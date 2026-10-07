@@ -16,10 +16,10 @@ message_id	ja_sha1	en	source
 2051_010_15	35f47cd06541ef7a69c047055bf54c799041c5df	Something's approaching!	machine
 2051_010_16	70bc27c8ca7909fad616ca9c2c69befd6cb3f923	It appears that local wildlife is\nclosing in. I recommend\npreparing for interception.	machine
 2051_010_18	82753877a35bc5c9a7f85ea53c4df55d5c22b327	Eek, the Captain says wild\nanimals are coming!! The\nCaptain said so!	machine
-2051_010_19	07cc3592fc5ce2de60ece92a3128347ba73fefd4	For someone who makes such\nstrange noises, you've got a\nkeen nose! There aren't many\nof them, but there are\nferocious creatures living in\nthis forest.	machine
+2051_010_19	07cc3592fc5ce2de60ece92a3128347ba73fefd4	For someone who makes such strange\nnoises, you've got a keen nose! There\naren't many of them, but there are\nferocious creatures living in this forest.	machine
 2051_010_20	74cce9b4365fda82e9a971945475fe0a97442dad	Even without the call of the\nBeast Witches, the beasts of\nBaschen are violent.	machine
 2051_015_01	693a63148dbbb00b7367d50d62300a94c4f094e8	<font color=blue>Karlyn</font>: If you make too much\nnoise, they'll attack us just like\nthis.	machine
-2051_015_02	942b39b9bc5a4a908bc320cccbfe56c941302d61	If the light from a battle is\nseen, it's as good as telling the\nRubarika soldiers exactly\nwhere we are. Show some\nrestraint.	machine
+2051_015_02	942b39b9bc5a4a908bc320cccbfe56c941302d61	If the light from a battle is seen, it's as\ngood as telling the Rubarika soldiers\nexactly where we are. Show some\nrestraint.	machine
 2051_015_03	b655f65192defba0e065900123e5e1791b1e6ac2	<font color=blue>Welch</font>: Grrr... dammit...!	machine
 2051_015_04	359f938ef31ab5b01f50773a6564fdc36af46f79	<font color=blue>Euwin</font>: ...Welch. Calm down.	machine
 2051_015_05	a69b12dcebd11226caf9e4f4188970ab6866dd76	Fine. I'll do as you say for now.	machine
@@ -28,7 +28,7 @@ message_id	ja_sha1	en	source
 2051_015_08	0fe8babf864c8971ac8dbf366dec2ada7f7d5d61	<font color=blue>Welch</font> Hmph... grrr...	machine
 2051_015_09	e9afab5f0f03caa4d694a0d5b8080fa426115c6c	<font color=blue>Karlyn</font> That masked man called\nyou Rakstar, didn't he? Is that\nRakstar, as in Lord Carlone's\nRakstar?	machine
 2051_015_10	dbe66cfada86a37f6d646d4b9d70f11433133268	<font color=blue>Euwin</font> ...That's correct.	machine
-2051_015_11	1e698b59c81545d8b9b64ba696b69b73f5722185	<font color=blue>Karlyn</font> You should be more\ncareful about the girls you\nassociate with. For your own\nsake, and for the sake of your\nfamily name.	machine
+2051_015_11	1e698b59c81545d8b9b64ba696b69b73f5722185	<font color=blue>Karlyn</font> You should be more careful\nabout the girls you associate with. For\nyour own sake, and for the sake of\nyour family name.	machine
 2051_015_12	a3d195740f3e89f8a887f4fa4485eb5af133cf91	<font color=blue>Welch</font> You... you bitch...!! Say\nthat again and I'll...!!	machine
 2051_015_13	31d2b4d1de72c697fb071eec0dc2714146107f3b	<font color=blue>Eve</font> Welch! I told you to be\nquiet!	machine
 2051_015_14	c59c96990c747344c1e6dacc72b62a373f636c0b	<font color=blue>Tika</font> Big sister Welch! Hold it in\nfor now!!	machine
@@ -69,17 +69,17 @@ message_id	ja_sha1	en	source
 2051_020_33	a00c9cc6b0043815b568c1a26df5fb89b4821598	<font color=blue>Euwin</font> ...Right now, we're the\nones being rude.	machine
 2051_020_34	8d9a792a55a0e3582a9848208404c995e1197d47	<font color=blue>Welch</font> ...Eu-boy, you!!	machine
 2051_020_35	1a417c59578dc7074365ceab36a37742c12506a6	<font color=blue>Euwin</font> I understand how you\nfeel, Welch.	machine
-2051_020_36	6ffbc04089ee23614b8e137fced3c120fdd64126	But please, judge the situation\ncalmly. There is absolutely\nnothing to be gained by\nsnapping at Ms. Karlyn right\nnow.	machine
+2051_020_36	6ffbc04089ee23614b8e137fced3c120fdd64126	But please, judge the situation calmly.\nThere is absolutely nothing to be\ngained by snapping at Ms. Karlyn right\nnow.	machine
 2051_020_37	2589a883a0d079fd50aad71dfb0c09e07a1c4b16	<font color=blue>Welch</font> ...!!	machine
 2051_020_38	99f17afca1be59b8fd0033510b2fd811245a474d	<font color=blue>Karlyn</font> Well then, for now, let's\nseek protection from the\nKorurine garrison. My\nsubordinates should be there.	machine
-2051_020_39	f703df27f02c97266ff2141a7b9e2b9562103b66	I have a promise to keep with\nthat insufferable masked man,\nand I have no particular desire\nto die, so I'll make sure you're\ntreated well.	machine
+2051_020_39	f703df27f02c97266ff2141a7b9e2b9562103b66	I have a promise to keep with that\ninsufferable masked man, and I have no\nparticular desire to die, so I'll make\nsure you're treated well.	machine
 2051_020_40	f92a308465a30f79a5c80e14ea603242ac84d0d6	<font color=blue>Welch</font> Hmph, you think that's\nenough to get on my good\nside?!	machine
 2051_020_41	41ceccf216230be0fb45dda4ab33db178769ecbd	Besides, we're...!	machine
 2051_020_42	fcffe93c23a42f1415a71ff8b0be896223d57908	Village Elder: Oh, it's Lady\nKarlyn...	machine
 2051_020_43	de084dd4f15045455f2719cb06594bcdd3a4bd96	Village Youth: Lady Karlyn!\nYou're safe!	machine
 2051_020_44	dd2a69f4fc64534c99b4ff74377f0a10bb242528	W-what is this...?	machine
 2051_020_45	6b702ea688a064b2f471af9a2b5662f8e761fd4d	...The masked man told us.	machine
-2051_020_46	23fa135c4a9cd410f03c8c0327025bd14c493f3b	He said it was public\nknowledge that Karlyn had\nbeen captured by Rubarika. I'm\nsure the word reached\nKorurine too.	machine
+2051_020_46	23fa135c4a9cd410f03c8c0327025bd14c493f3b	He said it was public knowledge that\nKarlyn had been captured by Rubarika.\nI'm sure the word reached Korurine too.	machine
 2051_020_47	5f3ccd634591b2e1eca1b59118589b0a77acb4b3	Even so, why is everyone so\nwelcoming...?	machine
 2051_020_48	4cfd780545932b305efc93fcc07e0aa6b5138653	The "Beast Witch," known even\nto our enemy, Rubarika.	machine
 2051_020_49	16fee44164c53e3290e3e15c905551289523fcfb	Put another way, to the people\nof Baschen, she is a reliable\nally who protects the village\nand crushes the enemy.	machine
@@ -101,14 +101,14 @@ message_id	ja_sha1	en	source
 2051_020_67	b5fd6341f269930d4a163997178080907c5fafe8	Naturally, this Commander\nGiverese must be aware of\nthat fact.	machine
 2051_020_68	ccf2c29f47ce0d0b8e6af7c0504ff0292a321e8c	After all, the capture of the\nfamous Karlyn is a major event.	machine
 2051_020_69	ed26ebfc266335b24f0326bf35c1b8302168847e	Giverese knows that Rubarika\nwould not make such a bold\nclaim without any evidence.	machine
-2051_020_70	675bd54d5f6f9e06d9f5d3651c49d46c8f3cd1f0	In other words, we must\nassume that the fact that\nKarlyn was captured by an\nenemy nation has reached the\nleadership of Baschen.	machine
+2051_020_70	675bd54d5f6f9e06d9f5d3651c49d46c8f3cd1f0	In other words, we must assume that\nthe fact that Karlyn was captured by\nan enemy nation has reached the\nleadership of Baschen.	machine
 2051_020_71	7e9525b694234f42c0fcbc92a235647baa0c554a	<font color=blue>Euwin</font> In that situation, if\nKarlyn tells us to go to\nBaschen, there's only one thing\nwe can do.	machine
 2051_020_72	1fb4b0454a6dd9e56bfc1855bf8e3f98d11c17b5	We bring along important\nprisoners to make up for the\nmistake of being captured.	machine
 2051_020_73	b365463a4a017357d9c0f0f78348bbe9865f6cb6	<font color=blue>Welch</font> What!? Important\nprisoners!? Us!?	machine
 2051_020_74	900028cc2799e5573e3171fb3a1ba8438385b2e6	I hate to say this myself, but\nhow exactly are we important!	machine
 2051_020_75	3c4ff3725c65754aee38f5173a535c66b5427170	<font color=blue>Verda</font> You are important.\nEspecially Euwin and Eve.	machine
 2051_020_76	ec9286d34b13c4f97d3640ae6bccf0c8b95e44ca	<font color=blue>Euwin</font> Well, regardless of the\ncircumstances, I am still a\nmember of the Rakstar family.	machine
-2051_020_77	370d1067111e544e8bdf6efb9a5fbe444bce56e8	As for Eve, the fact that she\nlikely possesses power similar\nto the Beast Witch's\nsummoning symbol arts could\nbe what piques their interest.	machine
+2051_020_77	370d1067111e544e8bdf6efb9a5fbe444bce56e8	As for Eve, the fact that she likely\npossesses power similar to the Beast\nWitch's summoning symbol arts could\nbe what piques their interest.	machine
 2051_020_78	75081093b3e7fc9bf6da24b7fedb0c16c436bde0	<font color=blue>Karlyn</font> That's more or less\ncorrect.	machine
 2051_020_79	174424512a61367490eae1724bdb725e8717ebd5	<font color=blue>Welch</font> ...!	machine
 2051_020_80	247cd45082c575cbdb4d5618887242f0fd3d15b4	<font color=blue>Verda</font> You were listening? Are\nthe villagers alright now?	machine
@@ -139,12 +139,12 @@ message_id	ja_sha1	en	source
 2052_050_103	5c8d49111cb606050b9b258d81d6e759c1fe5495	Look, everyone, it seems Euwin\nand Welch are coming back.	machine
 2052_050_104	dcdc6ed4cd935c8980c96b09d0864699bced6f6b	"I wonder if they've finished\nquestioning Baschen's troops.	machine
 2052_050_105	c4cd895b8bf4bbfb4727b762b4e215ef29c16acc	I'll continue to keep watch on\nthe surroundings. Until then..."	machine
-2052_050_11	676ec7d5993be3c56e05ea86b3ff67c88383bc0d	"The moment your life signs\nvanished when you were\nthrown into the dungeons, I\nthought my heart was going to\nstop!!"	machine
+2052_050_11	676ec7d5993be3c56e05ea86b3ff67c88383bc0d	"The moment your life signs vanished\nwhen you were thrown into the\ndungeons, I thought my heart was going\nto stop!!"	machine
 2052_050_12	ff2f7421dc9272bdcbf06166e2b2520c9157a298	<font color=blue>Rekoro</font> Does AI Coro have a\nheart... I failed to replicate that.	machine
 2052_050_13	5e0f565e212c9eeb98d2fcde53ac7798b4dc9d9e	<font color=blue>Eve</font> That was just a figure of\nspeech... Don't take everything\nCoro says literally.	machine
 2052_050_14	5befa4292d4a2090d997c2ebd4392b3c68505eea	<font color=blue>Coro</font> "And that's why I don't\nthink they're treating you well\njust to keep you from\nescaping.	machine
-2052_050_15	c2a8b718a60322b665176bb375025291898a9a22	Korurine seems like a small\nvillage, but perhaps because\nit's near the border, there are\nover 2,000 soldiers stationed\naround the area,	machine
-2052_050_16	14c6d9203eba5e8d41d018571875f6d173d2a148	and there are nearly 200\npeople in that building alone.\nLogically speaking, it's not a\nperimeter you can just slip\nthrough. It's practically a\nprison."	machine
+2052_050_15	c2a8b718a60322b665176bb375025291898a9a22	Korurine seems like a small village, but\nperhaps because it's near the border,\nthere are over 2,000 soldiers stationed\naround the area,	machine
+2052_050_16	14c6d9203eba5e8d41d018571875f6d173d2a148	and there are nearly 200 people in that\nbuilding alone. Logically speaking, it's\nnot a perimeter you can just slip\nthrough. It's practically a prison."	machine
 2052_050_17	bd63cd1a46d7bb6cb6bb5d8c0f15115ae20f8d2c	<font color=blue>Rekoro</font> However, the fact that\nwe haven't been disarmed	machine
 2052_050_18	d9aee58d495d431385341ebf6ab58acad8015869	suggests that Karlyn Kayson is\nattempting to treat us as\nguests on the surface, rather\nthan prisoners.	machine
 2052_050_19	7a7aa33ebb89fc5a08839a90fd0eb8700d8d42b2	Had we been disarmed, even I\nwould not have remained silent.	machine
@@ -152,7 +152,7 @@ message_id	ja_sha1	en	source
 2052_050_22	0a4ec8465ba2de2bf251281b962a844660042a23	<font color=blue>Tika</font> Thanks for working so\nhard, Captain. There, there.	machine
 2052_050_23	d5187a91b704b149f4a72f2364256423c17313b0	<font color=blue>Eve</font> Still, I wonder why that\nmasked man wanted us to go\nto Baschen.	machine
 2052_050_24	e8ca53b03376c42a98d918890a12c416632f19ca	Who is he anyway? Is he from\nRubarika?	machine
-2052_050_25	daffc482bbbc99b9037bc52575d12b5752cceedb	<font color=blue>Rekoro</font> His linguistic patterns\nwere not translated; he spoke\nnative Daftine. I conclude that\nhe is undoubtedly a local\nresident.	machine
+2052_050_25	daffc482bbbc99b9037bc52575d12b5752cceedb	<font color=blue>Rekoro</font> His linguistic patterns were not\ntranslated; he spoke native Daftine. I\nconclude that he is undoubtedly a local\nresident.	machine
 2052_050_26	e064d81ec597ad024642e6d4af780a908bf4f6c2	<font color=blue>Coro</font> "But I failed to tag and\ntrack him again this time."	machine
 2052_050_27	c2c5696dffb73a9d5bea8e181271f91b07c07e17	"Just like in the Rubarika\ndungeons, for some reason, he\njust vanishes from my sight."	machine
 2052_050_28	119b766cd0a02e5d64dcb537528364dcd06000fe	<font color=blue>Eve</font> That's true. I wonder how\nthe Rubarika dungeons were\nable to jam Coro's sensors.	machine
@@ -160,12 +160,12 @@ message_id	ja_sha1	en	source
 2052_050_30	46cf77a3fb4200b891ce0b9c1fe93a765cc99836	<font color=blue>Coro</font> "Ugh... Based on the\nfootage recorded by the\nCaptain's scanner,	machine
 2052_050_31	5b7ceb89bfdb217b05267a970a936b38c34142a1	it looked like nothing more than\nordinary stone or brick... I just\ndon't understand it."	machine
 2052_050_32	5fb628d05079542706e2f2acb0848dd772a50261	<font color=blue>Verda</font> The chains that sealed\nKarlyn's summoning arts were\nalso quite strange, now that I\nthink about it.	machine
-2052_050_33	35187804fee529f93ce19a61466d8d72ad623f26	As for that masked man's\nequipment, I cannot tell if it is\nexisting technology or\nsomething derived from the\npower of the "Emissaries,"	machine
+2052_050_33	35187804fee529f93ce19a61466d8d72ad623f26	As for that masked man's equipment, I\ncannot tell if it is existing technology or\nsomething derived from the power of\nthe "Emissaries,"	machine
 2052_050_34	f085545f1a2dca38dbca8b3ce9a5d6e699716b49	but it would be wise to assume\nthat both Rubarika and\nBaschen possess technology\nwe cannot afford to overlook.	machine
 2052_050_35	747ce27a4540094aa2909179987497bebeb1f7a1	<font color=blue>Coro</font> "Speaking of which, I've\nfinished tagging Karlyn.	machine
 2052_050_36	4741f64fc111a7c57225f7c0f9204c2c51dcdd80	Regarding that collar, it doesn't\nhave explosives built directly\ninto it, but it does contain\nsome kind of sigil reaction.	machine
 2052_050_37	6c4431b531d0890e11d7bb135d606e9e6f8e9a82	If it really is meant to explode,\nthere's a possibility it\npossesses high destructive\npower."	machine
-2052_050_38	9872c0c1e568bfe3132a5f04593f8e23d271c3ca	<font color=blue>Eve</font> Do you think that masked\nman is trying to assassinate\nKarlyn and that guy Givel? He's\nthe Commander-in-Chief of\nBaschen, right?	machine
+2052_050_38	9872c0c1e568bfe3132a5f04593f8e23d271c3ca	<font color=blue>Eve</font> Do you think that masked man is\ntrying to assassinate Karlyn and that\nguy Givel? He's the Commander-in-Chief\nof Baschen, right?	machine
 2052_050_39	7e6d86a479b22d39ba3e5badbf5e1d42eceef51b	<font color=blue>Rekoro</font> It's a possibility, but it's\nhard to believe a soldier of\nKarlyn Kayson's caliber\nwouldn't have considered that.	machine
 2052_050_40	09c43aa195245ef0906b99a2d51c7b83dd75dddb	<font color=blue>Verda</font> Besides, that masked\nman said it would explode even\nif we moved away from Karlyn.	machine
 2052_050_41	3a69b16865ef87568f0f09c9e6b9d7d0599a465f	That's the strange part. Karlyn\nis our enemy, so normally we'd\ntake the chance to make a run\nfor it.	machine
@@ -196,7 +196,7 @@ message_id	ja_sha1	en	source
 2052_050_67	b75ae8ef224ad052eb53e00a0a412163396711d9	After all, they're running away\nfrom Rubarika,	machine
 2052_050_68	6d32989bec9474751b8b1c1e7f8ccb60c441b7b7	so if things stay like this, Big\nBrother Euwin and Big Sister\nWelch won't be able to go\nanywhere.	machine
 2052_050_69	9445fc8beda9bcba92c904c35533e7ccf3bc1d43	Welch hates Baschen because\nshe suffered great losses\nduring the Holy War,	machine
-2052_050_70	9ba4c6d21e484f288e767fe0c27cce911d520374	but rather than acting on\nimpulse now, letting Karlyn\nhandle the situation might\nbetter ensure the safety of\ntheir future.	machine
+2052_050_70	9ba4c6d21e484f288e767fe0c27cce911d520374	but rather than acting on impulse now,\nletting Karlyn handle the situation might\nbetter ensure the safety of their\nfuture.	machine
 2052_050_71	92865531f6c0f9473a79371b2f8abb713c1cf415	If the goal is to protect their\nlives, the worst-case scenario\nwould be to take them aboard\nthe ship and leave Daftine.	machine
 2052_050_72	12a335926571c9c8806e0a6434bf7f36a4a32c72	That's the one thing we can't\ndo!	machine
 2052_050_73	bed0b394e9dbc956c07e583a8a1bf5003f336ad9	Big Brother Euwin and Big\nSister Welch call Daftine and\nRubarika home.	machine
@@ -215,13 +215,13 @@ message_id	ja_sha1	en	source
 2052_050_87	d2f04494ad447697c9fd57edd613525c428bdbc5	"Tika! It's a banana! Tika! It's a\nbananaaaa!"	machine
 2052_050_88	1ebf7b7a690c628669dda02d470d6a7ac7e246e8	Coro... you're kind of scaring\nme...?	machine
 2052_050_89	3c74ffd81c03a328fa2d82d75c737a99d30b3595	Captain. Once we return to the\nship,	machine
-2052_050_90	121264ed910387ac716fb8cbc3e3548473fb00cc	I request that AI Coro be\nuninstalled down to the last\nbyte, and its physical chassis\nbe decomposed at a molecular\nlevel.	machine
+2052_050_90	121264ed910387ac716fb8cbc3e3548473fb00cc	I request that AI Coro be uninstalled\ndown to the last byte, and its physical\nchassis be decomposed at a molecular\nlevel.	machine
 2052_050_91	a24e432f840cc1c755c68408c8b04220d49f167e	I'm so sorry! I am truly sorry\nfor Coro's behavior! I'll give him\na good thrashing later!!	machine
 2052_050_92	b6c4bf6612b470e75d038ce671d7ec4f77796d3d	"Aaaaah!!"	machine
 2052_050_93	dd348dbb7c662f57b1b6dca0e880b99875aa18d1	Regardless... it means we have\na reason to stay here for now.	machine
 2052_050_95	72343eb9a2dbeba52cca807d675960ee6b66cf49	Yes, for Tika's sake, and for\nEuwin and Welch, running away\nis not an option for us!	machine
 2052_050_96	7b058dbe326137988201d2fd65259ead58b4ee35	Let them bring on whatever\ntraps they have!	machine
-2052_050_97	82f9fc916d96a668121833c7638227ae8ee98a4e	"If Tika and the others are\ncausing time regression, then\nas a member of the Galactic\nFederation Army, it is my duty\nto investigate.	machine
+2052_050_97	82f9fc916d96a668121833c7638227ae8ee98a4e	"If Tika and the others are causing time\nregression, then as a member of the\nGalactic Federation Army, it is my duty\nto investigate.	machine
 2052_050_98	3aa7a52c565abb5e2016bb70c5e022c692a9972b	I'm not even afraid of the\nUncharted Planet Protection\nTreaty anymore!"	machine
 2052_050_99	8d9b1f24724f589982e4489dbafaea321aecb753	...But, it's strange.	machine
 2052_060_01	e081a33999e7b6aedae0804975973ad0fa4d82ef	*Sigh*... My shoulders are so\nstiff...	machine
@@ -254,7 +254,7 @@ message_id	ja_sha1	en	source
 2053_070_08	2e3aaa26cff09bc278a8914cc956ea91e9e9306a	Also, a maximum of four people\ncan enter training at a time.	machine
 2053_070_09	50014adf660440922850017251519f3ac465c296	The rest will be treated as\nhostages here, so you know\nwhat happens if you try\nanything funny.	machine
 2053_070_10	92949e16392aa0be1ff2d6e078bfe9d99fb3cffc	<font color=blue>Welch</font>: ...	machine
-2053_070_11	690c881e2ecaddc30cdb886cd43b520900a5b724	<font color=blue>Karlyn</font>: Conversely, I won't\ntolerate any slacking. Show the\nsoldiers of Baschen the true\nstrength of those who\nmanaged to defeat me.	machine
+2053_070_11	690c881e2ecaddc30cdb886cd43b520900a5b724	<font color=blue>Karlyn</font>: Conversely, I won't tolerate any\nslacking. Show the soldiers of Baschen\nthe true strength of those who\nmanaged to defeat me.	machine
 2053_070_12	92949e16392aa0be1ff2d6e078bfe9d99fb3cffc	<font color=blue>Welch</font>: ...	machine
 2053_080_01	5d13734818d3e3cab50418a2219c6fcdf0884890	<font color=blue>Euwin</font> Damn, the frontline\nsoldiers are as strong as they\nsay!	machine
 2053_080_02	0e0fd080d02aa6f5264cb1cb8d0658fb4beee3dd	<font color=blue>Karlyn</font> But we always end up\nwinning anyway, so it's just as\nexpected.	machine
@@ -272,7 +272,7 @@ message_id	ja_sha1	en	source
 2053_100_05	46c2b737556af31806d83dbf32e8118611b790d7	...I see. In that case, for the\nnext training session, I'll have\nyou face them one by one.	machine
 2053_100_06	a08a561bfc96db36f3835f537f6d575ceebdd647	As for my soldiers... let's see, I\nthink I'll have about 30 of them\nattack you at once.	machine
 2053_100_07	63150e8ef1c59d0eebf58f78442bda78e4b9245a	What...!	machine
-2053_100_08	04cf13a7982ddbe39926ec236bb163fb914330a4	It's embarrassing that my\ntroops are such weaklings. To\nensure our guests from\nRubarika are satisfied, I can't\nafford to be picky about my\nmethods, right?	machine
+2053_100_08	04cf13a7982ddbe39926ec236bb163fb914330a4	It's embarrassing that my troops are\nsuch weaklings. To ensure our guests\nfrom Rubarika are satisfied, I can't\nafford to be picky about my methods,\nright?	machine
 2053_100_09	dade1758e712461150525e01a049a49a38e78930	...You... you vixen!!	machine
 2053_100_10	271da5b4fffdcea97dbfaae939705d002b869518	I'll take that as a compliment.\nAs I told you last night, I\npersonally hold you in the\nhighest regard.	machine
 2053_100_11	53bc0277e13b37dc4e793e46255ad1af44fcef95	Know your place and obey my\ndemands without hesitation.	machine
@@ -320,7 +320,7 @@ message_id	ja_sha1	en	source
 2053_110_05	efda6d7825bbd80a763cadc8a59d62d45ef0dc0e	What's going on!?	machine
 2053_110_06	cff0f1b51fb2a2ea30c747a000eb4e6de5fc49c3	Baschen Soldier: Attack! We're\nunder attack!!	machine
 2053_110_07	f9b003cd07b857b750c88e7580bcfaa6a9588510	What's happening?!	machine
-2053_110_08	2a99414f7bb906153c0fa1af5af16e4cf72da114	Baschen Soldier: An attack\nfrom the Rubarika side!\nApproximately 2,000 troops!\nThere are many <font color=yellow>Light Arrow\nSoldiers</font> among them!	machine
+2053_110_08	2a99414f7bb906153c0fa1af5af16e4cf72da114	Baschen Soldier: An attack from the\nRubarika side! Approximately 2,000\ntroops! There are many <font color=yellow>Light Arrow\nSoldiers</font> among them!	machine
 2053_110_09	6c272889859d31feac9f5b4f982b6e206a999aa3	Light Arrow Soldiers? You\nmean soldiers using the same\nlight arrows as the\nmessenger?!	machine
 2053_110_10	70ce0f5e5bd65723ae7c9fb972286195cc916e82	This has become a nuisance.\nIt's a bit earlier than planned,\nbut I'll transport these people\nto the Imperial Capital.	machine
 2053_110_11	ad4db33e47fdc87f00ea90071b097bf42efd7003	Their objective is likely\nRakstar's fifth son. Hurry!	machine
@@ -339,7 +339,7 @@ message_id	ja_sha1	en	source
 2053_110_24	ca182a164b858e4c4b05cefaab14de9101ee7f31	That's not the point! Look over\nthere!!	machine
 2053_110_25	0fceb3bc5a6c5ca70e261fdfa0417fa04389ca69	Huh...?	machine
 2053_110_26	a9cc0a5da04731bce348424c14e085eff160e830	Village Youth: Gwaaaaaaaah!	machine
-2053_110_27	6a8d41d83de57d196715251d9d3f5d044ce9f428	Baschen Soldier: Retreat!\nRetreat! Prioritize protecting\nthe villagers! Get to the\nshelters! There are Light\nArchers here!	machine
+2053_110_27	6a8d41d83de57d196715251d9d3f5d044ce9f428	Baschen Soldier: Retreat! Retreat!\nPrioritize protecting the villagers! Get\nto the shelters! There are Light\nArchers here!	machine
 2053_110_28	f5c6b8372d74a6df16bd46c9635b37e8d5d11dfd	Village Woman: H-help me!\nAhhh!	machine
 2053_110_29	9d38b7680fc5f10e8c33ca36237e9e66d5d668c5	What... what is that...	machine
 2053_110_30	97d905b1878a14d9aa50922ece858c266c34c3fb	Village Elder: I... I can't go any\nfurther. Just run, quickly...!	machine
@@ -385,7 +385,7 @@ message_id	ja_sha1	en	source
 2053_130_09	1a69d9af294e2df78b9c8f1d3009aea4067968ea	That's why... I can't afford to\ndie in a place like this!	machine
 2053_130_10	96fb5f97f8fcce65fb9cee6c480ef69bb246e77a	Rubarika Soldier: You're not\ngetting away!!	machine
 2053_130_11	1e5c9407732db8078fff3a59b7bc28ca5d15e9f6	I... I am from Rubarika!!	machine
-2053_140_01	8fbb079999ce84b865ecc53728384697e6669047	Karlyn's Subordinate: Lady\nKarlyn! Please use that\ncarriage over there! I'll hold\nthem off here, so please\nretreat quickly!	machine
+2053_140_01	8fbb079999ce84b865ecc53728384697e6669047	Karlyn's Subordinate: Lady Karlyn!\nPlease use that carriage over there! I'll\nhold them off here, so please retreat\nquickly!	machine
 2053_140_02	e319f403e4c83d7b2d103ee49271e416c8f5c073	I understand. Prioritize the\nevacuation of the residents\nover maintaining the garrison.	machine
 2053_140_03	ad4df66d76a2e6fcaaacb2fc5956b23ad3e0fef8	Karlyn's Subordinate:\nUnderstood!	machine
 2053_140_04	260bfcbea8a5c109bff5017dcce1be9fa38f4793	Swaying light, obey me!!	machine
@@ -411,35 +411,35 @@ message_id	ja_sha1	en	source
 2054_200_06	347b9f7797e7b25ae42925fd56f695803f7e531c	<font color=blue>Eve</font> This is... just terrible.	machine
 2054_200_07	1cc17deeffb1fc4101507e68dbd39022226b29aa	<font color=blue>Verda</font> Yeah... it's the first time\nI've seen the true reality of the\nHoly War...	machine
 2054_200_09	3626a860b99266ceb8419a44272d9290f2d2eaec	<font color=blue>Karlyn</font> I'm relieved that you two\nare more mature than she is.	machine
-2054_200_10	4921a39906019dadf450bd278bf81bed34f8fe00	We had a bit of a commotion,\nbut we'll head straight for the\nImperial Capital now to deliver\nthe message. It'll be a grueling\njourney, so please hang in\nthere.	machine
+2054_200_10	4921a39906019dadf450bd278bf81bed34f8fe00	We had a bit of a commotion, but we'll\nhead straight for the Imperial Capital\nnow to deliver the message. It'll be a\ngrueling journey, so please hang in\nthere.	machine
 2054_200_11	c0ffcde80ae02d5ac78e258edb739a80391354e5	<font color=blue>Eve</font> Still, I can't believe Welch\nlost her composure like that...	machine
 2054_200_12	754a0c39c862fb493706bdf9810bc059a01e53bd	She's been acting strange\nsince last night. What on earth\ndid you say to her?	machine
 2054_200_13	45edb55d5ce9a4c3facb708ac65b027837fcb4e7	<font color=blue>Karlyn</font> It was nothing major.	machine
-2054_200_14	5492358fbae3c321f3bc15125ad9265dfbc99cab	I just realized that her wish\nwas to stop any more\ncasualties in the Holy War, so I\nsimply suggested an idea to\nmake that wish come true.	machine
+2054_200_14	5492358fbae3c321f3bc15125ad9265dfbc99cab	I just realized that her wish was to stop\nany more casualties in the Holy War, so\nI simply suggested an idea to make\nthat wish come true.	machine
 2054_200_15	9dddfa5467086c0d4f6c85a371215da84d73f3f1	<font color=blue>Verda</font> An idea to stop the\ncasualties, you say?	machine
 2054_200_16	7bfe66f1876ad347f1eb84d27a94372a0d22adbd	<font color=blue>Karlyn</font> Yes. Apparently, she's\nthe one who created that\nstrange hammer and Ewin\nLaxter's sword.	machine
 2054_200_17	2e225f1b73fe3ff7f4859191e54ebb14d09337e1	<font color=blue>Verda</font> ...Well, that seems to be\nthe case.	machine
 2054_200_18	d9969ae53465dc314cb8ae7f046e62eb892d8cc0	<font color=blue>Karlyn</font> Personality aside, her\ntechnical skill is top-notch.	machine
-2054_200_19	33b3913941eb62c78d64d4ab1e17df341f5a759c	So, I suggested that she join\nthe Weapon Development\nBureau of the Baschen Imperial\nCapital to use that power to\nbring peace to the world.	machine
+2054_200_19	33b3913941eb62c78d64d4ab1e17df341f5a759c	So, I suggested that she join the\nWeapon Development Bureau of the\nBaschen Imperial Capital to use that\npower to bring peace to the world.	machine
 2054_200_20	b73fa94bb068ce77ddf2fd3acd11abc367b0169e	<font color=blue>Eve</font> H-how on earth does that\nlead to world peace?!	machine
-2054_200_21	21555a4c082e7d9c25d9b99ed93f437e292afb94	<font color=blue>Karlyn</font> She had the exact same\nreaction. She told me she\ncouldn't possibly cooperate\nwith Baschen, and that she's a\ncitizen of Rubarika!	machine
-2054_200_22	c57695ef2ab68d9494f137e8bbf1d897502f4b44	Though... it'll be interesting to\nsee if she can still talk that big\nafter seeing what the soldiers\nof her homeland have done\nwith her own eyes.	machine
+2054_200_21	21555a4c082e7d9c25d9b99ed93f437e292afb94	<font color=blue>Karlyn</font> She had the exact same\nreaction. She told me she couldn't\npossibly cooperate with Baschen, and\nthat she's a citizen of Rubarika!	machine
+2054_200_22	c57695ef2ab68d9494f137e8bbf1d897502f4b44	Though... it'll be interesting to see if she\ncan still talk that big after seeing what\nthe soldiers of her homeland have done\nwith her own eyes.	machine
 2054_200_23	8549a18db384b0c26d6fccdb060ca9abafb1016b	<font color=blue>Welch</font> ...!	machine
 2054_200_24	b9e9e1ce55b1af50ef23ec733a6e1ca4baa6d0c3	<font color=blue>Karlyn</font> Right now, the Baschen\narmy is being pushed back.	machine
-2054_200_25	3f89d2d51e61ea3009db853cce187bcafde67e54	The cause is those light arrows\nused by the messengers.\nWeapons that can easily pierce\nsteel plates without any real\ntraining are a serious threat.	machine
+2054_200_25	3f89d2d51e61ea3009db853cce187bcafde67e54	The cause is those light arrows used\nby the messengers. Weapons that can\neasily pierce steel plates without any\nreal training are a serious threat.	machine
 2054_200_26	1ac2c10405b94bd4b16be18813d8599a7811385b	Meanwhile, all we have are\ntraditional crest arts and the\n"Beasts," whose numbers are\nlimited.	machine
 2054_200_27	e716292f5b27095220ed5262a65d5745a202ade4	But... I wonder what would\nhappen if weapons created by\nher were added to our arsenal.	machine
-2054_200_29	3070eeb5ca3ebd3fe1fd51de3042a86f2018cd1f	<font color=blue>Karlyn</font> That's the idea. If we\noverrun the battlefield with\ninnovative military power,\neveryone will fear that\nstrength, and no one will ever\ndare to fight again.	machine
+2054_200_29	3070eeb5ca3ebd3fe1fd51de3042a86f2018cd1f	<font color=blue>Karlyn</font> That's the idea. If we overrun\nthe battlefield with innovative military\npower, everyone will fear that strength,\nand no one will ever dare to fight again.	machine
 2054_200_30	1a17411c44baf98e3847c610c7800cc09f112622	<font color=blue>Eve</font> Overrun the battlefield?\nCan you really call a world\ntrembling in fear of military\nmight "peaceful"?!	machine
-2054_200_31	d525ba1c352c971024eea470d3140f99e267a981	<font color=blue>Karlyn</font> Please spare me the\ntired sophistry. Humans are\ncreatures who shout and throw\npunches when they have\nnothing else.	machine
-2054_200_32	828e103f3b3b2caa4abc7514bf2428ffc55dceff	This war has gone on so long\nthat we no longer know when it\nstarted or why the\nMoonshadow Ladders and\nDaftes' messengers began to\nappear. To end it,	machine
-2054_200_33	316a3b268d50d614ea645d3565b6bb069e4abdb2	one side must utterly crush\nthe other with overwhelming\npower, using the memory of\nthat terror to suppress any\nfuture conflict.	machine
+2054_200_31	d525ba1c352c971024eea470d3140f99e267a981	<font color=blue>Karlyn</font> Please spare me the tired\nsophistry. Humans are creatures who\nshout and throw punches when they\nhave nothing else.	machine
+2054_200_32	828e103f3b3b2caa4abc7514bf2428ffc55dceff	This war has gone on so long that we\nno longer know when it started or why\nthe Moonshadow Ladders and Daftes'\nmessengers began to appear. To end it,	machine
+2054_200_33	316a3b268d50d614ea645d3565b6bb069e4abdb2	one side must utterly crush the other\nwith overwhelming power, using the\nmemory of that terror to suppress any\nfuture conflict.	machine
 2054_200_34	4c4497a42c33e170765bf15f1c142d042bb24e08	If there is another way, I would\nlove for you to tell me,\ncomplete with specific\nprocedures and strategies.	machine
 2054_200_35	e535b6083b2cca60269bb0c8229ee5d01282964e	Usually, the empty-headed\ndreamers just start saying, "We\nshould just talk it out."	machine
 2054_200_36	0ec36b2c61278c3da959224576ed46e4e11146f6	<font color=blue>Euwin</font> ...Even so, we can't just\njustify war.	machine
-2054_200_37	0f15310daf3957c394513b9a58be774f422438fc	<font color=blue>Karlyn</font> Of course not. That's\nwhy we need a final resolution\nwith such great power that\nneither side ever thinks of\nfighting again.	machine
+2054_200_37	0f15310daf3957c394513b9a58be774f422438fc	<font color=blue>Karlyn</font> Of course not. That's why we\nneed a final resolution with such great\npower that neither side ever thinks of\nfighting again.	machine
 2054_200_38	5c9560b08b2b5d630f0229832e3631910b3700c5	If Baschen provides full\nsupport for her technology, I'm\ncertain that will become\npossible.	machine
-2054_200_39	925a5de1b6c42366b11b751f10b36ac911aefb9b	For the past four years,\nRubarika has relied too heavily\non the power of the light\narrows, neglecting the training\nof individual soldiers.	machine
+2054_200_39	925a5de1b6c42366b11b751f10b36ac911aefb9b	For the past four years, Rubarika has\nrelied too heavily on the power of the\nlight arrows, neglecting the training of\nindividual soldiers.	machine
 2054_200_40	b3e1c39a445b7d8b19b206978785be492d57ec71	If the elite soldiers of Baschen\nare equipped with her\nweapons―weapons equal to\nthe light arrows...	machine
 2054_200_41	7c07da2b5704fda8f763d4060f8655b8c70d5c88	Rubarika won't stand a chance.	machine
 2054_200_42	2526fce119be956f2653cbfcbfeb3464313c0f0e	<font color=blue>Verda</font> (...No matter the planet,\npeople never seem to change...)	machine
@@ -465,7 +465,7 @@ message_id	ja_sha1	en	source
 2054_200_63	e838974da9b945584a6b6ed0ca8e12fea176d80e	I'm amazed you'd even think of\ngetting involved in the Holy\nWar with such naive ideas.	machine
 2054_200_64	e49f01f0868a05014f24df68d887dab1eba667eb	I'll never be able to understand\npeople like you.	machine
 2054_210_01	9b15880334d7f7a17ab26601f096925536d8c75f	Big sister Welch... please, just\neat something...	machine
-2054_210_03	3a497fc144287cc421e4628c8879ce426a897752	Welch. We arrive at the\nImperial Capital tomorrow. You\nneed to eat to keep your\nstrength up, or you'll be in\ntrouble if something happens...	machine
+2054_210_03	3a497fc144287cc421e4628c8879ce426a897752	Welch. We arrive at the Imperial Capital\ntomorrow. You need to eat to keep\nyour strength up, or you'll be in trouble\nif something happens...	machine
 2054_210_06	2e1dd45597587c9887e52d195f5b174111b5c3b4	It's no use. I've never seen\nWelch in this state before.	machine
 2054_210_07	b3e3bd5063616b541240a6ef77667095b750a862	I don't know what to do...	machine
 2054_210_08	0c2d7f8e6db36732d485da44596cbc89cb524fe0	Euwin... I have an idea.	machine
@@ -490,7 +490,7 @@ message_id	ja_sha1	en	source
 2054_220_22	a658c8f151aafd516330b80447f4912f107c0e08	Do you feel the same way,\nCaptain?	machine
 2054_220_23	ac68a920abd5e365bb779358dec81762945a9043	Suddenly getting all serious...\nYou should use your usual\nventriloquism at times like this.\nLighten the mood a bit.	machine
 2054_220_25	83de827bbe578883b3ab9eb51e3292a22cda2154	So, what will it be?	machine
-2054_220_26	2aecc458f1b5454f9454a72d639621c06353637e	If Welch wishes to return to\nCarlone, well, that is fine. If the\nothers look the other way, I\ncan have you sent back in a\nminute or two.	machine
+2054_220_26	2aecc458f1b5454f9454a72d639621c06353637e	If Welch wishes to return to Carlone,\nwell, that is fine. If the others look the\nother way, I can have you sent back in\na minute or two.	machine
 2054_220_27	2815e883a3fa9c9c84f59c45ca762f3f5f8e7a8a	What about that vixen? Even if\nI apologize, there's still the\nbomb on the collar.	machine
 2054_220_28	5e196792091c02ac26d88c467f2c5545a75207d3	I believe that can be handled\nwith a bit of research. If I offer\nto remove the collar, I doubt\nKarlyn would refuse.	machine
 2054_220_29	224fea364af69388f367f1f7a650c2e8110f0c62	After all, we have fought side\nby side for quite some time.	machine
@@ -501,7 +501,7 @@ message_id	ja_sha1	en	source
 2054_220_34	9d3780cfbc25b7e843c3d21c85902bbbfc450b1e	I, too, have chased grand\nambitions, wandered aimlessly,\nhit walls, and fallen into despair\nmore times than I can count.	machine
 2054_220_35	471bf71caa1cd7849eb56122aa4ac321bb1bcbcd	I've thought this for a while,\nbut you're really not childlike at\nall, Verda.	machine
 2054_220_36	7f3f9f8e174ee85c6848acc4e14c9d7cadaf13d3	I must admit, I've lived a hard\nlife.	machine
-2054_220_37	faff951bf9b3b0999583da80b0969c8f18c43e7f	I've made countless irreparable\nblunders, and I can't tell you\nhow many times I've wailed,\nwondering why I was wasting\nmy time on such useless\nthings.	machine
+2054_220_37	faff951bf9b3b0999583da80b0969c8f18c43e7f	I've made countless irreparable\nblunders, and I can't tell you how many\ntimes I've wailed, wondering why I was\nwasting my time on such useless\nthings.	machine
 2054_220_38	8ab5118d76ec818b6c2871183c2f93ba969c9ab2	But in those moments,\nsomething always came to\nmind.	machine
 2054_220_39	5460ebec7c17c154e9def2c1b4bf82ffef624ad1	The faces of my precious\nfamily.	machine
 2054_220_41	b1ed12bd74dd4723396b75aa10419c1ea09cf245	This was long before I met the\nCaptain and the others.	machine
@@ -533,7 +533,7 @@ message_id	ja_sha1	en	source
 2054_230_14	6a3b4e5274f99f49d01e98d56c0e5eb18ab641c2	That's weird. This shouldn't be\nhappening... huh?	machine
 2054_230_15	1e86cf4a4ad08a9067be21ab9c7c0a3895f0e50e	<font color=blue>Welch</font> ...That sword is just too\nbig for you, Euwin.	machine
 2054_230_16	636b279535c174a1abdca48bc192a9edd278849f	<font color=blue>Euwin</font> T-that's not true! I\nusually train with swords even\nbigger than this!	machine
-2054_230_17	36b6a158c3d8081cff034c67ea776e68bb4ea332	<font color=blue>Welch</font> You and your brother\nare different sizes, Euwin. You\nwon't be able to get stronger\nunless you use a sword that\nactually fits you.	machine
+2054_230_17	36b6a158c3d8081cff034c67ea776e68bb4ea332	<font color=blue>Welch</font> You and your brother are\ndifferent sizes, Euwin. You won't be\nable to get stronger unless you use a\nsword that actually fits you.	machine
 2054_230_18	86edcdd3169ccfda233d16c5a853426dde576d5d	You're not actually allowed to\ntrain with swords yet, are you?	machine
 2054_230_19	ed0e1639ba0040940295c7db3159e1a00e8b423c	<font color=blue>Euwin</font> ...Ugh...	machine
 2054_230_20	dc0e0d46c33f63207f260db90c0197eca033ad69	<font color=blue>Welch</font> ...Hey, Euwin. Will you\nreally go look for my father\nsomeday?	machine
@@ -562,33 +562,33 @@ message_id	ja_sha1	en	source
 2054_230_45	954ccb350cd417012fe6c0fc4a37ea463e96d077	From now on, please take good\ncare of the genius, beautiful,\nyoung inventor, Welch!!	machine
 2057_390_01	c4c5db869f939355d79f273c78e34bf0be96e446	<font color=blue>Euwin</font> I never imagined I'd\nactually end up coming to the\nImperial Capital of Baschen.	machine
 2057_390_02	5d9e0fea4ca3120b74e5a44521495fbb01e4770e	<font color=blue>Tika</font> What a huge castle! I\nwonder if it's bigger than\nRubarika Castle.	machine
-2057_390_03	7f81729bfe617819f4feeb96bc1d2dea3d234156	<font color=blue>Rekoro</font> By rough estimation,\nthe total floor area of the\n<font color=yellow>Baschen Imperial Castle</font> is\napproximately 1.4 times that of\nRubarika Castle.	machine
+2057_390_03	7f81729bfe617819f4feeb96bc1d2dea3d234156	<font color=blue>Rekoro</font> By rough estimation, the total\nfloor area of the <font color=yellow>Baschen Imperial\nCastle</font> is approximately 1.4 times that\nof Rubarika Castle.	machine
 2057_390_05	45745b7aa68d6dd7f956f6453db75b9b1dc19c2e	<font color=blue>Karlyn</font> ...You say such oddly\nprecise things in such a\nstrange voice.	machine
 2057_390_06	182d78bcbd1433778f17ef1e4336e42601de14bd	<font color=blue>Tika</font> O-oh, is that so? Wow!!	machine
 2057_390_07	ab9afaa790d086d307c7127130cbad13b1f25703	<font color=blue>Eve</font> Tika... you've really gotten\nthe hang of playing along...	machine
-2057_390_08	c732e71db7f4a0f64677a47645344dbb543647ed	<font color=blue>Verda</font> This may not be my\nplace to say, but Karlyn, are\nyou sure it's alright to enter\nthe castle while wearing that\ncollar?	machine
+2057_390_08	c732e71db7f4a0f64677a47645344dbb543647ed	<font color=blue>Verda</font> This may not be my place to say,\nbut Karlyn, are you sure it's alright to\nenter the castle while wearing that\ncollar?	machine
 2057_390_09	3e9a6a21d6466ecbfd0eaa852056cacae5c7aeb9	<font color=blue>Karlyn</font> Oh, this?	machine
 2057_390_10	44623c7a03a25e3ec62c555cf0c97cca2e1e8b73	True. He did say it would\nexplode, but I'm not particularly\nworried about it.	machine
 2057_390_11	d4617b463733f16ff0ab12a93cbdca1b5ef4750a	<font color=blue>Verda</font> I assume they intend to\nbring us before the\nCommander-in-Chief, right?	machine
 2057_390_12	8e25ae5e893156e65bb43c8632ddde430c936d4b	I expected we'd be disarmed\nbefore even entering the\ncapital.	machine
 2057_390_13	de42f2e96bcf6ec4f28af17816279ee163ee3daa	<font color=blue>Karlyn</font> You shouldn't\nunderestimate Lord Givel.	machine
 2057_390_14	31751fefd29de95d69c732c5543b86fddd8e38b8	The Commander-in-Chief is a\n"Messenger of Daftes" and the\ngreatest symbolist in Baschen.	machine
-2057_390_15	4199f6ad3611eb37ab656e46e9fa345ef2c42ced	I already sent a letter by\nexpress horse when we arrived\nin Korurine to explain my\nsituation and this collar. I\nincluded the matter of that\nmasked man as well.	machine
+2057_390_15	4199f6ad3611eb37ab656e46e9fa345ef2c42ced	I already sent a letter by express horse\nwhen we arrived in Korurine to explain\nmy situation and this collar. I included\nthe matter of that masked man as well.	machine
 2057_390_16	d9292321f80b4e5a98e7ca893a50e6c54ae487f0	Even if this collar were to\nexplode right in front of Lord\nGivel, he wouldn't suffer a\nsingle scratch.	machine
 2057_390_17	13e5b71c4fcfa708de42242396502198d897295f	<font color=blue>Verda</font> ...He sounds like a\nformidable opponent to cross.	machine
-2057_390_18	988c9a4ec0558f00a952ca05c18099552f792b71	<font color=blue>Euwin</font> I've heard that the\ncurrent Emperor of Baschen is\na warrior who commanded the\nfront lines of the Holy War\nduring his time as Crown\nPrince, fighting with both\nweapons and arts.	machine
+2057_390_18	988c9a4ec0558f00a952ca05c18099552f792b71	<font color=blue>Euwin</font> I've heard that the current\nEmperor of Baschen is a warrior who\ncommanded the front lines of the Holy\nWar during his time as Crown Prince,\nfighting with both weapons and arts.	machine
 2057_390_19	871ed33c6f7270637d3a771e97df50496ff3d445	He likely has absolute\nconfidence that no matter\nwhat happens, he cannot be\nassassinated.	machine
 2057_390_20	690b2a803d38dc68a0fe2f9920d0e582db0b1d32	<font color=blue>Euwin</font> ...You all said you wanted\nto meet General Givel, but what\nexactly do you plan to do once\nyou do?	machine
 2057_390_21	1f9897db2113a8bc503f47715676db8cee53d632	<font color=blue>Eve</font> First, I'm going to talk to\nhim.	machine
-2057_390_22	da6d45620ae3bd4c20980fa3412d6dc873a42180	<font color=blue>Karlyn</font> You plan to talk him into\nstopping the war? Just so you\nknow, Commander-in-Chief\nGivel―and of course, His\nMajesty the Emperor―are\nhardline hawks.	machine
+2057_390_22	da6d45620ae3bd4c20980fa3412d6dc873a42180	<font color=blue>Karlyn</font> You plan to talk him into\nstopping the war? Just so you know,\nCommander-in-Chief Givel―and of\ncourse, His Majesty the Emperor―are\nhardline hawks.	machine
 2057_390_23	5d5be3f50ae7c54fa7fae459e01a9a1871bcdee2	<font color=blue>Eve</font> That's not it. It's about\nyour power as the "Beast\nWitch."	machine
-2057_390_24	0ee4e97fec4c6173a494db8f2290f1fcc5ab0a27	I want to know how you\nobtained a power that is the\nspitting image of my own\nsymbol arts, and how you're\nable to grant it to others... if I\ncan get an answer.	machine
+2057_390_24	0ee4e97fec4c6173a494db8f2290f1fcc5ab0a27	I want to know how you obtained a\npower that is the spitting image of my\nown symbol arts, and how you're able\nto grant it to others... if I can get an\nanswer.	machine
 2057_390_25	994909b5b88df813bbcba1a8c0680d339c6e2cc8	<font color=blue>Karlyn</font> Ah, now that you\nmention it, your symbol arts\nare very similar to mine.	machine
 2057_390_26	94cd7c0c3ae7f9e3df6f0c838ab2f280937dbc6c	Don't you even know the true\nnature of your own power?	machine
 2057_390_27	1f62da1803691f4174cd1976562f2dec9570391e	<font color=blue>Eve</font>: There's no point in hiding\nit. You're right.	machine
 2057_390_28	e84ca0ef33cde2f93fd789658707de647dd9f57a	Baschen's Commander-in-Chief\nis a vital hint for me in\nsearching for my roots.	machine
 2057_390_29	4b66fc598e1d0f2805afe9996dffe123eb9ff124	<font color=blue>Karlyn</font>: Looking at it that way,\nit seems we're both of use to\none another.	machine
-2057_390_30	396d2aa281be41b2214fe00ae577cd5fc68103c1	Just as much as her hammer\nand double-bladed sword, I'm\ninterested in your symbol arts.\nI'm sure Lord Givel would be\ninterested as well.	machine
+2057_390_30	396d2aa281be41b2214fe00ae577cd5fc68103c1	Just as much as her hammer and\ndouble-bladed sword, I'm interested in\nyour symbol arts. I'm sure Lord Givel\nwould be interested as well.	machine
 2057_390_31	d8b1bcda610cb6c99d5ba21e71c4b5b789032868	If possible, I'd like for us to get\nalong.	machine
 2057_390_32	63f6cd7ec194eea093e01b8a24ca99b6b552c3ac	<font color=blue>Welch</font>: ...No matter how many\ntimes you ask, I'm not\ncooperating.	machine
 2057_390_33	948368340ed2bc90de6560f788d60bf2c51b1d9f	<font color=blue>Karlyn</font>: Hehe, that's right.	machine
@@ -603,11 +603,11 @@ message_id	ja_sha1	en	source
 2057_400_06	096f0a3d5ba16922970df4c24fe2e851f617bdeb	Emperor: I hear you threw the\ncapital of Rubarika into chaos\nand captured Carlone's nobles.	machine
 2057_400_07	ff886b1f21bfe23574516e811a94359c0c36e466	Emperor: In the face of such\nmilitary achievement, being a\nKodama is a trivial matter.	machine
 2057_400_08	09ed0c35ee5ac2f44883670ea21dc94c2ddc54be	Yes, Your Majesty.	machine
-2057_400_09	6a59e8aa88f2b6857a63c27f4d54cd0d17b780c7	Emperor: Even Givel was\npraising the fact that you\nescaped and shamed Rubarika,\nrather than the fact that you\nwere captured.	machine
+2057_400_09	6a59e8aa88f2b6857a63c27f4d54cd0d17b780c7	Emperor: Even Givel was praising the\nfact that you escaped and shamed\nRubarika, rather than the fact that you\nwere captured.	machine
 2057_400_10	fad587ef3086af74908c3badc686d1cf1e942398	Emperor: He should be coming\nup here shortly...	machine
 2057_400_11	4b31a529ca45bee579018b48aa9f30811723112a	Emperor: And those behind\nyou, are they the prisoners?	machine
 2057_400_12	65688841a11e08716382347855792df8789a5b38	It is as you say, Your Majesty.	machine
-2057_400_13	40cdac5f3765384a1671a72525a1a633234c194d	Emperor: Hmm. I see. Even\namong barbarians like those in\nRubarika, the nobility certainly\npossess a certain air of\nrefinement.	machine
+2057_400_13	40cdac5f3765384a1671a72525a1a633234c194d	Emperor: Hmm. I see. Even among\nbarbarians like those in Rubarika, the\nnobility certainly possess a certain air\nof refinement.	machine
 2057_400_14	87911ccc90295d06ab213b7367d2544deaaa5666	...Maybe I should show him how\na real barbarian behaves.	machine
 2057_400_15	a0856be2dc224a6e5b00a7f0ee415d87ffabe79a	H-hey, Welch!	machine
 2057_410_01	e56acbbdeb414b9e1869eb1f834b562e0b34eca8	Your Majesty, you are far too\ncareless.	machine
@@ -616,13 +616,13 @@ message_id	ja_sha1	en	source
 2057_410_04	865c7a605643d70446d270afaa3f5557a3293f44	Yes, sir!	machine
 2057_410_05	e2a34368118cd68f711f029c84c468f0a98bf84c	Let us get straight to it. Are\nthose behind you the prisoners\nmentioned in the report?	machine
 2057_410_06	e3b9d9ad7f843f8ea18e7a09c2f721cfd67b53a2	That is correct, sir.	machine
-2057_410_07	0a54c13712cb8d4b057d2012af3185b0919d109f	Hmm. At a glance, they all look\nyoung. They hardly seem like\nthe kind of elite soldiers our\nnation possesses, nor the sort\nof people you would struggle to\ncapture...	machine
+2057_410_07	0a54c13712cb8d4b057d2012af3185b0919d109f	Hmm. At a glance, they all look young.\nThey hardly seem like the kind of elite\nsoldiers our nation possesses, nor the\nsort of people you would struggle to\ncapture...	machine
 2057_410_11	612f6299e08c91e95b557569f3a35ed4c9d2d99e	Hm?	machine
 2057_410_12	5ee73ae18de15fcf24ea00b713a02c7a28967ca0	...!?	machine
 2057_410_14	1839e3b5e9574e383edf41a0b545e1d29a1208dd	U-um... is something the\nmatter?	machine
 2057_410_15	26134e5aef997af458ed3a6933e355a24c54203d	You are in the presence of His\nMajesty and the\nCommander-in-Chief. Do not\nspeak without permission.	machine
 2057_410_16	6e31a618425e189aab2d393eea6078dd88e2ff60	I-I'm sorry...	machine
-2057_410_17	14433ba2310519a0c0f8df100a69a24b64828830	Commander. This girl is the\nyoungest among everyone, so\nshe has not yet mastered\nproper etiquette. Please\nforgive her.	machine
+2057_410_17	14433ba2310519a0c0f8df100a69a24b64828830	Commander. This girl is the youngest\namong everyone, so she has not yet\nmastered proper etiquette. Please\nforgive her.	machine
 2057_410_18	2bf81e1da06f37f482526986810ceeb2cdef1a80	No, it is fine... Hmm, well, I\nsuppose it's impossible...	machine
 2057_410_24	5590ff8011105dbc9611adfe36ab2f63edc164d3	What?	machine
 2057_410_25	e971ed39fc5ce242d95778349fdfd7c3c547d1a6	Karlyn Kayson!	machine
@@ -651,7 +651,7 @@ message_id	ja_sha1	en	source
 2057_420_03	c3c201b502bcfb153ee6859bda9799144a84917e	I see, I see!!	machine
 2057_420_04	d98b56f4a50e10a16f8d749a05a7fb11b4a9b126	I can't believe it, I simply can't!\nNo matter how lucky one is, I\nthought it would take 50,000\nyears!!	machine
 2057_420_05	68d5f51d54deea5ffce4bd9116737a775b47ae61	F-fifty thousand years?	machine
-2057_420_07	21a590eea5128e4dac0c72351d359ebf526be956	When I first received the\nreport, I didn't dare hope... I\nassumed it was just some\nvictim of the ladder or\nMastima...	machine
+2057_420_07	21a590eea5128e4dac0c72351d359ebf526be956	When I first received the report, I didn't\ndare hope... I assumed it was just some\nvictim of the ladder or Mastima...	machine
 2057_420_08	05df02408b1121a9d64b7561433c8a5fb0536dd5	Hehehe, is this what they call\nthe victory of the selfless!	machine
 2057_420_09	8786382b1a427677300f8332001d29a12c1bf6c5	Listen, Evelysse!	machine
 2057_420_10	f4656e3a80d9ea6220ff93b151f4b1964d155e1e	My entire life has led up to this\nvery moment!	machine
@@ -747,7 +747,7 @@ message_id	ja_sha1	en	source
 2057_440_10	908654704666fb794b5d312aee9ea87d4712b060	If I don't turn these wretches\nto dust this instant, Evelysse\nwill never return... O, Dark\nStar...!!	machine
 2057_440_11	d2275cb07e8ead4ab7deaae8f38a894e6424c7d0	What...	machine
 2057_440_12	cb1ec6320d7a2ac65f1a6218768543c5eefdacc5	Once I have you, I have no\nfurther use for this country.	machine
-2057_440_13	e25a5406790041ade374e3d64bde5fe32ee81a48	The Holy War or\nwhatever―they can do as they\nplease. As a thank you for\ntheir hospitality, I'll erase them\nin a heartbeat.	machine
+2057_440_13	e25a5406790041ade374e3d64bde5fe32ee81a48	The Holy War or whatever―they can do\nas they please. As a thank you for their\nhospitality, I'll erase them in a\nheartbeat.	machine
 2057_440_14	0108553bb27309408949501466cf6854bd62711f	L-Lord Givel! What on earth are\nyou doing?! What do you mean\nby this?!	machine
 2057_440_15	4c3b9f31634b2e8ff111c5a254d549dc5dde002a	Read the room, will you?!	machine
 2057_440_16	9600ea73da9c4f80f73801b4953cd1e74733d202	He's not the commander you\nknow! Can't you tell by the\nvibe? He's completely lost it!!	machine
@@ -811,13 +811,13 @@ message_id	ja_sha1	en	source
 2058_510_44	bbe1579590d908279424bfff48b90a3cedd8f301	And what is this round thing in\nthe first place...?	machine
 2058_510_45	c7e9e1903eedbf212357976ebbc90bd3f3baebc5	Captain, Verda, I don't\nunderstand what you're talking\nabout either. Do you two\nactually know what's going on?	machine
 2058_510_46	a2befc33f3562cb0601e7be3549b534ecfc74c02	I cannot provide a detailed\naccount of the events at the\nBaschen Imperial Castle...	machine
-2058_510_47	173dd470719c64aec7c93f62d5323df249866c74	However, based on calculations\nperformed after function\nrecovery, it is certain that we\nare neither in Baschen nor\nRubarika.	machine
+2058_510_47	173dd470719c64aec7c93f62d5323df249866c74	However, based on calculations\nperformed after function recovery, it is\ncertain that we are neither in Baschen\nnor Rubarika.	machine
 2058_510_48	2a1a61f63935b60cb4363e5879234feb2bbac51b	What's that?	machine
 2058_510_49	62b1fdb5f9c77555f9ae0168c8b8b6fe00357fc4	One incomprehensible thing\nafter another...	machine
 2058_510_50	e5aa1dd133c6a0ce2e9355107891c7620cfe426c	If General Givel isn't here, we\nneed to find Welch first! We\ncan talk after that...	machine
 2058_520_01	c7e9e1903eedbf212357976ebbc90bd3f3baebc5	Captain, Verda, I don't\nunderstand what you're saying\neither. Do you two even know\nwhat's happening right now?	machine
 2058_520_02	a2befc33f3562cb0601e7be3549b534ecfc74c02	I cannot provide a detailed\naccount of the events at the\nBaschen Imperial Castle...	machine
-2058_520_03	173dd470719c64aec7c93f62d5323df249866c74	However, based on calculations\nperformed after my functions\nwere restored, it is certain that\nwe are neither in Baschen nor\nRubarika.	machine
+2058_520_03	173dd470719c64aec7c93f62d5323df249866c74	However, based on calculations\nperformed after my functions were\nrestored, it is certain that we are\nneither in Baschen nor Rubarika.	machine
 2058_520_04	62b1fdb5f9c77555f9ae0168c8b8b6fe00357fc4	One confusing thing after\nanother...	machine
 2058_520_05	e5aa1dd133c6a0ce2e9355107891c7620cfe426c	If General Givel isn't here, we\nneed to find Welch first! We\ncan talk after that...	machine
 2058_520_06	7ee158eba161e66d45a0d9e04489b7dbd1f6a697	Now what?!	machine
@@ -830,10 +830,10 @@ message_id	ja_sha1	en	source
 2058_520_13	904c8eb6eff7b7e63c21dd05c4b8a183e886e88c	Ah! Eu! Eve! Help meeeee!!! I'm\ngonna be killed!!!	machine
 2058_520_14	4fe86c2aefce3f1d1747fa0505258a3410bdd5f6	Well... it seems.	machine
 2058_520_15	2fed3f0c298b9fa4bc0c2ba1e337aa0fdea15ea4	She has brought along some\ntruly terrible companions!	machine
-2058_520_16	08c45e9dea5559cda4f7e54b55885c5c9446dcf5	They are a swarm of lifeforms\nidentical to the "Baschen's\nBeasts" summoned by Karlyn\nKayson!! There are werewolf\ntypes mixed in as well!	machine
+2058_520_16	08c45e9dea5559cda4f7e54b55885c5c9446dcf5	They are a swarm of lifeforms identical\nto the "Baschen's Beasts" summoned\nby Karlyn Kayson!! There are werewolf\ntypes mixed in as well!	machine
 2058_520_17	4e48b2f03bb677f37335c79698793585f05edb66	...What?	machine
 2058_520_18	d90c605348472a09a3b6d4618138fb702bc99da6	Waaaaah, thank goodness! I'm\nso happy to see people I know,\neven if it's a woman like her!!	machine
-2058_520_19	d1f7a29b6676e12e4915a7aa998931f8e69ceba6	When I woke up, I was\nsurrounded by those things!\nI've been running for my life\nthrough the forest this whole\ntime!!	machine
+2058_520_19	d1f7a29b6676e12e4915a7aa998931f8e69ceba6	When I woke up, I was surrounded by\nthose things! I've been running for my\nlife through the forest this whole time!!	machine
 2058_520_20	c8d9da643a43992c83e4e668878f6194e7bac75e	...No, something is strange...\nthose creatures haven't been\nThornite-ized! They are just\nordinary beasts!	machine
 2058_520_21	5f59cb153b1924a7593059f24597f6bb624d3a00	It doesn't look like they're going\nto let us go!	machine
 2058_520_22	208cd4261d35bf8cf5fab2d5e08fbfc8ea40ad19	Jeez! What on earth is going\non here!!	machine
@@ -847,7 +847,7 @@ message_id	ja_sha1	en	source
 2058_540_08	1a85fc70a3c47dbb9b7057bc477157bb194afd4a	Both the legs and arms are\ndamaged! They were already at\ntheir limit after the battle at\nthe Imperial Castle!	machine
 2058_540_09	6e24889dced74584d0a72fd0d32c44564a0731e6	Hanyah!? The gun's energy is\nalmost gone!	machine
 2058_540_10	7ddf10c1af5fe38f845f34ec0f757d929d0c5181	Just how many of these things\nare there...?!	machine
-2058_540_11	26cda936a065b04c53c2038da0593fc4964dd73f	It's like there are dozens of\nBeast Witches out here! What\nare we going to do! We can't\nescape in a wide-open plain like\nthis!	machine
+2058_540_11	26cda936a065b04c53c2038da0593fc4964dd73f	It's like there are dozens of Beast\nWitches out here! What are we going to\ndo! We can't escape in a wide-open\nplain like this!	machine
 2058_540_12	97c0c4047bef1d3f9af4caee35259d0c952855f6	Why! Why won't the summoning\ncrest activate!	machine
 2058_540_13	4be4e01a44962f5ee906362f061d44f7f9f963e1	Captain! At this rate, we're\ndoomed!	machine
 2058_540_15	cbe8ed0960580d6f13f08d0aff3c686ca42afe2a	...Nun!	machine
@@ -858,7 +858,7 @@ message_id	ja_sha1	en	source
 2058_550_05	9ea66d1e14a4d5ba202d960581f12686d5d67772	Ah, there's someone over\nthere!	machine
 2058_550_06	fbfceb3afa68f11cc477c71216250422587e49b5	Wh-who goes there!!	machine
 2058_550_07	76224eac6025b65834af9e7252c818663fd053e7	My apologies, I did not intend\nto startle you.	machine
-2058_550_08	5d948591f12b16af892de2326deab77b077af8d8	I detected that you were being\nattacked by the native\ncreatures of this planet and\nrushed to your aid. I harbor no\nill will toward you.	machine
+2058_550_08	5d948591f12b16af892de2326deab77b077af8d8	I detected that you were being\nattacked by the native creatures of\nthis planet and rushed to your aid. I\nharbor no ill will toward you.	machine
 2058_550_09	4b976744b634d2fa2b277a299890eb4e07fedbb1	Wh-what's with that person...\nthere are strange things all\nover their body...	machine
 2058_550_10	f9fd93a0cc33d149da77486b175a865c751822fa	A robot... no, a Cyborg?	machine
 2058_550_11	b287dbd12d744f5ca8d075de03604ae8e4412cde	...Hmm... four Daftine, one\nLevarance... and...	machine
@@ -892,6 +892,6 @@ message_id	ja_sha1	en	source
 2058_550_41	6744f9da3ba5e54cd744904e7859e4ae3944e983	My base is hardly what I would\ncall comfortable, but it can\nprovide you with healing. Come.	machine
 2058_550_43	a2ccf33be42a0d27efb0cdf8f00193f1800fe567	Captain, are we really going?	machine
 2058_550_44	0d159782cf44e14987aed1af461795fb9af453ff	We have little other choice at\nthe moment.	machine
-2058_550_45	a9dc2c36cb6161fbee198effafe5e1f61025aaa7	If the owner of that body has a\nbase, they surely possess\nadvanced planetary technology.\nThey should be able to fix\nTika's Arms.	machine
+2058_550_45	a9dc2c36cb6161fbee198effafe5e1f61025aaa7	If the owner of that body has a base,\nthey surely possess advanced\nplanetary technology. They should be\nable to fix Tika's Arms.	machine
 2058_550_46	d9b1cfc100a114a1a5578b69fdefd8f47c35861a	...Besides.	machine
 2058_550_50	81f579fd53844e22f00bad39ae5e9dbfadde7026	We must get answers to\neveryone's questions.	machine

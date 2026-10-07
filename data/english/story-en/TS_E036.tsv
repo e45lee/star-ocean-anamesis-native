@@ -1,10 +1,10 @@
 message_id	ja_sha1	en	source
 E036_010_01	e55f81967360dbc61ba5cb4e370d8023f42b70e0	Huh? Captain, what are you\nlooking at?	machine
-E036_010_02	0c52505f012a2ffcc852d090c3875edc6e24837e	It is a TV show broadcasting\non the advanced planet that is\nour next destination. They are\nshowing live footage of the\nMilky Quintet.	machine
+E036_010_02	0c52505f012a2ffcc852d090c3875edc6e24837e	It is a TV show broadcasting on the\nadvanced planet that is our next\ndestination. They are showing live\nfootage of the Milky Quintet.	machine
 E036_010_03	666b5f2b700ff0d0718dfc204a2be0590017acd0	What!? Of us!?	machine
 E036_010_04	be3fc6880b36f9e9dd6457c24d0d7b686e0aa5ae	Oh, it's footage from one of our\npast concerts.	machine
-E036_010_05	ec0a8e1914d55d7188a7e980527b44cec1a76cf7	It seems idol activities are very\npopular in this star system,\nand they are broadcasting a\nprogram featuring idols who\nare popular in other systems.	machine
-E036_010_06	f06bf7b3274dbd375887e5bfba7dced93d6c647a	I'm so happy that there are\npeople watching our videos and\ncheering us on in a sector so\nfar from the planet where we\nperformed.	machine
+E036_010_05	ec0a8e1914d55d7188a7e980527b44cec1a76cf7	It seems idol activities are very popular\nin this star system, and they are\nbroadcasting a program featuring idols\nwho are popular in other systems.	machine
+E036_010_06	f06bf7b3274dbd375887e5bfba7dced93d6c647a	I'm so happy that there are people\nwatching our videos and cheering us on\nin a sector so far from the planet\nwhere we performed.	machine
 E036_010_07	865745ea9b0dbd1af6c9f3144ea346314e6ef10f	Wait, is that a news flash...?	machine
 E036_010_09	94629a0df060781263fbeb4701d5fea5377ff809	"Romance revealed for the\npopular space-faring idol group,\nMilky Quintet"... What is this\ntalking about!?	machine
 E036_010_10	429fd9ffe490fb928d9e724bbe19bfe6fe281f01	Captain, this is terrible! A huge\nscandal!!	machine
@@ -16,26 +16,26 @@ E036_010_15	a0edbcfe1a58b582c88dd1196177b128be354441	This photo... it's from whe
 E036_010_16	33769920144ee1f781d43178e4b07f0151a4f8b2	They've gone to the trouble of\ncropping it to show only the\npart where you're with the\nCaptain.	machine
 E036_010_17	5ee265e98191b21228d951cae111de840e9390a0	True, if someone only saw this,\nthey might actually\nmisunderstand...	machine
 E036_010_18	39fa8866c86a16aaa9ae95122c9341a64fc0ff25	A fake scandal article, huh...\nThis smells fishy too.	machine
-E036_010_20	c706df2c89459fc3289ceefa693745d20e0b6afc	Oh, as for my news, there have\nbeen frequent reports of girls\ndisappearing on our\ndestination, the advanced\nplanet Twinkle Dust.	machine
+E036_010_20	c706df2c89459fc3289ceefa693745d20e0b6afc	Oh, as for my news, there have been\nfrequent reports of girls disappearing\non our destination, the advanced planet\nTwinkle Dust.	machine
 E036_010_21	211ecd109e9351157fb5742d9be421270d1cb958	Girls disappearing!?	machine
 E036_010_22	35e2cea233233537bfa793b5d439612da759dde8	I don't have all the details yet,\nbut apparently there's a\ncommon thread among the\nmissing girls.	machine
 E036_010_23	8e243831ce3eb2408760833c04bbffbb5969c4ce	They were all "successful\napplicants for an Idol\nAudition"...	machine
 E036_010_24	16dd38588e94bd03f08abf7e022ec8f0319ac751	Could it be that someone is\ntrying to hold an idol concert\nfor themselves, just like Head\nBull did...!	machine
-E036_010_25	9a0ec4421956255e9c3cd25faa0b76c8192a5280	We cannot simply ignore this.\nWe were already planning to\nresupply on this planet, so\nshall we investigate the\nsituation locally?	machine
+E036_010_25	9a0ec4421956255e9c3cd25faa0b76c8192a5280	We cannot simply ignore this. We were\nalready planning to resupply on this\nplanet, so shall we investigate the\nsituation locally?	machine
 E036_010_26	e76fa678410db3abeecedafb62f3d2a8b7bef62b	But if we end up getting\nkidnapped like last time, it'll all\nbe for nothing.	machine
 E036_010_27	eda24915e2f3c3661504b87c6c93712a8343a74a	But we won't find anything if\nwe just stay here. Let's send a\nsmall group to investigate!	machine
 E036_010_28	2bcbc071b421f4259bd3c944bd0b82f4c0541b30	Male Fan: ...So, you've already\nheard the new <font color=yellow>GNG48</font> song,\nright? My favorite member was\nabsolutely amazing.	machine
 E036_010_29	4dd1afdaf2df4061f4a82e28883f4f828ea20c12	Female Fan: Who hasn't heard\nit? Milky Quintet wasn't bad,\nbut GNG is definitely where it's\nat these days!	machine
 E036_010_30	988da4984b1002353523bc327a134a426b822e6f	...I see. It looks like an idol\ngroup called GNG48 is popular\nhere.	machine
-E036_010_32	8272d1d3f29d8c83625c5a4a80147252d3de0ba7	If we want to verify the rumors\nabout the idols, talking to the\nfans would be the fastest way.\nFor now, let's look into the\nmost popular group, GNG48.	machine
+E036_010_32	8272d1d3f29d8c83625c5a4a80147252d3de0ba7	If we want to verify the rumors about\nthe idols, talking to the fans would be\nthe fastest way. For now, let's look into\nthe most popular group, GNG48.	machine
 E036_010_33	5ca7521d4dce8e4257c6b6d614b69a5406d4cbcb	Haggard Man: Are you all\nlooking into GNG?	machine
 E036_010_34	3c64548f971e61be33066c0db96e8d8a45b749b6	Huh... and you are?	machine
-E036_010_35	1713237caeb8b89e616bb7f3f9b38bb1951129e0	Haggard Man: Sorry for\nspeaking to you so abruptly.\nI'm not anyone suspicious.\nActually, I've been researching\nGNG myself.	machine
-E036_010_36	73d01b60ebb878bc4060bb9900533f12c3d18823	Haggard Man: My daughter is\nin GNG... but she left to\nperform a concert near where\nthe interplanetary conflict is\nhappening, and I haven't heard\nfrom her since.	machine
+E036_010_35	1713237caeb8b89e616bb7f3f9b38bb1951129e0	Haggard Man: Sorry for speaking to\nyou so abruptly. I'm not anyone\nsuspicious. Actually, I've been\nresearching GNG myself.	machine
+E036_010_36	73d01b60ebb878bc4060bb9900533f12c3d18823	Haggard Man: My daughter is in GNG...\nbut she left to perform a concert near\nwhere the interplanetary conflict is\nhappening, and I haven't heard from her\nsince.	machine
 E036_010_37	bf0c48dbd90ae21429a6946821aebce89145aaa3	You haven't heard from her?!\nAnd what do you mean, a\nconcert near a conflict zone?!	machine
-E036_010_38	1395d101376b3fab966fa2013e9000bb044474e5	Haggard Man: My daughter\nsaid it was part of a visit to\ncomfort the soldiers... but I'm\nso worried that she might have\nbeen caught up in the fighting...	machine
-E036_010_40	d8f4250ffed05bb9e957eb636f0941aa29394aba	Haggard Man: Oh, I've\ncontacted the agency too. But\nthey just keep insisting they\ncan't give me any details to\nprevent the girls' schedules\nfrom leaking.	machine
-E036_010_41	edf4ab29af56f568cd2700fba31d47f39f21f91e	I see... that is worrying. We're in\nthe middle of investigating as\nwell. I'll give you my contact\ninfo. Let's exchange\ninformation if we find anything.	machine
+E036_010_38	1395d101376b3fab966fa2013e9000bb044474e5	Haggard Man: My daughter said it was\npart of a visit to comfort the soldiers...\nbut I'm so worried that she might have\nbeen caught up in the fighting...	machine
+E036_010_40	d8f4250ffed05bb9e957eb636f0941aa29394aba	Haggard Man: Oh, I've contacted the\nagency too. But they just keep insisting\nthey can't give me any details to\nprevent the girls' schedules from\nleaking.	machine
+E036_010_41	edf4ab29af56f568cd2700fba31d47f39f21f91e	I see... that is worrying. We're in the\nmiddle of investigating as well. I'll give\nyou my contact info. Let's exchange\ninformation if we find anything.	machine
 E036_010_42	e61372989c3a363d5006b26be0cf38cf6f0c865b	Thank you. But that agency is\nplagued by unsettling rumors.\nPlease, be careful.	machine
 E036_010_43	da52fd06b049cd9f4c41ba4f7ff88310210268d9	Yes, I know. You take care as\nwell.	machine
 E036_010_44	13f93f3862065bf833a6b90aa87a5ea211642ffe	Ah, there you are! Captain,\nChisato, I've looked into a few\nthings!	machine
@@ -45,17 +45,17 @@ E036_010_47	bc2e28953741d013fd55c82295b4ae6a906cec73	There are rumors that they\
 E036_010_48	128b55555565df69152d65c64a8cb360e5caf424	It's possible that what\nhappened to Milky Quintet was\nthe work of this agency...	machine
 E036_010_49	672aa7657c41ec9de0661ab14658eebad616251e	Thank you both. GNG48 and\ntheir agency, Beyond Over\nProduction, definitely seem\nsuspicious.	machine
 E036_010_50	3b4372de3de2889543ff300178d370e66de0de22	Still, idol activities are really\nthriving on Twinkle Dust. No\nmatter where you go, there are\ngirls performing on the streets.	machine
-E036_010_51	04b37b72174567630d4b440cd2d88ce0431dac11	With songs and smiles\neverywhere, it really is a\nwonderful planet. Seeing them\nwork so hard somehow gives\nme energy.	machine
+E036_010_51	04b37b72174567630d4b440cd2d88ce0431dac11	With songs and smiles everywhere, it\nreally is a wonderful planet. Seeing\nthem work so hard somehow gives me\nenergy.	machine
 E036_010_52	99e0b3e5f7ee66a3c86b06cb1c5c2eea6b63e924	Ah! That's actually something I\nwas curious about.	machine
 E036_010_53	ad2c8983354ab12c221eabc8a96317c6154599bf	When I hear them sing, I feel\nthis surge of energy from\nwithin. It's almost like...\nSymbology...	machine
 E036_010_54	111569353c139bde803be90c4ac2d203f7bfeb3b	Spot on, Miki!	machine
 E036_010_55	b37ae40b8465aa50fa4835e8daa59249d7fc7c76	Hey! You scared me, jumping\ninto the comms like that!	machine
 E036_010_56	a47c3b76916a2cefce22ccf0e4c2fbef8927ad19	Ah, my apologies! I just got a\nbit carried away...	machine
-E036_010_57	edd9bf56e96af0fdc57da8f764ff672d25655024	After analyzing the songs, it\nseems the women of this\nplanet can use a special form\nof Symbology that enhances\nothers' physical abilities\nthrough song.	machine
+E036_010_57	edd9bf56e96af0fdc57da8f764ff672d25655024	After analyzing the songs, it seems the\nwomen of this planet can use a special\nform of Symbology that enhances\nothers' physical abilities through song.	machine
 E036_010_58	81b6ec3dd862ae5d70148ff20bcbbe8c4dbdc00b	Magic through song... they're\nalmost like the people of the\nFox Soul...	machine
-E036_010_59	dc8bb59b85617abdb77380eeafdcbd0ceed09f67	They're gathering girls\nindiscriminately. We can't reach\nthe GNG48 members who went\nto the comfort concert. Their\nsongs possess Symbology\npower.	machine
+E036_010_59	dc8bb59b85617abdb77380eeafdcbd0ceed09f67	They're gathering girls indiscriminately.\nWe can't reach the GNG48 members\nwho went to the comfort concert. Their\nsongs possess Symbology power.	machine
 E036_010_60	3a3695f9320b4d571a28dce67f50444a9997fcf4	I think the key to solving this\ncase is around here.	machine
-E036_010_62	352cba79e42f2b2c480df6b5bce9261f64f4eb4b	You're right. For the sake of\nyour worried father, I'll first\ninvestigate the conflict zone\nwhere the girls went for the\ncomfort concert!	machine
+E036_010_62	352cba79e42f2b2c480df6b5bce9261f64f4eb4b	You're right. For the sake of your\nworried father, I'll first investigate the\nconflict zone where the girls went for\nthe comfort concert!	machine
 E036_010_63	e4640840783828a064ef34285acc27adc17ab81d	Male Fan: ...Hey. Is that...\nsomeone from the Milky\nQuintet over there?	machine
 E036_010_64	a0270d7c7a57f291918354590889dabc824d5ad7	Oh no! We've been spotted!?	machine
 E036_010_65	1e0c785d4dd83606e7dc23c23bf71afbd92b3b81	A-Anyway, let's get out of here\nbefore a crowd forms!	machine
@@ -64,9 +64,9 @@ E036_020_02	5ac7fb552e73a705a4480c605e245a860171e748	I can't believe something l
 E036_020_03	7a0982335374d84ca42c5d08ae302b1fe1091f22	Captain, everyone. You're back\nalready.	machine
 E036_020_04	ed266d9cadd9c1e9033ec270688d399616f9a098	I heard you went to investigate\na strange incident on a planet\ncalled Twinkle Dust.	machine
 E036_020_05	7f364390e8c32b9be02d4a08a81bc4ec88572d79	...So, you're saying Beyond\nOver Production has been\nkidnapping girls?	machine
-E036_020_06	39578c9f34b167ef1013cefe2ea9e875cd222ad5	Yes. It seems the girls who\nbecome idols are sent to\ninterplanetary conflict zones\nunder the guise of being a\nmusical troupe to provide\ncombat support.	machine
-E036_020_07	eb808073a8e3a0bae9000bb0c7c8fc64991597f5	Furthermore, to prevent the\ninformation from leaking, the\ngirls are placed in an\nenvironment where they cannot\ncontact the outside world...	machine
-E036_020_08	3739b9f4fb6ca7c3f78944200c69faa2eb239824	It looks like the scandal was\njust a fabrication to crush\nother idol groups and\nconcentrate all the girls in their\nown agency.	machine
+E036_020_06	39578c9f34b167ef1013cefe2ea9e875cd222ad5	Yes. It seems the girls who become\nidols are sent to interplanetary conflict\nzones under the guise of being a\nmusical troupe to provide combat\nsupport.	machine
+E036_020_07	eb808073a8e3a0bae9000bb0c7c8fc64991597f5	Furthermore, to prevent the information\nfrom leaking, the girls are placed in an\nenvironment where they cannot contact\nthe outside world...	machine
+E036_020_08	3739b9f4fb6ca7c3f78944200c69faa2eb239824	It looks like the scandal was just a\nfabrication to crush other idol groups\nand concentrate all the girls in their\nown agency.	machine
 E036_020_09	ba58dfda9a8c4cb34b421eee1b1e8092e8a6ab64	We won't be staying in this\nsector for long. The scandal is\none thing, but the real problem\nis the members of GNG.	machine
 E036_020_10	ec7921c55d2eaad4590167ee1c771c036f495d85	Right. That's why I think we\nshould try talking to the GNG\ngirls first.	machine
 E036_020_11	01c86186b616eb66e9e06cbfff72118f1b80c1e8	Are you able to get in touch\nwith the idols?	machine
@@ -79,30 +79,30 @@ E036_020_17	da81ae1ac95a53e1e6d8a403f527873c66ec08ec	GNG48 Member: "Wait... are\
 E036_020_18	995f0380a007f6d22bd909f5579d3cd3dbf927e0	Yes. There is something I\nabsolutely need you to know,\nwhich is why I'm contacting\nyou.	machine
 E036_020_19	b47c15929aece7b9b0a2f0fbec3b0e11a5b32893	To put it bluntly, I want all of\nyou in GNG48 to quit the\ngroup and run away\nimmediately.	machine
 E036_020_20	a1b62404fd63b100b41d5979d1d672959321ea25	GNG48 Member: "What...!\nW-what are you talking\nabout?!"	machine
-E036_020_21	7c6f6cec91f5b4504667464f2638f274fbae0b1f	Beyond Over Production is\ntrying to exploit your unique\nsymbol arts. If you stay, you\ncould be forced to take part in\na conflict!	machine
-E036_020_22	3f7ab60a16d6de2ff1bb4333b7b190cc81e236b2	GNG48 Member: "...Who do you\nthink you are, calling us out of\nthe blue and saying this! No\none is going to believe such a\nwild story!!"	machine
+E036_020_21	7c6f6cec91f5b4504667464f2638f274fbae0b1f	Beyond Over Production is trying to\nexploit your unique symbol arts. If you\nstay, you could be forced to take part\nin a conflict!	machine
+E036_020_22	3f7ab60a16d6de2ff1bb4333b7b190cc81e236b2	GNG48 Member: "...Who do you think\nyou are, calling us out of the blue and\nsaying this! No one is going to believe\nsuch a wild story!!"	machine
 E036_020_23	03888294566cb90b6be38c6b27fe69fcef142ec2	Calm down and listen! Haven't\nany of your members gone\nmissing or stopped\nresponding? Think carefully!	machine
 E036_020_24	afa679605d470423ae51d6a8a284fd56693753ff	GNG48 Member: "T-that's..."	machine
 E036_020_25	4af88b7e1e6f32f79526922cd61db03d7b2f2205	"My, my, my! I thought I heard\nsome commotion... you're from\nthe Milky Quintet, aren't you?"	machine
 E036_020_26	ce8abe7aa2a5adcc1c5910b57415696c8815ec5b	You...!	machine
 E036_020_27	9baa6b3ef0338150201405bf4c633ff7da86d645	GNG48 Producer: "Greetings. I\nam the general producer for\nGNG48."	machine
-E036_020_28	87c76bf9130ed8d297f7929f725cbbac322d9a36	GNG48 Producer: "This is quite\nproblematic. Just because\nyou've been hit by a scandal,\nyou try to crush your business\nrivals."	machine
+E036_020_28	87c76bf9130ed8d297f7929f725cbbac322d9a36	GNG48 Producer: "This is quite\nproblematic. Just because you've been\nhit by a scandal, you try to crush your\nbusiness rivals."	machine
 E036_020_29	34b5c41553c71e158e271de6aad9cc27f341369e	I wonder which one of us is\nactually doing that?	machine
-E036_020_30	6bb6d7bcb4d7b2ab33ee9c4cdfd007ee29a8118c	GNG48 Producer: "I have no\nidea what you're talking about,\nbut if you're so concerned\nabout GNG, why don't we settle\nthis on stage like proper\nidols?"	machine
+E036_020_30	6bb6d7bcb4d7b2ab33ee9c4cdfd007ee29a8118c	GNG48 Producer: "I have no idea what\nyou're talking about, but if you're so\nconcerned about GNG, why don't we\nsettle this on stage like proper idols?"	machine
 E036_020_31	dfe9b3cd78bf72c6fa1ee4c1c9838499c98ad6d2	GNG48 Producer: "A festival\nshowdown where the fame and\nthe very existence of our\ngroups are on the line."	machine
 E036_020_32	7d7f7dda1a5f73ceb931ec8d8493856d2c17aef9	Existence...	machine
 E036_020_33	f06c983caf2bb10cb61fd0da4a085b0875074ccd	Fine, you're on!	machine
 E036_020_34	2798fca975bbd1ddf489db6dc542a88add63c91c	GNG48 Producer: "What a\nwonderful response. I look\nforward to the day of the\nfestival. Ha ha ha ha!"	machine
 E036_020_36	29b8b9efed16388038587c8c0f6d25a04b30d073	...Everyone, I'm sorry. I got\ncarried away and agreed to\nthe festival.	machine
 E036_020_37	f3b960de636e70f68869f13d3b5e09829c2317a0	No, Eve, you were so cool!	machine
-E036_020_38	a305d13d2635037651a8866b2bee746640e5f55d	Besides, the Milky Quintet was\nformed as idols to protect\neveryone from unreasonable\npower. Now is the time to\nstand up!	machine
+E036_020_38	a305d13d2635037651a8866b2bee746640e5f55d	Besides, the Milky Quintet was formed\nas idols to protect everyone from\nunreasonable power. Now is the time to\nstand up!	machine
 E036_020_39	cb4664456a5c2a77b84a812e86292f9ca15a2e99	They've already realized we are\nmaking a move. We had no\nchoice but to accept the\nchallenge.	machine
 E036_020_40	e4825498243d195f20b90bac08609869f9420765	However, now that it's come to\nthis, the scandal will likely take\na toll.	machine
 E036_020_41	ebccaa96e0ea17adfacab20083395218185081e5	You're right. I wonder if the\nfans will continue to support us\nas they always have...	machine
 E036_020_43	5e4b44a1a3ba27740d8f4feeba63e3ea8f4e6eb4	Hmm, a sister unit for the Milky\nQuintet, then?	machine
 E036_020_44	5efaa7e02dc7a9eddc637904321d1f547d26b420	Well, forming a new unit is the\nbest way to generate buzz. But\nwho will be the members?	machine
 E036_020_45	b7f9d2f8ef1909162951694bc0ef51c6e50dfb4f	Could I help out with that too?	machine
-E036_020_46	97bcb1235504d4c8ee62ffb9dccebfaf74fd6e33	Using the songs of girls who\nsing as idols as tools for\ncombat... I can't stand by and\nlet them be exploited and\ndragged into a conflict!	machine
+E036_020_46	97bcb1235504d4c8ee62ffb9dccebfaf74fd6e33	Using the songs of girls who sing as\nidols as tools for combat... I can't stand\nby and let them be exploited and\ndragged into a conflict!	machine
 E036_020_47	f1194bc2c4b69f027239a16442f07b335e623db2	Exploiting... their power...	machine
 E036_020_48	dca18ba2ca31f372be74165cf16a38facec1903b	Right, Karlyn, you feel the\nsame way, don't you?	machine
 E036_020_49	b5bcf3245fa3802b5489ff22cfd37d114084ecd5	I suppose so... As a survivor of\nthe Fox Soul people, I won't let\nsuch a tragedy happen again.	machine
@@ -129,7 +129,7 @@ E036_030_03	1adf65bbe5aa8e8b02fe2d30a5fd12d74eb367bf	GNG48 Member: Producer, you
 E036_030_04	0bfe9228ce991d75c4307c0315bc700609587835	Third-string... what does that\nmean?	machine
 E036_030_05	2c6fc9bc29a099b860463024ffffab26491f050a	GNG48 Producer: It means\nthey're just little chicks,\nnowhere near the level of the\nfirst-string center class.	machine
 E036_030_06	d3804ec5a43d769d72186024aed6f9b68c3bcad8	Then we'll just have to beat\nthe first-string. Bring those\ngirls here immediately.	machine
-E036_030_07	4b95bb546658ea4ed8dd930f287de8208bae1720	GNG48 Producer:\nUnfortunately, they are quite\nbusy. First, prove that you\nhave the skill to beat the\nsecond-string. Until next time.	machine
+E036_030_07	4b95bb546658ea4ed8dd930f287de8208bae1720	GNG48 Producer: Unfortunately, they\nare quite busy. First, prove that you\nhave the skill to beat the second-string.\nUntil next time.	machine
 E036_030_08	1d1c34d7c6e40533e7c8d54ca446689b2bfc26b4	Look at this crowd! So this is a\nGNG Event...!	machine
 E036_030_09	722e247aad3ea984c437c7c891e9c55a088e4eb7	I see there's more to being an\nidol than just standing on a\nstage.	machine
 E036_030_11	f1f019cbb768c5acc8166be51260cf2b38d48047	I know. We're here to figure out\nwhat we're lacking.	machine
@@ -148,17 +148,17 @@ E036_030_25	d6005704945b04186edc6b80a409d5c26b1beca5	So Rena and Fayt will be\nl
 E036_030_26	361e49f8cbc1f0e87d58edac34d02e7c63a6e11c	Yeah, looking forward to it.\nSince I'm the teacher, I'm going\nto be strict, so make sure you\nkeep up.	machine
 E036_030_27	e16bf7b29a98c03e3117e7be1b18d6145c43d875	You're already learning the\nbasics of being an idol from\nVerda and the others, right?	machine
 E036_030_28	053840f074c5f4cd5f554b40a0eccb89e4657cca	That's why we're going to\npractice Live MCing, which is\nessential for getting the crowd\nhyped up!	machine
-E036_030_29	554eedf32db0264dcf391960a25f3a2ece9a4f64	I see. The GNG members were\ngreat at getting everyone\nexcited during the handshake\nevent. We won't be able to win\nthe festival unless we can do\neven better than that.	machine
+E036_030_29	554eedf32db0264dcf391960a25f3a2ece9a4f64	I see. The GNG members were great at\ngetting everyone excited during the\nhandshake event. We won't be able to\nwin the festival unless we can do even\nbetter than that.	machine
 E036_030_30	248a0b19f5fb3c62a1e62e104760e5de5d4b3010	Exactly! Now, I'll show you how\nit's done.	machine
 E036_030_31	f3ae201cf74392c840b60e7ba33e228e879c74e1	Everyone! Thank you so much\nfor coming to see us today!!	machine
 E036_030_32	0951a4227cfe779c2497f16fe3ff7196e1ec6968	Wow... it's like I can actually\nhear the cheering.	machine
 E036_030_33	3353bd9ea11d67169ef6a2b25dfb0b7bed5584be	Hehe, thanks.	machine
-E036_030_34	c9e4408d5c455454473a59b93b4f6610538146db	To get the crowd excited, you\nhave to enjoy yourselves too!\nTry it out, and imagine that\nyou're actually on the Live\nStage.	machine
+E036_030_34	c9e4408d5c455454473a59b93b4f6610538146db	To get the crowd excited, you have to\nenjoy yourselves too! Try it out, and\nimagine that you're actually on the Live\nStage.	machine
 E036_030_35	ebb4da0321f81e69432e15d4705b3815911db40f	Um... Everyone! Thank you so,\nso much for coming to see us\ntoday!!	machine
 E036_030_36	cd9e69356f24a3697baf1970dd5f1c96dd08ff54	...Everyone! Thank you for\ncoming!	machine
 E036_030_37	30ca8e4e693c7e38f0daaf6b518545df50d299e1	Yep, Tika, you nailed it! You\nmight even be better than me\nalready.	machine
 E036_030_38	6053eee1e4b93e41bcc86eb01d0fd5369589d1e4	Y-you think so...? I'm so happy.	machine
-E036_030_39	a574ffc2e401ff9b0045529ce2c0e1da94d0fa62	Karlyn, your cool demeanor is\nyour selling point, but you still\nneed more energy if you want\nyour voice to reach the fans.\nDon't be shy!	machine
+E036_030_39	a574ffc2e401ff9b0045529ce2c0e1da94d0fa62	Karlyn, your cool demeanor is your\nselling point, but you still need more\nenergy if you want your voice to reach\nthe fans. Don't be shy!	machine
 E036_030_40	295f263dd75a298f250a4a34b87f906d7bc53284	It's not that I'm shy... Fine, I'll\ntry it one more time.	machine
 E036_030_41	e1d09babca2eac07a69db66c243c7da35037853f	Hehe. Good luck, Big Sister\nKarlyn!	machine
 E036_030_42	ddab95cbf0a0ae73d95c5e174fb0af3091ee7cee	Tika, don't act so confident.\nI've heard Karlyn is way better\nat singing and dancing.	machine
@@ -168,8 +168,8 @@ E036_030_45	c72e0af8524da879fcb92951f9c0da22269f50be	GNG48 Member: Everyone!\nYo
 E036_030_46	c8b7740d6ab38d4ed87d026d154c1904edbcfe50	Audience: YEAAAAAH!!	machine
 E036_030_47	16dc28d98469ca40332b56380ea6f1f63694b926	The GNG girls are amazing at\nMCing...! I can feel the whole\nvenue becoming one.	machine
 E036_030_48	6b76e61f907c573e917941c6935bc1ea73c936ae	Yes...	machine
-E036_030_49	92798b15c6d0b91981a302f42dde41a488f395cf	GNG48 Member: GNG will never\nbreak up, because we want to\nkeep seeing all of you at our\nshows! So please, give us all\nthe support you've got!	machine
-E036_030_50	6eb32588e4fad96c95c8583103301c7f3f84d132	(Those girls are just desperate\nto protect the place where\nthey belong... Just like I fought\ndesperately to protect the\nhome of the Kitsunetamashii\npeople...)	machine
+E036_030_49	92798b15c6d0b91981a302f42dde41a488f395cf	GNG48 Member: GNG will never break\nup, because we want to keep seeing all\nof you at our shows! So please, give us\nall the support you've got!	machine
+E036_030_50	6eb32588e4fad96c95c8583103301c7f3f84d132	(Those girls are just desperate to\nprotect the place where they belong...\nJust like I fought desperately to\nprotect the home of the\nKitsunetamashii people...)	machine
 E036_030_51	f87a673381a24c3b3d2e0969b05e062adf480a94	Oh, it's our turn! Let's go!	machine
 E036_030_52	233d89e96277d59d966dd775cf6a10e4bd476eaa	(No, I can't let my mind wander.\nI have to focus on the stage.)	machine
 E036_040_01	4e5db7be8b0d0823b0360abe2905e54f4633db16	One, two, three, four! One, two,\nthree...	machine
@@ -177,7 +177,7 @@ E036_040_02	3c53ca6aa75d180bac1d552df434725917b0d3e4	Stop!	machine
 E036_040_03	24796ee30dbca21ccd29f47a6151175e30f34a52	I think Karlyn might have been\nrushing a bit during that last\npart.	machine
 E036_040_04	ca849f8ec3d9ef26c9e98097ef863a2625cfa3c8	You're a unit, so you have to\nstay in sync with Tika.	machine
 E036_040_05	0e1fa1df9b5c12b3558c7a30c5f78d692f09aa2b	I'm sorry... could we try it one\nmore time?	machine
-E036_040_06	38e2038f3fb8584c2cacda607c71c4d4d11f0680	Oh, before that... our next\nfestival match is against the\nfirst-string members, so I think\nwe need a precise\nperformance.	machine
+E036_040_06	38e2038f3fb8584c2cacda607c71c4d4d11f0680	Oh, before that... our next festival\nmatch is against the first-string\nmembers, so I think we need a precise\nperformance.	machine
 E036_040_07	fe2f64c38e423f949adee99d7c0ff75793e41317	I think it would help if you paid\nmore attention to each other's\nmovements and what the other\nis thinking.	machine
 E036_040_09	bb7f650b945cbbeb6e0540a892a510f4adbf7a23	Yes, that's right. It's not good\nto overdo it, so why don't we\ntake a short break?	machine
 E036_040_10	a8365b834ffcf5f6de9114f73712aeed548930cf	*Sigh*...	machine
@@ -193,7 +193,7 @@ E036_040_19	0fceb3bc5a6c5ca70e261fdfa0417fa04389ca69	Huh...?	machine
 E036_040_20	a9525c89308abc2cb55787526f8d0076835a00dd	Of course it is! If we don't free\nthem, their Symbol Arts will\njust be forced into being tools\nfor conflict!	machine
 E036_040_21	bb2d893e8fc8186a2658f5859e33a597c3484cf0	That is obviously unacceptable.\nBut...	machine
 E036_040_22	7ecdfa7db4d9a2d6c8b93d8d569e66f4d0fa1290	Those girls were active\nspecifically to bring smiles to\nthe people who needed them.	machine
-E036_040_23	8d963a19c4699af1cd425a96b9d1f158b3ab75cb	Even the girls called\n"second-string" or "third-string"\npracticed desperately for their\nfans to put on Events and\nlives.	machine
+E036_040_23	8d963a19c4699af1cd425a96b9d1f158b3ab75cb	Even the girls called "second-string" or\n"third-string" practiced desperately for\ntheir fans to put on Events and lives.	machine
 E036_040_24	7c6d89a6df0a6c9b00c00c134b05ef3f1d1a2436	And yet, I've stolen their\nfuture... I've taken away the\nplace where they belonged.	machine
 E036_040_25	7af0c5d74aa7ec36bb66b8830f3785661ff96558	Sister Karlyn...	machine
 E036_040_26	4351c48ede2accbc928c0ac09cdbc5e7df2f3a15	In the future... in Daftine, where\nyou used to live...	machine
@@ -206,7 +206,7 @@ E036_040_33	d8cf1110e5ed0f8869a5434df9dad7884e47cbf4	Everyone in GNG became idol
 E036_040_34	6053d96bc7621e6ab70d70a5a8d0254ac37941ac	Being needed is a precious\nthing. That fact becomes the\nplace where you belong.	machine
 E036_040_35	db7edb7e6d464565dee1a6bc94c47a59d2d1ac41	I understand that feeling.\nBecause that's how everyone\non this ship is for me.	machine
 E036_040_36	d7920ec4e5fee75a3b34fc4ac12a92396093befb	But that's exactly why I don't\nwant them to stay in a fake\nplace like GNG48, which was\nonly made for military use.	machine
-E036_040_37	77d82c800ea6c75152ef9feeba3f519e8f10e2b4	It's true that GNG might be a\nfake place created for another\npurpose, but the cheers from\nthe fans are real. They truly\nsupport them.	machine
+E036_040_37	77d82c800ea6c75152ef9feeba3f519e8f10e2b4	It's true that GNG might be a fake\nplace created for another purpose, but\nthe cheers from the fans are real. They\ntruly support them.	machine
 E036_040_38	a48c80da482a4cabab85269b80c9cf914bba711c	Yeah, that's why I think it'll be\nokay.	machine
 E036_040_39	1aaa609d0371abf8935bf7cf1fbfb674a9600129	What do you mean, "it'll be\nokay"...?	machine
 E036_040_40	a1860d3528ad067b5cebd037ff951195f0209714	The girls of GNG48 work so\nhard just to live up to their\nfans' expectations.	machine
@@ -224,7 +224,7 @@ E036_050_05	341122bc00c63cd5dd3ca85ef4564f461be6d6f9	I got so nervous when I\nre
 E036_050_06	9c29d29ea8ebdf91ee31c17bcfacb0a1999f2225	Hehe... I never imagined the\nday would come when so many\npeople would listen to us sing.	machine
 E036_050_07	616c5776415af0f904cf7eb6cf11dee0d1b42058	A unit performing at a festival\nwith GNG's top tier is bound to\nget a lot of attention.	machine
 E036_050_08	d81989e54197d1ed9bf34c8d12a56feaac2e34e5	It looks like a lot of people\nbecame fans of yours after\nseeing today's show!	machine
-E036_050_09	fa728a3510ef1b28176867ed02caeba2beaed706	They're even calling you the\nnew stars following in the\nfootsteps of Milky Quintet.\nYou've both become such\nwonderful idols!	machine
+E036_050_09	fa728a3510ef1b28176867ed02caeba2beaed706	They're even calling you the new stars\nfollowing in the footsteps of Milky\nQuintet. You've both become such\nwonderful idols!	machine
 E036_050_10	40b296096c2f1851c1f038b1c55ff8d468d5a09b	Wonderful idols... I never\ndreamed things would turn out\nlike this.	machine
 E036_050_11	bfabf704ba13d1f5ae56c46d6934d639045d1d11	I'm so glad I get to be an idol\nwith Karlyn!	machine
 E036_050_12	580bdd5c490485ceaa224227ba2354e6ba668217	I think today's stage was so\nmuch fun because I was with\nyou!	machine
@@ -234,7 +234,7 @@ E036_050_15	af7277d3085a455e8ea27bd331e590b6b7bd8760	I'm sorry... It's just that
 E036_050_16	4618f895c6c27f7beb027212ff294e36395966ff	But what I need to do now is\nguide them back to where they\nbelong...	machine
 E036_050_17	5f51ecd19d3f7de3e816e0555e75d34f54950605	Karlyn. An idol shouldn't be\nmaking such a scary face.	machine
 E036_050_18	ff90e22ded834a899d12a1b547d0a82408fff49c	Think back carefully to today's\nlive show. A huge crowd came\njust to see the two of you\nperform, right?	machine
-E036_050_19	4cc420f891c52f1d376b8be8a10830e0fa269ce0	Everyone is cheering for you\nbecause they want to see you\nsmile. So, for the sake of your\nfans, you must never forget to\nsmile!	machine
+E036_050_19	4cc420f891c52f1d376b8be8a10830e0fa269ce0	Everyone is cheering for you because\nthey want to see you smile. So, for the\nsake of your fans, you must never\nforget to smile!	machine
 E036_050_20	c707dc0abaa319390d8764b69e860cbb8c32c870	You're right... We are idols,\nafter all.	machine
 E036_050_21	3d1d8d163debb44aa5cf55bfbbd0403efcb8e09b	Freeing them is an important\ngoal, but I also have to bring\nthe brightest smiles to the\npeople who became our fans.	machine
 E036_050_22	0ad9a61dc6eab430bb24c3a520b9183f2d8737d2	Ehehe... I'm looking forward to\nseeing your best smile too, big\nsister!	machine
@@ -247,12 +247,12 @@ E036_050_28	2944b0dfe1f9fbeebebda228ec9f48f93c39bf5e	So this is their true stren
 E036_050_29	fe67f438fe1a98bf4ce8cc306c8f65fdd69b420c	Huh? What's wrong, Karlyn?	machine
 E036_050_30	f2f6e7e67462a023a20f360229f0c596778854f3	Stop!! They have to stop\nsinging right now! Otherwise,\nsomething terrible will happen!!	machine
 E036_050_31	76a96d107b9a73c77b8968c5393571c2311ad3c9	Kyaa! What's going on?! This\nhas never happened in any of\ntheir previous shows!!	machine
-E036_050_32	7c0d781986dd28baf7791b6e6c5f2a25d05ce861	They must be resonating with\nthe Center girl's emotions,\ncausing their Symbol Arts to\nrun wild. If this continues, it'll\nbe a disaster...	machine
+E036_050_32	7c0d781986dd28baf7791b6e6c5f2a25d05ce861	They must be resonating with the\nCenter girl's emotions, causing their\nSymbol Arts to run wild. If this\ncontinues, it'll be a disaster...	machine
 E036_050_33	1c9b675abc9e53524436beef72f02cf2317157b6	GNG48 Producer: Ha ha ha ha!\nSplendid, simply splendid! More,\nmore, more! Let those\nemotions overflow!	machine
 E036_050_34	78aa95b6f3918b8751c3fd92a7ccf2adc6e7e3a0	You!	machine
-E036_050_35	145af0ca440dc846b731cf81d08afcedda27e39a	GNG48 Producer: I should\nthank you. I managed to gather\ngirls who could use arts, but I\nwas struggling to find a way to\ndraw out their full power.	machine
+E036_050_35	145af0ca440dc846b731cf81d08afcedda27e39a	GNG48 Producer: I should thank you. I\nmanaged to gather girls who could use\narts, but I was struggling to find a way\nto draw out their full power.	machine
 E036_050_36	9dc180ee96f538d7c7486154f1510baa49d90169	GNG48 Center: The singing,\nthe dancing... it's so powerful...!\nI can win... I want to win...!	machine
-E036_050_37	77977653fc4cd1dbd0517bf6bedcf2e48dfd17b7	GNG48 Producer: I never\nimagined things would go\nexactly as planned! With this\npower, the clients will surely be\nsatisfied! Muhahaha!	machine
+E036_050_37	77977653fc4cd1dbd0517bf6bedcf2e48dfd17b7	GNG48 Producer: I never imagined\nthings would go exactly as planned!\nWith this power, the clients will surely\nbe satisfied! Muhahaha!	machine
 E036_050_38	45460bce3c87d55f9ee678c85cb4b147ad6b409d	Sister Karlyn! The other girls'\nSymbol Arts power is being\ngathered into the center girl!	machine
 E036_050_39	0ef7c32026d33c302306eb24af62d10acf76ba3b	Stop singing this instant!\nOtherwise, your body won't be\nable to take it!	machine
 E036_050_40	9776467c46f9535cd2988fbaea68614c921dbf51	GNG48 Center: I won't... hand\nthis stage over... to people like\nyou...	machine
@@ -272,34 +272,34 @@ E036_050_53	418cd70370727729c1c3badc333a6aa6f85bc00a	Sorry, but this festival is
 E036_050_54	f0da949ec638d13c703afa753eb560c554a8bd90	GNG48 Center: Ugh... no...\nstop...	machine
 E036_050_55	e19753197bc3e30b46a75148cd68d739ae311d8e	Sister!	machine
 E036_050_56	3ff2158684c92a9acba033a321db1f7663de995c	Yes, we can still save them! We\nhave to suppress the magic's\nrampage!	machine
-E036_060_01	c51410f8ba1be1ddefcfb48ba9a4a59890aaa30f	Announcer: "Regarding the\nincident where GNG48\nmembers experienced\nabnormalities during their live\nperformance, it appears their\nagency may have known\nsomething..."	machine
+E036_060_01	c51410f8ba1be1ddefcfb48ba9a4a59890aaa30f	Announcer: "Regarding the incident\nwhere GNG48 members experienced\nabnormalities during their live\nperformance, it appears their agency\nmay have known something..."	machine
 E036_060_02	c3e47639f5958972eaf3adcb262dcf5401600a7b	People are still talking about\nthat concert.	machine
-E036_060_03	d2d955dc7b1e442eb964f07dd9c17499e64a962e	I think it's also because\nChisato published an expose\nwith a significant amount of\nevidence immediately after the\nincident.	machine
-E036_060_04	1f9be5794418c2847c141c50eb474eab46d1187f	Everyone must have been\nshocked to learn that while\nthey appeared to be an idol\nagency, they were secretly\nplotting to use idols for military\npurposes.	machine
-E036_060_05	c7202c3cd344d7037fa7a0c9d5bec9f84194ac7f	The crowd of fans at the\nvenue are the best witnesses\nof all. Beyond Over Production\nwon't be able to wiggle out of\nthis.	machine
+E036_060_03	d2d955dc7b1e442eb964f07dd9c17499e64a962e	I think it's also because Chisato\npublished an expose with a significant\namount of evidence immediately after\nthe incident.	machine
+E036_060_04	1f9be5794418c2847c141c50eb474eab46d1187f	Everyone must have been shocked to\nlearn that while they appeared to be an\nidol agency, they were secretly plotting\nto use idols for military purposes.	machine
+E036_060_05	c7202c3cd344d7037fa7a0c9d5bec9f84194ac7f	The crowd of fans at the venue are the\nbest witnesses of all. Beyond Over\nProduction won't be able to wiggle out\nof this.	machine
 E036_060_06	68159b03ce7b8034059cdcabd5a972042be66e83	So, will the idols all go back to\ntheir normal lives?	machine
-E036_060_07	a35a57c86625e03ea3944ef89c75fef220fbc51a	It looks like the agency is\nfolding, but there were reports\nthat the top members are\nstarting a new agency to\ncontinue their activities.	machine
+E036_060_07	a35a57c86625e03ea3944ef89c75fef220fbc51a	It looks like the agency is folding, but\nthere were reports that the top\nmembers are starting a new agency to\ncontinue their activities.	machine
 E036_060_08	add6c608e850b0f6261855df3345e9b5e9a0c6b4	Having to start all over again...\nthat sounds tough.	machine
 E036_060_09	64052db3207ec3eee85b73901528c0b924040942	I'm sure those girls will be fine.\nBecause...	machine
 E036_060_10	3b66605a12104aa2be072eff2cee6abace672193	The reaction from the Symbol\nArts has stopped... It won't run\nwild again, right?	machine
-E036_060_11	1bd5bf814a0c2d095b282817dc17ea2b53a6f043	No. The other girls' singing has\nstopped, and this girl is\ncompletely exhausted... She\nshouldn't be able to move for a\nwhile.	machine
+E036_060_11	1bd5bf814a0c2d095b282817dc17ea2b53a6f043	No. The other girls' singing has\nstopped, and this girl is completely\nexhausted... She shouldn't be able to\nmove for a while.	machine
 E036_060_12	e02d9372583c5b25130f0c102aefabb3c64351a2	GNG48 Center: Ugh... the\nfans... are they... okay? No\none... got hurt...?	machine
 E036_060_13	eb8f7d19c5d547a690d36e4103ee813b33c13b31	...Yes. Everything is fine. No\none else will be hurt, thanks to\nall your hard work.	machine
 E036_060_14	3dbd1382e6c60f47a0a742b5f8cb26939c2636fb	So, you should get some rest\nnow.	machine
 E036_060_15	fee87fc0537f6eecec86fc1e3faf5baafb17316f	GNG48 Center: I see... thank\ngoodness...	machine
 E036_060_16	a5449548b4b46ebd9c89fbd0c1c0ca061776d09c	...The GNG48 are the best\nidols, because they truly care\nfor their fans from the bottom\nof their hearts.	machine
-E036_060_17	7041ac958b642f84bafd6eca098d09b467b12a43	You're right. This incident might\nleave a lasting impression, but\nif they continue as idols with\nsincerity, I'm sure they'll be\npopular again.	machine
+E036_060_17	7041ac958b642f84bafd6eca098d09b467b12a43	You're right. This incident might leave a\nlasting impression, but if they continue\nas idols with sincerity, I'm sure they'll\nbe popular again.	machine
 E036_060_18	3c2dd84e6ca13c0dea288a87328bd6d3988f52f8	Even without any special\npowers, their performances\nwere truly energizing.	machine
 E036_060_19	51f414662e2a4de8bd8c5127cdc4da2bbbb9c56a	Yes... I feel the same way.	machine
 E036_060_20	7eac74c3e587f05a48cfb0252bfd9962a0461720	Now we just hope something\ncan be done about the fake\nnews regarding the Milky\nQuintet.	machine
 E036_060_21	b01884fc1f53b1b76c0065b0d5ee13fc3553738a	They say rumors fade with\ntime. If they keep a low profile\nuntil things cool down, it should\nsettle itself.	machine
 E036_060_22	de8cbdbfc6cae1f47ca216741b52c0407a7513e1	As for the Milky Quintet\nscandal, look here. It's already\nbeen retracted as a hoax!	machine
 E036_060_23	d030b4461ede8e33ad66a57da7b4bc2b84d5f9b9	This article... did you write this,\nChisato?	machine
-E036_060_24	725cd548246671d07af0382b34f3729516422db5	I put some pressure on the\nexecutive director of Beyond\nOver Production. Given the\ncircumstances, they retracted\nit without any fuss.	machine
+E036_060_24	725cd548246671d07af0382b34f3729516422db5	I put some pressure on the executive\ndirector of Beyond Over Production.\nGiven the circumstances, they\nretracted it without any fuss.	machine
 E036_060_25	1c9944ae7c7289811d50de446a3a909a178a557f	Not just the expose, but you\neven got our scandal\nretracted... Not bad, Chisato!	machine
-E036_060_27	18d22130748a8587ea01bca6503a899c6e05e57f	While you all were working hard\nas idols, the Captain was\nrunning around raising funds to\nestablish a new production\ncompany.	machine
+E036_060_27	18d22130748a8587ea01bca6503a899c6e05e57f	While you all were working hard as\nidols, the Captain was running around\nraising funds to establish a new\nproduction company.	machine
 E036_060_28	e111de528e3f8e0fddee091750e149c693ef3663	Captain, when did you have\ntime for that?! You were\nalways there for our lessons!	machine
-E036_060_29	3ff9059462ca17bca686dc3b9b07495d4476ba6b	The Captain said we couldn't\nlet our own circumstances or\nthe company's problems take\naway their place to belong.\nRight, Captain?	machine
+E036_060_29	3ff9059462ca17bca686dc3b9b07495d4476ba6b	The Captain said we couldn't let our\nown circumstances or the company's\nproblems take away their place to\nbelong. Right, Captain?	machine
 E036_060_31	2217175562c5ca00d5bf6bab9a127c9dd3637257	(...So the Captain felt the same\nway I did when looking at those\ngirls.)	machine
 E036_060_33	b207a6379277d33b1c072a19ff14130c5fb619fb	Hehe, it's nothing. Just... well...	machine
 E036_060_34	ebc98d844feeaa31a29b8337ca3b3cff0ede9eab	I just realized that this is it...\nthis ship, where the Captain is,\nis where I truly belong.	machine
@@ -318,5 +318,5 @@ E036_060_48	7abb4f128d41d8e356b35eeab6a79b2b5da18111	Haha... that would certainl
 E036_060_49	0945ab34acf01ff91b9c3468ebc559bbb1e4fc0b	But it sounds so exciting!	machine
 E036_060_50	08ffc55afe1b50e0a332b0685dfd24517040ce65	If our songs are ever needed\nagain, I'd love for all of us to\nstand on stage together.	machine
 E036_060_51	554eed3d75786a6bca155eee566101ae5d913a8e	And of course, we'll still be\ntogether then, Big Sister\nKarlyn.	machine
-E036_060_52	e8d0fbd742191304a4ca8214fb2f86f38b285576	You're right... being idols is one\nof the places where we belong.\nIt might be nice to sing for\nsomeone's sake again\nsomeday.	machine
+E036_060_52	e8d0fbd742191304a4ca8214fb2f86f38b285576	You're right... being idols is one of the\nplaces where we belong. It might be\nnice to sing for someone's sake again\nsomeday.	machine
 E036_060_53	bf1ef57bc2ee8acb137a6026132a4d7eb8b13fce	This concludes the current\nstory. More stories will be\nreleased in the future, so\nplease look forward to them.	machine

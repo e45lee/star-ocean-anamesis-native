@@ -4,7 +4,7 @@ message_id	ja_sha1	en	source
 6031_010_03	2a59e4941d971004c7d43bd220d9696b2f2413a2	How should I put it... it feels\nexactly like a roadside shack.\nRubarika had plenty of houses\nlike this.	machine
 6031_010_04	d5f588f161cb2563026b8f1db04feb9144cbe69c	This is a paper book... no, a\nmagazine.	machine
 6031_010_05	dd4a4bf0afc3049796d690d61c8c135bd9735fe2	A mag-a-zine?	machine
-6031_010_06	aed756349b0d1b0b260ade0391b48616e0510a3e	It's a composite publication. A\ntype of book where articles\nand photos from many\ndifferent people are published\nbased on a specific theme.	machine
+6031_010_06	aed756349b0d1b0b260ade0391b48616e0510a3e	It's a composite publication. A type of\nbook where articles and photos from\nmany different people are published\nbased on a specific theme.	machine
 6031_010_07	127abf18f9c5e7315d4412972d02848eb85a4551	Judging by the cover, I believe\nthis one is a magazine themed\naround science and technology.	machine
 6031_010_08	d5def91a7fa2beeb2365b8fe90bebf18ec3a5e84	What's that thing shooting fire\nand flying behind the old guy's\nface?	machine
 6031_010_10	eaaa5d9adfe19f3bb54cb892b744fdface662e12	...This is strange. Why... why\nwould a magazine like that be\nin a place like this?	machine
@@ -20,12 +20,12 @@ message_id	ja_sha1	en	source
 6031_010_20	7a9fe4f702139e0420ebd1136f067734b3c647a3	But... Mista Kevin's foster\nfather and my father... were\nlikely acquainted.	machine
 6031_010_21	547403907e92dcd8d8978f1f0f33f97243f7c04e	Huh...?	machine
 6031_010_22	d2a031cd1d90a6a8e9771aeeda83400a096a9a15	I see. So you were his\ndaughter.	machine
-6031_010_23	d9f03914f32dd012099573e192fc7d5f1f159012	What do you mean? Are you\nsaying your father came all the\nway to the Azurite system on\nsome mission for the Hardier\nWarrior of Morphus?	machine
+6031_010_23	d9f03914f32dd012099573e192fc7d5f1f159012	What do you mean? Are you saying\nyour father came all the way to the\nAzurite system on some mission for the\nHardier Warrior of Morphus?	machine
 6031_010_24	90d1915c5b2c206478fdff445d93a5de4cc7f47a	To be precise, Valka's father\nonce set foot on Planet Raza.	machine
 6031_010_25	6578de931a0342504cf0b4d7a7aa92b94eb90865	However, he never visited the\nAzurite system.	machine
 6031_010_26	126cec461fe0379cdf326da45160108057116dc3	This makes no sense.	machine
 6031_010_27	c334cc22da784f4aa1617820528745914237f7eb	When Valka's father... Bacchus\nD-79, met my father-in-law,\nKlaus Barktain,	machine
-6031_010_28	50f01f1836dbc5e7edbe125b534bd20b6fd015bd	Planet Raza was located in a\nplace called the Solar System,\nat the far edge of a galaxy\nmuch further than the Azurite\nsystem.	machine
+6031_010_28	50f01f1836dbc5e7edbe125b534bd20b6fd015bd	Planet Raza was located in a place\ncalled the Solar System, at the far\nedge of a galaxy much further than the\nAzurite system.	machine
 6031_010_29	6007a070a187993a2a232a94bbc34607308d6ace	The Solar System... Captain...\nCoro, that means...	machine
 6031_010_31	52452f11b4e677bf1dabb17586de4f3a5ff6dca7	Back when it was in the Solar\nSystem... the people living on\nPlanet Raza called their world\nthis.	machine
 6031_010_32	53030965b9544fa628e28e59add4906221f41573	... "Earth."	machine
@@ -47,7 +47,7 @@ message_id	ja_sha1	en	source
 6031_010_49	5b6486d771ba677cd15141f6eaff48357002797f	Yes. It is a name my father and\nhis companions can never\nforget.	machine
 6031_010_50	c6c88da4d495cdfd3c59286c5874473629199798	Because... the direct cause of\nAnother Earth's disappearance\nfrom the solar system was\nthose Exalithium crystals.	machine
 6031_010_51	5590ff8011105dbc9611adfe36ab2f63edc164d3	What?	machine
-6031_010_52	9035c9f64f2250de1decbfb8fcd64f2ac1c1fe88	When my father first arrived on\nAnother Earth, it was still in\nthe early stages of space\nexploration. Resources were\nscarce worldwide, and\nscientific progress was\nsluggish.	machine
+6031_010_52	9035c9f64f2250de1decbfb8fcd64f2ac1c1fe88	When my father first arrived on\nAnother Earth, it was still in the early\nstages of space exploration. Resources\nwere scarce worldwide, and scientific\nprogress was sluggish.	machine
 6031_010_53	f5f3a67f2e7ab392393999156e1d90962fc4172e	But one day, Exalithium\ncrystals―an innovative energy\nsource from an advanced\ncivilization―were brought there.	machine
 6031_010_54	de440a5db5671a25abbe5a7e907e10681f8aa9a6	And then... a scientist,\ncaptivated by them, attempted\nto control the crystals using an\nunfinished antimatter reactor...	machine
 6031_010_55	1c216a490ef3f51444004cfb6973c6cdfa03a096	He failed.	machine
@@ -55,13 +55,13 @@ message_id	ja_sha1	en	source
 6031_010_57	0d055b325501a6346af7973d544a117c212f7a5c	...To put it in terms you'd\nunderstand,	machine
 6031_010_58	a1e665c42155fb46c2986a69bc206e1130eb946d	It's a dangerous energy source.\nA piece the size of a pinky nail\ncould wipe Rubarika off the\nmap without leaving a trace.	machine
 6031_010_59	f5183008bfed0f928e898395dd8e916c1c1cb89d	A bit oversimplified, but not\nwrong.	machine
-6031_010_60	2144d5aea36f77a23c5583a00454149cd5933137	With Exalithium crystals, no\nmatter how small the fragment,\nblowing up a whole planet is a\nbreeze once you trigger\nannihilation.	machine
+6031_010_60	2144d5aea36f77a23c5583a00454149cd5933137	With Exalithium crystals, no matter how\nsmall the fragment, blowing up a whole\nplanet is a breeze once you trigger\nannihilation.	machine
 6031_010_61	ce70e04fb710da5da2ad784aa6050a1b5c29469a	...And the name of the\nantimatter reactor used at\nthat time was...	machine
 6031_010_62	ead8bd42ab53df97c270790fa5d35038f2e6ab8d	...Kevin.	machine
 6031_010_63	4a664fbf88e8c3a3ec10c8abeed587aa3fd6f6db	You are well-informed.	machine
 6031_010_64	c06e44f5741168b3da969299f5bec88d3bd89033	I've heard that your father...\nand your comrades... regretted\nit from the bottom of their\nhearts.	machine
 6031_010_65	80686bbfe6516599d58bd0f7401a461644805ca6	It was not the fault of your\nfather and the others, Valka.	machine
-6031_010_66	91e5b23deab0eb70b45a7fc2fadf8d29bc2de275	The responsibility lies entirely\nwith my stepmother, who could\nnot discipline herself, and my\nstepfather, who failed to stop\nher.	machine
+6031_010_66	91e5b23deab0eb70b45a7fc2fadf8d29bc2de275	The responsibility lies entirely with my\nstepmother, who could not discipline\nherself, and my stepfather, who failed\nto stop her.	machine
 6031_010_67	abce16bdc2d869e55ac68df31868e2960c4611f4	Your stepmother's name was...\n<font color=yellow>Mira Baktain</font>, was it not?	machine
 6031_010_68	703e6fdd8543b47f7bae228deb776570ddd9694e	...It is a complete coincidence\nthat my name is "Kevin." My\nbiological parents gave me this\nname.	machine
 6031_010_69	81e163100da9d032319263dc3006084524e9ab01	And then... shortly after the\nday the world changed... that\nday of tragedy...	machine
@@ -79,7 +79,7 @@ message_id	ja_sha1	en	source
 6031_030_11	40847c9cfe72f56035d6cd5b166da4bd4eb2ce12	As for why that happened...\neven now, I do not know for\ncertain.	machine
 6031_030_12	ad449a6d4b7ac1b70a91763cfefb0bf978bb7e1a	<font color=blue>Kevin</font> When Edge Maverick's\nparty appeared, my foster\nmother obtained one prisoner\nand an Exalithium crystal.	machine
 6031_030_13	40f11251919756c89aaa2f2515484c0ff37f56a0	<font color=blue>Valka</font> A prisoner... Reimi Saionji,\nthen.	machine
-6031_030_14	9718d6a21ba1c5f12b4689f1b7af4bc6c06129f8	<font color=blue>Kevin</font> Yes. At first, my\nstepmother focused her\nefforts on the medical study of\nReimi Saionji, as she was an\n"alien."	machine
+6031_030_14	9718d6a21ba1c5f12b4689f1b7af4bc6c06129f8	<font color=blue>Kevin</font> Yes. At first, my stepmother\nfocused her efforts on the medical\nstudy of Reimi Saionji, as she was an\n"alien."	machine
 6031_030_15	d34655741482ae4cea75f75a834e56bfcbfecaff	...However, once she obtained\nthe Exalithium crystal, she\nprioritized the completion of\nthe antimatter reactor,	machine
 6031_030_16	f63ab0e0bcf311cd0dfefe9dbd2e141d7733493d	...and she failed to control it.	machine
 6031_030_17	0dc32a2b7030c8dbb411a51e8594488fe058c244	The antimatter reactor went\ncritical, and Earth was swept\nup in a vortex of energy.	machine
@@ -88,24 +88,24 @@ message_id	ja_sha1	en	source
 6031_030_20	a6e118b9e3e2e7bbe23b2acc099e529f30c77eed	<font color=blue>Kevin</font> They saw light stretching\nfrom the antimatter reactor\nout into space.	machine
 6031_030_21	80305add1602e25857dc4bc5a6f721e7b4837a74	<font color=blue>Valka</font> Stretching into space?	machine
 6031_030_22	bb80486ef1a5324c80bc85b5c5ad2fe8740da2bc	<font color=blue>Kevin</font> Yes. ...As for why Earth\ntransferred to the Azurite\nsystem, my stepfather once\noffered an analysis of sorts.	machine
-6031_030_23	1f809347eabc72982ab489fe35d3a4642225e435	Exalithium crystals are\nsubstances that connect\nspace to space, and are\nessential for activating a\nsubspace Warp Drive.	machine
+6031_030_23	1f809347eabc72982ab489fe35d3a4642225e435	Exalithium crystals are substances that\nconnect space to space, and are\nessential for activating a subspace\nWarp Drive.	machine
 6031_030_24	2def5e5bdda4275baacee270eab3e1ad798bf5fc	And at that time, there was\nanother powerful Exalithium\ncrystal present, aside from the\none built into the reactor.	machine
 6031_030_25	eb97783ec63674be65aa90bb76a7a7f742dba76d	<font color=blue>Valka</font> ...Merikuru Shamlot's\npendant...	machine
 6031_030_26	596f8dbd98d81f02b417479e446d729adf426424	<font color=blue>Kevin</font> Yes. Those two\nExalithium crystals reacted\nwith one another, creating a\nspatial rift.	machine
 6031_030_27	6c2013daa324aee81a8201899f691b8ee1c44d0d	Earth was swallowed by that\nrift... and the entire planet was\ntransported to another star\nsystem.	machine
 6031_030_28	3df98abe4eec8748d8bf4843c6457ecac3167775	That was my stepfather's\nanalysis, though it was based\nlargely on inference and wishful\nthinking.	machine
 6031_030_29	cbdbedabefcc4b4fb12b13a107b9adab3e05a1fc	<font color=blue>Valka</font> I can't believe it... If\nthat's true, it can only be\ndescribed as a miracle...	machine
-6031_030_30	07d2b2cf3b3784d712b3f6d7e99cf2fd31b3e1ed	<font color=blue>Welch</font> I don't really get it, but\nis it like when Baschen sent us\nflying to Daftes, except the\nwhole planet flew far away into\nthe sky?	machine
+6031_030_30	07d2b2cf3b3784d712b3f6d7e99cf2fd31b3e1ed	<font color=blue>Welch</font> I don't really get it, but is it like\nwhen Baschen sent us flying to Daftes,\nexcept the whole planet flew far away\ninto the sky?	machine
 6031_030_31	281d3609e48f5a6952f516caa8659b8bc3d475be	I'm starting to get confused\nagain.	machine
 6031_030_32	804473156b3890e179f847e4885661b57b357cca	<font color=blue>Euwin</font> It's like if all of Daftine\nmoved to the Azurite system. If\nthat happened, the whole\nplanet would be in total chaos.	machine
 6031_030_33	20749193775931e1e113722f770e033661efba1f	<font color=blue>Mastima</font> Still, to have moved\ninto the habitable zone of\nanother star system is an\nunbelievable stroke of luck.	machine
 6031_030_34	dbc3e0481d13db6df6fc859aaf165fcd1641bc2b	Are the environments of the\nAzurite system and the Solar\nSystem really that similar?	machine
 6031_030_35	71ab8b2062099e91872b7fbad61c529b9b67173c	<font color=blue>Kevin</font> Of course, many\nproblems arose.	machine
-6031_030_36	bc94a1da8dc68a22ca2c90b9e30b40739e8e38d6	Changes to the planetary\nenvironment due to the shift in\nthe axial tilt, changes in the\nnature of the solar wind, and\nso on...	machine
-6031_030_37	2708c5062cc94813ceb17553a91922624e15800b	While the star itself survived,\nmany fell victim to the great\ncataclysm or failed to adapt to\nthe changing environment. The\npopulation plummeted to a\ntenth of its former size, and\ncivilization regressed\nsignificantly.	machine
+6031_030_36	bc94a1da8dc68a22ca2c90b9e30b40739e8e38d6	Changes to the planetary environment\ndue to the shift in the axial tilt,\nchanges in the nature of the solar wind,\nand so on...	machine
+6031_030_37	2708c5062cc94813ceb17553a91922624e15800b	While the star itself survived, many fell victim to\nthe great cataclysm or failed to adapt to the\nchanging environment. The population\nplummeted to a tenth of its former size, and\ncivilization regressed significantly.	machine
 6031_030_38	1b9b20b8a119b2758eba6fc6c9e3558a3dd54cd4	That happened... approximately\n670 years ago.	machine
-6031_030_39	81fada4062ecd33e4781e4c9438730eb07fdda3e	Still, it is hard to believe that\nyou could overcome a disaster\nthat caused such a regression\nand rebuild your civilization to\nthe point of waging interstellar\nwar once more.	machine
-6031_030_40	ab209474015e2ebe5619f4ff3ae2bc11343481ff	The fact that Milla and Klaus's\nresearch facility remained\nintact, despite being the\nsource of that great\ncataclysm, is what prevented\nthe total collapse of our\ncivilization.	machine
+6031_030_39	81fada4062ecd33e4781e4c9438730eb07fdda3e	Still, it is hard to believe that you could\novercome a disaster that caused such\na regression and rebuild your\ncivilization to the point of waging\ninterstellar war once more.	machine
+6031_030_40	ab209474015e2ebe5619f4ff3ae2bc11343481ff	The fact that Milla and Klaus's research\nfacility remained intact, despite being\nthe source of that great cataclysm, is\nwhat prevented the total collapse of\nour civilization.	machine
 6031_030_41	9cd3bad78b9bf0ce9c84196daced2a4e2095ecdd	Furthermore, that facility\ncontained the Hint on how to\n"reincarnate Earthlings as\nRaza,"	machine
 6031_030_42	aca386c5ebb41469e4c2cc68d871a6e5c42c4fbf	...the hints for "adapting them\nto a new environment" were\nleft behind.	machine
 6031_030_43	d801a7e41ba47d9a3e95fc4e2f607798635be6f8	Over a long period of time, this\nwas gradually implemented\nacross all of humanity on\nEarth.	machine
@@ -116,8 +116,8 @@ message_id	ja_sha1	en	source
 6031_030_48	8f780c865defb84e76fc689aa5c4934a9a24dbf0	A survivor of the children\nraised in Milla's research\nfacility.	machine
 6031_030_49	5052df2f440ebac874b5ec44a6eb4d16c2e54fcb	Milla and Klaus gave a name to\nthose of us who survived the\nGreat Catastrophe as the new\nhumans of Earth.	machine
 6031_030_50	76fece70c690927d2996aca3e806235ea77a02d4	The children of luck. The\n<font color=yellow>Fortune Babies</font>.	machine
-6031_040_01	1ddd7b19a5e8b40af11ffdc96ee4a7ce2c317162	This building where I reside in\nLazuli is a recreation of the\nhut where my father-in-law\nused to converse with Bacchus\nD-79 and the others.	machine
-6031_040_02	8314b52d231d8cd117c0d3b0b3c26011a2e6d081	I thought that by staying here,\nI might be able to see\nsomething regarding the future\nof the stars... and of this\nAzurite system.	machine
+6031_040_01	1ddd7b19a5e8b40af11ffdc96ee4a7ce2c317162	This building where I reside in Lazuli is\na recreation of the hut where my\nfather-in-law used to converse with\nBacchus D-79 and the others.	machine
+6031_040_02	8314b52d231d8cd117c0d3b0b3c26011a2e6d081	I thought that by staying here, I might\nbe able to see something regarding the\nfuture of the stars... and of this Azurite\nsystem.	machine
 6031_040_03	0101fd37fa8a1aed0b4ffc5b08a6a9325323d971	...It is hard to believe, but much\nof this aligns with the stories I\nheard from my father...	machine
 6031_040_04	b94869880daafcaa168843bb16954ff07c3baeca	If that is the case, then what\nMista Kevin says is true,	machine
 6031_040_05	caa8c098c8115b0fe5a799d6fd0957a944e5f049	And the planet Raza... is\nanother Earth that came from\nanother dimension.	machine
@@ -129,19 +129,19 @@ message_id	ja_sha1	en	source
 6031_040_11	82699cc8b6655b5a46a1089cef624d0089afc224	...Yes, what is it?	machine
 6031_040_12	102c59fae1a2d09bc65e3232c1a3c09b4a2502e8	This "Kevin" who started the\nStardust Bazaar... was that\nyou?	machine
 6031_040_13	833f604488c01cf5eba972ca634b8fe27641ae9e	There is no point in hiding it.\nThat is correct.	machine
-6031_040_14	ad7f4a280f35b6d9f3b8d2ca8cefdcb1fb218f78	...Do you ever think that the\nindependence of the Stardust\nBazaar was, in the end, a\ndistant cause of the\ninterstellar war between Raza\nand Ober?	machine
+6031_040_14	ad7f4a280f35b6d9f3b8d2ca8cefdcb1fb218f78	...Do you ever think that the\nindependence of the Stardust Bazaar\nwas, in the end, a distant cause of the\ninterstellar war between Raza and\nOber?	machine
 6031_040_15	6c13469771fc0fa012b78b832b315c5747372198	I do. Though I never imagined a\nwar of this scale would break\nout, nor that it would drag on\nfor so long.	machine
 6031_040_16	bf6d8b5110ac34043f273989e62fdb8f14c809dc	...I'll ask you this. Knowing that,\nwhy did you do it?	machine
 6031_040_17	d0765d0c30668b302819c47537abd70dfa8d1cbd	To prevent the calamity\nbrought about by my\nstepmother from happening\nagain.	machine
 6031_040_18	099228cf66b87b133b1af027347235d9f6865140	What?	machine
-6031_040_19	1f9cf3f0d3132e9decb1b02d772cd4d9916a9d8f	Whether it be Exalithium\ncrystals or Gems, it took a\nterrifying amount of time and\nsacrifice before they could be\nstably controlled as they are\nnow.	machine
+6031_040_19	1f9cf3f0d3132e9decb1b02d772cd4d9916a9d8f	Whether it be Exalithium crystals or\nGems, it took a terrifying amount of\ntime and sacrifice before they could be\nstably controlled as they are now.	machine
 6031_040_20	3b74d92886cd659ceafeadacd0ddcfaf6dba949c	The most extreme example of\nthis, as I mentioned, was the\nrisk of an entire planet\nvanishing.	machine
 6031_040_21	3caa75bc1f0cd22ee9cb234a17a8da1ac4c59876	...If the Bazaar were to fall into\nthe hands of either planet now,\na similar tragedy would surely\noccur. I must prevent that.	machine
 6031_040_22	6c88e8f5938b53394d935708746d0c984f47623e	...I'm going to be blunt here.	machine
 6031_040_23	7cc17ad4896fbffc9d804769dcdaf41f6df1eb94	It was your old lady who\nscrewed up,	machine
 6031_040_24	482951ab8498fc889a5440b40505e1a63abb7c3b	and isn't it a bit much to pin\nthat on the general lack of\nawareness among all of\nhumanity?	machine
 6031_040_25	6fc9aa4001310b8d83575999a295da6d7d77bde0	It is also true that there are\ncountless others capable of\nmaking the same mistakes my\nstepmother did.	machine
-6031_040_26	60043d1b96d4500c56467c55a7974f934ab7c58a	My stepmother confused her\nown misfortunes with the noble\ncause of saving the world,\neventually resorting to\ninhumane experiments and\ntriggering the Great Calamity.	machine
+6031_040_26	60043d1b96d4500c56467c55a7974f934ab7c58a	My stepmother confused her own\nmisfortunes with the noble cause of\nsaving the world, eventually resorting to\ninhumane experiments and triggering\nthe Great Calamity.	machine
 6031_040_27	70d794810d2bf9f3e9de9d990ac4d932b4fd1188	Whatever humans are capable\nof doing, there is a possibility it\nwill happen again.	machine
 6031_040_28	0cb0a544efacfe8d273352f99f35eced910cda6f	Therefore, it is not unnatural\nfor those who know the truth\nto fear it and seek measures\nto prevent its recurrence.	machine
 6031_040_29	ef2b1538484c51321a62bbc54aae958210867f2c	But still...!	machine
@@ -152,7 +152,7 @@ message_id	ja_sha1	en	source
 6031_040_34	a23cf4cccc14aa73cf05ccaf6cb2cf255059e137	Why do you think someone like\nme, who could have become\nthe supreme authority of the\nStardust Bazaar,	machine
 6031_040_35	a2be698c32ba4640675e0ac23c85ad86034d85e2	is living a life of seclusion on a\nplanet like this?	machine
 6031_040_37	67a75dc0fdb0c5d935513c2319140cefc80a8a22	Exactly. Long before we ever\nfound the asteroid belt of the\nStardust Bazaar,	machine
-6031_040_38	6db5fa5a7b853954214dd82c3462eeb26e9ffd18	Long before the asteroid belt\nof the Stardust Bazaar was\never discovered, I found *it*\nhere on Lazuli, back when no\none paid this planet any mind.	machine
+6031_040_38	6db5fa5a7b853954214dd82c3462eeb26e9ffd18	Long before the asteroid belt of the\nStardust Bazaar was ever discovered, I\nfound *it* here on Lazuli, back when no\none paid this planet any mind.	machine
 6031_040_39	36caf4dacb06a834e267caf20f33f23bd84fc22e	That stone gate, which\npossesses a power beyond\nhuman understanding or\nimagination.	machine
 6031_040_40	3bb0043950e0ae427ea7c686be16520236048fa6	...The Urza System...	machine
 6031_040_41	0897f1d807fd1ee8a9b48b8182a1bec58b6efa91	I call that stone gate the <font color=yellow>Lazuli\nStone</font>.	machine
@@ -160,11 +160,11 @@ message_id	ja_sha1	en	source
 6031_040_43	45e643ee2da732adb35443c790abb5ca2cf65a7b	You sound as if you know\nsomething specific regarding\nthat gate.	machine
 6031_040_44	e42dc58d43a3c05162aa6955abd0de4bf2cd58cf	...I can say no more than that.	machine
 6031_040_45	60f55de16f09d79b6f86b23a4a841b97e660cb80	It is not a conversation I should\nbe having within earshot of a\nRaza soldier,	machine
-6031_040_46	845f0640eb26be4586b7c260b65e295cd669bddb	And if you'll pardon my\nbluntness, there is no\nguarantee that you all wouldn't\nabuse the truth once you\nlearned it.	machine
+6031_040_46	845f0640eb26be4586b7c260b65e295cd669bddb	And if you'll pardon my bluntness, there\nis no guarantee that you all wouldn't\nabuse the truth once you learned it.	machine
 6031_040_47	10f7285a6a1c79b9a102a152a2acf92b71b29950	Huh?! You can't be serious\nafter we've come all this way!	machine
 6031_040_48	de900cbcd56047f976dbb09a46dafedb0a2d7bb4	We don't even know why the\nplanetary governments are\nfighting over this place! If you\nknow something, just tell us!	machine
 6031_040_49	52c0aabdadfe78d8935167339c89e71587524b8e	I cannot.	machine
-6031_040_50	8796c419c5c202d0a58ba89202f138cfdd47e7df	Besides, even if the current\nRaza and Ober people heard\nwhat I've said, it would only\ncause some unrest and lead\nthem to reconsider their roots.	machine
+6031_040_50	8796c419c5c202d0a58ba89202f138cfdd47e7df	Besides, even if the current Raza and\nOber people heard what I've said, it\nwould only cause some unrest and lead\nthem to reconsider their roots.	machine
 6031_040_51	2fc6222b8f1108387de13198ffdf749281e57723	But the Lazuli Stone is\ndifferent. That... can clearly\nchange the future.	machine
 6031_040_52	5483dabd6b16a9d68ccf34ea48dd3ad3c13a00fb	Master Mastima: ...Are you\nreferring to the power of Event\nExtraction?	machine
 6031_040_53	a0c3d8869b23665f9ffe184488549b95abfb02a9	...!!	machine
@@ -189,38 +189,38 @@ message_id	ja_sha1	en	source
 6031_050_15	4470573f8cf6f9ce2de5a916a313184cc6e0e29a	Hm?	machine
 6031_050_16	bef51b9dc8a70aaf77103a54f842be54805bf46c	The mass of an entire planet\ncrossing through time...	machine
 6031_050_17	76ae70bd5abc4a9ede683100af7bb598c489f8fc	The Galactic Federation has\nalready confirmed that\nphenomenon as a scientific\nfact.	machine
-6031_050_18	87bb3f6f4a5e09f4e22e24115fe5fd3d1baa3c28	<font color=blue>Coro</font> The technology to use a\npowerful gravitational field to\nphase-shift space-time and\ninterfere with the flow of time\nwithin a closed space already\nexisted in Energy Nede 700\nmillion years ago.	machine
+6031_050_18	87bb3f6f4a5e09f4e22e24115fe5fd3d1baa3c28	<font color=blue>Coro</font> The technology to use a powerful\ngravitational field to phase-shift space-time and\ninterfere with the flow of time within a closed\nspace already existed in Energy Nede 700\nmillion years ago.	machine
 6031_050_19	0488cee0da72bef048a3a3ef5b5c5331277c56ed	<font color=blue>Heath</font> Hey, all this complicated\ntalk is coming at me one after\nanother. I'm starting to lose\ntrack here.	machine
-6031_050_20	06068779e05d00ab692b6bcce5d662972c5a825f	<font color=blue>Coro</font> To put it simply, we have\nalready confirmed instances\nwhere "a lost star was\nextracted from a past timeline\nand revived."	machine
+6031_050_20	06068779e05d00ab692b6bcce5d662972c5a825f	<font color=blue>Coro</font> To put it simply, we have already\nconfirmed instances where "a lost star\nwas extracted from a past timeline and\nrevived."	machine
 6031_050_21	46f5c4c5223f452ab420ca0be4d0a674678a6ab4	<font color=blue>Heath</font> ...Everything you guys\ntalk about is on such a\nmassive scale that I just don't\nget it.	machine
 6031_050_22	8d9ab934ffc2123f883512da1c50020bae191b81	Summoning a whole planet\nfrom the past? How... and why\non earth would anyone do such\na thing...?	machine
 6031_050_23	81552b738e9a405a97714a84b08ac5cec6ef9895	<font color=blue>Kevin</font> ...	machine
-6031_050_24	f484fb5da27ac74e2f10a26700a0ef7b5f98ecf0	<font color=blue>Mastima</font> In this vast universe,\nthere were fools driven so far\nto the edge that they had to\nseriously consider such\nmadness.	machine
-6031_050_25	117b1aeef7cba0b89fc3570c8427337b1d86f7eb	Though, I never heard that this\nso-called space-time transfer\nshield was ever completed\nbefore I was cast out of\nparadise.	machine
+6031_050_24	f484fb5da27ac74e2f10a26700a0ef7b5f98ecf0	<font color=blue>Mastima</font> In this vast universe, there\nwere fools driven so far to the edge\nthat they had to seriously consider\nsuch madness.	machine
+6031_050_25	117b1aeef7cba0b89fc3570c8427337b1d86f7eb	Though, I never heard that this\nso-called space-time transfer shield\nwas ever completed before I was cast\nout of paradise.	machine
 6031_050_26	af80b4225332eea430d20bca997612c44bc12d58	The Captain, Coro, and Valka\nS90 are likely more\nknowledgeable about these\nmatters.	machine
-6031_050_28	be97016ab63372845e8c10c9357406b998d10755	<font color=blue>Mastima</font> Indeed. Energy Nede.\nEnergy Nede are fragments of\nthe planet Nede. They vanished\nfrom the universe as if fleeing\nfrom their own sins.	machine
-6031_050_29	529579f5605c0d5c866825cec0b92652a820c585	On the other hand, Vandione,\nwho refused to be bound by\nthe prisons of the universe, set\nout to protect a new cosmic\norder.	machine
+6031_050_28	be97016ab63372845e8c10c9357406b998d10755	<font color=blue>Mastima</font> Indeed. Energy Nede. Energy\nNede are fragments of the planet Nede.\nThey vanished from the universe as if\nfleeing from their own sins.	machine
+6031_050_29	529579f5605c0d5c866825cec0b92652a820c585	On the other hand, Vandione, who\nrefused to be bound by the prisons of\nthe universe, set out to protect a new\ncosmic order.	machine
 6031_050_30	4c3ff64b347c59303c05e5e11415282912b386bd	And... there was also a faction\nthat researched and applied\nthe Urza System, plotting the\nrevival of the planet Nede.	machine
 6031_050_31	f2df3fd699f0c9bf2a9ba022b203dde8556a7c3a	Well, as you know, it seems\nthey weren't successful.	machine
 6031_050_32	ae61dc65cf4a6ff2bab59f70c11fbe3d7dcc364a	<font color=blue>Valka</font> Why did it fail?	machine
 6031_050_33	6bed758429927452e5f3774bbdcf8ad770b5c977	<font color=blue>Mastima</font> Simply put, they\nlacked the energy.	machine
-6031_050_34	53318e762b7b0f9d41ef89de4aa8f8c7e39812fd	Pulling out a mass as\nenormous and complex as an\nentire planet is a completely\ndifferent story from pulling out\na single human.	machine
+6031_050_34	53318e762b7b0f9d41ef89de4aa8f8c7e39812fd	Pulling out a mass as enormous and\ncomplex as an entire planet is a\ncompletely different story from pulling\nout a single human.	machine
 6031_050_35	673fe6adf9b58534ac6f4cf16fdf1e18b8f3a76a	<font color=blue>Henri</font> Even for a single human,\nthat's generally quite a feat.	machine
-6031_050_36	babdedbf8e7a19953ce873b7443166f433f32192	<font color=blue>Mastima</font> The cause of failure\nfor those who might be called\nthe Nede Revivalists was that\nthey couldn't accumulate\nenough energy or prepare a\ncaster capable of controlling it\nin time.	machine
+6031_050_36	babdedbf8e7a19953ce873b7443166f433f32192	<font color=blue>Mastima</font> The cause of failure for those who\nmight be called the Nede Revivalists was that\nthey couldn't accumulate enough energy or\nprepare a caster capable of controlling it in\ntime.	machine
 6031_050_37	93f46058d4441276bad6bbf2bdb14983e746bad0	<font color=blue>Henri</font> Then, conversely, if they\nhad succeeded...	machine
 6031_050_38	b81ea91d5a82badf89678d82bde654f5bee2ae28	<font color=blue>Mastima</font> There would be one\nmore star in this universe that\nshouldn't exist right now.	machine
-6031_050_39	9db255d5a6bee6363a7893e00d9dbe7fd180d44e	Well, according to Coro, there\nare cases where stars that\nshould have vanished were\nrestored, separate from Planet\nNede.	machine
+6031_050_39	9db255d5a6bee6363a7893e00d9dbe7fd180d44e	Well, according to Coro, there are\ncases where stars that should have\nvanished were restored, separate from\nPlanet Nede.	machine
 6031_050_40	e30efa0236966d94d9625ed55687fb47e49d7ba7	I'll have to hear more about\nthat in due time.	machine
 6031_050_41	c9ab0bb90d6d6032b6795f75edaad6dd79364045	<font color=blue>Mastima</font> What's important now\nis that the Urza System is here\non Planet Lazuli.	machine
 6031_050_42	a1a2266fb9b4d764d18594a6ecbb70577a7605d3	That significantly changes the\nmeaning behind why Raza and\nOber are fighting over this\nplanet.	machine
 6031_050_43	074caef6a1e1bcd7468e44495f10182369e2948d	<font color=blue>Heath</font> You're saying both Raza\nand Ober are aware of this\n"Urza System" thing?	machine
-6031_050_44	66a6ba3ea62f95ae5fda08aa0871f1f0f6f71529	<font color=blue>Valka</font> Yeah. In an interstellar\nwar spanning twenty years, you\nhave to assume there's a\nhidden objective that hasn't\nbeen made public.	machine
+6031_050_44	66a6ba3ea62f95ae5fda08aa0871f1f0f6f71529	<font color=blue>Valka</font> Yeah. In an interstellar war\nspanning twenty years, you have to\nassume there's a hidden objective that\nhasn't been made public.	machine
 6031_050_45	bae4354b9bf29de7130621310c477e98cf7c59b2	...Tell me, Mastima. You\nmentioned earlier that the Urza\nSystem requires energy to\noperate.	machine
 6031_050_46	23524a36bde7f4911a607a1935344fafc45c6260	In this case, the energy\nsource... is it what I think it is?	machine
 6031_050_47	c6978147e185767fb431b6975e7df168444063cd	From here on, this is nothing\nmore than my speculation.	machine
 6031_050_48	be9a9365daa8428ebc7a9b60060beb126460f9d9	However, the Evelysse in the\nrecording possessed a massive\namount of cargo stolen from\nLavarnia.	machine
-6031_050_49	32038cf28c7203fa458bd2e1d632678c142c595e	And there is a man who\nestablished the Stardust\nBazaar, which controls the\nprimary resources of the star\nsystem.	machine
-6031_050_50	9f86c23dc92b617f04ff92be83d7c50b5aaa3547	And the man who established\nthe Stardust Bazaar to control\nthe system's primary resources\nis right here, keeping watch\nover that gate.	machine
+6031_050_49	32038cf28c7203fa458bd2e1d632678c142c595e	And there is a man who established the\nStardust Bazaar, which controls the\nprimary resources of the star system.	machine
+6031_050_50	9f86c23dc92b617f04ff92be83d7c50b5aaa3547	And the man who established the\nStardust Bazaar to control the\nsystem's primary resources is right\nhere, keeping watch over that gate.	machine
 6031_050_51	4561c2d46adf6c3e9c8ca4dd3d53201e77eb0b82	With all these pieces in place,\nthe answer should be simple,\nwouldn't you say?	machine
 6031_050_53	beb7ff186a14c1497ce1de86e9ac33c40c69c3e4	If that's the case, then what on\nearth are Raza and Ober\ngathering them for...?	machine
 6031_050_54	886f107d067564b2ff9fba6df513b45f64dbd539	...Gems.	machine
@@ -230,7 +230,7 @@ message_id	ja_sha1	en	source
 6031_060_04	4e8e3f44d869aa698b8881a96f8c499ff58b9a6c	Givel said that the Thornite's\nthorns act as antennas and\nneedles to repair dimensional\nrifts.	machine
 6031_060_05	23459eb225e27d5596a18ce2683ecfeae08cfff4	So, I think it's trying to repair\nthe space-time distortion\ncaused by the gate's power\nthis time too.	machine
 6031_060_06	80cc1df87df45c1ea0140fa05271f019bae0ba69	Hmm... so the Thornite appears\nwhenever time is crossed.	machine
-6031_060_07	0050d86964e43b64bc79e9e3d3f97e2618694355	Then what about the incident\nat the Bazaar? Was the\nThornite that appeared in the\nRose family's warehouse\nseparate from Givel's?	machine
+6031_060_07	0050d86964e43b64bc79e9e3d3f97e2618694355	Then what about the incident at the\nBazaar? Was the Thornite that\nappeared in the Rose family's\nwarehouse separate from Givel's?	machine
 6031_060_08	9415006e0ac4bd684da21124eff81694c996790a	We don't have nearly enough\ninformation right now. Don't get\nahead of yourself.	machine
 6031_060_09	bfbfb9822df673192a33c328dd707889962364b4	For now, we have no way off\nthis planet. Besides, our\nprimary goal is to get Heath\nback to the mothership.	machine
 6031_060_10	c42afc47cb7612c9e485303f11fba10f210250ee	True. Since there is so much\nwe can't confirm, we should\nfocus on the goals right in\nfront of us.	machine
@@ -238,16 +238,16 @@ message_id	ja_sha1	en	source
 6031_060_12	3f56957e1ce7d4ac7b6ff0b4a6371d0e136ed040	Hm? Speaking of which, what\nhappened to the owner of the\nOverman?	machine
 6031_060_13	fd6ddc7b4f73eb895c446cf6b5a2ba16939d4510	I noticed Welch disappeared at\nsome point. No wonder it\nsuddenly got so quiet.	machine
 6031_060_14	bc6286051c4e0871bd69bcb70712e4ea5d85886f	Oh, those two?	machine
-6031_060_15	6b3c95703dce1baa9277c8e44e4ee3febeb1a69d	They went to repair the ship\njust now, taking Euwin along\nand using the maintenance\nmachine they borrowed from\nKevin.	machine
+6031_060_15	6b3c95703dce1baa9277c8e44e4ee3febeb1a69d	They went to repair the ship just now,\ntaking Euwin along and using the\nmaintenance machine they borrowed\nfrom Kevin.	machine
 6031_060_16	7c16419569a58da08fbb411fbee55920ddb42344	Welch said that since I wouldn't\nunderstand anyway, she'd just\ntell me later.	machine
 6031_060_17	7ab3bf677cf6899ab0246e1a7eaf215151b14f40	...Poor Euwin, getting dragged\ninto that.	machine
 6031_060_18	9e48e6dd26b68fd372a3feb1ec66bc7b36b6b442	No, I'm thinking of Euwin.	machine
 6031_060_19	4af0a88d252fe799ae119705adb3066b6569c64c	He likely volunteered to keep\nan eye on things so Welch\nwouldn't break the Overman or\nKevin's machine.	machine
 6031_060_21	cf5d2ae7cbe45db52ce271e3a47825999986d720	In any case, let us wait for the\nOverman to be repaired.	machine
-6031_060_22	5f67dfb168ad65c060f1b829217feeffd842430b	We've had one trouble after\nanother, and we've received far\ntoo much new information.\nEveryone here must be\nexhausted, both mentally and\nphysically.	machine
+6031_060_22	5f67dfb168ad65c060f1b829217feeffd842430b	We've had one trouble after another,\nand we've received far too much new\ninformation. Everyone here must be\nexhausted, both mentally and\nphysically.	machine
 6031_060_23	ff06fefb52659e495e34dc0258eb8c74a6682d91	We should take a short break.	machine
 6031_060_24	4245b3492b8c691ac0bf763fe199df78ef88ff92	True that. I don't even know\nwhat I'm doing or what I'm\nlistening to anymore.	machine
-6031_060_25	d1de2fd9d90fb59eb0f1dd6c4c79eec9bfa4bb14	Kevin. I wish to apologize for\nintruding upon your territory so\nsuddenly and for prying into\nyour affairs in such an abrupt\nmanner.	machine
+6031_060_25	d1de2fd9d90fb59eb0f1dd6c4c79eec9bfa4bb14	Kevin. I wish to apologize for intruding\nupon your territory so suddenly and for\nprying into your affairs in such an\nabrupt manner.	machine
 6031_060_26	3a85a48fb08f63ca9dd9d8de4967aa427779f28f	That being said, I have a\nrequest. Please, let us rest\nuntil the situation aboard the\nOverman improves.	machine
 6031_060_27	b98483be1be37dcbb1067b1df0d944f754579508	...Yes, that is fine. I also have a\nfew more things I would like to\nask...	machine
 6031_060_28	3e374459098660c3678fb27a5d10edb5f21a61c7	Captain. Coro.	machine
@@ -269,7 +269,7 @@ message_id	ja_sha1	en	source
 6032_070_14	b919638a56dc35f1b15e334dbc6e6be4f521abb6	You should have sent someone\nto get him. What if he got\nseriously hurt?	machine
 6032_070_15	25a9364356f983e45bc3a521a3d9335c92d730a2	Oh, no, the fighting itself isn't\nthat hard. Besides the spare\nmachine, Lavarnia's... thing is\nhelping out too.	machine
 6032_070_16	a350c46d37853d34f07b162339e389da2d4b7011	"Thing"... you mean those wings\non Lavarnia's back?	machine
-6032_070_17	76d9ca02c569b6f1995494bc3b631ea574390077	Right?! Isn't it amazing?! I\nheard Lover can make them fly\nand even perform simple\nattacks just by thinking about\nit!!	machine
+6032_070_17	76d9ca02c569b6f1995494bc3b631ea574390077	Right?! Isn't it amazing?! I heard Lover\ncan make them fly and even perform\nsimple attacks just by thinking about\nit!!	machine
 6032_070_18	f468b70575687b6cc844a1a8af18948c13122ecc	Huh. It is impressive. But why\nare you the one bragging about\nit?	machine
 6032_070_19	d124959517ac4f89511883d17a728e996827dbf9	Because I'm going to have\nthem teach me how to make\nsome! Hehehehe.	machine
 6032_070_20	b5624352e9921f93b19bfe104c2b809f37868d12	...Anyway, they seemed to be\nhaving fun, so I just got caught\nup in it.	machine
@@ -313,7 +313,7 @@ message_id	ja_sha1	en	source
 6032_080_30	ec58d244cfd9a4d648ab5804d78dac29267ea902	...Family.	machine
 6032_080_31	e00c2a6478f4092a26e2f1883abe2ddf85dde466	They accept any absurdity...\nthough it's usually Welch\ncausing it...	machine
 6032_080_32	2c8c22c6bdde6a23a43c24f57c56bbc8965242fc	And if one of them is about to\ngo astray... again, probably\nWelch... the other would risk\ntheir life to bring them back.	machine
-6032_080_33	f9ad505672bb29943498a586dcf1064eea97c91c	Normally, they understand each\nother without saying a word,\nand they share everything,\nfrom the joyful moments to the\ninfuriating ones.	machine
+6032_080_33	f9ad505672bb29943498a586dcf1064eea97c91c	Normally, they understand each other\nwithout saying a word, and they share\neverything, from the joyful moments to\nthe infuriating ones.	machine
 6032_080_34	5436c7e9ff200b1747b3eebe36678ff60658659d	If you asked me what that kind\nof relationship is, I couldn't find\na word other than "married."	machine
 6032_080_35	eecac6bd1bdca84cd9ab747bf6ad1fe86171efa1	Just don't tell them I said that.\nThey'll get angry.	machine
 6032_080_36	3ef3e5765488009ad90232e4300d5ce2c084a3ad	...Strange. It's the complete\nopposite of my father and\nmother.	machine
@@ -327,7 +327,7 @@ message_id	ja_sha1	en	source
 6032_080_44	69e5d55ec89cde6a941bac9fe835a78ae8d84daa	Until that one person is found,\nwe must absolutely protect\nourselves.	machine
 6032_080_45	711b50e9541588eb529c0cbfab1ab752eceba9d0	And then... when the time\ncomes, we fall deeply in love.	machine
 6032_080_46	b536d9b30e3f0991367332f0bdad24862a1c68eb	I see.	machine
-6032_080_47	dc3bdcf1bd8899e70cd99df8af56f427952aada4	Apparently, my mother simply\ncouldn't unravel my father's\nheart or peek into his dreams,\nand she became desperate to\nknow what he was thinking.	machine
+6032_080_47	dc3bdcf1bd8899e70cd99df8af56f427952aada4	Apparently, my mother simply couldn't\nunravel my father's heart or peek into\nhis dreams, and she became desperate\nto know what he was thinking.	machine
 6032_080_48	522c2e96d3b3560693748f7c4ec3c6779dea35ad	She chased him for years and\nyears, until she realized she\ncouldn't think of anything but\nhim.	machine
 6032_080_49	36d530f3b265e81e131c7b7629bd31d537b698e3	That's why she always told me\nshe wanted me to find\nsomeone like that for myself.	machine
 6032_080_50	b5dcb1c0ce602f67925ab95566f6e79fb379a8b3	...Wait, could it be?	machine
@@ -356,7 +356,7 @@ message_id	ja_sha1	en	source
 6032_090_06	8868dd3e6bddbc92630d65fd270a25a8a529a391	...But there's nothing I can do\nabout the Warp Drive.	machine
 6032_090_07	10810031fca0a62ed04ac778b79829dbc93878ee	The reactor specs don't match,\nand it would take over a month\nto manufacture the parts from\nscratch.	machine
 6032_090_08	e00397d6af0d6bebd30426426e923c751749f340	Hmm... it really is inconvenient\nnot having a Replicator at a\ntime like this.	machine
-6032_090_09	35d42cde3001abdb9d04e4635893f237ca1b6b3b	We can't take any risks without\nwarp capabilities. Especially\nwith McKinley involved. Around\nLazuli, mobility is directly linked\nto safety and survival.	machine
+6032_090_09	35d42cde3001abdb9d04e4635893f237ca1b6b3b	We can't take any risks without warp\ncapabilities. Especially with McKinley\ninvolved. Around Lazuli, mobility is\ndirectly linked to safety and survival.	machine
 6032_090_10	13d998133e252fe5a2e3f23c218c4ea3f46473bc	I have stockpiled enough food\nfor everyone in case of\nemergency, so staying here for\na while won't be an issue.	machine
 6032_090_11	77439b6e801b5ec2ff3e5f602846d7b72d788cc4	If it's only for a month, maybe\nbeing a nuisance for a bit is\nour best bet.	machine
 6032_090_12	d1ff27fc47459aba64c1685648d5570efb390074	No way! While we're doing that,\nBig Sister Eve might go\nsomewhere else!	machine
@@ -392,7 +392,7 @@ message_id	ja_sha1	en	source
 6033_100_08	78a0e084141bdf8b71c4243744a10d24f8569bff	I-incredible... I didn't expect this\nmuch...	machine
 6033_100_09	0d580b5cbd0f9c53e165b22052edd9cd816f4594	This is on a completely\ndifferent level than last time.\nThe image is much clearer\nusing the Gem as a medium.	machine
 6033_100_10	3751d55d3adc8672010b8f2a5c93e5c1394b90bc	Hey, look over there! Isn't that\nRekoro?	machine
-6033_100_11	e313e7d23003defda94a01765fce3f6aa9bed50b	You're right... If he's doing\nsomething with Lambda on the\nBridge, then this footage must\nbe from after we left the\nStardust Bazaar.	machine
+6033_100_11	e313e7d23003defda94a01765fce3f6aa9bed50b	You're right... If he's doing something\nwith Lambda on the Bridge, then this\nfootage must be from after we left the\nStardust Bazaar.	machine
 6033_100_12	94c5531bfbeec8e6bfd635cec5f1a8ff6c2e7538	...Over here is the Baschen\nImperial Capital. And that in\nthe bottom right is the\nRubarika Royal Capital.	machine
 6033_100_13	77ddc20dba155705d3cda0ebf8480f9222de5951	Hey, Captain! Isn't this the\nforest where we first met\nWelch and Karlyn?	machine
 6033_100_15	d4f10f7e19a8703b553ae89b6c1b87a110eb6f66	I can see Onelsen's Ark and Ex\nGiva as well.	machine
@@ -429,7 +429,7 @@ message_id	ja_sha1	en	source
 6033_110_01	01d19110008dc0ac03389db75f0d1ba7323fb0dc	You're right. The shape of the\ncontinents matches Earth\nperfectly, without a doubt...	machine
 6033_110_02	d0b1ed56b642af0bbf06eaeb468f4b0333af060e	And I think it's Earth from\nbefore my time or the\nCaptain's... before the era of\nspace colonization.	machine
 6033_110_03	103ff7ec279965e999c09d4904720719e0e29cb2	What makes thee say that?	machine
-6033_110_04	7b8f8317963547783a157f9f78ec865f2545d147	If we were looking down at\nmodern Earth from that\ndistance, we should see many\nmore starships and space\nstations just above the\natmosphere.	machine
+6033_110_04	7b8f8317963547783a157f9f78ec865f2545d147	If we were looking down at modern\nEarth from that distance, we should\nsee many more starships and space\nstations just above the atmosphere.	machine
 6033_110_05	06f07949b9ac11967401a8429d4b094a442ef835	It wouldn't be like this, where\nyou can see nothing but the\nplanet itself...	machine
 6033_110_06	e5ab9b9c5f6a809489eee18f1acc53c7190b54dd	Huh?	machine
 6033_110_07	43dfa92311e280d64f4357961bca2b7879d94566	What is it? There is a light... on\nthe continent in the Northern\nHemisphere.	machine
@@ -438,10 +438,10 @@ message_id	ja_sha1	en	source
 6033_110_10	f0124a5993494de4f40a340ba4ac21232d2fbee8	Yes... there's no mistake...!	machine
 6033_110_11	7481844950be78156d384d374fcc916a24635dad	The Earth Lady Leash was\nseeing isn't the Captain's Earth.	machine
 6033_110_12	8aa102caab1c752fdd7bd4a4b06ea396275d639d	It's Mista Kevin's Earth. In\nother words, the planet Raza.	machine
-6033_110_13	8f693cfd05ad3a23c13835c5ae391595542e9c9c	What!! This is Raza...!? You\nmean this is footage of the\nexact moment it blew up\nbecause of a failure in handling\nExalithium crystals?	machine
+6033_110_13	8f693cfd05ad3a23c13835c5ae391595542e9c9c	What!! This is Raza...!? You mean this is\nfootage of the exact moment it blew up\nbecause of a failure in handling\nExalithium crystals?	machine
 6033_110_14	c51c4a9b0df8e40d42b9c430e3f86dd570e30aff	Why on earth is she watching\nsomething like that?!	machine
 6033_110_15	02ac2ea48910600f5a1da7bc340b8cd4d8920ceb	I don't know, but... hm, it looks\nlike the image Lady Leash was\nseeing has cut out.	machine
-6033_110_16	242498006224f59013b0cb10dce6c47307bb7ebc	The Gems Lady Eve had were\nshattered... They were probably\nlow quality, so she couldn't\nmake them last as long as\nKarlyn did.	machine
+6033_110_16	242498006224f59013b0cb10dce6c47307bb7ebc	The Gems Lady Eve had were\nshattered... They were probably low\nquality, so she couldn't make them last\nas long as Karlyn did.	machine
 6033_110_17	7ae9871ebfbc3eec794210951252ecedfd5ad71d	But I'm reaching my limit too.\nIsn't there anything else that\nlooks like a hint?	machine
 6033_110_18	21cff367e96d5bd5dbabb6eacfdd6c988a92a152	Eve has picked up the next\nGem and started watching a\nnew image! Just hang on a\nlittle longer!	machine
 6033_110_19	fe576dac9c93313efc34e01b3eb69e2799b2202d	This image is kind of dark. I\nwonder if it's a different Earth\nthan the last one.	machine
@@ -484,13 +484,13 @@ message_id	ja_sha1	en	source
 6033_120_16	9411f73efd1c9e62d20ee15442bf3f4b3779446d	After stealing the Rose family's\nGems and shaking us off,	machine
 6033_120_17	2e56aa3bc197b47104e82e2ff121318895f5a05c	She must have come here\nspecifically to see those\nimages of Planet Raza and\nGivel.	machine
 6033_120_18	a103db3e0f4459b195bcad390a6640e8cdd8bc0b	Either way, that just adds to\nthe number of suspicious\nthings about that woman.	machine
-6033_120_19	62025175569d982017f944c7d0fa7ac752b0d774	I don't doubt she's been an ally\nof ours, but she may have\nbeen connected to the\nGiverese in some way in the\npast.	machine
+6033_120_19	62025175569d982017f944c7d0fa7ac752b0d774	I don't doubt she's been an ally of ours,\nbut she may have been connected to\nthe Giverese in some way in the past.	machine
 6033_120_20	a6c91d000a73971b823812f17448b42c0a768b51	...No way.	machine
 6033_120_21	9986cadbe16f7e891bc3aca958359d119c4c2056	When Eve first met the Captain\nand me, she said she had lost\nher memories.	machine
 6033_120_22	26ee48de8034f82c0de9d52956eb72919cbbe448	I don't know how much of that\nwas true.	machine
 6033_120_23	d448ea896800ce98ab87e2c866502dbdad0a8611	But... throughout our journey,\nshe's never shown any sign of\nharboring ill will toward us.	machine
 6033_120_24	75dd9f36bfafe59ffdbd1cdd000981de162d68c6	Coro...	machine
-6033_120_25	93f3bab0291c1d38051627f0024902261a858503	Can you really say that to\nKarlyn Kayson? I bet Giverese\nplayed the innocent act for the\nBeast Witches for a long time,\ndidn't she?	machine
+6033_120_25	93f3bab0291c1d38051627f0024902261a858503	Can you really say that to Karlyn\nKayson? I bet Giverese played the\ninnocent act for the Beast Witches for\na long time, didn't she?	machine
 6033_120_26	0a3d25efd240d728c5e9fd1fc8b963d1eadde437	I know. I know that true villains\ndon't show their real colors\nuntil the very end...	machine
 6033_120_27	687158dfaa56b769f712faa19dac4f5cb18287a2	But if that's the case, there's\none thing I just can't wrap my\nhead around.	machine
 6033_120_28	d3799734d0f34cc481541a4dc9c461825d9be4dd	...I feel the same.	machine
@@ -509,7 +509,7 @@ message_id	ja_sha1	en	source
 6033_120_42	768425242901f2319b0fc02bc14821ff57c9ce5a	...I've got a lock! It's at the very\nedge of my sensor range...\nThere is indeed one starship...	machine
 6033_120_43	bab334f5f9802ff3c49ab0a6905a15658002f141	But what is this? There's\nsomething... strange...	machine
 6033_120_44	cfc6f17023a3a1886236dc87935c02ac33a67a56	A Raza ship... Don't tell me\nMcKinley followed us here!	machine
-6033_120_45	7ee4929d7f9536d7668bdc1109ac517d5c0e7ccf	If that were the case, he\nwouldn't pull a stunt like this in\nspace. He'd be searching for\nus more cautiously after our\ncrash landing.	machine
+6033_120_45	7ee4929d7f9536d7668bdc1109ac517d5c0e7ccf	If that were the case, he wouldn't pull a\nstunt like this in space. He'd be\nsearching for us more cautiously after\nour crash landing.	machine
 6033_120_46	a287d3c60f52f200a4da6249b58bdce6efb2d99b	Another transmission from\nRekoro!	machine
 6033_120_47	784cf772176abba3a0259cde11b02cb80e88612e	Fleets that appear to be from\nthe Raza and Ober armies are\nheading toward Lazuli in\nmassive numbers!	machine
 6033_120_48	7db5276f5dc3aebf881f41381ca841c9d65a10e9	They likely detected the\ncombat activity just above the\natmosphere!	machine
@@ -538,7 +538,7 @@ message_id	ja_sha1	en	source
 6033_140_06	c90c1952bcccd6353dbb5b50559b49c473705811	S-sorry. I let my guard down.	machine
 6033_140_07	1063b1aa88a9ad3bfc0d5485dbfbcd70f3321ac1	Strange creatures. They have\na slightly different feel than\nthe black monsters summoned\nby Giverese and Evelysse.	machine
 6033_140_08	5827b606deda0dbc35221743b4bc0dbc8b36e7c0	Mastima! Save the analysis for\nlater!	machine
-6033_150_01	4f44ba0b5a37be09ec5c91c6b5440274f874669b	Just as I thought! These\nsoldiers have the exact same\nstructure as the silicon\ncomponents left around the\nsmugglers' ships on the\nsatellite Rigas!	machine
+6033_150_01	4f44ba0b5a37be09ec5c91c6b5440274f874669b	Just as I thought! These soldiers have\nthe exact same structure as the silicon\ncomponents left around the smugglers'\nships on the satellite Rigas!	machine
 6033_150_02	66319a72aa42d39e127cafe8e4019957aff55323	What!? They're tough, sure, but\nare you telling me a starship\nwas destroyed by these weird\nhumanoid things!	machine
 6033_150_03	d2511b668434bad9fcccd993fa2dec2f1346ae7d	There's no other explanation.\nThe match rate is 99.987%!	machine
 6033_150_04	d31b9dc17f6889058405a01549570f74d4045805	Dammit! This makes no sense!	machine
@@ -551,7 +551,7 @@ message_id	ja_sha1	en	source
 6033_150_11	25b623a76de337c56113a46554a8667e60a27d06	Nuwah!? W-what is that!? That\ngiant object in the sky...!?	machine
 6033_150_12	dfcfec337834e92cd4906deabd2e7c64ecc1dee1	Hey... hey, you've gotta be\nkidding me... that's...	machine
 6033_150_13	23450c17ca9cb3fb9ee4d741d7d34b429a042f29	McKinley!!	machine
-6033_150_14	e374b31570794f72c33874411d4a4280257f0730	Impossible! It's just like the\nsoldiers! The shape is\nMcKinley's, but it's\nsilicon-based... a form I\nrecognize...!!	machine
+6033_150_14	e374b31570794f72c33874411d4a4280257f0730	Impossible! It's just like the soldiers!\nThe shape is McKinley's, but it's\nsilicon-based... a form I recognize...!!	machine
 6033_150_15	21d51fa2193d784834f5da0e538d3eb8152e094d	It's as if... as if...!!	machine
 6033_150_16	8e140760b70467f9f101ec25e1b9d0d913829725	Sister Valka!? What's wrong?\nPlease, calm down...!	machine
 6033_150_17	d9bccb1dc9631375e01fe2f81be9e563e1d4e720	No, it can't be... At the edge of\nthe universe... there's no way\nthey could be here...!!	machine
@@ -565,7 +565,7 @@ message_id	ja_sha1	en	source
 6033_150_25	1c9b723633b504118cbb24f5de5f6821027ec6c9	But! You're hurt...!	machine
 6033_150_26	7127fcefe125ae255008ab2562d983bc4d9a7dfc	It's only the outer plating; my\nmobility isn't affected...! More\nimportantly, Captain...	machine
 6033_150_27	3f1d71d2c89be6120ced3a59acf4a72b1e82a96b	...We have to retreat.	machine
-6033_150_28	51e5ffc687402ab019ed8dc5c3a27364a8948e3d	A battleship-type... there's no\nway we can win... No matter\nhow many we take down, they\njust keep coming... At this\nrate...	machine
+6033_150_28	51e5ffc687402ab019ed8dc5c3a27364a8948e3d	A battleship-type... there's no way we\ncan win... No matter how many we take\ndown, they just keep coming... At this\nrate...	machine
 6033_155_01	6f85b814752c158bba9a8d2c25755c48467192b1	What is it this time?!	machine
 6033_155_02	102b20b85d4c065b9080ceefcab2f7b080dde10a	...! It's Thornite!!	machine
 6033_155_03	49f0819f163aadbb4f5b408f3cf73f80c4401781	Th-there are so many of them!\nWhere on earth are they\ncoming from?!	machine
@@ -642,22 +642,22 @@ message_id	ja_sha1	en	source
 6034_160_53	cca53db0fdac27e71e1e8a819e6396220e69b3ea	Very well. I shall invite them to\nthe Isabel.	machine
 6034_160_54	803ada3ba958e61a6dd15d19f13483705129939e	It seems... we also have the\ndaughter of a prominent figure\nfrom the Bazaar among us.	machine
 6034_160_55	9ef8cc9825f17b46a9be48f5a64ae5a8ef9e368f	...You know who I am?	machine
-6034_160_56	04f0fff880a988798da5798e8803ef1965e1c5a1	If we list them as a group of\nmilitary observers from the\nStardust Bazaar, we will have a\nvalid pretext for them to\nboard.	machine
-6034_160_57	014254b3d7f411c23552290c00febf72cc36d72e	We shall also take in that ship\nof theirs, which appears to be\nmalfunctioning. Please board\nwithin 120 seconds. Heath,\nguide them.	machine
+6034_160_56	04f0fff880a988798da5798e8803ef1965e1c5a1	If we list them as a group of military\nobservers from the Stardust Bazaar,\nwe will have a valid pretext for them to\nboard.	machine
+6034_160_57	014254b3d7f411c23552290c00febf72cc36d72e	We shall also take in that ship of theirs,\nwhich appears to be malfunctioning.\nPlease board within 120 seconds.\nHeath, guide them.	machine
 6034_160_58	78e35cc735923b40f6568abedd90c3c0e3493cb2	120 seconds!? No way!! I\nmean...	machine
 6034_160_59	c52eaba2e6fbbbfb3d1a9974e3103e0e7ef0a89f	Time is passing even as you\nspeak. 116 seconds, 115\nseconds, 114 seconds...	machine
 6034_160_60	55a06e1557ddf0752450cd3f16584038f6b89471	No time for complaining!\nEveryone, run!!	machine
 6034_170_01	98f40073ad1a2d2943d99c6d5491c359226cccd7	*Pant... pant...* My heart's\nabout to jump out of my\nchest... *Ugh...*	machine
-6034_170_02	45cab982ba76b9f760741a250e8a1ad5c9fc60bb	I got caught up in the\nmomentum and ran right in\nmyself. It's been a while since\nI've exercised this vigorously.\nHahaha.	machine
+6034_170_02	45cab982ba76b9f760741a250e8a1ad5c9fc60bb	I got caught up in the momentum and\nran right in myself. It's been a while\nsince I've exercised this vigorously.\nHahaha.	machine
 6034_170_03	fc68fac2534671bb81609c531833611fa0657b57	This is no laughing matter...!\n*Haa...* How should I put this...\nthe Captain is like a whirlwind...	machine
 6034_170_04	653578d669bbee9b9fe65466a2f00e6e9012407f	A far cry from a certain\nCaptain who's always fooling\naround with Coro, shouting\n"banana, banana!"	machine
-6034_170_06	0498a73d3e63ef3eef80d1068855c9b71f6f370e	...Heath, you bastard. You just\nspilled everything about us\nwithout a second thought.\nDon't come crying to me when\nthings go south.	machine
+6034_170_06	0498a73d3e63ef3eef80d1068855c9b71f6f370e	...Heath, you bastard. You just spilled\neverything about us without a second\nthought. Don't come crying to me when\nthings go south.	machine
 6034_170_07	e9b202f481fd4d02ff636d937750649628aba47c	Sorry... but I'm sure the Boss\nwon't treat you guys badly.	machine
 6034_170_08	11c045f391bd1a7151fe28815ab861e7066194b4	In the military, "probably" and\n"should be" don't cut it.	machine
 6034_170_09	520a5fef49b619e1de39d1756b169f4a3f51341c	We have no choice but to rely\non them for now. I'm worried\nabout Valka's injuries, too...	machine
 6034_170_10	8a50d0e2444e0b14dbc4bfdd0925bbf4c29dd77e	My apologies. The damage isn't\ncritical, but I would appreciate\nit if I could undergo\nmaintenance.	machine
 6034_170_11	e82547875de87bd156cd4db217878de7aa50c44e	I'm so sorry I let you get hurt\nbecause I was careless... Thank\nyou so much for protecting me.	machine
-6034_170_12	ed494f317a5a19429f5a8b80563fe9d5a69677a7	No, you are not at fault, Lady\nTika. If anything, it was caused\nby my own loss of composure. I\nhave shown a pathetic side of\nmyself as a warrior.	machine
+6034_170_12	ed494f317a5a19429f5a8b80563fe9d5a69677a7	No, you are not at fault, Lady Tika. If\nanything, it was caused by my own loss\nof composure. I have shown a pathetic\nside of myself as a warrior.	machine
 6034_170_13	0255334f4da64784e7fbb700b57c8734e98da55a	(But... that thing from before\nwas definitely... If that's the\ncase, there may be a way to\nhandle this...)	machine
 6034_170_14	97efcc5a7cccae12f1f69c764f770648189e95fd	Still, can we really trust that\nwoman, Jeanne?	machine
 6034_170_15	4bc24430d282404828666abbf756cbfc9776c011	...Heath was assigned to help\nthe war refugees of Ober\nunder her orders, was he not?	machine
@@ -693,11 +693,11 @@ message_id	ja_sha1	en	source
 6034_170_45	3cbeb591febc27fef4dd3766c8f7533df2251246	Give me a break with the jokes!	machine
 6034_170_46	be96813a5b2303f3d90b4376e99ca771d4f4a079	...R-really?	machine
 6034_170_47	517685272c71343202c3e5f2da071941f134be16	He looks like that, but he's got\nmonstrous strength, insane\nStamina, and his mental\nattacks are brutal.	machine
-6034_170_48	3b6e6a9b0b15acb237cda91b6c30b64ca6402f00	When you think about how\nmany muscle-heads have been\nmade to cry by those slender\narms, you should never call\nthat boss cute even if your\nmouth were ripped ope―	machine
+6034_170_48	3b6e6a9b0b15acb237cda91b6c30b64ca6402f00	When you think about how many\nmuscle-heads have been made to cry\nby those slender arms, you should\nnever call that boss cute even if your\nmouth were ripped ope―	machine
 6034_170_49	1a6151339dbe75e83f137e249a1fa27a2e133b3e	It's fine to say it, you know? I\ndon't mind.	machine
 6034_170_50	8f9cffea45c276464d90f6766cd4985e73805ba1	...*Gasp*...	machine
 6034_170_51	ea715ded836b999adaf8a8316dd7204a9c77e787	Eek!	machine
-6034_170_52	e69aa81e71b7a7eb3995f1b6b898a3926b25a99f	Since you said you couldn't say\nit even if your mouth were torn\nopen, that means you truly\nthink I'm cute, don't you,\nHeath? I'm so happy.	machine
+6034_170_52	e69aa81e71b7a7eb3995f1b6b898a3926b25a99f	Since you said you couldn't say it even\nif your mouth were torn open, that\nmeans you truly think I'm cute, don't\nyou, Heath? I'm so happy.	machine
 6034_170_53	3ddbff1490c467012e45596ab778cfa292a8c737	U-um... Boss...	machine
 6034_170_54	0e37ce28f5e886ba0afe5ad91466a67a2639e81d	It seems Heath finds women\nwith superhuman strength,\nendless Stamina, and brutal\nmental attacks cute.	machine
 6034_170_55	a8af8d1a42c4b92d85883e4ae6bb9b06ab0912fd	I'll do my best to make sure\nyou keep thinking of me that\nway, okay?	machine
@@ -720,7 +720,7 @@ message_id	ja_sha1	en	source
 6035_190_01	b94c8775029ddca1a662528ab387b0b76739b83b	It looks like everyone is here.	machine
 6035_190_02	a77827145109bc2afe495740c0243d75f9dd936a	Yes, boss. Only Valka S90 is\nstill in the infirmary getting a\ncheckup!	machine
 6035_190_03	731afb2a1ab5579f50f4e73ed4b315ba38c9e93b	I see.	machine
-6035_190_04	aea7d17d5beb60e847123870034734f7fc8f4b2a	...Valka seemed kind of spaced\nout. I wonder if she's okay...\nShe looked really shaken when\nshe saw that black starship,\ntoo...	machine
+6035_190_04	aea7d17d5beb60e847123870034734f7fc8f4b2a	...Valka seemed kind of spaced out. I\nwonder if she's okay... She looked really\nshaken when she saw that black\nstarship, too...	machine
 6035_190_05	2f424dd2ef3fe4f29c70a24b406fb9847cd22284	She was acting strangely\ndepressed, but for now, all we\ncan do is wait for her body to\nbe repaired.	machine
 6035_190_06	5ef9e73a26a778402d9bccbf1b53e8a5ced14439	Now, once more...	machine
 6035_190_07	df55d898c0259ad9b50f0ad5bf2e1ab350a86508	Captain. Please allow me to\napologize for my rudeness the\nother day.	machine
@@ -729,21 +729,21 @@ message_id	ja_sha1	en	source
 6035_190_10	09b01b3eeb9851df93a201605460aed22eed8b36	yet I still forced you to take in\nHeath and the refugees.	machine
 6035_190_12	433ab0d2c3967f3c4a7e312121cb0242c0ca8f10	The Captain is right, please\ndon't worry about it.	machine
 6035_190_13	a3b9f334a1cbded869e6755cfcc09cd73782f1eb	We're just glad we could help\nHeath.	machine
-6035_190_14	e58b03273ecdd9863c2619ffd993035cec2b83aa	Even after arriving at the\nStardust Bazaar, the war\nrefugees remained deeply\nconcerned about Ensign\nHeath's future.	machine
+6035_190_14	e58b03273ecdd9863c2619ffd993035cec2b83aa	Even after arriving at the Stardust\nBazaar, the war refugees remained\ndeeply concerned about Ensign Heath's\nfuture.	machine
 6035_190_15	2455914628256d14b4a646f3856888a48856b3ba	That would not be the case if\nhe and you, his superior, had\nnot treated them with such\nsincerity.	machine
 6035_190_16	3133aa28e4baaf3f242907d90c7db816367941a3	Thank you for your\nunderstanding. Heath has\nalready explained the situation\nregarding our ship...	machine
 6035_190_17	c67a0f09b2b1e9ff3bb6bb23def6818e3a7c2f53	I've heard the gist of it. That\nyou're being hunted by allied\nforces for defying an inhumane\norder...	machine
 6035_190_18	964263c85089badf22ec2ea30e2f52c3a1f31a6c	However, judging by the\ncurrent situation, it seems\nthings have changed slightly.	machine
 6035_190_19	afd39cc8407768d59523b7001820b998d7eac0eb	Huh? What do you mean?	machine
 6035_190_20	f740cb7e2cdc44c12188ec73935a1247eecfc04f	...Your intuition is correct.	machine
-6035_190_21	880f9b3ce6274317c75795337011eda584747b1d	Since then, Isabel has returned\nto her original unit and been\ntransferred to the 5th Fleet.\nShe is now deployed on the\nfront lines of the war against\nOber.	machine
+6035_190_21	880f9b3ce6274317c75795337011eda584747b1d	Since then, Isabel has returned to her\noriginal unit and been transferred to\nthe 5th Fleet. She is now deployed on\nthe front lines of the war against Ober.	machine
 6035_190_22	45b2ffa69631fcec6a6834b17326a00c52a2a8b5	What!? That actually\nhappened!?	machine
 6035_190_23	3d7595645952a3908cacec22b8c70c493f364c48	Officially, Raza and Ober are\nfighting over Lazuli.	machine
-6035_190_24	f49b0d5820e6fdbdad0ef0b174124dc7d3a6bf6b	The fact that you could fly in\nhere as a single ship proves\nthat the surveillance networks\nof Raza and Ober aren't\nexactly airtight.	machine
-6035_190_25	5c0cbff1cee5ad9fdd65fb4a75efde15ce209bda	But if that's the case, wouldn't\nit make sense for pursuers to\nhave come after us the\nmoment we made our\nemergency landing?	machine
+6035_190_24	f49b0d5820e6fdbdad0ef0b174124dc7d3a6bf6b	The fact that you could fly in here as a\nsingle ship proves that the surveillance\nnetworks of Raza and Ober aren't\nexactly airtight.	machine
+6035_190_25	5c0cbff1cee5ad9fdd65fb4a75efde15ce209bda	But if that's the case, wouldn't it make\nsense for pursuers to have come after\nus the moment we made our\nemergency landing?	machine
 6035_190_26	d63fb94204d365215309d81464e909d04f7cd99d	I'm sure they did. But those\npursuers messed up.	machine
 6035_190_27	599586f84ad5c7b42035924b96da5c604f58e669	Messed up?	machine
-6035_190_28	1638d4a7e70dfbcc3668d3ec4943bb1add735d70	The McKinley, the combat ship\ntracking our Overman, turned\ninto some kind of unidentifiable\nmonster and crashed onto\nLazuli.	machine
+6035_190_28	1638d4a7e70dfbcc3668d3ec4943bb1add735d70	The McKinley, the combat ship tracking\nour Overman, turned into some kind of\nunidentifiable monster and crashed\nonto Lazuli.	machine
 6035_190_29	52812c3954dad044909ff2afaaa55db01367ebea	I reckon there's a hint in there\nsomewhere.	machine
 6035_190_30	8a9991867ca229f98fba628e292d25d5ef69035d	Heath. You fought those\nhumanoid silicon masses on the\nsurface of Lazuli, didn't you?	machine
 6035_190_31	0970e883d1699ee1b6762526a308b400494d5e3b	Did you notice anything\nunusual?	machine
@@ -755,29 +755,29 @@ message_id	ja_sha1	en	source
 6035_190_37	4c4f02aa6359060e47e160db9e9f6429571b576a	While pursuing pirate ships\nfrom the Stardust Bazaar, they\nencountered an unidentified\nenemy fleet and were sunk.	machine
 6035_190_38	7fc98954ae37a1383ebbb63f11371738d84e8676	...They were scrubs in close\nquarters, but their piloting and\nfire control were top-notch.	machine
 6035_190_39	3a8aa47069b74ee06159c8cb3103a8e375e6db11	How is it possible that they\nwere sunk so easily?	machine
-6035_190_40	59ec02ea0d2793e1e5ff316cd6380115a6ccdae4	Over the last few months,\nace-class warships have been\nsunk one after another across\nvarious fronts, causing our\nlines to be pushed back\nrepeatedly.	machine
-6035_190_41	968f2dd5f229b0a2b99c8debf5cec76e2f00d24d	For some reason, the identity\nof the enemy fleets remains\nunknown, and in many cases,\nthey aren't detected until the\nmoment of engagement.	machine
+6035_190_40	59ec02ea0d2793e1e5ff316cd6380115a6ccdae4	Over the last few months, ace-class\nwarships have been sunk one after\nanother across various fronts, causing\nour lines to be pushed back repeatedly.	machine
+6035_190_41	968f2dd5f229b0a2b99c8debf5cec76e2f00d24d	For some reason, the identity of the\nenemy fleets remains unknown, and in\nmany cases, they aren't detected until\nthe moment of engagement.	machine
 6035_190_42	8d838b0e67fab817bd76c6a37ba38b443b087ee1	It has been a constant source\nof frustration for the military\nhigh command.	machine
 6035_190_43	57a1f267c8827825207fb63705fc26fefaba8b61	However, by cross-referencing\nthe testimonies of soldiers who\nsurvived these defeated fleets,	machine
 6035_190_44	add3beaf52c0a6133ab21d0c92791c65678cade8	one particular phrase has\nbegun to draw attention.	machine
-6035_190_45	6cb7c50c8aeaf7850a25d3d4636da188d6caac71	Every single one of them\nencountered black warships\nand black soldiers, as if the\ndarkness of space itself had\nmelted.	machine
+6035_190_45	6cb7c50c8aeaf7850a25d3d4636da188d6caac71	Every single one of them encountered\nblack warships and black soldiers, as if\nthe darkness of space itself had\nmelted.	machine
 6035_190_46	f81bbf59f0f231a1e426c5943ac707f77a773458	Black ships and soldiers... just\nlike the ones we fought on\nLazuli.	machine
 6035_190_47	57f419794de3d568e5989c6b4f0632ca3bfaabd5	Those who fought them all\nwore expressions of pure\nterror, describing those\nsilicon-based enemies as such.	machine
 6035_190_48	45e945313f8f20c17f930a42a1d4a33473681187	...The <font color=yellow>Phantom</font> Fleet...	machine
 6035_200_01	2c5bf3de7fb253eb68e113daf2719514280f5fc6	The Phantom Fleet?	machine
 6035_200_02	a6a2c46e9c563980cdfdea65a70f7c424fbaf384	Phantom...? In our tongue, that\nmeans "ghost," but...	machine
-6035_200_03	f595417bbb320eee97d4b1e9f0911fb220ad361f	After reviewing the data, it has\nbecome clear that the\nappearance of the Phantom\nFleet dates back approximately\nfive months.	machine
-6035_200_04	f5e9567743f42c2b8f47d97d527a06dd6ea2bab6	<font color=blue>Jeanne</font> At first, only a small\nnumber of black Ober ships,\nlike the ones you all saw,\nappeared, and the damage was\nnegligible.	machine
+6035_200_03	f595417bbb320eee97d4b1e9f0911fb220ad361f	After reviewing the data, it has become\nclear that the appearance of the\nPhantom Fleet dates back\napproximately five months.	machine
+6035_200_04	f5e9567743f42c2b8f47d97d527a06dd6ea2bab6	<font color=blue>Jeanne</font> At first, only a small number of\nblack Ober ships, like the ones you all\nsaw, appeared, and the damage was\nnegligible.	machine
 6035_200_05	234fc64f5fb62f8b4335f4d27e2eeb6d5c00a58a	However, those black Ober\nships soon vanished, and black\nRaza ships began to be sighted\ninstead.	machine
 6035_200_06	007e97ac7ace41b1dedc77948e32aed086daaa20	But since the sensors left no\ntrace of them even then, it\nwasn't considered a serious\nproblem.	machine
 6035_200_07	dc864c03fbcda2915330cc0e6c5fd13548a1000e	In fact, at the time... people\nsimply said that traitors had\nappeared within the Raza army.	machine
 6035_200_08	201529443224e02ff3334be6f65b19ee5acf006c	<font color=blue>Heath</font> This is the first I've ever\nheard of this...	machine
 6035_200_09	6f4dd5dcd46aaa89aef844b1a62b84aac255c26f	<font color=blue>Jeanne</font> I imagine so. The\ninformation was kept secret\nfrom anyone below a certain\nrank.	machine
-6035_200_10	59401e1e5f316e73e0f8cab1ba0278f6d7bd6460	Back then, rumors even began\nto circulate among some that\nRaza warships had been\ncaptured and repainted in the\ncolors of the Ober army.	machine
-6035_200_11	e981958067c51a018799fe2a55fa48f3a97419f6	<font color=blue>Ricardo</font> Well, that's the logical\nconclusion. It's far more\nreasonable than thinking allies\nwho were supposed to be dead\nbecame shadow monsters.	machine
+6035_200_10	59401e1e5f316e73e0f8cab1ba0278f6d7bd6460	Back then, rumors even began to\ncirculate among some that Raza\nwarships had been captured and\nrepainted in the colors of the Ober\narmy.	machine
+6035_200_11	e981958067c51a018799fe2a55fa48f3a97419f6	<font color=blue>Ricardo</font> Well, that's the logical\nconclusion. It's far more reasonable\nthan thinking allies who were supposed\nto be dead became shadow monsters.	machine
 6035_200_12	72e57d06e47ca1a0a33a030f16521722d71dca90	<font color=blue>Tika</font> Shadow... monsters...	machine
 6035_200_13	555c997326396b070b2eb1ddc18e52315f202236	<font color=blue>Mastima</font> ...	machine
-6035_200_14	c2721e2d2423658343857f17e364d88c9cdbd93d	<font color=blue>Jeanne</font> However, from the time\nthe Phantom ship began to be\nsighted, the front line was\ngradually pushed back, and\nRaza's casualties slowly began\nto mount.	machine
+6035_200_14	c2721e2d2423658343857f17e364d88c9cdbd93d	<font color=blue>Jeanne</font> However, from the time the\nPhantom ship began to be sighted, the\nfront line was gradually pushed back,\nand Raza's casualties slowly began to\nmount.	machine
 6035_200_15	3f8d61e8f7eb17c0ac35eff28def8273bbf828ac	Panicked by a situation that\nfelt like being slowly strangled,\nthe high command issued an\norder to us.	machine
 6035_200_16	7bfeb98264fd34fbaf74d7cfcbfd7356c928114a	That order was to attack\nOber's civilian space stations.	machine
 6035_200_18	f981139c0d7a2fa4bddbf4f296e6e90d2fe1588d	<font color=blue>Euwin</font> I don't know why, but\nthis sounds like a story I've\nheard somewhere before.	machine
@@ -786,7 +786,7 @@ message_id	ja_sha1	en	source
 6035_200_21	7d36b16858e0181ae4a63b3f6a594d914e2b4c30	...I shall speak honestly.	machine
 6035_200_22	51f0b54fd14fa60e6bf5b45fa4f13ac6d63a8540	Boss!	machine
 6035_200_23	e10c6599fd88ef67deb07f13aafa9e7da14a58d3	It is fine.	machine
-6035_200_24	b325e68867cf4bd74bcb420334b4fc03bff7c1ee	As "Military Observers," you\nmust grasp the situation\naccurately so that you may\nassist in the subsequent peace\nnegotiations.	machine
+6035_200_24	b325e68867cf4bd74bcb420334b4fc03bff7c1ee	As "Military Observers," you must grasp\nthe situation accurately so that you\nmay assist in the subsequent peace\nnegotiations.	machine
 6035_200_26	40a2cfbdbdb62de02eaa664ca6643d48ca280b23	...If you're saying that, it\nmeans...	machine
 6035_200_27	b60cd063c7f5f6570ac75f7481c56d5c36bee739	Isabel and I captured two\nspace bases within Ober's\nsphere of influence.	machine
 6035_200_28	5b6ab62d6dc6f5c3707bebaaefe6b3d719c2c370	The people you were entrusted\nwith are the residents of the\nthird base.	machine
@@ -794,10 +794,10 @@ message_id	ja_sha1	en	source
 6035_200_31	96f73149d1d9625e17dcb28e842f6743c5a21be0	...I'm fine. I get it. I guess it's\nbetter that she's just being\nhonest about it.	machine
 6035_200_32	4c67e791e70977817f70cccc02963f458322872c	...If I may offer an excuse, we\nwere in a state of confusion\nourselves.	machine
 6035_200_33	dbc41d457df4977804cb860eebf591a6df00f1d9	The reports coming in from the\nfront lines were constantly\nstating that Raza's army was\nat a disadvantage.	machine
-6035_200_34	4d296a24c5fdb2bc985930696dd45d534d304976	Despite that, instead of being\nsent to support the front, we\nwere ordered to invade a\nspace base where the\npresence of military defenses\nwas uncertain.	machine
-6035_200_35	c46ebd053f7901b97a618795948a9a70981c2597	At the time, those of us in the\nrear had the least\nunderstanding of the situation,\nand panic spread through the\narmy.	machine
+6035_200_34	4d296a24c5fdb2bc985930696dd45d534d304976	Despite that, instead of being sent to\nsupport the front, we were ordered to\ninvade a space base where the\npresence of military defenses was\nuncertain.	machine
+6035_200_35	c46ebd053f7901b97a618795948a9a70981c2597	At the time, those of us in the rear had\nthe least understanding of the\nsituation, and panic spread through the\narmy.	machine
 6035_200_36	09ed6fb29814bd9f5dc3f508a1a517ed9b67bc56	In such a climate, following the\norders we were given was the\nonly way to keep the soldiers\nfrom wavering.	machine
-6035_200_37	d34921bdd77b406c7e2979f64106713608acc146	Soldiers are less likely to panic\nwhen there's a clear\noperational objective; field\ncommanders don't need a view\nof the big picture. ...That's\nwhat my brother used to say.	machine
+6035_200_37	d34921bdd77b406c7e2979f64106713608acc146	Soldiers are less likely to panic when\nthere's a clear operational objective;\nfield commanders don't need a view of\nthe big picture. ...That's what my\nbrother used to say.	machine
 6035_200_38	71d02166e6714bb5be16ef2367f8b1205c31dfe0	Ugh, seriously!! Hmph!	machine
 6035_200_39	6af3f9497016899f280105a54d940ddd2428d0c0	But at that time, things were\nclearly wrong.	machine
 6035_200_40	01e0ff76abc7763ae03e88989cdf7f7c3890eb28	Near our operational sector,\nthe 7th Fleet suffered\ncasualties that left them nearly\nannihilated.	machine
@@ -810,8 +810,8 @@ message_id	ja_sha1	en	source
 6035_200_47	0c0988f93f616d5dd3597db8982661f406f476c4	It was after that when things\nstarted feeling truly strange.	machine
 6035_200_48	f687f2ae5a6b92f4f8c650f55d0211b2eaab18a6	What is it? Did a disciplinary\nsquad show up or something?	machine
 6035_200_49	898f6828153e50668cf357b5b131312126d0ca27	Not like that.	machine
-6035_200_50	6cfbc53ec6aed231cdda6b6bd4f8b6e44031ec6c	The 10th Fleet, which was\nsupposed to be guarding\nRaza's home planet, marched\nright toward the space station\nwe were meant to take.	machine
-6035_200_51	745478c23a9f00f3482eb454521150654e3d2ab5	Can you believe it? While the\n7th Fleet was being wiped out\non the front lines, the key to\nthe home planet's defense just\nvanished.	machine
+6035_200_50	6cfbc53ec6aed231cdda6b6bd4f8b6e44031ec6c	The 10th Fleet, which was supposed to\nbe guarding Raza's home planet,\nmarched right toward the space station\nwe were meant to take.	machine
+6035_200_51	745478c23a9f00f3482eb454521150654e3d2ab5	Can you believe it? While the 7th Fleet\nwas being wiped out on the front lines,\nthe key to the home planet's defense\njust vanished.	machine
 6035_200_52	d584e72fc33e3952872ffd718e4a77c04440f5fd	I can say for a fact that space\nstation wasn't worth doing all\nthat for.	machine
 6035_200_53	5f220c55233d6fc77776c202bffa7e824f35fce3	Once we made our decision, we\nevacuated as many residents\nas possible and fled the base.	machine
 6035_200_54	7f4df3ad49048729aacdf05c0fa5bbe12b7b9066	That was when we\nencountered you...	machine
@@ -853,7 +853,7 @@ message_id	ja_sha1	en	source
 6035_210_31	cdcdb85ebb9949479098e11e99d20161690e9186	Hmm, is something wrong?	machine
 6035_210_32	4228e2f10705e72ed44ae4fd98f382c2e1c8e7dd	Oh, no, it's not something that\nhappened at the scene.	machine
 6035_210_33	c8dfb616fc68a42653a596f199a31945045166f9	It's currently being investigated\non the home planet of Raza,\nbut...	machine
-6035_210_34	ecbed4d579f0b5a4851c17e6f3e746f78bb9b890	Around the time the Phantom\nfleet appeared, the\nCommander-in-Chief of the\nOber Space Force was\nreplaced.	machine
+6035_210_34	ecbed4d579f0b5a4851c17e6f3e746f78bb9b890	Around the time the Phantom fleet\nappeared, the Commander-in-Chief of\nthe Ober Space Force was replaced.	machine
 6035_210_35	66806505afe6b10b5289f90c89605a47b7537f3e	The Commander-in-Chief...?	machine
 6035_210_36	50abfd5101ec26b9da35e1d312bc3c3b81237e8f	Wait a minute! The one who\nbecame the\nCommander-in-Chief of the\nOber army was...!!	machine
 6035_210_38	cc4fd75a510d3d71265f59c236d9d794c1bc3acd	That's right! That man\nGivel―no, isn't his name\nGiverese!?	machine
@@ -865,13 +865,13 @@ message_id	ja_sha1	en	source
 6035_210_44	a2f65a1e48dfdfde27f6a363c0063a84bac4a4d0	Hmm, no matter how\nmysterious Givel is,	machine
 6035_210_45	e6116eba1d406506a78969d95e01511f081ad5b6	Taking over the military of a\nplanet that's been at war for\n20 years in such a short time...\nthat's just...	machine
 6035_210_46	6eeeb1f4643f5e7c256b9677b7fe589839a22886	To continue, the current\nCommander-in-Chief of the\nOber Space Force is named\n<font color=yellow>Asmodeus</font>.	machine
-6035_210_47	ca350b9243174f7eb29eb20046a7976a77c9b651	He rose to power suddenly five\nmonths ago. That name wasn't\namong the leading candidates,\nso the Raza military leadership\nwas also surprised...	machine
+6035_210_47	ca350b9243174f7eb29eb20046a7976a77c9b651	He rose to power suddenly five months\nago. That name wasn't among the\nleading candidates, so the Raza military\nleadership was also surprised...	machine
 6035_210_49	09b3e3ed145faea407f73fb2cd1fb52584f7ba00	...What did you just say?	machine
 6035_210_50	d05fb232cc5e132087e684d929b12aa5aa13bc6a	Captain, Coro, what is it? You\nboth have strange looks on\nyour faces.	machine
 6035_210_51	d44c42f3905eb3d94683dc7011db22459ef4238b	Captain Jeanne... what, what\ndid you just say? The name of\nthe Ober Commander-in-Chief.	machine
 6035_210_52	9b731cb59cb272e7bfb6903f3b821efedd53da67	Asmodeus, I said.	machine
 6035_210_54	0e48ac9ca454fea2d9dfd8d6dfb06c6f6bd8da32	The people of Ober really are\ncompletely under your thumb,\naren't they?	machine
-6035_210_55	da35d1eb3f805e5c3f6a460d8d9b3f370767b395	The lack of unity among the\npeople of Ober is ultimately\ndue to their arrogance―the\nbelief that they are the\npinnacle of all races.	machine
+6035_210_55	da35d1eb3f805e5c3f6a460d8d9b3f370767b395	The lack of unity among the people of\nOber is ultimately due to their\narrogance―the belief that they are the\npinnacle of all races.	machine
 6035_210_56	3376896c117a0a0e3b673171f1c56b87c47b023f	By suppressing them with\nabsolute power and crushing\nthat pride, a unity born of\nobedience is created.	machine
 6035_210_57	78030c7a5ddabf6a52be069dd88feec71fe96480	What a bloody methodology.	machine
 6035_210_58	861d70e773ff5f204a6a6c0ec0a2709827117c51	...Hmph. I was summoned\nprecisely because that is what\nwas required. Is it not so?	machine

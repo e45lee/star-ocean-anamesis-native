@@ -14,6 +14,7 @@
 #include "english_art/art.h"
 #include "soaserver/cdn.h"
 #include "soaserver/msgpack.h"
+#include <soa/line_break.h>
 
 namespace soa::server::english {
 
@@ -117,6 +118,20 @@ U esc(const U& s) {
         else o += c;
     }
     return o;
+}
+// english_core.ws_key: the text without its white space (WS_CHARS: tab, newline, space, U+00A0,
+// U+3000; a master-encoded "\n" is a newline first), the key of the rules id-ws and memory-ws
+U ws_key_u(const U& s) {
+    U o;
+    for (char32_t c : unesc(s))
+        if (c != '\t' && c != '\n' && c != ' ' && c != 0xa0 && c != 0x3000) o += c;
+    return o;
+}
+// english_core.same_ja != None: Global's ja is 3.7.0's exactly, or but for white space (some text left)
+bool same_ja(const std::string& gl_ja, const std::string& ja) {
+    if (gl_ja == ja) return true;
+    U k = ws_key_u(u32(ja));
+    return !k.empty() && ws_key_u(u32(gl_ja)) == k;
 }
 // str.strip()
 U strip(const U& s) {
@@ -452,44 +467,29 @@ int widest(const Advances& f, const U& text) {
     for (auto& l : split(text, '\n')) w = std::max(w, width(f, l, false));
     return w;
 }
-U rebreak_u(const Advances& f, const U& text0, int budget, bool player_px) {
-    // re.sub(r"\s*\n\s*", " ", text): every whitespace run that holds a newline -> one space
-    U text;
-    for (size_t i = 0; i < text0.size();) {
-        if (is_space(text0[i])) {
-            size_t j = i;
-            bool nl = false;
-            while (j < text0.size() && is_space(text0[j])) nl |= text0[j++] == '\n';
-            if (nl) text += U" ";
-            else text += text0.substr(i, j - i);
-            i = j;
-        } else text += text0[i++];
-    }
-    // a tag is one word
-    U t2;
-    for (size_t i = 0; i < text.size();) {
-        size_t n = tag_at(text, i);
-        if (n) {
-            t2 += replace_all(text.substr(i, n), U" ", U"\x01");
-            i += n;
-        } else t2 += text[i++];
-    }
-    std::vector<U> lines;
-    U cur;
-    for (auto& w : split(t2, ' ')) {
-        U cand = cur.empty() ? w : cur + U" " + w;
-        if (!cur.empty() && width(f, cand, player_px) > budget) {
-            lines.push_back(cur);
-            cur = w;
-        } else cur = cand;
-    }
-    if (!cur.empty()) lines.push_back(cur);
-    U out;
-    for (size_t k = 0; k < lines.size(); k++) {
-        if (k) out += U"\n";
-        out += lines[k];
-    }
-    return replace_all(out, U"\x01", U" ");
+// english_core.Font.rebreak: the shared breaker (soa/line_break.h) in its derivation mode (breaks
+// collapsed, tags are words), measured with width() above.
+U rebreak_u(const Advances& f, const U& text, int budget, bool player_px) {
+    soa::text::BreakOptions o;  // keep_breaks false, skip_japanese false, tags_are_words true, trim false
+    // width() on UTF-8 without a copy: the tags (tag_at, the same TAG) count 0, <player> 120
+    auto measure = [&](std::string_view line) {
+        int w = 0;
+        for (size_t i = 0; i < line.size();) {
+            size_t t = soa::text::tag_at(line, i);
+            if (t) {
+                if (player_px && line.substr(i, t) == "<player>") w += 120;
+                i += t;
+                continue;
+            }
+            utf8proc_int32_t cp;
+            utf8proc_ssize_t k = utf8proc_iterate((const uint8_t*)line.data() + i, (utf8proc_ssize_t)(line.size() - i), &cp);
+            if (k <= 0) cp = 0xfffd, k = 1;
+            w += adv_of(f, (char32_t)cp);
+            i += (size_t)k;
+        }
+        return (double)w;
+    };
+    return u32(soa::text::break_lines(u8(text), budget, measure, o));
 }
 
 // ---- check (english_core.check, without the glossary and the budget) -------------------------------
@@ -604,6 +604,7 @@ bool gl_token_english(const Src& s, const std::string& mid, U* out) {
 // Memory (exact and template)
 struct Memory {
     std::map<std::string, std::string> exact;     // ja -> en (UTF-8)
+    std::map<std::string, std::string> exact_ws;  // ws_key(ja) -> en (memory-ws)
     std::map<std::string, std::string> templ;     // key -> template
 };
 void numkey(const U& ja, U* key, std::vector<U>* ns) {
@@ -631,7 +632,7 @@ bool template_unsafe(const U& t) {
     return false;
 }
 Memory make_memory(const Src& s) {
-    std::map<std::string, std::map<std::string, int>> exact, tmpl;
+    std::map<std::string, std::map<std::string, int>> exact, exact_ws, tmpl;
     for (auto& mid : s.gl_ja_order) {
         const std::string& ja8 = s.gl_ja.at(mid);
         if (ja8.empty()) continue;
@@ -639,7 +640,8 @@ Memory make_memory(const Src& s) {
         if (!gl_english(s, mid, &en)) continue;
         std::string en8 = u8(en);
         exact[ja8][en8]++;
-        U ja = u32(ja8), key;
+        U ja = u32(ja8), key, wk = ws_key_u(ja);
+        if (!wk.empty()) exact_ws[u8(wk)][en8]++;
         std::vector<U> ns;
         numkey(ja, &key, &ns);
         if (ns.empty()) continue;
@@ -687,6 +689,7 @@ Memory make_memory(const Src& s) {
     };
     Memory m;
     for (auto& [k, c] : exact) m.exact[k] = pick(c);
+    for (auto& [k, c] : exact_ws) m.exact_ws[k] = pick(c);
     for (auto& [k, c] : tmpl) m.templ[k] = pick(c);
     return m;
 }
@@ -695,6 +698,12 @@ bool lookup(const Memory& m, const std::string& ja8, U* en, bool* exact) {
     auto e = m.exact.find(ja8);
     if (e != m.exact.end()) {
         *en = u32(e->second);
+        *exact = true;
+        return true;
+    }
+    auto w = m.exact_ws.find(u8(ws_key_u(u32(ja8))));  // memory-ws: the same text but for white space
+    if (w != m.exact_ws.end()) {
+        *en = u32(w->second);
         *exact = true;
         return true;
     }
@@ -742,6 +751,12 @@ bool lookup(const Memory& m, const std::string& ja8, U* en, bool* exact) {
     return true;
 }
 
+}  // namespace
+
+std::string ws_key(const std::string& s) { return u8(ws_key_u(u32(s))); }
+
+namespace {
+
 // english_text.finish for a derived candidate: (served English in the master encoding, passes)
 bool finish(const Advances& f, const U& en, const std::string& ja8, std::string* out) {
     U ja = u32(ja8), jn = unesc(ja), e = unesc(en);
@@ -758,7 +773,14 @@ bool story_finish(const Advances& f, const U& en, const U& ja, int budget, std::
     U e = unesc(en);
     e = fold_u(f, e);
     e = strip(e);
-    e = rebreak_u(f, e, budget, true);
+    // english_text.story_break: the fewest n whose break at story_budget(n) takes at most n lines
+    U r;
+    for (int n = 1; n < 25; n++) {
+        int b = n <= kStoryLines ? budget : budget * (40 * n - 10) / (40 * kStoryLines - 10);
+        r = rebreak_u(f, e, b, true);
+        if ((int)std::count(r.begin(), r.end(), U'\n') + 1 <= n) break;
+    }
+    e = r;
     Problems p = check(f, ja, e, false);
     auto ts = tags(e);
     bool bad = false;
@@ -841,7 +863,8 @@ bool derive(const DeriveInput& in, Derived& d, std::string* err) {
         const char* source = nullptr;
         U off;
         auto gj = s.gl_ja.find(mid);
-        bool gl_same = gj != s.gl_ja.end() && !s.gl_ja_null.at(mid) && gj->second == ja8;
+        // (a) id, or (d) id-ws: Global's ja is this text but for white space (english.md 7.9)
+        bool gl_same = gj != s.gl_ja.end() && !s.gl_ja_null.at(mid) && same_ja(gj->second, ja8);
         // (a) Global's English by id (the five filters)
         if (gl_english(s, mid, &off) && gl_same) {
             cand = off, source = "official";

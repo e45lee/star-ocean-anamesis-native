@@ -2,7 +2,7 @@ message_id	ja_sha1	en	source
 2071_010_01	995b99a0d583716b213bf73383359e155db122a5	The medical checks are all\nfinished! Fortunately, it doesn't\nlook like any of you are going\nto turn into beasts!	machine
 2071_010_02	ff6a42a0e05b07c43d2bcd433eebbcaa44868583	I'm impressed, Verda. You're a\nscientist at your age?	machine
 2071_010_03	6a1aad0dec5777854fefbe9e507906f057871b46	Heh, something like that, I\nsuppose. Hehehe.	machine
-2071_010_04	347f3443e3128098c22351f5b2933c41ea16a5cb	As for you, Henri, based on the\ndata you gave me, the way you\norganize your papers and data\nis very similar to that of a\ndoctor.	machine
+2071_010_04	347f3443e3128098c22351f5b2933c41ea16a5cb	As for you, Henri, based on the data\nyou gave me, the way you organize\nyour papers and data is very similar to\nthat of a doctor.	machine
 2071_010_05	04917f0ef793b0ebe5f2acef1fe24a40d598dcdb	At first, I thought you were\nmore like President Onelsen.	machine
 2071_010_06	ff83e11619c3f07b14b1eb1b20365f2e8e8cad10	Well, I'm just a novice myself.	machine
 2071_010_07	76d8096a52e817c37a07aa82044ded3c0b7d9e27	In the end, I lacked the\nstrength, and I've spent my\ntime up until today in vain.	machine
@@ -18,8 +18,8 @@ message_id	ja_sha1	en	source
 2071_010_17	240161808f8c8305f1e98af42f650864d46571e1	What?! Is that not a problem?!	machine
 2071_010_18	189d49dddfcc55a2a0fe51b6da6ba7f70b29ea34	Please don't worry. This\nevolved form is harmless to all\nhumans currently aboard this\nship.	machine
 2071_010_19	c05c2db9c8d9e15fe4b30f14f181a6d01907796c	I see... You gave me a real\nscare for a moment.	machine
-2071_010_20	48dc0e8bfb0f5ca5cc593ec994c69ec920af7f88	We're still investigating the\nconnection to the Burning\nDeath, but we've already\nbeaten it once, so there's no\nneed to worry!	machine
-2071_010_21	03c426fe0579d8ce609d2c46e215fb07e8ec4aff	We'll need to coordinate with\nthe science team on Levarance\neventually, but until then, we'll\njust have to steadily collect\ndata using this ship's\nequipment.	machine
+2071_010_20	48dc0e8bfb0f5ca5cc593ec994c69ec920af7f88	We're still investigating the connection\nto the Burning Death, but we've already\nbeaten it once, so there's no need to\nworry!	machine
+2071_010_21	03c426fe0579d8ce609d2c46e215fb07e8ec4aff	We'll need to coordinate with the\nscience team on Levarance eventually,\nbut until then, we'll just have to steadily\ncollect data using this ship's equipment.	machine
 2071_010_22	e34a0c4a81bef7f5af99bbbb550559cb2c0c991f	I'm sorry, but in the meantime...	machine
 2071_010_23	70675b7c0c9287d456ab9c3ab905114bffb6b071	I understand. I shall do my\nhumble part to support your\njourney, the saviors of the\nBinary Star.	machine
 2071_010_24	7cb1e7a4ba5ce42290f69322eeb5275b99694910	Ooh, a truly reliable adult man\nhas joined the party! I feel like\nour journey just got a lot more\nstable!	machine
@@ -43,7 +43,7 @@ message_id	ja_sha1	en	source
 2071_010_44	0cf592b6f17f137876f04b6b65f2af0df109b5ac	WHAT DO YOU\nMEANNNNNNNNNNN!?	machine
 2071_020_01	59b9803a93bb1c229a697172290564c0ad53a4ff	<font color=blue>Coro</font> This map shows the\nmovement of the battlefield\nright up until I received the\ntransmission from Onelsen.	machine
 2071_020_02	d89d2161b95006b0f45bcd640c494b2c1ba27fdd	Baschen's speed and scale of\ninvasion are incredible.	machine
-2071_020_03	c30ed1d7322e0bd10f6b75d7b8ee5994a75caba4	<font color=blue>Karlyn</font> I've never seen an\noffensive on this scale before.\nTo pull something like this off,\nthey would have needed\nmonths of preparation.	machine
+2071_020_03	c30ed1d7322e0bd10f6b75d7b8ee5994a75caba4	<font color=blue>Karlyn</font> I've never seen an offensive on\nthis scale before. To pull something like\nthis off, they would have needed\nmonths of preparation.	machine
 2071_020_04	5b6fcad6a3d3945e5608db30e3621d28bb0b1280	But I've never heard of any\nsuch plan.	machine
 2071_020_05	a2de3fa2560e81af91cb400bbecc48d1a8759b32	<font color=blue>Welch</font> ...It doesn't help anyone\nif you keep secrets!	machine
 2071_020_06	390746012af30828f817834ac6eff766deba9a57	<font color=blue>Karlyn</font> At a time like this, I\nhave no reason to hide\nanything from you.	machine
@@ -52,12 +52,12 @@ message_id	ja_sha1	en	source
 2071_020_09	3775dd8544c47322dd083b3f658ddbc375cb6235	we could barely push the front\nline forward because of\nRubarika's messenger light\narrows.	machine
 2071_020_10	6808578b4748ba3bc8fe2a74a440be5e199060d3	In this Holy Land War, though I\nhated to admit it, Rubarika's\npower surpassed Baschen's.	machine
 2071_020_11	c340b08c7c86c0af7cdec31ad955369f8d9e39b1	Baschen shouldn't have the\npower to overwhelm Rubarika\nacross such a wide area in\nsuch a short time.	machine
-2071_020_12	f58d4166d11c7df7a0bdaf7afec482347c2aca85	<font color=blue>Coro</font> Actually, it seems that\nthe political upheaval in the\nBaschen Imperial Capital is\nheavily involved in this\nlarge-scale offensive.	machine
+2071_020_12	f58d4166d11c7df7a0bdaf7afec482347c2aca85	<font color=blue>Coro</font> Actually, it seems that the\npolitical upheaval in the Baschen\nImperial Capital is heavily involved in\nthis large-scale offensive.	machine
 2071_020_13	83180b7650184d61c0d5da9a58c4e2d6130fe508	<font color=blue>Euwin</font> A political upheaval?	machine
 2071_020_14	29e5a208e220c18c4ba944f4979f13042a0aca1e	<font color=blue>Coro</font> This is just a guess, but...	machine
 2071_020_15	13fb9d500298205dc2dc43105789720cf3df3747	It's possible that the Baschen\nEmperor was sent somewhere\nelse, just like what happened\nto Eve and the others.	machine
 2071_020_16	aea21b40d13eb6044f0f66480effbee2a5b5f346	<font color=blue>Euwin</font> What!?	machine
-2071_020_17	4fbeb7a7d4f01618a67c21f8f26863991a6af7b9	<font color=blue>Valka</font> I couldn't detect any\nbiological signatures other than\nLady Leash's group within a\n50km radius of my starship,\nbut...	machine
+2071_020_17	4fbeb7a7d4f01618a67c21f8f26863991a6af7b9	<font color=blue>Valka</font> I couldn't detect any biological\nsignatures other than Lady Leash's\ngroup within a 50km radius of my\nstarship, but...	machine
 2071_020_18	931537940e084de0c6aa48809dd4814fafb25d73	<font color=blue>Coro</font> Regardless, I get the\nfeeling that something went\ndown in the Imperial Capital\nwhile the Emperor was away.	machine
 2071_020_19	38064632c8520ae9bcadc8eeadbec5c794f418bc	<font color=blue>Karlyn</font> I bet the Crown Prince\nseized power.	machine
 2071_020_20	81760c8481cbced7d46b69320e30f8a5837b461e	<font color=blue>Welch</font> The Crown Prince?	machine
@@ -65,11 +65,11 @@ message_id	ja_sha1	en	source
 2071_020_22	91db9c634216e0ce0ad766ee4d2ddef18fcc496b	He's always saying that simply\nwinning the Holy War isn't\nenough―that Rubarika itself\nmust be annihilated...	machine
 2071_020_23	c35e4d30608548245592c2e5143904fe70be7e7b	Naturally, he's not the type to\nbe picky about the means used\nto achieve his goals.	machine
 2071_020_24	7b4630465067f983ec4ca5ef0a34267d72d19616	<font color=blue>Welch</font> Ugh... that's the worst.	machine
-2071_020_25	746fc61996b3534a1e5d46d8c74dde1a3a319dee	<font color=blue>Coro</font> Additionally, I have\nconfirmed that the majority of\nthe "Beasts of Baschen"\ndeployed on the battlefield this\ntime are of that specific\nbeast-man type.	machine
+2071_020_25	746fc61996b3534a1e5d46d8c74dde1a3a319dee	<font color=blue>Coro</font> Additionally, I have confirmed that\nthe majority of the "Beasts of Baschen"\ndeployed on the battlefield this time\nare of that specific beast-man type.	machine
 2071_020_26	55b3b02ecca20e0862ddd0cf264466c20084fc8a	This footage shows a few of\nthem.	machine
 2071_020_28	c108b8acba10a3bd2c03b73847b9a16c154618a2	<font color=blue>Coro</font> Exactly. No matter how\npowerful the light arrows are,\nthey're meaningless if they\ndon't hit.	machine
 2071_020_29	1b813141d89aa036d6bcbad4f986885f8a8d9d3f	Beast-man type Thornite are\nincredibly fast and strong.	machine
-2071_020_30	36afb0550f175161afbdd5f475731b89411a57c4	There were many instances\nwhere the Rubarika soldiers,\nwho are inferior in individual\nskill, were forced to retreat\nbecause they couldn't land\ntheir new light arrows on the\n"Beasts."	machine
+2071_020_30	36afb0550f175161afbdd5f475731b89411a57c4	There were many instances where the\nRubarika soldiers, who are inferior in\nindividual skill, were forced to retreat\nbecause they couldn't land their new\nlight arrows on the "Beasts."	machine
 2071_020_31	46f479b48fa8789a2ff1698acc595d29dc26f817	...Can't we use this ship to\nintervene in the war?	machine
 2071_020_33	3d693abf6af87aaf49d512c844e682862a78198f	We have to stop the Beast\nWitches... those girls...	machine
 2071_020_34	e8e8d9e4b31db5cb7caa4d8b8acdb7fc224f6f80	Huh? What are you talking\nabout? You're on Baschen's\nside, aren't you? This should\nbe exactly what you want...	machine
@@ -83,7 +83,7 @@ message_id	ja_sha1	en	source
 2071_020_42	8ccfd0fcd49ccd87d20688e917dde6403f4c10fb	Isn't that right, you two little\nmarbles over there!	machine
 2071_020_43	5e019ccc14473fddf577750251ba3104a6a9c34d	D-did you just call us marbles!?	machine
 2071_020_44	a9a1d5384af17d0bdf2290bf04ac3b925d9aa547	...While we are still in the\nverification stage, we lack any\nevidence to deny it.	machine
-2071_020_45	3bdd5c7b647fe63e21b34cfd5b313425d800fec9	Optically speaking, the\ncreatures inhabiting Daftes and\nthe Thornite used by Karlyn\nKayson show an extremely high\nrate of similarity.	machine
+2071_020_45	3bdd5c7b647fe63e21b34cfd5b313425d800fec9	Optically speaking, the creatures\ninhabiting Daftes and the Thornite used\nby Karlyn Kayson show an extremely\nhigh rate of similarity.	machine
 2071_020_46	30a4e95acb9b2823e0d94a9b93e1b566e664d2f8	If the beastmen of Daftes,\nLady Carlin's "beasts,"	machine
 2071_020_47	eaf1b9c3f669ee82e58af6b597eb182e45f2a4c5	and the Thornite mentioned by\nLady Leash and the others are\nall the same thing,	machine
 2071_020_48	57f59782d34668613ec823d183faa708918205ca	then it's highly probable that\nthese beastmen were\ndeveloped as high-spec\nbiological weapons...	machine
@@ -94,16 +94,16 @@ message_id	ja_sha1	en	source
 2071_020_53	c7d19ca09bcfc782703c253a853f4ccd553f2ca5	Baschen's people don't even\nknow humans live in Daftes, so\nyou don't need to worry so\nmuch...	machine
 2071_020_54	39742f941ba35ec066533454043d57a9d4013baf	I'm not so heartless that I can\nsay that in front of Henri!!	machine
 2071_020_55	ef06d737cfc76a5a5c1ed0a4297c0dcf049aaef3	You need not trouble yourself.	machine
-2071_020_56	276b44b028c27200f674ba88d7206a5af16daf3a	Nearly 30,000 years have\npassed since civilization was\nlost. It is not hard to imagine\nthat humans have long since\nreturned to the wild, their\necology no different from that\nof beasts.	machine
+2071_020_56	276b44b028c27200f674ba88d7206a5af16daf3a	Nearly 30,000 years have passed since\ncivilization was lost. It is not hard to\nimagine that humans have long since\nreturned to the wild, their ecology no\ndifferent from that of beasts.	machine
 2071_020_57	2bb6916f151b51937821806d789746033aab6687	That is why...	machine
 2071_020_58	8e816a9bfde55f8762fb60a46f422366809e3b5c	My family was killed by\nRubarika soldiers on the front\nlines of the Holy Land War!	machine
 2071_020_60	b80b6255f6146d9e8de3fab53adb8acd81452429	It was a small fishing village on\nthe coast.	machine
-2071_020_61	1caad5c5a86ead29c99eb5c11cc38c50ddc352c2	Rubarika's analysts decided it\nwas too close to the waters\nwhere the Holy Land Asyl\nmight surface, and that was\nthe only reason.	machine
+2071_020_61	1caad5c5a86ead29c99eb5c11cc38c50ddc352c2	Rubarika's analysts decided it was too\nclose to the waters where the Holy\nLand Asyl might surface, and that was\nthe only reason.	machine
 2071_020_62	a1d7ba5ee3bdba131daf96ee98b21b1d6eb650e7	Huh? Surface...?	machine
 2071_020_63	a87f39236c7d0ad95433f8597d898b62e1dd4379	But later, I found out that\nBaschen's side was aware of\nRubarika's movements, and...	machine
-2071_020_64	60fb0fca4287dd7aa52b8e1ae19673672c8426f8	But later, I learned that\nBaschen had sensed Rubarika's\nmovements and deliberately\nabandoned the village just to\ngauge the true strength of the\nRubarikan navy...	machine
+2071_020_64	60fb0fca4287dd7aa52b8e1ae19673672c8426f8	But later, I learned that Baschen had\nsensed Rubarika's movements and\ndeliberately abandoned the village just\nto gauge the true strength of the\nRubarikan navy...	machine
 2071_020_65	cc8cf724b7952464a937feb9f22a1008cec22118	Even so, why would they leave\nyou to someone like the Beast\nWitch...?	machine
-2071_020_66	f54fe988bf1338aef689ac024e932585869d5f1c	Because Lord Givel discovered\nme... The Baschen army was\nobedient to me, for I could\nwield the Beast Witch's powers\nbetter than anyone.	machine
+2071_020_66	f54fe988bf1338aef689ac024e932585869d5f1c	Because Lord Givel discovered me...\nThe Baschen army was obedient to me,\nfor I could wield the Beast Witch's\npowers better than anyone.	machine
 2071_020_67	bd1fde6a271ef5c9982cd2f32c1fae580a2f737a	Lord Givel is an agent of\nDaftes. He isn't a true\nBaschen.	machine
 2071_020_68	0aa145db81c2c8fae5bc4c2f8661c20565475434	That's why I followed him. He\ngave me power. The power to\nmake both Baschen and\nRubarika submit...	machine
 2071_020_69	8b753c48806fe9930e2c6f535d49ac5434a9a178	But for it to end up... like this...	machine
@@ -123,12 +123,12 @@ message_id	ja_sha1	en	source
 2071_050_01	c19bbfd1c73bb93eb3278fc0ef5edda4ad65bca5	Oh, did I not mention it? The\nHoly Land of Asyl usually rests\nat the bottom of the ocean.	machine
 2071_050_02	6512ba10969544ca73fda72d312fa72a9562e046	The bottom of the ocean!?	machine
 2071_050_03	fac1a37ee22ddca8bf7b358224f7958c5158e5d5	That's right. The Moonshadow\nLadder doesn't always descend\nin the same spot.	machine
-2071_050_04	66ee458a7696ca675a2745a71ae11454e6b773c8	Since the Holy Land of Asyl\nappears wherever the ladder\ndescends, it doesn't always\nappear in the same place\neither.	machine
-2071_050_05	2fcfc024bb79a29d5835192097cb8bd32f6de1f9	May I ask something? Based\non the name, am I correct in\nassuming the Moonshadow\nLadder is a massive shadow\nconnecting the satellite to the\nplanet's surface?	machine
+2071_050_04	66ee458a7696ca675a2745a71ae11454e6b773c8	Since the Holy Land of Asyl appears\nwherever the ladder descends, it\ndoesn't always appear in the same\nplace either.	machine
+2071_050_05	2fcfc024bb79a29d5835192097cb8bd32f6de1f9	May I ask something? Based on the\nname, am I correct in assuming the\nMoonshadow Ladder is a massive\nshadow connecting the satellite to the\nplanet's surface?	machine
 2071_050_06	cffcf74a1149a8d04ba14c093c5c87f062c5c521	Yes. There are many paintings\nin Rubarika that depict it that\nway.	machine
 2071_050_07	dbc34df28758a500f2c136a303a2a641ec7f47ee	Hmm. If the ladder is the\nshadow of a solar or lunar\neclipse, it seems the area\nwould be quite narrow.	machine
 2071_050_08	364382e992638d4532ae903f951207607254d378	Assuming the "Moonshadow\nLadder" is indeed the shadow\nof a solar eclipse,	machine
-2071_050_09	6fc62416f91f69d20bc912e7fcae40dd61e7873e	Then the observable locations\nwould certainly change based\non the rotation and revolution\nof the planet and satellite, as\nwell as the axial tilt.	machine
+2071_050_09	6fc62416f91f69d20bc912e7fcae40dd61e7873e	Then the observable locations would\ncertainly change based on the rotation\nand revolution of the planet and\nsatellite, as well as the axial tilt.	machine
 2071_050_10	7c8b52e77d00df680bab2e0b2e1873370c20958c	And in this case, the point\nwhere the shadow falls is\nalways over the sea.	machine
 2071_050_11	628f47bc3b3eb0328a9a62201605a4cd7cc8ea4d	So that's why the old\nbattlefields of the Holy War\nwere all along the coastlines...	machine
 2071_050_12	5a8073a1d3169d577ee9df71512aca7c6248bb80	But the Holy Land is at the\nbottom of the sea? And it\nrises with every eclipse? Is\nthat even natural...?	machine
@@ -139,9 +139,9 @@ message_id	ja_sha1	en	source
 2071_050_17	108e554afc07e61ac197220db2a166c86460bd60	Because those ideas are\nrooted in everyone involved in\nthe Holy Land War, we've just\nkept repeating the same cycle.	machine
 2071_050_18	faa3ffde8c80e06f223e38baa685475368113f52	Yes, the Holy Land Asyl is on\nan island that rises from the\nbottom of the sea.	machine
 2071_050_19	f41f84efbf6d6ca0882f84aac93a0685d721d786	You've both heard about it,\nright, Welch, Karlyn?	machine
-2071_050_20	900613dfc3871728757c2fd07f49ee5f36ab8698	Tides alone can't possibly\nexplain it, and don't you think\nit's strange that the location\nwhere it appears changes so\ndrastically?	machine
+2071_050_20	900613dfc3871728757c2fd07f49ee5f36ab8698	Tides alone can't possibly explain it,\nand don't you think it's strange that the\nlocation where it appears changes so\ndrastically?	machine
 2071_050_21	b8b06c5e0325f69920318b507e453f57ff30f652	Have you ever heard of any\nother island like that?	machine
-2071_050_22	9cba6c43c52ee04eddabe12524087576735518ce	There's a cause. Looking down\nfrom the vastness of the world,\nit's clearly abnormal. There's\nsomething about this Holy\nLand Asyl.	machine
+2071_050_22	9cba6c43c52ee04eddabe12524087576735518ce	There's a cause. Looking down from the\nvastness of the world, it's clearly\nabnormal. There's something about this\nHoly Land Asyl.	machine
 2071_050_23	f51f7c0f4767db34d04d511e61d74bf1226d70d2	A human... will?	machine
 2071_050_24	067b94540abd72a70d7330303ec5bbcb373ed9dd	No way, an island rising and\nsinking because of someone's\nwill?	machine
 2071_050_25	3676439bb222c95423a4a70874adeb35ac528d44	When you're shown a world this\nvast, nothing seems impossible.\nTika is a perfect example.	machine
@@ -157,7 +157,7 @@ message_id	ja_sha1	en	source
 2071_050_36	b2e9cf60aebec416ce1c918d224506b91fb16f88	Otherwise, Tika―who says\nshe's from the future―wouldn't\nbe here.	machine
 2071_050_37	052ae0678240c816db8d643b32dca0eae1aac2a1	Big brother Euwin...	machine
 2071_050_38	b8948db552a8c2108507cab0680cbd09fd98c54e	Welch, Karlyn, and I have seen\nthe wider world, and yet here\nwe are, able to coexist without\nfighting.	machine
-2071_050_39	e502e8f4b780b4ae2a1c85b4f310d19cecacadcc	I believe this is the beginning\nof the end for the Holy Land\nWar between Rubarika and\nBaschen, a conflict that has\nraged for hundreds of years.	machine
+2071_050_39	e502e8f4b780b4ae2a1c85b4f310d19cecacadcc	I believe this is the beginning of the\nend for the Holy Land War between\nRubarika and Baschen, a conflict that\nhas raged for hundreds of years.	machine
 2071_050_40	71c04ac7f632d67310040d6eee77bf7d04046f5f	The "Messenger's Light Arrow"\nand the "Beast of Baschen"\naren't miracles or anything of\nthe sort.	machine
 2071_050_41	e584b066882b2371e3c40573faa3022a91662561	They can be explained by the\nlogic of the wider world―logic\nwe simply didn't know about.	machine
 2071_050_42	026368a7f6934e2e76e013e577928da61213147f	There was no such thing as a\n"Messenger of Daftes" in\nDaftes.	machine
@@ -168,11 +168,11 @@ message_id	ja_sha1	en	source
 2071_050_47	4916b185d1151718211ee6750ea4f95968ea78b6	Valka, Henri.	machine
 2071_050_48	ffef6734a7150179826eea7bfdf99286d25cf546	Coro, Rekoro, will you lend me\nyour strength?	machine
 2071_050_49	c7b476c3a38ca2840e7ca487aa84589168c16fae	With your incredible,\nmysterious powers,	machine
-2071_050_50	f64e7490ee019e36e0a20e0c193424efe86b85ce	I want you to use those\nincredible, mysterious powers\nof yours to uncover the truth\nabout the Holy Land of Asyl―a\ntruth that has remained hidden\nfrom us.	machine
+2071_050_50	f64e7490ee019e36e0a20e0c193424efe86b85ce	I want you to use those incredible,\nmysterious powers of yours to uncover\nthe truth about the Holy Land of\nAsyl―a truth that has remained hidden\nfrom us.	machine
 2071_050_52	a448adb80ac10e34ccd76aca65af91d3630ceb70	C-Captain, this is getting way\ntoo out of hand for a simple\nUncharted Planet\nProtection―GABU!!	machine
 2071_050_53	9ac7dd0863df120401fe42c68142129b11fde099	Be silent, Coro. This is no\nlonger a problem for Daftine\nalone.	machine
 2071_050_54	4c8260d4c95f6e4ba79b3e75c7c8e5d4b7da2edf	It is a matter that concerns\nDaftes and Levarance as well.	machine
-2071_050_55	a618ef2f644bc581d26030d5841860582ec5a283	Considering how the\nsummoning sigil arts Givel\nbestowed upon the Beast\nWitches affected Daftes\nacross the cosmos,	machine
+2071_050_55	a618ef2f644bc581d26030d5841860582ec5a283	Considering how the summoning sigil\narts Givel bestowed upon the Beast\nWitches affected Daftes across the\ncosmos,	machine
 2071_050_56	b662bface1b598a10f1831bb8d1e5be4d1f6739a	there is no guarantee that the\npeople of Levarance won't be\ndragged into this.	machine
 2071_050_58	f08e04a6807b8462edaddacfcc1830476d7505a6	We can no longer simply tuck\nour tails and flee from Daftine.	machine
 2071_050_59	802328f1f75f18fa913ed71297465f1d3ab5db48	Not for the sake of galactic\npeace, and certainly not for\nthe sake of our comrades.	machine
@@ -184,7 +184,7 @@ message_id	ja_sha1	en	source
 2071_050_66	f24fb90757787f71d3e99da978bf1ceb414f26ef	....................Right. ...Well then,\nshall we go?	machine
 2072_100_01	58910b594fde9862528da99af5714bb345eba6a1	Why is this taking so long? You\nall got here so quickly!	machine
 2072_100_02	179f0ccc004ffc273ce7a09c2fa7b165482e72d2	Once we arrive at Daftine,\nthere is an extremely high\nprobability that we will enter a\ncombat zone.	machine
-2072_100_03	3cb2fd980fa0e0e46317b6324589ba3288adcb28	During the journey to Daftes,\neveryone's equipment was\ndamaged and their stamina\nexhausted. If we do not\nrecover these, the likelihood of\nmission failure increases.	machine
+2072_100_03	3cb2fd980fa0e0e46317b6324589ba3288adcb28	During the journey to Daftes,\neveryone's equipment was damaged\nand their stamina exhausted. If we do\nnot recover these, the likelihood of\nmission failure increases.	machine
 2072_100_04	f64f3a181ff067213f86bd01c91cdedea7129cd5	Coro and Sister Verda both\nsaid they wanted two days for\nrepairs and treatment.	machine
 2072_100_05	f1f32fb12795ccf372e3fe692938cdb6d5e0ab1a	Sister Karlyn, why don't you\nrest for now too?	machine
 2072_100_06	d195affabb8e546af9448a04af5bfad8dba3f026	...I just can't bring myself to do\nthat.	machine
@@ -198,11 +198,11 @@ message_id	ja_sha1	en	source
 2072_100_14	9ddf4e7d0cb1d196b80fdc47223b9cf2b0bc4d19	It's only natural for Karlyn,\nEuwin, and Welch to feel some\nmental strain when they think\nof their homelands.	machine
 2072_100_15	9699af4f485929322a56b7b4b7654db05cc82111	<font color=blue>Rekoro</font> Even so, I cannot\nfathom Eve's reaction.	machine
 2072_100_16	7d4af4007a24d431ebefb9c4bcf362c260facbc9	I understand that she wishes\nfor peace in Daftine from a\nhumanitarian perspective.	machine
-2072_100_17	58dad09ae7fe44d21fcee387aab44ec55d18173f	But she should have no direct\nstake in Daftine's political\nsituation, yet she has remained\nlocked in her room since that\nconversation.	machine
+2072_100_17	58dad09ae7fe44d21fcee387aab44ec55d18173f	But she should have no direct stake in\nDaftine's political situation, yet she has\nremained locked in her room since that\nconversation.	machine
 2072_100_18	334cd93e60f8fd3bbfbe30772214868863281c1c	<font color=blue>Tika</font> I wonder if Big Sister Eve\nis okay...	machine
 2072_100_19	6ea1665813cf806b84eb89f8db0826574466b9b3	<font color=blue>Henri</font> She is likely dwelling on\nwhat Karlyn and Verda said.	machine
 2072_100_20	97b426bb83dc6944f54463a043e95e75952eb381	<font color=blue>Tika</font> Huh?	machine
-2072_100_21	6b3b8244ea04525d45fd39762d6ba1a9da9cb4df	<font color=blue>Henri</font> Karlyn, though she didn't\nknow at the time, summoned\nmy kin against their will and\nforced them to fight on the\nbattlefield.	machine
+2072_100_21	6b3b8244ea04525d45fd39762d6ba1a9da9cb4df	<font color=blue>Henri</font> Karlyn, though she didn't know at\nthe time, summoned my kin against\ntheir will and forced them to fight on\nthe battlefield.	machine
 2072_100_22	0514e2f89ee5df2f59f50cfbb43116d351cc8d33	Karlyn was deeply pained by\nthis, feeling that she had\ntrampled upon human dignity.	machine
 2072_100_23	e734e273dd518547fcf0b6121c15a48bf48ef125	<font color=blue>Tika</font> Oh...	machine
 2072_100_24	d1cae9eef02efd4e231d7dc674e7890b2df54f82	<font color=blue>Henri</font> Eve is likely asking\nherself where she stands in all\nof this, and she cannot find an\nanswer.	machine
@@ -214,7 +214,7 @@ message_id	ja_sha1	en	source
 2072_100_30	7ef6c52d53433147e772d966d5dbf891deef0133	You shall stay here and lecture\nme on the history of Daftine.	machine
 2072_100_31	aae1f129d4885371d0c8a4a41f7af44d1cda170f	B-but!	machine
 2072_100_32	5271140adc5328fce4d5fa4b29000f49efd79066	Spare the rod and spoil the\nchild.	machine
-2072_100_33	8950effe041cf69cc426aff8bef7243edd88a29c	Respecting their judgment and\nletting them gain experience\ninteracting with others on their\nown is also a form of "parental\nlove."	machine
+2072_100_33	8950effe041cf69cc426aff8bef7243edd88a29c	Respecting their judgment and letting\nthem gain experience interacting with\nothers on their own is also a form of\n"parental love."	machine
 2072_100_34	235833f444ce35165c8a8a59937cca588b9d8a6a	This is by no means "neglect."	machine
 2072_100_35	a8486c54e8d5c773627be6bec966be8989e0aa6a	...Humans are still so\nincomprehensible.	machine
 2072_110_01	6e5ae462a40288953605b1497c21ba44d5fb2dc9	Big sister Eve...? Are you\nokay?	machine
@@ -227,7 +227,7 @@ message_id	ja_sha1	en	source
 2072_110_08	764348bc7b4bc294361f07618d105bae5fb622d4	It made me wonder... what I\nactually thought of my\ncompanions.	machine
 2072_110_10	de406d02325c8e9237b7623ad90f1c90ab3020ff	Summoning them across space\nand time, regardless of their\nown will...	machine
 2072_110_11	2ea76910ceca6eb56e2d1b144a83dd25d22324f9	But our companions... they're\nall human.	machine
-2072_110_12	f021fea11dcfb5f6c3d4d92c6f7d0b9649092d0b	I've brought them all on a\njourney through the cosmos,\nacross space and time, with no\nguarantee that I can even send\nthem home.	machine
+2072_110_12	f021fea11dcfb5f6c3d4d92c6f7d0b9649092d0b	I've brought them all on a journey\nthrough the cosmos, across space and\ntime, with no guarantee that I can even\nsend them home.	machine
 2072_110_13	f390e9cfbd35a33ac9ca96da95de599d1e9e9057	But... it saved me.	machine
 2072_110_14	0fceb3bc5a6c5ca70e261fdfa0417fa04389ca69	What...?	machine
 2072_110_15	c9026eac83af7b9ef577fa03f4dcb759bc302fb2	I was saved because you were\nhere, Big Sister Eve.	machine
@@ -252,10 +252,10 @@ message_id	ja_sha1	en	source
 2072_150_06	349f79178a0e70479b6071c2ccb48d5aaefbcc7b	Perhaps it was due to poor\nmaintenance?	machine
 2072_150_07	0de005e9e3a1b74e3115d09fa4b2bf89fc23b438	Poor maintenance...?	machine
 2072_150_08	5d1db35c3e978c7be54f32f5710b10e7a2030ab5	T-That's not it!	machine
-2072_150_09	565c8fde2559dba617fb3993a0434c217463ad1f	But even looking at the data\nyou gave me, I couldn't find\nanything other than the fact\nthat it took an external\nimpact...	machine
+2072_150_09	565c8fde2559dba617fb3993a0434c217463ad1f	But even looking at the data you gave\nme, I couldn't find anything other than\nthe fact that it took an external\nimpact...	machine
 2072_150_10	d7c118ca55ddb82b859020c0f910baf5b33b5840	I said it's not like that!	machine
 2072_150_11	80a749900c63ca2a049144b91c0913be4b67dafa	...Huh?	machine
-2072_150_12	1c7cd991053cff48ad4b34318c95b3dd8b78418c	My father is the one who\nmaintained that ship! And I've\nalways taken great care of it!\nThere's no way it was poor\nmaintenance!	machine
+2072_150_12	1c7cd991053cff48ad4b34318c95b3dd8b78418c	My father is the one who maintained\nthat ship! And I've always taken great\ncare of it! There's no way it was poor\nmaintenance!	machine
 2072_150_13	c8d4cad3c6c219a6ec3b33fd82a3474d5e7b6aaf	Don't talk bad about my\nfather's ship! You idiot, Coro!	machine
 2072_150_14	8e44f8a455d0abc57d7d341e2bdbfca653944c62	W-what? Miss Valka?	machine
 2072_150_15	064d481f95bb7459e9f2c4842f3935f5c3cd8da9	Now, now, Valka. Coro is simply\nsaying that we shouldn't rule\nout any possibilities.	machine
@@ -273,12 +273,12 @@ message_id	ja_sha1	en	source
 2072_150_27	876f3b722947aaef611b01087a603420c885444f	...Ah, based on the data\nAdministrator Koro collected,\nthe calculations are already\ncomplete.	machine
 2072_150_28	53d06c1e8d150dff177b2d0bd9ea450e30963253	W-well, this is a bit sudden...	machine
 2072_150_29	689919c1b97309362ee7cfcb5549927464588328	My, my, to throw Coro off like\nthat... Good grief.	machine
-2072_150_30	ee2364ae3febb7c7d549329b1dab09bb1f690ef2	<font color=blue>Valka</font> By calculating the\nmovements of Daftine and the\nsatellite Mastima, I can narrow\ndown the approximate area\nwhere the Moonshadow Ladder\nwill descend.	machine
-2072_150_31	4e4743aa191e94f73e4cccc7cda4cdfab208f4ea	Then, by overlaying that with\nthe areas that can be secured\nby the naval forces of Rubarika\nand Baschen, as inferred from\nAdministrator Koro's footage...	machine
+2072_150_30	ee2364ae3febb7c7d549329b1dab09bb1f690ef2	<font color=blue>Valka</font> By calculating the movements of\nDaftine and the satellite Mastima, I can\nnarrow down the approximate area\nwhere the Moonshadow Ladder will\ndescend.	machine
+2072_150_31	4e4743aa191e94f73e4cccc7cda4cdfab208f4ea	Then, by overlaying that with the areas\nthat can be secured by the naval\nforces of Rubarika and Baschen, as\ninferred from Administrator Koro's\nfootage...	machine
 2072_150_32	639b0aab5b53b11d36753f8b3000a85fb76621e2	It looks like this diagram.	machine
 2072_150_33	d8ea0219982a806ca134b62dde2d47713ec0d988	<font color=blue>Verda</font> It's wider than I\nexpected. What is the average\ndepth?	machine
 2072_150_34	1f51a142d3014c7ebe7d0d4a3dd8f42b653c803f	<font color=blue>Valka</font> The continental shelf\ndrops off around here, and the\ndepth increases sharply.	machine
-2072_150_35	6d8353f7581f3821de72a374a7268bb95ebebdf4	Furthermore, there are several\nareas that appear to be\noceanic trenches. The deepest\ntrench reaches a depth of\n8,000 meters.	machine
+2072_150_35	6d8353f7581f3821de72a374a7268bb95ebebdf4	Furthermore, there are several areas\nthat appear to be oceanic trenches.\nThe deepest trench reaches a depth of\n8,000 meters.	machine
 2072_150_36	69f682cf03a3438edfa24d97ef58a230bd1c5b50	<font color=blue>Verda</font> That is right at the limit\nof where vertebrate organisms\ncan survive.	machine
 2072_150_37	9de3c0a51202d8cd9e5a324fe70d4a254c0eb5f0	Coro, can this ship's pressure\nequipment handle a dive into\nthese trenches?	machine
 2072_150_38	0781aca3f5bc1441297eef3f00b0f5fde8f6cb65	<font color=blue>Coro</font> Don't be ridiculous. This\nship isn't equipped for\nunderwater operations.	machine
@@ -296,7 +296,7 @@ message_id	ja_sha1	en	source
 2072_150_50	a9cc04d144fa9223338ef6a37d4512f292a458de	Haaa... honestly!	machine
 2072_150_51	db87a7fa2c606c4a1d6f57ed38372be5221d3c39	I just had a tune-up on Planet\nViret, so there's no way I'm\nmalfunctioning!	machine
 2072_150_52	91f1192f3f221464047fa497af4886e17987e867	Good grief, they're hopeless.	machine
-2072_150_53	689bfc8582f6b8adc9d2f37d5ad6d9d82f7fa360	For now, let's get everyone\ntogether and hear their\nthoughts... If I leave these two\nto talk it out, nothing's ever\ngoing to get solved.	machine
+2072_150_53	689bfc8582f6b8adc9d2f37d5ad6d9d82f7fa360	For now, let's get everyone together\nand hear their thoughts... If I leave\nthese two to talk it out, nothing's ever\ngoing to get solved.	machine
 2073_160_02	01e000449e659352c37ccfbb9f91eed08bfe4a34	I see... So even with the\nCaptains' technology, they\ncan't determine where Asyl is.	machine
 2073_160_03	fed1c8bf2dd529f28ae22275692f3315b7184d02	Maybe Coro just didn't\nmaintain the equipment\nproperly?	machine
 2073_160_04	00b85de26be138d8f719ef173b9d716acafdc630	Not you too, Ms. Welch!! That's\nnot it at all!	machine
@@ -304,35 +304,35 @@ message_id	ja_sha1	en	source
 2073_160_06	930afbf212f2e024070c8b07b0df4b9ae02e78e8	<font color=blue>Verda</font> Hidden?	machine
 2073_160_07	b326c68892547397ed904ab9515f74d72338efc1	<font color=blue>Tika</font> I think someone is hiding it\nwith a power so great that\neven Coro can't find it.	machine
 2073_160_08	348a5662fb55a7e33a11971ac93324adc5822f8a	You know, it felt like that\nwhere Ms. Henri and Onelsen\nwere, right?	machine
-2073_160_09	eb295e8d62dbb76858f007ca23c67740581ced3e	<font color=blue>Rekoro</font> True. Unless someone\nhad the technical skill to crack\nthe electronic lock, they\nwouldn't have known how to\nopen that door.	machine
-2073_160_10	06619995b339373143625d45d73c124e9e20f7ee	<font color=blue>Henri</font> So, whoever hid the Holy\nLand of Asyl ensured it would\nonly reveal itself when the\nconditions for the Moonshadow\nLadder's descent were met...	machine
+2073_160_09	eb295e8d62dbb76858f007ca23c67740581ced3e	<font color=blue>Rekoro</font> True. Unless someone had the\ntechnical skill to crack the electronic\nlock, they wouldn't have known how to\nopen that door.	machine
+2073_160_10	06619995b339373143625d45d73c124e9e20f7ee	<font color=blue>Henri</font> So, whoever hid the Holy Land of\nAsyl ensured it would only reveal itself\nwhen the conditions for the\nMoonshadow Ladder's descent were\nmet...	machine
 2073_160_11	0ce9589c3e724627c028385fa4b4a544eca1def0	...and otherwise, its existence\nremains completely\nundetectable.	machine
 2073_160_12	d12186e8f337a6d7b4ddd35db3097118d5c286d1	<font color=blue>Eve</font> So in the end, we just\nhave to wait for the ladder to\ndescend? We can't intervene in\nthe war like that.	machine
-2073_160_13	d47eec5a5992e3057d46fd5b5f409086ab964bbf	<font color=blue>Coro</font> I've thought about it, and\nsince it's called a "Holy Land," I\nthink it must be at least larger\nthan the facility where Ms.\nHenri and the others were.	machine
+2073_160_13	d47eec5a5992e3057d46fd5b5f409086ab964bbf	<font color=blue>Coro</font> I've thought about it, and since it's\ncalled a "Holy Land," I think it must be\nat least larger than the facility where\nMs. Henri and the others were.	machine
 2073_160_14	be6c74198e0aa08f929eb24788a3387cc683b45d	I think the methods for\ndisguising something of that\nscale would be quite limited.	machine
-2073_160_15	2c8454f48f59f14ec7bfaee361ff9b3dc236a239	For now, we are searching\nwhile considering mechanical\ntechnology, Crest Science, and\neven concealment via some\nkind of natural phenomenon...	machine
+2073_160_15	2c8454f48f59f14ec7bfaee361ff9b3dc236a239	For now, we are searching while\nconsidering mechanical technology,\nCrest Science, and even concealment\nvia some kind of natural phenomenon...	machine
 2073_160_16	2d299b3f391563749e29e66440ed99bb066a7902	Unfortunately, nothing\nresembling that has triggered\nour sensors at all.	machine
 2073_160_17	d99401a8160e3c89072b7d1f62f95d0d400d0141	<font color=blue>Karlyn</font> I think the possibility of\nSymbology is low.	machine
 2073_160_18	79dfdf0b4fda6174156cdc3c2a1ea54cec838315	<font color=blue>Coro</font> Why is that?	machine
-2073_160_19	2ef7acb626b0730792de4cbc2f1e050895defa30	<font color=blue>Karlyn</font> Asyl has been appearing\nand disappearing every time\nthe Moonshadow Ladder\ndescends for hundreds of\nyears, right?	machine
-2073_160_20	aba3fca88b60ad5ef202e6ca4ab2377dffd48670	There's no way people could be\nthere constantly, and if it were\nCrest Arts, the durability and\nremote functionality would\nhave to be beyond anything\nreasonable.	machine
+2073_160_19	2ef7acb626b0730792de4cbc2f1e050895defa30	<font color=blue>Karlyn</font> Asyl has been appearing and\ndisappearing every time the\nMoonshadow Ladder descends for\nhundreds of years, right?	machine
+2073_160_20	aba3fca88b60ad5ef202e6ca4ab2377dffd48670	There's no way people could be there\nconstantly, and if it were Crest Arts,\nthe durability and remote functionality\nwould have to be beyond anything\nreasonable.	machine
 2073_160_21	555cba935a780bb90eecc33dc3bc7e680baad47b	<font color=blue>Rekoro</font> I believe there are\nbarrier arts in Symbology that\ncontinue to function even after\nthe caster has left.	machine
 2073_160_22	e22622cc843db9b06f2e5ead60b5cf29783cb830	<font color=blue>Karlyn</font> A barrier just stays in\none place to protect what's\ninside.	machine
 2073_160_23	49ed2ea66dbe40be96212dbda5a254912a0ba46b	<font color=blue>Karlyn</font> Besides, once it's\nbreached, that's it. To restore\nit, the caster would have to go\nback and recast it.	machine
 2073_160_24	c4f1037c854c57b13a12391cb25ad9a0b36025f6	<font color=blue>Euwin</font> I see. So if Symbology\nwere being used on Asyl...	machine
-2073_160_25	49990f1cc5f0f9928078c5f60621882b32665f5d	It would have to be a spell that\nreacts to a Ladder of unknown\ndescent, causing it to surface\nand appear, then sink and\nvanish again.	machine
+2073_160_25	49990f1cc5f0f9928078c5f60621882b32665f5d	It would have to be a spell that reacts\nto a Ladder of unknown descent,\ncausing it to surface and appear, then\nsink and vanish again.	machine
 2073_160_26	f738f9dfab0ea6a66b4bee561b5068c91a2a9bb0	Even a layman like me could\ntell it was complex.	machine
-2073_160_27	eaba1e52e52873925ce7dd6593817d011e9eba34	<font color=blue>Karlyn</font> Furthermore, the spell\nitself would have to be able to\njudge the surrounding\nconditions independently of the\ncaster. Such a Symbol spell is...	machine
+2073_160_27	eaba1e52e52873925ce7dd6593817d011e9eba34	<font color=blue>Karlyn</font> Furthermore, the spell itself\nwould have to be able to judge the\nsurrounding conditions independently of\nthe caster. Such a Symbol spell is...	machine
 2073_160_28	7375965e3d9954268b06ea0f51cea026c4efdd33	It exists.	machine
 2073_160_29	c5a511bc057ad3d27d6f8ecc4f9340a334d63d1b	Right, as if it could possibly...	machine
 2073_160_30	5590ff8011105dbc9611adfe36ab2f63edc164d3	Huh?	machine
-2073_160_31	c9fb6b537b88da94b919dac5f0daddac9ff67326	It does exist. A Symbol spell\nthat activates based on the\nsurroundings even after the\ncaster is gone. Around your\nneck.	machine
+2073_160_31	c9fb6b537b88da94b919dac5f0daddac9ff67326	It does exist. A Symbol spell that\nactivates based on the surroundings\neven after the caster is gone. Around\nyour neck.	machine
 2073_160_32	109f686ed331e7de46c9e6c6f2b651559dd368ec	!! That collar... the one that\nman put on me...!	machine
 2073_160_33	b4cf0bbd24427325cbd4d52739f164a6c46525e9	What? A collar put on by a\nman? What's that about?	machine
 2073_160_34	1b5eb3b57ba56b42d8754d38e7330798ffd22dbe	The collar the masked man put\non you in the dungeons of\nRubarika!	machine
 2073_160_35	80a6f3a3a6af291cda40d61a0d98100aaca38c9a	It's true that when Givel's\nSymbol spell and mine clashed,\nit suddenly broke and a new\nsymbol flew out!	machine
 2073_160_36	f00bfc9c078ca97fdc7aa8ae9353726bff7a9733	That masked guy said that if\nwe didn't do what he said, the\ncollar would explode and Karlyn\nwould die.	machine
-2073_160_37	ed879087e650f76fd541b46cebb7df29347c43e4	Doesn't that mean the symbol\ninside the collar activates\nbased on certain conditions,\nand then Daftes blasts her\naway?	machine
+2073_160_37	ed879087e650f76fd541b46cebb7df29347c43e4	Doesn't that mean the symbol inside\nthe collar activates based on certain\nconditions, and then Daftes blasts her\naway?	machine
 2073_160_38	ddd57593b9852fa7c7e29bcb9ba3b29c65b64a4e	I-I suppose if I'd been thrown\ninto Daftes all alone, I probably\nwouldn't have survived for\nlong...	machine
 2073_160_40	09b5ed01d4103add6d03dbce343f0c60a34ab9c4	...Hm? What is it, Valka?	machine
 2073_160_41	7cfebf73327c4a51fb9f406948233eeb4ada11c2	...I probably would have saved\nyou anyway...	machine
@@ -346,7 +346,7 @@ message_id	ja_sha1	en	source
 2073_160_50	d77f71c4900c1d2c77819bf02454d1bac27cac1d	but tracking down that man will\nbe quite a chore in its own\nright.	machine
 2073_160_51	0443a9faa2ea47fa031bbc37af23eb0f0c747cdd	True, we don't even know who\nhe is or where he's from.	machine
 2073_160_53	17afe6483a28bc83dc5e102222910377dde6845a	Right. I mean, the way we met\nhim was so random, and he's\njust... way too elusive.	machine
-2073_160_54	719acd3d03f413b805576b64c6fe18533b4bb66d	It might be a detour from our\ngoal of finding the Holy Land of\nAsyl, but we still have time\nbefore we have to go back\ndown the ladder.	machine
+2073_160_54	719acd3d03f413b805576b64c6fe18533b4bb66d	It might be a detour from our goal of\nfinding the Holy Land of Asyl, but we\nstill have time before we have to go\nback down the ladder.	machine
 2073_160_55	5f1aa4f10b32ac9f1f71893d27739e4f01db3965	I wonder if there's any way we\ncan track that man down\nourselves.	machine
 2073_160_56	34be9c8f87515a9ec037ede62e3ee70d52b09957	Coro, you saw him once, right?\nCan't you track him?	machine
 2073_160_57	5d1242bfd7d502ab64cc9184b69cecc5073c8972	Unfortunately, it was\nimpossible. For some reason, I\nwas unable to attach a\ntracking tag to him.	machine
@@ -354,7 +354,7 @@ message_id	ja_sha1	en	source
 2073_160_59	8eef9f76f4a0e710f63baeae06201013f6b8fa11	I suspect that man is also from\nan advanced planet.	machine
 2073_160_60	4690c5556c90a257b17858b25fbe135c40bfd2cf	He likely possesses some\nmethod to evade Coro's\ntracking.	machine
 2073_160_61	550bda4012c3c670d2f4262bc5fad52959fc9f48	Now that you mention it, my\nhammer didn't seem to do a\nthing to him.	machine
-2073_160_62	bff706d60496bd4d6291dd77c81136a677021b25	A rather crude way to verify it,\nbut... perhaps he possesses a\ndefense mechanism based on\nadvanced civilization, such as\ngravity manipulation.	machine
+2073_160_62	bff706d60496bd4d6291dd77c81136a677021b25	A rather crude way to verify it, but...\nperhaps he possesses a defense\nmechanism based on advanced\ncivilization, such as gravity\nmanipulation.	machine
 2073_160_63	a563e69900f11bbb87f443661ab3bb1f62ae5f2e	If that's the case, finding him\nseems like it'll be difficult. We\nhave no idea what his objective\neven is...	machine
 2073_160_64	b5dde758405f431be40d006d4af1a401c80c0703	Objective...	machine
 2073_160_65	0d60e86181c0b19953db5cfd4c444553a5e01a8e	...Oh.	machine
@@ -365,13 +365,13 @@ message_id	ja_sha1	en	source
 2073_160_70	e6928037327748361696e73de0c4c7f6c0b1af9c	What do you mean?	machine
 2073_160_71	a53bff3f038f85d1cdc247e16648e9586c9c2507	Karlyn, Henri, and I will lure him\nout.	machine
 2073_160_74	72441af49906a7bde734c0f775b83bc945cdf604	If I let myself be captured by\nBaschen's army again... I bet\nhe'll come for me.	machine
-2073_170_01	6a354d9f0651cd766734ca184b6ff7e38aef8118	I think there are plenty of\npeople at the front who don't\nknow what happened at the\nImperial Castle, and since\nKarlyn is high-ranking, she\nshould be able to blend in\neasily.	machine
+2073_170_01	6a354d9f0651cd766734ca184b6ff7e38aef8118	I think there are plenty of people at the\nfront who don't know what happened at\nthe Imperial Castle, and since Karlyn is\nhigh-ranking, she should be able to\nblend in easily.	machine
 2073_170_02	c3dcbc8d3fde7551210cbb2e31c336478729b7f8	Then I thought maybe Henri\ncould protect us while\ndisguised as a "Beast"... what\ndo you think?	machine
 2073_170_03	d0aacb0709030ec3461b5ed4d1808776f921be6c	...It's true that he was\nobsessed with Tika, so it\nseems like a good plan, but...	machine
 2073_170_04	666c96ab92316eb132845cac94ddb93b46ac14bd	I wonder if Henri's appearance\nafter transforming into a Beast\nwill look suspicious.	machine
 2073_170_05	5286031b0f51e3d36c94e370bd718294eda2310b	If you're talking about the\nglowing spikes, I think it'll be\nfine.	machine
 2073_170_06	5b8d7982954d221e2bcfa23514aa448bec1dd919	Huh?	machine
-2073_170_07	da8d320ce370d7796ae427f0bbdbbcde3c4b68b4	To be honest, even we Beast\nWitches don't understand the\nlogic behind the minor\ndifferences between the\n"Beasts."	machine
+2073_170_07	da8d320ce370d7796ae427f0bbdbbcde3c4b68b4	To be honest, even we Beast Witches\ndon't understand the logic behind the\nminor differences between the "Beasts."	machine
 2073_170_08	ec923203427d8c5a3adc128a7c348e15b985b783	Givel is probably the only one\nwho knows.	machine
 2073_170_09	37036c28d2074349ee4f0273f3ac45534bfcfda1	If I just say he's a new type of\n"Beast," that should be enough\nto fool the soldiers at the\nfront.	machine
 2073_170_10	5d9282c9aa3612ac009cb78bf35cae977dafa348	But he already let Karlyn\ncapture us once.	machine
@@ -391,11 +391,11 @@ message_id	ja_sha1	en	source
 2073_170_24	30b693795446d3976f83db10be17db7a6df10f91	Besides, if Daftine doesn't find\npeace now, the future me\nmight be in danger.	machine
 2073_170_25	58c8436ee94d15b2f50bfb4618cc508b6fc10178	So Rekoro, please. I want you\nto come with me. I want you to\nfight by my side.	machine
 2073_170_26	49ca9069c8dc425f87012b2b78c89dbff9fb9f56	Gu... unununu!	machine
-2073_170_27	0ed7989d0cc7ed959bef3aedf928f731323adde7	If you're truly set on this, I\ndon't mind. If this wretched\ndisease can help bring peace\nto Daftine, I will gladly\ncooperate.	machine
+2073_170_27	0ed7989d0cc7ed959bef3aedf928f731323adde7	If you're truly set on this, I don't mind. If\nthis wretched disease can help bring\npeace to Daftine, I will gladly cooperate.	machine
 2073_170_28	d03e2cd115b9107e3ee136a823cf99e2102398b4	Gugugu...!	machine
 2073_170_29	ae8104ec3abc393c3c3a47f19b19dcf917ad72d8	In that case, I'll join in as a\nprisoner too.	machine
 2073_170_30	126998001fd0a68442955417b38ffb74d32fbfb1	That masked man's obsession\nwith Tika is abnormal. It would\nbe terrible if he attacked the\ntwo of you by mistake.	machine
-2073_170_31	1d04fceddba1046d2b9275fe1fa8605b243ca325	If word gets out that the\nyoungest son of the Rakstar\nfamily was captured as well,\nrumors will spread through\nRubarika quickly, and it'll reach\nhis ears sooner.	machine
+2073_170_31	1d04fceddba1046d2b9275fe1fa8605b243ca325	If word gets out that the youngest son\nof the Rakstar family was captured as\nwell, rumors will spread through\nRubarika quickly, and it'll reach his ears\nsooner.	machine
 2073_170_32	ad4d9f96c7156128a815d7ae1a0fb9c4de4eeba8	I shall descend with you.\nStealth is my specialty. I will\nprotect Sir Ewin and Lady Tika\nwithout anyone noticing.	machine
 2073_170_33	b092a407b165c88f7f2fc40dad133751ecda07d2	With this many people, Tika\nshouldn't be in too much\ndanger, right, Rekoro?	machine
 2073_170_34	4ba6e999efd21bb88731b2303e876aff76abe396	I... I suppose I have... no\nchoice... ununu. For the sake of\nTika's... future safety... gugugu.	machine
@@ -403,11 +403,11 @@ message_id	ja_sha1	en	source
 2073_170_37	d72f04109f1725d99554614045c97d6cc6b8a7bd	Then I'm in too.	machine
 2073_170_38	64de6be9809c336f1936c48bfb4549e743938586	I shall join you as well...	machine
 2073_170_39	f5aea8df5d398258bc613924e12f022ade6ee9b1	Now, now, Captain, Eve,\nVerda―just wait a second.\nThere's no point in all of us\ncrowding in there.	machine
-2073_170_40	7bc4c35c76d515be35da9533d2ca5ac19d670ced	That Givel guy seemed\nobsessed with Eve. If too many\nof us end up as prisoners,\nword might get back to him,\nand he might try something.	machine
+2073_170_40	7bc4c35c76d515be35da9533d2ca5ac19d670ced	That Givel guy seemed obsessed with\nEve. If too many of us end up as\nprisoners, word might get back to him,\nand he might try something.	machine
 2073_170_41	3bccb5e6ca15e07d335c174a4645c0bbcff6d5a4	Right, Eu?	machine
 2073_170_42	4f90df4e9fb385c6f4bc6179dcb2804be731c5e4	Huh!? I mean, that's true, but...	machine
 2073_170_43	58e3119c06a291cb02c480f81d82bfb5e5f747ac	With Karlyn, Valka, Henri, and\neven little Eu there, Tika should\nbe in little danger,	machine
-2073_170_44	d54906fb9620357e3d6565d9266e74efbd0e07a9	While they're doing their best,\nwouldn't it be more efficient for\nus to keep searching for Asyl\nfrom here using our usual\napproach...?	machine
+2073_170_44	d54906fb9620357e3d6565d9266e74efbd0e07a9	While they're doing their best, wouldn't\nit be more efficient for us to keep\nsearching for Asyl from here using our\nusual approach...?	machine
 2073_170_45	507c1f8e546db469775a9f12ac4e0e91234ba749	Hey, what's with those looks?	machine
 2073_170_46	39191f5a8c296a7d95982f7f9087749043cca789	...I think we're just surprised\nthat a constructive opinion\nactually came out of your\nmouth.	machine
 2073_170_47	09c49fe9195a97aea43508f54790f7490baae3e3	Do you guys think I'm an idiot\nor something?	machine
@@ -426,14 +426,14 @@ message_id	ja_sha1	en	source
 2074_180_01	1d25a96e0ed81689f24f18a1192ff390e4f739ef	<font color=blue>Coro</font>: Now then, let's review\nthe outline of the plan to lure\nout the masked man.	machine
 2074_180_02	9f8b4616f52cedd22f510fbbf20463c93940f4a9	First, Karlyn and Henri\ndescended to the front-line\nunits and managed to blend in\nwithout raising suspicion.	machine
 2074_180_03	17987f56aea3e7d71a73e45e83c1ef6f07f76fbb	I was nervous that they might\nbe found out, but it seems\nBaschen's front-line forces are\nquite stretched thin.	machine
-2074_180_04	7dbe672f55b157adc015305703e0792d1c7bac64	They appear to be\nshort-handed due to the\nlarge-scale offensive, so they\nwere actually welcomed with\nopen arms.	machine
-2074_180_05	e85c73d8f1024a8a0064644dbb04cdccb5b857a3	According to information from\nthe two of them, a beastman\nunit led by the Beast Witch is\nplanning to charge toward a\nvillage in Rubarika called\nConroy.	machine
-2074_180_06	30b5e1110df33f13caa4e9666fd2eea9626c588d	<font color=blue>Coro</font>: Tika, along with Rekoro,\nEuwin, and Valka, will descend\nonto that invasion route and\nallow themselves to be\ncaptured by Karlyn.	machine
+2074_180_04	7dbe672f55b157adc015305703e0792d1c7bac64	They appear to be short-handed due to\nthe large-scale offensive, so they were\nactually welcomed with open arms.	machine
+2074_180_05	e85c73d8f1024a8a0064644dbb04cdccb5b857a3	According to information from the two\nof them, a beastman unit led by the\nBeast Witch is planning to charge\ntoward a village in Rubarika called\nConroy.	machine
+2074_180_06	30b5e1110df33f13caa4e9666fd2eea9626c588d	<font color=blue>Coro</font>: Tika, along with Rekoro, Euwin,\nand Valka, will descend onto that\ninvasion route and allow themselves to\nbe captured by Karlyn.	machine
 2074_180_07	60d9d92e74642c0a7fa173d6e4f82c37cbf0baa5	<font color=blue>Tika</font>: Got it! I'll do my best!	machine
 2074_180_08	71c5372e8ec195ec6a5ef9dffb7c0e2db6c34397	<font color=blue>Rekoro</font>: Ugh... I'm still against\nthis. It's far too dangerous...	machine
 2074_180_09	9d21a9d591f0f7707c4588d95caff042543efbf1	<font color=blue>Welch</font>: Then just make sure\nyou protect her properly. I told\nyou to steel yourself!	machine
-2074_180_10	b6fd3151a1c76d7dc41650197e9184717431197c	<font color=blue>Coro</font>: Euwin, I want you to\nproudly announce that you are\na member of the Rakstar\nfamily and cause a fair bit of\nchaos.	machine
-2074_180_11	444cdb9c72ce2f23c70708c3d841865da27719ae	Valka, please operate in a way\nthat prevents heavy casualties\non both sides, and let me know\nif you determine the risk has\nbecome too great.	machine
+2074_180_10	b6fd3151a1c76d7dc41650197e9184717431197c	<font color=blue>Coro</font>: Euwin, I want you to proudly\nannounce that you are a member of\nthe Rakstar family and cause a fair bit\nof chaos.	machine
+2074_180_11	444cdb9c72ce2f23c70708c3d841865da27719ae	Valka, please operate in a way that\nprevents heavy casualties on both\nsides, and let me know if you determine\nthe risk has become too great.	machine
 2074_180_12	94699f49e1484b92371cb64af351f9073617f7fd	I will then teleport you to\nsafety.	machine
 2074_180_13	d4de8bbb62b1318b43986ec426b7da292f2c296f	<font color=blue>Euwin</font> Leave it to me. I've been\ncaught up in things like this a\nfew times before, so I'll handle\nit.	machine
 2074_180_14	d69d7fcc016363c11af6dfc7f50a21be664f9964	<font color=blue>Valka</font> I understand... Ugh... I\nwonder if I can do this...	machine
@@ -443,18 +443,18 @@ message_id	ja_sha1	en	source
 2074_180_18	b53df0b951c0c2add6b98d269bca4c851b53f4d0	<font color=blue>Valka</font> Y-yeah, thanks, Verda.\nI'll... I'll do my best!	machine
 2074_180_19	21ab618051eb3383c0f9c3771619c0f4d4feb99d	<font color=blue>Rekoro</font> I'm nervous!	machine
 2074_180_20	30d8fefb6374eef8974a64acdfe0053f74acc75f	<font color=blue>Coro</font> Uh, let's see... Once we\nget the signal to retreat from\nHenri, we'll head toward\nConroy's side...	machine
-2074_180_21	de253bab4be38467b3995af93c2be53728350cbb	We'll use transport descent to\nscatter flyers toward Conroy's\nside, stating that Ewin Laxter\nand Tika Blanche have been\ncaptured.	machine
+2074_180_21	de253bab4be38467b3995af93c2be53728350cbb	We'll use transport descent to scatter\nflyers toward Conroy's side, stating\nthat Ewin Laxter and Tika Blanche have\nbeen captured.	machine
 2074_180_22	eadef230bdfa9d3c41028d69e9946dead9c2a714	<font color=blue>Euwin</font> Yeah, well, I'll just let my\nfather and brothers deal with\nthe fallout in the royal capital.	machine
 2074_180_23	9750ca9d5191fa2fe5e040ae977202a62f872fae	I can just apologize to my\nsister later.	machine
 2074_180_24	f4e1b1099223d23ebb6497f887d31d0e3b2afeb4	<font color=blue>Coro</font> After that, Rekoro, Valka,\nand Henri will provide frequent,\ndetailed updates...	machine
 2074_180_25	fdac0bb8518e210a819d5e32751737ba34ffae86	We will also keep a close watch\non the Imperial Capital for any\nsuspicious activity.	machine
-2074_180_26	d23d38553546967f5919b5b762471e63def62186	If the masked man appears\nbefore any anomalies occur in\nthe Imperial Capital, the plan is\na success. Otherwise, it's a\nfailure, and we'll have to think\nof our next move.	machine
+2074_180_26	d23d38553546967f5919b5b762471e63def62186	If the masked man appears before any\nanomalies occur in the Imperial Capital,\nthe plan is a success. Otherwise, it's a\nfailure, and we'll have to think of our\nnext move.	machine
 2074_180_27	19e4795f53a09343853a98cefdf47a4167e60686	<font color=blue>Eve</font>: In the meantime, we'll\ncontinue to put all our efforts\ninto searching for the Holy\nLand.	machine
 2074_180_28	6e407333b8609d8917195fc8166ef417d3c8d1bd	<font color=blue>Valka</font>: Captain. Separately,\nthere is something else I want\nyou to continue investigating.	machine
 2074_180_30	11d986e0096b3eac388b407eb651c6b2272d50d3	<font color=blue>Valka</font>: The search for the\nentity that brought down my\nship. I simply cannot let it go.	machine
 2074_180_31	e5f82730e82aec364644a9181bb89baf6b8baa54	<font color=blue>Coro</font>: But... we've already been\nover this so many times...	machine
 2074_180_32	f694211475b0fe92dfcda10de858654e41704291	<font color=blue>Valka</font>: In this sector of space,\nthings happen that defy all\ncommon sense.	machine
-2074_180_33	20bfef9115e534ac3c6874e0dfeb0372a11bfbdf	The dungeons beneath the\ncapital of Rubarika, Baschen's\nImperial Castle, the masked\nman, and the Holy Land of\nAsyl.	machine
+2074_180_33	20bfef9115e534ac3c6874e0dfeb0372a11bfbdf	The dungeons beneath the capital of\nRubarika, Baschen's Imperial Castle, the\nmasked man, and the Holy Land of\nAsyl.	machine
 2074_180_34	52591ac98b06912382f9ed4b5b806fb5deeec6d0	There are already this many\nthings that Administrator\nKoro's sensors cannot detect.	machine
 2074_180_35	68d002be83074edc14dda943391302e1b5e1961f	Just because we can't see\nanything now doesn't mean it\ndoesn't exist.	machine
 2074_180_36	fd6bc7d8b28e66952421f46e16583a0ff9033cc7	<font color=blue>Coro</font>: Ugh... w-well, that's true...	machine
@@ -473,14 +473,14 @@ message_id	ja_sha1	en	source
 2074_180_50	bf546f371fd1e4a1cd80c4c7ee3c2e055dfef5a1	...Wait, what?	machine
 2074_180_52	de3ecad088f6576b11f591888cb7fd05377de343	True. Those two are just...	machine
 2074_180_53	78ab8e79fe3dd57462045a5d4e66cce608fddc8b	It feels as if they've already\nreached perfection...	machine
-2074_180_54	b476b493d0e0bb8df9f31cf84698979c08199edc	What? What are you talking\nabout? It's incredibly annoying\nthat you're all looking at me\nwith those pitying eyes! What\nis it!	machine
+2074_180_54	b476b493d0e0bb8df9f31cf84698979c08199edc	What? What are you talking about? It's\nincredibly annoying that you're all\nlooking at me with those pitying eyes!\nWhat is it!	machine
 2074_180_55	c35a9a5a8384a348b7375b705d1b582ceed824d4	...Nothin' at all...	machine
 2074_180_56	6d46e17cff951b8cd4fd5498a805ca174c2375db	Anyway, while we search for\nAsyl,	machine
-2074_180_57	ad1f5dcb8fba532b0723443d17f08bcaaf4335cb	let's focus on what needs to\nbe done so we can be notified\nimmediately if the Baschen\nImperial Capital makes any\nstrange moves!	machine
+2074_180_57	ad1f5dcb8fba532b0723443d17f08bcaaf4335cb	let's focus on what needs to be done\nso we can be notified immediately if the\nBaschen Imperial Capital makes any\nstrange moves!	machine
 2074_200_01	684fc76713a02dc8b7f979814a8bf82b40a2b3b9	Wow, this is amazing! I can't\nbelieve we could travel to a\nplace like this in an instant!	machine
 2074_200_02	5c9f767aa3c8597f2e89145828ff427ac011eac0	Your first teleportation can be\nnerve-wracking. I remember\nbeing really anxious when I first\ndid it.	machine
-2074_200_03	af7cbe8337345f85b7b565576633c1b80cfea4ad	I guess it's a common thing in\nthe future where Tika is from.\nIf this kind of technology were\ncommon, carriages and ships\nwould just disappear.	machine
-2074_200_04	39f3ed83204501b53f4f36b44311230f650e55c3	Surprisingly, that is not the\ncase. While they are no longer\nthe mainstream of logistics,\ncarriages and seafaring ships\nstill exist.	machine
+2074_200_03	af7cbe8337345f85b7b565576633c1b80cfea4ad	I guess it's a common thing in the\nfuture where Tika is from. If this kind of\ntechnology were common, carriages\nand ships would just disappear.	machine
+2074_200_04	39f3ed83204501b53f4f36b44311230f650e55c3	Surprisingly, that is not the case. While\nthey are no longer the mainstream of\nlogistics, carriages and seafaring ships\nstill exist.	machine
 2074_200_05	73db7090f52564c2f2355e9409beba1aeacda012	I'd love to see it. A world that\nincredible...!	machine
 2074_200_06	ee9ee7a2d494902a6994f762fcf2fe70a54b0272	This is no time to be giddy.	machine
 2074_200_07	eff3467ccb08e9c35b5f90c58295ffc490eeeeaf	Let's assess the situation. I'll\nbring up the map now.	machine
@@ -491,17 +491,17 @@ message_id	ja_sha1	en	source
 2074_200_12	924c45a6b46849e978c7a64409959df717d3a087	Hmm, okay, this is the location\nof the communicator held by\nMista Henri.	machine
 2074_200_13	2ecc3947e8f1e433a9c6830d350a8642c26d3cb4	Big sister Valka is so much\ncuter when she's smiling. I\nwonder why she always talks\nlike that.	machine
 2074_200_14	a84e20419a66224d670f644146202633ea7ac3b5	I'm uneasy...	machine
-2074_200_15	bf42e628d9ef95ac7e1fe51021e753e2cdebf84c	Baschen's Conroy conquest\nforce is slowly heading our\nway, so we'll eventually\nencounter them even if we just\nstand here,	machine
-2074_200_16	c3a14876dfdbdcaf5c14dd202611a77531e49592	but considering the location of\nConroy Village, the amount of\ndamage to the village will likely\ndepend on where the battle\ntakes place.	machine
+2074_200_15	bf42e628d9ef95ac7e1fe51021e753e2cdebf84c	Baschen's Conroy conquest force is\nslowly heading our way, so we'll\neventually encounter them even if we\njust stand here,	machine
+2074_200_16	c3a14876dfdbdcaf5c14dd202611a77531e49592	but considering the location of Conroy\nVillage, the amount of damage to the\nvillage will likely depend on where the\nbattle takes place.	machine
 2074_200_17	85be8712792a1da55ab2ae9b4fd6ebdea4545d39	I see. If this dot represents\nus...	machine
 2074_200_18	e4e1fc074a717e1551422103e0282f08d09ca11f	Maybe here? This would\nensure Conroy doesn't take\nany damage at all.	machine
 2074_200_19	f5a562e5ba210cc0a85a9608baa2075b3fc734a3	I agree. Not only the village,\nbut I also don't want any\ncasualties among Baschen's\nconquest force,	machine
 2074_200_20	af2dac73ee53f27a6f41a8cee131ee321b355b9b	or Mista Henri's kin, who have\nlikely been summoned by the\nBeast Witch.	machine
-2074_200_21	2b4b0d7028eaf23c53c3a142a3f367a2ec86437b	If we fight here, we can force\nthe Conroy conquest force to\nretreat before Rubarika's\ndefense force in Conroy even\narrives, even if things get\nchaotic.	machine
+2074_200_21	2b4b0d7028eaf23c53c3a142a3f367a2ec86437b	If we fight here, we can force the\nConroy conquest force to retreat\nbefore Rubarika's defense force in\nConroy even arrives, even if things get\nchaotic.	machine
 2074_200_22	dbe79d9880e79149953c5e2272eb1985170f90c5	All right, let's go. Tika, Rekoro.	machine
 2074_200_23	9b20da62d2ba9461e6ebbb637fd88e7169b9d9c3	Yeah!	machine
 2074_200_24	c98142920645552057e1f8ee75565ae82ed66789	...I will do everything in my\npower to keep Tika safe.	machine
-2074_200_25	6154f0f9f309401b65c5e121ed99f7be5bec152e	Now, I'll activate my optical\ncamouflage. Even if you can't\nsee me, I'll be right by your\nside. Please, proceed with\nconfidence.	machine
+2074_200_25	6154f0f9f309401b65c5e121ed99f7be5bec152e	Now, I'll activate my optical camouflage.\nEven if you can't see me, I'll be right by\nyour side. Please, proceed with\nconfidence.	machine
 2074_200_26	5be8251290cc827e84a273c24a95ef716548c0e4	W-wow, she's actually invisible...\nThat's amazing, Valka!	machine
 2074_200_27	c0fde671619905d0b7fa8d4437fd2df54707cdab	...I-I told you, praising me isn't\ngoing to get you anything!	machine
 2074_200_28	4b31518a667c3f0c5ded60383e8fa5114a456e78	Big sister Valka!? You're\nturning a little red!	machine
@@ -518,11 +518,11 @@ message_id	ja_sha1	en	source
 2074_210_11	d0ce3325e3bb3c80cac7e1132d397525dc02954a	Rekoro & Valca: I'm not so sure\nabout that...	machine
 2074_210_12	2be4fbb436b9d62b85dc4cf66cdd0af6dc16a9e3	Couldn't he have handled that...\nI don't know, a bit better?	machine
 2074_210_13	692777cfe2c234c4c4919076f45535be80252f23	He's got spirit, and that's what\nmatters.	machine
-2074_210_14	507590d0517677014a962252e5fef3e3d5f2d053	What happened to his usual\nseasoned traveler vibe, or his\nknack for negotiation and\nmanipulation? Why is he acting\nlike that?	machine
+2074_210_14	507590d0517677014a962252e5fef3e3d5f2d053	What happened to his usual seasoned\ntraveler vibe, or his knack for\nnegotiation and manipulation? Why is\nhe acting like that?	machine
 2074_210_15	42c36f49be90b688b07922670ecc8e8b3e9acbbd	I imagine there's a big\ndifference in his mind between\nthe art of "making a lie seem\nreal" and simply "acting."	machine
 2074_210_16	90e72bfe7e5e39546a076acec3a547a7e00e178a	If Welch were here, she'd tease\nhim for his wooden acting for\nthe rest of his life... *Sigh*.	machine
 2074_210_17	45ef059155584e6526409db50aaec32604683e61	All units, halt!	machine
-2074_210_18	cecfb7c8cb15b93f9eea28508c2112be9f81e47e	I don't quite get what's going\non, but if they really are\nconnected to the Rakstar\nfamily or Ricardo Franz, we\ncan't let them go! Capture\nthem alive!	machine
+2074_210_18	cecfb7c8cb15b93f9eea28508c2112be9f81e47e	I don't quite get what's going on, but if\nthey really are connected to the\nRakstar family or Ricardo Franz, we\ncan't let them go! Capture them alive!	machine
 2074_210_19	c2f1dfe5ea810add6b202ea247fef9cf0c15b0ee	Baschen Soldier: Y-yes,\nma'am...!	machine
 2074_210_20	49975879fa17f5e580432ed66f7a5a76d3d34ec7	Beast Witch: Uh, anyway,\nattack!	machine
 2074_210_21	415bc79d88b4cccaee4f87ccde24370cb72f8d19	Waaaaagh! Come and get\nsome! Hyaaaaah!!	machine
@@ -546,7 +546,7 @@ message_id	ja_sha1	en	source
 2074_210_39	49b1e06148a6ff7bcfeacde41e2f3e0ce2680f9e	Good grief...	machine
 2074_230_01	17d34192c219fefe21716922b1b426992eadc624	I can't believe they retreated\nto Korurine Village...	machine
 2074_230_02	762d4b81a90772bd8282a7321c1bebb3999927bc	I wonder if the villagers who\ngot caught up in the fighting\nback then are okay...	machine
-2074_230_03	ab7ef5cfec74cb5c75e9a5831cbd1ac68adf9791	From what I've heard,\nunfortunately, there were a fair\nnumber of casualties in the\nbattle you were involved in\nhere.	machine
+2074_230_03	ab7ef5cfec74cb5c75e9a5831cbd1ac68adf9791	From what I've heard, unfortunately,\nthere were a fair number of casualties\nin the battle you were involved in here.	machine
 2074_230_04	045f46267759020931cf0eaf70e1a9a1f273e580	The survivors evacuated to the\nImperial Capital, and now only\nsoldiers remain.	machine
 2074_230_05	d9ff3cdb54f91f5128129b42cd78dc23766102a0	...I see.	machine
 2074_230_06	aa9e35d3b52ad54fc30a60b094f98f7494b0e306	Therefore, Karlyn's message is\nfor both of you to stop the\nunnecessary acting and just\nstay captured quietly.	machine
@@ -564,20 +564,20 @@ message_id	ja_sha1	en	source
 2074_230_18	c3f6e3f8a648b3a75c69849675d28f721243b90b	<font color=blue>Euwin</font> Will things be alright\nback in the Imperial Capital?	machine
 2074_230_19	d46e8b26e9b3b2295a329fe22c3ac316a2aacb43	If word gets out that Karlyn is\nleading a unit on her own, Givel\nwill be here in no time...	machine
 2074_230_20	ceebb640ec26d4409a07fee389658e7c1bf29db0	<font color=blue>Henri</font> Regarding that, it seems\nCommander-in-Chief Givel has\nheaded to the battlefield by\nthe sea.	machine
-2074_230_21	0089b657d0f70038804694a2a4b7278b2daf4ece	It appears that Rubarika's\n"Messenger of Daftes" has\ntaken direct command, and\nthey've begun fighting for\ncontrol of the waters where\nAsyl is expected to appear.	machine
+2074_230_21	0089b657d0f70038804694a2a4b7278b2daf4ece	It appears that Rubarika's "Messenger\nof Daftes" has taken direct command,\nand they've begun fighting for control\nof the waters where Asyl is expected\nto appear.	machine
 2074_230_22	a1ecca36585f3a6eb8dfe19e600ddcfd06a6fc95	<font color=blue>Euwin</font> ...So it's finally\nhappening.	machine
-2074_230_23	9b1fa7a800d189e3f956219037c27716780eddc1	<font color=blue>Tika</font> The messenger from\nRubarika... that's the person\nBig Brother Euwin mentioned\nback in the Royal Capital,\nright?	machine
+2074_230_23	9b1fa7a800d189e3f956219037c27716780eddc1	<font color=blue>Tika</font> The messenger from Rubarika...\nthat's the person Big Brother Euwin\nmentioned back in the Royal Capital,\nright?	machine
 2074_230_24	6f53b6828aaf7a7cfb6c200861728108378cfd02	The one who appointed General\nRicardo...	machine
 2074_230_25	d9a89de1f109bfc5fc5a5ba4309a946a559c8586	I wonder if they're scary, like\nthat Givel person.	machine
-2074_230_26	6bcc8b16059946896f8b7e416a5de5b18404f10b	<font color=blue>Euwin</font> I told you, they say\nGeneral Ricardo himself is the\npower of the emissary. Unlike\nGivel, I've hardly heard any\nrumors about them.	machine
+2074_230_26	6bcc8b16059946896f8b7e416a5de5b18404f10b	<font color=blue>Euwin</font> I told you, they say General\nRicardo himself is the power of the\nemissary. Unlike Givel, I've hardly heard\nany rumors about them.	machine
 2074_230_27	de0fa9acf9105c2dc85858eb11b0244c7332f374	All I know about Rubarika's\n"Emissary of Daftes" is that\ntheir name is <font color=yellow>Elaine</font>.	machine
 2074_230_28	a27752a854704bb2a27982cea6e0a345da0ba95d	<font color=blue>Tika</font> What?	machine
 2074_230_29	51e1de0db21e0e1f4baf91739692717a79d1fd9d	What's wrong?	machine
 2074_230_30	d858a55ade7bf9db8afb65cf931a0ccbe473d94a	O-oh, nothing. It's just that\nElaine is the same name as my\nmother's, so I was a little\nsurprised.	machine
 2074_230_31	3098dad424a719be08afd6a9a4136a2f5f564191	...I wonder if there's a\nconnection. After everything\nthat's happened, I'm starting to\nthink everything is a sign.	machine
-2074_230_32	e4d91f2f18d87fb32b54b3eccefdaaeabf925887	Maybe Tika's mother also\nended up in this era in some\nstrange way because of the\naccident Tika encountered in\nthe future.	machine
-2074_230_33	181a2ef5bd732c7d33382fa074d9dd1e5f8bdbf2	But my mom is just a regular\nhousewife. Even if she came to\nthe past, she couldn't spread\ntechnology like the "Emissary's\nLight Arrow."	machine
-2074_230_34	52568eca492e762bee462c704f1bcac197203886	And she's not close with\nGeneral Ricardo. My mom gets\nreally nervous around people\nlike that... so I don't think that's\nit.	machine
+2074_230_32	e4d91f2f18d87fb32b54b3eccefdaaeabf925887	Maybe Tika's mother also ended up in\nthis era in some strange way because\nof the accident Tika encountered in the\nfuture.	machine
+2074_230_33	181a2ef5bd732c7d33382fa074d9dd1e5f8bdbf2	But my mom is just a regular\nhousewife. Even if she came to the\npast, she couldn't spread technology\nlike the "Emissary's Light Arrow."	machine
+2074_230_34	52568eca492e762bee462c704f1bcac197203886	And she's not close with General\nRicardo. My mom gets really nervous\naround people like that... so I don't think\nthat's it.	machine
 2074_230_35	7a2137e5e58316edaba1241c1ebbf162847b17c7	Hahaha, when a child puts you\nin your place like that, there's\nno arguing.	machine
 2074_230_36	930849810fbb0d7522a68ee8bb92cd0bd154b5cc	But... she's such a kind mother.	machine
 2074_230_37	7ad3dff722dea5224044a40f0325df8cfd64774d	If she's safe, I don't want her\nto be in a place like this. I'm\nsure she'd be terrified.	machine
@@ -596,7 +596,7 @@ message_id	ja_sha1	en	source
 2074_230_50	ad6f92ae3e76cf0ffabd5c9d112369f9b91737f1	First, we must bring the Holy\nWar to an end. Let us move\nforward toward that goal\nwithout wavering.	machine
 2074_230_51	099cab8df05d4d90a52ae1fea42080657cf0bd66	And for now, let us patiently\nawait the appearance of this\n"Masked Man" you speak of.	machine
 2074_240_01	101520615fc9e5261c70c4f0574438537e9281f2	It's been three days already,\nand there's still no sign of that\nmasked man.	machine
-2074_240_02	31aacd101c893c1b0d5347c6770bb7dce9dee4d0	He's only appeared within\nRubarika's territory so far, so\nmaybe it'll take a bit longer for\nhim to show up in Baschen's\nterritory.	machine
+2074_240_02	31aacd101c893c1b0d5347c6770bb7dce9dee4d0	He's only appeared within Rubarika's\nterritory so far, so maybe it'll take a bit\nlonger for him to show up in Baschen's\nterritory.	machine
 2074_240_03	632ec345ecec55b715bbf50d16f237e2d8f0a3fd	...Hm?	machine
 2074_240_04	6fb35a6d86d748f896cb9b636f945e128e4f725e	Whoops. Mmm... alright.	machine
 2074_240_05	448bc5eeff527a049d13710ae780f323e1d329ba	<font color=blue>Karlyn</font> Go ahead.	machine
@@ -605,21 +605,21 @@ message_id	ja_sha1	en	source
 2074_240_08	890b93a98c3a6d64e9edb9a6597dc203689bc784	<font color=blue>Karlyn</font> Orders? May I see\nthem?	machine
 2074_240_09	049707c426b3721b1424009077bcb032996ec735	<font color=blue>Henri</font> Grrr...?	machine
 2074_240_10	a69c259b6fcc0a955d0f7a19744c274e63f80cf8	<font color=blue>Karlyn</font> ...A new unit is coming\nfrom the Imperial Capital?	machine
-2074_240_11	4cda63521813fee0b2db3c8d19ad1f0eafb7f46e	<font color=blue>Beast Witch</font> Yes. Apparently,\nit's to gain an advantage in the\nland battles now that Lord\nGivel has moved to command\nthe navy...	machine
+2074_240_11	4cda63521813fee0b2db3c8d19ad1f0eafb7f46e	<font color=blue>Beast Witch</font> Yes. Apparently, it's to\ngain an advantage in the land battles\nnow that Lord Givel has moved to\ncommand the navy...	machine
 2074_240_12	4b7c436dc9d9915c6fd46464da146bd04be90b32	<font color=blue>Karlyn</font> I see. When is this new\nunit expected to arrive here in\nKorurine?	machine
-2074_240_13	4f720d02700d88ff735d96e1f3c4b8a5f6886ea3	<font color=blue>Beast Witch</font> Well, the thing is,\nLord Givel's orders only stated\nthat they would appear when\nthe time is right. No march plan\nor anything of the sort was\nincluded.	machine
+2074_240_13	4f720d02700d88ff735d96e1f3c4b8a5f6886ea3	<font color=blue>Beast Witch</font> Well, the thing is, Lord\nGivel's orders only stated that they\nwould appear when the time is right. No\nmarch plan or anything of the sort was\nincluded.	machine
 2074_240_14	7456ca68d669923b36afb296cefde885c328da37	<font color=blue>Beast Witch</font> ...Um, Lady Karlyn.\nAre you sure it's alright not to\nnotify the Imperial Capital that\nyou've returned?	machine
-2074_240_15	46fe505b1bb4477de57e4bb8db4af9e94ba1e29b	<font color=blue>Karlyn</font> I will not bother Lord\nGivel with trivial reports while\nhe is occupied fighting\nRubarika's "emissaries." I shall\nreport when it becomes\nnecessary.	machine
+2074_240_15	46fe505b1bb4477de57e4bb8db4af9e94ba1e29b	<font color=blue>Karlyn</font> I will not bother Lord Givel with\ntrivial reports while he is occupied\nfighting Rubarika's "emissaries." I shall\nreport when it becomes necessary.	machine
 2074_240_16	4863c17120dfbae0a8c3fb578b7ce833a1c0fd5a	Just keep me informed of\nevery detail regarding this new\nunit... You may leave.	machine
 2074_240_17	4bffc08d7375e92f48fa4399ba0506e99ee324af	<font color=blue>Beast Witch</font> Y... Yes, excuse\nme.	machine
 2074_240_18	b5fababca1221ea55913d3ce978ec2883f706e04	<font color=blue>Karlyn</font> A new unit from the\nImperial Capital... I wonder if\nTika's plan was too naive after\nall.	machine
 2074_240_19	130cbbabd6fcab0a27be8b339bef7e1287e11a85	<font color=blue>Henri</font> Grrr... If worst comes to\nworst, we still have the\nteleportation containment.	machine
-2074_240_20	5697506e21bebc80cae6f91d5351382a7f7eb350	Neither Valka nor I have\nreceived any special\ncommunication from the\ncaptains. Waiting until the last\npossible moment shouldn't be a\nproblem...	machine
+2074_240_20	5697506e21bebc80cae6f91d5351382a7f7eb350	Neither Valka nor I have received any\nspecial communication from the\ncaptains. Waiting until the last possible\nmoment shouldn't be a problem...	machine
 2074_240_21	825a43f5654b2ca26640e95d7a87d7a6c52b5fb0	Hm.	machine
-2074_240_22	a65449f8f2c90512625956eea5a071f840e98129	Beast Witch: E-excuse me! I've\nreceived a report from the\nguards on perimeter watch\nthat there are intruders in\nKorurine!	machine
+2074_240_22	a65449f8f2c90512625956eea5a071f840e98129	Beast Witch: E-excuse me! I've received\na report from the guards on perimeter\nwatch that there are intruders in\nKorurine!	machine
 2074_240_24	4fb913fe4e520263376373bab163af8975f31a25	Grrr...!	machine
 2074_240_25	99083315bc8570789bfba7dff6fb26e0c053479d	Beast Witch: Also, I am terribly\nsorry! We've currently lost\nsight of the intruders! T-that\nshouldn't even be possible...!	machine
-2074_240_26	04921ec7df177b339ab907beaf8e9dee4f19ac2b	Beast Witch: A-anyway, there's\na possibility that Rubarika\nsoldiers have sneaked into the\nvillage of Korurine! I will handle\nLady Karlyn's escort...	machine
+2074_240_26	04921ec7df177b339ab907beaf8e9dee4f19ac2b	Beast Witch: A-anyway, there's a\npossibility that Rubarika soldiers have\nsneaked into the village of Korurine! I\nwill handle Lady Karlyn's escort...	machine
 2074_240_27	619b78228b7584104e305f1fe18527a0c86d7aec	...Sigh.	machine
 2074_240_28	f82351a419fec95883d0d35aa506572fc4c0feb5	Beast Witch: Lady Karlyn!?	machine
 2074_240_29	3c73669a3038ebf1dbbf3af1b1859647fa162cca	I'll be fine. I already have a\nperfectly capable guard here,\nso you go help search for that\nintruder.	machine
@@ -629,7 +629,7 @@ message_id	ja_sha1	en	source
 2074_240_33	ea9ea883bf628c0178428a2e9a46da99cec652ec	...Speak of the devil.	machine
 2074_240_34	5021e81e76768112cea6c56812c608a7f34d7df4	Well then, shall we begin\npreparations for withdrawal?	machine
 2074_250_02	7df542bf26c64c030f1092ba3d04875474a56d72	He... he actually came...	machine
-2074_250_03	b0c19351473948a76d109c56663753236bf9a0c3	Masked Man: You... you little\nbrat, Rakstar! You've got some\nnerve pulling a stunt like that!\nThanks to you lot, everything's\nbeen thrown into chaos!	machine
+2074_250_03	b0c19351473948a76d109c56663753236bf9a0c3	Masked Man: You... you little brat,\nRakstar! You've got some nerve pulling\na stunt like that! Thanks to you lot,\neverything's been thrown into chaos!	machine
 2074_250_04	3c719acddf3330a7041117414631c01375422e21	That was the plan.	machine
 2074_250_05	074483a254bd0af209c3803704ffb401953e83b6	It was my idea! Big brother\nEuwin didn't do anything wrong!	machine
 2074_250_06	6642889c0109adcb3a2814184b4dcb8ae2e9e632	Masked Man: ...!	machine
@@ -654,7 +654,7 @@ message_id	ja_sha1	en	source
 2074_250_25	7b29c354ee722dd133d9c22794ec185e20002390	There's no way you've ever\nmet Henri...	machine
 2074_250_26	f4d1958d3340b9669c532a4f634250e834ff2191	Masked Man: I told you we'll\ntalk later!	machine
 2074_250_27	1cbbb54b4cbc2a823e1bc01f22a85cd5c1a8fc19	Masked Man: Listen! Everything\nI have is borrowed!!	machine
-2074_250_28	3a863a1571332919e15f6fcebce8c8c9e738d457	Masked Man: The mechanism\nof the Witch's Collar, the\nSymbology inside―I don't\nunderstand a single thing\nabout it! It's all borrowed!	machine
+2074_250_28	3a863a1571332919e15f6fcebce8c8c9e738d457	Masked Man: The mechanism of the\nWitch's Collar, the Symbology inside―I\ndon't understand a single thing about it!\nIt's all borrowed!	machine
 2074_250_29	de540c9e494bd4c674c175031addb65c8202248d	Masked Man: Damn it, I'm not\nletting myself get tripped up\nhere!	machine
 2074_250_30	b3e768030040e86fb014eba3a15e50b1d6bfafdb	Masked Man: Hey, you\nlistening, Coro! You piece of\njunk AI! Get everyone aboard\nthe ship, now!	machine
 2074_250_31	1ae12c627812369515fd8294945a71518521c288	"Huh!? H-how do you know my\nname...!?"	machine
@@ -671,11 +671,11 @@ message_id	ja_sha1	en	source
 2074_250_42	fc7dec5f6c16f856c6bbdd42b5a5328633fea8f8	Who on earth is that... is she\nanother "Beast of Baschen"\ntoo!?	machine
 2074_250_43	abbe09848f94f6ede8a0106dfbb8506a0946d45d	Masked Man: Don't be stupid.\nThere's no way a "Beast" like\nthat exists... We're leaving!	machine
 2074_250_44	d0266993ffce130079272ddd5c92354a296e6d59	What!?	machine
-2074_250_45	d4ef2b53ed426b0bfe58b6db52355cdcf9d5b7fa	Masked Man: If you mess\naround with her, you'll end up\nwith more than just a few\nscratches! First, we regroup\nwith that witch! Until then,\nprotect Tika with your life!	machine
+2074_250_45	d4ef2b53ed426b0bfe58b6db52355cdcf9d5b7fa	Masked Man: If you mess around with\nher, you'll end up with more than just a\nfew scratches! First, we regroup with\nthat witch! Until then, protect Tika with\nyour life!	machine
 2074_260_01	51ff3ad389edb5374dbcfb64057c8f2b182d6c03	Tika! You're safe!	machine
 2074_260_02	157dfe291039280b9f8e9222a5c5e5f41218956c	Oh, good! You're safe too,\nKarlyn! I'm so glad!	machine
 2074_260_03	4d975cefa69995013557c92af59d860d53ea9cac	Euwin! Valka! Rekoro! I see\nyou've successfully linked up\nwith the masked man!	machine
-2074_260_04	3332c356762ce79b4971780238d848dc360b60bc	The village is in terrible shape.\nThose six-winged creatures\nappeared out of nowhere and\nstarted rampaging; we can't\nget them under control!	machine
+2074_260_04	3332c356762ce79b4971780238d848dc360b60bc	The village is in terrible shape. Those\nsix-winged creatures appeared out of\nnowhere and started rampaging; we\ncan't get them under control!	machine
 2074_260_05	96e4dcec2409a2d732ee334da36462457fdc8fa0	We saw them! Those are the\nforms the Beast Witches took\nwhen they transformed!	machine
 2074_260_06	fa887249d5366aa7c4aa17875d15551ebd1701e4	W-what did you say!?	machine
 2074_260_07	25205e494d814af6d01aedea3a6ad0dd6db4364a	We saw the witches transform!	machine
@@ -696,13 +696,13 @@ message_id	ja_sha1	en	source
 2074_260_22	fcba9dc97d2275597a1ca3bce99bbd689193e2c5	This Givel... to treat not only\nmy kin, but the people of this\nland as mere pawns...	machine
 2074_260_23	4ea47fe3af74fbcc9f12fd3e14f3b1495f63877c	He seems to be a far more\ndangerous individual than the\nrumors suggested.	machine
 2074_260_24	d6333c33235dd2d5b43af345b9f1d431b84c6456	That doesn't matter right now!\nHow are we going to ensure\nTika's safety!	machine
-2074_260_25	672a9f198aadfbc12e5058525d606b195df82552	Masked Man: ...You're Rekoro,\nright? I've got some bad news.\nIf you want them teleported\nback, your only choice is to\nwipe out those witches who've\nturned into monsters.	machine
+2074_260_25	672a9f198aadfbc12e5058525d606b195df82552	Masked Man: ...You're Rekoro, right?\nI've got some bad news. If you want\nthem teleported back, your only choice\nis to wipe out those witches who've\nturned into monsters.	machine
 2074_260_26	63150e8ef1c59d0eebf58f78442bda78e4b9245a	What...!	machine
-2074_260_27	2b99a7ffcb8191220774d92865627c13fd396a53	Masked Man: Apparently, the\nGem power they're emitting is\nwarping space. The only way to\nstop it is to take out the\nsource.	machine
+2074_260_27	2b99a7ffcb8191220774d92865627c13fd396a53	Masked Man: Apparently, the Gem\npower they're emitting is warping\nspace. The only way to stop it is to\ntake out the source.	machine
 2074_260_28	9a012251c453ded9cfaa2ddd879a7f18c828fd91	Isn't there any way to save\nthem!?	machine
 2074_260_29	190fe89ce538c31f636cc737239d9f3d104f8748	Masked Man: Once they're like\nthat, there's nothing left to do\nbut kill 'em.	machine
 2074_260_30	9a00dca902fea3b5240f8d8ab5286f9c2cc43b81	No...!	machine
-2074_260_31	d2058838d145b2d55c8154e57e23cbd6f07be47d	How much does Mista know\nabout the witches'\ntransformation? We cannot\nfight effectively unless that\ninformation is shared.	machine
+2074_260_31	d2058838d145b2d55c8154e57e23cbd6f07be47d	How much does Mista know about the\nwitches' transformation? We cannot\nfight effectively unless that information\nis shared.	machine
 2074_260_32	93f61944bb03988b72c3c313943cd873157b3357	Masked Man: ...They're called\n"Exorcisers," supposedly.	machine
 2074_260_33	9b44718b6ad64772f976e054f47504f857e5b36f	"Exorcisers"?	machine
 2074_260_34	0ad7cacf46b39ec288a0f2a9eb24a9c688b102a3	Masked Man: From what I've\nheard, that's Givel's true\nobjective for intervening in the\nHoly War.	machine
@@ -727,11 +727,11 @@ message_id	ja_sha1	en	source
 2074_270_05	9d04d146b5b8439b06276cb1cffe89fc7b3bb0e2	...Save that anger for a little\nlonger.	machine
 2074_270_06	5d9c93342847bbf5a54b29d85986c49d570fbf75	The ladder will descend soon.\nWhen it does, you'll be forced\nto face him whether you like it\nor not.	machine
 2074_270_07	3485066cc7b85efecd0fabd2414e950fe861b85e	What!? The ladder is\ndescending!?	machine
-2074_270_08	fce7fb4997391d9f2aa04b20e89e3a9a39e987b3	Yeah. The real Holy War is\nabout to begin. Before that,\nwe're going to storm the Holy\nLand Asyl before Rubarika or\nBaschen can.	machine
+2074_270_08	fce7fb4997391d9f2aa04b20e89e3a9a39e987b3	Yeah. The real Holy War is about to\nbegin. Before that, we're going to storm\nthe Holy Land Asyl before Rubarika or\nBaschen can.	machine
 2074_270_09	200f672ba5c65129a065989614a3cb466abf40bd	B-but how is that even\npossible...?	machine
 2074_270_10	138eab61a3f68c74c0b58f1bbf5d72ec13cc7ead	Asyl surfaces from the sea\nbefore the ladder even\ndescends.	machine
 2074_270_11	d9aabbeaaa83ada97516f6b90aa4faa844ca2ee7	What? I thought the ladder\nwas what summoned Asyl.	machine
-2074_270_12	a7d5cd5aa07af4e25e286091f2e651dbbcf78ee7	That's not entirely wrong. But\nthe folks from Rubarika and\nBaschen just rely on\nunscientific observations and\nhearsay regarding the causality\nof it all.	machine
+2074_270_12	a7d5cd5aa07af4e25e286091f2e651dbbcf78ee7	That's not entirely wrong. But the folks\nfrom Rubarika and Baschen just rely on\nunscientific observations and hearsay\nregarding the causality of it all.	machine
 2074_270_13	9f5d7ae1bb3b600599f1d44910888cd3ea84c353	Apparently, once Asyl surfaces,\nit and the ladder exist in a\nstate of mutual resonance.	machine
 2074_270_14	3172ef687383d575d5fc7036e53bd8561014f119	Either way, the brief window of\ntime that Asyl remains above\nthe sea...	machine
 2074_270_15	acb0656e35f6d3a34e42d17131e93eea2d3831d9	That is the time we have to\nstop the Holy War.	machine
@@ -750,7 +750,7 @@ message_id	ja_sha1	en	source
 2075_300_12	85cda05015f7e9abfb32089e289a30f53190b229	But that is a separate matter\nentirely.	machine
 2075_300_13	a41cdf7603ef6c6c5924ade455e928846e485213	Look, Tika is terrified.	machine
 2075_300_14	6e46ff8b6e9fb0b67fe8fb7d497e268828f203ab	Exactly! Exactly!	machine
-2075_300_15	eb2cce46900bec9cd39a45cc501ece0c6e201177	And while I agreed to the warp\ntransport due to the\nemergency, normally we\nwouldn't allow someone like you\non the ship...	machine
+2075_300_15	eb2cce46900bec9cd39a45cc501ece0c6e201177	And while I agreed to the warp\ntransport due to the emergency,\nnormally we wouldn't allow someone like\nyou on the ship...	machine
 2075_300_16	16ad37c61cce855fb540a0b3ef4a34fb0699458d	What, you're saying I'm violating\nGalactic Federation military\nregulations and the Uncharted\nPlanet Protection Treaty?	machine
 2075_300_17	7024cb27040ed626631260d6d74c9deb54bf7c90	You lot never change, always\nclinging to the same old lines. I\ncouldn't care less about your\nrules.	machine
 2075_300_18	9cad79fd2f08021d4c544e9a6026e3020e4b64c4	Huh!?	machine
@@ -778,7 +778,7 @@ message_id	ja_sha1	en	source
 2075_300_42	dff0a03e22820384159a4e2f82dcc2a946201721	...To think we spent hundreds\nof years... for something like\nthis...	machine
 2075_300_43	701afabfa4650c2b915ea8ca69f1b9477bb1a3b3	...The movements of both\nnavies have shifted... The time\nfor the final battle draws near.	machine
 2075_300_44	2a8c2237ab4e11619a1baa832dd423bfd7b83aff	If we go there... we'll find the\ntruth.	machine
-2075_300_45	f9ce31854c009a9e92d1b5699fc7cb63f6be34d9	Exactly. The Moonshadow\nLadder will descend soon. The\noffensives from Rubarika and\nBaschen will likely reach their\npeak.	machine
+2075_300_45	f9ce31854c009a9e92d1b5699fc7cb63f6be34d9	Exactly. The Moonshadow Ladder will\ndescend soon. The offensives from\nRubarika and Baschen will likely reach\ntheir peak.	machine
 2075_300_46	418b61986129787de498669d41652ca2d00a4289	But there should still be a little\ntime before either army lands\non Asyl.	machine
 2075_300_47	29221c33a039d3dfff01a92660be08953c3f4689	Hey, Ewin Laxter. You haven't\nforgotten what you said, have\nyou?	machine
 2075_300_48	93cf35be7c895a4ed6ed5eed549bd76c96c139da	I'll do it!	machine

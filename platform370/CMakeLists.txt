@@ -25,5 +25,5 @@ file(GLOB SOA_PLATFORM370_SOURCES CONFIGURE_DEPENDS ${SOA_PLATFORM370_DIR}/src/*
 list(SORT SOA_PLATFORM370_SOURCES)
 add_library(soaplatform370 STATIC ${SOA_PLATFORM370_SOURCES})
 target_include_directories(soaplatform370 PUBLIC ${SOA_PLATFORM370_DIR}/include PRIVATE ${SOA_PLATFORM370_DIR}/src)
-target_link_libraries(soaplatform370 PUBLIC soaruntime_iface)
+target_link_libraries(soaplatform370 PUBLIC soaruntime_iface soa_text)
 target_link_libraries(soaplatform370 PRIVATE soa_guest_code)

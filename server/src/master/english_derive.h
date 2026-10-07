@@ -7,6 +7,8 @@
 // server (no Python) builds the same tables. Our own rows (machine / human / reviewed, already
 // finished and checked by tools/english_text.py) are merged on top with the same precedence:
 //   human / reviewed > official (by id, then E3) > memory (exact) / template > machine > Japanese.
+// "By id" and the exact memory also take a Japanese text that differs only in white space
+// (english.md 7.9: id-ws, memory-ws).
 // Port code, not guest behaviour; every rule is (a) Global's text or (d) the derivation's choice.
 #include <cstdint>
 #include <map>
@@ -29,6 +31,9 @@ bool load_advances(const std::vector<uint8_t>& fpk_plain, Advances& out, std::st
 // (d) px per story line the English is re-broken to: tools/english_text.py STORY_BUDGET (the same
 // value; tests/test_english_derive.py checks).
 constexpr int kStoryBudget = 480;
+// E13: the message window's lines (english_text.py STORY_LINES): a story line over them is broken at
+// story_budget(n) for the fewest n lines that hold it, the client scaling its font (english.md 7.13).
+constexpr int kStoryLines = 4;
 
 // One story file's lines, in file order: (message_id, text_value with real newlines).
 struct StoryFile {
@@ -74,6 +79,9 @@ std::string nfkc(const std::string& s);
 std::string fold(const Advances& f, const std::string& s);
 std::string rebreak(const Advances& f, const std::string& s, int budget, bool player_px);
 std::string fix_percent(const std::string& en, const std::string& ja);
+// The white-space-insensitive key of the rules id-ws and memory-ws (english_core.ws_key; a
+// master-encoded "\n" counts as a line break): the text without tab, newline, space, U+00A0, U+3000.
+std::string ws_key(const std::string& s);
 // E3: Global's tokens rewritten; false when the row can't be (why in *why).
 bool rewrite_tokens(const std::string& en, const std::string& ja, std::string* out, std::string* why);
 

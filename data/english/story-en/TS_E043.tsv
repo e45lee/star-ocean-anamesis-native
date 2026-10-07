@@ -3,12 +3,12 @@ E043_010_01	e172eea85d5a3ea16362dd2530afba901be60daf	Investigating mysterious ru
 E043_010_02	3864eb254fdde067d6c5556260139317d3cfb0ac	Looks like there'll be plenty of\nstrong enemies too. This\nshould be a fight worth having!	machine
 E043_010_03	c7d3a0ad081bac2bd3ba066766f856c6766db946	T'nique... was it? Let's have a\nman's duel to see who can\ntake down more enemies!	machine
 E043_010_04	979951001ef53628f973eaa6b86b95c38f6fc58e	A... man's duel...?	machine
-E043_010_05	ee82310744f3c395e016830b95f2895c2d453f00	You don't even know what a\nman's duel is? A man's duel is\na serious contest to decide\nwho is a man among men―a\ntrue man!	machine
+E043_010_05	ee82310744f3c395e016830b95f2895c2d453f00	You don't even know what a man's duel\nis? A man's duel is a serious contest to\ndecide who is a man among men―a\ntrue man!	machine
 E043_010_06	ff37f0d5697a32dae681de3768731552962796a1	A man among men... now that's\na challenge that gets me fired\nup!!	machine
 E043_010_07	f5f362711c60b443eddaba48c60e6afcb2575513	Right?! Back when I was in\nSurferio, as the captain, I\nspent every single day in man's\nduels with my rival, Lucio!	machine
 E043_010_08	ecc55e7d08e1fb8c15f3a8b34ecdeb51d4d91ff0	The boys certainly have a lot\nof energy. What kind of\ncontests did you have?	machine
 E043_010_09	4e627ee88b43ead0e4938b5cd8dcb198d1a12776	Oh, you're curious too, sis?\nLet's see, for example...	machine
-E043_010_10	d3320ee0db88336ef3ae1ea012b08c4a8c97ec13	Who could run around the\nvillage the fastest, or who\ncould hold their breath the\nlongest with their face in the\nwater...	machine
+E043_010_10	d3320ee0db88336ef3ae1ea012b08c4a8c97ec13	Who could run around the village the\nfastest, or who could hold their breath\nthe longest with their face in the\nwater...	machine
 E043_010_11	32315f3689a7593926184067f19faed3cda517c6	Oh, so that's the kind of\ncontest it is...	machine
 E043_010_13	324e7aa44fd083d86727772579227a2e22f9275d	(Huh, why did everyone\nsuddenly look so\nuninterested?!)	machine
 E043_010_14	8cadec7f7e64988e868a46479fde73bc56678de6	Uh, not that kind of contest...\nOh, I know!	machine
@@ -18,11 +18,11 @@ E043_010_17	395618947ab937e2485b80c84df5d2e47fca76ff	(Yes! Mera's hooked!)	machi
 E043_010_18	f21553e3c591c02a827ac53fda9850a81de67a30	And did you win that contest,\nRoger?	machine
 E043_010_19	dc33f8925714cbe87a4905398a64943e3b534eae	You bet I did!	machine
 E043_010_20	9351f457d86af422bbf5deddec2d2ffee0072dc9	(Oh, right!)	machine
-E043_010_21	64a2e3310141f87721ee58c4f433b17a71a065b2	When I sneaked into the\nhideout, I messed up and\nended up saving Fayt and Cliff,\nwho had been captured by the\nbandits. That's how we all met!	machine
+E043_010_21	64a2e3310141f87721ee58c4f433b17a71a065b2	When I sneaked into the hideout, I\nmessed up and ended up saving Fayt\nand Cliff, who had been captured by\nthe bandits. That's how we all met!	machine
 E043_010_22	1bea9e4c0d1128a4218743f3f13a905c1efdab87	Wait, so you're saying Roger\nbeat the bandits that Fayt and\nthe others lost to!?	machine
 E043_010_23	10d7dc1e8004bf795ab2d024c2e77f68a0c10931	Of course! Those two are\nsurprisingly clueless, so they'd\nbe totally lost without me.	machine
 E043_010_24	4f17e120a69c8e30f0c86b33c819e195d3722e28	Plus, those bandits were\nnothing but a nuisance to the\npeople in the nearby towns, so\nI gave 'em a good lesson!	machine
-E043_010_25	31a039bf0955291c719d188be3f79186126cbd7b	"The young chief of the\nMenodix, who refines himself\nthrough masculine\ncompetition"... Hehe, this is\nshaping up to be a great\narticle.	machine
+E043_010_25	31a039bf0955291c719d188be3f79186126cbd7b	"The young chief of the Menodix, who\nrefines himself through masculine\ncompetition"... Hehe, this is shaping up\nto be a great article.	machine
 E043_010_26	15dd79c1be9e78533f7c93d7b7ea8bed109f907e	Hehe. This is just normal stuff.\nIt's hardly worth writing an\narticle about.	machine
 E043_010_27	9e97b8de0a5743e9da1068415572e9e959acc853	Look, I'll keep protecting you\nfrom here on out, so just stay\nclose!	machine
 E043_010_28	4c136f5a08ddd58ac225e01e736e9f66bbc9d19d	(Oh, come to think of it, didn't\nthey say memories get\nreplayed in these ruins...?)	machine
@@ -64,7 +64,7 @@ E043_020_02	8950a573183f481d002d963133b6f8c26a55c841	Right? As the leader, I can
 E043_020_03	fcd13bdbb59f0d04b896a9483857261ba3016137	Did you have a rival you didn't\nwant to lose to, T'nique?	machine
 E043_020_04	1d6d44598e233106e61fa4e3acee122dc7b71357	I don't have one specific rival\nlike Roger does, but no matter\nwho I face in the Tatroi arena, I\nrefuse to lose!	machine
 E043_020_05	001fb92121b7d6511d8942e2a0e988582e3ba457	I'm still trailing behind Lati, so\nI'm definitely going to win this\ntime, thanks to the opportunity\nEve gave me!	machine
-E043_020_07	30589e931b2d995afa33329afeac202b06dc316e	"The legendary Lycanthrope\nburning for revenge." That\nsounds like another great\narticle. I'll set up an interview\nright away, T'nique.	machine
+E043_020_07	30589e931b2d995afa33329afeac202b06dc316e	"The legendary Lycanthrope burning for\nrevenge." That sounds like another\ngreat article. I'll set up an interview\nright away, T'nique.	machine
 E043_020_08	57d6e048d46e09e0311ce26b6d14e2acb0615f4e	Huh, an interview with me?! I'm\nnot sure if I can do this well...	machine
 E043_020_09	c864df1822b2371c1c75324044220a60eaa43a10	No need to be nervous. Just\nanswer honestly. For example,\nT'nique, why did you start\nseeking strength?	machine
 E043_020_10	bd586cad32f0d6e9cf779490f86d06f435230888	Why I seek strength... huh.\nHmm, I can't really think of a\nreason...	machine
@@ -82,14 +82,14 @@ E043_020_21	a42a4092c8443ec25e2aa51dce78689f2c587ee6	Is this T'nique's memory!?\
 E043_020_22	c6b289c2ecd84a6f27310484a1467dd6332473ea	No, this is... uh...	machine
 E043_020_23	4db465583d14efd212e81c42238ddf9b33015257	This looks like it could be a\ngreat story. I want to hear\nmore. So, what was the result?	machine
 E043_020_24	03356fd83d83c2060ee3c81612c8f00574a74698	Wa-wait a minute, ssu! I don't\nremember ever making a\npromise like that!!	machine
-E043_020_25	e5a532732661d374ce8c4e0c58fa278f8be8205c	Eh? Then is this something\nthat's going to happen? I've\nheard it's possible to see\nevents from a future that\nhasn't happened yet.	machine
-E043_020_26	b83d3abf142e355ae171e9773ac37acec9b0947d	But Lati-san has already\nreturned to her own time, so\nthere's no way she could be\nhere at the Tatroi Arena with\nme!	machine
+E043_020_25	e5a532732661d374ce8c4e0c58fa278f8be8205c	Eh? Then is this something that's going\nto happen? I've heard it's possible to\nsee events from a future that hasn't\nhappened yet.	machine
+E043_020_26	b83d3abf142e355ae171e9773ac37acec9b0947d	But Lati-san has already returned to\nher own time, so there's no way she\ncould be here at the Tatroi Arena with\nme!	machine
 E043_020_27	032dfaf57d2d5e42f6713643b82a80daa61891fb	It's a fake T'nique!	machine
 E043_020_28	59726467fa3a0d182725bc5314912fe018e71db0	Maybe you just forgot?	machine
 E043_020_29	f401194259377c7228e81066c1c34c6a3196cef8	Could it be another world?	machine
 E043_020_30	a2d8fba2f8702936ab634a9b14946614e3ae3458	What, a fake me?!	machine
 E043_020_31	ffbbcea787e9940de43f3e853fe550a10cbf08fc	True, T'nique is quite famous\nat the arena, so it wouldn't be\nsurprising if an impostor\nappeared.	machine
-E043_020_33	2d142173b997bb9d3e6934d8cd6c1127b491d00e	Exactly! Lati is on friendly\nterms with the kings of various\nnations, so someone could\npretend to be one of Lati's\ncompanions to get close to\nroyalty and plot an\nassassination...!	machine
+E043_020_33	2d142173b997bb9d3e6934d8cd6c1127b491d00e	Exactly! Lati is on friendly terms with\nthe kings of various nations, so\nsomeone could pretend to be one of\nLati's companions to get close to\nroyalty and plot an assassination...!	machine
 E043_020_34	135300420eb587b008293466202c19a6020bbc76	Whaaaat! That's terrifying!!	machine
 E043_020_35	43165d16476d4e9d2e3a944b6e703d8dc5bf85a9	That's not all! The plan is to\npin all the assassination\ncharges on T'nique and then\nvanish into thin air!	machine
 E043_020_36	d2e66c065b2d201524b72c4985e315b15d4bc5fe	Oh, Lati-san... Don't be fooled!\nThat person is a fake!!	machine
@@ -102,10 +102,10 @@ E043_020_43	b05552bc5c43f0071e501ac61a590cd94388dbc4	...A-anyway, I don't know w
 E043_020_44	494f6e4fdcec5ee3c4c4caea83e0df0bc2fb90c8	Y-yeah. I still have my doubts,\nthough...	machine
 E043_020_45	9faabb6de7de112a4f33647cde6fa1c4ecda74f1	Even I would remember such\nan important promise!	machine
 E043_020_47	bbd7fb08a6cbf4512f1b3ade962f4e7123d3f93b	P-please don't look at me like\nthat. I'm telling the truth!	machine
-E043_020_48	b429525d2a77e39ee05aadce37059f6f3e4cc568	A kid that young traveled all\nthe way to the arena just to\nmeet T'nique, and you don't\nremember it? That's\ndisappointing.	machine
-E043_020_49	b7874fbbeee8a03bd1a78ce4a1f70caeebbfb77c	The design of her clothes is a\nbit different from the people\naround here, so she might have\ncome from quite far away. It\nmust have been such a\nstruggle...	machine
+E043_020_48	b429525d2a77e39ee05aadce37059f6f3e4cc568	A kid that young traveled all the way to\nthe arena just to meet T'nique, and you\ndon't remember it? That's\ndisappointing.	machine
+E043_020_49	b7874fbbeee8a03bd1a78ce4a1f70caeebbfb77c	The design of her clothes is a bit\ndifferent from the people around here,\nso she might have come from quite far\naway. It must have been such a\nstruggle...	machine
 E043_020_51	e6af7511930b889dd82ed6f0e46e397cc77bc476	I'm being framed! Please\nbelieve me!!	machine
-E043_020_52	291e8c2a6f98c743aeb7cd958ba53fd43be8aa7d	Now, jokes aside, I don't know\nwhat this T'nique actually is,\nbut it seems we have no\nchoice but to take things as\nthey appear.	machine
+E043_020_52	291e8c2a6f98c743aeb7cd958ba53fd43be8aa7d	Now, jokes aside, I don't know what this\nT'nique actually is, but it seems we\nhave no choice but to take things as\nthey appear.	machine
 E043_020_53	84c5ced49b8681e1114583ef9c9f583ab69d0d84	Jokes?! You're all so mean...	machine
 E043_020_54	1f28f2e2a7243b1d9d810245dac26865dd7adf83	Another world, you say?	machine
 E043_020_55	97b6809055744b0d54f1f4bcf028b80fa443484d	...Right, Erys was summoned\nfrom another world that Ioshua\nand the others didn't know\nabout.	machine
@@ -115,7 +115,7 @@ E043_020_59	9bc42baacfda6cd4f8da2c746a8aa348e2105682	Y-yeah. It's a strange feel
 E043_020_60	9108b8c81b452f2bc2de39ed06ac9060a72f5b1b	By the way, what's this "strong\ncurse" that boy has? He looks\nperfectly fine at a glance.	machine
 E043_020_61	fcfab7ba566e74f8dc292a85cc13477fb9dd9120	That's... the Lycanthrope's\ncurse.	machine
 E043_020_63	067826d2727837a11581ff1d9121f6c22abfc7ed	In Roak, it's said that\nLycanthropes transform into\nbeasts because their\nancestors were cursed.	machine
-E043_020_64	bcb52743c249513d27becc743f136695b020f823	Normally, you can't tell\nsomeone's a Lycanthrope when\nthey're in human form, but\nmaybe we just clicked. I knew\nthe moment I saw him.	machine
+E043_020_64	bcb52743c249513d27becc743f136695b020f823	Normally, you can't tell someone's a\nLycanthrope when they're in human\nform, but maybe we just clicked. I knew\nthe moment I saw him.	machine
 E043_020_65	e0ff0ef5d147bc34d0b2b27d0be9048b1cd056fb	He looks like he's suffering\nterribly because of that curse...	machine
 E043_020_66	0799c8bdca57197a76bdf7eb47e938deaf52fe63	...Because of the curse,\nLycanthropes are often\nshunned by other races.	machine
 E043_020_67	6271f787cb3f3a16e5e5892aa12478a2cbe0a72f	That's why I've heard that\nmany Lycanthropes live their\nlives hiding it. Some even wear\nfake tails...	machine
@@ -123,7 +123,7 @@ E043_020_68	c22954ac7941dc725d3b32c6c0f6f0f131975560	But since they transform ju
 E043_020_69	d1f577a4e12ed2207794b1c7aa0e427b953c7330	What do you mean, "shunned"?!\nAnd "fake tails"?! Your race is\njust part of your individuality!	machine
 E043_020_70	e80a234009e293f8277cea7235429f1f9a12d92d	Don't act like that's just how\nthings are, T'nique!! Don't you\nthink that's crazy!	machine
 E043_020_71	8558db13ed7ca318cafd9d3d0477e28e9446935d	We Menodix are good with our\nhands and make all sorts of\ncrafts. Then the March Rabbit\nsell them in town.	machine
-E043_020_72	0e17e967b3b4e1aedd8673460d8e12a971118b97	Besides that, the Lum and\nDragon are great at hauling\nthings, and the Foxtail live long\nlives to pass knowledge down\nto future generations.	machine
+E043_020_72	0e17e967b3b4e1aedd8673460d8e12a971118b97	Besides that, the Lum and Dragon are\ngreat at hauling things, and the Foxtail\nlive long lives to pass knowledge down\nto future generations.	machine
 E043_020_73	86ceed990a40ec37296449778903911ed3776cd0	We can survive because\ndifferent races cooperate. My\ndad told me so. Mera, I'm right,\naren't I!	machine
 E043_020_74	9ba5432bec48a10093684ae8497bceb160f47353	Your home has so many\ndifferent races, Roger. That's\nwonderful.	machine
 E043_020_75	5d94f11e7d269a27c5788958ba30dcfcb99e4d31	If anything, a country where\nonly one race lives feels\nunnatural to me.	machine
@@ -131,7 +131,7 @@ E043_020_76	072bd139dc854be20e6f7fc8727fe5870fbcaecb	...You're right. We of Nede
 E043_020_77	2ea5f681aadb4a45b208d3a1cc7a294c806eb4cd	There must have been\nconflicts we could have\navoided if we had just\nrespected one another more...	machine
 E043_020_78	7d3720d29580844e024753c9decc472ede656257	...Chisato! Now I have a reason\nto want to get stronger, and\nit's not just for the sake of it!	machine
 E043_020_79	92c11615b47c4fe4aa67feae429f57481623111e	Huh? Where did that come\nfrom all of a sudden?	machine
-E043_020_80	15eb2c114ba80615c90706a2f1287f5385017df7	I want to give the\nLycanthropes courage by\nsucceeding in the arena! I want\nto show them that they don't\nhave to be swayed by words\nlike "curse"!	machine
+E043_020_80	15eb2c114ba80615c90706a2f1287f5385017df7	I want to give the Lycanthropes\ncourage by succeeding in the arena! I\nwant to show them that they don't\nhave to be swayed by words like\n"curse"!	machine
 E043_020_81	958823c5c28ae328556463ba430bb0abb2ff2f41	And I want everyone from\nother races to get to know the\nLycanthropes too!	machine
 E043_020_82	5638d415f1541ecbf5cffa97fea86a31490afa85	The Felpool, Lesser Felpool,\nHighlander, Featherfolk, and\nLycanthropes in Roak...	machine
 E043_020_83	25f740834db4f2fd187cb01f3b81a288f8468cce	I'll do it to help create a world\nwhere everyone can work\ntogether!	machine
@@ -140,13 +140,13 @@ E043_020_86	3ad02d0fc6ed9f558327307db3256b59431bc8d5	That's the spirit, T'nique!
 E043_030_01	72ecc25f71329019e05e5333b8d1d4bb36215af0	By the way, I heard you're a\nmaster of the Jingu-style fluid\narts, Chisato. What made you\nstart learning that?	machine
 E043_030_02	192ceab70dde619529bb3d7969f6ef35573bf1de	Oh, so now I'm the one being\ninterviewed?	machine
 E043_030_03	1a7ad23c25f95379005d6b791e8a7e653e2e5fa5	Yes! I'm really interested!\nPlease tell me all about it!	machine
-E043_030_04	d6a3d9570ed2d7ad3403b32da89182ee847ad728	Well, it all started because of\nmy reporting. I decided that\nonce I've committed to a story,\nI don't want to give up just\nbecause it's dangerous.	machine
+E043_030_04	d6a3d9570ed2d7ad3403b32da89182ee847ad728	Well, it all started because of my\nreporting. I decided that once I've\ncommitted to a story, I don't want to\ngive up just because it's dangerous.	machine
 E043_030_05	674a8541f0053f62c08437a6edb51bab725ff05e	Oh...	machine
 E043_030_06	adf0269aa69b19a6f413ce2d6c6fa6c200c46b44	Arnon: Looking is free, you\nknow. Feel free to browse!	machine
 E043_030_07	99da47fc892da49eebb512fde46ef191d2f7fca7	Hmm. I wonder what I should\nget...	machine
 E043_030_08	0846c36450fbd4e446cf7d5b31f57696d69d1585	Claude C. Kenny. It seems he's\nthe leader of the hero's party\nfighting the Ten Sages.	machine
-E043_030_09	aad39cd711965b4b027198c292b1fcb81029b0b9	They're planning to head to\nNorth City to obtain the flying\ncrest creature, Psynard. I\nsuppose they're just preparing\nfor that?	machine
-E043_030_10	c4174b8840f2598323a5fe11c972f6aa5c8aff6a	These kinds of everyday\nscenes are important\ninformation for understanding\nthe hero's party. I've got to\nreport this thoroughly!	machine
+E043_030_09	aad39cd711965b4b027198c292b1fcb81029b0b9	They're planning to head to North City\nto obtain the flying crest creature,\nPsynard. I suppose they're just\npreparing for that?	machine
+E043_030_10	c4174b8840f2598323a5fe11c972f6aa5c8aff6a	These kinds of everyday scenes are\nimportant information for understanding\nthe hero's party. I've got to report this\nthoroughly!	machine
 E043_030_11	75ede895cd3a3c5808160539ed77c094f01b1435	I wonder what brings the hero\nto a back alley like this?	machine
 E043_030_12	612f6299e08c91e95b557569f3a35ed4c9d2d99e	Hm?	machine
 E043_030_13	5c954da8694f6a0d72ddfb8e1f2bcace1583574a	Ah! I've been spotted.	machine
@@ -154,21 +154,21 @@ E043_030_14	477a2bedb9f239eeef4118507dd4871206bbd3fb	Huh? Who was that...?	machi
 E043_030_15	07a5a3edd9ec0b282f8f55fc464632fabc6e7efb	This is a memory from when I\nwas secretly following Claude\nand the others for a close-up\nreport.	machine
 E043_030_16	8bd2eff0bf1518e55dd7ab3c4f0df4a4c9e44354	You're like a ninja, sis! The way\nyou dove behind that cover\nwhen you were spotted was so\ncool, Mera!	machine
 E043_030_17	dd0250bc919a91ac2045e01ebadbb04d2fd748c7	That's thanks to my training in\nmartial arts. A reporter has to\nput in the legwork, after all.	machine
-E043_030_18	f6d03eb32004479bf96d5ddbe5f4894ac4d09170	As expected of the Hero's\nparty. They're breezing through\nthe Crimson Crystal Cave...\nWait, if I lose focus, they'll\nleave me behind!	machine
+E043_030_18	f6d03eb32004479bf96d5ddbe5f4894ac4d09170	As expected of the Hero's party.\nThey're breezing through the Crimson\nCrystal Cave... Wait, if I lose focus,\nthey'll leave me behind!	machine
 E043_030_19	23baddaef7686dc9b73976b95703e2eac837b8e9	Ouch!	machine
 E043_030_20	ace378720d5a87a59cbb875c3b97123c5e254e8d	If anyone saw me in such an\nembarrassing state...	machine
 E043_030_22	4130d20b3f89adb73c301b2b40f7046be0584f18	Yikes, that looked like a painful\nfall...	machine
 E043_030_23	d5d5ac4f2a21bc8301de7401fee17a51d7fc11f6	Jeez! This ruin didn't have to\nrecreate such an embarrassing\nmoment!	machine
 E043_030_24	4f45b9c0e7530f7e6f5c8c553d5ea8ff8000c167	Claude and the others were\nmoving so fast that I was\ndesperate just to keep up...	machine
 E043_030_26	db0861894f62bfe85af94e4b428250a96f441bfd	Yes, I was following Claude and\nthe others all by myself.	machine
-E043_030_27	77dfc650b1572679f9db455c487a909842ce89c2	You mean Chisato was chasing\nafter Claude and the others all\nby herself through a cave\nwhere everyone else was\nworking together!?	machine
+E043_030_27	77dfc650b1572679f9db455c487a909842ce89c2	You mean Chisato was chasing after\nClaude and the others all by herself\nthrough a cave where everyone else\nwas working together!?	machine
 E043_030_28	d7a16908d2c6bade8cd28d2b8a3ada0101f6cd97	Claude and the others took\ncare of all the strong enemies,\nso it wasn't actually that\ndangerous.	machine
-E043_030_29	6366094895c2063e8997db1fcbe5b345da6abe87	Besides, I was fully prepared\nfor self-defense. I had a stun\ngun and tear gas in my right\npocket, and a Fire Flare in my\nleft.	machine
+E043_030_29	6366094895c2063e8997db1fcbe5b345da6abe87	Besides, I was fully prepared for\nself-defense. I had a stun gun and tear\ngas in my right pocket, and a Fire Flare\nin my left.	machine
 E043_030_30	1a17b884be664f74be30988d816551315f18c4ba	What kind of pocket can fit a\nFire Flare...	machine
 E043_030_31	506caa91f629b630bf121a8d3af1d43a26a92a67	And that tear gas sounds more\nlike a weapon of war...	machine
 E043_030_32	159eacd224eeb911b1dbb6ccd4db95a21e3f0e1f	Look, even a business card\ncan be a weapon if you throw\nit hard enough.	machine
 E043_030_34	878bd56558e2eef3edfda3d1608a4474bf127339	Th-the business card... it stuck\nright into the rock...	machine
-E043_030_35	6599c9272dfacf37ad5b47845765b516f2f1bce2	Then in my bag, I had three\ndays' worth of preserved food\nand water, a sleeping bag, a\nportable tent, a portable stove,\na flashlight, rain gear, a Swiss\nArmy knife, sunscreen, insect\nrepellent, and...	machine
+E043_030_35	6599c9272dfacf37ad5b47845765b516f2f1bce2	Then in my bag, I had three days' worth\nof preserved food and water, a sleeping\nbag, a portable tent, a portable stove,\na flashlight, rain gear, a Swiss Army\nknife, sunscreen, insect repellent, and...	machine
 E043_030_36	c397d4d669dd8a50c997a4972f952f53fadfc2a1	Whoa, hold on a second! You're\ncarrying all that with you!?	machine
 E043_030_37	1d8a960b103eab22a132a5edc12fb86ed0f4507e	Yes, that way I'm safe no\nmatter what happens.	machine
 E043_030_38	547314e3ed7fee457f48f12c1f85b46209cb7bfd	Carrying all that in one hand\nwhile fighting and chasing after\nClaude and the others... that\nsounds like great training...	machine

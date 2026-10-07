@@ -1,25 +1,25 @@
 message_id	ja_sha1	en	source
 2061_010_01	76e376081c4fd91da660c207f971ac5370ec57c7	...Valka, ...what you just told us.	machine
-2061_010_02	aaac57faa8ef8c990a110044308b14c8350da79f	Yes. What I have just\ndescribed is the nature of the\nuniverse, and the home planet\nof Sir Ewin, Lady Welch, and\nLady Carlin...	machine
+2061_010_02	aaac57faa8ef8c990a110044308b14c8350da79f	Yes. What I have just described is the\nnature of the universe, and the home\nplanet of Sir Ewin, Lady Welch, and\nLady Carlin...	machine
 2061_010_03	182b984d940bd68f11fc77a0a1b5f907594121ab	...the planet Daftine.	machine
 2061_010_04	65c6261ea3686b4cdae5aa331ba193fc6f96508d	This is a bit...	machine
 2061_010_05	ecd3a9d99894ea58a526b2f5927cdb7582a71f21	I can't believe it, but...	machine
-2061_010_06	1132b092ce5ca2130ecd5127956fd18a7dbfefe1	<font color=blue>Valka</font> Both the Kingdom of\nRubarika and the Baschen\nEmpire are nations located\nupon a massive planet called\nDaftine,	machine
+2061_010_06	1132b092ce5ca2130ecd5127956fd18a7dbfefe1	<font color=blue>Valka</font> Both the Kingdom of Rubarika\nand the Baschen Empire are nations\nlocated upon a massive planet called\nDaftine,	machine
 2061_010_07	5fee6c7c4478c32e4317716fd1549dc4a4a1a527	and the planet Daftine floats\nwithin a vast, endless sea of\nstars.	machine
 2061_010_08	a9041d456c530c42c12f145148785e74d385f11c	This world, Daftes, is the twin\nof Daftine. They are a binary\nplanet system.	machine
 2061_010_09	f506f8eaff6c5b16b3673501492df0451b728f72	<font color=blue>Euwin</font> ...Did Eve and the others\nknow about this?	machine
 2061_010_10	840cdfb72646b1fcd38b8018093304f81b07b41e	<font color=blue>Eve</font> ...Yes.	machine
 2061_010_11	ee494620a08f3ccdb8af2dfccc9446666b896b57	<font color=blue>Verda</font> My apologies... it was\nnot my intention to hide this\nfrom you out of malice...	machine
-2061_010_13	37cb4c09f77e3aa04ebcc2a529253eaa1d1dc547	<font color=blue>Euwin</font> True, as the Captain\nsaid, if someone had just told\nme this out of the blue, I\nwouldn't have believed it\neither...	machine
+2061_010_13	37cb4c09f77e3aa04ebcc2a529253eaa1d1dc547	<font color=blue>Euwin</font> True, as the Captain said, if\nsomeone had just told me this out of\nthe blue, I wouldn't have believed it\neither...	machine
 2061_010_14	424ee72dd8cc21200dbc978c39f8d0d88243c528	In fact, they still don't quite\nbelieve it.	machine
 2061_010_15	b3ca0f77438becd7b4b5dcbbb7f1e397ef469545	<font color=blue>Valka</font> If my memory serves me\ncorrectly, in the homeland of\nMista... or rather, Captain\n<player>,	machine
-2061_010_16	288395058ed38f0588c5deb86f9938d606f616a4	there should be legal\nrestrictions imposing a\nmaximum limit on interference\nwith the inhabitants of planets\nthat have not yet achieved\nspace exploration.	machine
+2061_010_16	288395058ed38f0588c5deb86f9938d606f616a4	there should be legal restrictions\nimposing a maximum limit on\ninterference with the inhabitants of\nplanets that have not yet achieved\nspace exploration.	machine
 2061_010_17	a62daa0e97163f95bbb20609bc15e7f7ffd75bea	The same should apply to Dr.\nBelda's homeland, Levarance.	machine
 2061_010_18	ff1b2493e1bea92f9ba1f87f5623f2b2772a897c	Their failure to tell the truth\nwas not born of malice...	machine
 2061_010_19	851ed2a88e7ad87e9f48aa8835ea47b718a0b54e	Sir Ewin.	machine
 2061_010_20	269f33cdc0892992361ed594bb320cf8196d1eb0	Or, based on your introduction,\nshould I call you Sir Laxter?	machine
 2061_010_21	adbcfabd1f71ce917984a033ba24aeda5a4cc56d	Euwin is fine. To me, my noble\nfamily name is nothing more\nthan a tool.	machine
-2061_010_23	6cfaf2b6ce49def50d3d37c8df67f0b580093ce6	We have the safety and time\nhere to process the truth. I\ncan see that you are injured\nand exhausted. For a while, we\nshall stay here...	machine
+2061_010_23	6cfaf2b6ce49def50d3d37c8df67f0b580093ce6	We have the safety and time here to\nprocess the truth. I can see that you\nare injured and exhausted. For a while,\nwe shall stay here...	machine
 2061_010_24	fa2afed4dabe98c44c716cb44579459d7328ffc8	...Ugh.	machine
 2061_010_25	65ec20ea4f12d81edf265c1236b50b84d24ba998	Lady Welch? Is something...	machine
 2061_010_26	3596795f359a314ae97c02c61e1a533d8dda7ece	...Right?	machine
@@ -69,7 +69,7 @@ message_id	ja_sha1	en	source
 2061_020_37	3d0dafeff2a8f5b1ad17ddd6ee7555fddec603ed	Nooo! Hurry up!! I'm about to\nexplode from curiosity!!	machine
 2061_020_38	7c4ea280231ee92e4fbaaebff78e723ca955bee7	Euwin, Karlyn, I'm sure you're\nboth confused, but this\nsituation is full of mysteries for\nus too.	machine
 2061_020_39	6f2f551e77ef6851140efed758af5e858b949b03	May I speak with her first?	machine
-2061_020_40	79831242a48c92b32ea978e269f6bd97a27d2f99	I don't mind. I want to get the\nsituation sorted out, and if we\nlet Welch do whatever she\nwants, we'll never make any\nprogress.	machine
+2061_020_40	79831242a48c92b32ea978e269f6bd97a27d2f99	I don't mind. I want to get the situation\nsorted out, and if we let Welch do\nwhatever she wants, we'll never make\nany progress.	machine
 2061_020_41	400861cbcaf1778c4a7f598a43e3d93a58601553	...Do as you please. It's not like\nI'd understand anything even if\nI listened.	machine
 2061_020_42	e8e4e3209426bb753e5da0da44f69619894d6a28	...I'm going to get some fresh\nair.	machine
 2061_020_43	1e10d573eb11ad9d2a7ebac70cc36f289cb635d7	My head hurts thanks to a\ncertain someone who is as loud\nas they are tactless.	machine
@@ -100,17 +100,17 @@ message_id	ja_sha1	en	source
 2061_020_71	f1ba6c2b75b45c6328cc8984043ed08a60122aea	<font color=blue>Valka</font> ...It is done.	machine
 2061_020_72	7ce7aa9a66a7fce705be2b7158ec01fbbb8725e1	<font color=blue>Eve</font> Such incredible technology.\nYou're linked with the ship,\naren't you?	machine
 2061_020_73	d09a7cd3eafc23dc0363033153ef3cddebf3aa35	<font color=blue>Eve</font> Now, to the main point.\nWhat on earth are you doing\nhere on Daftes?	machine
-2061_020_74	b203781a3c7dc4c070f782ff26f1835683b12d32	<font color=blue>Verda</font> Even taking into account\nthat you hail from some\nadvanced planet called "EnII,"\nyou're quick to understand the\nsituation on Daftine.	machine
-2061_020_75	e2f1d96ae50379be513d2cc60624aa1c88af0cc1	Between your body's sensors\nand the equipment on this ship,\nyou've been monitoring Daftine,\nhaven't you? For what\npurpose?	machine
+2061_020_74	b203781a3c7dc4c070f782ff26f1835683b12d32	<font color=blue>Verda</font> Even taking into account that\nyou hail from some advanced planet\ncalled "EnII," you're quick to understand\nthe situation on Daftine.	machine
+2061_020_75	e2f1d96ae50379be513d2cc60624aa1c88af0cc1	Between your body's sensors and the\nequipment on this ship, you've been\nmonitoring Daftine, haven't you? For\nwhat purpose?	machine
 2061_020_76	fa7ae331f5b748aa8fd0eae69df15825325639e4	<font color=blue>Valka</font> ...Let me make this clear\nfirst.	machine
 2061_020_77	efa051daa18c80fa8867353b4786319eeaeebcf6	Neither I nor <font color=yellow>EnII</font> harbor any ill\nwill or malicious intent toward\nthe planets of Daftine or\nDaftes.	machine
 2061_020_78	eacc370f1f05b8b35b6e9677071c4c3d8360aef5	Originally, I was supposed to\nland on the <font color=yellow>satellite Mastima</font>.	machine
 2061_020_79	e392e48ab3740a6ae691f0970389e15745140809	<font color=blue>Eve</font> Satellite Mastima...? By\nsatellite, you mean a moon?	machine
 2061_020_80	cfb303ce93dfc87c5ee84615cf7e44ce31977194	<font color=blue>Valka</font> Exactly. Satellite\nMastima is the moon of the\nplanet Daftine.	machine
-2061_020_81	9fe55e173ec27479d1e9a8ac020053ef49d17a8b	On Daftine, it is known as the\nentity that lowers the\nMoonshadow Ladder,\nconnecting Daftes, the moon,\nand Daftine at the end of the\nHoly War.	machine
-2061_020_82	dd6c0e33dc0c0bbff050695da8e03a727bb16bb0	And unraveling the mystery of\nthat Moonshadow Ladder was\nthe primary reason I was\ndispatched to this sector of\nspace.	machine
+2061_020_81	9fe55e173ec27479d1e9a8ac020053ef49d17a8b	On Daftine, it is known as the entity\nthat lowers the Moonshadow Ladder,\nconnecting Daftes, the moon, and\nDaftine at the end of the Holy War.	machine
+2061_020_82	dd6c0e33dc0c0bbff050695da8e03a727bb16bb0	And unraveling the mystery of that\nMoonshadow Ladder was the primary\nreason I was dispatched to this sector\nof space.	machine
 2061_030_02	1697aef7946fe182ad28aa9156f49270c1fe5605	"Shall we start by erasing\nyou?"	machine
-2061_030_03	e71f8edb9c50365e0293d65b3ec9160661588599	"The most superior Summoning\nSigil adapter... how pitiful. If\nEvelysse hadn't appeared, you\nmight have been the Gate\nyourself."	machine
+2061_030_03	e71f8edb9c50365e0293d65b3ec9160661588599	"The most superior Summoning Sigil\nadapter... how pitiful. If Evelysse hadn't\nappeared, you might have been the\nGate yourself."	machine
 2061_030_04	ba5fcb94b0eadb781a41d72048cd02964b1f25d3	...I...	machine
 2061_030_05	657b40a96aa7e810f69c3b9bb7cb10e422e81b0f	"But a fake can never hope to\nmatch the real thing."	machine
 2061_030_06	d5c90f788b869e79df1ac7439d1883e8c8358053	"Your devotion thus far has\nbeen appreciated. Now, you\nmay rest..."	machine
@@ -125,7 +125,7 @@ message_id	ja_sha1	en	source
 2061_030_16	1990c50fbd80a74f8760410fc48c7c45abc21e4b	...Tika, was it?	machine
 2061_030_17	301786db4cf89f19911cf8800b0b5d0d4cb48884	Y-yes... I'm Tika Blanche.	machine
 2061_030_18	184529eb9bf351a128ca0b5b31b96b4917a599ab	Why the sudden formality?	machine
-2061_030_19	66f074efd128bb33eac69436632c5d9d6b42596e	Well, since I've been hiding\nthings about space and\neverything until now, I thought I\nshould introduce myself\nproperly one more time...	machine
+2061_030_19	66f074efd128bb33eac69436632c5d9d6b42596e	Well, since I've been hiding things about\nspace and everything until now, I\nthought I should introduce myself\nproperly one more time...	machine
 2061_030_20	937aededbc04392207bcd344f71de7af4ee523d0	...I'm sorry.	machine
 2061_030_21	434701925ea324b242ee4d64e3d107c15c11e303	...Haha.	machine
 2061_030_22	5590ff8011105dbc9611adfe36ab2f63edc164d3	Huh?	machine
@@ -159,7 +159,7 @@ message_id	ja_sha1	en	source
 2061_040_03	7f96af88b36f16b72f4464dcb5c86687b5983198	It has been about a year since\nI drifted ashore here on Daftes.	machine
 2061_040_04	70848eea13503510cd1615c785271870d854f6c7	Since a year ago? All by\nyourself?	machine
 2061_040_05	6b9c2fb8b0c9d9ff94df4734de4fdbd2bd941a0f	Precisely. It is by no means a\nlong period for observation.	machine
-2061_040_06	ab2e3c8e90520249c93ed9dd6c9c721fefdecec3	In particular, information\nregarding the Holy Site War of\nDaftine is not the kind of data\nthat can be collected in detail\nwhile staying on Daftes.	machine
+2061_040_06	ab2e3c8e90520249c93ed9dd6c9c721fefdecec3	In particular, information regarding the\nHoly Site War of Daftine is not the kind\nof data that can be collected in detail\nwhile staying on Daftes.	machine
 2061_040_07	7df398e58fd07255b42a13f51d4458677238b64c	I would very much like to\ninterview Sir Ewin and Lady\nWelch later.	machine
 2061_040_08	f8f30efb2d84159abaa67c24f52530ee95cc4711	Of course, of course! Ask me\nanything, anything!!	machine
 2061_040_09	10f2b5e0c51d40f5dacfca70c45ef53530e61b6f	In exchange―if I may say\nso―I'd love for you to tell me\nall about yourself, hehehehe~.	machine
@@ -182,7 +182,7 @@ message_id	ja_sha1	en	source
 2061_040_27	dea2a46ea09f77e3947748f2199e8c149a850df9	<font color=blue>Eve</font> Shot down!?	machine
 2061_040_28	f2b9fff6d7f2018cd872066368fe510367148989	<font color=blue>Verda</font> How did that happen!?	machine
 2061_040_29	86701ab612183647e95d4caa04b6c1030c71a3ea	<font color=blue>Valka</font> To be honest, I don't\nknow myself.	machine
-2061_040_30	d688bfab328b277f9845aa5dd801095390b9633d	I scrutinized every piece of\ndata left on the ship, but I\ncouldn't find any footage or\ntrace of whoever shot me\ndown.	machine
+2061_040_30	d688bfab328b277f9845aa5dd801095390b9633d	I scrutinized every piece of data left on\nthe ship, but I couldn't find any footage\nor trace of whoever shot me down.	machine
 2061_040_31	e3555c986d9390073cdcf7f79e2eaea69a61d4bd	There is no doubt, however,\nthat it was an attack by an\nadvanced planetary power.	machine
 2061_040_32	677bb83689327c49cb3455eecb26470d210c6420	<font color=blue>Eve</font> An attack by an invisible\nadvanced planetary power...	machine
 2061_040_33	c71745f4178c3ef5a22b3c65402ae0c05f67dad8	...Does that mean...	machine
@@ -210,25 +210,25 @@ message_id	ja_sha1	en	source
 2061_040_55	a2f11c2bc1b099eb2adc3d3248066a007f27a5f6	It couldn't be.	machine
 2061_040_56	77d2d49c484e4a80877d58dbeed50d3c00be98a6	Wait a second. This\nconversation is heading in a\nweird direction.	machine
 2061_040_57	8ec410ab1dfc017a6d326d3028340de18686674b	Euwin?	machine
-2061_040_58	ff26dc21c2f5d76e504b1f7446792906b71f99a0	Checking the situation is\nimportant. But that ghost...\nstarship... thing probably isn't\nsomething we need to solve\nright this second.	machine
+2061_040_58	ff26dc21c2f5d76e504b1f7446792906b71f99a0	Checking the situation is important. But\nthat ghost... starship... thing probably\nisn't something we need to solve right\nthis second.	machine
 2061_040_60	d2e679f8b3c38aea852231d67689b7b978f09624	...No, it's not like I've fully\nwrapped my head around\n"space" and all that yet.	machine
 2061_040_61	86acd642ce4da353335757b7f4479fe7af67291d	But I know that's not the most\nimportant thing right now.	machine
-2061_040_62	a0d4685d519dfcb4993bb81168f0404469ee0d31	From everything we've\ndiscussed, the only thing that's\nclear is that everyone here is\nin a place they aren't supposed\nto be because of some\nunforeseen accident.	machine
-2061_040_63	955187d69ed022efc61aa4869e7386b952b56f39	Welch, Karlyn, and I are from\nDaftine. Tika is from the future.\nAnd the Captain and the\nothers are on the ship that\narrived here in Daftine.	machine
+2061_040_62	a0d4685d519dfcb4993bb81168f0404469ee0d31	From everything we've discussed, the\nonly thing that's clear is that everyone\nhere is in a place they aren't supposed\nto be because of some unforeseen\naccident.	machine
+2061_040_63	955187d69ed022efc61aa4869e7386b952b56f39	Welch, Karlyn, and I are from Daftine.\nTika is from the future. And the\nCaptain and the others are on the ship\nthat arrived here in Daftine.	machine
 2061_040_64	a0e9281e902c926b127de13847526ad64aa38840	Even Valka, your original\ndestination wasn't supposed to\nbe here, right?	machine
 2061_040_65	e97844c934eebbea2928d1ee79320b8ec8b33cb2	That is correct.	machine
 2061_040_66	465639651f6d820f3471878e30be10fee01334fe	Then shouldn't we first focus\non finding a way to return to\nwhere we belong?	machine
 2061_040_67	8f6a927e1975759f46f287a597a2fcca3aab3090	We should figure out how to\ndeal with that invisible ghost\nship once we've actually\nestablished a way to travel,	machine
 2061_040_68	0b20fa067c16edd94b676ac5174c2f874353e54a	Because discussing its true\nidentity now... will just waste\ntime and make us hungry.	machine
 2061_050_01	9deac6a688f64126ebc5b98fb3762dfd53cf3f8c	<font color=blue>Euwin</font>: Let's go through this\nstep by step.	machine
-2061_050_02	b23c7991283e7bbcfe65696f0530ccf730e0a73c	Is it correct to think of the\n"space" you mentioned as the\nsea, "planets" as islands or\ncontinents, and the "spaceship"\nas a boat?	machine
+2061_050_02	b23c7991283e7bbcfe65696f0530ccf730e0a73c	Is it correct to think of the "space" you\nmentioned as the sea, "planets" as\nislands or continents, and the\n"spaceship" as a boat?	machine
 2061_050_03	2ad7386e3dd0fba987665c03487073c91e7b3084	<font color=blue>Verda</font>: Y-yes. That\nunderstanding is correct.	machine
-2061_050_04	99366175f96c73b304f323d3a83286c1d2735ae6	<font color=blue>Euwin</font>: Valka, the Captain, and\nthe others―and of course,\nKarlyn and us―being on this\nisland called Daftes right now\nwas unplanned. Isn't that right?	machine
+2061_050_04	99366175f96c73b304f323d3a83286c1d2735ae6	<font color=blue>Euwin</font>: Valka, the Captain, and the\nothers―and of course, Karlyn and\nus―being on this island called Daftes\nright now was unplanned. Isn't that\nright?	machine
 2061_050_05	9de9719c879c3dcb15a7417b03da475886ee3572	<font color=blue>Valka</font>: That is correct.	machine
 2061_050_06	0d0463fad76f98f9128c72da7b4106eeca4e07bf	<font color=blue>Euwin</font>: What we are looking for\nis not on this Daftes.	machine
 2061_050_07	e44b875545a3eb7e9468db1d94aa3af784909adf	Therefore, the first thing we\nmust do is procure a boat that\ncan cross the sea.	machine
 2061_050_08	99dec01aa92d728f9019981505a11292107f3c18	If we are going to discuss this,\nlet's focus on that.	machine
-2061_050_09	c8146deeb997bf85c979728a247057fb25956bc5	<font color=blue>Euwin</font>: Regarding the ghost\nship, considering Valka has\nbeen able to live here for a\nyear after her ship was\ndestroyed, it won't be landing\non Daftes.	machine
+2061_050_09	c8146deeb997bf85c979728a247057fb25956bc5	<font color=blue>Euwin</font>: Regarding the ghost ship,\nconsidering Valka has been able to live\nhere for a year after her ship was\ndestroyed, it won't be landing on\nDaftes.	machine
 2061_050_10	a4c76110a9927ecb51c2893a2bcdfe628a416387	We can't devise a\ncountermeasure until we reach\nthe stage of deciding what to\nload onto the boat we prepare.	machine
 2061_050_11	36a5e354b97596eda64d319675a448949011822b	So, I want to ask. Captain,\nValka. Can you provide a boat?	machine
 2061_050_12	0a0027d868764c4ce31e5f43368f9dbb117d4387	<font color=blue>Verda</font>: ...Our ship is in orbit\naround Daftine.	machine
@@ -237,7 +237,7 @@ message_id	ja_sha1	en	source
 2061_050_16	db53c7cd6faaecd8af37ebe40544f65ab1c13c87	<font color=blue>Rekoro</font> ...It is the same as the\nCaptain's. Communication with\nCoro has not been restored.	machine
 2061_050_17	ccc9f431655313cc88d3232a2ae93353fca22a55	<font color=blue>Eve</font> What about a distress\nsignal? Could we send Rekoro's\ndistress signal toward Coro...?	machine
 2061_050_18	6d70b60d14f2fce0f32ee366e1d4e7db480fd71b	<font color=blue>Rekoro</font> My wide-area signal\ntransmission function depends\non the transmission capabilities\nof the escape pod itself.	machine
-2061_050_19	a154747cc7c3f7aec0842198340920e7f522b214	The communication functions\ninstalled in this body are not\ndesigned for distances\nbetween a planet's surface and\nits orbital path or beyond.	machine
+2061_050_19	a154747cc7c3f7aec0842198340920e7f522b214	The communication functions installed\nin this body are not designed for\ndistances between a planet's surface\nand its orbital path or beyond.	machine
 2061_050_20	e4ae8d66d8ad4fabc6e6610af2ddad477e0da7c8	<font color=blue>Euwin</font> So, you can't get a ship\nready.	machine
 2061_050_21	df8d41df604867dda2aa91c59c541e1ac91f18c6	<font color=blue>Verda</font> Valka's ship, of course...	machine
 2061_050_22	28ed011733776f676fdf4b6df04d9b561cea98c8	<font color=blue>Valka</font> Between being shot\ndown and the crash, the\ndamage is too severe for it to\nwithstand space travel.	machine
@@ -273,7 +273,7 @@ message_id	ja_sha1	en	source
 2061_060_15	6e5c0536e289da23355958001e88f10b0a90f06e	For us, that was normal.	machine
 2061_060_16	f71b0b652f4825d523d94cb9e7ddfde1ac6ea76b	Normal...!	machine
 2061_060_17	c7c440372a8f1cb3a9f9a70159114933808f6e36	But Lord Givel changed that\nenvironment for us...	machine
-2061_060_18	b621fe407bcbbd1431dc15dcbadc359933fd4d5e	Those among the Kokon with\nparticularly strong symbol\npower were appointed as\n"Beast Witches"... and the\nstatus of the Kokon people\nrose instantly.	machine
+2061_060_18	b621fe407bcbbd1431dc15dcbadc359933fd4d5e	Those among the Kokon with\nparticularly strong symbol power were\nappointed as "Beast Witches"... and the\nstatus of the Kokon people rose\ninstantly.	machine
 2061_060_19	885c2814e89b4edb34eac71af785541a04cc59c4	Of course, that doesn't mean\nwe've forgotten what was done\nto us, or that we don't hold a\ngrudge...	machine
 2061_060_20	69c80cdc7a34c0694022a094b7eb9cb814800537	But Lord Givel, he...	machine
 2061_060_21	0c83d8c77f7130c4f77397d66b68aba7bc910027	...Big sister Karlyn...	machine
@@ -282,7 +282,7 @@ message_id	ja_sha1	en	source
 2061_060_25	44fd4b789cbda4f6fdd28afc82190c13e25217c9	You see, I had a younger\nsister.	machine
 2061_060_26	550314c9200791ccde3c2097c1744156182bc039	...You had one?	machine
 2061_060_27	b0cc166c69d2fb1356e981822aeedf1263632266	During the Holy War... our\nvillage was burned down by\nRubarika.	machine
-2061_060_29	07c301f15b458cde82fc16ab9f82f6fbaf803276	Since then, I've lived for\nnothing but to avenge my\nsister. That's why I accepted\nLord Givel's invitation without\nhesitation...	machine
+2061_060_29	07c301f15b458cde82fc16ab9f82f6fbaf803276	Since then, I've lived for nothing but to\navenge my sister. That's why I\naccepted Lord Givel's invitation without\nhesitation...	machine
 2061_060_30	ac21d12d14bf434f4d4afb22f7745a68820d8233	To defeat Rubarika... I wanted\nto prove the power of the Fox\nSoul...	machine
 2061_060_31	fd090e2ae239175957f5af9b3615c4789d54a121	...My loyalty was sincere...	machine
 2061_060_32	55953b7c7c1d7d12903d4406e09e436c72872033	I defeated the Rubarika\nsoldiers, and Lord Givel praised\nme...	machine
@@ -302,7 +302,7 @@ message_id	ja_sha1	en	source
 2061_070_10	2a146cc3c5df5232bc45fd8ba1fbc2e658688e36	That's why it was so\npainful―being able to see you,\nyet unable to communicate. I\ncried so many times.	machine
 2061_070_11	674a883042cd548ec1c352b692cfc4c69c9d4862	...Captain...	machine
 2061_070_13	7902833e8a41fb1f1e4fbf4eba1296add5a5ba80	H-Hey! Why are you being so\nclingy with the Captain?!	machine
-2061_070_14	c976f13787fcc50f08f1b349efc6ccf4646bcb54	I'm making sure this isn't a\ndream. That this warmth, and\nthese human genes, aren't just\nan electronic dream caused by\na sensor error...	machine
+2061_070_14	c976f13787fcc50f08f1b349efc6ccf4646bcb54	I'm making sure this isn't a dream. That\nthis warmth, and these human genes,\naren't just an electronic dream caused\nby a sensor error...	machine
 2061_070_15	eb952ca27713f559b1dfcd8a2128061c71a52f54	That doesn't mean you have to\ncling to him like that! There are\nchildren present, so stop doing\nthings that set a bad example!	machine
 2061_070_16	32e7f813b95d5460b202f1e1c160f4a095f56618	...I don't want to let go.	machine
 2061_070_17	46b249a19d00ec654403c155d53a09ea5ef0f31c	Seems like she's got plenty of\nenergy...	machine
@@ -314,21 +314,21 @@ message_id	ja_sha1	en	source
 2061_070_23	c73567d6314e5eb08431bd440de565c177020eea	...What did you say?	machine
 2061_070_24	dcf5e0d4bb563a07a80706fc0128a380ad3dc329	About 30 kilometers south of\nhere, there are ruins of an\nabandoned city.	machine
 2061_070_25	b7c2a443f5df6aeb3cdc7d9fdc5b4e81dd4f2b66	An abandoned city!? Is that\ntrue!?	machine
-2061_070_26	b93fc29efb6bcea2b41740977b22abcee98ea9ce	They are ancient cities that\nperished for some reason. A\ncivilization that held scientific\npotential equal to that of\nmodern advanced civilizations.	machine
+2061_070_26	b93fc29efb6bcea2b41740977b22abcee98ea9ce	They are ancient cities that perished\nfor some reason. A civilization that held\nscientific potential equal to that of\nmodern advanced civilizations.	machine
 2061_070_27	9cea69b10d48870fcd38d072a3862265c49538b4	I thought there were no traces\nof humanity on Daftes?	machine
-2061_070_28	49423abcbe61a3ffd2b93141c586c6ae9b87e46c	Even in Tika's time, it was said\nto be so unsuitable for human\nsurvival that it wasn't chosen\nas a settlement, despite being\nthis close...	machine
+2061_070_28	49423abcbe61a3ffd2b93141c586c6ae9b87e46c	Even in Tika's time, it was said to be so\nunsuitable for human survival that it\nwasn't chosen as a settlement, despite\nbeing this close...	machine
 2061_070_29	894a2928dd5c8f87122a4926fdd1d58494985ff6	That should be the case, but...	machine
 2061_070_30	b68bd92c662962460d897e1b95d6bd758928799c	There are some situations that\nI simply cannot handle on my\nown, no matter how hard I try.	machine
 2061_070_31	63864921785425a567cce85f7d275e0c8ad9f31c	But... if I'm with all of you...!	machine
-2063_100_01	e767e955199b67b30f98991fea741abde785c64a	<font color=blue>Verda</font> But if there are traces\nof where humans once lived, I\nwonder why it wasn't chosen\nas a destination for migration\nin Tika's time.	machine
+2063_100_01	e767e955199b67b30f98991fea741abde785c64a	<font color=blue>Verda</font> But if there are traces of where\nhumans once lived, I wonder why it\nwasn't chosen as a destination for\nmigration in Tika's time.	machine
 2063_100_02	b396c691c6e71d07dceb242c33310d849a2f8bcd	<font color=blue>Tika</font> I don't know... Maybe it's\njust something I haven't been\ntaught at school yet.	machine
 2063_100_03	b8a7f8a0c77264c8f71cd11210daa1ff96c9c908	Do you know anything, Rekoro?	machine
 2063_100_04	5aa14f3c3170ac73c62061724395df6c74dc60c9	<font color=blue>Rekoro</font> I suspect it was not the\ntype of information registered\nwithin the life pod's AI...	machine
 2063_100_05	356c78e97d3ad1083b2107a9acfcf71540dcd06d	However, there is one point of\nconsideration I can present.	machine
 2063_100_06	d000049f1549de8675bf841d1c9c018920be26fb	<font color=blue>Verda</font> And what's that?	machine
-2063_100_07	25f025640589188f95623948dd704b3a1f2c56b9	<font color=blue>Rekoro</font> Daftes is not registered\nas either an emergency warp\ndestination or an emergency\nevacuation site for the life\npods.	machine
-2063_100_08	6f5fe9f85a252217b28ebb4ebf866c331cb07a8f	<font color=blue>Verda</font> Now that is strange. For\nan evacuation site, it seems\nlike anywhere would do, as long\nas the atmosphere and water\nare compatible.	machine
-2063_100_09	f0583056c994e238a2ca890592c4e722beceb28c	<font color=blue>Valka</font> I suspect that if it were\nan evacuation site, there would\nbe no need to go all the way to\na binary star system when\nthere is a home planet nearby.	machine
+2063_100_07	25f025640589188f95623948dd704b3a1f2c56b9	<font color=blue>Rekoro</font> Daftes is not registered as\neither an emergency warp destination\nor an emergency evacuation site for\nthe life pods.	machine
+2063_100_08	6f5fe9f85a252217b28ebb4ebf866c331cb07a8f	<font color=blue>Verda</font> Now that is strange. For an\nevacuation site, it seems like anywhere\nwould do, as long as the atmosphere\nand water are compatible.	machine
+2063_100_09	f0583056c994e238a2ca890592c4e722beceb28c	<font color=blue>Valka</font> I suspect that if it were an\nevacuation site, there would be no need\nto go all the way to a binary star\nsystem when there is a home planet\nnearby.	machine
 2063_100_10	5dac32ae269d432239e62a61d116a81d602fae0f	<font color=blue>Verda</font> I wonder if we'll find\nsome new information once we\nreach that ruined capital...	machine
 2063_100_11	459e6a937beec99c3bf737060649ee468e0fa1c8	What's with those weirdly\ncolored rocks... they're\namazing.	machine
 2063_100_12	e868a7784afb3d68b43eac515bba7ff33f043eed	Whoa... what is that tree? How\ndoes it even grow in that\nshape? I wonder if I can use it\nfor something...	machine
@@ -343,7 +343,7 @@ message_id	ja_sha1	en	source
 2063_100_21	d10d6f95c9f8752294515a561cbd70d6df847f74	Tsk, tsk, tsk! I am curiosity\nitself! Curiosity is me! I am\ncuriosity!	machine
 2063_100_22	265fa0c5f072cccb4bfa6fb7f5fef596fc3834d3	Now, world! Show this genius,\nbeautiful girl, Welch, everything\nyour new world has to offer!!	machine
 2063_100_23	e58e8b63e92dcb2de030f0b7866b1eb92c9332d2	...Well, I suppose that's better\nthan her being depressed...	machine
-2063_100_24	b2205224fba66d70d97878bcf00ceee901a36708	And think about it, Eu! In the\n"Ruined City" ahead, there\nmight even be "Daftes's\nmessengers" or the "power of\nthe messengers"!	machine
+2063_100_24	b2205224fba66d70d97878bcf00ceee901a36708	And think about it, Eu! In the "Ruined\nCity" ahead, there might even be\n"Daftes's messengers" or the "power of\nthe messengers"!	machine
 2063_100_25	af42f67a8628422fbd02ad0fc23cc69e29f1f3e2	Right, that's true. Both the\n"servants" and their "power"\nare supposed to originate from\nDaftes!	machine
 2063_100_26	9ea604131e8b9805711192966730a4fb35ef074f	I mean, given how much Valca\nwas bawling, I'm not sure if\nwe'll find anyone right away,\nbut...	machine
 2063_100_27	b5f3034407ea9f8156beebf1ba8c9130537b81eb	As long as we're walking\nthrough this unknown world, we\ndon't have a single second to\nwaste being depressed!	machine
@@ -369,7 +369,7 @@ message_id	ja_sha1	en	source
 2063_110_07	da47af1dc79bce68acae7e8b15ee5bddfde1a456	R-Rice ball!?	machine
 2063_110_08	9af8f6bf6aac85410285a3e3eb74ca58560b6982	I have told you many times... I\nam RESCUE-AI-056, commonly\nknown as Rekoro!	machine
 2063_110_09	aa081fc194af242a556ee9fe5ca2a07ea710ad46	Yeah, yeah. I get it, I get it.	machine
-2063_110_10	f6bad1c8ed4e608b3db640d93183702dac1c3d23	I suspect that Lady Welch's\ntalent can no longer be\ncontained within the confines\nof Daftine. Quite frankly, it is\nworthy of admiration.	machine
+2063_110_10	f6bad1c8ed4e608b3db640d93183702dac1c3d23	I suspect that Lady Welch's talent can\nno longer be contained within the\nconfines of Daftine. Quite frankly, it is\nworthy of admiration.	machine
 2063_110_11	cbf46a340ba6f35d7819fd7228236665b939e892	Did you hear that, Rice Ball!?\nThis is how you honestly praise\na genius!	machine
 2063_110_12	3962b0d792e21a55555fc322beb3590d0ef3cffd	Gnuuuuuuuu!	machine
 2063_110_13	54a6f098a30bc04870d918ce45fd9ec9d74fee31	...I wish I could just accept\neverything as smoothly as that.	machine
@@ -384,7 +384,7 @@ message_id	ja_sha1	en	source
 2063_110_23	f63b3009b78dcf52b8b3937332f3b11da1752444	Whoa?!	machine
 2063_110_24	674ba31cf132ca83e2e77e41735f5d479a1b1702	An attack?!	machine
 2063_110_25	c1e900992c6de6baa1107e781e3c1ff00f3edd93	The sensors aren't picking up\nanything...!	machine
-2063_110_26	fdbefcbfde9edb9920bcaec1a5cfdaa214bc0035	For people who claim to be\npowerful beings from beyond\nthe sky, you're completely\noblivious to this strange smell,\naren't you?!	machine
+2063_110_26	fdbefcbfde9edb9920bcaec1a5cfdaa214bc0035	For people who claim to be powerful\nbeings from beyond the sky, you're\ncompletely oblivious to this strange\nsmell, aren't you?!	machine
 2063_120_01	9bbab5dbaa42ea4bde98e13b1b13fb8791b17971	Looks like we managed to take\nit down.	machine
 2063_120_02	2096865edb31d47d0cfc351020bded99ff905151	My apologies, Lady Carlin. This\nsituation was brought about by\nmy own carelessness.	machine
 2063_120_03	5da0a3bd60dcc494149c832f5f3b7883c5ebbde9	...Whew, that gave me a scare.	machine
@@ -417,17 +417,17 @@ message_id	ja_sha1	en	source
 2064_150_03	a128346558b93a7b5bb421a2b2b02c9bde933fc5	<font color=blue>Verda</font> Now this is quite the\nmetropolis!	machine
 2064_150_04	eaee2199a28853ef2a4bbe65de870a47aba6cf9e	<font color=blue>Tika</font> I can't believe something\nlike this exists in Daftes...	machine
 2064_150_05	f547d2a3a8864b7f3a3365e3235bc46c6588ace6	<font color=blue>Euwin</font> I-is this really a city?\nThere are countless buildings\ntaller than the royal castle in\nRubarika!	machine
-2064_150_06	c4d4336d21d1081dcda1f368ee4bc55a4f9747d2	<font color=blue>Valka</font> Based on various data I\ncollected during several solo\nexplorations, it has been\ndetermined that this city was\ncalled <font color=yellow>Onelsen</font>.	machine
+2064_150_06	c4d4336d21d1081dcda1f368ee4bc55a4f9747d2	<font color=blue>Valka</font> Based on various data I collected\nduring several solo explorations, it has\nbeen determined that this city was\ncalled <font color=yellow>Onelsen</font>.	machine
 2064_150_07	3df1389f60fdd255f935ff7ca523576b9c18e4e4	<font color=blue>Welch</font> Onelsen...	machine
 2064_150_08	9849809f38e42c65215a40a63b4a0ead765e13bf	<font color=blue>Valka</font> However, I know nothing\nmore beyond that.	machine
-2064_150_09	69f9964df15a3c396a4483f6f9346eee8b2b43a6	I can detect reactions\nindicating that a large\nenergy-related facility is\noperational in the center of the\ncity...	machine
+2064_150_09	69f9964df15a3c396a4483f6f9346eee8b2b43a6	I can detect reactions indicating that a\nlarge energy-related facility is\noperational in the center of the city...	machine
 2064_150_10	19505669e5810824e4a1bd9ca1729b227e37bcb4	But due to numerous\nobstacles, I was unable to\nreach it.	machine
 2064_150_11	138edd0be6eaa258f4e6c659b19fb140ffe80a24	<font color=blue>Eve</font> Obstacles?	machine
 2064_150_12	92a96d6abdda540c0d4195f3fb12c3bf95e1e616	<font color=blue>Valka</font> This city of Onelsen is\nthe stronghold of those\nwerewolves.	machine
 2064_150_13	e309e80211dbe8513883dfe06302b1976e8bc57a	They are equally ferocious, and\nI cannot face them alone.	machine
 2064_150_14	d3f6421a64acd3617062d5eecc395b8fc1a3b6e8	<font color=blue>Karlyn</font> ...True. The scent of\nthose wolves is everywhere; it's\nalmost enough to make my\nnose curl.	machine
 2064_150_15	333127adef834bcf3f1725787579b4a36097e419	<font color=blue>Welch</font> Valka, you were using\nsome seriously crazy power at\nfirst. You still can't handle\nthem with that?	machine
-2064_150_16	58397bb000b14e61911cfe07801083cb9345eeda	<font color=blue>Karlyn</font> Can't you imagine what\nwould happen if you used\nattacks of that magnitude in a\nplace crowded with tall\nbuildings?	machine
+2064_150_16	58397bb000b14e61911cfe07801083cb9345eeda	<font color=blue>Karlyn</font> Can't you imagine what would\nhappen if you used attacks of that\nmagnitude in a place crowded with tall\nbuildings?	machine
 2064_150_17	61a581d01677db13dcffc769269db4eab09f8115	<font color=blue>Welch</font> Huh!?	machine
 2064_150_18	6ededc96202bf00f1439a877c4e9c4f0ede6f1b7	<font color=blue>Euwin</font> ...If Valka went all out\nhere, the surrounding buildings\nwould probably collapse, and\nthings would get messy.	machine
 2064_150_19	9cdee5e4d2b8f236e4ecea167b15634d7df5e760	<font color=blue>Valka</font> Exactly.	machine
@@ -464,8 +464,8 @@ message_id	ja_sha1	en	source
 2064_160_03	f2962080a8ac0781cd9f8b3979e1c198d2f31a9d	But now, there isn't a soul in\nsight... I wonder what\nhappened.	machine
 2064_160_04	b0bb3e22b788b5ff3969497fbdd95549a856d3ed	They say it only takes a few\nhundred years for a city to\nweather away once the people\nare gone...	machine
 2064_160_05	8ea85d13df07527d5ebffc7e0d6428ee29efeb00	I wonder when this city―or\nperhaps this entire\nplanet―actually fell. Was it a\nrecent occurrence?	machine
-2064_160_06	37221e72e56d448a585cac1324eeb69c6cc7dcb8	I am detecting facilities that\nare still being supplied with\nenergy in several locations, as\nwell as reactions from\nmaintenance robots that have\nnot degraded significantly.	machine
-2064_160_07	2f6d7f181052c5153178a3cfc4efede7343720e8	It appears to be a civilization\nthat achieved AI and\nautonomous robotics. Accurate\ndating will be difficult without\ntracing through recorded\ndocuments.	machine
+2064_160_06	37221e72e56d448a585cac1324eeb69c6cc7dcb8	I am detecting facilities that are still\nbeing supplied with energy in several\nlocations, as well as reactions from\nmaintenance robots that have not\ndegraded significantly.	machine
+2064_160_07	2f6d7f181052c5153178a3cfc4efede7343720e8	It appears to be a civilization that\nachieved AI and autonomous robotics.\nAccurate dating will be difficult without\ntracing through recorded documents.	machine
 2064_160_08	a907fb70589778589abd8c3ce2b49c1c975a68ef	But... in my time, it should still\nbe here, right...?	machine
 2064_160_09	469d72db6fcc4eaf0dd627079ad587b611960f91	Why wouldn't a planet that was\ndefinitely inhabited once have\nbecome a destination for\nimmigrants...?	machine
 2064_160_10	b28c92541ba07799294084b42875ba52e470fe2a	The mysteries just keep piling\nup throughout this journey...	machine
@@ -474,30 +474,30 @@ message_id	ja_sha1	en	source
 2064_160_13	19dbd25f664090ee179d7824cf0e7f904974d86a	Extinct for some reason	machine
 2064_160_14	1942543439673f9d7a88a54a24014fedfab31fe1	Ventured into space in search\nof bananas	machine
 2064_160_15	ca0bf15e6ba208c3997e023bbdf78dec4a8bfb09	True, even if a civilization falls,\nit doesn't necessarily mean\nhumanity went extinct.	machine
-2064_160_16	abf185635c266fee92052c266ece27b035e75338	Whether it was war or a\nnatural disaster, the civilization\nmay have fallen for reasons\nbeyond their control, but\npeople who no longer rely on\nthat civilization might still be\nliving somewhere on this\nplanet.	machine
+2064_160_16	abf185635c266fee92052c266ece27b035e75338	Whether it was war or a natural disaster, the\ncivilization may have fallen for reasons beyond\ntheir control, but people who no longer rely on\nthat civilization might still be living somewhere\non this planet.	machine
 2064_160_17	7d9baaa9604008232bedd9fd4967a0dc09f77885	If that's the case, I'd want to\nmake sure we don't disturb\ntheir way of life.	machine
 2064_160_18	394294da2dbc3a9658ceb7ee00388e4582c41cd7	...Maybe that's why this planet\nwasn't chosen as a colony.	machine
 2064_160_19	a5f27176e2f5eef449cc561dcb7158af9f4c9c37	The "Uncharted Planet\nProtection Treaty," as the\nCaptain calls it... huh.	machine
 2064_160_20	d40467cf06d41b04e228b1c4075889d1a5fd1738	Though it seems strange that\nRekoro wouldn't know the\nreason if that were the case...	machine
 2064_160_21	9d8dbbcfd14b826453e57a1124e5f0fd40207ca6	I hope they're out there\nsomewhere...	machine
 2064_160_22	451f1ae3051df0b99c14af2f8b5069e6e590616e	...You're right. It is strange that\nthe robots and energy facilities\nare still functioning, yet there's\nnot a trace of any people.	machine
-2064_160_23	0632340b171cb8f60a8e842afeea9f57c48f64f3	War, natural disasters... people\nvanish for some unavoidable\nreason, and nature begins to\nreclaim the civilization they left\nbehind...	machine
+2064_160_23	0632340b171cb8f60a8e842afeea9f57c48f64f3	War, natural disasters... people vanish\nfor some unavoidable reason, and\nnature begins to reclaim the civilization\nthey left behind...	machine
 2064_160_24	4340a36563d89c1c097131a520c79b760b039055	We may have just landed right\nat the starting point of that\nprocess.	machine
 2064_160_25	483bedd85c0c84462b1f4036bea00b2161d25656	I wonder if Valka knows of any\nother places where people\nmight be.	machine
 2064_160_26	bf5f659bf7e3647d429178b6213dc13be937e12f	I don't want to believe that the\npeople who might have lived on\nthe neighboring planet just\nwent extinct.	machine
-2064_160_27	7bfe919f16f39ad7b4f33bcd0dbae8b6032e99b0	I determine that using this\nexploration to uncover the\nreason for the current state of\nOnelsen will surely be beneficial\nfor the future Daftine where\nTika resides...	machine
+2064_160_27	7bfe919f16f39ad7b4f33bcd0dbae8b6032e99b0	I determine that using this exploration\nto uncover the reason for the current\nstate of Onelsen will surely be\nbeneficial for the future Daftine where\nTika resides...	machine
 2064_160_28	0d9851ab29e1bf74977c13721d5276224882ea37	Humanity is surprisingly\nstubborn. They might have\nsurvived in some unexpected\nway.	machine
 2064_160_29	70de3ecfa9a345efbd650dd999dde55290147d8d	...That wouldn't be so bad.	machine
 2064_160_31	78bdccabb0d65844c5514e328164c46b1e9b9620	What, were you waiting for me\nto call you out? That's a bit\ntwisted, even for this\nconversation.	machine
 2064_160_32	aab2a654001a102fadd31471659f28153c719b50	Bananas aside,	machine
-2064_160_33	a43ddb859d4dac9be5b3cc68fdfa292536e9d7e4	It's far more comforting to\nthink they set off on a journey\nof their own volition than to\nthink they went extinct for\nsome ominous reason.	machine
+2064_160_33	a43ddb859d4dac9be5b3cc68fdfa292536e9d7e4	It's far more comforting to think they\nset off on a journey of their own\nvolition than to think they went extinct\nfor some ominous reason.	machine
 2064_160_35	a2a50b85b1858086134edee8707f17623bf6e185	But if that's the case, it means\nthere are no bananas on\nDaftes, right?	machine
 2064_160_37	19dc3b8e88c86fb2b211f259d1a7f685e734d712	I wonder sometimes... what\nexactly are "bananas" to the\nCaptain and Coro?	machine
-2064_160_38	f4c3bcd7e9ba964fff8171a464022b3285b93266	In any case, tomorrow we\nexplore the energy facility in\nthe center, just as Valka\nmentioned. I hope we find\nsomething useful...	machine
+2064_160_38	f4c3bcd7e9ba964fff8171a464022b3285b93266	In any case, tomorrow we explore the\nenergy facility in the center, just as\nValka mentioned. I hope we find\nsomething useful...	machine
 2065_170_01	ae91f5ce295d8bdcf34b4021cab6b5e65cdfa92e	<font color=blue>Valka</font>: We've finally made it...\nthe place in Onelsen with the\nhighest energy levels...	machine
 2065_170_02	30dffb2c6d302a8182cccd91711b77a3fb67f63c	<font color=blue>Verda</font>: Indeed. This place feels\ndifferent from the other\nbuildings; it seems to have\nbeen well-maintained.	machine
 2065_170_03	7e3a80b8e9d6bfa0c088c41663e7067d7936068e	<font color=blue>Valka</font>: Exactly. This facility is\nclearly still active.	machine
-2065_170_04	bec90606d530e614bc84304fc1e326ba732f992f	Here, we might be able to find\nthe materials needed to repair\nthe ship and communications\ngear―or at the very least,\ngather information on how to\ndo it!	machine
+2065_170_04	bec90606d530e614bc84304fc1e326ba732f992f	Here, we might be able to find the\nmaterials needed to repair the ship and\ncommunications gear―or at the very\nleast, gather information on how to do\nit!	machine
 2065_170_05	8889b9c71240bb872b566a6270ed332c5050da85	<font color=blue>Euwin</font>: But how do we get in?\nThis building... I don't see any\ndoors or gates anywhere...	machine
 2065_170_06	27e466c5ddb50c23a115e7bd68fc7e7dea5415f8	<font color=blue>Rekoro</font>: ...Hmm.	machine
 2065_170_07	9b8e8566f66c487e95fc1c70881f10f10f930b99	<font color=blue>Tika</font>: What is it, Rekoro?	machine
@@ -514,16 +514,16 @@ message_id	ja_sha1	en	source
 2065_170_18	194f9d3be8c1cdc101c7675457be0b8db486ca58	What? This is far too easy...	machine
 2065_170_19	8b9cf9152583d01a148fbc386c8022d00bc60e37	AI Rekoro, it seems this is the\nMaster Key Code for this\nfacility.	machine
 2065_170_20	51fdff6024b82c089f730b35d91ffa121eaceb52	With a few exceptions, it can\nopen almost every bulkhead.	machine
-2065_170_21	828609913f48e489570101248ddb395348ba2c01	<font color=blue>Rekoro</font> A Master Key Code?\nYou're saying such critical\ninformation was embedded in a\nconnection request signal that\nanyone could access?	machine
+2065_170_21	828609913f48e489570101248ddb395348ba2c01	<font color=blue>Rekoro</font> A Master Key Code? You're\nsaying such critical information was\nembedded in a connection request\nsignal that anyone could access?	machine
 2065_170_22	5e6e3fbfdfa331066a9184dc9e2a48cf8d593772	Unbelievable...	machine
 2065_170_23	8545ee883b584d5a20a0558bdc9e208aa48faf9f	<font color=blue>Valka</font> But there's no mistake. I\ndon't detect even a hint of an\naggressive program in the\nfirewall.	machine
 2065_170_24	b5dd81289a2e132bcbab45341551b166ecee4101	Opening it now.	machine
 2065_170_25	aff8a753917acf6f060b977810e0fb74c6092b1e	<font color=blue>Tika</font> ...It's open, but... it's pitch\nblack beyond the door.	machine
-2065_170_26	979383f523efad939c95e3fa9e16659f0e1e2ffa	<font color=blue>Euwin</font> I can hear a strange\nnoise coming from deep\ninside... I wonder if it's one of\nthose things called robots that\nwere in town?	machine
+2065_170_26	979383f523efad939c95e3fa9e16659f0e1e2ffa	<font color=blue>Euwin</font> I can hear a strange noise\ncoming from deep inside... I wonder if\nit's one of those things called robots\nthat were in town?	machine
 2065_170_27	e02f6addcc7c01651cba3df584c5a9fadc090c00	I hope it's not something\nhostile...	machine
 2065_170_28	a7f5a9bc564a8b9821f1c24dec4b0538ea13f580	<font color=blue>Welch</font> I just hope that werewolf\nisn't lurking in there too.	machine
 2065_170_29	3711cdd96431d6da16b3d2c1cd17df28ec67cbdf	<font color=blue>Tika</font> Rekoro, can you tell\nwhat's inside?	machine
-2065_170_30	bdb6b35f0da07f862ee03313c3d7910756ec8d98	<font color=blue>Rekoro</font> This building has deep\nunderground facilities. Building\nmaterials designed to block\nsensors are integrated\nthroughout. My sensors cannot\npenetrate them.	machine
+2065_170_30	bdb6b35f0da07f862ee03313c3d7910756ec8d98	<font color=blue>Rekoro</font> This building has deep\nunderground facilities. Building\nmaterials designed to block sensors are\nintegrated throughout. My sensors\ncannot penetrate them.	machine
 2065_170_31	bb0fd58c4228eaefa06fc9f71792dbc01a2f5cd4	<font color=blue>Valka</font> The gate opened so\neasily, yet the interior is this\nheavily fortified...	machine
 2065_170_32	dd34a5e81e4c891d951343a8eca6d4dd522109b8	My own sensors cannot scan\nthe entire area.	machine
 2065_170_33	4495b104e897ecc1124ed59f6a57672bd5a827ec	If there are hostile entities\ninside, turning on the lights\nindiscriminately may not be the\nbest strategy...	machine
@@ -535,7 +535,7 @@ message_id	ja_sha1	en	source
 2065_170_41	c5fe0a4825be4e52c1bb60e7849c3775bf6491ce	W-wait, you can see in this\npitch black?	machine
 2065_170_42	a6dacf5f3cb73958f50a33db8221c18cbc1503e7	Lady Carlin: Be quiet for a\nmoment.	machine
 2065_170_43	6a53d355a12eec471b8c728a9134fc60ff2fed80	Huh? What could you possibly\nfind out by making noise with\nthat scythe...?	machine
-2065_170_44	f51f4d567a1ed1580c0c84996d4a39bd2d403b4d	Lady Carlin: ...I'm hearing\nsounds I've never heard before,\nbut it doesn't seem like any\nwerewolves or monsters like\nthe ones in the forest are\nlurking here...	machine
+2065_170_44	f51f4d567a1ed1580c0c84996d4a39bd2d403b4d	Lady Carlin: ...I'm hearing sounds I've\nnever heard before, but it doesn't seem\nlike any werewolves or monsters like\nthe ones in the forest are lurking here...	machine
 2065_170_45	a0ca5562edf18988356284e7ee17c77738cb3557	Lady Carlin: However, I wonder\nwhat this is... something small\nis moving near the ceiling.	machine
 2065_170_46	eeddb85a95679998e1c08fb16816c584ff7b2775	What?	machine
 2065_170_47	c96eb6c6f77e1992787f4046260fb63cebab1c87	Lady Carlin. Are you perhaps\nsensing the interior by the\nechoes of the sound?	machine
@@ -580,7 +580,7 @@ message_id	ja_sha1	en	source
 2065_170_89	9ed2ab77bb65a2a09d0c89bff405fc76cad70a8d	Lady Welch: I know... I know,\nbut...!	machine
 2065_170_90	ce55bf0e3a5aa6655e47e9000a0037c9ca9da54d	Lady Welch: This is just so\nannoying!!	machine
 2065_200_01	03bff550545c15347b32c030ff2bf5c0f38ffbc3	Another door. It looks different\nfrom the ones we've seen so\nfar. There's no way we can\nopen this by hand.	machine
-2065_200_02	e5c32c434534d29cadbc305b17a48bf681fba877	This space seems to serve a\ndifferent purpose than the\ncorridors and rooms we've\npassed through. The ceilings\nare quite high.	machine
+2065_200_02	e5c32c434534d29cadbc305b17a48bf681fba877	This space seems to serve a different\npurpose than the corridors and rooms\nwe've passed through. The ceilings are\nquite high.	machine
 2065_200_03	bc824e047af9595b3f476374d886fd914ab4c71b	These strange lights on the\nfloor are making it hard to see\nahead.	machine
 2065_200_04	0f2c156a532f44a16093eddf6308a7e594af6834	If it weren't for Karlyn's ears,\nwe wouldn't be able to sense\nthose robot attacks at all.	machine
 2065_200_05	289386a3ef4815a911fb0791064154d15bb78fdd	Is it okay to just leave them\nbroken? Couldn't we use those\nparts for repairs?	machine
@@ -617,10 +617,10 @@ message_id	ja_sha1	en	source
 2066_210_01	f3045384ed8042434de94afadf1cb886d8f903f7	<font color=blue>Euwin</font> D-did we... defeat them?	machine
 2066_210_02	979953e6555dcfe5ceee7ba8f1856bc5a5d61a62	<font color=blue>Welch</font> It's way too hard to tell\nif these things are actually\ndead!	machine
 2066_210_03	52d0520178ea8d11c8baea6a88e5ec835cea446a	<font color=blue>Valka</font> N-n-no problem. I'll\nconsider the repulsion\ncomplete. *Huff, puff!*	machine
-2066_210_04	0b307a42e82dc0d8f9bd1c88c4c855e03aaf3bf6	<font color=blue>Eve</font> But doesn't something feel\noff? I was definitely confused\nat first, but I'm not sure if they\nactually put up much of a\nfight...	machine
+2066_210_04	0b307a42e82dc0d8f9bd1c88c4c855e03aaf3bf6	<font color=blue>Eve</font> But doesn't something feel off? I\nwas definitely confused at first, but I'm\nnot sure if they actually put up much\nof a fight...	machine
 2066_210_05	5e300dae3140b6f7646a6e3b9583dd37d36397db	<font color=blue>Valka</font> True, at first, I was\nscared to death.	machine
 2066_210_06	4b11b272953e7298e1817e44ae392ef436c1518d	<font color=blue>Welch</font> Right.	machine
-2066_210_07	366330c93d019e205652db0927745e5b8bad7f3b	<font color=blue>Valka</font> However, both the\nphysical and optical weapons\nshould have had much higher\nexpected power. I feel as\nthough their functions were\nsomehow restricted.	machine
+2066_210_07	366330c93d019e205652db0927745e5b8bad7f3b	<font color=blue>Valka</font> However, both the physical and\noptical weapons should have had much\nhigher expected power. I feel as though\ntheir functions were somehow\nrestricted.	machine
 2066_210_08	3ddff71c5c770eb4b35215e1827e4101776f38b3	<font color=blue>Welch</font> Still, if you get punched\nby one of those arms in the\nwrong spot, you're normally\ndead.	machine
 2066_210_09	77fac5d27f2c7237fdc0e2ca7b558c1c82f94c04	<font color=blue>Karlyn</font> True. You nearly died\nthis time, didn't you?	machine
 2066_210_10	302e128fba1f4fd92829c17285d572a14d63f531	<font color=blue>Welch</font> Ugh... shut up! You don't\nneed to point that out...	machine
@@ -642,7 +642,7 @@ message_id	ja_sha1	en	source
 2066_220_03	90ab0ef68e41c949d8469f5f8f7cdfa1f70b5656	A human... a human, right? I\nwonder if they're from this\nplanet...	machine
 2066_220_04	83ac8ba8bb76ded6226eacc1a9e42264f282694b	...Ah... just how long have I\nlonged for this moment.	machine
 2066_220_05	7267418d8001ff9c4843c5b4f2a8eb0537d16b7b	Wait. Stop right there.	machine
-2066_220_07	7caa1fbf139968c1eef692a0c4bac959bf8a44bb	You should be able to\nunderstand me. Raise your\nhands where we can see them\nand prove you mean us no\nharm.	machine
+2066_220_07	7caa1fbf139968c1eef692a0c4bac959bf8a44bb	You should be able to understand me.\nRaise your hands where we can see\nthem and prove you mean us no harm.	machine
 2066_220_09	0c326a5c2d60967a57be5e7368b4ddf9cad7c447	This is a warning. Raise your\nhands...	machine
 2066_220_10	6588713a54a55ad55d9341cb9b80c267e1abaf6e	...I have a request.	machine
 2066_220_11	4470573f8cf6f9ce2de5a916a313184cc6e0e29a	Hm?	machine
@@ -674,20 +674,20 @@ message_id	ja_sha1	en	source
 2066_220_38	e852327c026fb7942e6a838018ab208b4cdab927	I have never heard of a\n"Messenger of Daftes"... but I\nwonder if there are those\ncalled such on this planet now.	machine
 2066_220_40	095373b2c1b96838fd86ac2d7434a516a013d65a	<font color=blue>Eve</font> Yeah. Something's\nstrange... it feels like they have\nno idea what's actually\nhappening on this planet.	machine
 2066_220_41	cb3c4c0690188abeda064b6ba4e0f72861ac9061	<font color=blue>Valka</font> It seems we need to\nexchange information... I sense\nno hostility from them.	machine
-2066_220_42	1e0bbe2873c75127d55f6e4057154781b7cf062b	As you might have guessed, we\nhad all encountered unforeseen\ncircumstances outside the\nplanet and ended up visiting\nOnelsen.	machine
+2066_220_42	1e0bbe2873c75127d55f6e4057154781b7cf062b	As you might have guessed, we had all\nencountered unforeseen circumstances\noutside the planet and ended up\nvisiting Onelsen.	machine
 2066_220_43	94a091987c6709ba50c7bd2a257d9ee29f13bd54	Mista...	machine
 2066_220_44	72348986d4bd7b9f0a86740ddcd2c2361361af93	<font color=blue>Henri</font> <font color=yellow>Henri</font>. Henri Anle Henri. I\nserve as the director of the\nOnelsen Human Preservation\nResearch Institute, <font color=yellow>Ark</font>...	machine
 2066_220_45	b5f5e02af39276ae79afd3b73fc932e5696bbae8	Or rather, I used to.	machine
 2066_220_46	54a784fec265c74550dc1e3d5e840941bbf3295b	<font color=blue>Valka</font> Mista Henri. I am Valka\nS90, a Hardier Warrior of\nMorphus.	machine
 2066_220_47	47430c0960132f6e01941aba3f70d8026e9cb3cf	What on earth are you doing\nhere, Mista? And what exactly\ndo you mean by "human\npreservation"?	machine
-2066_220_48	29122fe6fe621234477145543ab63fe5e37af880	<font color=blue>Henri</font> I was waiting. Waiting for\nsomeone to save us. Human\npreservation is exactly what it\nsounds like. I struggled to save\na people who were fading\naway.	machine
+2066_220_48	29122fe6fe621234477145543ab63fe5e37af880	<font color=blue>Henri</font> I was waiting. Waiting for\nsomeone to save us. Human\npreservation is exactly what it sounds\nlike. I struggled to save a people who\nwere fading away.	machine
 2066_220_49	7c87a69fc95c63212e2b8c7bf5c123214fc480d1	<font color=blue>Valka</font> Save them? From what?	machine
 2066_220_50	1795f09ea7af245b78f7b88d0e5950b091152316	<font color=blue>Henri</font> ...A plague that blanketed\nthe planet. ...A plague that\npreyed upon humanity.	machine
 2066_220_51	e66db46fcd66dbb69a52d66bf9a5406723f6b36c	<font color=blue>Verda</font> A plague, you say?	machine
 2066_220_52	e99e72152a08049e34524026d97633292134e439	<font color=blue>Henri</font> There was nothing that\ncould be done. We couldn't\neven fight back.	machine
 2066_220_53	9f3344cdc724add7abf4b8c288fb8d96e96c8452	That is why I waited.	machine
-2066_220_54	22e542fe72c5d474c04d83e73f5ecc9c54ea3377	As nations and societies\ncrumbled and the population\ndwindled, I prayed for the\narrival of someone among the\nfew who adapted to the\nplague―someone who could\ncarry on our history.	machine
-2066_220_55	8dc43b0d98d1956a1603f901206553b18753411a	I believed that anyone capable\nof understanding this planet's\ncivilization would open the\ngates of the Ark, defeat its\nguardian, and set us free.	machine
+2066_220_54	22e542fe72c5d474c04d83e73f5ecc9c54ea3377	As nations and societies crumbled and\nthe population dwindled, I prayed for\nthe arrival of someone among the few\nwho adapted to the plague―someone\nwho could carry on our history.	machine
+2066_220_55	8dc43b0d98d1956a1603f901206553b18753411a	I believed that anyone capable of\nunderstanding this planet's civilization\nwould open the gates of the Ark,\ndefeat its guardian, and set us free.	machine
 2066_220_56	c7b186bee2a582be4fd89c61e1bf0fced39a1920	I can only hope that today is\nfinally the day of our liberation.	machine
 2066_220_57	d422a20f9cd237bfa0877269128de8b8ed880bc1	<font color=blue>Valka</font> Defeat the guardian and\nliberate...	machine
 2066_220_58	6a56a0c04cd4e3fbd391d773467411c91bf8f690	Which means the Guard Robot\nwas holding back its full power\nduring that last fight...	machine
@@ -696,7 +696,7 @@ message_id	ja_sha1	en	source
 2066_220_61	069cffbe55381b33bb1be867a1918007ebae2181	Henri, don't tell me you've\nfallen victim to this disease as\nwell? What exactly are the\nsymptoms?	machine
 2066_220_62	f09feb743e7ed1b1f4d28dab62dbe4cb7c2fbc88	A plague that turns humans\ninto beasts.	machine
 2066_220_64	cb830354f1703af2bbc43a0a1e20b88ba0cac943	We discovered it was caused\nby a certain type of virus,	machine
-2066_220_65	7bf0b15a80fd05b793a2ba5a877c5ec0763cb200	but once infected, it erodes\nthe body's tissues at an\nunstoppable speed. Eventually,\nthe victim loses their reason\nand becomes a beast.	machine
+2066_220_65	7bf0b15a80fd05b793a2ba5a877c5ec0763cb200	but once infected, it erodes the body's\ntissues at an unstoppable speed.\nEventually, the victim loses their reason\nand becomes a beast.	machine
 2066_220_66	0d347fd944607458f481a40e220b87903efdf24c	It was nothing short of a\nnightmare.	machine
 2066_220_67	c9d68e928a7ac6e92b394f22b7bd8cd795a56115	Wait... did you just say "falling\ninto a beast"?	machine
 2066_220_68	6a22738e47a941592fed47cd8cc69eef8ab01358	Yes... everyone held in this\nfacility, myself included, are\nthose who have adapted to the\n<font color=yellow>Beastification Disease</font>.	machine
@@ -724,19 +724,19 @@ message_id	ja_sha1	en	source
 2066_230_20	f436d99fdea64dbc7681db254503c7e8657284d2	Even so, our ferocity increases,\nand our physical traits change\ndrastically.	machine
 2066_230_21	34e30a5888c69f6b4289a970b959156b5aa8a74a	Our bodies become such that\nall the medical knowledge we\nhad cultivated is no longer\napplicable.	machine
 2066_230_22	484bd4d54dda850556c4597d959ddc92b238c997	Tens of thousands, hundreds\nof millions of people became\nbeasts.	machine
-2066_230_23	22753071f54e88cd7dcf697813670166f59d5587	Have you seen the remnants of\nthe people of this planet? Has\ntheir number grown? Were\nthere any who retained a\nhuman form?	machine
+2066_230_23	22753071f54e88cd7dcf697813670166f59d5587	Have you seen the remnants of the\npeople of this planet? Has their\nnumber grown? Were there any who\nretained a human form?	machine
 2066_230_24	6e24740971407f33c38bb6cdf129fdcdcfc75c51	I do not know. It has been\n30,000 years since our\ncivilization fell.	machine
 2066_230_25	b88b47055e5ffb17a518a404cb27d1a32a4858a5	Th... 30,000 years!?	machine
 2066_230_26	61f0e1cbd7415209e8944f78723a1fbfdb0cdef3	If the quantum computer's\ncalculations are correct, then\nthat is the case.	machine
 2066_230_28	f463507c7c0d749cceb697ad787186279d62a298	That's right, Captain. There's\nno mistake.	machine
 2066_230_29	c880952f313f5fbf91e399da590d68f2a36c5524	Th-this is... the Lycanthrope\nVirus, or something with very\nsimilar symptoms.	machine
-2066_230_30	ac27080861c661de6d1e3cbd38e9a9cfde3290df	Turning into beasts... wolves,\nbeasts, the Lycanthrope\nVirus...? A virus that turns\npeople into beasts? Could it\nbe...!	machine
+2066_230_30	ac27080861c661de6d1e3cbd38e9a9cfde3290df	Turning into beasts... wolves, beasts,\nthe Lycanthrope Virus...? A virus that\nturns people into beasts? Could it be...!	machine
 2066_230_31	b5c14f044d257df7511df16a2ab28f9bde6663fb	The "beasts" are... humans...!?	machine
-2066_240_01	246c864e7ed48ccf103df260ce441e3bda44289c	This is the place where the\npeople of Daftes met their end.\nI want you to see the names of\nthe few thousand who\naccepted the beast and fell\nasleep awaiting salvation.	machine
+2066_240_01	246c864e7ed48ccf103df260ce441e3bda44289c	This is the place where the people of\nDaftes met their end. I want you to see\nthe names of the few thousand who\naccepted the beast and fell asleep\nawaiting salvation.	machine
 2066_240_02	0575ab0d2ab70cc79362097c5b73d7eca1e19fa7	Oh...	machine
 2066_240_03	ba526f1b0e5972b95d13691f90f05d379f34401a	H-how could this happen...?	machine
 2066_240_04	459d8ad5b50df42ff74dae19aee9a9c64554b8bb	The people here... are they still\nalive?	machine
-2066_240_05	6085e41edb029293bd0f0effd9edb07737b94c84	Fortunately, there is no\ndamage to the cold sleep\nfunctions. Miraculously, survival\nsignals are lit for every single\ncapsule.	machine
+2066_240_05	6085e41edb029293bd0f0effd9edb07737b94c84	Fortunately, there is no damage to the\ncold sleep functions. Miraculously,\nsurvival signals are lit for every single\ncapsule.	machine
 2066_240_06	ac87763c245c10d4eaefacb335911980c5e56fd8	Approximately 8,000\nvirus-compatible individuals\nhave survived here until this\nvery day.	machine
 2066_240_07	b67280c98ade26545b642f5d1f7c46f306a9594f	From such a vast planet...\nonly... 8,000 people...	machine
 2066_240_08	5b27f93f288d7dfc13703f71d802a7257f36965b	There were some who\nmiraculously escaped infection\nand left the planet...	machine
@@ -774,13 +774,13 @@ message_id	ja_sha1	en	source
 2066_240_40	7e525b90b885fd92ca52a071931836298c24c9d7	Eve, Captain, do you remember\nwhat my grandfather became\nin the end?	machine
 2066_240_42	60c88b9773c5374262bd0426931a1283f7c93c80	Y-yes, of course, but...	machine
 2066_240_43	76f0cd5385539fc0d9e0abea00e7de353ee2bb9c	I am not trying to dwell on\nsentiment! Remember it.	machine
-2066_240_44	4c0fc6e2c61c54731617d72593a62804720ad271	The symptoms of my\ngrandfather's <font color=yellow>Pyre Disease</font>\nwere clearly different from\nthose of other Pyre Disease\ncases.	machine
+2066_240_44	4c0fc6e2c61c54731617d72593a62804720ad271	The symptoms of my grandfather's\n<font color=yellow>Pyre Disease</font> were clearly different\nfrom those of other Pyre Disease\ncases.	machine
 2066_240_45	b551ec288b3994ebf8bd7db73cbc2b62fdb2664b	The alteration of body tissue,\nthe gigantism, and above all,\nthat beast-like appearance...	machine
-2066_240_46	d7b6fadd8c8fd47608a9242ffc59096718459dc5	I cannot overlook the fact that\nthe beastification disease\noccurred near Daftine, the\nplanned site for the Pulse\nTower!	machine
-2066_240_47	0d19e5eadb54529fe419353c4a642e599b6a6f22	...Verda, you suspect that your\ngrandfather's transformation\nwas a complication of both\nPyre Disease and the\nbeastification disease?	machine
+2066_240_46	d7b6fadd8c8fd47608a9242ffc59096718459dc5	I cannot overlook the fact that the\nbeastification disease occurred near\nDaftine, the planned site for the Pulse\nTower!	machine
+2066_240_47	0d19e5eadb54529fe419353c4a642e599b6a6f22	...Verda, you suspect that your\ngrandfather's transformation was a\ncomplication of both Pyre Disease and\nthe beastification disease?	machine
 2066_240_48	bbbd9bf7b4f81f18809e90b9d53e44a9acd40815	Exactly!	machine
-2066_240_49	037019d9d6af325ab97396a42a262fdc958b8cfd	The Eldram and Levarance\narmies were driven from this\nsector by a mysterious attack\nand could not investigate\nDaftes, but...	machine
-2066_240_50	f2b34a6bcfd2c6e523407a8a30e9462ac7507b4c	I cannot rule out the possibility\nthat the mutated Grandfather\nor the Burning Death had\narrived in this sector even\nbefore then.	machine
+2066_240_49	037019d9d6af325ab97396a42a262fdc958b8cfd	The Eldram and Levarance armies were\ndriven from this sector by a mysterious\nattack and could not investigate\nDaftes, but...	machine
+2066_240_50	f2b34a6bcfd2c6e523407a8a30e9462ac7507b4c	I cannot rule out the possibility that the\nmutated Grandfather or the Burning\nDeath had arrived in this sector even\nbefore then.	machine
 2066_240_51	f1ae91cb2cea540dfe2681a8fe16342c40eec66a	And remember, Grandfather\nwas capable of spatial\nteleportation!	machine
 2066_240_52	31c5c3d2cf42ac3ceeae1dd1b1d13b47f2326e0a	How exactly did we end up on\nDaftes this time? What was it\nthat transported us to this\nplanet in an instant?	machine
 2066_240_53	a64e4838a4810edc9f1948f58c416cd052c2e344	Ah!!	machine
@@ -788,15 +788,15 @@ message_id	ja_sha1	en	source
 2066_240_55	fcddb4cccb97b927b80567ccb84e96dc31b1c561	And the source of the "Beast\nof Baschen" summoned by\nKarlyn's sigil arts was likely this\nplanet, Daftes.	machine
 2066_240_56	f5bf182924a11aab78f0724368d5e49e31e5b1a1	Every beast that was\nsummoned had been\nThornite-ized.	machine
 2066_240_57	c854de99ff9996d78b0849c60dbb2060b2d3f92c	...This is a sick joke... This is\nthe worst...	machine
-2066_240_58	2018b3de93f36aee73a8e6f0499c8b9fad47bdb8	Givel, a master of summoning\nsigil arts, created the "Witch of\nthe Beasts," another master of\nthe same art, and fought the\nHoly War.	machine
+2066_240_58	2018b3de93f36aee73a8e6f0499c8b9fad47bdb8	Givel, a master of summoning sigil arts,\ncreated the "Witch of the Beasts,"\nanother master of the same art, and\nfought the Holy War.	machine
 2066_240_59	ac928aac7bb596c4ce5b980d3112b2e9230564c4	Givel appeared from the\nMoonshadow Ladder, which is\nsaid to connect Daftes,\nMastima, and Daftine...	machine
 2066_240_60	26bfa3e239227d8124bb0adf1abffd27e3589bae	None of these connections are\nstrong on their own,	machine
-2066_240_61	cc15b13eec80237653e99263c46f659b38f261c2	But the fact that every event\nwe've encountered in this\nsector is linked by a thin\nthread is something I cannot\nignore!	machine
+2066_240_61	cc15b13eec80237653e99263c46f659b38f261c2	But the fact that every event we've\nencountered in this sector is linked by\na thin thread is something I cannot\nignore!	machine
 2066_240_62	3799a78739f2cff76a1a4710382e356dc6498032	I propose that Dr. Belda's\nhypothesis is more than worthy\nof investigation.	machine
 2066_240_63	438e0a718347bea5a56c4e994a8d610f6a08d148	Henri. For the people of\nOnelsen, for the future of the\npeople of Daftine, and for my\nhomeland, Levarance...	machine
 2066_240_64	239430d3248ea4a55a0b98405fc85cdab00080c5	Will you once again unleash the\naccumulated wisdom of\nOnelsen upon the universe?	machine
 2066_240_65	924dbb40dbd5e57a5fdbe34ec21b0601a8cd1b20	...Yes. I never dreamed that\nsuch a light would shine upon\nOnelsen after thirty thousand\nyears.	machine
-2066_240_66	787a218e2d44fe70be9fcaf1ff475e137b96e1be	If we can establish contact\nwith Levarance, an envoy\nshould be sent to Daftes to\nfurther the research on the\nBurning Death.	machine
+2066_240_66	787a218e2d44fe70be9fcaf1ff475e137b96e1be	If we can establish contact with\nLevarance, an envoy should be sent to\nDaftes to further the research on the\nBurning Death.	machine
 2066_240_67	de68f20eb00a132698e3078be7e43acb85929c1a	By combining the strengths of\nOnelsen and Levarance, we\nshall wipe away every single\ntear in this sector!	machine
 2066_240_68	6d45b50f294e47cd6a1b3befe34a2f42fbdcf8c0	To that end, we must first find\na way to reach Daftine.	machine
 2066_240_69	c155e49f0bbd287312547813209d3e77f5382604	If the beastification disease\nprogresses via viral infection,\nthen Tika needs a health\ncheckup too!!	machine
@@ -805,7 +805,7 @@ message_id	ja_sha1	en	source
 2066_240_72	a02641ff9e4d882b24aa407a7b8b2a665ac79578	In that case, we need to get\nCoro to come pick us up as\nsoon as possible!	machine
 2066_240_73	0d613732cd7ae25175fd28f7328c1fd15fc3e8ae	Henri, our ship is currently in\nDaftine's orbit.	machine
 2066_240_74	a1b935943417f7bfc2eca93872cedb699beff0e1	Do you think you could find\nsome repair materials so we\ncan use Valka's ship's\ncommunicator to get in touch?	machine
-2066_240_75	f7f47322b53726002d617e53c4779ecda29e7395	I can certainly provide the\nmaterials, but long-range\ncommunication is also possible\nfrom this facility. You should\ncontact them from here.	machine
+2066_240_75	f7f47322b53726002d617e53c4779ecda29e7395	I can certainly provide the materials,\nbut long-range communication is also\npossible from this facility. You should\ncontact them from here.	machine
 2066_240_77	77261310e4374b49cca9200f18cdafdc6b23ba00	No, it is I who should be\nthanking you...	machine
 2066_240_78	8d8c8b554c50bd32c9bc37191f97ed76b0512ec1	In the midst of despair, as so\nmany of my kin became\nmindless beasts and our\ncivilization faded away...	machine
 2066_240_79	41a082ee26e7e352cc208ed720250c1468a8b05b	I thought the light of civilization\nwould never shine upon\nOnelsen again...	machine
@@ -819,7 +819,7 @@ message_id	ja_sha1	en	source
 2067_270_09	ce8c981783f0997e00844aba4cacbd196bc2571b	I still feel that Coro's linguistic\nfunctions are far too\nredundant...	machine
 2067_270_10	6dceff348d5ac6044d5644d8e566793cd42781f5	W-wait! This is Valka S90!\nAdministrator Koro!	machine
 2067_270_11	0fa877b6d4adef50e0b310d18c471748e0010248	Your current position is\nDaftine, isn't it!? There are\nunidentified hostile forces in\nthis sector...!!	machine
-2067_270_12	dfba01dbae49bfb71915d89d69f85ddf70e74b71	"I don't see anything like that\nanywhere! While the captains\nwere away, I scanned this\nsector so many times I'm bored\nto death!"	machine
+2067_270_12	dfba01dbae49bfb71915d89d69f85ddf70e74b71	"I don't see anything like that anywhere!\nWhile the captains were away, I\nscanned this sector so many times I'm\nbored to death!"	machine
 2067_270_13	7c3bb8b9c3ba14340a94817ba9a4cdec167569f8	"Besides, don't you worry! I'll\nget there via warp!!"	machine
 2067_270_14	60fda58d006053c1b059f6d5a434992b0166f3d8	Is it really safe to warp at such\na short distance!?	machine
 2067_270_16	419cdbcaf22415503311ad25e37d8b7699cb2510	Well, if the Captain says so,\nthen do as you please...	machine
@@ -836,12 +836,12 @@ message_id	ja_sha1	en	source
 2067_270_29	4d5eb07b61a856847c326ee7c309a0d3f327eced	Me? You mean... you're allowing\nme to accompany you?	machine
 2067_270_30	d2de1549a08e42d67e2181d8426538f4751b35dd	...That is a fine idea!	machine
 2067_270_32	42ed29e1078f4c60b1e17fab40b54a26d20f7b9c	Oh... that's right... I can't\nbelieve I didn't consider that\npossibility.	machine
-2067_270_33	7aa709cdb73ebaf90083c61877277c51998af20a	Indeed, if the beastification\nvirus still lingers in Daftes'\natmosphere, then Tika and all\nof us will need a health\ncheckup.	machine
+2067_270_33	7aa709cdb73ebaf90083c61877277c51998af20a	Indeed, if the beastification virus still\nlingers in Daftes' atmosphere, then Tika\nand all of us will need a health checkup.	machine
 2067_270_34	0098659aa6fd6038df3b8cee5932f73c6955d3d1	The Captain and Valka seem to\nbe aware of these symptoms,\nbut can the ship's medical\nfacilities handle this?	machine
-2067_270_36	dbd59960025214ef679192fb8f479062066397d4	C-can you people of the\nGalactic Federation actually\ncontrol this virus!? If that's the\ncase, I have absolutely no\nreason to refuse!	machine
+2067_270_36	dbd59960025214ef679192fb8f479062066397d4	C-can you people of the Galactic\nFederation actually control this virus!?\nIf that's the case, I have absolutely no\nreason to refuse!	machine
 2067_270_38	fad0c72a83621e99ad6eac64d894fb1bc17038a6	I see... For Henri and the\nothers, we must have Coro\ncome pick us up as soon as\npossible.	machine
 2067_270_39	c657bd895e14741eb7b6e456a3fb3e3b2a1b348a	Will the facility be alright if\nHenri leaves?	machine
-2067_270_40	4f357d191c27fc2ac4bbb96b2c0294afdad56240	Within this "Ark," there are\nothers like me who are\ncompatible with the virus and\npossess the qualifications and\nskills to maintain the facility.	machine
+2067_270_40	4f357d191c27fc2ac4bbb96b2c0294afdad56240	Within this "Ark," there are others like\nme who are compatible with the virus\nand possess the qualifications and\nskills to maintain the facility.	machine
 2067_270_41	3cb6d94def048d9c9c095ade4018a4d93436b39b	I shall awaken them and leave\nthe facility in their care. I will\nalso provide the data we have\naccumulated to your ship.	machine
 2067_270_42	a64db5e742bb07e30ed75308606b30ee585060eb	Please... ensure that my\nsleeping compatriots wake to a\nworld filled with light...	machine
 2067_270_44	6051430db2f3679cde893b5710af6680faa530e7	Leave it to me!	machine
@@ -878,7 +878,7 @@ message_id	ja_sha1	en	source
 2067_280_16	9ec6d179fce89c1a1919b813ff74696a75dd4322	...Uh, I take it you've already\nmet the others?	machine
 2067_280_17	23d9c04d36537aed6635fad311cdd030fe1ca461	It looks like there's still plenty\nleft to surprise us. Anyway,\nnice to meet you, Coro.	machine
 2067_280_18	bdc2874abfefc14ade7b07283cdcf6643a7be303	Yes, sir! Euwin, Welch, Valka,\nKarlyn, and Henri―thank you all\nfor taking such great care of\nthe Captains!	machine
-2067_280_19	d006664478710e3825e2c93041905e070c2ffe0d	First, everyone please board\nthe ship and get a medical\ncheckup. Let's heal those\nwounds and get ready for the\nnext mission!	machine
+2067_280_19	d006664478710e3825e2c93041905e070c2ffe0d	First, everyone please board the ship\nand get a medical checkup. Let's heal\nthose wounds and get ready for the\nnext mission!	machine
 2067_280_20	78356862b50383b2439a9c2e85205054a8438bc0	Whoaaaaaa! This is awesome! I\nactually get to ride in this\nthing?!	machine
 2067_280_21	cffd8e07a6559ca9a2b0925baefbfb0f0324db7e	U-um... please don't try to\ndismantle it, okay?	machine
 2067_280_22	876a31ad8bca9b3f9741f7e628f23846149695d4	I can't help it, I just want to\nsee how it works...!	machine

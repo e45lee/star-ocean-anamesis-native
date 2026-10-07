@@ -1,9 +1,9 @@
 message_id	ja_sha1	en	source
 D053_010_01	78b08f1690dfca5f1387c93eaf69856242f07fb6	These ruins are so quiet... It\ndoesn't look like any traps are\nactive or that anything has\nmade a nest here.	machine
-D053_010_02	cee3477348aee5cbeeb64f9fc0f0eddd6326d69f	Coro made such a fuss about\nsome unnatural readings here\nthat we all came to check it\nout... but it seems it was for\nnothing.	machine
-D053_010_03	c8ed0f2a4e1fdcdf24727cf6da01d4624f298764	Coro is a worrywart AI. He\ntends to overreport even the\nsmallest reactions; this is\nprobably just more of the\nsame.	machine
-D053_010_04	2e8cd20204a1c99249478dbdfe08c9c60a335445	It's too early to let our guard\ndown. Ruins of advanced\ncivilizations can look dormant,\nbut you never know when\nthey'll spring to life.	machine
-D053_010_05	3ce03a0d95dd1c508abf3fdde2ab15ac515c86b3	Haha, the words of an\nexperienced traveler really\ncarry weight. But still... I\nwonder what kind of ruins\nthese are.	machine
+D053_010_02	cee3477348aee5cbeeb64f9fc0f0eddd6326d69f	Coro made such a fuss about some\nunnatural readings here that we all\ncame to check it out... but it seems it\nwas for nothing.	machine
+D053_010_03	c8ed0f2a4e1fdcdf24727cf6da01d4624f298764	Coro is a worrywart AI. He tends to\noverreport even the smallest reactions;\nthis is probably just more of the same.	machine
+D053_010_04	2e8cd20204a1c99249478dbdfe08c9c60a335445	It's too early to let our guard down.\nRuins of advanced civilizations can look\ndormant, but you never know when\nthey'll spring to life.	machine
+D053_010_05	3ce03a0d95dd1c508abf3fdde2ab15ac515c86b3	Haha, the words of an experienced\ntraveler really carry weight. But still... I\nwonder what kind of ruins these are.	machine
 D053_010_06	16c3c0f477c24726562b9a285fff69dec496a2fa	Which planet did Coro say had\na similar pattern? Um, S...?	machine
 D053_010_07	3d340d2d92aebdeb4c5a00b3c8dbc561e430c051	Planet Stream. The planet that\nhad the Time Gate...	machine
 D053_010_08	139876cfe6021bdb2dd9f9ece7824dc3c2ec14cf	...del. To Fidel...	machine
@@ -28,20 +28,20 @@ D053_010_26	2296ca5ae7d291add0e5a267da09bd8693361b52	This can't be... This is ri
 D053_010_27	eff35d22211a575a58a2bef85215283a19eb1a26	Big brother Fidel still can't eat\nfish guts. Even though they're\ndelicious.	machine
 D053_010_28	9ee1da575ca20c5fac318926ad0d839b2692d5d3	...Guts?	machine
 D053_010_29	98e97c2f564a797c1c43f9b1cc58c13e66dd2bd8	The innards. For small fish,\nthey're usually cooked without\nremoving them.	machine
-D053_010_30	86d045b4654dcc761d355929638456808eeb6a05	A long time ago, when Big\nbrother Fidel grilled and ate a\nfish he caught in the river, an\nearthworm from the bait just\npopped out of the guts...	machine
+D053_010_30	86d045b4654dcc761d355929638456808eeb6a05	A long time ago, when Big brother Fidel\ngrilled and ate a fish he caught in the\nriver, an earthworm from the bait just\npopped out of the guts...	machine
 D053_010_31	ba682d79df06aabbdfe2510e0596320ce6249747	Hey, don't remind me of that!	machine
 D053_010_32	a8953a527b85513d03ea4b123ef8c74e8bd38ca0	The guts are the best part, so\nit's a waste.	machine
 D053_010_33	4da3a668bf9341d9948d630ba27a0024b148e9c0	...I remember this conversation.\nJust what is this ruin...?	machine
-D053_020_01	f88cb260d34ab9255ab1441d010c1f4a0c8e0c66	*Pant, pant*... We barely\nmanaged to win. Still, those\nenemies and the place we\nfought... it feels like everything\nis from my memories.	machine
+D053_020_01	f88cb260d34ab9255ab1441d010c1f4a0c8e0c66	*Pant, pant*... We barely managed to\nwin. Still, those enemies and the place\nwe fought... it feels like everything is\nfrom my memories.	machine
 D053_020_02	c52d012b395b3a50418281afdde1dabe4da596e9	Yes, they vanished once we\ndefeated them, but they\nweren't illusions. You felt it too,\ndidn't you, Claude?	machine
-D053_020_03	c57a4db07ca3c24ace176a2187536834fd865165	It was quite different from the\nBattle Simulator, wasn't it? I\nwonder if it's manifesting\nthings from our memories as\nphysical entities.	machine
+D053_020_03	c57a4db07ca3c24ace176a2187536834fd865165	It was quite different from the Battle\nSimulator, wasn't it? I wonder if it's\nmanifesting things from our memories\nas physical entities.	machine
 D053_020_04	f1c2c6eb2487517a7b9b910cf33cde42025451b8	I didn't sense any malice,\nthough. The enemies were\ndetermined, but they fought us\nhead-on...	machine
 D053_020_05	a6a8b96d3bc0274fc777e3e80d2cae4fcc6c626b	And the memories being\nrecreated... they all seemed to\nbe, you know, the ones without\nany malice.	machine
 D053_020_06	1f2295f58c4b642cbba6e48f56ed7300d39fce6f	...You don't have to be so\nconsiderate. Everyone knows\nI'm not fond of fish. It's not like\nthe reason is a secret now...	machine
 D053_020_07	894824ebf006f1f1c3b5cddadbac7d15d7686995	...But why were only those\nkinds of memories played\nback? For what reason...?	machine
 D053_020_08	917e34baa611c76de21709814fba014ff09afc6f	Doctor: Captain, Dorne's\ncondition is...!	machine
 D053_020_09	dce9798a5bbe74a1c9afc379d6e3bd5da5935bd3	...I recognize that voice! Is this...\nmy memory? If so...!	machine
-D053_020_10	cc83d574e6d22a2e79de46a310ebeffecd82ac92	...I knew it. This is the medical\nbay of the Space Battleship\nKarnas. And over there, in that\ntransparent bed, is Dorne,\nwho's starting to turn to\nstone...	machine
+D053_020_10	cc83d574e6d22a2e79de46a310ebeffecd82ac92	...I knew it. This is the medical bay of\nthe Space Battleship Karnas. And over\nthere, in that transparent bed, is Dorne,\nwho's starting to turn to stone...	machine
 D053_020_11	a277f170e6e94113394c3dacf3012a16d8afe551	...They're here. Ronyx... and the\npowerless version of me from\nback then.	machine
 D053_020_12	89419a8c7b8a588a77f804fad91c0a37dc6b17a5	Doctor: His vital organs have\nbegun to petrify. He is in\ncritical condition.	machine
 D053_020_13	9f85c0c07feb1f40a037731961678ec2095e94a1	Dorne...!	machine
@@ -67,7 +67,7 @@ D053_020_33	6b7a5db98d9fa8e34814e79447b91c2f1a103133	That... my sister... I...	m
 D053_020_34	156343ed0ea9d4574dc679e2b4a29a4ed54981e8	It's okay. I promise I'll save you.	machine
 D053_020_35	ef2459e926f88c48d01de1d9356f6514a2de4ecf	...Dorne!	machine
 D053_020_36	96afc3c808eda0caa3d9624f951b130f37080eed	Was that Lati's memory?\n...Something painful happened,\ndidn't it?	machine
-D053_020_37	dd00cd47f7a6e6803c3abdd3e168eca5d9d90ae6	...Yeah. But it's okay. Many\nmore hardships followed this,\nbut we overcame them. Dorne\nand his home planet were both\nsaved.	machine
+D053_020_37	dd00cd47f7a6e6803c3abdd3e168eca5d9d90ae6	...Yeah. But it's okay. Many more\nhardships followed this, but we\novercame them. Dorne and his home\nplanet were both saved.	machine
 D053_020_38	4b378ae77fdcb9113d97632802729b233dee3b7d	So, while that was a painful\nsight... I think it served as a\ngood reminder of the\nhappiness we have now.	machine
 D053_020_39	1e38bf17c9bb881e593635ab2feef179fd2c7638	I see... Lati is strong. Or\nperhaps she became strong\nthrough all those battles...	machine
 D053_020_40	57d4e0832c7bda5cc50aec3ad272d77cb9203b0c	...I'd heard my father talk about\nthis period, but seeing it\nfirsthand is a completely\ndifferent experience.	machine
@@ -79,7 +79,7 @@ D053_030_03	70bb08e7e1867af4dece4972320e73c088375713	Are you all right, Edge? Yo
 D053_030_04	59af432c20958a2994cf49468b6942a01a42bfa5	Eh, no, I'm fine. I just...\nremembered something\nunpleasant...	machine
 D053_030_05	b6172250569716b55c56604ab76fe648b8ba9eb5	...Ugh!	machine
 D053_030_06	9933e1906d9cad071e6f2459f89bf0799d4cd1cd	This place is... the Bridge of\nthe Space Exploration Vessel\n003, the Karnas... I thought so.	machine
-D053_030_07	37b242f3d9cef0a368d9826c2494d47cb90075ae	That means "now" is around\nSpace Calendar year 10. Right\nafter "that planet" vanished...\nAnd the one slumped over in\nthe captain's chair... is me,\nback then.	machine
+D053_030_07	37b242f3d9cef0a368d9826c2494d47cb90075ae	That means "now" is around Space\nCalendar year 10. Right after "that\nplanet" vanished... And the one slumped\nover in the captain's chair... is me, back\nthen.	machine
 D053_030_08	1affdff3f5ed6a8611f39704a4d630fb8835b000	I saw it right before we were\nswallowed by subspace... The\nmoment the distorted Earth...\nvanished into the light...	machine
 D053_030_09	903fccde9d4e9519be393542c5cbb9751e80211f	Earth, which had miraculously\nbecome what it was... over the\ncourse of 4.6 billion years...	machine
 D053_030_10	d377f71ab111047fafcfb031a82b5b62fd8d55b8	Vanished... in a single instant...\nSo easily...	machine
@@ -93,7 +93,7 @@ D053_030_17	430dfa6a6f6920a910edf2d358489362da882c1d	Even if that wasn't our Ear
 D053_030_18	0941a489aba4e3694b73b3e372cf6259843ccb8f	That's right... it all vanished! My\nwrong decision is what caused\nthem to spiral out of control!	machine
 D053_030_19	64dded36a967f83e014145bf2c2c286295f2dc6e	Earth was annihilated! Not a\nsingle thing left! Everything!	machine
 D053_030_20	34a7d3b9574c58682a06146e7dc26728a3acc770	Everything!	machine
-D053_030_21	4a0def5e882748d7d6c48a3c6a7c0e8c68209e9a	The adults! The children! The\nanimals! The towns, the houses,\nall of it! Everything! Everything!\nEverything, everything,\neverything!	machine
+D053_030_21	4a0def5e882748d7d6c48a3c6a7c0e8c68209e9a	The adults! The children! The animals!\nThe towns, the houses, all of it!\nEverything! Everything! Everything,\neverything, everything!	machine
 D053_030_22	05166ff6326e5bff329577fa68d62972d65e0764	Aaaagh! Uaaaagh...!!	machine
 D053_030_23	5e0d10f7456f8d1a5dc7ed25bcca235ae43fcf09	Stop it, E-tan! Please, stop it!	machine
 D053_030_24	d804bb493e74009b6df3b398734e8e73a9c3b57c	This isn't why I went into\nspace... I did it for everyone's\nhappiness... for the future...	machine
@@ -109,15 +109,15 @@ D053_030_33	43d851f9f3cec0f3a835d056bf53277a55714187	Still, a materialized flash
 D053_030_34	fe8218531fb4db4ad2aafe501cd7b366ff89fadd	Unlike my memories, this isn't\nfunny. And it's not as easy to\nmove past as it is for Lati... is\nit?	machine
 D053_030_35	d313f8e4c23be2cc1c93a2b5b06880b47b6da4b5	I'm sorry, Edge. If only I hadn't\nsuggested we keep exploring\nout of curiosity...!	machine
 D053_030_36	d2703a6ba9f99a03250c94adde946b9eab31a118	...It's okay. What I experienced\nwas incredibly sad and\nirreversible, but...	machine
-D053_030_37	81e5be5f0d2882b6b1eafd79adbc4b9424c3d5e7	...It was worth it. I was able to\nleave something meaningful\nbehind in this universe. The\nUncharted Planet Protection\nTreaty only came to be\nbecause of these events...	machine
+D053_030_37	81e5be5f0d2882b6b1eafd79adbc4b9424c3d5e7	...It was worth it. I was able to leave\nsomething meaningful behind in this\nuniverse. The Uncharted Planet\nProtection Treaty only came to be\nbecause of these events...	machine
 D053_030_38	4ef8482b400f92ac65a9f776eb71dd9901d9bbdc	...Yeah. That philosophy has\nbeen passed down until Space\nCalendar 772. I'll keep it going.\nNow, and forever...	machine
 D053_030_39	c46065be17f3818af9350e47f121858c3e66d574	...Right. I'm counting on you for\nthe future.	machine
-D053_030_40	b0d1a0b736b25ca17ffe443d67d0823c75b0cda4	Now, let's get back to\nexploring. If we can share and\nunderstand each other's\nprecious memories... then that\ncan't be a bad thing.	machine
+D053_030_40	b0d1a0b736b25ca17ffe443d67d0823c75b0cda4	Now, let's get back to exploring. If we\ncan share and understand each other's\nprecious memories... then that can't be\na bad thing.	machine
 D053_040_01	8d30bad08465c35acf5c6412aa2e144967e53241	Meeting Rena and everyone\nelse. Growing so much. Saving\nthe universe. I have so many\nhappy memories, but...	machine
-D053_040_02	88e60347e3625127acdccc6df3f57145aa456466	...The secrets of our birth, the\ndestruction of our hometowns.\nThe grueling battles... There\nare many painful memories as\nwell.	machine
+D053_040_02	88e60347e3625127acdccc6df3f57145aa456466	...The secrets of our birth, the\ndestruction of our hometowns. The\ngrueling battles... There are many\npainful memories as well.	machine
 D053_040_03	3ed3076417c5cc94ecdf6f22bed35c79fc3fdfcb	I'm a little anxious about what\nwe're going to see.	machine
 D053_040_04	33087ab425605026c883db6520038056822c0c5d	Ah... this is the shop in my\nhometown, Aria Village. Opera\nis there too...	machine
-D053_040_05	5350ee59c11253ecf4815a3cb8922b084d51320f	I remember now! This was\nshortly after I met Claude.\nOpera and I were looking at\naccessories while talking about\nthe people we loved!	machine
+D053_040_05	5350ee59c11253ecf4815a3cb8922b084d51320f	I remember now! This was shortly after\nI met Claude. Opera and I were looking\nat accessories while talking about the\npeople we loved!	machine
 D053_040_06	fb5bd09e756b5ec0dc95084894d0601cf6272b82	Hmm. So you've never received\none, Rena?	machine
 D053_040_07	65e5205bbe875f21ac32b8d6215efe9bc334489d	In that case, try acting a bit\nspoiled in front of a boy you\nlike. I'm sure he'll give you one...	machine
 D053_040_08	fa32bd2235fc9f5666347c59e54249bcd96c9e3b	...Let's see. For now, how about\nClaude?	machine
@@ -138,12 +138,12 @@ D053_040_22	2f7e9a057465a959c60fe45d7a6c5bcd644fb235	How sweet and innocent.	mac
 D053_040_23	f16a77d04619f6849de7c6442eeb80f3ac62ea00	I'm getting hives just watching\nthis.	machine
 D053_040_24	9107f15b67445497cde8b49f2a0befe5300216bd	Isn't the vibe here completely\ndifferent from what I was\nshown...?	machine
 D053_040_25	0de853a937c40b74d9938651d599c583b479fb40	It's embarrassing! So\nembarrassing! I'm so naive! It's\nfrustrating that I can't just be\nhonest with my feelings!	machine
-D053_040_26	792b6f7705c396b18813cbcf08229db89eb35556	Whoa! Rena, who was perfectly\nfine watching her life turned\ninto a stage play by her\nfriends, is now totally\nsquirming!	machine
+D053_040_26	792b6f7705c396b18813cbcf08229db89eb35556	Whoa! Rena, who was perfectly fine\nwatching her life turned into a stage\nplay by her friends, is now totally\nsquirming!	machine
 D053_040_27	a87e44d8dfffcbdf886b16a682bf73c6a67e0cba	I suppose it has a different\neffect when it's played back as\nyour own image.	machine
 D053_040_29	5fbce00af6cc80c0ae3e7c68d7182be9168710ba	(I feel like this is different from\nmy memories... but for the sake\nof my own sanity, it's probably\nbest not to dwell on it...)	machine
 D053_050_01	5ede2fe3a0cc7656720f7ff82e064d6d644c61aa	Hmm, I'm not sure what the\ncriteria are for the ruins to\nplayback memories... but I have\na feeling I'm the last one.	machine
-D053_050_02	aec65785474cc4abb38ce7e87fabc3e59fc00cc2	There are some memories I'd\nrather not show, but it's too\nlate for me to be the only one\nhiding things. Though I really\nhope it skips over any\nembarrassing mistakes I made\nas a kid.	machine
-D053_050_03	a775b60797c46a4d96a0429e2a0f0e576ac6a65a	I wonder how far back the\nmemories go. If it's millions of\nyears, maybe we could even\nsee memories of my real\nmother...	machine
+D053_050_02	aec65785474cc4abb38ce7e87fabc3e59fc00cc2	There are some memories I'd rather not\nshow, but it's too late for me to be the\nonly one hiding things. Though I really\nhope it skips over any embarrassing\nmistakes I made as a kid.	machine
+D053_050_03	a775b60797c46a4d96a0429e2a0f0e576ac6a65a	I wonder how far back the memories\ngo. If it's millions of years, maybe we\ncould even see memories of my real\nmother...	machine
 D053_050_04	03c8d5ebe87e6a763f408d0f5c3ad4f97cb82d2a	Just the past... I wonder. These\nruins seem related to the Time\nGate, so maybe...	machine
 D053_050_05	c3b8d12f58ef87fc47714627b9a03fb31dc0b56f	This place... is it some noble's\nestate? It looks familiar, but I\ncan't quite place it...	machine
 D053_050_06	26a78b6588fb1b918ea055d6faf7ef684ae8315d	Oh, there I am with Adray! And\nClair... is she making tea for\nme?	machine
@@ -154,7 +154,7 @@ D053_050_10	8784f55536ac183dde607dcb614e7369a7e40e2d	By the way. Are you... seei
 D053_050_11	497222b1ea85bd8e9fabf4823492aefecb58e7a6	Wh― *cough cough*! Where did\nthat come from?	machine
 D053_050_12	b7df443fc7516e771e803c14bb3174603362295d	You went out of your way to\nstay here. I assumed as much...\nam I wrong?	machine
 D053_050_13	b547a12492b2ec34e498cb49c7d53a52f08cf3d5	N-no, it's not like that. Nel and I\naren't... that.	machine
-D053_050_14	47362c5250c00ed8392895e5227e16094853ad79	She was the first person I met\non this planet, and we've\nadventured together... How\nshould I put it... yeah, she's\nmore like a comrade to me.	machine
+D053_050_14	47362c5250c00ed8392895e5227e16094853ad79	She was the first person I met on this\nplanet, and we've adventured together...\nHow should I put it... yeah, she's more\nlike a comrade to me.	machine
 D053_050_15	c0fd29d2b3dfbc9c36f338abfbcf4153da412c3c	In that case, Master Fayt. Do\nyou happen to have a partner\nat the moment?	machine
 D053_050_16	2602346c7fc846f37cf962a0517e8a8504a70748	Not really... but why do you\nask?	machine
 D053_050_17	da59cb815afd659c708c49b95225089d4a8dd415	I see. Then this is perfect. How\nabout marrying my daughter?	machine
@@ -171,11 +171,11 @@ D053_050_29	52894b45a67acb80f9733e06c9cd38895c1df12e	No matter how you look at i
 D053_050_30	f7b1064e6a2562ff2560e6a92462323905f28c71	Fayt, when did things progress\nthat far between you two?\nAnyway, congratulations.	machine
 D053_050_31	fc915771bc1ac9598ca792c3503ef5e5913ade7c	Have you told Sophia about\nthis? You've got to settle your\nrelationships properly, or you'll\nbe in for some trouble!	machine
 D053_050_32	e2f6a2e05a5e165eb858d5bb1a10a507a2367375	...I don't know, I don't know! I\nhave no memory of this!\nBelieve me!	machine
-D053_050_33	bf49914f8b57d6f95873ebd546e548686897c10f	I suspect... the memories\nplayed back here aren't just\npast facts. Some might be\npossible futures or from\nparallel worlds.	machine
+D053_050_33	bf49914f8b57d6f95873ebd546e548686897c10f	I suspect... the memories played back\nhere aren't just past facts. Some might\nbe possible futures or from parallel\nworlds.	machine
 D053_050_34	e91296b25aaceeb4c1318cb5551eb6f768818fa2	I agree. Considering the\nenemies and the battlefields,\nEdge is probably right.	machine
 D053_050_35	f4fdbe1d0fddc81a70e6e4cfef99bbc2b6312933	...If that's the case, this is a\nprecious ruin! I think we should\ntake more time and explore it\ncarefully!	machine
 D053_050_36	a42bdbbd682c8763630368403aaa615bd8e4ec57	True! Alright, let's head back\nfor now and bring the captains!	machine
 D053_050_37	061d43771fbbdd5fa49d0d31c214ad943d5e59bc	This is a huge discovery. For\nonce, Coro's exaggerated\nreports were actually spot on!	machine
 D053_050_38	0e184b972c828824f8ffb698535520530649de1a	M-maybe we should destroy\nthis thing before any more\nweird memories play... Actually,\nI really want to destroy it...	machine
-D053_050_39	5293ebaf0ebe0f19afe60d081b2941b36910092f	I totally agree, and I can\nalready imagine the chaos that\nwould ensue... but given the\nmood, I don't think we can just\nbreak it...	machine
+D053_050_39	5293ebaf0ebe0f19afe60d081b2941b36910092f	I totally agree, and I can already\nimagine the chaos that would ensue...\nbut given the mood, I don't think we\ncan just break it...	machine
 D053_050_40	bf1ef57bc2ee8acb137a6026132a4d7eb8b13fce	This story has come to an end.\nMore stories will be released in\nthe future. Please look forward\nto them.	machine

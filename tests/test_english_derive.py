@@ -22,6 +22,7 @@ DOWNLOAD = ROOT / "work/SOA-3.7.0-canonical-data.zip"
 def test_story_budget_is_the_tools():
     h = (ROOT / "server/src/master/english_derive.h").read_text(encoding="utf-8")
     assert int(re.search(r"kStoryBudget = (\d+);", h).group(1)) == T.STORY_BUDGET
+    assert int(re.search(r"kStoryLines = (\d+);", h).group(1)) == T.STORY_LINES
 
 
 @pytest.mark.skipif(not SERVER.exists() or not DOWNLOAD.exists(), reason="needs build/server/soa-server and the 3.7.0 download")

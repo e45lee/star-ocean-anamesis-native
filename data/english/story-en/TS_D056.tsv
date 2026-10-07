@@ -1,13 +1,13 @@
 message_id	ja_sha1	en	source
-D056_010_01	a7661736e52b9f4f0b391ba222a778ea816992e6	Captain, it looks like this\nresupply went well. Reimi and\nthe others who went shopping\nseem to have relieved some\nstress, too.	machine
+D056_010_01	a7661736e52b9f4f0b391ba222a778ea816992e6	Captain, it looks like this resupply went\nwell. Reimi and the others who went\nshopping seem to have relieved some\nstress, too.	machine
 D056_010_02	a57f1e4b2241d3a539657bfa396350689da9f7cc	Reimi's Voice: Wow, it looks\ngreat on you! It was definitely\nworth splurging on!	machine
 D056_010_04	6f6ac5d6d1493e30b12e320ecc4eedfa8da208c7	They're quite lively, aren't\nthey? I wonder if they found\nsomething nice?	machine
-D056_010_05	60e0e25495dd0b769da004f833d8aa8ed347024d	I wondered what you were\nbuying, but these clothes look\nquite expensive. Are you sure\nyou want me to be the first to\nwear them?	machine
+D056_010_05	60e0e25495dd0b769da004f833d8aa8ed347024d	I wondered what you were buying, but\nthese clothes look quite expensive. Are\nyou sure you want me to be the first to\nwear them?	machine
 D056_010_06	46165373f4370609e32999d9bd26763c1d508349	Because you'll look the best in\nit, Nel! Of course, I'll wear it\nlater too, and I'll call everyone\nelse so we can all swap outfits!	machine
 D056_010_07	7375cf0778441f9740f9c856212c182773aa0d0d	You've certainly got energy...\nWell, I'm honestly grateful that\nyou thought it would suit me.	machine
 D056_010_08	7cc34b1da0b2c5f8433fef51a66cf65e643b5ea0	Oh my! How glamorous! It looks\nquite old; is it some kind of\nantique?	machine
-D056_010_09	f73e3b7b5f8e7b75464c9db5bcd9d19345c96cf3	Yeah, apparently it's a relic left\nbehind by a people who once\nflourished in this sector. They\nsay it's incredibly valuable,\nboth historically and\nartistically.	machine
-D056_010_10	5b891418badc85224bce63f4931fce338d18495a	I see, ancient ethnic clothing. It\nis lovely. It possesses a blend\nof primitive strength and\nprogressive delicacy... so to\nspeak.	machine
+D056_010_09	f73e3b7b5f8e7b75464c9db5bcd9d19345c96cf3	Yeah, apparently it's a relic left behind\nby a people who once flourished in this\nsector. They say it's incredibly valuable,\nboth historically and artistically.	machine
+D056_010_10	5b891418badc85224bce63f4931fce338d18495a	I see, ancient ethnic clothing. It is\nlovely. It possesses a blend of primitive\nstrength and progressive delicacy... so\nto speak.	machine
 D056_010_11	791a2eb9221d2397e4e67cb46cf301a7402b0dd1	Yes, yes! This is some fine\ncraftsmanship. By the way, how\nmuch did it cost?	machine
 D056_010_12	805b6e4a3084bed6bf989c0b281dcf53976cbcdf	That's expensive...!?	machine
 D056_010_13	db4585b7c021969e4e0f50cc48ec7603d2ed9a5e	Right, it was so expensive that\nI could only buy one for a man\nand one for a woman.	machine
@@ -17,36 +17,36 @@ D056_010_16	63e5a11451157ff507878e6705310c2e779c54bd	Ah, Albel! Perfect timing! 
 D056_010_17	bb005f4d1bdb6acec251441d56914fcda2a34e8e	Hmph. I'd rather be asleep than\nwaste my time on such a\nchildish game.	machine
 D056_010_18	6036d6c4273d01aedf1e2ba5ab7ea7fe5b830c0a	Oh... He shot me down\ninstantly. And I really thought it\nwould look good on him.	machine
 D056_010_19	19fd633167237b1f1e24f0abd8e792ba87661208	He has no sense of\ncooperation... Even if he was\ngoing to refuse, he could have\nbeen a bit more polite.	machine
-D056_010_20	c3a1d4ad232b742566e50e69b97b43e452431a8b	Hmm... Come to think of it, is\nthe culture that made these\nclothes from the people of\nPlanet Augus? I heard\nsomething about them during\nour last resupply.	machine
-D056_010_21	ec082fc7ec25f2318835e1da42fc14a5deacd246	Yes, the fallen Planet Augus.\nApparently, after a series of\nevents, the inhabitants\nperished, leaving behind a\ndesolate world of ruins and a\nfew scattered relics.	machine
-D056_010_22	c3a3904535f6e6ba6bd4cb00d71fb2bfd573e7c7	The environment is in terrible\nshape, and the ruins where the\nlocal gods were enshrined are\nsaid to be dangerous―so much\nso that even tomb raiders\nwon't go near them now.	machine
-D056_010_23	1d5f7d72dc6da0717fc805f055abb878b730f552	I heard some space merchants\nwere worried because there's\nsome eccentric scholar trying\nto poke around those\ndangerous ruins on that\nwasteland of a planet.	machine
+D056_010_20	c3a1d4ad232b742566e50e69b97b43e452431a8b	Hmm... Come to think of it, is the\nculture that made these clothes from\nthe people of Planet Augus? I heard\nsomething about them during our last\nresupply.	machine
+D056_010_21	ec082fc7ec25f2318835e1da42fc14a5deacd246	Yes, the fallen Planet Augus.\nApparently, after a series of events,\nthe inhabitants perished, leaving behind\na desolate world of ruins and a few\nscattered relics.	machine
+D056_010_22	c3a3904535f6e6ba6bd4cb00d71fb2bfd573e7c7	The environment is in terrible shape,\nand the ruins where the local gods\nwere enshrined are said to be\ndangerous―so much so that even tomb\nraiders won't go near them now.	machine
+D056_010_23	1d5f7d72dc6da0717fc805f055abb878b730f552	I heard some space merchants were\nworried because there's some eccentric\nscholar trying to poke around those\ndangerous ruins on that wasteland of a\nplanet.	machine
 D056_010_24	f7720060504107e8330ba401ab0e021e0181b424	I thought I'd like to check\nthings out if the ship happened\nto pass by... I didn't realize this\nclothing originated from there.	machine
-D056_010_25	591b77774974ca7265c5396ce507b475d1a22bc0	Augus was listed on the star\nchart you bought for me at the\nresupply station. We're actually\npassing nearby right now...\nShall we stop and take a look?	machine
-D056_010_26	795738ed1d26e1ba868d6c0197190c1944066fd1	Hmm... This planet is certainly\nin a terrible state. It's right on\nthe edge of being habitable...\nactually, it's just barely\nuninhabitable.	machine
+D056_010_25	591b77774974ca7265c5396ce507b475d1a22bc0	Augus was listed on the star chart you\nbought for me at the resupply station.\nWe're actually passing nearby right\nnow... Shall we stop and take a look?	machine
+D056_010_26	795738ed1d26e1ba868d6c0197190c1944066fd1	Hmm... This planet is certainly in a\nterrible state. It's right on the edge of\nbeing habitable... actually, it's just\nbarely uninhabitable.	machine
 D056_010_27	6f2537582c7ede822173915e3e7e9edc3867d245	There are signs that a small\ncraft landed here very\nrecently. I wonder if it belongs\nto that scholar.	machine
 D056_010_28	1e291a569ef27920c3f8503bcbdbcb50f7d634ea	Hmm... But for such a desolate\nplanet, there's a strange\nenergy? And it's amplifying...!	machine
 D056_010_29	9bdaf28cc9526035830f2fa569c1303bad9f571c	What do you mean!?	machine
-D056_010_30	0c505e3494b91810089890b4496684ac5fa2e174	N-now that you mention it, I\nheard the god worshipped by\nthe people of Augus was a\nviolent deity... one that brought\ncalamity to anyone who\napproached carelessly.	machine
-D056_010_31	a43933e614a7ae4958c97109d907d7a154f44728	Once provoked, the god would\ncontinue to cause disasters\nuntil it was satisfied, and the\nplanet grew more desolate with\nevery occurrence...	machine
+D056_010_30	0c505e3494b91810089890b4496684ac5fa2e174	N-now that you mention it, I heard the\ngod worshipped by the people of Augus\nwas a violent deity... one that brought\ncalamity to anyone who approached\ncarelessly.	machine
+D056_010_31	a43933e614a7ae4958c97109d907d7a154f44728	Once provoked, the god would continue\nto cause disasters until it was satisfied,\nand the planet grew more desolate with\nevery occurrence...	machine
 D056_010_32	c76996ec6661e0f61e06263839dd289901a29ac5	There's even a theory that\nthese traditional clothes were\noriginally the attire of dancers\nmeant to appease the god.	machine
 D056_010_33	c12bdde29b6f17c0d7c446be03f579981a57592e	...The scholar is a young man\neager for fame, and apparently,\nhe was trying to investigate\nthat very god of Augus.	machine
 D056_010_34	69993e2403551ee899036522b0030c85ae74a883	This is definitely a case of\nsomeone provoking something\nthat should have been left\nalone!	machine
-D056_010_35	a24367d358fc916939bb0624397ef1a65368b36b	Hmm, this is not good. If left\nunchecked, this is the kind of\nenergy that could strip the\nentire surface of the planet\nbare.	machine
+D056_010_35	a24367d358fc916939bb0624397ef1a65368b36b	Hmm, this is not good. If left\nunchecked, this is the kind of energy\nthat could strip the entire surface of\nthe planet bare.	machine
 D056_010_36	79627c2523a4cc5880232ed624e9c25191bfdf18	For everyone's safety, I believe\nwe should leave immediately...\nhowever.	machine
 D056_010_37	8b58cfa3e76712631cb319a1734b4c8376ce36ad	Even on a planet where the\ninhabitants have perished, I\nbelieve the remnants of their\nculture should be protected!	machine
-D056_010_38	bb431fe887c5aeeea44b2274801aa8c9b2570914	Especially when a superior past\nculture is erased just because\nsome scholar from an\nadvanced planet was\ncareless―we can't let that\nhappen!	machine
+D056_010_38	bb431fe887c5aeeea44b2274801aa8c9b2570914	Especially when a superior past culture\nis erased just because some scholar\nfrom an advanced planet was\ncareless―we can't let that happen!	machine
 D056_010_39	d980561a0370121f89d5c4bf3eb22d8c1eecf299	Indeed. It would be cruel to\nsimply overlook this while we\nare here. We may have the\npower to stop it.	machine
 D056_010_41	75f37cbaca24ad434b7706662f04a9237035564a	I'd expect that from Reimi and\nNel, though maybe not from\nAlbel. That's what makes you\ntwo so wonderful, though.	machine
-D056_010_42	d661ce9091deda80630300ff0e04c1ca40d5d84c	Well, from a Federation moral\nstandpoint, we can't exactly\nignore this. Let's get this\nsituation under control,\nCaptain. Landing now!	machine
+D056_010_42	d661ce9091deda80630300ff0e04c1ca40d5d84c	Well, from a Federation moral\nstandpoint, we can't exactly ignore this.\nLet's get this situation under control,\nCaptain. Landing now!	machine
 D056_010_43	1d153595f49b6a4f0914caaf41261f3513c08710	The air is... barely breathable.\nBut I have a terrible feeling. It's\nlike a storm is about to hit...!	machine
-D056_010_44	4277a1e53d053c0e6ccd2939cc50ee0e107f4f97	Yes, this feels far too\nabnormal. We must hurry.\nThere's no time to change\nclothes, but we must find the\nscholar's traces...	machine
+D056_010_44	4277a1e53d053c0e6ccd2939cc50ee0e107f4f97	Yes, this feels far too abnormal. We\nmust hurry. There's no time to change\nclothes, but we must find the scholar's\ntraces...	machine
 D056_010_45	f144d4b90f8c265786e51f3879d23fdfb6c226ef	Gishaaaa!	machine
 D056_010_46	ea676aa0e64d016b420611a733a9c8bc9c3cce2a	What?! What are these things?\nThis environment shouldn't\nhave been capable of\nsupporting native life!	machine
 D056_010_47	4830ba200c3f4a597578767f592c7b177f0553f8	Are these creatures from the\nDemon Realm? Could the "god"\nof this place actually be from\nthe Demon Realm...?!	machine
 D056_010_49	ff106c9ba12fbebba338f76bc4e3e2cd4daf2577	Understood! I'll issue an\nemergency request for\nassistance to everyone on\nboard the ship!!	machine
 D056_010_50	4c2270ff1154a8445168140219577f74d4cd069f	If we don't hold them here, the\nship will be in danger.\nEveryone, let's do this!	machine
-D056_020_01	db2ef16a257b9deb9917783e614b32f868d21422	Phew... we managed to repel\nthem. That was a terrifying\nnumber of enemies. We would\nhave been overwhelmed if the\nentire crew hadn't fought\ntogether.	machine
+D056_020_01	db2ef16a257b9deb9917783e614b32f868d21422	Phew... we managed to repel them. That\nwas a terrifying number of enemies. We\nwould have been overwhelmed if the\nentire crew hadn't fought together.	machine
 D056_020_02	a851f70a5d1867abb7269173b6c05882b8241080	You're right, it was truly thanks\nto everyone's cooperation!	machine
 D056_020_03	25a41eb15ff52319651d07c8c6047730f470a6a4	...Or so I thought, but it seems\nAlbel was the only one resting\nin his room...	machine
 D056_020_04	3ea96d5c4049cb219d7e18c2fa3e6d391135ab52	I can't believe he could sleep\nthrough an emergency like this.\nTalk about a lack of team\nspirit.	machine
@@ -56,11 +56,11 @@ D056_020_07	635d2f5a41e3bee990a952123ac677aed07b7790	A-Are you okay, Reimi? You\
 D056_020_08	11afe3df88b5b611b6408e6892dd47283f021549	...Wait, something's wrong with\nthe others too!? A-And my own\nbody... my movements are\nslowing down...!	machine
 D056_020_09	85c3cb41638c65cc7e1c4aa352762c2cf6fffad8	Ugh, *cough*...!	machine
 D056_020_10	04b88a6c6e579d0541ba4e55c15faab37bfd389b	Reimi! What's happening!\nEveryone else is... suddenly\ncollapsing...!	machine
-D056_020_11	e006e0bb6b4e3336b123fa10f3bee514f6534cb8	There must be something\nharmful in this planet's air...\nsomething our senses and\nequipment can't detect...!\n*cough cough*...!	machine
-D056_020_12	78de4149c65d12f3beb111cf766113635aadaf4d	Everyone on the crew... no,\nCoro, everyone with a\nmechanical body, please\nevacuate to the ship\nimmediately! Before you end up\nlike me!	machine
+D056_020_11	e006e0bb6b4e3336b123fa10f3bee514f6534cb8	There must be something harmful in\nthis planet's air... something our senses\nand equipment can't detect...! *cough\ncough*...!	machine
+D056_020_12	78de4149c65d12f3beb111cf766113635aadaf4d	Everyone on the crew... no, Coro,\neveryone with a mechanical body,\nplease evacuate to the ship\nimmediately! Before you end up like me!	machine
 D056_020_13	1077d8a0f3df67e0e177d6f5d8281ac4d3764bd5	Ugh... ah...	machine
 D056_020_14	c3b18c8de1b92bd6506c2f0a3f8da763dc584396	Reimi, stay with me! I'll carry\nyou out of here, so just hang\non!	machine
-D056_020_15	da5593e93c4c618629044c2e63d06f3405cac2d3	*Cough*... I'll be fine. I have a\nunique constitution that allows\nme to adapt to environments\nquickly. I'll recover soon, so Nel,\nplease... evacuate and leave\nme...!	machine
+D056_020_15	da5593e93c4c618629044c2e63d06f3405cac2d3	*Cough*... I'll be fine. I have a unique\nconstitution that allows me to adapt to\nenvironments quickly. I'll recover soon,\nso Nel, please... evacuate and leave\nme...!	machine
 D056_020_16	0f4518b2433cec9283f88776f25e8f1f4ba2b082	Dammit... I can't just leave\nReimi when she's in this much\npain...	machine
 D056_020_18	192e1501589ec88f8daab25604eab1b0865ec43b	Wait, why am I the only one\nwho's okay...? I-I mean, why am\nI actually safe?	machine
 D056_020_19	d42fdcee1957a9afef81ba1c4f4afbf597df32b3	Even Coro, who's made of\nmachinery, is acting strange...	machine
@@ -71,51 +71,51 @@ D056_020_23	7eadc07136fa0e2fd52370f9a4beb2eae0fba9d4	You mustn't take them off!\
 D056_020_24	369e7bae052e1c02969f5b190db839394c6f5136	...No, one more. There might be\none other person who escaped\nthe effects...!	machine
 D056_020_25	9b2c210a3ecb4030ea4f8bdb8ed1ff5287202c9a	...I've got the situation. You\nmeddling pests.	machine
 D056_020_26	baaacc2f505c82316084bedc7fdb7f00f591a941	This is what happens when you\nplay the hero and stick your\nnose into the affairs of a dying\nplanet.	machine
-D056_020_27	f292c5b8d803744c3093fa993cf037766f5e3f30	It's a miracle that you sleeping\nin your room through the\nemergency alerts actually\nworked in our favor. Now, help\neveryone evacuate.	machine
+D056_020_27	f292c5b8d803744c3093fa993cf037766f5e3f30	It's a miracle that you sleeping in your\nroom through the emergency alerts\nactually worked in our favor. Now, help\neveryone evacuate.	machine
 D056_020_28	75e77442aea7960ee49711e688737864af20aedc	They chose to set foot on a\ndangerous planet of their own\nfree will. Let them find their\nown way back.	machine
-D056_020_29	f72d15704dc6c759c8efcee1aa78fb54abbe7189	If the captain and the others\nstay down, we're all wiped out\nalong with this planet. If you\ndon't want to die, shut up, put\non this suit, and get to work.	machine
+D056_020_29	f72d15704dc6c759c8efcee1aa78fb54abbe7189	If the captain and the others stay\ndown, we're all wiped out along with\nthis planet. If you don't want to die,\nshut up, put on this suit, and get to\nwork.	machine
 D056_020_30	520d990dc177c7c6cf27c8aebddfda9d8d2575a5	...Tch, why do I have to wear a\nsuit like this...	machine
-D056_020_31	7fef1405ca52f54767c8c2d3aaa4f080e2409eb7	*Sigh*... Is everyone back inside\nthe ship? It looks like they\ncan't move right away, even\nafter getting out of the\natmosphere.	machine
+D056_020_31	7fef1405ca52f54767c8c2d3aaa4f080e2409eb7	*Sigh*... Is everyone back inside the\nship? It looks like they can't move right\naway, even after getting out of the\natmosphere.	machine
 D056_020_32	5715ff18f9d7e924ce54050301d1e03367263f34	I just brought Reimi in last, but\nshe hasn't recovered yet. The\nothers will likely take even\nlonger.	machine
 D056_020_33	20e0b432b14ba1a8e326072984f80cee58b49aba	We might need to escape this\nplanet... but we can't operate\nthe ship.	machine
-D056_020_34	13f990f2e1fcf5580979dd79e25d0679afe86a66	So we just wait for this "divine\ncurse" to wear off? At this\nrate, some of those\nsoft-hearted idiots are going to\nend up dead.	machine
+D056_020_34	13f990f2e1fcf5580979dd79e25d0679afe86a66	So we just wait for this "divine curse"\nto wear off? At this rate, some of\nthose soft-hearted idiots are going to\nend up dead.	machine
 D056_020_35	278fc9cacf956c75cc05c395f1d9d51b91544c3e	I know that without you telling\nme! If that's the case, we have\nno choice but to cut the\nproblem off at the root!	machine
 D056_020_36	66ac4f3f322df8ce73e7b1fb1131d3d12ff35f26	I'll find that strange scholar\nand put a stop to this!	machine
 D056_020_37	9788f2d7807ac86d8a5d09ee28c212fbf3050510	*Pant*... *pant*... No sign of the\nscholar here either...	machine
 D056_020_38	1d75dfc91fcc606eec8139497373f15c02265724	You're slow. The best stealth\nagent in Aquaria is dragging\nher feet. Are you slacking off\nin a situation like this?	machine
-D056_020_39	76a7bb1488ecb896ec46bf29091f6e67501e93be	I'm trained differently than a\ncombat maniac like you.\nBesides, the surface of this\nplanet is far too desolate to\nwalk through easily...	machine
-D056_020_40	aebc3e0e0bd6dfcabd4ad5c38b5db29c94ce7604	Don't make excuses, you pest.\nYou're just under-trained. No\nmatter the situation or who\nyou are, if you can't move,\nyou're just dead weight.	machine
-D056_020_41	d35d7c4783e0a7004189864212272585144fd823	I can't believe the Aquaria\narmy is run by such weaklings.\nI should've just launched an\nall-out attack and crushed\nthem already.	machine
+D056_020_39	76a7bb1488ecb896ec46bf29091f6e67501e93be	I'm trained differently than a combat\nmaniac like you. Besides, the surface of\nthis planet is far too desolate to walk\nthrough easily...	machine
+D056_020_40	aebc3e0e0bd6dfcabd4ad5c38b5db29c94ce7604	Don't make excuses, you pest. You're\njust under-trained. No matter the\nsituation or who you are, if you can't\nmove, you're just dead weight.	machine
+D056_020_41	d35d7c4783e0a7004189864212272585144fd823	I can't believe the Aquaria army is run\nby such weaklings. I should've just\nlaunched an all-out attack and crushed\nthem already.	machine
 D056_020_42	90fb0c37196ddaff01897aa15dde71a97c7f4793	It's reassuring to see you still\nhave enough energy to spout\ninsults. It looks like our\ndestination is close.	machine
 D056_020_43	9da8d515184c6ffce72a83ac84466b2b3529d1dc	There are signs of recent\nactivity in that cave over\nthere. That must be the temple\nruins.	machine
 D056_020_44	70d55a2e91ff180dbd6d0dbdf1e3e395c5afd3f2	I see. No wonder I can sense\nenemies. There's a fair number\nof them lying in wait. Get\nready, Nel!	machine
-D056_030_01	9c17a5eb12bcf8a64e045270f3414927ef49892b	*Sigh*... We ended up fighting\nour way right into the cave.\nFrom the looks of it... this area\nseems to have been a\nresidential district.	machine
-D056_030_02	49396ae5a186c86b4b3846c926e017a961580899	There must have been grand\nbuildings here once, but most\nof them have returned to the\nearth. The environment of this\nplanet must have been truly\nharsh.	machine
-D056_030_03	64d91d4a8d79fce6b3ab9d699cf1cfb82f40e302	It seems the inhabitants of this\nworld were a very sturdy\npeople, possessing horns like\nthe ornaments on this outfit,\nbut even so, their lives must\nhave been difficult.	machine
+D056_030_01	9c17a5eb12bcf8a64e045270f3414927ef49892b	*Sigh*... We ended up fighting our way\nright into the cave. From the looks of\nit... this area seems to have been a\nresidential district.	machine
+D056_030_02	49396ae5a186c86b4b3846c926e017a961580899	There must have been grand buildings\nhere once, but most of them have\nreturned to the earth. The environment\nof this planet must have been truly\nharsh.	machine
+D056_030_03	64d91d4a8d79fce6b3ab9d699cf1cfb82f40e302	It seems the inhabitants of this world\nwere a very sturdy people, possessing\nhorns like the ornaments on this outfit,\nbut even so, their lives must have been\ndifficult.	machine
 D056_030_04	d8c4638730ac71a8660f5a72d59381df743194cc	On a ruined planet like this,\nbeing "sturdy" doesn't get you\nvery far. It's only natural that\nthey went extinct.	machine
-D056_030_05	27616d68b927f9f0e3a51057d6dfca257c2ef3cf	There is no such thing as a\npeople who deserve to go\nextinct. Especially a people\ncapable of creating such\nsuperior art as these clothes...\nit is a tragedy that they are\ngone.	machine
-D056_030_06	92fe2d589df96f6c2959e0665ddfcb832b1063ca	Hmph. That's why they lost the\nfight for survival―because they\nwasted their energy on things\nlike art. Whether it was the\ngods or the environment, if\nthey'd just crushed everything\nwith raw power, they might still\nbe alive.	machine
-D056_030_07	7475d7e7cae1c8618c67738b70393ff1da9d9c05	It doesn't matter if you leave\nclothes behind; if you lose and\nperish, it's all over. No matter\nwhat it takes... the one who\nsurvives in the end is the\nwinner.	machine
-D056_030_08	51656457ee688ff89ded11e5b1c8fc583a2ae330	If you lose, it's over. I agree\nwith you there. Since we carry\nthe lives of everyone on the\nship, we cannot afford to lose\neither.	machine
+D056_030_05	27616d68b927f9f0e3a51057d6dfca257c2ef3cf	There is no such thing as a people who\ndeserve to go extinct. Especially a\npeople capable of creating such\nsuperior art as these clothes... it is a\ntragedy that they are gone.	machine
+D056_030_06	92fe2d589df96f6c2959e0665ddfcb832b1063ca	Hmph. That's why they lost the fight for\nsurvival―because they wasted their energy on\nthings like art. Whether it was the gods or the\nenvironment, if they'd just crushed everything\nwith raw power, they might still be alive.	machine
+D056_030_07	7475d7e7cae1c8618c67738b70393ff1da9d9c05	It doesn't matter if you leave clothes\nbehind; if you lose and perish, it's all\nover. No matter what it takes... the one\nwho survives in the end is the winner.	machine
+D056_030_08	51656457ee688ff89ded11e5b1c8fc583a2ae330	If you lose, it's over. I agree with you\nthere. Since we carry the lives of\neveryone on the ship, we cannot afford\nto lose either.	machine
 D056_030_09	e1b636a579891335cf1ea0013270ee736e953ecb	That's why... I'll leave the rest...\nto you...	machine
 D056_030_10	d46dffdfbe6387ecf4dd905a037f127fe5b81716	...What's wrong? Stop messing\naround. Get up. Get up and\nkeep moving.	machine
 D056_030_11	afd1f83d794ee8d62e5b6ef704b8d3b02a587495	Sorry, but I don't think I can\nstand. It seems the protection\nof these clothes had its limits.	machine
-D056_030_12	58a83972d12afaa4d7c8120f3f3e40203c9284d6	You don't know when the same\nthing might happen to you.\nThere's no time. Hurry and find\nthat scholar and stop him! I'm\ntold he's a young man in black\nclothes and a black hat.	machine
+D056_030_12	58a83972d12afaa4d7c8120f3f3e40203c9284d6	You don't know when the same thing\nmight happen to you. There's no time.\nHurry and find that scholar and stop\nhim! I'm told he's a young man in black\nclothes and a black hat.	machine
 D056_030_13	644d3f071cf53b603429abafdf97b3e262637d88	Do you intend to just rot away\nhere?	machine
 D056_030_14	8aeff6fb2b0fbd86ee71102b7fc15dbff99d4b83	Don't make me say it.	machine
 D056_030_15	a97f5cfcce1a7c1f915cbc04ed410d81a48dc4f3	Hmph... Interesting.	machine
 D056_030_16	1aefd449c8783762a27f87061fe2f2671b15d024	Whoa, what are you doing?\nS-stop it, Albel! What do you\nthink you're...!	machine
 D056_030_17	959b4b2af3601c2251cd90b16aab6b07b3ecfc61	Quiet, you fool, or the enemy\nwill notice us. Just... stay on\nmy back.	machine
 D056_030_18	eeef8f00f930b9ad2c6572f6c3964378f8047bd6	...What is the meaning of this?\nIf you're trying to put me in\nyour debt, I refuse. Just leave\nme behind; I'm only a burden.	machine
-D056_030_19	93bf1cade28e95e20b14b109a6e690affa7c79f7	Are you mocking me? I told\nyou my training is on a\ndifferent level. Carrying one\nwoman isn't going to make me\na burden.	machine
-D056_030_20	99968cbd6584de84f8c9f893b39aa52586c58d33	Besides, it's not for your sake.\nThese clothes... if I keep two of\nthem in close contact, the\neffect might be stronger and\nlast longer.	machine
+D056_030_19	93bf1cade28e95e20b14b109a6e690affa7c79f7	Are you mocking me? I told you my\ntraining is on a different level. Carrying\none woman isn't going to make me a\nburden.	machine
+D056_030_20	99968cbd6584de84f8c9f893b39aa52586c58d33	Besides, it's not for your sake. These\nclothes... if I keep two of them in close\ncontact, the effect might be stronger\nand last longer.	machine
 D056_030_21	fb92c544bc85c4fd68531c98b41e70e8418c883e	Cl... close contact!? Don't say\nsuch ridiculous things! Let go!\nL-let me go!	machine
-D056_030_22	b49de65e14ee411680b4809944c5005dcc1796eb	What, you've recovered enough\nstrength to make all that\nnoise? It seems it actually\nworked. In that case, we move\nout.	machine
-D056_030_23	35a2061da06e85e439e201e007f111c5208dbda8	Unlike you, I have absolutely no\nintention of rotting away on\nthis planet. I'll get those\nsoft-hearted fools healed and\nput an end to this nuisance.	machine
+D056_030_22	b49de65e14ee411680b4809944c5005dcc1796eb	What, you've recovered enough\nstrength to make all that noise? It\nseems it actually worked. In that case,\nwe move out.	machine
+D056_030_23	35a2061da06e85e439e201e007f111c5208dbda8	Unlike you, I have absolutely no\nintention of rotting away on this planet.\nI'll get those soft-hearted fools healed\nand put an end to this nuisance.	machine
 D056_030_24	5a11c252afbd5ba3844c011fecee5d1f05eb2323	For that purpose, I'm willing to\ncarry someone who was once\nthe enemy. That's all.	machine
 D056_030_25	594ba9308b1f2c4f3e3261fc4021c3c76976d9a2	...Fine. Sorry for making a\nscene. Since it's to save\neveryone's lives, I'll rely on your\nback for a while.	machine
 D056_030_26	fe139e495ceb4becd847cd157d3489332112c7b0	The footprints around here are\nespecially fresh. They lead that\nway. Yes, go through that\ncollapsed section.	machine
-D056_030_27	5b6af5dddd2a7893f56078f3c48329ed25c8eb3f	The cross-section of the\ncollapse is brand new. And the\ndust is still... It seems the\nsource of this mess is indeed\nclose.	machine
+D056_030_27	5b6af5dddd2a7893f56078f3c48329ed25c8eb3f	The cross-section of the collapse is\nbrand new. And the dust is still... It\nseems the source of this mess is\nindeed close.	machine
 D056_030_29	0e5a979640986c6dde97f194482d529403d0bea1	Hm, the man in black...! So\nthat's the scholar.	machine
 D056_030_30	99eb037a1ca48dfc3b48d3621ccc2f5f072b098d	It looks like it... but he's just\nstanding there? Something\nseems off...	machine
 D056_030_31	25ebfc360fe7724d3e6ab59e2a8ace18b13bb2a5	For that matter, how is he fine\nwithout wearing the traditional\nethnic clothing?	machine
@@ -140,14 +140,14 @@ D056_040_07	f624186e1e70084f9eb6ebde8c06b65269b82e7b	Heh... Or maybe it lost\nco
 D056_040_08	9973d3cbf735d30816246a4ee3d80289d25d62dc	You did that? ...Well, I secretly\nlanded a few hits myself.	machine
 D056_040_09	ff295b7e8945d2be4e23cb86d3db7f3b68fde823	Good grief. I braced myself for\na death match with a god, but\nit ended before things even\ngot interesting.	machine
 D056_040_10	8ef98a77d3a2887b2c87bb223a571fe809c1cd89	As if that would be interesting.\nHonestly...	machine
-D056_040_11	4fae740f55ee475c7abf56f0399546d629878b3e	Still, everyone suffered terribly\nbecause of this scholar. We\nneed to restrain him properly\nand hand him over to the\nauthorities.	machine
+D056_040_11	4fae740f55ee475c7abf56f0399546d629878b3e	Still, everyone suffered terribly because\nof this scholar. We need to restrain him\nproperly and hand him over to the\nauthorities.	machine
 D056_040_12	822e5fbc9620ea7e3b910079151308d961ae3779	Ho, looks like you're feeling\nbetter now that he's out of the\npicture?	machine
 D056_040_13	547224084421049f5d6d0ffbd2b8d2aefa727322	Now that you mention it... I\nsuppose the harmful air\nvanished once the god was\nappeased.	machine
 D056_040_14	72f5a8b12c97b63116a2a2a12bb630a0f7a0d6a9	I see... In that case, those\nsoft-hearted fools should be on\nthe mend as well.	machine
-D056_040_15	f13e2c7c882ab95d1e3a36fd3cb1c4947bd56147	What's this? You were more\nworried about the Captain and\nthe others than I thought. I\nthought this was all just a\n"nuisance" to you?	machine
-D056_040_16	b85ac4430748ade6a73c21556eb175d09bbed2e1	Who would worry about a\nbunch of idiots who went out\nof their way to get mixed up in\ntrouble?! This pointless job is\nfinally over!	machine
+D056_040_15	f13e2c7c882ab95d1e3a36fd3cb1c4947bd56147	What's this? You were more worried\nabout the Captain and the others than\nI thought. I thought this was all just a\n"nuisance" to you?	machine
+D056_040_16	b85ac4430748ade6a73c21556eb175d09bbed2e1	Who would worry about a bunch of\nidiots who went out of their way to get\nmixed up in trouble?! This pointless job\nis finally over!	machine
 D056_040_17	e34a9da34ed2bb39a67505e13c4a60f82f52e9f5	I don't need these flashy,\nrestrictive clothes anymore\neither!	machine
-D056_040_18	9fadb073b0c576674796030b90c77d639521a570	Wa-wait, you're planning to\nstrip right here?! You didn't\nbring a change of clothes! I\ndon't need you flashing me any\nmore than you already have!!	machine
+D056_040_18	9fadb073b0c576674796030b90c77d639521a570	Wa-wait, you're planning to strip right\nhere?! You didn't bring a change of\nclothes! I don't need you flashing me\nany more than you already have!!	machine
 D056_040_19	cbb9fef818ee1dd30a81b553edca9e6a7abef952	Huh? I couldn't care less\nwhether it bothers you or not!	machine
 D056_040_20	65a6a41778c29bd3bec3934202c4918ca22bd2a1	Ju-just stop trying to undress\nhere! Do it once you're back in\nyour room on the ship!	machine
 D056_040_21	0371fa2c3c8ed119c9c5505918cd9d1996aa7825	Tsk, you're so noisy. Fine, let's\njust get back.	machine
@@ -161,7 +161,7 @@ D056_050_04	fbebff1374deb8bea7a0bdbd13bdb2f4af0d3ea2	Then you should just rest i
 D056_050_05	ecf052ab43653cdad545e12e9a5fb7dc14d5d67c	...The "Fayt" Simulator? Didn't\nyou mean the "Fight"\nSimulator?	machine
 D056_050_07	76513fc3c2ba6fd8dfb0f4be0aad8f85771ca0b0	...What are you talking about? I\nsaid "Fight." I didn't mistake it\nfor your name.	machine
 D056_050_08	a005dead7d80663ebcb75daee4ae31dcabd1d473	You did. You said Fayt. Did I\nworry you so much that my\nname is on your lips? Or do\nyou just want to simulate me?	machine
-D056_050_09	433923c143f5e2e7e2c99852bc790152a63fa63a	Who would want to simulate\nthe likes of you?! Whatever,\njust go play with your "Fight\nSimulator" for the rest of the\nday!	machine
+D056_050_09	433923c143f5e2e7e2c99852bc790152a63fa63a	Who would want to simulate the likes of\nyou?! Whatever, just go play with your\n"Fight Simulator" for the rest of the\nday!	machine
 D056_050_10	b10d793e238e9a187cae2d1be53e535bb519b5a8	Hahaha, I'm not going to do\nanything this physically\ndemanding right after being\nsick. But...	machine
 D056_050_11	2b8ef82239832d2ac562732fe8e98fac4ff314c0	This whole thing made me\nrealize something. Just how\ninexperienced I am, to be taken\ndown so easily...	machine
 D056_050_12	cedff1bee6ff76646ddb657069c04427e7bb6ee1	It was a disaster. Every single\none of you was knocked out\ntogether.	machine
@@ -170,23 +170,23 @@ D056_050_14	c7de9c6d592b9cfab3e7d08ca93f1412791ab80f	While I was lying there una
 D056_050_15	0b056d6b1ce6d93a92df9727a8900a94ec16e7c5	I felt pathetic, not being able\nto move a single finger.	machine
 D056_050_17	89e075232baddea8093953234192858b47dc01ab	That's why I didn't come to the\nFight Simulator just to play.	machine
 D056_050_18	978d7e7e149e4ea8e99736f72bbe399095ba3671	I came to the Battle Simulator\nto harden my resolve.	machine
-D056_050_19	9ae24fec3ffde8f777f2a4655fcda3c40ac2ae83	Hmph. From where I stand,\neveryone on this ship is just a\nbunch of good-natured fools\nwho stick their noses into\neverything without considering\ntheir own limits.	machine
+D056_050_19	9ae24fec3ffde8f777f2a4655fcda3c40ac2ae83	Hmph. From where I stand, everyone on\nthis ship is just a bunch of\ngood-natured fools who stick their\nnoses into everything without\nconsidering their own limits.	machine
 D056_050_20	174e4e28e8aa32ed0835f37473d2e42a4b6e8eac	Hehe, in that case, you're one\nof those good-natured fools\ntoo, since you helped us.	machine
 D056_050_21	c4e78a3a5dfd353de7a8b7d87099a7802c3bbb11	I've heard how things ended.\nSorry for the trouble we\ncaused you, Albel.	machine
-D056_050_22	3ef8f119c865695137917fb10dbc5a7e90b3ffc7	Damn it, who's the\ngood-natured one? I only act\nfor my own sake. If you lot\nstayed knocked out forever,\nthis ship wouldn't even move.	machine
+D056_050_22	3ef8f119c865695137917fb10dbc5a7e90b3ffc7	Damn it, who's the good-natured one? I\nonly act for my own sake. If you lot\nstayed knocked out forever, this ship\nwouldn't even move.	machine
 D056_050_23	b099fcbfed9386f56a9421d7e54786a465b64ba4	Cyuss and Arumat, you're both\nback on your feet too. That's a\nrelief. But what are you doing\nhere?	machine
 D056_050_24	8d3f60b85ff59def51b5a640ec8fe07da8dd781d	Same as you. If I let something\nlike this take me down, I'd be a\ndisgrace to the name of the\nReaper.	machine
 D056_050_25	183f4f282ab695a0338dd2ee494c3a0e003c5522	After being out for that long,\nI've gotta move around or I'll\nget rusty.	machine
 D056_050_26	ccb2e3607853d76f610de9fae39525f483f3cca4	What the―?! You two, were you\nlistening to everything I just\nsaid?!	machine
 D056_050_27	fcc42ff16f3880ba9263cd687c7704e5691e087d	Yeah, we heard every word\nfrom the start!	machine
-D056_050_28	6db2e8d21b70fc226dcce0b7447eb06e5bc6fad0	*Sigh*... Since the cat's out of\nthe bag, I'm going to need you\ntwo to help me out. Albel, you\ntoo, of course. Even if you're\nrecovering, don't hold back―	machine
+D056_050_28	6db2e8d21b70fc226dcce0b7447eb06e5bc6fad0	*Sigh*... Since the cat's out of the bag,\nI'm going to need you two to help me\nout. Albel, you too, of course. Even if\nyou're recovering, don't hold back―	machine
 D056_050_29	eca6a86bf09f25775340b9cc29bd8ea49baeae46	Ugh...	machine
 D056_050_30	6d61cf9922d684a3be345151d53f42a6d01e173d	Hey!!	machine
 D056_050_31	040cd294adeb29b99a10f45a81c1a43b36a7f5af	You okay, Fayt?! Maybe you\nshould've stayed in bed!	machine
 D056_050_32	b36c8300c9923d4549e2db1a994767f2badc6036	Sorry for worrying you. I just\nfelt a bit dizzy, but I'm fine\nnow.	machine
 D056_050_33	345877c53c8d719f43fa59b1ce2d4acbe8447c24	Put this on.	machine
 D056_050_34	5b8d7982954d221e2bcfa23514aa448bec1dd919	Huh?	machine
-D056_050_35	1fdbadf1f5789c8b16249491c7e086be2fb62e91	Apparently, these clothes repel\nthe toxic substances that\nknocked you guys out. It\nshould speed up your recovery\na bit.	machine
+D056_050_35	1fdbadf1f5789c8b16249491c7e086be2fb62e91	Apparently, these clothes repel the\ntoxic substances that knocked you\nguys out. It should speed up your\nrecovery a bit.	machine
 D056_050_36	120b21e5b3e93df87acf0447c0bc7e7be57f7046	...Um, you mean the thing\nyou're wearing right now,\nAlbel? I think... I'll pass on that.	machine
 D056_050_37	eb9cff3ff7501aaebb7a3a8f96173b9b56fc2d17	What? You want to stay a\npatient forever?	machine
 D056_050_38	de80adf4b3f6249251a9b6a5f318805e3412e050	No, I mean, of course I want to\nget better quickly, but...	machine
@@ -196,7 +196,7 @@ D056_050_41	b3afbd5a1b4e5cbf2f6b8edeb2c9cd02c0dd980d	You might not mind since yo
 D056_050_42	db6d96ee3f629f1300d39579a7ee441dd30d7d7b	Hmm, embarrassing? Being\nshirtless?	machine
 D056_050_43	d49b7e84b594ebc9ca101d44bbfb02293442eaa1	Hmph, who cares. I don't\nbother myself with what others\nwear.	machine
 D056_050_44	eb2e0eb92f8d022025ae08f4ed9cdefb57715be9	Fayt, what are you trying to\nsay? What's the problem with\nthis outfit?	machine
-D056_050_45	1307a7559f59c6e70d764493182320ea4fcf9c54	Ugh, I can't get through to any\nof you three... If I walked\naround the ship dressed like\nthat, I'd definitely be a\nlaughingstock.	machine
+D056_050_45	1307a7559f59c6e70d764493182320ea4fcf9c54	Ugh, I can't get through to any of you\nthree... If I walked around the ship\ndressed like that, I'd definitely be a\nlaughingstock.	machine
 D056_050_46	bcd12f89341bf293372a86d8dcd977b5f26aedc8	A laughingstock, you say...\nWhat is wrong with my clothes!!	machine
 D056_050_47	e5c9a7a04cbdd792a538cfb7a8f6d70590b2d06d	No, I mean, I'm used to yours,\nAlbel, so it's fine! Nobody cares\nabout that!	machine
 D056_050_48	60681006c7af34c3bc6ed136a847dcdff1afb108	That means if people aren't\nused to it, they'll laugh at me!	machine
@@ -207,11 +207,11 @@ D056_060_01	c64a9091a228e73399eab30d0530959706969673	That was quite an ordeal...
 D056_060_02	63d901ec41dccec5e228dc702d22510e477b0275	Now then, as originally planned,\nlet's have a fashion show with\nthe traditional clothing of\nAugus!	machine
 D056_060_03	bb98b22855574420fc05f05804fa1d228b2b5de7	I figured I'd be the first one to\ntry it on...	machine
 D056_060_04	67be5b53c464c02cecc4be3f188213ecb25be633	As expected of Lady Nel! It\nlooks great on you!	machine
-D056_060_05	24a0f45ae1bfa9e59023ae7ac5a3bc0ecdf59c12	Wawa, you look so cool! With\nLady Nel's charm, men and\nwomen alike will be head over\nheels! One hit and they're\ndead!	machine
+D056_060_05	24a0f45ae1bfa9e59023ae7ac5a3bc0ecdf59c12	Wawa, you look so cool! With Lady Nel's\ncharm, men and women alike will be\nhead over heels! One hit and they're\ndead!	machine
 D056_060_06	bb32b84c81ae6637c6c901365a31df4879d89e09	I see, so this is the dancer's\nattire of Augus said to\nappease the God of Calamity.\nAnd it actually worked.	machine
 D056_060_07	26165680ded39748e3693728c42530751c7ca745	I wonder if that thing calmed\ndown because we fought while\nwearing these... though there's\nno way to check now.	machine
-D056_060_08	118337f6333bbcdf55cf3ddc01283a4ed551c5f0	Hehe... the outfit is beautiful,\nand so is the person wearing it.\nAnyone would be mesmerized\nand forget all about their\nanger.	machine
-D056_060_09	fc4ee33f50576a061d5a219852bde60962ecd085	Hmm? These patterns look a\nbit like Symbology. I wonder if\nit's a unique local development.\nIt's interesting, but... I don't\nreally get it.	machine
+D056_060_08	118337f6333bbcdf55cf3ddc01283a4ed551c5f0	Hehe... the outfit is beautiful, and so is\nthe person wearing it. Anyone would be\nmesmerized and forget all about their\nanger.	machine
+D056_060_09	fc4ee33f50576a061d5a219852bde60962ecd085	Hmm? These patterns look a bit like\nSymbology. I wonder if it's a unique\nlocal development. It's interesting, but...\nI don't really get it.	machine
 D056_060_10	f5950eca5baff4f990b93b5493615b9b9291c4d9	Yeah! Regardless of the\ncomplicated stuff, the design is\nlovely! Such mature sexiness,\nit's so cool!	machine
 D056_060_11	f11853541dd670f335bdb40d0daddb84c967d761	The painting and dyeing aside,\nthe structure itself doesn't\nseem too difficult. I might be\nable to make something similar!	machine
 D056_060_12	ac0c4e0f1c0b693de11f4368b789ef174a3c9088	Let's see, this piece of fabric\ngoes here and the lining goes\nthere... I really want to try it on\nto be sure. Hey, can I go next?	machine
@@ -233,7 +233,7 @@ D056_060_27	09dd6d8498e4acd19e0dbcc57414ac9382270562	I can just wear one. Welch\
 D056_060_28	f112a6e09181019bf1c7847e962dc7348637e359	""Not if Welch is making it!""	machine
 D056_060_29	71b799be3bfb4a00996c4a4b8173e2ed546a0bcc	If Welch made it, it would\ndefinitely have some weird\nfunctions built in.	machine
 D056_060_30	0d72c54c6105d341542ad60e0e2881cabc94996a	(But that's what makes it\ninteresting...)	machine
-D056_060_31	3b1b9dbed6dedf1472a0c49fac6dd0949ff2df9f	Besides, her sense of style is a\nbit too... provocative. Who\nknows what kind of outfit she'd\ncome up with if she just let her\ncreativity run wild...	machine
+D056_060_31	3b1b9dbed6dedf1472a0c49fac6dd0949ff2df9f	Besides, her sense of style is a bit\ntoo... provocative. Who knows what kind\nof outfit she'd come up with if she just\nlet her creativity run wild...	machine
 D056_060_32	f7f25f640d113742421090d41eb46396a5c208dc	Oh, that's exactly the kind of\noutfit I'd want to see Nel and\nClair wearing while they walk\nthe runway!	machine
 D056_060_33	ed56c2effcfe6293f79031dea6d2168156e1fa63	Stop. Stop imagining it. I don't\nknow what you're picturing, but\nit's not something incredibly\nrevealing, is it?	machine
 D056_060_34	24d426e32639159ed862c535fcf92a7bb7638a77	It's fine. In terms of how much\nskin shows, I don't think it\nwould be much different from\nwhat you're wearing now.	machine
@@ -247,7 +247,7 @@ D056_060_41	117f03838e0d209fcb48891b9f64c139ecab74c5	Oh, that sounds like a grea
 D056_060_42	ae9618035065d72299db652f1313ac8763660a77	W-wait a minute. I was just\nforced to change into this.\nBesides, isn't Sophia's outfit a\nbit too cute for me to wear?	machine
 D056_060_43	b08f250864f4a4d1294a67cd612f9116e3c50de5	True, sexy looks suit Nel\nbetter. In that case, I have\nsome clothes I borrowed from\nMaria!	machine
 D056_060_44	bf93273e0bc3101ad474853adba56c81366f4579	Let's see, let me have a look.\nOh... does this have rabbit\nears? I love it!	machine
-D056_060_45	dd7dc3b0fe05d98c4f4b7ef56b73e0ddb81cd40a	That's the outfit from when we\ninfiltrated the casino. It's\nwonderful! I want to dress Lady\nNel and Lady Clair in those,\nknock them to the floor, and\njust stare at them!	machine
+D056_060_45	dd7dc3b0fe05d98c4f4b7ef56b73e0ddb81cd40a	That's the outfit from when we\ninfiltrated the casino. It's wonderful! I\nwant to dress Lady Nel and Lady Clair\nin those, knock them to the floor, and\njust stare at them!	machine
 D056_060_46	912092fb892f4ffc18e5fb7df7a611b9d892964d	E-enough already! Why is\neveryone so obsessed with\ndressing me up?!	machine
 D056_060_47	e57147ce945043ef147d869797c29760dd2588ea	Farleen, Tynave! If you want it\nthat badly, I'll make you two\nwear them first! Clair, you too!	machine
 D056_060_48	9ff5b91b8231ff11e22a783982ee600b4153f057	My, it seems things are heating\nup over there as well. How\nlovely.	machine

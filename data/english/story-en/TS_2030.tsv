@@ -13,18 +13,18 @@ message_id	ja_sha1	en	source
 2031_010_12	d35488c4f9dd7b85ed4696560d09be85692ca6e3	Well... I guess I'll give you a\npassing grade for now!	machine
 2031_010_13	0f7e7ab6c5c345f3086387f169e8b642099581c7	So, don't ever do anything that\nreckless again. No one but\nWelch can handle these twin\nblades.	machine
 2031_010_14	4bd23a9b4149eda320a2c33f3ab965e296d5afc8	I know, I know.	machine
-2031_010_15	9d84f6c1f18581cbd815ed498da72c2e926fe881	You, Eve and the others, and\neven Sister Eslyn gave me\nsuch a hard time about it that\nI'm not doing anything that\ncrazy on my own anymore.	machine
+2031_010_15	9d84f6c1f18581cbd815ed498da72c2e926fe881	You, Eve and the others, and even\nSister Eslyn gave me such a hard time\nabout it that I'm not doing anything\nthat crazy on my own anymore.	machine
 2031_010_16	ac6991122e3fa144405f34a7e9d39b7bf16de9b1	Sister Eslyn too?	machine
 2031_010_17	de1389b83d446c69c7114117342a638670da2af2	She stopped by the shop this\nmorning.	machine
 2031_010_18	cfb32679eeac904a628509b9a7c7230b79e7af50	Huh? I didn't hear anything\nabout that.	machine
 2031_010_19	bc2b6eb21228ca472ddd69a5a3be25236daee560	Sister Eslyn is always very\nconsiderate about those\nthings.	machine
-2031_010_20	cd95c83de97f29607a6f0ae0c86be72673b59186	She told me that if I pushed\nmyself too far and got hurt, Eu\nwould be heartbroken, so I\nabsolutely must not be\nreckless.	machine
+2031_010_20	cd95c83de97f29607a6f0ae0c86be72673b59186	She told me that if I pushed myself too\nfar and got hurt, Eu would be\nheartbroken, so I absolutely must not\nbe reckless.	machine
 2031_010_21	727ffc03400a074102854f674823f9e63a5abde9	I-I wouldn't be heartbroken!	machine
 2031_010_22	a3fc26d2274d49980bfa425c0c0cc36262df7c4a	Well... I might panic a little.	machine
 2031_010_23	91ebb3a6e06fd06ae486ba2079499ec672d5fe93	Yeah, yeah. Thanks. Anyway,\nI've got a lot to prepare at the\nshop today, so can we wrap\nthis up?	machine
 2031_010_24	870f3cfa220a3db66d417cde1cbbd78a31744c39	Yeah, sorry to keep you.	machine
 2031_010_25	23123918efff0e177a6b2a17f4dfecd09f83e826	You're heading to the Royal\nCapital with those weird\ntraveling performers, right?\nAre you leaving today?	machine
-2031_010_26	264580b19d488331fe8f1bdf581fa36fc5a208f2	I plan to leave tomorrow\nmorning. It's been a few days\nsince the blockade was lifted,\nso logistics are back to normal.\nWe've gathered enough food\nand supplies.	machine
+2031_010_26	264580b19d488331fe8f1bdf581fa36fc5a208f2	I plan to leave tomorrow morning. It's\nbeen a few days since the blockade\nwas lifted, so logistics are back to\nnormal. We've gathered enough food\nand supplies.	machine
 2031_010_27	944636e6bc6992c24946c7c8308dc6f03d4ea138	I-I see. Well, let me know when\nyou're heading out. I'll come\nsee you off.	machine
 2031_010_28	d97371ee9c26b342c0ae99ef34c95fa34674f4c7	Really? You don't have to go\nthrough the trouble.	machine
 2031_010_29	af4c8139b463812424f164fe983b27035a13d90a	I'm well aware that I've been a\nnuisance to you and those\npeople, Eu. This is the least I\ncan do.	machine
@@ -38,11 +38,11 @@ message_id	ja_sha1	en	source
 2031_010_37	af23aca965454fe2eff428cf7a1eb8bca985e3d6	<font color=blue>Eslyn</font> ...Please, take good care\nof him. I apologize for visiting\nso early in the morning.	machine
 2031_010_39	4f188d05ae19a2c9cb2f2489dee53eae4810c3db	<font color=blue>Eve</font> Yes... thank you for coming\nall this way.	machine
 2031_010_40	f9f9092356514c418003666df7013ec7039b3a2d	<font color=blue>Tika</font> ...Euwin's big sister... she\nwas so beautiful.	machine
-2031_010_41	a4604b8bc8a624dde6aa0af9d4422d0e14c3d600	<font color=blue>Verda</font> I had thought that the\nRakstar family of lords\ncontained nothing but\ncold-blooded individuals\nbesides Euwin...	machine
+2031_010_41	a4604b8bc8a624dde6aa0af9d4422d0e14c3d600	<font color=blue>Verda</font> I had thought that the Rakstar\nfamily of lords contained nothing but\ncold-blooded individuals besides Euwin...	machine
 2031_010_42	a7089d679b968cc2a2918ce544984a136abb06eb	It is likely because of that\nsister that Euwin is able to act\nso freely.	machine
 2031_010_43	3cee03803ff1a3bbc0bd94f73001386ef1653179	<font color=blue>Eve</font> Phew, I was so nervous. I\nnever expected Euwin's sister\nto come and greet us\npersonally.	machine
-2031_010_44	19d3f5f72b41659bf4934ef902498457a2afa027	<font color=blue>Verda</font> Despite being a noble,\nshe did not doubt us strangers\nand prayed for our safe\ntravels. We cannot let such\nkindness go to waste.	machine
-2031_010_45	e4da61117188bfcf3c2ad0d64a51166fa8e562d3	<font color=blue>Eve</font> You're right. She even\ncovered our lodging expenses\nwhile we were in Carlone. We'll\nreally have to make sure Euwin\nthanks her properly once this\nis all over.	machine
+2031_010_44	19d3f5f72b41659bf4934ef902498457a2afa027	<font color=blue>Verda</font> Despite being a noble, she did\nnot doubt us strangers and prayed for\nour safe travels. We cannot let such\nkindness go to waste.	machine
+2031_010_45	e4da61117188bfcf3c2ad0d64a51166fa8e562d3	<font color=blue>Eve</font> You're right. She even covered our\nlodging expenses while we were in\nCarlone. We'll really have to make sure\nEuwin thanks her properly once this is\nall over.	machine
 2031_010_46	f6ca8d14f551a34b7f27b53992821cc5b7caf93f	Speak of the devil, Ewin Laxter\nis approaching.	machine
 2031_010_47	970cdf78c5e3b44fd952263b66d3cf1695121e12	You're right. Hey! Euwin's sis...	machine
 2031_010_48	2d7c24393dfa2f537743fd826a9ef96f6dbed912	He's running toward us with a\nlot of momentum...	machine
@@ -88,7 +88,7 @@ message_id	ja_sha1	en	source
 2031_025_37	9b8a463bc3b5946e80943963a908d5ee820308f6	Verda!? What are you saying!?	machine
 2031_025_38	e9e79711e90c7de22ff5e39735c9c18dfc40deed	Verda!? What are you talking\nabout!	machine
 2031_025_39	823622e983515cd2443efdb2da2524a7217c7709	I cannot tell you what kind of\ndangerous actions I might take\nif I am not allowed to\naccompany you.	machine
-2031_025_40	51f794232b90b669af8a3bb08a7636c382411df6	It would be pointless to have\nworked so hard to save you if\nyou only go and do something\nreckless after we leave.\nWouldn't you agree, Euwin?	machine
+2031_025_40	51f794232b90b669af8a3bb08a7636c382411df6	It would be pointless to have worked so\nhard to save you if you only go and do\nsomething reckless after we leave.\nWouldn't you agree, Euwin?	machine
 2031_025_41	6a09bd1bcd489a07ebe45ef4cba0c3e8f3b03ff6	W-well, that might be true,\nbut...	machine
 2031_025_42	519ce6b95cb86116efe903d14a69a5b9abc62f01	Besides, I am quite interested\nin the mysterious technology\nthat Welch possesses.	machine
 2031_025_43	882b905b119a8bc99c30d8a72c00234fc5f46fdf	...I suppose so. As they say, it's\nbetter to have company on a\njourney.	machine
@@ -125,7 +125,7 @@ message_id	ja_sha1	en	source
 2032_040_26	5dfb6352021b910d49c98b313cde98e9529b9293	They aren't going to explode,\nare they!?	machine
 2032_040_27	53759498b8709a7319dd7578a9511d00ca0c7865	Sorry, big brother Euwin...	machine
 2032_040_28	9f18f414bfa70efbae1cc7b9b343b37bf22fddf9	Don't be so scared. I'm sure it\nwas built properly!	machine
-2032_040_29	5eeaac61f101c41fb1564aaa338050cf81343a58	But if it is not the original,\ndoes that mean there is a\nmaster, a prototype, or\nperhaps blueprints existed\nfrom the start?	machine
+2032_040_29	5eeaac61f101c41fb1564aaa338050cf81343a58	But if it is not the original, does that\nmean there is a master, a prototype, or\nperhaps blueprints existed from the\nstart?	machine
 2032_040_30	c153112a42f83f264fa505a8a2dbe1295ca3f679	Ah... this is a problem. Verda,\nare you actually really smart?	machine
 2032_040_31	fa7b196e44a922a2c1884ea787775b4a4fe94d38	Of course I am!	machine
 2032_040_32	44483743dc157458656bb97258413a0ff9f1eb0b	You're actually gonna say that\nyourself?!	machine
@@ -138,7 +138,7 @@ message_id	ja_sha1	en	source
 2032_045_03	c821b7db6ad4d6e51d8cc6556c5f62800e7a7d7d	I know, but you guys need Eu's\nhelp, right?	machine
 2032_045_04	1c9cc7835d8e43b5a5da208ea74433e4deecc24c	I want to collect some reliable\nparts so I can properly\nmaintain Eu's Twin Blades of\nLight.	machine
 2032_045_05	08f823e62bf7486c674c3fd35972ada8128e8843	Things might get more\ncomplicated as we get closer\nto the Royal Capital,	machine
-2032_045_06	5a269ec0cc09d2201ac422afc57a2727e2c419c4	and if Eu's weapon breaks\nduring a fierce battle with\nsome weirdo like last time,\neveryone's going to be in\ntrouble, right?	machine
+2032_045_06	5a269ec0cc09d2201ac422afc57a2727e2c419c4	and if Eu's weapon breaks during a\nfierce battle with some weirdo like last\ntime, everyone's going to be in trouble,\nright?	machine
 2032_045_07	5e53b2fa9d158482bb08c25d793872d5d19865b7	Well, I suppose that's true...	machine
 2032_045_08	ad4076ce4d0c8ae410142d9af8bb1c3222b05b4f	Tika and Verda seem uneasy\nabout my inventions too, so I'll\nlet you in on a few trade\nsecrets.	machine
 2032_045_09	2988fcf09cba7f75c233085d4cfde774abb5f856	I thought that might put your\nminds at ease.	machine
@@ -149,20 +149,20 @@ message_id	ja_sha1	en	source
 2032_045_14	b630f796d254c9d372c0150b13bf264d8d2aabeb	I'm regretting saying that with\nevery fiber of my being right\nnow!	machine
 2032_045_15	043fb2ec001d3f0d8cb201fb20d213e7788cce0f	Hahaha! Anyway, the place is\npretty deep inside the forest\nwe were in before.	machine
 2032_045_16	35dfdfa2d9a30b03b8a29e297022923ef3fc2893	Who knows, maybe some of\nthose "beasts" from last time\nare still hanging around?	machine
-2032_045_17	a6ab9e6f26d221b1e5afb217a640d212da470879	...Captain, everyone, I'm sorry.\nYou can deduct this from my\nreward as much as you want,\nbut would you mind coming\nalong?	machine
+2032_045_17	a6ab9e6f26d221b1e5afb217a640d212da470879	...Captain, everyone, I'm sorry. You can\ndeduct this from my reward as much\nas you want, but would you mind\ncoming along?	machine
 2032_045_19	4c0d07a7b3ab2c46b11aac0f9ca3f878140bbcfc	I guess we have no choice... I'd\nbe worried about what's ahead\nwithout Euwin's help.	machine
 2032_045_20	59e34d3eb24915fad2701e38544ac4cb5d631a31	I'd rather not have a weapon\nexplode right next to me,\neither...	machine
-2032_045_21	3c3486e57f21908f6fdf77bd488f5628db88fddc	I cannot leave Tika in the\nvicinity of something with such\na high probability of exploding!\nAI Coro! Initiate transport\ncontainment!!	machine
+2032_045_21	3c3486e57f21908f6fdf77bd488f5628db88fddc	I cannot leave Tika in the vicinity of\nsomething with such a high probability\nof exploding! AI Coro! Initiate transport\ncontainment!!	machine
 2032_045_22	2e233dfe3e65a4a46970fd72d8566ae6d289b2be	Y-yeah... R-Rekoro, I'm okay, so\nplease be a little quieter...!	machine
 2032_045_23	db410261c3400848d74db4f7f57ae610b68b902d	Then sorry, but I'm counting on\nyou! I bet everyone's going to\nbe shocked!	machine
-2032_045_24	12a71d4189c0c1c085e235a744a3d222f746606e	Come on, everything is a\nlearning experience! Captain, if\nyou stick to ventriloquism\nforever, the audience will get\nbored!	machine
+2032_045_24	12a71d4189c0c1c085e235a744a3d222f746606e	Come on, everything is a learning\nexperience! Captain, if you stick to\nventriloquism forever, the audience will\nget bored!	machine
 2032_045_26	c01dbb49d6c6802e209257d2af18aefee3f65bf8	...Captain, sorry, I'm also really\nregretting my traveling\nperformer persona.	machine
 2032_050_01	5ecbe6b951812a823091917fad6eedade47057bc	<font color=blue>Welch</font> Phew, I'm so glad you\nguys came! I definitely would've\ndied if I were alone!	machine
-2032_050_02	809df1365107938d580f63e1f45c627594fabab3	<font color=blue>Euwin</font> There were more\n"Beasts" left than I expected. It\ndidn't feel like the Beast Witch\nhad returned, but there might\nbe more that were missed\nduring the subjugation.	machine
+2032_050_02	809df1365107938d580f63e1f45c627594fabab3	<font color=blue>Euwin</font> There were more "Beasts" left\nthan I expected. It didn't feel like the\nBeast Witch had returned, but there\nmight be more that were missed during\nthe subjugation.	machine
 2032_050_03	04eb137708ea363bca97361d007bed1db1bdaff1	I'll have to send a letter to my\nsister sometime...	machine
 2032_050_04	107ac8428b7c5a839ebc3f582ac1e86207199443	<font color=blue>Eve</font> So, what is this "corporate\nsecret" of yours? We've walked\nquite a distance off the main\nroad.	machine
 2032_050_05	2feb374166d82d9d5e3ee91269ffc128ee534223	<font color=blue>Welch</font> Don't worry, we're\nalmost there!	machine
-2032_050_06	998c4c9fceb2d118ed7df2a024d619b51af89d05	<font color=blue>Euwin</font> Wolves have lived in this\nforest since long ago. They\nseem pretty agitated because\nof Baschen's beast, so let's\nfinish your business quickly\nbefore things get troublesome.	machine
+2032_050_06	998c4c9fceb2d118ed7df2a024d619b51af89d05	<font color=blue>Euwin</font> Wolves have lived in this forest\nsince long ago. They seem pretty\nagitated because of Baschen's beast,\nso let's finish your business quickly\nbefore things get troublesome.	machine
 2032_050_07	7241dae23aff4c8435e94853a636ced5a2e8d488	<font color=blue>Welch</font> I know, I know!	machine
 2032_050_08	0e9fca6417f2b68f7fb286c33a9340926b06864c	<font color=blue>Welch</font> Look, we're here! Right\nhere! Oh, thank goodness, it\nlooks like nothing happened to\nthis place!	machine
 2032_050_09	fb05e37724ef53bb226d29142de7ae8750fd1942	<font color=blue>Eve</font> This place... there's nothing\nhere.	machine
@@ -198,19 +198,19 @@ message_id	ja_sha1	en	source
 2033_060_18	63d6c184e86b89a7e67ea01ce15a72b7b9b52487	<font color=blue>Welch</font> Yeah... I happened to be\nat Carlone's house, looking out\nthe window.	machine
 2033_060_19	13a29b98467b50d8c39b8586dbf1aa5e661ab006	Then, a sparkling light fell\nstraight from the sky into this\nforest.	machine
 2033_060_20	7ccc666188c835b6fed3dc45a257549496adb777	At the time, the whole town\nwas buzzing with rumors that\nthe Holy War was almost over...	machine
-2033_060_21	908648905ec9ad0871a57b607284f3483139ac27	So, being the innocent and\npure little girl I was, I rushed\nout of the house to find it,\nthinking, "That must be the\npower of a familiar!"	machine
+2033_060_21	908648905ec9ad0871a57b607284f3483139ac27	So, being the innocent and pure little\ngirl I was, I rushed out of the house to\nfind it, thinking, "That must be the\npower of a familiar!"	machine
 2033_060_22	6a242338ae2c65074607464e87e9ed41bd39a3cc	Because I thought my father\nmight be coming home.	machine
 2033_060_23	fecf489d9ea7838aa3ecc650a1371076de45ac6f	<font color=blue>Tika</font> Welch, big sister...?	machine
 2033_060_24	49aeb7b8405d4d1bc65449822b2a2ffdf6991d24	<font color=blue>Euwin</font> ...	machine
 2033_060_25	985e917c74bce9a672c0a62751e26910d1c026de	<font color=blue>Welch</font> My father... he was\ntaken as a soldier in the Holy\nWar eight years ago and never\ncame back.	machine
-2033_060_26	77318c4b376a325ef1a926ddb499faec65056cb0	He didn't come back when my\nmother got sick, or even for\nher funeral. I don't know where\nhe's wandered off to, but he's\na pretty useless old man.	machine
+2033_060_26	77318c4b376a325ef1a926ddb499faec65056cb0	He didn't come back when my mother\ngot sick, or even for her funeral. I don't\nknow where he's wandered off to, but\nhe's a pretty useless old man.	machine
 2033_060_27	16cf1894e487fa8b20c66090d7b657409cb2b13d	If Eu and Eslyn hadn't been\nthere back then, I might've\nended up on the streets.	machine
 2033_060_28	770d5002a231b4f927d8659be5572534b3861566	<font color=blue>Eve</font> ...	machine
 2033_060_30	0c975b77ee3fb275c5460bec7c92d1a9d21c84df	<font color=blue>Welch</font> Well, my mom was still\nalive when this thing fell from\nthe sky,	machine
 2033_060_31	1a746f06ed1ef6383f5572a7b7fdee3d51557035	but since I never doubted that\nmy dad would come home, I\ncame here and discovered this\nmysterious lab.	machine
-2033_060_32	d51562e8f8a6eba029ff79379e3aff6960e71732	At first, I really had no idea\nwhat was going on, but then\nsomething happened and I\nfigured out how to operate the\nplace.	machine
+2033_060_32	d51562e8f8a6eba029ff79379e3aff6960e71732	At first, I really had no idea what was\ngoing on, but then something happened\nand I figured out how to operate the\nplace.	machine
 2033_060_33	38fb7404cc87e7bbeed1c9fc3567d5bc8e912dbe	Six years ago, when my mom\ndied of her illness, I had to\nlearn how to survive on my\nown.	machine
-2033_060_34	40a92cb180cc424024a658c89a9e7ce3ac4e7d13	<font color=blue>Welch</font> My dad used to run a\ngeneral blacksmith shop.\nThanks to that, I've been on\ngood terms with the metal and\nscrap dealers for a long time...	machine
+2033_060_34	40a92cb180cc424024a658c89a9e7ce3ac4e7d13	<font color=blue>Welch</font> My dad used to run a general\nblacksmith shop. Thanks to that, I've\nbeen on good terms with the metal and\nscrap dealers for a long time...	machine
 2033_060_35	4cad9e76e276b510f972894c79093a3f4ca557ae	So, I thought I'd just sell off\nsome of the rare stuff in this\nlab! And I actually did sell a\nfew things!	machine
 2033_060_36	81ba39e5896a156daf811a84214e7d52fa4535f3	<font color=blue>Eve</font> I... I see...	machine
 2033_060_37	05c6fb11ed826c005c163091850b7e96698caf4c	<font color=blue>Welch</font> Then one day, I\nhappened to touch this, and\nthis thing popped out.	machine
@@ -220,10 +220,10 @@ message_id	ja_sha1	en	source
 2033_070_04	af38943bfd9fe069b2248c5ead6c13604ad0bcd0	Be careful! Sickness is nothing\nto play around with.	machine
 2033_070_05	a4e06d2109c93867f11d71d458b6f4a4474fe4b0	Y-yeah...	machine
 2033_070_06	90ff3abb9305b0ccd9a632a817ba77344c971bf0	Are these the blueprints for\nEuwin's weapon?	machine
-2033_070_07	49ed38784f8a5acf51ef5835767ecfbbbef8d532	That's right. It's got everything\nwritten out in detail, like which\nparts to make with which\ndevice and how to put them\ntogether,	machine
+2033_070_07	49ed38784f8a5acf51ef5835767ecfbbbef8d532	That's right. It's got everything written\nout in detail, like which parts to make\nwith which device and how to put them\ntogether,	machine
 2033_070_08	5b29ca79ae15e25f0fe78335da80ac018c646950	all accompanied by drawings\nthat look just like the real\nthing.	machine
 2033_070_09	8e531a55b7f113703bcc57b9e7978962d632da32	When I first saw this, I finally\nrealized that I'd been blessed\nwith some incredible stroke of\nluck.	machine
-2033_070_10	4c050377696769dc4ae070473597e75dc9f585fa	After that, whenever I had a\nspare moment, I'd head over\nthere and try out different\nways to make things work, bit\nby bit...	machine
+2033_070_10	4c050377696769dc4ae070473597e75dc9f585fa	After that, whenever I had a spare\nmoment, I'd head over there and try out\ndifferent ways to make things work, bit\nby bit...	machine
 2033_070_11	b51c1c15f99df3af760759900e6c19f348d78567	But even after six years, all I\nmanaged to make were Eu's\nsword, my hammer, and some\nhandy tools for the shop.	machine
 2033_070_12	e9acb40dfba3586693e1923861de1f7d6d1138c0	There's still so much I don't\nunderstand.	machine
 2033_070_13	13019d64bd29c9b0101f094c056a9e0fcbef8162	Verda, do you think you could\nfigure out how to get these\nweird devices working?	machine
@@ -262,7 +262,7 @@ message_id	ja_sha1	en	source
 2033_080_04	70aff6ad53f9f081d05858bbbc86080931019dc2	Rekoro & Coro: What on earth\nis this!? "What on earth is\nthis?!"	machine
 2033_080_06	2086871b2fddf2f95132706b5ce45f8c6451a62b	Shh! H-hey, you two are being\ntoo loud!	machine
 2033_080_07	c9c36ec091fd26c7bcc5a382ae6dee2dfdd972ed	I-is it really that shocking!?	machine
-2033_080_08	8a344bb6b5c351f8845123327d0e734b3bd981ef	<font color=blue>Verda</font> There is no mistake.\nThis is clearly the work of an\nadvanced civilization...\nFurthermore, if my assessment\nis correct...	machine
+2033_080_08	8a344bb6b5c351f8845123327d0e734b3bd981ef	<font color=blue>Verda</font> There is no mistake. This is\nclearly the work of an advanced\ncivilization... Furthermore, if my\nassessment is correct...	machine
 2033_080_09	b88507436dd511d16933520a1e85bdf562e7646e	Their level of civilization is\nlikely even more advanced than\nthat of our own ship.	machine
 2033_080_10	1154b3bd20ceffeea4344f0839917c0c5b4f1a42	<font color=blue>Eve</font> R-really?!	machine
 2033_080_11	0a89bb709dfd61afc04f1f2d5f240ed182a88fe0	<font color=blue>Coro</font> "It's frustrating, but I\nbelieve it's true..."	machine
@@ -275,8 +275,8 @@ message_id	ja_sha1	en	source
 2033_080_18	492de39439356d31430af2648c2131c3194bc015	The same applies to the\ncharacters used in Carlone, as\nwell as the speech of Ewin\nLaxter and Welch Vineyard.	machine
 2033_080_19	95360306aeb00bdb5704c4915ef1056efd589df9	<font color=blue>Verda</font> Me, Eve, and the\nCaptain all communicate\nthrough translators, but...	machine
 2033_080_20	7fa5ecc4b324e9f6a566652b169cea4ebbc00fd9	<font color=blue>Tika</font> ...Yeah, I'm just speaking\nnormally.	machine
-2033_080_21	9e7016cb5130bcbfb0d2b27ce496a6a4fc68510b	<font color=blue>Rekoro</font> Based on the usage of\ncharacters and language, the\nprogression of the Holy War,\nand the names of key figures\nin the Kingdom of Rubarika,	machine
-2033_080_22	5f8c6fe62b1fd88fc2a7241bd8cad1d064930eb4	I conclude that our current\nsituation is from an era\napproximately two hundred\nyears before the time Tika\nlived in.	machine
+2033_080_21	9e7016cb5130bcbfb0d2b27ce496a6a4fc68510b	<font color=blue>Rekoro</font> Based on the usage of\ncharacters and language, the\nprogression of the Holy War, and the\nnames of key figures in the Kingdom of\nRubarika,	machine
+2033_080_22	5f8c6fe62b1fd88fc2a7241bd8cad1d064930eb4	I conclude that our current situation is\nfrom an era approximately two hundred\nyears before the time Tika lived in.	machine
 2033_080_23	a6eae739131d5f3cd7ec9a4069c5cb6fd957d033	<font color=blue>Tika</font> ...	machine
 2033_080_24	10d9ad5a01ac372af0b8f466315c8800130279ba	<font color=blue>Verda</font> Two hundred years...?\nYou mean we've gone back in\ntime?	machine
 2033_080_25	8a71e2a907b0ca41d8fe85a79a827221ff1b68f2	<font color=blue>Eve</font> Wait, Rekoro, does that\nmean...	machine
@@ -286,7 +286,7 @@ message_id	ja_sha1	en	source
 2033_080_30	b7b91f33635b0181d44d99c2fee663a370c6e6e4	However, that still leaves\nseveral questions regarding\nthis planet...	machine
 2033_080_31	4319e441ada002b6a638dcd22c6431bd1d6a7e48	For instance, who exactly sent\nWelch's lab here, and why is it\nset to the language of this\nera...?"	machine
 2033_080_32	5d2db5a7a474f50ea9d1c08857c16f305fcbcbe9	<font color=blue>Verda</font> Aye. The Levarance\narmy was only expelled from\nthis sector in the present day.	machine
-2033_080_33	8e9e98ca84a3dee9d6207b71cbcb97f3a3659e69	<font color=blue>Verda</font> If Tika came from two\nhundred years in the future,\nthen I don't understand why a\ngeneral of the Rubarika\nKingdom living in the present is\nsearching for her by name.	machine
+2033_080_33	8e9e98ca84a3dee9d6207b71cbcb97f3a3659e69	<font color=blue>Verda</font> If Tika came from two hundred\nyears in the future, then I don't\nunderstand why a general of the\nRubarika Kingdom living in the present\nis searching for her by name.	machine
 2033_080_34	d501803169370143f8ad18afe1f80356bd8a6f5e	That armored man from before\nalso seemed to know Tika from\nthe start. And...	machine
 2033_080_35	797f609e661e9d743253e0a1b4d6af3ec0c6d4dc	We can't just ignore that\n"Beast Witch" who uses the\nsame summoning crest arts as\nEve.	machine
 2033_080_36	eba6ad792ef043d1f7303f33907eb2a151d9c29c	<font color=blue>Eve</font> Karlyn... was that her\nname? That Beast Witch...	machine
@@ -297,7 +297,7 @@ message_id	ja_sha1	en	source
 2033_080_41	586a388a0456bfbe5d98f56d8760c0a31df01c1b	They are skilled in Symbology,\nand among humanoid races,\ntheir average lifespan is\nslightly longer.	machine
 2033_080_42	7fa8577f9b42d58233f72246c3560d1e6d1ebec2	Rekoro, are there any Foxtails\nin Daftine...?』	machine
 2033_080_43	227d4b311c0fa4335e3b1f5a98653e999f521f76	<font color=blue>Rekoro</font> They are a minority\nliving throughout Baschen, but\nthere should be almost none in\nRubarika.	machine
-2033_080_44	36e5eabc5b3a3756e1feb1de3dcef90ec25c1e68	<font color=blue>Tika</font> That was my first time\nseeing one. I'd heard stories\nabout people with tails, but I\ndidn't know that lady was one\nof them.	machine
+2033_080_44	36e5eabc5b3a3756e1feb1de3dcef90ec25c1e68	<font color=blue>Tika</font> That was my first time seeing one.\nI'd heard stories about people with tails,\nbut I didn't know that lady was one of\nthem.	machine
 2033_080_45	5527797bfc0932680529a4699b9bb15053dda7f7	You're taking this quite calmly,\nTika.	machine
 2033_080_46	ec297c15bdf51929fef6a49af4c4bae4648b1f57	Yeah... I mean, it's not like I\ncouldn't imagine it.	machine
 2033_080_47	4e4867c0cddcc915b8d526083c94194b325ac871	Everything is so unfamiliar, but\nthere are so many things I\nstudied at school,	machine
@@ -329,14 +329,14 @@ message_id	ja_sha1	en	source
 2033_085_09	360b9df252cc37ae48222ad05dc9a90e2b348795	Don't push yourself too hard.	machine
 2033_085_10	6b72bc6dddb2b291ff01822414b9a34ceb9afbaf	Should I treat you like a child?	machine
 2033_085_11	ae5440acbd392790025e1ad01f8871c2beb65b84	Hehe, thanks. It's not like I was\nreally depressed.	machine
-2033_085_12	41705e948f567ff14da449da4ff469d99adc540c	It's just... while I still don't\nunderstand the true nature of\nmy own power, the Beast Witch\nseemed to use hers so freely.\nThat's why I got rattled.	machine
-2033_085_14	73055117e05d39e365500b549d1a1635d85e4197	I'll be fine. I'll worry and I'll think\nabout it, but I'll never stop\nmoving forward. After all, Tika\nis the most important thing\nright now.	machine
+2033_085_12	41705e948f567ff14da449da4ff469d99adc540c	It's just... while I still don't understand\nthe true nature of my own power, the\nBeast Witch seemed to use hers so\nfreely. That's why I got rattled.	machine
+2033_085_14	73055117e05d39e365500b549d1a1635d85e4197	I'll be fine. I'll worry and I'll think about\nit, but I'll never stop moving forward.\nAfter all, Tika is the most important\nthing right now.	machine
 2033_085_15	c2626965d8a45f23a07dbd2acfdd8d361fe9a875	I don't think... I'm pushing\nmyself... but if anything, I'm just\nspinning my wheels.	machine
 2033_085_16	e9384238f1c51a500ba0eb45945817865e0672b7	Come to think of it, I don't\nactually have a goal.	machine
-2033_085_17	138aa10ef3f362d91db50dac77256a9ab28b44a4	The memory loss I mentioned\nat first was a lie, but I really\nhave no idea where I came\nfrom or why I can use\nSymbology...	machine
-2033_085_18	5c330dde3508aff58363d295bd97c7c76e22a10f	I don't need a goal as grand as\nVerda's to reduce the Tears of\nthe Universe, but I'm still\nshaken by the Beast Witch,\neven though I haven't even\nfound my own footing...	machine
+2033_085_17	138aa10ef3f362d91db50dac77256a9ab28b44a4	The memory loss I mentioned at first\nwas a lie, but I really have no idea\nwhere I came from or why I can use\nSymbology...	machine
+2033_085_18	5c330dde3508aff58363d295bd97c7c76e22a10f	I don't need a goal as grand as Verda's\nto reduce the Tears of the Universe,\nbut I'm still shaken by the Beast Witch,\neven though I haven't even found my\nown footing...	machine
 2033_085_19	17d5097b31d163fd85d1fc764069f8a57f132313	Ah, what am I even talking\nabout?	machine
-2033_085_21	2e219de26a299ad935afc70ee66e3f511c7dc01f	...Thanks. Taking it easy, huh...\nMaybe I'm managing because\nyou say things like that,\nCaptain. ...I don't even know\nwhat I'm saying anymore.	machine
+2033_085_21	2e219de26a299ad935afc70ee66e3f511c7dc01f	...Thanks. Taking it easy, huh... Maybe\nI'm managing because you say things\nlike that, Captain. ...I don't even know\nwhat I'm saying anymore.	machine
 2033_085_22	0f6ae0e6e21726a9c87e27024282b97bd9478f32	...Just so you know, my age is\nthe one thing I remember. I'm\neighteen. No mistake about it.\nI'm not a child anymore!	machine
 2033_085_24	c9092736e6948f6f514dbcac9aef58d6cd32d2d9	To think you still see an\neighteen-year-old as a child...\nCaptain, that's a very\nold-fashioned way of thinking.	machine
 2033_085_26	ec1099c6521b84bd91325c656912d9fb2d132310	...Hehe, but thanks. Do you\nknow what the privilege of\nbeing a child is?	machine
@@ -366,7 +366,7 @@ message_id	ja_sha1	en	source
 2033_090_11	195fabba3fc0c672e8f160a9aa8d3fd2868b8628	Seems so. I don't actually know\nhow it works, but I'm hoping to\nfigure that out eventually.	machine
 2033_090_12	663364e04e82f43e4eb65529ae8dc8565f80a399	One step at a time.	machine
 2034_100_01	0989e85711df7cc7b9d2cd11c94a0f00435a9f01	We're almost there. The royal\ncapital should be just ahead.	machine
-2034_100_02	2c2b7828917d896bd8f130513cefc08e7d19b4f2	It looks like there's a\ndetachment of knights\nstationed here for road patrols,\nso I'll go report what I saw in\nthe forest about those\n"beasts."	machine
+2034_100_02	2c2b7828917d896bd8f130513cefc08e7d19b4f2	It looks like there's a detachment of\nknights stationed here for road patrols,\nso I'll go report what I saw in the forest\nabout those "beasts."	machine
 2034_100_03	976e5a4835a808bcaa064967b0fa2d3e3e7f65f6	Just stay put until I get back.	machine
 2034_100_04	5bb081781630e4060056501de6404a10f4763a68	Why are you only telling me to\ndo that?!	machine
 2034_100_05	3e5b12398088f76e61e59024795c5d099f6b5362	He's just worried about you.	machine
@@ -376,9 +376,9 @@ message_id	ja_sha1	en	source
 2034_100_09	d3480da1559684dbabdf7a9de8ba73e3e84445c7	Are you and Euwin lovers?	machine
 2034_100_10	6be02290516a877c92d3f65393e24e208d3465c9	............Huh?	machine
 2034_100_11	8f29e0e0ed8a74cfe7f5b5a97b2c8427b3bef850	WHAAAAAAAAAAAAAT?!	machine
-2034_100_12	6eb75c28f1328ce343f60a8b3330f4d11b9cdba6	W-w-w-where did that even\ncome from?! Huh?! What\nexactly have you seen between\nme and Eu to come to that\nconclusion?!	machine
+2034_100_12	6eb75c28f1328ce343f60a8b3330f4d11b9cdba6	W-w-w-where did that even come\nfrom?! Huh?! What exactly have you\nseen between me and Eu to come to\nthat conclusion?!	machine
 2034_100_13	e11a2bb7bbb5d2d1a048bb89e23038c918b910da	Y-you're not?	machine
-2034_100_14	93564b2baf95ac04fc3f0409a5dcedf9bfc30c59	No! No! Absolutely not! What\nare you talking about?! Eu is\nmore like a convenient lackey,\nor a little brother, or a guinea\npig to me!	machine
+2034_100_14	93564b2baf95ac04fc3f0409a5dcedf9bfc30c59	No! No! Absolutely not! What are you\ntalking about?! Eu is more like a\nconvenient lackey, or a little brother, or\na guinea pig to me!	machine
 2034_100_15	4314897045ce73ca7cd0de1f5dc3c5b7e40ef604	Calling him a guinea pig is a bit\nharsh...	machine
 2034_100_17	b947e841f31f7782e515a150d91932f2fdead145	Hey! You, with nothing but\nventriloquism to your name,\nshut it!	machine
 2034_100_18	2d2ae95668c01a200119ae25494512b3dbe4fbfc	Listen, Tika. Lovers are, you\nknow, how do I put this... they\nhave that certain "feeling," you\nknow? That feeling.	machine
@@ -394,12 +394,12 @@ message_id	ja_sha1	en	source
 2034_100_28	9dee712322e25d9c2d872b5f52ba351bebf4fcd8	So why on earth is there talk\nof me and Eu being lovers!	machine
 2034_100_29	317bf0ed6ee5fed660865b9cf9c0af21ee39e49d	...But you are lovers, right?	machine
 2034_100_30	5278d102b86e1acabaebc7cd69a38e3e1fc79e52	In what way!?	machine
-2034_100_31	b8b85d042077bb73571bbba6838a09925ed04927	Well, you're close, you trust\neach other, you can say\nanything to each other, and\nyou're always together, aren't\nyou?	machine
+2034_100_31	b8b85d042077bb73571bbba6838a09925ed04927	Well, you're close, you trust each other,\nyou can say anything to each other,\nand you're always together, aren't you?	machine
 2034_100_32	6d906d73508b3cc978c387a339ef970dbed2e3da	Wh... what!? I mean, I guess\nthat's true.	machine
 2034_100_33	e890886c25accb4d772a5266412d0aff9678ee86	But that's not it! Mutual\nperception is what matters!	machine
 2034_100_34	1e874cd7a1dc2a39e309956f4537daf96853cddc	To me, Eu is like a little brother\nand a guinea pig.	machine
 2034_100_35	6d8cbc3de878ccd074363b08ac86e3e9e9e12f12	And to Eu, I'm the super cute,\nsexy, glamorous older sister\nnext door that he looks up to!	machine
-2034_100_36	521c39c174f0a1489328ac301c3901a8012d86e5	Numerous falsehoods are\ndetected in the self-report. The\npossibility that she is falsifying\nher own origins cannot be\ndenied.	machine
+2034_100_36	521c39c174f0a1489328ac301c3901a8012d86e5	Numerous falsehoods are detected in\nthe self-report. The possibility that she\nis falsifying her own origins cannot be\ndenied.	machine
 2034_100_37	c9b924053b04cc5d8733bb53cdda6db0b042c3f6	As expected, Welch Vineyard is\na dangerous individual.	machine
 2034_100_38	1c178b671a4bae2159ba7e4c9b436f3a3143fd85	Hey, Captain!!! Don't think you\ncan get away with anything\njust by calling it ventriloquism!!!	machine
 2034_100_40	322dfe5ea247b88f09a9c12aa976dce99c0a2e62	Hey now. Euwin is paying for\nthis room, so please don't\nbreak anything in the inn.	machine
@@ -408,7 +408,7 @@ message_id	ja_sha1	en	source
 2034_100_44	234d1cc53638670698ccc8ea610f808a490dde9f	Hmph, watch your tone.	machine
 2034_100_45	9f40c26ea0d9e3cca14b50a0bd4843e8a6fa442c	Awawa...	machine
 2034_100_46	df998429b10ef0818f7cb2453eae6227a08859e3	<font color=blue>Verda</font> Captain. I apologize, but\nmay I ask a small favor of you?	machine
-2034_100_48	ab0731ee33f1b18da14ddb2f61c7745c37ee7d97	<font color=blue>Verda</font> I found a most wonderful\nflask at the general store near\nthe entrance of this town. I\nwish to go see it, but it is late\nand the shop is on the\noutskirts.	machine
+2034_100_48	ab0731ee33f1b18da14ddb2f61c7745c37ee7d97	<font color=blue>Verda</font> I found a most wonderful flask at\nthe general store near the entrance of\nthis town. I wish to go see it, but it is\nlate and the shop is on the outskirts.	machine
 2034_100_49	2c95560073e1949ad05b712d090a3dc20faaf07c	I fear I might get caught up in\ntrouble without an adult to\naccompany me. Would you be\nwilling to come along?	machine
 2034_100_51	d7527330ac9e9ce553918bbf60565094040dfee1	<font color=blue>Verda</font> Is that alright? Eve, I am\nsorry, but could I ask you to\nwatch over things here?	machine
 2034_100_52	fcb6eb545630d5abd8b205202df1091b7e58759a	<font color=blue>Eve</font> ...! I understand. Please be\ncareful.	machine
@@ -424,7 +424,7 @@ message_id	ja_sha1	en	source
 2034_100_63	78469de533d142b75654774e81899f5b0e30e7a0	Has such amazing taste!	machine
 2034_100_64	3dc060f067155a8d6274828555821ba1be587226	...Huh?	machine
 2034_100_65	3ef2cefd645e358d1750b7fc6c6f70210ddc927c	I mean, I saw that flask Verda\nwas talking about.	machine
-2034_100_66	2158f66b608b0a7899bac156cdc722110e070eb2	I thought that chic Erlenmeyer\nflask was just great! I was so\nsurprised to find such a\ntreasure at the general store\nin town!	machine
+2034_100_66	2158f66b608b0a7899bac156cdc722110e070eb2	I thought that chic Erlenmeyer flask\nwas just great! I was so surprised to\nfind such a treasure at the general\nstore in town!	machine
 2034_100_67	83f80a60c634b67211f5d642c5ea98e4cda3f622	Oh... there really is a flask.	machine
 2034_100_68	e5ebda0969ba08a3e92fb5a49ea8ac4fc53ee5c4	Verda's got a real eye for\nquality. She's the real deal!	machine
 2034_100_69	aa2e2544ce6986e01a26ad51b983871437944ed1	I'm jealous. I wonder if little Eu\nwould buy one for me too?	machine
@@ -436,7 +436,7 @@ message_id	ja_sha1	en	source
 2034_110_05	4e96492e85e8ec8d74d0068931586254d942d45b	More importantly, Coro.	machine
 2034_110_06	ad2ac93d27a6af6da9e02b474adb260ff8336026	<font color=blue>Coro</font> Yes, yes. I'm ready. I saw\nVerda collecting fur from that\nwerewolf-type Thornite, so I\nprepared everything.	machine
 2034_110_08	d973933d7de37a407c85f47c058baa3ff76a33a2	<font color=blue>Verda</font> ...I was just a bit curious.	machine
-2034_110_09	cd98c32fc776d14ef23476732cfc7075812cb3dc	See, I originally intended to\ncross-reference the genetic\ninformation of Tika and the\nDaftine humans, so I thought I'd\ndo this while I was at it. Coro.	machine
+2034_110_09	cd98c32fc776d14ef23476732cfc7075812cb3dc	See, I originally intended to\ncross-reference the genetic information\nof Tika and the Daftine humans, so I\nthought I'd do this while I was at it.\nCoro.	machine
 2034_110_10	f4ad892d38886585911dd002789bbf8436989837	<font color=blue>Coro</font> Right, excuse me. This is\nEuwin's hair, and this is\nWelch's.	machine
 2034_110_11	8bc15fc604c7634e31198ffd4ca36c5d03258316	<font color=blue>Verda</font> And this here is from\nthat werewolf, Thornite.	machine
 2034_110_12	1d250bcdb46b8fe0eb1970a592f2ba96e34c74b9	<font color=blue>Coro</font> I believe the results will\nbe out shortly.	machine
@@ -450,27 +450,27 @@ message_id	ja_sha1	en	source
 2034_110_20	92d275a56bad9de6d4a2e7b91db25151a19d1b8a	<font color=blue>Coro</font> I've also independently\ngathered a few pieces of\nevidence to support Rekoro's\nhypothesis.	machine
 2034_110_21	97c7f0df69ca4679295ac251e933fe68219d4ecf	First, regarding "Daftes"―I was\nable to identify it quickly\nbecause the coordinates were\nrecorded in Tika's escape pod.	machine
 2034_110_22	17678ec026208f8a94c489fac2f6b921c9ab217d	Daftes is the twin star of\nDaftine. They are a habitable\nbinary planet system with a\nmoon situated between them.	machine
-2034_110_23	97b10e70bac67d86ec265f62cbdf372cc5c8c43d	<font color=blue>Verda</font> A habitable binary\nplanet... It's rare to find two\nadjacent planets that both\npossess environments capable\nof supporting organic life.	machine
+2034_110_23	97b10e70bac67d86ec265f62cbdf372cc5c8c43d	<font color=blue>Verda</font> A habitable binary planet... It's\nrare to find two adjacent planets that\nboth possess environments capable of\nsupporting organic life.	machine
 2034_110_24	68468b8f3e1ef1f626419e739b78a12f28b8837f	<font color=blue>Coro</font> Indeed. There are very\nfew precedents in the\nFederation's records.	machine
 2034_110_25	022cdf8b8bc88fd49a684bb4e02dccc4bb808246	As for Daftes, long-range\nsensors show no signs of\ncivilization.	machine
-2034_110_26	bb3e200e96a556a50da0ecc5c2e53a75c4d4e717	According to Rekoro's records,\ndespite having water and an\natmosphere that Daftine\nhumans could survive in, it isn't\nregistered as a colony or an\nemergency evacuation site.	machine
-2034_110_27	ee71bd500ecdd8aca9ba9bd69e0a2e5f5d35b5b0	<font color=blue>Verda</font> What do you mean? If\nit's this close and has a\nbreathable atmosphere, it\nwould be a much easier place\nto wait for rescue.	machine
-2034_110_28	60b462fb3366edc946b45c2ea2b16340c9f102de	<font color=blue>Coro</font> I can only assume there's\na reason why it isn't listed in\nthe life-pod records, but\nregardless, we can safely\nassume that the Daftes Euwin\nand the others mentioned is\nthe same as this Daftes.	machine
+2034_110_26	bb3e200e96a556a50da0ecc5c2e53a75c4d4e717	According to Rekoro's records, despite\nhaving water and an atmosphere that\nDaftine humans could survive in, it isn't\nregistered as a colony or an emergency\nevacuation site.	machine
+2034_110_27	ee71bd500ecdd8aca9ba9bd69e0a2e5f5d35b5b0	<font color=blue>Verda</font> What do you mean? If it's this\nclose and has a breathable\natmosphere, it would be a much easier\nplace to wait for rescue.	machine
+2034_110_28	60b462fb3366edc946b45c2ea2b16340c9f102de	<font color=blue>Coro</font> I can only assume there's a reason why it\nisn't listed in the life-pod records, but\nregardless, we can safely assume that the\nDaftes Euwin and the others mentioned is the\nsame as this Daftes.	machine
 2034_110_29	3c454f7001042cb0a1e20f04a53f93d7d48ebca7	Given that, it seems likely that\nTika and the others have\ntraveled back in time.	machine
 2034_110_30	597ddd86bf20f0614cb3b165a0f46535b997a5d5	<font color=blue>Verda</font> You say "traveled back\nin time" quite casually, don't\nyou?	machine
-2034_110_32	adfe469bcb2c9a7578474628482691a568740358	<font color=blue>Coro</font> Yes. The Galactic\nFederation has several\nscientifically verified records of\npeople actually transcending\ntime.	machine
+2034_110_32	adfe469bcb2c9a7578474628482691a568740358	<font color=blue>Coro</font> Yes. The Galactic Federation has\nseveral scientifically verified records of\npeople actually transcending time.	machine
 2034_110_33	cdb5ee00de274a4893afd7ef2ead085b02c1cac0	So, while it's surprising, it is\nsomething that can be\naccepted.	machine
 2034_110_34	dd79b9e62b6a4e2c40e29566bfa4399bb41c5b97	<font color=blue>Verda</font> ...The universe is truly\nvast... If Grandfather or Eldram\nknew, they'd be absolutely\nshocked.	machine
 2034_110_35	c65359ded232a48ca348c91bf1cca9760796b461	<font color=blue>Coro</font> Verda...	machine
 2034_110_37	92a14af72673a92cacc866ab9e5b04a174f750be	Now then, the last thing was\nthat lab of Welch's.	machine
 2034_110_38	0b2fd3beaddadeacf85f59a247bf333a1387c677	Yes! That's it! That's the one!\nWelch's lab!	machine
 2034_110_39	5ba9421cda18a3c1f608cdf877e0a1feabb62fc3	Wanya!?	machine
-2034_110_40	67de8cd9fa05043e90c6babc35d96e4dd1ca17a6	Honestly, that's far harder to\naccept than the time travel\nthing―it's a much bigger\nproblem than the Beast Witch\nor the power of the servants!	machine
-2034_110_41	3a6e653eafe4b0b29a7a3cb45286744293effc07	It completely defies my\nadvanced computational\ncapabilities! I feel like I need to\ngo there myself and dismantle\nevery single screw to\ninvestigate!	machine
+2034_110_40	67de8cd9fa05043e90c6babc35d96e4dd1ca17a6	Honestly, that's far harder to accept\nthan the time travel thing―it's a much\nbigger problem than the Beast Witch or\nthe power of the servants!	machine
+2034_110_41	3a6e653eafe4b0b29a7a3cb45286744293effc07	It completely defies my advanced\ncomputational capabilities! I feel like I\nneed to go there myself and dismantle\nevery single screw to investigate!	machine
 2034_110_43	b0fa78ce451132cefeb4c03e3f2a3630f62411f0	Right... sorry. I lost my cool...\nBut that lab is just that\nunbelievable!	machine
 2034_110_44	74910d7769b1e07ed6a2bc490327c03ef99d9c96	So what exactly is so\nunbelievable about it?	machine
 2034_110_45	e7cdf233017adc068b1d256daf20bea483fb42f4	The fact that the lab is built\nwith advanced civilization\ntechnology,	machine
-2034_110_46	bd9479b0821019a3aa584666a4f65b094fbb348a	And as Rekoro mentioned, the\nfact that all the internal\nlanguage displays are unified in\nthe current language of\nDaftine,	machine
+2034_110_46	bd9479b0821019a3aa584666a4f65b094fbb348a	And as Rekoro mentioned, the fact that\nall the internal language displays are\nunified in the current language of\nDaftine,	machine
 2034_110_47	e14d2d6b34dc51eb09eb13d8490925688386b1b0	But the most important thing\nfor me is...	machine
 2034_110_48	7036f9a6d1a0aed28e85c801d0999710b6fa9222	That lab was built using\nGalactic Federation technology.	machine
 2034_110_49	c6af559de70d0e08be53c21d7e08a7e6185376e0	What!?	machine
@@ -482,22 +482,22 @@ message_id	ja_sha1	en	source
 2034_110_57	b07ef915fad29b20409dd820a67186c6b2289614	But the Federation has no\nrecord of anything like that...	machine
 2034_110_58	6be55c7eee09084a85fb7e0f4c58ad71c83f2317	...If that were true, would it not\nbe something that could aid\nyou and Coro, Captain?	machine
 2034_110_59	185ea130360479828ec9f7dbaa65f7a6cc90c3fa	Eight years in a place this far\nfrom Federation territory? This\nreeks of a conspiracy.	machine
-2034_110_60	e76efbe8c2a81c8d8d3475ededdb990958d494bd	Now that I think about it, Tika's\nescape pod distress signal\nused a Federation code, and\nthe way the Levarance fleet\nwas repelled might have been...	machine
-2034_110_61	21796ae74a3e205e31a3650f8da0ee7b5359bd30	Ugh, Captain, what do we do?\nWe've worked so hard to get\nthis far, only to be erased by\nsome dark corner of the\nFederation...	machine
+2034_110_60	e76efbe8c2a81c8d8d3475ededdb990958d494bd	Now that I think about it, Tika's escape\npod distress signal used a Federation\ncode, and the way the Levarance fleet\nwas repelled might have been...	machine
+2034_110_61	21796ae74a3e205e31a3650f8da0ee7b5359bd30	Ugh, Captain, what do we do? We've\nworked so hard to get this far, only to\nbe erased by some dark corner of the\nFederation...	machine
 2034_110_63	981063640b83f8336735442488b37e226b129a2f	R-right! It's not like it's a done\ndeal yet!	machine
 2034_110_64	a5d3ca6413e7c03f6c4dd5219409fae5461ef06a	Besides, we have been in this\nsector for some time now, yet\nthere has been no sign of them\nattempting to make contact.	machine
-2034_110_65	bf5469f9537a715f89884bc223a1c640a59bf10e	There is still something we\nhave not found, something we\nhave overlooked. Something\nnecessary to unravel the\nmysteries of this planet...	machine
+2034_110_65	bf5469f9537a715f89884bc223a1c640a59bf10e	There is still something we have not\nfound, something we have overlooked.\nSomething necessary to unravel the\nmysteries of this planet...	machine
 2034_110_66	c1ba5f8a9feffe16a39550949288b39b1d77634f	Captain, Coro...	machine
 2034_110_68	2cde6ad7bbdb77460ec3dd27954d13964a69ca86	Yes!	machine
 2034_110_69	b0e2790f90cbe1d6e073210b18d629d484261a93	Let us continue our journey on\nthis planet with caution.\nTomorrow, we head to the\nroyal capital, Rubarika.	machine
 2034_110_70	24736cf1573076d43b8d822eeb343400370f049e	Right now, the only thin\nthreads of clues we have all\nlead back to the Holy War...	machine
 2034_110_71	6b8890c46ce014247e4db2bdda5a2646263272ff	As we draw closer to the truth\nof the Holy War, more things\nmay finally come to light.	machine
 2034_120_01	0ac828222c71c5cb8206381385da3508905bdb62	Baschen Soldier: The Beast\nWitch, Lady Karlyn Kayson, has\nreturned!	machine
-2034_120_02	59dfef12405842fdd12056e15bd14ef73f17296b	Baschen Soldier: The operation\nto block the highway from\nCarlone to the Royal Capital\nusing the "Beasts" was a\nsuccess!	machine
-2034_120_03	9d0927210a24419bb819d79a9eaea8f7cf9a1429	Baschen Soldier: There is\nsignificant chaos in the\ntransport of troops and\nsupplies to the Rubarika army's\nforward base!	machine
+2034_120_02	59dfef12405842fdd12056e15bd14ef73f17296b	Baschen Soldier: The operation to block\nthe highway from Carlone to the Royal\nCapital using the "Beasts" was a\nsuccess!	machine
+2034_120_03	9d0927210a24419bb819d79a9eaea8f7cf9a1429	Baschen Soldier: There is significant\nchaos in the transport of troops and\nsupplies to the Rubarika army's forward\nbase!	machine
 2034_120_04	97ba74811e811a43fc1b2ded648496edc6aeb220	Hmm.	machine
 2034_120_05	3ba07b3606e5ce808998f7ad8f413ca0b6581846	Baschen Soldier: Additionally,\nthe experimental plan for the\nnew "Beasts" created by Your\nExcellency has been activated.	machine
-2034_120_06	42df7ce5f2b25b23b5c3078d5983a114ec54617e	Baschen Soldier: It appears\nthat Lady Karlyn and the other\nBeast Witches are achieving\nexcellent results across\nvarious regions.	machine
+2034_120_06	42df7ce5f2b25b23b5c3078d5983a114ec54617e	Baschen Soldier: It appears that Lady\nKarlyn and the other Beast Witches are\nachieving excellent results across\nvarious regions.	machine
 2034_120_07	fc5b7abae511129acb713a4eb530dd1d1053e563	Hmm...	machine
 2034_120_08	feea0b0f1d6fc7286e605a402726f401e5f2973f	Baschen Soldier: ...Um...\nE-Excellency Giverese...	machine
 2034_120_09	e0dbc8e0bedbf6f9935abf86a8d1ce4ed280832e	What is it? Is that all for the\nreport?	machine

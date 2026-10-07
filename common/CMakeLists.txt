@@ -106,6 +106,18 @@ target_link_libraries(soa_codec_tests PRIVATE soa_warnings)
 target_compile_definitions(soa_codec_tests PRIVATE SOA_REPO_DIR="${CMAKE_SOURCE_DIR}")
 target_link_libraries(soa_codec_tests PRIVATE soa_codec soa_compat)
 
+# soa_text: the English line breaker (include/soa/line_break.h, src/line_break.cpp): the server's
+# English derivation, platform370's --lang en word wrap and box fit.
+#   soa_text_tests  its unit tests (build/common/soa_text_tests; T0 `line-break`): the shared vectors
+#                   common/tests/line_break_vectors.tsv (also tests/test_line_break.py), fit_box
+add_library(soa_text STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/line_break.cpp)
+target_include_directories(soa_text PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(soa_text PRIVATE soa_warnings)
+
+add_executable(soa_text_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/line_break_tests.cpp)
+target_compile_definitions(soa_text_tests PRIVATE SOA_REPO_DIR="${CMAKE_SOURCE_DIR}")
+target_link_libraries(soa_text_tests PRIVATE soa_text soa_warnings)
+
 # common/ includes nothing of the repository but itself (cmake/flags.cmake)
 soa_check_includes(common/ DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src
                    ${CMAKE_CURRENT_SOURCE_DIR}/win32 ${CMAKE_CURRENT_SOURCE_DIR}/tests

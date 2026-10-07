@@ -21,12 +21,17 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <list>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <utility>
 #include <vector>
+
+#include <soa/line_break.h>
 
 namespace soa {
 struct LoadedLib;
@@ -139,28 +144,94 @@ bool english_for(std::string_view s, const Lookup& lookup, std::string* out);
 // The client's own StringDB::Get(id) (--lang en only; false before --lang en's install or when the
 // master has no such row).
 bool master_text(const char* id, std::string* out);
-// Kana, kanji, CJK punctuation or full-width forms in `s`.
-bool has_japanese(std::string_view s);
-// The width of one line.
-using Measure = std::function<float(std::string_view line)>;
-// `text` with each line wider than `budget` broken at spaces (greedily); lines with Japanese (kana,
-// kanji, full-width forms) or without a space stay, and so does a word wider than the budget.
-std::string wrap(std::string_view text, float budget, const Measure& measure);
-// The size of a whole (multi-line) text, as CDirectAofTextRenderer::CalcStringRect gives it.
-struct Extent {
-    float w, h;
+// The line breaking itself is soa::text (common/include/soa/line_break.h): break_lines (the label
+// wrap: keep_breaks, skip_japanese) and fit_box (the boxes).
+
+// DrawSelf's shrink of a fixed-size label: min(1, box w / text w, box h / text h).
+double fit_scale(double text_w, double text_h, double box_w, double box_h);
+
+// A bounded, thread-safe cache of the text code's results (least recently used out first).
+template <class V>
+class LruCache {
+public:
+    explicit LruCache(size_t capacity) : cap_(capacity) {}
+    bool get(const std::string& key, V* out) {
+        std::lock_guard<std::mutex> l(mu_);
+        auto it = map_.find(key);
+        if (it == map_.end()) return false;
+        order_.splice(order_.begin(), order_, it->second);
+        *out = it->second->second;
+        return true;
+    }
+    void put(const std::string& key, V value) {
+        std::lock_guard<std::mutex> l(mu_);
+        auto it = map_.find(key);
+        if (it != map_.end()) {
+            it->second->second = std::move(value);
+            order_.splice(order_.begin(), order_, it->second);
+            return;
+        }
+        order_.emplace_front(key, std::move(value));
+        map_[key] = order_.begin();
+        if (map_.size() > cap_) {
+            map_.erase(order_.back().first);
+            order_.pop_back();
+        }
+    }
+    size_t size() {
+        std::lock_guard<std::mutex> l(mu_);
+        return map_.size();
+    }
+
+private:
+    size_t cap_;
+    std::mutex mu_;
+    std::list<std::pair<std::string, V>> order_;
+    std::unordered_map<std::string, typename std::list<std::pair<std::string, V>>::iterator> map_;
 };
-using MeasureText = std::function<Extent(std::string_view text)>;
-// A text laid out for a fixed box that shrinks its text to fit (the home's speech box, E12): the
-// text with its line breaks collapsed to spaces and re-broken at spaces, and the scale DrawSelf's
-// shrink then gives it (min(1, w / text w, h / text h)). The break width is the box's width over
-// the scale of the fewest lines whose height fits (n lines at scale min(1, h / height of n lines)),
-// so the shrunk text uses the whole width; no minimum: a text that needs a tiny font gets it.
-struct BoxFit {
-    std::string text;
-    float scale;
+
+// What the hooks remember per guest label (thread-safe): the text a hook set and the text it was
+// made from (so a label laid out again is re-wrapped from its original, not from our result), and
+// a label's own box while E12 switched it to a fixed box. Keyed by the label's guest address, so the
+// label's destructor (CCocosLabel D0/D1, hooked) calls forget(): a freed label's address reused by a
+// new label never inherits the old label's text or "restores" the old label's box.
+class LabelStates {
+public:
+    struct Box {
+        uint8_t custom, shrink;
+        float w, h;
+    };
+    // The original a hook made `current` from, when `current` is what a hook set on this label.
+    bool original_of(uint64_t label, std::string_view current, std::string* original);
+    // A hook set `produced` (made from `original`) on the label.
+    void set(uint64_t label, std::string produced, std::string original);
+    void erase_text(uint64_t label);
+    // The label's own box, kept the first time a hook changes it.
+    void keep_box(uint64_t label, const Box& own);
+    // The kept box (and forgets it): false when the hook never changed this label's box.
+    bool take_box(uint64_t label, Box* own);
+    // A label marked as the story message window's (E13): the label wrap leaves it alone.
+    void mark_story(uint64_t label);
+    bool is_story(uint64_t label);
+    // The label is destroyed: everything about it goes.
+    void forget(uint64_t label);
+    size_t size();
+
+private:
+    struct Entry {
+        std::string produced, original;
+        bool has_text = false, has_box = false, story = false;
+        Box box{};
+    };
+    std::mutex mu_;
+    std::unordered_map<uint64_t, Entry> map_;
 };
-BoxFit fit_box(std::string_view text, float box_w, float box_h, const MeasureText& measure);
+LabelStates& label_states();
+
+// E13, the story message window: the font scale at which a whole message (its lines as the data
+// broke them; tags drawn as nothing) fits the window's box, and the box (in the label's units at the
+// window's own FontSize 30 and line spacing 10, CEventScenarioMessageWindow::Show).
+double story_scale(std::string_view message, const soa::text::MeasureText& measure, double box_w, double box_h);
 }  // namespace text
 
 // The patch's rule, for a host that replaces CParameterUtility::FindGlobalStringWithKey itself

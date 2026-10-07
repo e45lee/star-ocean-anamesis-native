@@ -1,7 +1,7 @@
 message_id	ja_sha1	en	source
 E013_010_01	19aa11a2d137e9e3b40965b850e6e419915f7cbd	Tsk, damn pests...! Why the hell\ndo I have to play nice and\nexplore ruins with a bunch of\nFederation lackeys...!	machine
 E013_010_02	9eb0f7f0358331b1bb94e6584044824e7f4b5976	*Sigh*, we discussed this\nseveral times before the\nexploration began.	machine
-E013_010_03	0f60443a3c17eb23ef78876b7af3897f0e40c397	While the hull of this ship\nbelongs to the Federation, it is\ncrewed by people from a vast\nvariety of organizations, making\nit a distinct entity from the\nFederation military.	machine
+E013_010_03	0f60443a3c17eb23ef78876b7af3897f0e40c397	While the hull of this ship belongs to\nthe Federation, it is crewed by people\nfrom a vast variety of organizations,\nmaking it a distinct entity from the\nFederation military.	machine
 E013_010_04	c0bf328767014d8ce0a387a0abfc745989a0a0f3	I believe it is only prudent for\neveryone to cooperate to\nachieve their respective goals.	machine
 E013_010_05	7cb6984bd6d5cef1aa46d71694baecb94bace964	That still doesn't mean I owe\nyou lot any cooperation!	machine
 E013_010_06	d2f1b6f854fb68203edf6661bd5660b9b6102f90	Huh? Is Pavine not coming? I\nwas looking forward to\nexploring together, mya...	machine
@@ -24,17 +24,17 @@ E013_010_23	2fc0544a61e60b14595cd230149ea0ab3b051135	I thought the people from t
 E013_010_24	bee4ec0480a34f370b7204d34487150ee299d79f	Wawa! Don't come over here,\nmya!	machine
 E013_010_25	f4e73c78a57ce9eec91f0a325ec7965acdc6a096	Myaaaaaaa!	machine
 E013_010_26	045355e41ac314a5f8a3987be0f0ccd34d6024b3	Leave this to us and get back!	machine
-E013_010_27	9b2872f57ba09fdfcffe6dfe8d5876082059a33a	Edge was so cool back then.\nHe just swooped in right in\nfront of me, just as I was\nabout to be eaten by those\nexperimental creatures...	machine
+E013_010_27	9b2872f57ba09fdfcffe6dfe8d5876082059a33a	Edge was so cool back then. He just\nswooped in right in front of me, just as\nI was about to be eaten by those\nexperimental creatures...	machine
 E013_010_28	7a23fd8ab861f29030b2f2184699739dc4e863a8	Tsk. You Earthlings have a real\nknack for disregarding the\nprotection of primitive planets.	machine
 E013_010_30	f99f22b032b5b1699b68136ad7c436a43c6e9cd9	The Captain is right! Edge just\nsaved me because I was\ncaptured!! He didn't do\nanything wrong!	machine
-E013_010_31	277a0541462c8c721689c7b8267ad4c62b9fb6ae	You're flaunting weapons\ncreated by advanced\ncivilization technology on a\nplanet with an obviously lower\nlevel of civilization.	machine
+E013_010_31	277a0541462c8c721689c7b8267ad4c62b9fb6ae	You're flaunting weapons created by\nadvanced civilization technology on a\nplanet with an obviously lower level of\ncivilization.	machine
 E013_010_32	914f04cf69d07819720debc3c64f5d8a7d70c9cd	Human lives were being\nthreatened. I believe the use of\nweapons was unavoidable.	machine
 E013_010_33	4c418b9f43791222ed1de149452ef142714d6084	Furthermore, the Primitive\nPlanet Protection Treaty didn't\neven exist in Edge's time, so he\ndidn't break any rules.	machine
 E013_010_34	3608cba2220b6ffb1273e0666cea508138ed40fe	Hmph. Nothing but excuses\nfrom you pests.	machine
 E013_010_35	0a81cde7fc9e3574a4a349974a7d92b5f7d77c58	Do you think I don't know how\nthis ended? You were tricked\nby the director here, and\nthings went south fast, hehehe.	machine
 E013_010_36	b455ad703cc897e8a2eaa39d12f45579d57d0562	He had no choice!! Edge\nthought he could protect the\nDoctor's Earth!!	machine
 E013_010_37	c08eaa4e7042202f49147628e744733ec8f12149	And instead, he drove it\nstraight to ruin. How touching.	machine
-E013_010_38	859262c326835830f34e0f2add5baa73e8fc8617	Even without a treaty, any idiot\ncould figure that out. What\nhappens when you hand\nantimatter over to ignorant\nfools?	machine
+E013_010_38	859262c326835830f34e0f2add5baa73e8fc8617	Even without a treaty, any idiot could\nfigure that out. What happens when\nyou hand antimatter over to ignorant\nfools?	machine
 E013_010_39	ef560db24e420f6761b787b1c8f29de49418e4ad	...S-still, at that time... Edge...	machine
 E013_010_41	32dc198cb8e9a23441ca57af733003dacd7aa677	Indeed. Mr. Pavine, surely you\nunderstand better than anyone\nthat arguing here is pointless?	machine
 E013_010_42	0e6500c92a4809e9fe113b2579205ff29c48bf46	Besides, I doubt you truly wish\nto cause such sadness to a\nyoung child.	machine
@@ -46,10 +46,10 @@ E013_010_49	90fb1ef43b28215909e492f7798917709014de3a	No, let's keep exploring.\n
 E013_020_01	1a67471b90fe353be295608cfbad31c25810eb3f	Hey, Pavine. Why do you have\nto say such mean things about\neveryone?	machine
 E013_020_02	9293369fa2b1ab1498530c91d1e73eca9df322c1	Huh? It's obvious. Because\nthose Federation bastards are\nnothing but scum.	machine
 E013_020_03	d2ad0eb467aba0ec9a1a6cd93ace1df1dd98d906	What?!	machine
-E013_020_04	074bb17aaabf0f85fdc7499d3d2e91a5267763be	If the Federation is involved, I\ndon't care what it takes, you\npieces of shit! This is your last\nwarning, you idiots. Hand over\nRelia!	machine
+E013_020_04	074bb17aaabf0f85fdc7499d3d2e91a5267763be	If the Federation is involved, I don't\ncare what it takes, you pieces of shit!\nThis is your last warning, you idiots.\nHand over Relia!	machine
 E013_020_06	dd75f13f92c5e811862052b4ed46927be3f764d9	Why is there a starship in this\nsector...?	machine
 E013_020_07	3afeb6b561bc4d9bf2dca6bb0b67b950d61ec171	How far are you planning to\ntake this?! This is a CFNZ\nviolation!	machine
-E013_020_08	111093ef5918dd19cf5cc3c9cc239dd4de8c82f6	Deploying a starship above an\nundeveloped planet... That is a\nmassive violation of the\nUndeveloped Planet Protection\nTreaty.	machine
+E013_020_08	111093ef5918dd19cf5cc3c9cc239dd4de8c82f6	Deploying a starship above an\nundeveloped planet... That is a massive\nviolation of the Undeveloped Planet\nProtection Treaty.	machine
 E013_020_09	047b903c69ab8bea684be7e87c2361561e324590	They're the ones who violated\nit first!	machine
 E013_020_10	d4a2df40f008549f3574d54b43f6d843459c4742	Dammit! You idiots, hurry up\nand capture Relia!	machine
 E013_020_11	aedb3765df7534a46722d7bb6e0425cb3895f809	Aaaaaah!!	machine
@@ -62,27 +62,27 @@ E013_020_17	3dd4cd967506586514d616d465e3e2563ce93570	Ah, right, sorry, Brother P
 E013_020_18	420adf683cce0ce169fe27320224d007881f5fb3	Enough! Now, what happened?	machine
 E013_020_19	33e32d60b9b03f445a1f62deba2ae82fff3c0b73	It looks like one of the Phase\nGuns we provided to the leader\nof the Eitalon was stolen by a\nresident of this planet!	machine
 E013_020_20	15ed6ff1b90c1fab623bd4b678dd21455290d8b6	What!?	machine
-E013_020_21	7634636d1b2caf61691adb5253a6112a106a721f	We found out it was stolen by\nsome strange woman claiming\nto be an inventor in a town\ncalled Meedock, but she seems\nto have no intention of giving it\nback, no matter what I say.	machine
+E013_020_21	7634636d1b2caf61691adb5253a6112a106a721f	We found out it was stolen by some\nstrange woman claiming to be an\ninventor in a town called Meedock, but\nshe seems to have no intention of\ngiving it back, no matter what I say.	machine
 E013_020_22	6d0340825f9802d1cc26b15f9cb3b9c3e2d3f7c9	I think if we sneak into her\nhouse in the middle of the\nnight, we could take it back...	machine
-E013_020_23	b77b73b4236365b204b80a246128cbd5add89642	Stop it, you idiot! That woman\nis a civilian with nothing to do\nwith this affair! Do you intend\nto act just like those\nFederation scum!?	machine
+E013_020_23	b77b73b4236365b204b80a246128cbd5add89642	Stop it, you idiot! That woman is a\ncivilian with nothing to do with this\naffair! Do you intend to act just like\nthose Federation scum!?	machine
 E013_020_24	b8529b0c07f9ce8e2ed3f9160a25db61e120df39	Brother Pavi...	machine
 E013_020_25	150aeac7a08cd40515c3f7afab7d86b53fbfc6d4	...I'll provide the Fol. Negotiate\nto buy it back at a high price.	machine
 E013_020_26	aebe463a36cbb20f4b771e8b9a47b57b49e5c498	Tsk, I was against providing our\nweapons to those low-life\nEitalon thieves from the very\nstart...!	machine
 E013_020_27	87a31786b035d4ba6fd81102b7ccc041fc7cf6ec	Yeah. They've even been\nattacking villages that have\nnothing to do with our orders...	machine
 E013_020_28	e403a68a65197cc03125a694e47cfce5aba8678f	Just get to the negotiations\nnow! If they try to dismantle it\nthe wrong way, they could blow\nthe whole town sky-high!	machine
 E013_020_29	07286879ecfc015b9ec04d5318d4e7602a8754de	You're surprisingly\nhumanitarian, considering you\nattacked the royal capital with\na starship.	machine
-E013_020_30	468c5cdef7b62d0ae3356c647c090bef0ce6f33e	There's a difference between\nthose who arm themselves and\nprepare for battle, and civilians\nwho don't. Do you not\nunderstand that, you idiot?	machine
+E013_020_30	468c5cdef7b62d0ae3356c647c090bef0ce6f33e	There's a difference between those\nwho arm themselves and prepare for\nbattle, and civilians who don't. Do you\nnot understand that, you idiot?	machine
 E013_020_31	24f189f2f736d049888def0ba971d6f3126863b3	You seemed really close with\nHal. Are you friends?	machine
-E013_020_32	2e34d170c2e5f67ede05fd1fc6318e969fda0a98	He's just some neighborhood\nbrat. Since we're from the\nsame planet, I was forced to\nlook after him even after I\njoined the military.	machine
+E013_020_32	2e34d170c2e5f67ede05fd1fc6318e969fda0a98	He's just some neighborhood brat.\nSince we're from the same planet, I was\nforced to look after him even after I\njoined the military.	machine
 E013_020_33	fba7e3166ff6102e483e47c87a0387d732c010c7	I know what that is! You're\nchildhood friends! Just like\nEdge and Reimi-mya!	machine
 E013_020_34	f6fb10d71621eb7a0ff05c5eef43314e130675ff	Stop saying it in such a creepy\nway, you idiot! We just happen\nto be from the same planet.	machine
 E013_020_35	a44dbae2c854b08acdff4dba1e9cdd759052b4de	Though, that planet is no\nlonger part of Kronos...	machine
 E013_020_37	8f6863de9421f65a314974a3d4def2d9dae56b02	It was cast aside. By the damn\nKronos government.	machine
-E013_020_38	57e8e73dee7351d306d21ab25d56e2d9d386b464	Because it was on the frontier,\npeople dissatisfied with the\ntreaty with the Federation\ngathered there and launched a\nmassive rebellion against the\nKronos government.	machine
-E013_020_39	72cb885c5322a1759abaa0ad4b75c635390f0ad3	The Kronos government\nstruggled to suppress it, and\nthe Federation military\nintervened under the guise of\nhelping. By the time anyone\nnoticed, the planet was under\ntheir control.	machine
-E013_020_40	c1c2ecb0935d0881fecfd0fc1a143325205b49e1	Now it's just a playground for\nthose Federation military\nrejects to vent their\nfrustrations―a regular carnival\nof crime.	machine
+E013_020_38	57e8e73dee7351d306d21ab25d56e2d9d386b464	Because it was on the frontier, people\ndissatisfied with the treaty with the\nFederation gathered there and\nlaunched a massive rebellion against\nthe Kronos government.	machine
+E013_020_39	72cb885c5322a1759abaa0ad4b75c635390f0ad3	The Kronos government struggled to\nsuppress it, and the Federation military\nintervened under the guise of helping.\nBy the time anyone noticed, the planet\nwas under their control.	machine
+E013_020_40	c1c2ecb0935d0881fecfd0fc1a143325205b49e1	Now it's just a playground for those\nFederation military rejects to vent their\nfrustrations―a regular carnival of crime.	machine
 E013_020_41	66ae11e5dd3607befd0989f31e3dbcdc8f80bb59	That's horrible...	machine
-E013_020_42	905e69c5cc5c4248e216948862a973a7e0eaa5da	That's why I bet everything on\nher... General Alma. I know\nshe's the only one who can\nwipe those Federation fools off\nthe map!	machine
+E013_020_42	905e69c5cc5c4248e216948862a973a7e0eaa5da	That's why I bet everything on her...\nGeneral Alma. I know she's the only one\nwho can wipe those Federation fools\noff the map!	machine
 E013_020_43	6868c1543c54c2b70dd39c8481ace6aa85ff1619	This is the path I've chosen! I'll\neliminate anyone who gets in\nher way, by any means\nnecessary.	machine
 E013_020_44	f2a436172b7223592885600d06eafb7d56b1d55f	Even if it means violating the\nUncharted Planet Protection\nTreaty!	machine
 E013_030_02	f6e46dba8afeef4c1ead0d97362a9b81f67c56e2	If it's Kronos, does that mean\nPavine's home planet is in\nSector Kappa?	machine
@@ -93,7 +93,7 @@ E013_030_06	250fc6236d2183073094f17ee9dd3ae4d86da1b7	This kid?	machine
 E013_030_07	33399a1a3996ffe82db7d9e7d2782a0eda59f0b5	Yes, Cliff. They're quite weak,\nbut it looks like their life isn't in\ndanger.	machine
 E013_030_08	41f2569f5d37bf675eb682a289707677c1952d6e	A Terran.	machine
 E013_030_09	c672c9986f6ccd731c6e8741e85840215d8eb501	It seems so.	machine
-E013_030_10	585cbcc921f01adaa662df7f474706710b5e42f0	Based on the analysis of the\nescape pod's data, I believe\nthey are a victim of the\nengagement with Ardion at\nFederation Space Base 17 the\nother day.	machine
+E013_030_10	585cbcc921f01adaa662df7f474706710b5e42f0	Based on the analysis of the escape\npod's data, I believe they are a victim\nof the engagement with Ardion at\nFederation Space Base 17 the other\nday.	machine
 E013_030_11	2303cb638b4aff264dfc548e9e4f9070c4e63e3d	So this brat is another victim\nof the war...	machine
 E013_030_12	aa386188bfd309ae92d29b945e0b9dc5c9999e5c	Yes. In our time, the Federation\nwas in a state of prolonged\nwar with an organization called\nthe Ardion Empire.	machine
 E013_030_13	06430b6454d0168ac1a9ec09a3cdc72126b08323	It's not uncommon to find\nescape pods of civilians caught\nup in the war while traveling.	machine
@@ -101,7 +101,7 @@ E013_030_14	26749f933b9a0191002ae57893723218f72cfdff	This girl... she looks like
 E013_030_15	82bb456e5e797b6380f76356809c3b96b238b8c5	It's Maria. This is a memory\nfrom seven years ago, so Cliff\nand I look younger, right?	machine
 E013_030_16	424d102e2b77d6006db6ef731cc9327619528bfd	Se-seven years ago!? But\nMirage and Cliff look exactly\nthe same to me, nya...	machine
 E013_030_17	c8dcbfadc30579a33789e7611a0ecaac1257e0ae	I'll take that as a compliment.	machine
-E013_030_18	37f34cc483d1d2a07538cd33833992e8aabc871b	Hundreds of years later and\nthe Federation is still obsessed\nwith power struggles... In the\nend, it's always the civilians\nwho suffer. Damn pests...	machine
+E013_030_18	37f34cc483d1d2a07538cd33833992e8aabc871b	Hundreds of years later and the\nFederation is still obsessed with power\nstruggles... In the end, it's always the\ncivilians who suffer. Damn pests...	machine
 E013_030_19	e855175b333183edf2f48debe935e7036ffd5c5d	Poor kid. She's so small. The\nFederation and Ardion should\nkeep their power struggles to\nthemselves.	machine
 E013_030_20	fcb7ac18c5295ee6dfc354329610193d5c376d85	It's always the ordinary people\nwho get caught in the\ncrossfire.	machine
 E013_030_21	f90a61d13634818e6fa44c28cf05921d37ce47da	...Is that why you started this\norganization?	machine
@@ -115,28 +115,28 @@ E013_030_29	d2c11cd270685e3e83b8dbc8cce937cfda959666	You're reading that email a
 E013_030_30	7c5956117d6c034a3aff0dbcccdf0634a5a23c8b	Oh, Mirage. Don't sneak up on\nme. Is the kid doing okay?	machine
 E013_030_31	00ccc53fa57b0684619bc182407150ae2ad2d476	Yes, their vitals are stable. In\nthe meantime, I thought I'd\nrecalculate our course.	machine
 E013_030_32	a9855272418532f06cd85e55f1d6085455b1aa05	Recalculate the course?	machine
-E013_030_33	7f6fac617e0f61b0349969fef3518041de25de03	We can't just fly around\ndangerous sectors with the\nchild on board. I'll search for\nthe shortest, safest route back\nto Claustro.	machine
+E013_030_33	7f6fac617e0f61b0349969fef3518041de25de03	We can't just fly around dangerous\nsectors with the child on board. I'll\nsearch for the shortest, safest route\nback to Claustro.	machine
 E013_030_34	d00423264474d8c4d30402482c1c720b0e965b50	That's fine, right, Cliff?	machine
 E013_030_35	0d07526ee8ff34db01b6c54f22af305aeee70f52	Yeah, go for it. Sorry, Mirage. I\nhadn't even thought that far\nahead.	machine
 E013_030_36	bb6603b3958ab756ce58d0c04674476c72311d8f	I figured you'd be too\npreoccupied reading that email\nto focus on anything else.	machine
 E013_030_37	872ff64234c5b87b328796ae8fc2f212be17e8eb	You've got me figured out,\nhuh?	machine
-E013_030_38	dfe58764ea34cca0677cfe647e153b05b0767e72	An expose on the reality of\nSector Iota and the lawless\nzone created by the\nFederation. Our first job\nbegins.	machine
+E013_030_38	dfe58764ea34cca0677cfe647e153b05b0767e72	An expose on the reality of Sector Iota\nand the lawless zone created by the\nFederation. Our first job begins.	machine
 E013_030_39	f2f21215a4c8474a2b4e292a45a4c028bdf23a7a	Sector Iota! Do you know\nwhat's going to happen to my\nhome planet?!	machine
 E013_030_40	1a77f0c121360d4e12bb69a774bc624cbed21837	Sector Iota is a vast region, so\nI am not certain if this refers\nspecifically to your home\nplanet, Pavine.	machine
-E013_030_41	441436e56139a1068dfbe36686ea4cb8f55c5e4c	However, Quark once accepted\na request from people in that\nregion who desired\nindependence from the\nFederation and filed a lawsuit\nregarding their autonomy.	machine
+E013_030_41	441436e56139a1068dfbe36686ea4cb8f55c5e4c	However, Quark once accepted a\nrequest from people in that region who\ndesired independence from the\nFederation and filed a lawsuit regarding\ntheir autonomy.	machine
 E013_030_42	b4a8837da8c5e929044c89266faa51d3461d2988	...And how did that turn out?	machine
 E013_030_43	e7b6643d0014a9924c7ec0321cdf7bb5937792ad	Unfortunately...	machine
 E013_030_44	6c5d3ece9bf6ff2be351e7936ae5ef9d12a6a8e6	Hah, figures. There's no way\nthe Federation would just let\nsomething like that slide.	machine
 E013_030_45	528bcae213e476eac2c068d998e860519b1958fa	Why not?! All they want is to\ndecide things for themselves!	machine
-E013_030_46	086edc21413001dd97f520b35c4193e861feb559	...If they allow even one\nexception, it creates another. If\na planet that's a strategically\nimportant military base asks\nfor autonomy, it'll be a disaster.	machine
+E013_030_46	086edc21413001dd97f520b35c4193e861feb559	...If they allow even one exception, it\ncreates another. If a planet that's a\nstrategically important military base\nasks for autonomy, it'll be a disaster.	machine
 E013_030_47	1d644038c69f1fd5e7e0dab736e215fa3d59c3c3	The trial has ended, but we at\nQuark do not believe the\nmatter is settled.	machine
 E013_030_48	60528fc0e689a69c7ae2ba500d2b4def91743de7	If victory is difficult for\nindividuals, we will link those\nforces together to win\ncomplete autonomy.	machine
 E013_030_49	fbe123e44c1c9547f21f3035f1348c6475d333de	That is the current approach\nof Quark, learned from that\nlost case.	machine
-E013_030_50	5fb156ace52ac6a49495f4c5911c9325745bb20a	So your plan is that if those\nwanting independence gather\nnot just on one planet, but\nacross entire star systems,\nthey can actually stand up to\nthe Federation?	machine
+E013_030_50	5fb156ace52ac6a49495f4c5911c9325745bb20a	So your plan is that if those wanting\nindependence gather not just on one\nplanet, but across entire star systems,\nthey can actually stand up to the\nFederation?	machine
 E013_030_51	78bd3dd034ef2311f5558b974278beabf8c7bd75	Yes. We have already\nsuccessfully achieved\nindependence in several star\nsystems.	machine
 E013_030_52	c8e8ef8fb2e09962518458b4ae0a1b51c1b85ae7	That's amazing, mya! Since\nMirage is from 200 years in\nthe future...	machine
-E013_030_53	c04f99eed589ae3a5bd2db6b2d380c265a558361	It might be hard to save\nPavine's friends right now, but\ntheir\ngreat-great-great-grandchildren\nare living happily, mya!	machine
-E013_030_54	7f6cf8f314abf5fe4590178e60d4e37d2125101f	Starting a war only brings\nsuffering to innocent civilians.\nThat is why we resolve things\nthrough the law. This is the\npath we have chosen.	machine
+E013_030_53	c04f99eed589ae3a5bd2db6b2d380c265a558361	It might be hard to save Pavine's\nfriends right now, but their\ngreat-great-great-grandchildren are\nliving happily, mya!	machine
+E013_030_54	7f6cf8f314abf5fe4590178e60d4e37d2125101f	Starting a war only brings suffering to\ninnocent civilians. That is why we\nresolve things through the law. This is\nthe path we have chosen.	machine
 E013_030_55	2dcbfa3628ae22d7943ce3ca7823eaceb84d2151	Hmph... You trying to tell me\nthat the future isn't a total lost\ncause?	machine
 E013_030_56	7384271a3b4c4c46db03c7ca19a2fce643d3921a	Is that not allowed?	machine
 E013_030_57	6b1a64b5fed1879ac42a950c21f6b74854e5da63	Hmph. Everyone has their own\nway of living. Do as you please.	machine

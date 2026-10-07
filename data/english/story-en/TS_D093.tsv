@@ -17,7 +17,7 @@ D093_010_16	f6e8427ebca116afb2fbc85568ebd27ab0ee6f3b	Farleen has a bit of a riva
 D093_010_17	d6fdc248adfcf11d43b0dde4d1ee836810f170f3	Hehe, is that how it looks?	machine
 D093_010_18	53d95f385ebec86c083ebf63f1da7ed541d4d11f	...Oh! What a strange sensation.\nSo this is that thing everyone\ntalks about...	machine
 D093_010_19	34ca1c6a3dc059f5b7c33a3a4f8481ac57be1867	Come to think of it, things were\na bit chaotic when we first\nmet, so let me introduce myself\nproperly.	machine
-D093_010_20	89c367458adb88fe1c15f3ae8b824439733631c7	My name is Tynave, and this is\nFarleen. We are both members\nof the Demon Sealing Corps\n"Darkness," serving under Lady\nNel.	machine
+D093_010_20	89c367458adb88fe1c15f3ae8b824439733631c7	My name is Tynave, and this is Farleen.\nWe are both members of the Demon\nSealing Corps "Darkness," serving under\nLady Nel.	machine
 D093_010_21	6e49acab3d74fbfac843e3a5f80afd09594702e3	It's a pleasure to meet you.	machine
 D093_010_22	26687250ba358cff1c87c1630f64763a4ffafc57	This is a memory of when I\nintroduced myself to Fayt in\nthe riverside village of Alias.	machine
 D093_010_23	c30503ca7806c241166f3c91c201d71761cb6100	For the record, I'm mainly in\ncharge of the physical labor.\nAnd Farleen over there is...	machine
@@ -41,11 +41,11 @@ D093_020_01	b96e4bbafeb2ee9c15117d698738d241017a28f7	...Looks like it's my turn 
 D093_020_02	38ed6a995c64a5097111d3acdda04cabecf72c37	Hey there, Edge.	machine
 D093_020_04	d84136c09148efda1be276ae260b3bdccebf8cd9	Hey, Edge. Cutting off the\ncomms like that was cold.	machine
 D093_020_05	308063b2d6adfa0fd6f227d22cd2478047abb24e	This line is not for the Captain\nof the Karnas. Or do you have\nsome business with a mere\ncrew member?	machine
-D093_020_07	0e7faa9c35fdc655098190470ac13b41f5c17f17	Playing the obedient crewman\ndoesn't suit you, Edge. More\nimportantly, you skipped the\ndeparture ceremony, didn't\nyou?	machine
+D093_020_07	0e7faa9c35fdc655098190470ac13b41f5c17f17	Playing the obedient crewman doesn't\nsuit you, Edge. More importantly, you\nskipped the departure ceremony, didn't\nyou?	machine
 D093_020_08	50d7ab1b87ca52adb78ef09d6b607f5b58c379a0	Brings back memories. This\nwas right before we set sail\ninto the sea of stars for the\nfirst time.	machine
 D093_020_10	0700bc059b705edbd494bf7a0edf3601c486e179	You seem quite relaxed. Wasn't\nthis right before a very critical\nmission?	machine
 D093_020_11	b403143373a328b8087aca5a6e114df8bc11a6ba	Nah, I was so nervous my heart\nwas practically leaping out of\nmy chest.	machine
-D093_020_12	754b933cbf073261c267f0db0af6a322d604a65b	We were short on fuel, after all.\nThat was the first time we\nactually launched the ship for\nreal instead of using a\nsimulator.	machine
+D093_020_12	754b933cbf073261c267f0db0af6a322d604a65b	We were short on fuel, after all. That\nwas the first time we actually launched\nthe ship for real instead of using a\nsimulator.	machine
 D093_020_13	907b4dc819fce5fe86d2f6dd0a464dd143c40946	And... back then, I...	machine
 D093_020_14	ebb3e54f2bf0261282289fad4f752c001971346f	...Anyway, I just really wanted\nto hear Edge's voice.	machine
 D093_020_16	95127c4a2804c0a4f9365fb38c8c3a6b2c68c8ab	Hey, Edge. Do you really dislike\nthe fact that I became the\ncaptain that much?	machine
@@ -53,7 +53,7 @@ D093_020_17	adc69f38ef1ec128393b8eb2953f9b8d1ef2c682	...It's not that. I think i
 D093_020_18	fa1ff32985ce91a9211386805d4edafb5e89f169	It's just... that the gap between\nus has widened once again...	machine
 D093_020_19	a2e37f93027e85630ccb314b7c4a8d4ae25564da	Ah, I get it! You're just trying\nto show off that you beat your\nrival, Edge!	machine
 D093_020_20	bffe362606bd2d58e7a8c0c163ee68bdc3fed981	N-no! Why on earth would I\nhave to claim something like\nthat?!	machine
-D093_020_21	20e68aeb5fb1f34138bb22f53b9f3be789d4908d	But the feeling of superiority\nwhen you win is just\nirresistible, isn't it? If you just\nsoak it in, all your nerves will\njust blow away!	machine
+D093_020_21	20e68aeb5fb1f34138bb22f53b9f3be789d4908d	But the feeling of superiority when you\nwin is just irresistible, isn't it? If you\njust soak it in, all your nerves will just\nblow away!	machine
 D093_020_22	1df9341efc3568f8ff1c007390fd3796a2295e3e	...She's surprisingly calculating.	machine
 D093_020_23	97c59a0c09b404dce3e1098e514e705a7c647c10	I can see why Tynave has such\na hard time...	machine
 D093_020_25	0b2aae35e3bd0431778b91b629be7fce4d730b22	You know it too, right? How\ncritical the role of us SRF\nmembers is.	machine
@@ -66,7 +66,7 @@ D093_020_31	fa807611f6d7fe5a1c1e712e722acae40720432d	All right! That's all I wan
 D093_020_33	af5ff8ebb77874154f89f0220c239507b663f32c	*Sigh*... Edge really is way more\ncomposed than I am.	machine
 D093_020_34	1bd2a77ec7d2e342e6caf7a60077827340cbde2e	...Ever since we were kids, he\nwas always the one doing big\nthings.	machine
 D093_020_35	122c725b52441b5ade2fbe3a11cd07ac9a1053d7	But... this time, I'm the one\nwho's going to...!	machine
-D093_020_36	5feb6fa44df36b75fdb9661b1fcfbe66b7ae848c	Accura Crew: Captain, using\nthe comms for personal\nmatters is a violation of\nregulations. Please focus on\nthe launch preparations.	machine
+D093_020_36	5feb6fa44df36b75fdb9661b1fcfbe66b7ae848c	Accura Crew: Captain, using the comms\nfor personal matters is a violation of\nregulations. Please focus on the launch\npreparations.	machine
 D093_020_37	223ca37069b44b7a10feb352326505cadf549dc0	Yeah, yeah, my bad. I was just\ngiving myself a little pep talk.	machine
 D093_020_38	9276d0e7831fb49dacc09181df0705db5cf5cb78	Well then, time to get to work.	machine
 D093_020_39	343f44cdfcce82a74bf77d74476b3fbf94085869	Everyone at your stations. SRF\nSpaceship 001 Accura,\npreparing for launch!	machine
@@ -74,7 +74,7 @@ D093_020_40	d284715fd512f24194c6d55182c0deec7a35089b	Hehe, it seems Crowe really
 D093_020_41	d96f7911aa199724b68a5978cd57c33c877c3fd0	Well, partly because of the\ngenes in my body, I've spent a\nlot of my life being compared\nto others.	machine
 D093_020_42	bab100d71497b4e05f6551b6a59bdfbeb1ad5f0c	Did you open this channel\nspecifically to listen to the\nvoice of your rival?	machine
 D093_020_43	d6aacf6e96a8eded5fc32972038f2f73d5118646	To me, Edge is a rival, but also\na comrade who shares the\nsame dream.	machine
-D093_020_44	2bc507698381b634f626bb475b5a0b81124868de	Of course, everyone on the\nAccura is a comrade too, but\nback then, I'd just been\nsuddenly appointed captain\nand felt a bit inadequate.	machine
+D093_020_44	2bc507698381b634f626bb475b5a0b81124868de	Of course, everyone on the Accura is a\ncomrade too, but back then, I'd just\nbeen suddenly appointed captain and\nfelt a bit inadequate.	machine
 D093_020_45	186605d62ac1edc9d0790d811e4626cdf2d397b7	I wondered if a punk like me\nshould really be acting as\ncaptain...	machine
 D093_020_46	9ea42962716a4993726d122db81017ff7eb6e18d	I thought that by talking to him,\nI could remind myself that\nwe're all comrades looking in\nthe same direction.	machine
 D093_020_47	ff29ed2160c410fda0b677d2e0e8747fed091e63	So you were pretending to\nadvise Edge, when in reality,\nyou were talking to yourself.	machine
@@ -98,7 +98,7 @@ D093_030_14	100f6af4f6f95868aec45618d50129ccfc300bdc	Waaaah! No test-cutting\nal
 D093_030_15	a1a042f6abde14da95c6b0eba667a1e10daaf75c	Well, no matter how much the\nCaptain insists, he's still the\nonly one who can be called\nDias's true rival.	machine
 D093_030_16	9d0de6e3c02811dc5d717fedd8225cc0268ee23a	My family was killed by bandits,\nand I believed that by staying\nalone, I could grow strong\nwithout hurting anyone.	machine
 D093_030_17	3e7638aba6c10e7d3d7c83ca886efbaf3ed33929	No, that's not it... I believed I\nhad to become strong on my\nown, and that doing so would\nbe my atonement.	machine
-D093_030_18	c3012fb7d59670b27131317d7ceda7ad470b6f57	He showed me that there is a\nstrength that can only be\ngained when you are with\nothers, and when you have a\ndesire to protect your\ncomrades.	machine
+D093_030_18	c3012fb7d59670b27131317d7ceda7ad470b6f57	He showed me that there is a strength\nthat can only be gained when you are\nwith others, and when you have a\ndesire to protect your comrades.	machine
 D093_030_19	7ff550674b9c707a391165f80da9ffd660976324	Yeah, it's hard to exert your\nfull power just for yourself or\nfor some stranger you've never\nmet.	machine
 D093_030_20	952fac3a545b4473bd0a1d3e840ab0d272a62b66	It's when there's a smile you\nwant to protect that fighting\nwith everything you've got\nbecomes worthwhile.	machine
 D093_030_21	c36e2343b4c67a2740567765983d251903aee6a0	That's right. Because I have\nfamily and friends back home I\nwant to protect, I can steel my\nresolve and head into the fray.	machine
@@ -107,8 +107,8 @@ D093_030_24	c555d3ace1dd833f74739142cfa217993d78ec3f	Speak of the devil... here 
 D093_030_25	8ec8d3413764693cf425bc89fc64619d019d11cf	You're an interesting one. You\nget worked up so quickly\nwhenever it comes to Rena.	machine
 D093_030_26	dbf30d2587ff172b0af2dc04eb617e9dfb0b9c9f	But when it comes to battle,\nI'm dead serious. Once we\nenter the arena, I won't give an\ninch.	machine
 D093_030_27	4c5e22710ba709f12e5f1d9e139d1aa04d94853b	I'm counting on it.	machine
-D093_030_28	72f7df1bc0328dace064ae8a20ee1eb98bdb362c	Announcer: And now, the\nmoment you've all been waiting\nfor! The grand finale of this\nyear's Lacuer Martial Arts\nTournament!!	machine
-D093_030_29	7bb90c9ab125674e0d3bc0bf97440fab0babeec1	So this was the final of the\nLacuer Martial Arts\nTournament. Back then, I was\nstill obsessed with strength\nthrough raw power alone.	machine
+D093_030_28	72f7df1bc0328dace064ae8a20ee1eb98bdb362c	Announcer: And now, the moment\nyou've all been waiting for! The grand\nfinale of this year's Lacuer Martial Arts\nTournament!!	machine
+D093_030_29	7bb90c9ab125674e0d3bc0bf97440fab0babeec1	So this was the final of the Lacuer\nMartial Arts Tournament. Back then, I\nwas still obsessed with strength\nthrough raw power alone.	machine
 D093_030_30	1842ba0d51b03d6d627388d8a1f31fca2f1a9b96	Hah!!	machine
 D093_030_31	e94c6f58517de247c837792aff1180628eeb1cfd	Gah!	machine
 D093_030_32	75d57b9ab4e4fbcc969913a782542efe62113a8c	Impressive as always, Dias.\nHe's really putting the pressure\non.	machine

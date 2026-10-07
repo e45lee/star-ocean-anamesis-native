@@ -669,7 +669,7 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
 | No Japanese left | no kana or kanji | a half-translated row is worse than a Japanese one |
 | Width | story and multi-line rows re-broken at spaces to the budget with the font's advances; single-line rows reported when wider than 1.5× the Japanese | the client never wraps (3.2) |
 
-- **Line budgets.** The trial used the Japanese row's own widest line for multi-line master rows, and for the story the p99 widest JP story line, 407 px (max 483). The build now uses 480 px, measured on screen (7.6 "The story tables"). JP story lines have 1–4 lines (5+ in 266 of 21,663). Global's official story English (EP1, `TS_3xxx`, `TS_5xxx`) re-broken at 407 px needs 5 or more lines in 675 of 4,893 lines (at 483 px: 281). So about one story line in ten needs a shorter wording or a smaller font: `<fontsize=…>` is a story tag the client already reads (3.3), an untested data-only option; the per-screen box widths still have to be measured (E7).
+- **Line budgets.** The trial used the Japanese row's own widest line for multi-line master rows, and for the story the p99 widest JP story line, 407 px (max 483). The build now uses 480 px, measured on screen (7.6 "The story tables"). JP story lines have 1–4 lines (5+ in 266 of 21,663). Global's official story English (EP1, `TS_3xxx`, `TS_5xxx`) re-broken at 407 px needs 5 or more lines in 675 of 4,893 lines (at 483 px: 281). So about one story line in ten needs a shorter wording or a smaller font. The user chose the smaller font (2026-10-07): the client scales the message window's font to fit (E13, 7.13); `<fontsize=…>` turned out not to be a size the 3.7.0 client applies (7.13).
 - **Style per kind** (the prompt's rules, from Global's practice): UI labels and buttons terse, title case; descriptions one plain sentence; stat lines in Global's formula ("Damage dealt +55% at 100% HP", "(party)", "(self)", "(N seconds)"); dialogue natural, in the speaker's voice; names transliterated as the glossary has them.
 
 ### 7.6 Storage, provenance and editing
@@ -755,7 +755,7 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
   - Official and human lines may colour other words, or name `<player>` where the Japanese says 艦長, as long as `<font>` stays balanced. Without this, 16 EP1/`TS_5xxx` lines that no MT run translates would block their files.
 - **Line breaking (E7, data side).** Every served line is re-broken at spaces to a message window of **480 font px** (2026-10-07; first 407 px, the p99 widest JP story line). The width was measured on a `--lang en` campaign shot (`work/english/exec/art/final-campaign/shots/85-story.png`, 729 px wide): 388 font px show as 486 px (scale 1.25), the text starts at x≈57 and the window is symmetric, so there is room for ≈615 display px ≈ 492 font px; the widest JP story line is 483. `<player>` is counted as 120 px (an assumption: about 8 Latin letters).
   - At 480 px, 290 served official lines need 5 or more lines (690 at 407 px); `report` lists them in `story-long.tsv`. The change re-broke 3,498 of the 5,037 served story lines; their ids, sources and the completeness are unchanged, and the master is byte-identical.
-  - Shorter wordings or `<fontsize=…>` are still open (E7).
+  - Lines over the window's four lines: the client shrinks the font (E13, 7.13); no shortening.
 - **First build:**
   - 4,625 of the 21,663 story lines that need English have it (official 5,037 rows including 412 language-neutral lines Global spelled out), 0 failing.
   - 24 of 64 files are complete: EP1 10 of 11 (10 lines missing), `TS_3xxx` 9 of 10, `TS_5xxx` 5 of 7.
@@ -1009,6 +1009,11 @@ Investigation of 2026-10-07 (agent `en-homeline`), after the user's report that 
 
 How measured: `tools/english_text.py derive` and `report` (the box check above) over the committed tables and `data/basmaster-3.7.0.sqlite3` / `data/basmaster-gl.sqlite3`. The layout comes from the download's `UI/etc2/home.csf` (ADLD + SLZ + ISF, `home.msgp` decoded with msgpack). The code is Ghidra (MCP) on `CHome::PlayTalk`, `CHome::SendPresentReaction` and the callers of `CUIUtility::CollectMasterHomeMessage`. The screen comes from the two runs above. Each run held one slot for about 5 minutes; no client was left running.
 
+**Why only 535 home lines are official** (2026-10-07, agent `en-textclean-gl`). Global never translated the rest; no other id, table or text holds their English:
+
+- Of the 2,743 `*_hmmsg_*` rows, 721 ids are not in Global's master (later content), and for 1,487 of the 2,022 Global has, its `en` row **is the Japanese** (untranslated). Global's English exists essentially only for the greetings `hmmsg_01` / `_02` (244 each) and a few `_15`; the Home3D tap and gift reactions (`_11`, `_21`, `_25`, `_31`, `_35`, `_41`, `_45`, `_91`, `_95`) have none. The bios (`*_prmsg_06`) are alike: 142 official, 137 untranslated, 103 not in Global, 9 with an older Japanese (8 of them a `０` placeholder, no English either).
+- Rules tried and measured on the machine rows: the same Japanese elsewhere in Global after white space removal (+0 home, +0 bio; the master's 140 gains are UI rows: id-ws and memory-ws in 7.9), after NFKC and punctuation removal (rejected: `＋２０％` matched `－２０％`, `リーシュ` matched "Eve!!!"), the same character and line slot in another costume (rejected: 172 matches, all other lines), Global's `master_home_message` (its 308 own ids are other cards' lines). Story memory (the same Japanese line elsewhere) was also rejected: of 131 official story lines whose text recurs, only 59 have the same English (interjections such as `えっ……。` have 2–5 different translations).
+
 **Decision and fix (2026-10-07, agent `en-homefit`).** The user chose **(b), the client change**, and to keep Global's official English as it is (no shortening or override of official rows, no MT pass for this box). With `--lang en` the E10 hook on `CCocosLabel::DrawSelf` fits every English line into the box ([client-changes.md "The home's speech box"](client-changes.md)):
 
 - **Which labels:** the two `talk_text` labels, told by their node path (`talk_text` in `talk_frame` in `talk_menu_gp` or `talk_menu_talkmode`). `CHome::PlayTalk` is the only code that names them (the two path strings are referenced only there; `talk_menu_talkmode` is also shown and hidden by `SetTalkMode`). Talk Mode uses the same box.
@@ -1030,6 +1035,24 @@ How measured: `tools/english_text.py derive` and `report` (the box check above) 
   served** (official 5,037, machine 17,013: 16,889 on the 31B, 124 on the 26B). The E7 shortening is
   retired (the user: shrink the font in the client instead), so no `short-v1` row remains; story lines
   needing 5+ window lines: 2,103, for the client font shrink.
+
+### 7.13 Line breaking: who breaks what; the story window's font (E13)
+
+Agent `en-textclean`, 2026-10-07. One breaker, `soa::text::break_lines` (`common/include/soa/line_break.h`), with explicit options; its rules are the shared vectors `common/tests/line_break_vectors.tsv`, which `build/common/soa_text_tests` (T0 `line-break`) and `tests/test_line_break.py` (against `tools/english_core.py` `Font.rebreak`) both pass. The server's derivation calls it (`rebreak_u`; byte-identical, `tests/test_english_derive.py`), and so do the client's label wrap (E10) and box fit (`fit_box`, E12, E13).
+
+| Text | Broken by | Rule |
+|---|---|---|
+| master rows whose Japanese has line breaks, when Global's English has none | the data (`finish`) | at the Japanese row's widest line (≥ 200 px) |
+| every other label (buttons, dialogs, lists) | the client at draw time (E10) | the label's existing breaks kept, each line broken at its room (a fixed box's width, else the room on the screen); Japanese lines left alone |
+| the home's two talk labels | the client (E12) | breaks collapsed, re-broken for 480 × 2 lines at the largest scale that fits, shrunk by the label's own fit |
+| story lines | the data only (`story_finish` → `story_break`) | 480 px when the line fits the window's 4 lines; else 128 n − 32 px for the fewest n lines that hold it |
+| the story window's font | the client (E13) | k = min(1, 600 / width, 4 lines' height / height) at Show's FontSize 30, from the data's breaks |
+
+- **No double wrapping.** The E10 wrap leaves the story window's labels (the message label, `Append`'s `AppendMessage` clones) alone; before E13 it could re-break a story line revealed a character at a time differently from the whole line. The offline break and the client's scale agree: n lines at the client's scale k_n = 150 / (40 n − 10) are as wide as 480 / k_n = 128 n − 32 font px, which is the width the data breaks them at.
+- **The story window** (client-changes.md "The story message window"): one label at FontSize 30, line spacing 10 (lines 40 apart; four lines 150 units high, measured), 600 units (480 font px) wide; `ParseMessage` splits a message at its tags into `MessageChange` (the text up to the first tag) and `MessageAppend` (colour segments, clones of the label placed after the text before them). No font-size tag is applied by the 3.7.0 client: `ParseMessage`'s segment switch has no size case (3.3's `<fontsize=…>` was read from the disassembly and never run). So E13 hooks `ParseMessage` (to know each message's whole text) and `Change` (to set the label's FontSize and spacing before the message is laid out).
+- **Sizes** (every English story line served on 2026-10-07, after the 31B import, by the font's advances; the live client's scale agreed exactly on the lines shot): 22,050 lines; 21,650 of them take 1–4 lines (5,565 / 5,583 / 5,390 / 5,112), 399 take 5 and 1 takes 6. 19,946 keep FontSize 30 (100%); 16 get 27–30, 1,200 get 24–27, 861 get 21–24, 27 get 19.6–21. The smallest is 65% (FontSize 19.6, `D026_030_18`, six lines); p1 79%, p5 80%, median 100%. Before (one break at 480 px for every line) 2,103 lines needed 5 or more window lines and ran over Skip / Auto; at the same scale rule but without the wider break the smallest would have been 43% (nine lines).
+- **Shots** (`work/english/textclean/story-e13/`, local; `control/run.py campaign ... --lang en --english`): `en-D026_030_18-65pct.png` and `en-D056_030_06-68pct.png` (with `SOA_TEST_STORY_TEXTS`), `en-1010_030_02-84pct.png` (the scene mc01_030 with the served data: four lines at 84%).
+- **Open:** the back log (`CEventScenarioBackLog`) shows past messages in its own layout and was not checked for 5-line messages. A message whose wider break comes out with fewer lines than n (the greedy break) is scaled by its width, a little smaller than its height would allow (`1010_030_02`: 84% for four lines).
 
 ## 8. English UI art
 
@@ -1129,9 +1152,12 @@ How `tools/english_text.py` derives the English it does not commit (official, me
 
 **1. Global's usable English** `gl_english(mid)`: `en = GL_EN[mid]`, `ja = GL_JA[mid]`; none when `en` is missing or empty, `has_kana(en)`, `en == ja`, `GL_TOKEN` matches `en`, or `SPEC_STRICT.findall(en) != SPEC_STRICT.findall(ja or "")` (ordered lists of the matched strings).
 
-**2. Official by id** (master): `gl_english(mid)` when `GL_JA[mid] == ja` exactly (both master encoding).
+**2. Official by id** (master): `gl_english(mid)` when `same_ja(GL_JA[mid], ja)` (both master encoding):
+- `"id"`: `GL_JA[mid] == ja` exactly;
+- `"id-ws"`: else, when `ws_key(ja)` is non-empty and `ws_key(GL_JA[mid]) == ws_key(ja)`. `ws_key(t)` = `unesc(t)` with every U+0009, U+000A, U+0020, U+00A0 and U+3000 removed (an explicit set, not `\s`). Global's `ja` often doubles a line break (`…\n\n…`) or lacks a trailing U+3000, so the same text missed its English (2026-10-07, agent `en-textclean-gl`: 57 rows, all `uimsg_*` dialogs but one, and 5 E3 rows). The served source stays `official`; `report` lists the rows with their rule in `matched.tsv`.
+- A NULL `GL_JA[mid]` never matches.
 
-**3. E3** (only when 2 gives nothing): `gl_token_english(mid)`: `en` present, `!has_kana(en)`, `en != GL_JA[mid]`, `GL_MARKUP` matches `en`, and `GL_TOKEN` does **not** match `GL_MARKUP.sub("", en.replace("</INSERT>", ""))` (only the matched prefixes are removed, e.g. `<NUM` of `<NUM 1>`); and `GL_JA[mid] == ja`. Then `rewrite_tokens(en, ja)`:
+**3. E3** (only when 2 gives nothing): `gl_token_english(mid)`: `en` present, `!has_kana(en)`, `en != GL_JA[mid]`, `GL_MARKUP` matches `en`, and `GL_TOKEN` does **not** match `GL_MARKUP.sub("", en.replace("</INSERT>", ""))` (only the matched prefixes are removed, e.g. `<NUM` of `<NUM 1>`); and `same_ja(GL_JA[mid], ja)` (2). Then `rewrite_tokens(en, ja)`:
 1. every `<EMDASH>` → U+2015;
 2. `INSERT` → its group 2 (the plural form);
 3. `toks` = the integers of `NUMSTR` in order, `specs = SPEC_STRICT.findall(ja)`. If `toks` is non-empty: no `specs` → no candidate (reason "composition"); `sorted(toks) != [1..len(specs)]` → none; `toks` not ascending → none (reorder); else every `NUMSTR` match → `specs[n-1]`;
@@ -1142,10 +1168,10 @@ How `tools/english_text.py` derives the English it does not commit (official, me
 A row with a reason is listed (`token-gaps.tsv`); it may still get memory (4).
 
 **4. Memory** (only when 2 and 3 give nothing and `has_kana(ja)`; a row without kana is "neutral" and gets nothing more). Built once over every Global pair (`mid` of `GL_JA` with a non-empty `GL_JA[mid]` and `en = gl_english(mid)` not none):
-- **Exact:** `exact[GL_JA[mid]][en] += 1`.
+- **Exact:** `exact[GL_JA[mid]][en] += 1`; and, when `k = ws_key(GL_JA[mid])` is non-empty, `exact_ws[k][en] += 1`.
 - **Template:** `n = NFKC(GL_JA[mid])`, `nums = NUM.findall(n)`, `key = NUM.sub("\x00", n)`. Skip when `nums` is empty or has a repeated value, or when `sorted(NUM.findall(en)) != sorted(nums)` (string sort; `en` is not normalised). `t = NUM.sub(m → "{i}" where nums[i] == m, en)`; skip when `NUM` still matches `t` with every `\{\d+\}` removed, or `TEMPLATE_UNSAFE` matches `t`. Then `template[key][t] += 1`.
 - **Choice:** per key, the English with the highest count, ties to the smallest string.
-- **Lookup:** `exact[ja]` if present (kind `memory`). Else `key, nums` of `NFKC(ja)` as above; if `nums` is non-empty and `template[key]` exists: replace each `{i}` with `nums[i]` (the NFKC digits), then `re.sub(r"\b1 (time|hit|day|turn|battle|mission)s\b", r"1 \1", flags=IGNORECASE)` (kind `template`).
+- **Lookup:** `exact[ja]` if present (kind `memory`). Else `exact_ws[ws_key(ja)]` if present (rule memory-ws, kind `memory`: the same text but for white space, 83 rows, e.g. `ピックアップ武器ガチャ　` with a trailing U+3000; listed in `matched.tsv`). Else `key, nums` of `NFKC(ja)` as above; if `nums` is non-empty and `template[key]` exists: replace each `{i}` with `nums[i]` (the NFKC digits), then `re.sub(r"\b1 (time|hit|day|turn|battle|mission)s\b", r"1 \1", flags=IGNORECASE)` (kind `template`).
 
 **5. Finishing a master candidate** (`finish`; derived sources official, memory, template):
 1. `e = unesc(en)`; (our human rows: NFC first);
@@ -1182,11 +1208,13 @@ Width is never a check for the master (reported only).
 2. the derived candidate (official or E3; else memory or template) when it passes;
 3. our `machine` row.
 
+So Global's English (official, E3, and the memory built from it) always wins over a machine row, and only a `human` or `reviewed` row may replace it; the server's `merge_master` / `merge_story` apply the same order. **Checked in T0** (`english-official`, `tools/check_english_official.py`, 2026-10-07): for every served master row and story line it derives Global's text independently of the merge (by id, id-ws, E3, memory, memory-ws, template; story: by id, E3) and compares the served text modulo folding, `%%`, a story line's strip and white space / line breaks (a re-break is allowed, a reword is not). It fails on any machine row or Japanese served where Global's text passes its checks, and on a derived source whose text is not Global's; human rows (5, the composed fragments) and Global texts that fail a check (0) are counted. `--tables DIR` checks a written table instead, e.g. `soa-server --english-dump`'s. On the data of 2026-10-07: master 27,997 rows ok (id 19,144, id-ws 57, E3 38, memory 6,265, memory-ws 83, template 2,410), story 5,037 ok, 0 violations; the tables before id-ws / memory-ws had 145.
+
 Rows of `ours` with an empty `ja_sha1` (new message_ids, the client strings) are served as they are. Output: one row per served message_id, sorted by message_id (code points), `message_id \t ja_sha1 \t en \t source` with the header `message_id\tja_sha1\ten\tsource`, `\n` line ends, a final `\n`; `en` in master encoding; no tab, CR or real newline in a field.
 
 **8. The story.** Per line (`mid`, `ja` with real newlines, `ja_sha1` = SHA-1 of that text):
-- **Official**: `gl_english(mid)` when `unesc(GL_JA[mid]) == ja`. Else **E3**: `gl_token_english(mid)` when `unesc(GL_JA[mid]) == ja`, through `rewrite_tokens(en, esc(ja))`. No memory or template for the story.
-- **Finishing** (`story_finish`): `e = unesc(en)` (NFC for our human, reviewed and machine rows), fold, `str.strip()` (every code point with `isspace()` at both ends), `rebreak(e, 480, {"<player>": 120})` (no `fix_percent`); checks of 6 against `ja` with tag mode **strict** and no glossary for derived lines; then every `TAG` of `e` must fully match `STORY_TAG` (else `story_tag`, hard). For a source other than `machine`, a `tags` problem is dropped when there is no `story_tag` problem and the count of tags starting with `<font` equals the count of `</font>`. The result is `esc(e)`.
+- **Official**: `gl_english(mid)` when `unesc(GL_JA[mid]) == ja` (exactly: id-ws would add no story line). Else **E3**: `gl_token_english(mid)` when `unesc(GL_JA[mid]) == ja`, through `rewrite_tokens(en, esc(ja))`. No memory or template for the story.
+- **Finishing** (`story_finish`): `e = unesc(en)` (NFC for our human, reviewed and machine rows), fold, `str.strip()` (every code point with `isspace()` at both ends), `story_break(e)` (no `fix_percent`): for n = 1, 2, … (up to 24) `r = rebreak(e, b(n), {"<player>": 120})` with `b(n) = 480` for n ≤ 4 and `480 * (40 n - 10) // 150` (128 n − 32) above, the first `r` with at most n lines (else the last one; E13, 7.13); checks of 6 against `ja` with tag mode **strict** and no glossary for derived lines; then every `TAG` of `e` must fully match `STORY_TAG` (else `story_tag`, hard). For a source other than `machine`, a `tags` problem is dropped when there is no `story_tag` problem and the count of tags starting with `<font` equals the count of `</font>`. The result is `esc(e)`.
 - **Merge**: as 7 with the committed `story-en/TS_xxxx.tsv` (our human/reviewed > official/E3 > our machine).
 - **Output**: per Scenario file with at least one served line, `story-en-full/<file>.tsv` in the format of 7, rows sorted by message_id.
 - **Completeness** (`index.tsv`: `file, lines, need, english, complete`): `lines` = rows of the file, `need` = rows with `has_kana(ja)`, `english` = those of them served, `complete` = `yes` when `english == need`. A language-neutral line may be served (Global's English for `……`) without counting.

@@ -23,7 +23,7 @@
 #include "core/hle.h"
 #include "core/log.h"
 #include "hle/gfx.h"
-#include "hle/guest_errno.h"
+#include "core/linux_errno.h"
 #include "hle/thread.h"
 
 namespace soa {
@@ -220,6 +220,8 @@ void th_gettid_np(Cpu& c) {
 }
 
 // ---- once ----
+// The guest's pthread_once_t: 0 not run, 1 running, 2 done. A caller that finds it running sleeps
+// until the initializer's thread marks it done (it spun on sched_yield before code review CR3).
 void th_once(Cpu& c) {
     auto* o = (std::atomic<s32>*)c.x(0);
     s32 st = o->load();
@@ -231,10 +233,11 @@ void th_once(Cpu& c) {
     if (o->compare_exchange_strong(expected, 1)) {
         guest_call(c.x(1), {});
         o->store(2);
+        o->notify_all();
         ret(c, 0);
         return;
     }
-    while (o->load() != 2) sched_yield();
+    for (s32 v; (v = o->load()) != 2;) o->wait(v);
     ret(c, 0);
 }
 
@@ -317,6 +320,13 @@ void th_rwlockattr_init(Cpu& c) {
 }
 
 // ---- semaphores (bionic sem_t is 16 bytes, smaller than glibc's: keep host objects aside) ----
+// A guest semaphore is a host one keyed by the guest sem_t's address. sem_init always makes a new
+// one (a sem_t freed without sem_destroy and initialised again at the same address doesn't keep
+// the old count: hle/libc-sem-init-reused-address); a sem_t used without sem_init (zero-filled
+// memory, which bionic accepts as a semaphore at 0) gets one on first use, from its count word.
+// Assumed, as the game does: memory holding a semaphore that wasn't destroyed isn't reused as a
+// semaphore without sem_init (it would inherit the old host semaphore and its count), and a
+// semaphore freed without sem_destroy leaks its host object (code review 2026-10-06 R3).
 std::mutex g_sem_mutex;
 std::unordered_map<u64, sem_t*> g_sems;
 sem_t* get_sem(u64 p) {
@@ -366,20 +376,20 @@ int hle_mutex_init(u64 m, u64 attr) {
     if (attr) pthread_mutexattr_settype(&a, host_mutex_type(*(u64*)attr));
     int r = pthread_mutex_init((pthread_mutex_t*)m, &a);
     pthread_mutexattr_destroy(&a);
-    return guest_errno(r);
+    return linux_errno(r);
 }
-int hle_mutex_destroy(u64 m) { return guest_errno(pthread_mutex_destroy(fix_mutex(m))); }
-int hle_mutex_lock(u64 m) { return guest_errno(pthread_mutex_lock(fix_mutex(m))); }
-int hle_mutex_trylock(u64 m) { return guest_errno(pthread_mutex_trylock(fix_mutex(m))); }
-int hle_mutex_unlock(u64 m) { return guest_errno(pthread_mutex_unlock(fix_mutex(m))); }
-int hle_cond_init(u64 cv) { return guest_errno(pthread_cond_init((pthread_cond_t*)cv, nullptr)); }
-int hle_cond_destroy(u64 cv) { return guest_errno(pthread_cond_destroy(fix_cond(cv))); }
-int hle_cond_signal(u64 cv) { return guest_errno(pthread_cond_signal(fix_cond(cv))); }
-int hle_cond_broadcast(u64 cv) { return guest_errno(pthread_cond_broadcast(fix_cond(cv))); }
+int hle_mutex_destroy(u64 m) { return linux_errno(pthread_mutex_destroy(fix_mutex(m))); }
+int hle_mutex_lock(u64 m) { return linux_errno(pthread_mutex_lock(fix_mutex(m))); }
+int hle_mutex_trylock(u64 m) { return linux_errno(pthread_mutex_trylock(fix_mutex(m))); }
+int hle_mutex_unlock(u64 m) { return linux_errno(pthread_mutex_unlock(fix_mutex(m))); }
+int hle_cond_init(u64 cv) { return linux_errno(pthread_cond_init((pthread_cond_t*)cv, nullptr)); }
+int hle_cond_destroy(u64 cv) { return linux_errno(pthread_cond_destroy(fix_cond(cv))); }
+int hle_cond_signal(u64 cv) { return linux_errno(pthread_cond_signal(fix_cond(cv))); }
+int hle_cond_broadcast(u64 cv) { return linux_errno(pthread_cond_broadcast(fix_cond(cv))); }
 int hle_cond_wait(u64 guest_cv, u64 guest_m) {
     auto* cv = fix_cond(guest_cv);
     pthread_mutex_t* m = fix_mutex(guest_m);
-    if (!window_thread()) return guest_errno(pthread_cond_wait(cv, m));
+    if (!window_thread()) return linux_errno(pthread_cond_wait(cv, m));
     // Idle presenting (hle/gfx.h): the window's thread (the game's RenderThread, waiting for its next
     // frame's work) waits in slices, so that it notices idle presenting turned on while it already
     // waits, and then repaints the last frame between slices. A slice's timeout is not a wakeup.
@@ -389,7 +399,7 @@ int hle_cond_wait(u64 guest_cv, u64 guest_m) {
         t.tv_nsec += (idle_present_on() ? kIdlePresentMs : kIdleCheckMs) * 1000000L;
         if (t.tv_nsec >= 1000000000L) t.tv_sec++, t.tv_nsec -= 1000000000L;
         int r = pthread_cond_timedwait(cv, m, &t);
-        if (r != ETIMEDOUT) return guest_errno(r);
+        if (r != ETIMEDOUT) return linux_errno(r);
         if (idle_present_on()) idle_present();
     }
 }
@@ -399,11 +409,11 @@ int hle_cond_timedwait(u64 cv, u64 m, u64 guest_abstime) {
     // (Aska::Event::Wait builds tv_nsec >= 1e9 for timeouts of a second or more: a wait that never
     // ends on Windows when the low half is negative), so the check is made here for both.
     const s64* g = (const s64*)guest_abstime;
-    if (g[1] < 0 || g[1] >= 1000000000) return guest_errno(EINVAL);
+    if (g[1] < 0 || g[1] >= 1000000000) return linux_errno(EINVAL);
     timespec t;
     t.tv_sec = (time_t)g[0];
     t.tv_nsec = (long)g[1];
-    return guest_errno(pthread_cond_timedwait(fix_cond(cv), fix_mutex(m), &t));
+    return linux_errno(pthread_cond_timedwait(fix_cond(cv), fix_mutex(m), &t));
 }
 int hle_sem_wait(u64 guest_sem) {
     sem_t* s = get_sem(guest_sem);

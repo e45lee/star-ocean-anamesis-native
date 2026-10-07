@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <cstring>
 #include <deque>
 #include <iterator>
@@ -35,6 +36,11 @@ struct Movie {
     bool has_audio = false;
     std::thread video_thread, audio_thread;
     std::atomic<bool> stop{false}, video_done{false}, audio_done{false};
+    // The threads wait on these (stop is set under both locks, then both are notified): the video
+    // thread for its next picture's time, the audio thread for room in `samples`.
+    std::mutex wait_m;
+    std::condition_variable video_wake;
+    std::condition_variable audio_wake;  // with audio_m; also notified when the mixer takes samples
 
     std::mutex frame_m;
     MovieFrame frame;  // latest decoded picture (yuv420p planes)
@@ -82,7 +88,11 @@ void video_loop(Movie* m) {
             break;
         }
         auto due = m->start + std::chrono::microseconds((u64)(k * 1e6 / m->fps));
-        while (!m->stop && std::chrono::steady_clock::now() < due) std::this_thread::sleep_for(std::chrono::milliseconds(2));
+        {
+            std::unique_lock wl(m->wait_m);
+            m->video_wake.wait_until(wl, due, [m] { return m->stop.load(); });
+        }
+        if (m->stop) break;
         std::lock_guard lk(m->frame_m);
         std::swap(m->frame, buf);
         m->frame_dirty = true;
@@ -99,18 +109,20 @@ void audio_loop(Movie* m) {
             if (!err.empty() && !m->stop) LOGE("movie", "audio: %s", err.c_str());
             break;
         }
-        // Don't run far ahead of playback.
+        // Don't run far ahead of playback: wait for the mixer to take samples, or for the time
+        // drop_late_audio frees the room (the stereo frame that brings the buffer under 1 s).
+        std::unique_lock lk(m->audio_m);
         for (;;) {
-            {
-                std::lock_guard lk(m->audio_m);
-                drop_late_audio(m);
-                if (m->samples.size() < kMovieRate * 2) {
-                    m->samples.insert(m->samples.end(), buf.begin(), buf.end());
-                    break;
-                }
+            drop_late_audio(m);
+            if (m->samples.size() < kMovieRate * 2) {
+                m->samples.insert(m->samples.end(), buf.begin(), buf.end());
+                break;
             }
             if (m->stop) break;
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            u64 room_at = m->consumed + (m->samples.size() - kMovieRate * 2) / 2 + 1;  // stereo frames
+            auto when = m->start + std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+                                       std::chrono::duration<double>(kAudioSlack + (double)room_at / kMovieRate));
+            m->audio_wake.wait_until(lk, when);
         }
     }
     m->audio_done = true;
@@ -367,7 +379,13 @@ void movie_stop() {
         g_active = false;
     }
     if (!m) return;
-    m->stop = true;
+    {
+        std::lock_guard wl(m->wait_m);
+        std::lock_guard al(m->audio_m);
+        m->stop = true;
+    }
+    m->video_wake.notify_all();
+    m->audio_wake.notify_all();
     if (m->video_thread.joinable()) m->video_thread.join();
     if (m->audio_thread.joinable()) m->audio_thread.join();
     LOGI("movie", "stopped");
@@ -449,6 +467,7 @@ void movie_mix_audio(float* out, int frames, int rate) {
     for (size_t i = 0; i < n; i++) out[i] += m->samples[i] * m->volume;
     m->samples.erase(m->samples.begin(), m->samples.begin() + n);
     m->consumed += n / 2;
+    if (n) m->audio_wake.notify_one();
 }
 
 }  // namespace soa

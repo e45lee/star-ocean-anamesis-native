@@ -23,6 +23,7 @@
 #include "core/crash.h"
 #include "core/gdbstub.h"
 #include "core/host_mem.h"
+#include "core/linux_errno.h"
 #include "core/log.h"
 #include "core/thread_record.h"
 #include "dynarmic/interface/A64/a64.h"
@@ -256,6 +257,10 @@ public:
     ProfThread prof;
     bool prof_registered = false;
     std::atomic<bool> in_jit{false};  // the innermost level is running JIT code (maintained only with g_gdb_enabled)
+#ifdef _WIN32
+    int guest_errno = 0;      // what __errno returns (core/linux_errno.h)
+    int* crt_errno = &errno;  // the CRT's, for this thread (made on its thread)
+#endif
 
     ~ThreadState();
 
@@ -327,6 +332,37 @@ static inline ThreadState& thread_state() {
 }
 
 GuestThreadInfo& guest_thread() { return thread_state().info; }
+
+#ifdef _WIN32
+int* guest_errno_location() { return &thread_state().guest_errno; }
+#else
+int* guest_errno_location() { return &errno; }
+#endif
+
+// Around every host function the guest calls (CallSVC, run_direct): on Windows the errno the
+// function sets becomes the guest's, in Linux's numbers (core/linux_errno.h). The CRT's errno is
+// cleared after too, so that the host function a guest call nests in (a qsort comparator, a
+// pthread_once initializer) doesn't store the inner function's value again over what the guest
+// wrote since.
+namespace {
+class HostErrno {
+public:
+#ifdef _WIN32
+    explicit HostErrno(ThreadState& ts) : ts_(ts) { *ts.crt_errno = 0; }
+    ~HostErrno() {
+        if (int e = *ts_.crt_errno) {
+            ts_.guest_errno = linux_errno(e);
+            *ts_.crt_errno = 0;
+        }
+    }
+
+private:
+    ThreadState& ts_;
+#else
+    explicit HostErrno(ThreadState&) {}
+#endif
+};
+}  // namespace
 Cpu* current_cpu() { return t_current; }
 
 void guest_thread_init(size_t stack_size) {
@@ -507,6 +543,7 @@ void CpuCallbacks::CallSVC(u32 swi) {
     const ThunkEntry& t = g_thunks[swi];
     if (!t.fn) fatal("SVC #%u with no handler", swi);
     if (__builtin_expect(t_hook_filter != nullptr, 0) && t.hook && t_hook_filter(*cpu, t.hook)) return;
+    HostErrno host_errno(*t_state);
     if (__builtin_expect(g_gdb_enabled, 0)) {
         // For the GDB stub: this level is in host code (stopped from gdb's point of view) until the
         // handler returns to the JIT.
@@ -642,6 +679,7 @@ void run_jit(Cpu& c, u64 fn, ThreadState& ts, int d) {
 // Calls thunk `idx` directly on level d's CPU, as the SVC at `fn` would (PC = fn + 4).
 void run_direct(Cpu& c, u32 idx, u64 fn, ThreadState& ts, int d) {
     HostFn f = g_thunks[idx].fn;
+    HostErrno host_errno(ts);
     if (__builtin_expect(g_gdb_enabled, 0) && g_thunks[idx].hook && gdb_native_breakpoints()) {
         gdb_call_native(c, fn, f, false);  // (a breakpoint on a native: core/gdbstub.h)
         return;

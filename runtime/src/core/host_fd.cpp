@@ -1,6 +1,8 @@
 // host_fd.h: kernel descriptors on Linux, in-process emulation on Windows.
 #include "core/host_fd.h"
 
+#include "core/linux_errno.h"
+
 #include <algorithm>
 #include <cerrno>
 #include <cstdint>
@@ -108,17 +110,7 @@ short ready(const Fd& f, short events) {
     }
     return r;
 }
-int wsa_errno() {
-    switch (WSAGetLastError()) {
-    case WSAEWOULDBLOCK: return EAGAIN;
-    case WSAEINTR: return EINTR;
-    case WSAECONNRESET: return ECONNRESET;
-    case WSAENOTCONN: return ENOTCONN;
-    case WSAETIMEDOUT: return ETIMEDOUT;
-    case WSAECONNABORTED: return ECONNABORTED;
-    default: return EIO;
-    }
-}
+int wsa_errno() { return host_errno_of_wsa(WSAGetLastError()); }  // (core/linux_errno.h)
 
 }  // namespace
 

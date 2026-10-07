@@ -28,6 +28,18 @@
 #include "core/log.h"
 
 namespace soa {
+
+// prctl (the syscall, on either host): PR_SET_NAME names the thread in crash reports
+// (core/crash.h); the rest is ignored. Returns 0.
+s64 guest_prctl(u64 option, u64 arg2) {
+    if (option == 15 && arg2) {
+        char name[16] = {};
+        strncpy(name, (const char*)arg2, sizeof name - 1);
+        crash_thread_set_name(name);
+    }
+    return 0;
+}
+
 namespace {
 
 #ifndef _WIN32  // Windows: libc_win32.cpp (time structs, sysconf, syscall)
@@ -76,14 +88,7 @@ void th_syscall(Cpu& c) {
     case 123: r = syscall(SYS_sched_getaffinity, a1, a2, a3); break;
     case 122: r = syscall(SYS_sched_setaffinity, a1, a2, a3); break;
     case 168: r = syscall(SYS_getcpu, a1, a2, a3); break;
-    case 167:  // prctl: PR_SET_NAME names the thread in crash reports (core/crash.h); the rest ignored
-        if (a1 == 15 && a2) {
-            char name[16] = {};
-            strncpy(name, (const char*)a2, sizeof name - 1);
-            crash_thread_set_name(name);
-        }
-        r = 0;
-        break;
+    case 167: r = guest_prctl(a1, a2); break;
     case 131: r = syscall(SYS_tgkill, a1, a2, a3); break;
     default:
         LOGW("libc", "syscall(%ld) unsupported", nr);

@@ -163,7 +163,7 @@ extern "C" char* soa_mkdtemp(char* tmpl) {
 // run from WSL, a script or a test harness then showed its log only in 4 KB pieces and at exit. The
 // session drivers wait on log lines (the runtime's "I/perf" line every 10 s), so a quiet stretch,
 // such as the client's data check after a download, read as a hung client ("no frame-rate line
-// for 120s"; UCRT, llvm-mingw's runtime, doesn't buffer stderr). Every program that links
+// for 120s"). Every program that links
 // soa_compat gets this before main().
 namespace {
 __attribute__((constructor(101))) void unbuffer_stderr() { setvbuf(stderr, nullptr, _IONBF, 0); }

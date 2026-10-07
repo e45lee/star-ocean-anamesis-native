@@ -15,7 +15,7 @@
 // the main thread's at exit(), through an atexit handler registered at each of its registrations
 // (C++ destroys thread storage before the statics; static destructors are atexit handlers too, run
 // in reverse order of registration, so an object constructed before the thread_local outlives it).
-// (clang, llvm-mingw, has native TLS: none of this.)
+// (clang has native TLS: none of this.)
 #if defined(_WIN32) && defined(__GNUC__) && !defined(__clang__)
 #include <pthread.h>
 #include <stdlib.h>

@@ -129,9 +129,8 @@ configure gets them, or an existing build dir is reconfigured with them.
 A cross build from Linux (or WSL) with the distribution's **MinGW-w64 GCC** (GCC, libstdc++,
 winpthreads, msvcrt) into `build-win/`
 (`port/PLAN.md` 5b, "W"): every part, as `.exe` files (`soa.exe`, `soa-server.exe`, `soa-emu.exe`,
-`soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop) with the
-earlier llvm-mingw build (clang, libc++, the UCRT): `soa-server.exe --selftest`,
-`soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests `win:battle-gacha` (the port's
+`soa-viewer.exe`, the tests and tools). Checked on Windows (from WSL, through interop):
+`soa-server.exe --selftest`, `soaruntime_tests.exe`, `soa.exe --selftest`, and the gate tests `win:battle-gacha` (the port's
 restore session, in process), `win:seeded` (`soa-emu.exe` against `soa-server.exe`: login, battle,
 gacha), `win:viewer-boot` and `win:shard-login` (the tests/diff shard on the three Windows targets)
 (`port/PLAN.md` 5b, "As built"). The MinGW-w64 GCC build (2026-10-05), checked on Windows on
@@ -166,7 +165,7 @@ scripts/build.sh --windows --target soa-server          # one part
   `angle` (ANGLE: EGL / GLES on Windows). The first configure on a machine builds every port for
   MinGW (about an hour, then cached; a change to the triplet file rebuilds them all). The `.exe` files are static:
   only Windows' own DLLs.
-- GCC on MinGW differs from llvm-mingw in ways `soa_compat` covers (`common/win32/posix_compat.h`,
+- MinGW differs from Linux in ways `soa_compat` covers (`common/win32/posix_compat.h`,
   `common/src/posix_compat_win32.cpp`): `rename` must replace (libstdc++'s `<cstdio>` restores the C
   runtime's, so the header includes it before its define; call `rename()`, never
   `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated and libstdc++ runs

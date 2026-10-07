@@ -25,7 +25,7 @@ struct Class;
 // created with `new` (Vm::str / new_array / instance / boolean / integer / find_class, NewObject,
 // AllocObject, Method / Field); none is static, embedded or made by make_shared (asserted in the
 // tests: jni/references-low-byte). 8-byte alignment is all these types need with libstdc++.
-// With libc++ (the Windows build) std::function is 16-aligned (Instance::on_destroy), so there the
+// With libc++ (clang; the first Windows build used it) std::function is 16-aligned (Instance::on_destroy), so there the
 // block is 256-aligned and the object at 16 past it: 16-aligned, its low byte 0x10.
 struct TaggedAlloc {
 #ifdef _LIBCPP_VERSION

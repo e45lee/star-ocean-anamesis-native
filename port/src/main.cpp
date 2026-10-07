@@ -44,6 +44,7 @@
 #include "core/profile.h"
 #include "core/vfs.h"
 #include "jni/jvm.h"
+#include "native/common/lib_check.h"
 #include "native/common/live_check.h"
 #include "native/common/native.h"
 #include "native/common/port_debug.h"
@@ -89,10 +90,14 @@ int main(int argc, char** argv) {
         return 0;
     }
     if (args.apk_dir_given) LOGW("main", "--apk-dir is ignored: the rebased port runs the 3.7.0 APK (--apk FILE)");
-    // --natives: route (every registered native) or none.
-    NativeSet natives = NativeSet::Route;
+    // --natives: all (every registered native), route (the route's and the port's own hooks) or none.
+    NativeSet natives = NativeSet::All;
     if (!parse_native_set(args.natives, natives)) {
-        fprintf(stderr, "--natives: expected route or none, got \"%s\"\n", args.natives.c_str());
+        fprintf(stderr, "--natives: expected all, route or none, got \"%s\"\n", args.natives.c_str());
+        return 2;
+    }
+    if (std::string err; !check_native_subsystems(args.natives_skip, &err)) {
+        fprintf(stderr, "--natives-skip: %s\n", err.c_str());
         return 2;
     }
     for (auto& spec : args.live_checks) {
@@ -169,6 +174,19 @@ int main(int argc, char** argv) {
                 lib_path = find_repo_file("work/libSOA-3.7.0.so");
                 if (lib_path.empty()) fatal("couldn't extract lib/arm64-v8a/libSOA.so from %s (and work/libSOA-3.7.0.so wasn't found)", apk_path.c_str());
             }
+        }
+    }
+    // The natives and their generated address tables are the 3.7.0 lib's: on another build they
+    // would read and write the wrong memory, so they are refused (native/common/lib_check.h).
+    if (natives != NativeSet::None || selftest) {
+        std::string got;
+        if (!native::lib_matches(lib_path, &got)) {
+            if (!selftest)
+                fatal("%s is not the libSOA.so the natives were made for (sha256 %s, expected the 3.7.0 build's %s): run it "
+                      "with --natives none, or regenerate the natives' tables for it (tools/check_generated.py)",
+                      lib_path.c_str(), got.empty() ? "unreadable" : got.c_str(), native::expected_lib_sha256());
+            LOGW("main", "%s is not the 3.7.0 libSOA.so the natives' tables were made for (sha256 %s): the tests that "
+                         "use their addresses will fail", lib_path.c_str(), got.c_str());
         }
     }
     ClientOptions& cl = opt.client;
@@ -260,7 +278,7 @@ int main(int argc, char** argv) {
     // The FakeApiCaller route's hooks only in-process; with --server HOST the client's own
     // NetworkApiCaller runs untouched. (The main image is the 3.7.0 client; no
     // second image is mapped.)
-    if (!selftest) install_native_functions(*lib, natives, inproc);
+    if (!selftest) install_native_functions(*lib, natives, inproc, args.natives_skip);
     if (selftest) install_test_hooks(*lib);  // test harness hooks (see NATIVE_TEST_HOOK)
     if (!selftest) install_traces(*lib);
     profile_init(*lib);  // SOA_COVERAGE / SOA_PROFILE
@@ -299,14 +317,15 @@ int main(int argc, char** argv) {
     if (headless < 0) headless = selftest;
     host.hidden = headless != 0;
     if (host.hidden) LOGI("main", "headless: the window isn't shown");
-    // The render resolution (native/ui/ui_utility.cpp): its natives aren't installed with --natives none
-    // or in --selftest.
+    // The render resolution (native/ui/ui_utility.cpp, the port's own hooks): its natives aren't
+    // installed with --natives none, --natives-skip ui or in --selftest.
     {
         const ClientOptions& cl = opt.client;
         char note[160];
-        if (cl.legacy_res || natives == NativeSet::None || selftest)
+        const bool skip_ui = std::find(args.natives_skip.begin(), args.natives_skip.end(), "ui") != args.natives_skip.end();
+        if (cl.legacy_res || natives == NativeSet::None || skip_ui || selftest)
             snprintf(note, sizeof note, " (the game's own resolution: 720 wide, a 0.75 back buffer, upscaled%s)",
-                     cl.legacy_res ? "" : selftest ? "; --selftest: no natives" : "; --natives none");
+                     cl.legacy_res ? "" : selftest ? "; --selftest: no natives" : skip_ui ? "; --natives-skip ui" : "; --natives none");
         else if (cl.render_scale > 0)
             snprintf(note, sizeof note, " (--render-scale %g: 720 wide, a %gx back buffer)", cl.render_scale, cl.render_scale);
         else

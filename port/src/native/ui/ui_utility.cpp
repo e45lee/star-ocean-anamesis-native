@@ -7,8 +7,8 @@
 // UI and the 3D are drawn at the game screen's size (--render-size; 728x1296 for a 729x1296 window).
 // With --render-scale S it keeps the legacy 720x1280 screen (the UI) and answers S for the scale (the
 // 3D at S x 720x1280, independent of the window); --legacy-res installs neither (the game as shipped).
-// A behaviour change, not a bit-exact port: installed by predicate (NATIVE_FUNCTION_IF), so the
-// selftest (no natives) and --natives none see the shipped values.
+// A behaviour change, not a bit-exact port: one of the port's own hooks, installed by predicate
+// (NATIVE_PORT_FUNCTION_IF), so the selftest (no natives) and --natives none see the shipped values.
 #include "native/ui/ui_utility.h"
 
 #include "core/abi.h"
@@ -47,10 +47,10 @@ bool not_legacy() { return resolution() != Resolution::Legacy; }
 bool scaled() { return resolution() == Resolution::Scaled; }
 }  // namespace
 
-NATIVE_FUNCTION_IF("_ZN10CUIUtility18IsResolutionLegacyEv", wrap<&CUIUtility::IsResolutionLegacy>(),
+NATIVE_PORT_FUNCTION_IF("_ZN10CUIUtility18IsResolutionLegacyEv", wrap<&CUIUtility::IsResolutionLegacy>(),
                    "ui: CUIUtility::IsResolutionLegacy: false (hi-res, the default) or true (--render-scale); not with --legacy-res",
                    not_legacy);
-NATIVE_FUNCTION_IF("_ZN10CUIUtility25GetDefaultBackBufferScaleEv", wrap<&CUIUtility::GetDefaultBackBufferScale>(),
+NATIVE_PORT_FUNCTION_IF("_ZN10CUIUtility25GetDefaultBackBufferScaleEv", wrap<&CUIUtility::GetDefaultBackBufferScale>(),
                    "ui: CUIUtility::GetDefaultBackBufferScale: the --render-scale (only with it)", scaled);
 
 // ui/resolution: the guest originals are the shipped constants the natives replace (true, 0.75f;

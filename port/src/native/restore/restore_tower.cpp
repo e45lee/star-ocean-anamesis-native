@@ -121,10 +121,10 @@ void h_search_tree(Cpu& c) {
     t_search--;
     with_stand_in(c, node, name);
 }
-NATIVE_FUNCTION_ORIG_IF(SEARCH_BY_NAME, h_search_name,
+NATIVE_PORT_FUNCTION_ORIG_IF(SEARCH_BY_NAME, h_search_name,
                         "restore: CCocosNode::SearchByName native; tower menu, stand-ins for the lost play_plate nodes (--restore-tower)",
                         on, &g_search_name.orig);
-NATIVE_FUNCTION_ORIG_IF(SEARCH_BY_TREE_NAME, h_search_tree,
+NATIVE_PORT_FUNCTION_ORIG_IF(SEARCH_BY_TREE_NAME, h_search_tree,
                         "restore: tower menu, stand-ins for the lost play_plate nodes (--restore-tower)", on, &g_search_tree.orig);
 
 u64 g_orig_setup = 0;
@@ -134,13 +134,13 @@ void h_setup(Cpu& c) {
     g_depth--;
     c.set_x(0, r);
 }
-NATIVE_FUNCTION_ORIG_IF("_ZN17CTowerMissionMenu5SetupEv", h_setup,
+NATIVE_PORT_FUNCTION_ORIG_IF("_ZN17CTowerMissionMenu5SetupEv", h_setup,
                         "restore: tower menu, stand-ins for the lost play_plate nodes (--restore-tower)", on, &g_orig_setup);
 
 // bool CParameterUtility::IsOpenTowerMission(): 0 in 3.7.0 (the tower was closed); 1 with the
 // opt-in. Client change (docs/client-changes.md "Tower").
 void h_is_open_tower(Cpu& c) { c.set_x(0, 1); }
-NATIVE_FUNCTION_IF("_ZN17CParameterUtility18IsOpenTowerMissionEv", h_is_open_tower, "restore: the tower is open (--restore-tower)", on);
+NATIVE_PORT_FUNCTION_IF("_ZN17CParameterUtility18IsOpenTowerMissionEv", h_is_open_tower, "restore: the tower is open (--restore-tower)", on);
 
 // CTowerMissionMenu::Initialize(float, const std::function<void(int)>&): x0 this, s0, x1.
 u64 g_orig_init = 0;
@@ -151,7 +151,7 @@ void h_init(Cpu& c) {
     guest_call(add, {self});
     c.set_x(0, r);
 }
-NATIVE_FUNCTION_ORIG_IF("_ZN17CTowerMissionMenu10InitializeEfRKNSt6__ndk18functionIFviEEE", h_init,
+NATIVE_PORT_FUNCTION_ORIG_IF("_ZN17CTowerMissionMenu10InitializeEfRKNSt6__ndk18functionIFviEEE", h_init,
                         "restore: tower menu adds the common-resource scene, as the event menu does (--restore-tower)", on,
                         &g_orig_init);
 

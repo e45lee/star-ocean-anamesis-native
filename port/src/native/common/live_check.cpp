@@ -736,7 +736,8 @@ Family::Family(const char* tag_, int every_, bool sret_marked_)
     families().push_back(this);  // (static families: --live-check switches them on, apply_live_check)
 }
 
-int Family::add(const char* sym, HostFn run, Body body, u32 obj_bytes, RetKind ret, bool (*enabled)(), const char* label) {
+int Family::add(const char* sym, HostFn run, Body body, u32 obj_bytes, RetKind ret, bool (*enabled)(), const char* label,
+                const char* file) {
     if (g_n >= kMax) {
         LOGE("live_check", "%s: too many functions (kMax %d); %s left to the guest", tag, kMax, sym);
         return -1;
@@ -744,7 +745,9 @@ int Family::add(const char* sym, HostFn run, Body body, u32 obj_bytes, RetKind r
     int n = g_n++;
     Entry& e = g_entries[n];
     e.fam = this, e.sym = sym, e.run = run, e.body = body, e.obj_bytes = obj_bytes, e.ret = ret;
-    register_native_function({sym, hook_at(n, std::make_integer_sequence<int, kMax>{}), label, enabled, &e.orig});
+    NativeFunction f{sym, hook_at(n, std::make_integer_sequence<int, kMax>{}), label, enabled, &e.orig};
+    f.file = file;
+    register_native_function(f);
     entries.push_back(n);
     return n;
 }

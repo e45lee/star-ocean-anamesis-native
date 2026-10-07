@@ -198,7 +198,7 @@ void h_phase_progress(Cpu& c) {
     on_phase_progress(self);
     guest_call(g_phase_progress_orig, {self});
 }
-NATIVE_FUNCTION_ORIG("_ZN6CPhase8ProgressEv", h_phase_progress, "port: CPhase::Progress wrapper (port_debug control commands, phase log)",
+NATIVE_PORT_FUNCTION_ORIG("_ZN6CPhase8ProgressEv", h_phase_progress, "port: CPhase::Progress wrapper (port_debug control commands, phase log)",
                      &g_phase_progress_orig);
 }  // namespace
 }  // namespace soa::native::port_debug

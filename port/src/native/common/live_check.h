@@ -266,7 +266,9 @@ public:
     // Registers a native at `sym` (hooked through the check when the family is on): a
     // hand-written host function (run) or a transcribed body (body). `enabled`: the family's
     // on switch; `label`: the registry's description.
-    int add(const char* sym, HostFn run, Body body, u32 obj_bytes, RetKind ret, bool (*enabled)(), const char* label);
+    // `file`: the registering source (its subsystem: --natives-skip; the caller's by default).
+    int add(const char* sym, HostFn run, Body body, u32 obj_bytes, RetKind ret, bool (*enabled)(), const char* label,
+            const char* file = __builtin_FILE());
     // A transcribed body checked through a test hook (--selftest, where natives aren't installed):
     // calls that aren't checked run the guest original. `user`: the family's own index.
     int add_test(const char* sym, Body body, u32 obj_bytes, RetKind ret, int user);

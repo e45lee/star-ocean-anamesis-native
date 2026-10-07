@@ -6,6 +6,7 @@
 // moves from "ARM64 code under a JIT" towards native code, one verified function at a time.
 #include <cstdio>
 #include <string>
+#include <vector>
 
 #include "core/abi.h"
 #include "core/loader.h"
@@ -24,35 +25,54 @@ struct NativeFunction {
     // the replacement isn't installed (e.g. in --selftest, where the guest symbol itself is
     // still the original code).
     u64* original = nullptr;
-    // Optional group: nullptr = an ordinary native; kGroupRoute = the in-process server route's own
-    // hooks (the FakeApiCaller replacements, native/api/fakeapi.cpp), left out with --server HOST.
+    // Optional group: nullptr = an ordinary native (a subsystem's bit-exact replacement);
+    // kGroupRoute = the in-process server route's own hooks (the FakeApiCaller replacements,
+    // native/api/fakeapi.cpp), left out with --server HOST; kGroupPort = the port's own hooks
+    // (behaviour the port adds: the control commands, the tower opt-in, the resolution, the local
+    // web pages), kept with --natives route.
     const char* group = nullptr;
     // Optional: the C++ that replaces it, as written at the registration (the NATIVE_* macros fill
     // it: the member of NATIVE_METHOD, the function of NATIVE_FUNCTION); shown by the GDB stub's
     // `monitor natives` (runtime/README.md "Debugging the guest with gdb"). nullptr: the note.
     const char* host = nullptr;
+    // The source file that registered it (register_native_function fills it from its caller):
+    // its folder under native/ is the native's subsystem (--natives-skip, native_subsystem).
+    const char* file = nullptr;
 };
 
 constexpr const char* kGroupRoute = "route";
+constexpr const char* kGroupPort = "port";
 
 // Which registered natives install_native_functions installs (soa --natives):
-//   Route: every registered native: the in-process route's hooks plus the port's own (the
-//          CPhase::Progress wrapper of the control commands, the tower, the local web pages).
-//          Since the rebase's revision 2 (docs/history/PLAN-rebase-370.md) there are no other natives;
-//          "all" is accepted as a synonym.
-//   None:  nothing (--no-native).
-enum class NativeSet { Route, None };
+//   All:   every registered native (the default): the subsystems' replacements of guest code, the
+//          in-process route's hooks and the port's own.
+//   Route: only the route's hooks (kGroupRoute) and the port's own (kGroupPort): the game's own code
+//          all runs under the JIT, as in soa-emu, while the in-process server, the control commands
+//          (port_debug: phase N) and the port's options still work. The A/B of a native regression:
+//          a bug that goes away with `route` is in a subsystem's natives (--natives-skip narrows it).
+//   None:  nothing (--no-native): pure JIT, no in-process route.
+enum class NativeSet { All, Route, None };
 const char* native_set_name(NativeSet s);
-// "route" (or "all") / "none" (false for anything else).
+// "all" / "route" / "none" (false for anything else).
 bool parse_native_set(const std::string& s, NativeSet& out);
 
-// Registers a replacement (call from a static initializer via NATIVE_FUNCTION).
-bool register_native_function(const NativeFunction& f);
+// Registers a replacement (call from a static initializer via NATIVE_FUNCTION); `file` is the
+// caller's source file unless f.file is set.
+bool register_native_function(const NativeFunction& f, const char* file = __builtin_FILE());
+// The subsystem a native belongs to: the folder under port/src/native/ of the file that registered
+// it ("render", "math", ...; "" when unknown).
+std::string native_subsystem(const NativeFunction& f);
+// false (and *err, listing the subsystems that have natives) when a name isn't one of them.
+bool check_native_subsystems(const std::vector<std::string>& names, std::string* err);
 // `route` false leaves out the kGroupRoute hooks whatever the set (soa --server HOST: the
-// client's own NetworkApiCaller, no FakeApiCaller route).
-void install_native_functions(LoadedLib& lib, NativeSet set = NativeSet::Route, bool route = true);
+// client's own NetworkApiCaller, no FakeApiCaller route). `skip`: subsystems left out
+// (soa --natives-skip), whatever their group.
+void install_native_functions(LoadedLib& lib, NativeSet set = NativeSet::All, bool route = true,
+                              const std::vector<std::string>& skip = {});
 // Prints "symbol<TAB>note" for every registered replacement (soa --list-native).
 void list_native_functions(FILE* out);
+// Every registration, in registration order.
+const std::vector<NativeFunction>& registered_natives();
 
 }  // namespace soa
 
@@ -66,5 +86,10 @@ void list_native_functions(FILE* out);
 // The in-process server route's own hooks (group kGroupRoute; not installed with --server HOST).
 #define NATIVE_ROUTE_FUNCTION(sym, fn, note) NATIVE_REGISTER(sym, fn, note, nullptr, nullptr, ::soa::kGroupRoute, #fn)
 #define NATIVE_ROUTE_FUNCTION_ORIG_IF(sym, fn, note, cond, orig) NATIVE_REGISTER(sym, fn, note, cond, orig, ::soa::kGroupRoute, #fn)
+// The port's own hooks (group kGroupPort: kept with --natives route): behaviour the port adds, not
+// a bit-exact replacement (docs/client-changes.md lists each).
+#define NATIVE_PORT_FUNCTION_ORIG(sym, fn, note, orig) NATIVE_REGISTER(sym, fn, note, nullptr, orig, ::soa::kGroupPort, #fn)
+#define NATIVE_PORT_FUNCTION_IF(sym, fn, note, cond) NATIVE_REGISTER(sym, fn, note, cond, nullptr, ::soa::kGroupPort, #fn)
+#define NATIVE_PORT_FUNCTION_ORIG_IF(sym, fn, note, cond, orig) NATIVE_REGISTER(sym, fn, note, cond, orig, ::soa::kGroupPort, #fn)
 // Like NATIVE_FUNCTION_IF, and stores a trampoline to the original guest code in *orig (u64).
 #define NATIVE_FUNCTION_ORIG_IF(sym, fn, note, cond, orig) NATIVE_REGISTER(sym, fn, note, cond, orig, nullptr, #fn)

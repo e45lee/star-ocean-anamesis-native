@@ -57,13 +57,21 @@ int parse_soa_args(int argc, const char* const* argv, SoaArgs& a, std::vector<st
     platform370::add_device_options(app, a.p370, device);
     app::add_guest_cpus(app, h)->group(device);
     app.add_option("--natives", a.natives,
-                   "native replacements: route (every registered one, i.e. the in-process route's FakeApiCaller hooks (not "
-                   "with --server HOST) and the port's own hooks; \"all\" is a synonym) or none (pure JIT)")
-        ->type_name("route|none")
-        ->default_str("route")
+                   "native replacements: all (every registered one: the subsystems' natives, the in-process route's "
+                   "FakeApiCaller hooks (not with --server HOST) and the port's own hooks), route (only the route's and the "
+                   "port's own hooks: the game's code all under the JIT, the A/B for a native regression) or none (pure JIT, "
+                   "no in-process route)")
+        ->type_name("all|route|none")
+        ->default_str("all")
         ->trigger_on_parse()
         ->group(device);
     cli::add_ordered_flag(app, "--no-native", [&a] { a.natives = "none"; }, "the same as --natives none")->group(device);
+    cli::add_list(app, "--natives-skip", a.natives_skip,
+                  "leave these subsystems' natives to the guest (port/src/native/<SUBSYS>/; repeatable or comma-separated), "
+                  "to narrow down a native regression")
+        ->delimiter(',')
+        ->type_name("SUBSYS[,SUBSYS..]")
+        ->group(device);
     platform370::add_network_options(app, a.p370, device + " (with --server HOST)");
 
     app::add_window_options(app, h, "Client: window");
@@ -111,8 +119,8 @@ int parse_soa_args(int argc, const char* const* argv, SoaArgs& a, std::vector<st
         ->expected(0, 1)
         ->group(diag);
     cli::add_list(app, "--live-check", a.live_checks,
-                  "check a native family against the guest in the run (port/src/native/README.md \"Live checks\"; no family is "
-                  "registered now)")
+                  "check a native family against the guest in the run (port/src/native/README.md \"Live checks\"; an unknown "
+                  "family fails at start, naming the registered ones)")
         ->type_name("FAMILY[,FAMILY..][:KEY[=VALUE]..]")
         ->group(diag);
 

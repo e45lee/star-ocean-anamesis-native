@@ -1,0 +1,197 @@
+{
+ "note": "A pick-up weapon gacha's banner (3 slots, with a bonus).",
+ "source": "Image/etc2/20200305_weapon_001.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    80,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    52,
+    13
+   ]
+  },
+  {
+   "jp": "ピックアップ武器ガチャ",
+   "text": "Pick-up Weapon Draws",
+   "box": [
+    170,
+    15,
+    170,
+    14
+   ],
+   "style": "blue_s",
+   "cover": [
+    176,
+    15,
+    156,
+    14
+   ],
+   "clear": "inpaint",
+   "size": 13
+  },
+  {
+   "jp": "3スロット",
+   "text": "3 Slots",
+   "box": [
+    368,
+    15,
+    40,
+    13
+   ],
+   "style": "tag",
+   "cover": [
+    368,
+    15,
+    40,
+    13
+   ],
+   "clear": "inpaint",
+   "size": 10
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "cover": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "10連で★5新武器1本確定!!",
+   "text": "10-chain: 1 new\n★5 weapon guaranteed!!",
+   "box": [
+    250,
+    52,
+    206,
+    64
+   ],
+   "style": "gold_r",
+   "cover": [
+    248,
+    44,
+    208,
+    72
+   ],
+   "size": 20
+  },
+  {
+   "jp": "おまけ付き",
+   "text": "Bonus",
+   "box": [
+    410,
+    27,
+    46,
+    11
+   ],
+   "style": "omake",
+   "cover": [
+    410,
+    27,
+    46,
+    11
+   ]
+  }
+ ]
+}

@@ -259,3 +259,78 @@ w("20200430_campaign_002", "The item shop's EP3 start sets campaign banner.", [
 w("20200430_campaign_001", "The EP3 start campaign banner (the logo is the game's).", [
     tag("キャンペーン"), L("EP3 The Leash Codeスタート記念キャンペーン", "EP3 -The Leash Code- Start Campaign", [60, 98, 396, 20], "blue_s", [58, 98, 398, 20], clear="inpaint", size=15)])
 xmas_rerun("20200416_chara_003", 0, "Rerun Idol\n2019", x1=236)
+
+# ---- 2020-04-16 .. 2020-02-27
+SNOW = "Hot Springs and the\nMischievous Snow Monsters"
+xmas_rerun("20200416_chara_002", 0, "Rerun Idol\n2018", x1=236, bonus=False)
+w("20200326_chara_005", "The SO5 release-day anniversary gacha's banner.", [
+    tag("ガチャ"), L("スターオーシャン5発売日記念ガチャ", "Star Ocean 5 Release Day Draws", [170, 14, 200, 14], "blue_s", [168, 14, 210, 15], clear="inpaint", size=12),
+    L("1人3回限定", "3 per player", [384, 14, 72, 14], "omake", [382, 14, 74, 16], size=10),
+    band("スターオーシャン5 ★5キャラが10連で1体確定!!", "Star Ocean 5\n10-chain: 1 ★5\ncharacter guaranteed!!", [270, 30, 186, 88], "blue", size=18)])
+weapon_pu("20200312_weapon_001")
+w("20200312_chara_006", "The new-life support free gacha's banner.", [
+    tag("ガチャ"), band("新生活応援 10連無料キャラガチャ 期間中5回まで10連無料!", "New Life Support\nFree 10-chain\nCharacter Draws\n5 free 10-chains in the period!", [270, 14, 186, 104], size=16)])
+awaken("20200312_chara_005", "Chisato", x1=270)
+for n, vol in (("20200312_chara_004", 2), ("20200312_chara_003", 1)):
+    w(n, f"The White Day limited rerun pick-up gacha's banner ({vol}).", [
+        tag("ガチャ"), L("お負け付き", "Bonus", [58, 31, 50, 11], "omake", [57, 31, 48, 11]),
+        band("ホワイトデー ピックアップキャラガチャ", f"White Day {vol}\nPick-up Character Draws", [266, 34, 190, 76] if vol == 2 else [210, 34, 246, 76], size=20),
+        L("この5キャラをピックアップ!", "These 5 characters are picked up!", [58, 103, 180, 14], "cap", [56, 102, 160, 16])])
+w("20200312_chara_002", "Divine Wing Fayt's step-up gacha banner.", [
+    tag("ガチャ"), band("神翼のフェイト", "Divine Wing\nFayt", [56, 26, 140, 70], "gold", size=22, align="left"),
+    band("10連10ステップ目 PU1体確定ガチャ", "10-chain Step 10:\n1 pick-up guaranteed", [320, 50, 136, 52], size=13),
+    L("ステップ10は神翼のフェイト1体確定!", "Step 10: Divine Wing Fayt guaranteed!", [58, 103, 230, 14], "bar_r", [56, 101, 236, 18], clear="shade", clear_color="#200400c0", align="left", size=13)])
+rateup("20200312_chara_001", 240, "Divine Wing Fayt", y0=20)
+w("20200312_campaign_002", "The item shop's 2020 new-life sets campaign banner.", [
+    tag("キャンペーン"), band("アイテムショップで 2020年新生活応援 期間限定追加", "Limited-time 2020 New Life\nSupport Sets\nin the Item Shop", [244, 4, 212, 116], size=17)])
+w("20200312_campaign_001", "The new-life support campaign banner.", [
+    tag("キャンペーン"), band("新生活応援キャンペーン", "New Life Support Campaign", [160, 40, 296, 50], "gold", size=24)])
+weapon_pu("20200305_weapon_001")
+w("20200305_event_001", "The hot springs event's banner (raid boss, Misery 2 & 3 added).", [
+    tag("イベント"), band("大討伐", "Raid Boss", [56, 54, 120, 40], "gold", size=20),
+    band("温泉と悪戯好きの雪の魔物", SNOW, [228, 26, 228, 76], "gold", size=18),
+    band(MIS[0], MIS[1], [258, 102, 186, 16], "gold", size=12)])
+event_title("20200227_event_002", "温泉と悪戯好きの雪の魔物", SNOW, [56, 26, 250, 70], tagjp="ボックスガチャ", sub=("ボックスガチャ", "Box Draws", [300, 86, 156, 30]), style="gold")
+w("20200227_event_001", "The hot springs event's banner (raid boss).", [
+    tag("イベント"), band("大討伐", "Raid Boss", [56, 54, 120, 40], "gold", size=20),
+    band("温泉と悪戯好きの雪の魔物", SNOW, [228, 26, 228, 92], "gold", size=18)])
+awaken("20200227_chara_004", "Lucifer", x1=300)
+
+# ---- 2020-02-27 .. 2020-01-01
+def release_day(name, so):
+    w(name, f"The SO{so} release-day anniversary gacha's banner.", [
+        tag("ガチャ"), L(f"スターオーシャン{so}発売日記念ガチャ", f"Star Ocean {so} Release Day Draws", [170, 14, 200, 14], "blue_s", [168, 14, 210, 15], clear="inpaint", size=12),
+        L("1人3回まで", "3 per player", [384, 14, 72, 14], "omake", [382, 14, 74, 16], size=10),
+        band(f"スターオーシャン{so} ★5キャラが10連で1体確定!!", f"Star Ocean {so}\n10-chain: 1 ★5\ncharacter guaranteed!!", [270, 30, 186, 88], "blue", size=18)])
+SPIRIT = "Spirit of\nRenewal"
+release_day("20200227_chara_003", 3)
+rateup("20200227_chara_001", 270, "Hot Spring Evelysse &\nHot Spring Rena", y0=20)
+w("20200220_campaign_004", "The purchase bonus campaign banner.", [tag("キャンペーン"), band("ご購入特典キャンペーン", "Purchase Bonus\nCampaign", [56, 26, 260, 92], "blue", size=26, align="left")])
+w("20200220_campaign_003", "The Galaxy Pass banner (its GALAXY logo is the game's).", [
+    L("ギャラクシーパス", "Galaxy Pass", [300, 36, 156, 34], "blue", [294, 34, 162, 36], clear="inpaint", size=22),
+    band("お得な機能を30日間利用可能!", "Handy features for 30 days!", [110, 82, 330, 30], "blue", size=17)])
+w("20200213_event_001", "The 2020 Valentine event's banner (Chocolate in the Bell).", [
+    tag("イベント"), band("チョコレート・イン・ザ・ベル 2020バレンタインイベント", "Chocolate in the Bell\n2020 Valentine Event", [196, 30, 260, 88], "gold", size=22)])
+awaken("20200213_chara_004", "Azure Rena", x1=290)
+release_day("20200213_chara_003", 4)
+rateup("20200213_chara_002", 270, "the Valentine 2019\ncharacters", y0=20, extra=[band("復刻", "Rerun", [58, 30, 46, 44], "blue", size=13)])
+rateup("20200213_chara_001", 270, "Miki of Sweet Love &\nErys of the Heavenly Wings", y0=20)
+w("20200206_campaign_001", "The treasured weapon exchange ticket exchange's banner.", [
+    band("秘蔵武器引換券 交換所オープン!", "Treasured Weapon Exchange Tickets:\nthe Exchange is open!", [58, 26, 330, 88], "blue", size=22, align="left")])
+weapon_pu("20200123_weapon_001")
+awaken("20200123_chara_003", "Pericci", x1=270)
+w("20200123_chara_002", "The Lunar New Year step-up gacha banner.", [
+    tag("ガチャ"), band("春節ガチャ 10連10ステップ目PUいずれか1体確定!", "Lunar New Year Draws\n10-chain Step 10:\n1 pick-up guaranteed!", [250, 40, 206, 78], size=18)])
+rateup("20200123_chara_001", 270, "Queen Nel &\nQueen Clair", y0=20)
+event_title("20200106_event_002", "改新の志 2020新年イベント", SPIRIT, [56, 26, 220, 92], tagjp="ボックスガチャ", sub=("ボックスガチャ", "Box Draws", [300, 86, 156, 30]), style="gold")
+w("20200106_event_001", "The 2020 New Year event's banner (Misery 2 & 3 added).", [
+    tag("イベント"), band("改新の志 2020新年イベント", SPIRIT + "\n2020 New Year Event", [56, 26, 220, 92], "gold", size=20),
+    band("滅級・絶級追加", "Misery 2 & 3\nadded", [380, 14, 76, 104], "gold", size=13)])
+rateup("20200102_chara_001", 270, "New Year Evelysse &\nNew Year Tika", y0=20, extra=[band("復刻", "Rerun", [58, 30, 46, 44], "blue", size=13)])
+weapon_pu("20200101_weapon_001")
+event_title("20200101_event_001", "改新の志 2020新年イベント", SPIRIT + "\n2020 New Year Event", [56, 26, 220, 92], style="gold")
+w("20200101_chara_002", "The New Year gift pick-up gacha's banner.", [
+    tag("ガチャ"), band("新年お年玉 ピックアップキャラガチャ ★5はPU6体のみ!! 10連目はピックアップ確率3倍", "New Year's Gift\nPick-up Character Draws\n★5: the 6 pick-ups only!!\n10th 10-chain: pick-up x3", [250, 14, 206, 104], size=16)])
+rateup("20200101_chara_001", 270, "Reimi of the Phoenix Bow &\nKarlyn of the Dawn Fox", y0=20)
+w("20200101_campaign_001", "The item shop's New Year sets campaign banner.", [
+    tag("キャンペーン"), band("アイテムショップで 新年あけましておめでとう福袋 期間限定追加", "Limited-time New Year\nLucky Bags\nin the Item Shop", [244, 4, 212, 116], size=17)])

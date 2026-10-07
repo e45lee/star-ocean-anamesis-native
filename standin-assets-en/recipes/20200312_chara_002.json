@@ -1,0 +1,216 @@
+{
+ "note": "Divine Wing Fayt's step-up gacha banner.",
+ "source": "Image/etc2/20200312_chara_002.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  },
+  "omake": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 11,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "clear": "inpaint",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    80,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    52,
+    13
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    56,
+    26,
+    140,
+    70
+   ],
+   "cover": [
+    56,
+    26,
+    140,
+    70
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "神翼のフェイト",
+   "text": "Divine Wing\nFayt",
+   "box": [
+    60,
+    28,
+    132,
+    66
+   ],
+   "style": "gold",
+   "cover": [
+    56,
+    26,
+    140,
+    70
+   ],
+   "size": 22,
+   "align": "left"
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    320,
+    50,
+    136,
+    52
+   ],
+   "cover": [
+    320,
+    50,
+    136,
+    52
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "10連10ステップ目 PU1体確定ガチャ",
+   "text": "10-chain Step 10:\n1 pick-up guaranteed",
+   "box": [
+    324,
+    52,
+    128,
+    48
+   ],
+   "style": "gold_r",
+   "cover": [
+    320,
+    50,
+    136,
+    52
+   ],
+   "size": 13
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    56,
+    101,
+    236,
+    18
+   ],
+   "cover": [
+    56,
+    101,
+    236,
+    18
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "ステップ10は神翼のフェイト1体確定!",
+   "text": "Step 10: Divine Wing Fayt guaranteed!",
+   "box": [
+    58,
+    103,
+    230,
+    14
+   ],
+   "style": "bar_r",
+   "cover": [
+    56,
+    101,
+    236,
+    18
+   ],
+   "clear": "shade",
+   "clear_color": "#200400c0",
+   "align": "left",
+   "size": 13
+  }
+ ]
+}

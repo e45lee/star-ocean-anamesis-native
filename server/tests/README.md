@@ -1,6 +1,6 @@
 # server/tests: the server's unit tests and replay corpora
 
-Run with `build/server/soa-server --selftest [FILTER] [--shuffle N]` (no game needed; `soa --selftest` runs the library's after its own). 91 tests today: 70 `server/…`, 7 `cdn/…`, 14 `net/…`. Each test's random seed comes from its name (`soaserver/testing.h` `seed_for`), so filtering, adding or moving tests doesn't change another test's inputs; `--shuffle N` runs them in a shuffled order to find tests that depend on what an earlier one left behind.
+Run with `build/server/soa-server --selftest [FILTER] [--shuffle N]` (no game needed; `soa --selftest` runs the library's after its own). The tests are named by area (`server/…`, `cdn/…`, `net/…`); the run prints how many ran. Each test's random seed comes from its name (`soaserver/testing.h` `seed_for`), so filtering, adding or moving tests doesn't change another test's inputs; `--shuffle N` runs them in a shuffled order to find tests that depend on what an earlier one left behind.
 
 | Path | What |
 |---|---|

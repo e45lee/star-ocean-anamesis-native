@@ -8,8 +8,8 @@ How a request becomes a reply, what owns which part, and where state and master 
 |---|---|---|
 | The library (`libsoaserver`) | `src/`, `include/soaserver/` | the request lifecycle, the state DB, the master lookups, every game rule, the CDN content |
 | The core | `src/core/server.cpp`: `struct Server` | the two DB handles, the gacha pools, the RNG, the pending requests and their error codes, the transaction and refusal path, `Server::dispatch` (the registry's handler of the method). `src/core/context.cpp` defines `ext::Ctx`'s services, `src/core/clock.cpp` the server clock and the event calendar. Its shared helpers beside it in `src/core/` (`time`, `errors.h`, `response`, `wallet`, `rewards`, `request_args.h`, `request_context.h`, `assets`, `ids.h`), `src/state/` (the state module: the schema and its migrations, the meta helpers, the master-reference check, the one SQLite wrapper, the Game.xml codec, seeding) and `src/master/master` |
-| The core's APIs | `src/api/entry/`, `src/api/player/`, `src/api/missions/`, `src/api/gacha/`, `src/api/presents/`, `src/api/favor/favor_api.cpp` | 40 methods: the entry flow (10, with SendErrorLog and CbtCertification); the player load, the parties and the home character (7, with the player state builders); the missions (8); the gacha (10); the present box (3); the favor APIs (2). Registered first, with `ext::add_core_api` |
-| The modules | `src/api/<domain>/` | 125 more methods (35 of them stubs, `ext::add_stub`), and hooks into the core's responses, registered through `include/soaserver/ext.h` in `src/core/modules.cpp`'s order |
+| The core's APIs | `src/api/entry/`, `src/api/player/`, `src/api/missions/`, `src/api/gacha/`, `src/api/presents/`, `src/api/favor/favor_api.cpp` | the core's methods (marked *core* in [API-INDEX.md](API-INDEX.md), which counts them): the entry flow (with SendErrorLog and CbtCertification); the player load, the parties and the home character (with the player state builders); the missions; the gacha; the present box; the favor APIs. Registered first, with `ext::add_core_api` |
+| The modules | `src/api/<domain>/` | every other answered method (some of them stubs, `ext::add_stub`; [API-INDEX.md](API-INDEX.md) section 1 counts them), and hooks into the core's responses, registered through `include/soaserver/ext.h` in `src/core/modules.cpp`'s order |
 | The story campaign | `src/api/campaign/` (`campaign.cpp` the hooks and the splice; `master_data.cpp`, `progress.cpp`, `lists.cpp`), `soaserver/api_campaign.h` | the campaign's own progress (the state DB, below): written by its `OnResponse` hook inside the request's transaction (registered last, `campaign`), its keys spliced into every answer around the request by `server::answer` (`src/core/lifecycle.cpp`) |
 | Host 1: soa (in-process) | `port/src/native/api/` (not in `server/`) | the FakeApiCaller hooks: the guest's arguments -> `Request`, the reply -> the client's `On<Api>Res` |
 | Host 2: soa-server (out of process) | `net/`, `app/main.cpp` | the wire protocol: TCP packets, the Ninja cipher, the bridge handshake, the request decoder, the HTTP server and CDN routes |
@@ -54,7 +54,7 @@ The same in text, with the functions to look up:
               -> campaign::on_request(r) (its log lines, the session's world-map episode)
               -> handle(fid): Server::handle: a RequestContext for the request (its battle log); ext::Ctx = Server::make_ctx
                    -> Server::handle_request: "begin"; forced_error (--fail)
-                   -> Server::dispatch: ext::find(method) (40 core methods, 125 module methods)
+                   -> Server::dispatch: ext::find(method) (the core's methods, then the modules')
                         core handler and module handler alike: (ext::Ctx&, const Request&) -> body
                    -> RequestContext::refusal != 0, or a statement failed (sql::statement_errors): "rollback",
                       errors[fid] = code (10208 for a failure), body = {Time, Player, Wallet}
@@ -97,16 +97,18 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 
 `include/soaserver/ext.h` is the module API. Each module has one function, `register_<module>()` (declared in `src/core/modules.h`, defined at the end of the module's file), that registers its handlers and hooks with the `ext::add_*` functions:
 
-| Kind | Registered with | What it does | Count today |
-|---|---|---|---|
-| Api | `ext::add_core_api({"Method", ...}, fn)` (the core's, first) / `ext::add_api` (a module's) | answers its methods | core: 32 registrations, 40 methods; modules: 78 registrations, 125 methods |
-| `OnPlayerLoad` | `ext::add_player_load(fn)` | adds keys to the full player state (Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart) | 15 |
-| `OnResponse` | `ext::add_response_hook(fn)` | sees and may add keys to every answered response | 2 |
-| `MissionStartExtra` / `MissionResultExtra` | `ext::add_mission_start_extra` / `add_mission_result_extra` | adds to MissionStart / MissionEnd after the core built them | 2 / 3 |
-| `Grant` | `ext::add_grant(type, fn)` | grants a content type the core's `grant()` doesn't handle | 5 |
-| `ItemExtra` | `ext::add_item_extra(fn)` | adds keys to each owned item in `Item` | 1 |
-| `ClientMaster` | `ext::add_client_master(fn)` | changes the master DB the CDN serves to the client | 5 |
-| `AreaExtra` | `events::add_area_extra(fn)` | adds keys to each area of the event area list | 1 |
+| Kind | Registered with | What it does |
+|---|---|---|
+| Api | `ext::add_core_api({"Method", ...}, fn)` (the core's, first) / `ext::add_api` (a module's) | answers its methods |
+| `OnPlayerLoad` | `ext::add_player_load(fn)` | adds keys to the full player state (Login, SimpleLogin, CreatePlayer, GetPlayer, NoLoginStart) |
+| `OnResponse` | `ext::add_response_hook(fn)` | sees and may add keys to every answered response |
+| `MissionStartExtra` / `MissionResultExtra` | `ext::add_mission_start_extra` / `add_mission_result_extra` | adds to MissionStart / MissionEnd after the core built them |
+| `Grant` | `ext::add_grant(type, fn)` | grants a content type the core's `grant()` doesn't handle |
+| `ItemExtra` | `ext::add_item_extra(fn)` | adds keys to each owned item in `Item` |
+| `ClientMaster` | `ext::add_client_master(fn)` | changes the master DB the CDN serves to the client |
+| `AreaExtra` | `events::add_area_extra(fn)` | adds keys to each area of the event area list |
+
+How many of each there are is generated, not written here: [API-INDEX.md](API-INDEX.md) section 1 counts the methods (the core's and the modules'), section 2 each kind's hooks (`soa-server --list-hooks`).
 
 **The order is one explicit list.** `src/core/modules.cpp` calls the register functions in one list, the core's APIs (`entry`, `player`, ..., `favor`) first, then the modules (`modules::register_all`), once, the first time anything reads the registry (`ext::find`, `ext::player_load`, `ext::client_master`, ...), so neither host calls it. Each kind runs in registration order. `OnPlayerLoad` and `OnResponse` hooks add keys to one response map, and maps keep insertion order on the wire, so this order is visible in the reply bytes; it no longer depends on the source files' names (before step R4 of the plan it was the static-initializer order, i.e. the files sorted by name), so a file can be renamed or moved without changing a reply. The list is today's former order. The test `server/module-order` (`src/core/modules_tests.cpp`) pins it per kind: changing the order is a change to the replies and must update that list in the same commit. `soa-server --list-hooks` prints every hook in its run order (kind, module, file:line, detail), and API-INDEX.md section 2 is generated from it.
 
@@ -118,7 +120,7 @@ Two clocks, both in `include/soaserver/server.h` (defined in `src/core/clock.cpp
 
 | Data | Where | Who writes it |
 |---|---|---|
-| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table (54) is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `docs/history/PLAN-schema.md` section 1 is their inventory |
+| The player state | SQLite: `--db`, else soa-server's `--data DIR/server.sqlite3`, else `server.sqlite3` in the working directory | the handlers, core and modules alike; every table is created when the file opens, by `src/state/schema.cpp`'s migration steps (`pragma user_version`; an older file is upgraded after a `.bak-v<N>` copy, a newer one refused; `src/state/README.md`). `docs/history/PLAN-schema.md` section 1 is their inventory |
 | The story campaign's progress | the state DB's `campaign_clear` / `campaign_last` (since schema version 11, PLAN-schema S12; before, `<data_root>/server_campaign.txt`, which step 11 imports and renames `.migrated`) | `src/api/campaign/progress.cpp` only: in the request's transaction (its `OnResponse` hook, an accepted MissionEnd / MissionTalk) or, for EndMissionTalk, through `ext::with_live_server`; read from the DB for every answer |
 | The master data | `data/basmaster-3.7.0.sqlite3` (read-only; `--master`) | nobody: the server reads it |
 | The client's master copy | the CDN's `basmaster-served.sqlite3` (`<scratch>`), the 3.7.0 master with `apply_client_master` | `cdn::Tree::build` (`src/cdn/tree.cpp`), `make_served_master` (`src/cdn/served_master.cpp`) |

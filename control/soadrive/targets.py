@@ -491,12 +491,13 @@ class Run:
                                                        "--http", gdb.host_port(lo, hp), "--data", wp(os.path.dirname(self.state_db))] +
                                         ([] if PACKAGE_DIR else ["--download-dir", wp(download)]) + pkt + srv, self.server_log,
                                         limit=cfg.limit, cwd=cwd)
+                # its "ready" line: every startup line (game, CDN) is out (scripts/lib/with-server.sh)
                 end = time.monotonic() + 120
-                while not self.grep(self.server_log, r"^soa-server: game"):
+                while not self.grep(self.server_log, r"^soa-server: ready"):
                     if not self.server.running() or time.monotonic() > end:
                         break
                     time.sleep(0.5)
-                if self.grep(self.server_log, r"^soa-server: game"):
+                if self.grep(self.server_log, r"^soa-server: ready"):
                     break
                 self.server.stop()
                 # a Windows soa-server whose ports Windows refused (winhost.free_ports): other ports

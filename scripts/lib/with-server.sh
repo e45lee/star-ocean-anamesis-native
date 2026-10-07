@@ -2,7 +2,7 @@
 # soa-server started in the background, waited for, and stopped with the client, also on Ctrl-C.
 # Used by scripts/run-emulator-370.sh, scripts/run-port-with-server.sh and the release packages'
 # run-emulator.sh / run-port-server.sh (shipped beside them as lib/with-server.sh, tools/package.py).
-# The Windows launchers (.ps1) follow the same steps.
+# The Windows launchers (.ps1) share its PowerShell twin, scripts/lib/with-server.ps1 (the same options).
 #
 #   ws_init NAME                 the launcher's name for messages; installs the cleanup traps
 #   ws_need "$@"                 exits 2 unless the option $1 has a value

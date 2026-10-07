@@ -44,6 +44,7 @@ port/src/native/params/testdata/                                 # soa.exe --sel
 scripts/windows/run-port.cmd                                     # soa.exe
 scripts/windows/run-emulator-370.cmd                             # soa-emu.exe + soa-server.exe
 scripts/windows/run-emulator-370.ps1                             # (its PowerShell half)
+scripts/lib/with-server.ps1                                      # (the shared half it dot-sources)
 scripts/windows/run-viewer-380.cmd                               # soa-viewer.exe
 
 # --- work/, by exact name (in a worktree through its work/ link: the main checkout's)

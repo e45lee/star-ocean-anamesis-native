@@ -97,9 +97,9 @@ WITH_DATA = {"port", "emulator"}
 # The allow-list: a packaged file's path (inside the top folder) must match one of these.
 ALLOW = {
     "port": ["soa", "soa.exe", "soa-server", "soa-server.exe", "run-port.sh", "run-port.cmd", "run-port-en.sh", "run-port-en.cmd",
-             "run-port-server.sh", "run-port-server.cmd", "run-port-server.ps1", "lib/with-server.sh"],
+             "run-port-server.sh", "run-port-server.cmd", "run-port-server.ps1", "lib/with-server.sh", "lib/with-server.ps1"],
     "emulator": ["soa-emu", "soa-server", "soa-emu.exe", "soa-server.exe", "run-emulator.sh", "run-emulator.cmd", "run-emulator.ps1",
-                 "run-emulator-en.sh", "run-emulator-en.cmd", "lib/with-server.sh"],
+                 "run-emulator-en.sh", "run-emulator-en.cmd", "lib/with-server.sh", "lib/with-server.ps1"],
     "viewer": ["soa-viewer", "soa-viewer.exe", "run-viewer.sh", "run-viewer.cmd"],
 }
 ALLOW_COMMON = ["README.txt", "LICENSE.txt", "THIRD-PARTY-NOTICES.txt", "BUILD-INFO.txt", "game/PUT-GAME-FILES-HERE.txt"]
@@ -433,12 +433,16 @@ def launcher_files(kind, windows):
 
 
 # What the launchers source, {path in the package: source}: the server-plus-client launchers'
-# shared half (run-port-server.sh, run-emulator.sh: . "$here/lib/with-server.sh").
+# shared half (run-port-server.sh, run-emulator.sh: . "$here/lib/with-server.sh"; on Windows
+# run-port-server.ps1, run-emulator.ps1: . (Join-Path $here "lib\with-server.ps1")).
 LAUNCHER_LIBS = {"lib/with-server.sh": os.path.join(ROOT, "scripts", "lib", "with-server.sh")}
+LAUNCHER_LIBS_WIN = {"lib/with-server.ps1": os.path.join(ROOT, "scripts", "lib", "with-server.ps1")}
 
 
 def launcher_libs(kind, windows):
-    return {} if windows or kind not in ("port", "emulator") else dict(LAUNCHER_LIBS)
+    if kind not in ("port", "emulator"):
+        return {}
+    return dict(LAUNCHER_LIBS_WIN if windows else LAUNCHER_LIBS)
 
 
 def stage_package(plat, kind, version, work, dbg_dir):

@@ -19,7 +19,7 @@ namespace soa::native::memory::check {
 
 namespace {
 // --live-check memory: every= (default 64), budget=, only= (substrings of the symbols below), out=.
-live::Family g_family("memory", 64, false);
+live::Family g_family("memory", 64);
 
 const char* const kSyms[kFnCount] = {
     "_ZN4Aska13MemoryManager6MallocEm",

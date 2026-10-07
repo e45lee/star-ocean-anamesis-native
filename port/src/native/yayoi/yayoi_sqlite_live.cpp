@@ -27,7 +27,7 @@ u64 g_orig[kFnCount];
 
 namespace {
 
-soa::live::Family g_fam("yayoi_sqlite", 1, false);
+soa::live::Family g_fam("yayoi_sqlite", 1);
 
 // > 0 while this thread runs a shadow call: the hooks run the originals.
 thread_local int t_shadow = 0;

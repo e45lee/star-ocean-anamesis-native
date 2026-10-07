@@ -2,30 +2,29 @@
 // The shared live differential check ("live check") of native families: one harness for every
 // family that checks its natives against the guest originals in a normal run.
 //
-// Two kinds of check use it:
+// The kinds of check that use it:
 //
-// 1. Record / replay (A64 families: arena, objbase; their transcribed bodies and hand-written
-//    functions call out through Family::gcall / icall / memop / ACall). A checked call runs the
-//    native first, for real, with every outgoing call recorded (target, argument registers,
-//    results, the snapshot regions after it, stack buffers the callee wrote). Then the regions
-//    are put back and the guest original (the hook's trampoline) runs with every recorded callee
-//    replaced by a replay stub (guest_stub.h) that checks target and arguments and plays back the
-//    recorded effects. Call sequence, region bytes and x0 / v0 must match; side effects happen
-//    once (in the native run). See check_a64() in live_check.cpp for every rule the replay uses.
-//    The families with their own recorders (charobj, battle core: calls from hand-written C++
-//    through GuestArgs) replay through the same stub registry and ReplaySession.
-//
-// 2. Run both (particles, dynamics): the family runs the original and the native from the same
-//    state and compares; they share the switches, the chosen-set filter and the Budget counters.
+// 1. Record / replay (Family::add; the leaf families of live_leaf.h: hash, math, containers, libcxx,
+//    data_formats). A checked call runs the native first, for real, with every outgoing call recorded
+//    (calls from readable natives go through live::ACall / live::out_call, live_call.h: target,
+//    argument registers, results, the snapshot regions after it, stack buffers the callee wrote).
+//    Then the regions are put back and the guest original (the hook's trampoline) runs with every
+//    recorded callee replaced by a replay stub (guest_stub.h) that checks target and arguments and
+//    plays back the recorded effects. Call sequence, region bytes and x0 / v0 must match; side effects
+//    happen once (in the native run). The rules the replay follows are at the top of live_check.cpp.
+// 2. The other kinds use the switches below (and some the stubs, ReplaySession, guest_call_at_sp):
+//    shadow checks (shadow_check.h: sync, input, kernel, resource, scene, restore), lockstep shadow
+//    runs (lockstep.h: lib_crypto, lib_jpeg, lib_vorbis, lib_zlib, lib_zstd), run-both checks
+//    (live_run_both.h: render, params) and the families with checks of their own on a plain
+//    live::Family (memory, lib_sqlite, yayoi_sqlite).
 //
 // Switched on per family from the command line (soa --live-check, parse_live_check below):
 //   --live-check FAMILY[,FAMILY..][:KEY[=VALUE]..]   (repeatable; FAMILY = the family's tag)
 // keys: every=N (every n-th call per function; default the family's), budget=N (checks per
-// function at most), out=FILE (per-function counts, record / replay families), only=SUB[|SUB..]
-// (check only functions whose symbol contains one of these: the others run natively without a
-// check, so the chosen ones are checked also where they are nested callees of other natives),
-// trace, dump (debugging). E.g. --live-check arena:every=4:only=Alloc|Free. Registered: lib_sqlite
-// (its own shadow run: native/lib_sqlite/lib_sqlite_api.cpp; it uses the switch and out=).
+// function at most), out=FILE (per-function counts), only=SUB[|SUB..] (check only functions whose
+// symbol contains one of these: the others run natively without a check, so the chosen ones are
+// checked also where they are nested callees of other natives), trace, dump (debugging). E.g.
+// --live-check math:every=4:only=Matrix. An unknown family fails at start (apply_live_check).
 #include <atomic>
 #include <cstdio>
 #include <cstring>
@@ -38,15 +37,20 @@
 #include <vector>
 
 #include "core/cpu.h"
-#include "native/common/a2c_regs.h"
 #include "native/common/guest_stub.h"
 
 namespace soa::live {
 
-using a2c::A64;
-using a2c::Body;
-using a2c::V4;
-using a2c::a2c_gcall;
+// The register file of an outgoing call from a native (ACall): the AAPCS64 argument and result
+// registers and the caller's SP.
+struct V4 {
+    float f[4];
+};
+struct Regs {
+    u64 x[9];  // x0-x7 the integer arguments, x8 the indirect-result pointer; x0 / x1 come back
+    u64 sp;    // the caller's SP: stack arguments are above it
+    V4 v[8];   // v0-v7 (the low 128 bits); v0-v3 come back
+};
 
 // ---- switches (soa --live-check) ----
 
@@ -138,92 +142,7 @@ struct Journal {
     void undo();
 };
 
-// Store log: (address, the bytes overwritten, size). The record / replay check's undo log of a
-// transcribed body's own stores, and the particles check's store log.
-struct StoreLog {
-    struct E {
-        u64 a;
-        u64 old;
-        u32 n;
-    };
-    std::vector<E> v;
-    void undo() const {
-        for (size_t k = v.size(); k-- > 0;) std::memcpy((void*)v[k].a, &v[k].old, v[k].n);
-    }
-};
-
-// ---- the Aska random state pin ----
-// The Aska random-number generators (Aska::Random / RandomShort / RandomFloat / ... and MT::Rand,
-// which HighPrecisionRandom tail-calls; and g_uiLowPrecisionRandomSeed) keep their state in one guest .bss block that every
-// thread draws from. A run-both check that puts that state back and compares it pins it for the
-// check's window (RandPin): another thread's draw (RandDraw) waits until the pin is released, for
-// at most kPinWaitMs; then it draws anyway and counts as a pin violation (so a check never
-// deadlocks on a thread it waits for), which the check sees in rand_violations() and treats as a
-// proven race. The pin also waits for draws already past the gate. (The low-precision seed's
-// inline draws in guest code and in the transcriptions can't be gated.)
-constexpr int kPinWaitMs = 200;
-extern std::atomic<int> g_rand_pin;       // the pinning thread's tid (0: none)
-extern std::atomic<int> g_rand_inflight;   // draws in progress (a pin waits for them to end)
-extern std::atomic<bool> g_rand_tracking;  // a family with a pinning check is on (else draws skip all this)
-void rand_tracking_on();
-// One draw (scope): waits for a pin another thread holds, and counts as in progress, so a pin
-// taken meanwhile waits for it to end (a draw that passed the gate can't overlap the pinned window).
-struct RandDraw {
-    bool on = false;
-    RandDraw() {
-        if (__builtin_expect(!g_rand_tracking.load(std::memory_order_relaxed), 1)) return;
-        on = true;
-        for (;;) {
-            g_rand_inflight.fetch_add(1, std::memory_order_acq_rel);
-            if (__builtin_expect(g_rand_pin.load(std::memory_order_acquire) == 0, 1)) return;
-            g_rand_inflight.fetch_sub(1, std::memory_order_acq_rel);
-            if (rand_gate_pinned_by_me()) {
-                g_rand_inflight.fetch_add(1, std::memory_order_acq_rel);
-                return;
-            }
-            if (!rand_gate_wait()) {  // (a violation: draws anyway)
-                g_rand_inflight.fetch_add(1, std::memory_order_acq_rel);
-                return;
-            }
-        }
-    }
-    ~RandDraw() {
-        if (on) g_rand_inflight.fetch_sub(1, std::memory_order_acq_rel);
-    }
-    RandDraw(const RandDraw&) = delete;
-    RandDraw& operator=(const RandDraw&) = delete;
-    static bool rand_gate_pinned_by_me();
-    static bool rand_gate_wait();  // false: timed out (counted as a violation)
-};
-u64 rand_violations();
-struct RandPin {  // pins for the calling thread (nests)
-    RandPin();
-    ~RandPin();
-    RandPin(const RandPin&) = delete;
-    RandPin& operator=(const RandPin&) = delete;
-};
-
-// Per-function counters of a budgeted run-both check (particles, dynamics). races: a difference
-// every attempt showed while another thread provably touched the shared state (not a mismatch).
-struct Budget {
-    std::atomic<int> budget{0}, done{0}, bad{0}, unstable{0}, races{0};
-    std::mutex m;
-    std::vector<std::string> errs;
-    // One check off the budget (false: none left).
-    bool take() { return budget.load(std::memory_order_relaxed) > 0 && budget.fetch_sub(1) > 0; }
-    void fail(const std::string& e, size_t keep = 3) {
-        std::lock_guard lk(m);
-        if (errs.size() < keep) errs.push_back(e);
-    }
-    void reset(int n) {
-        budget = n;
-        done = 0, bad = 0, unstable = 0, races = 0;
-        std::lock_guard lk(m);
-        errs.clear();
-    }
-};
-
-// ---- the record / replay (A64) families ----
+// ---- the record / replay families ----
 
 enum RetKind : u8 { kVoid = 0, kInt = 1, kFloat = 2, kAll = 3 };
 
@@ -233,11 +152,9 @@ struct Entry;
 // objects they return, out-parameters they write whole) are shared (live_check.cpp).
 class Family {
 public:
-    // tag: log tag (I/<tag>_check), registration label and --live-check name ("arena");
-    // every: the default of --live-check's every=; sret_marked: the generator marks x8 = sret calls
-    // (gcall_sret); otherwise any 8-aligned stack x8 is treated as one (its first 16 bytes are
-    // always replayed).
-    Family(const char* tag, int every, bool sret_marked);
+    // tag: log tag (I/<tag>_check), registration label and --live-check name ("math");
+    // every: the default of --live-check's every=.
+    Family(const char* tag, int every);
     virtual ~Family() = default;
 
     const char* tag;
@@ -245,7 +162,6 @@ public:
     std::atomic<bool> on{false};  // --live-check <tag> (a test may switch it at run time)
     int every;
     int budget = 0;  // checks per function at most (0: no limit)
-    bool sret_marked;
     Only only;
     std::string out_path;  // --live-check <tag>:out=FILE
     bool trace = false, dump = false;
@@ -263,28 +179,17 @@ public:
     virtual void on_mismatch(const Entry&, const std::string&) {}
     virtual void on_skip(const Entry&, const std::string&) {}
 
-    // Registers a native at `sym` (hooked through the check when the family is on): a
-    // hand-written host function (run) or a transcribed body (body). `enabled`: the family's
-    // on switch; `label`: the registry's description.
-    // `file`: the registering source (its subsystem: --natives-skip; the caller's by default).
-    int add(const char* sym, HostFn run, Body body, u32 obj_bytes, RetKind ret, bool (*enabled)(), const char* label,
+    // Registers the native `run` at `sym`, hooked through the check when the family is on.
+    // obj_bytes: the object at x0 the check snapshots and compares (0: none); ret: the result
+    // registers compared; `enabled`: its install switch (nullptr: always); `label`: the registry's
+    // description; `file`: the registering source (its subsystem: --natives-skip; the caller's).
+    int add(const char* sym, HostFn run, u32 obj_bytes, RetKind ret, bool (*enabled)(), const char* label,
             const char* file = __builtin_FILE());
-    // A transcribed body checked through a test hook (--selftest, where natives aren't installed):
-    // calls that aren't checked run the guest original. `user`: the family's own index.
-    int add_test(const char* sym, Body body, u32 obj_bytes, RetKind ret, int user);
 
-    // Outgoing calls of the family's natives (transcribed bodies and ACall).
-    void gcall(A64& r, u64 target);
-    void icall(A64& r, u64 target);  // (a virtual call; a guest call when not recorded)
-    void gcall_sret(A64& r, u64 target);  // x8 is an sret buffer in the caller's frame
-    // A call from readable code with its real arity: only x0..x(ni-1) and v0..v(nf-1) (and x8 when
-    // `sret`) are arguments; the replay compares only those (like ACall, on a register file of the
-    // caller's).
-    void gcall_n(A64& r, u64 target, int ni, int nf, bool sret = false);
-    void memop(A64& r, u64 target, int kind);  // memset (1) / memcpy (2) / memmove (3), on the host
-
-    // Installed transcribed bodies by guest address (direct calls between them skip the hook).
-    const std::unordered_map<u64, Body>& own_bodies();
+    // An outgoing call of the family's natives (ACall::call): recorded inside a check, else a plain
+    // guest call (a replaced callee's host function directly). Only x0..x(ni-1) and v0..v(nf-1) are
+    // arguments; the replay compares only those.
+    void gcall(Regs& r, u64 target, int ni, int nf);
 
     void summary(FILE* f);  // per-function counts
     void summary_file();    // to out_path
@@ -292,49 +197,28 @@ public:
     struct Stats {
         std::atomic<u64> checks{0}, ok{0}, bad{0}, skipped{0}, races{0};
     } stats;
-    int first = -1, count = 0;  // (entries [first, first + count) are this family's, when contiguous)
     std::vector<int> entries;
-
-private:
-    std::unordered_map<u64, Body>* own_ = nullptr;
-    std::once_flag own_once_;
 };
 
 struct Entry {
     Family* fam = nullptr;
     const char* sym = nullptr;
-    HostFn run = nullptr;          // a hand-written native
-    Body body = nullptr;   // a transcribed one
+    HostFn run = nullptr;  // the native
     u32 obj_bytes = 0;
     RetKind ret = kAll;
-    bool test = false;  // a test hook: an unchecked call runs the original
-    int user = -1;      // the family's own index
     u64 orig = 0;  // trampoline to the guest original (set when installed)
     std::atomic<u64> calls{0}, checks{0}, ok{0}, bad{0}, skipped{0}, races{0};
-    void invoke(Cpu& c) const {
-        if (body) a2c::a2c_run_hook(c, body);
-        else run(c);
-    }
-    void run_original(Cpu& c) const;
-    void run_unchecked(Cpu& c) const {
-        if (test) run_original(c);
-        else invoke(c);
-    }
 };
 
-Entry& entry(int n);  // (an index Family::add / add_test returned)
+Entry& entry(int n);  // (an index Family::add returned)
 
-// Undo log of the checked transcribed body's own stores (the a2c store macros note each one
-// while t_undo_on is set): the replay starts from the memory the native run saw.
-extern thread_local bool t_undo_on;
-void undo_note(u64 a, u32 n);
 // Inside a check on this thread (no other call can be checked; every family).
 extern thread_local bool t_busy;
 
-// Outgoing call from hand-written code, through the family's path (so the check sees it).
+// An outgoing call from a native, through the family's path (so the check sees it).
 // Integers go to x0.., floats to v0..; x0 / s0 come back.
 struct ACall {
-    A64 r;
+    Regs r;
     int ni = 0, nf = 0;
     Family* fam;
     explicit ACall(Family& f);
@@ -347,8 +231,6 @@ struct ACall {
         return *this;
     }
     u64 call(u64 target);
-    // A call whose x8 (set by the caller in r.x[8]) is an sret buffer in the caller's frame.
-    u64 call_sret(u64 target);
     float fcall(u64 target) {
         call(target);
         return r.v[0].f[0];

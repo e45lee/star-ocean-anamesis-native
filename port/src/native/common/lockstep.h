@@ -32,7 +32,7 @@ namespace soa::live {
 
 class Lockstep : public Family {
 public:
-    explicit Lockstep(const char* tag) : Family(tag, 1, false) {}
+    explicit Lockstep(const char* tag) : Family(tag, 1) {}
 
     bool active() const { return on.load(std::memory_order_relaxed); }
 

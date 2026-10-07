@@ -41,10 +41,10 @@ inline Arg out_len(int reg, int len_reg, u32 scale = 1, u32 extra = 0, u32 cap =
 
 class LeafFamily : public Family {
 public:
-    LeafFamily(const char* tag, int every) : Family(tag, every, false) {}
+    LeafFamily(const char* tag, int every) : Family(tag, every) {}
     int add_leaf(const char* sym, HostFn fn, u32 obj_bytes, RetKind ret, const char* label, std::initializer_list<Arg> args,
                  const char* file = __builtin_FILE()) {
-        int n = add(sym, fn, nullptr, obj_bytes, ret, nullptr, label, file);
+        int n = add(sym, fn, obj_bytes, ret, nullptr, label, file);
         if (n >= 0) {
             if ((size_t)n >= args_.size()) args_.resize(n + 1);
             args_[n].assign(args.begin(), args.end());

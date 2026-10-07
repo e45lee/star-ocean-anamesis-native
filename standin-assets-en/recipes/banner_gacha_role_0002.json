@@ -1,0 +1,160 @@
+{
+ "note": "The standard character gacha's banner.",
+ "source": "Image/etc2/banner_gacha_role_0002.aif",
+ "styles": {
+  "tag": {
+   "size": 12,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  },
+  "gold": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "gold_r": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#4a0800",
+   "outline_width": 3,
+   "align": "right",
+   "clear": "shade",
+   "clear_color": "#200400e0"
+  },
+  "bar_l": {
+   "size": 14,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 1,
+   "align": "left",
+   "clear": "fill",
+   "clear_color": "#0c0806ff"
+  },
+  "bar_r": {
+   "size": 15,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "blue": {
+   "size": 24,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 3,
+   "glow": "#40c0ffa0",
+   "glow_radius": 2,
+   "clear": "shade",
+   "clear_color": "#0a1a3ab0"
+  },
+  "erase": {
+   "clear": "inpaint"
+  },
+  "blue_s": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "outline": "#0a3a8a",
+   "outline_width": 2,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ガチャ",
+   "text": "Draws",
+   "box": [
+    73,
+    14,
+    60,
+    15
+   ],
+   "style": "tag",
+   "cover": [
+    72,
+    15,
+    42,
+    13
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    56,
+    46,
+    98,
+    34
+   ],
+   "cover": [
+    56,
+    46,
+    98,
+    34
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "10連で",
+   "text": "10-chain",
+   "box": [
+    58,
+    46,
+    100,
+    32
+   ],
+   "style": "gold",
+   "cover": [
+    56,
+    46,
+    98,
+    34
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    56,
+    82,
+    346,
+    32
+   ],
+   "cover": [
+    56,
+    82,
+    346,
+    32
+   ],
+   "style": "erase"
+  },
+  {
+   "jp": "★4以上のキャラが1体確定!",
+   "text": "1 ★4+ character guaranteed!",
+   "box": [
+    58,
+    84,
+    344,
+    28
+   ],
+   "style": "gold",
+   "cover": [
+    56,
+    82,
+    346,
+    32
+   ],
+   "size": 20
+  }
+ ]
+}

@@ -1,0 +1,79 @@
+{
+ "note": "The all roles EXP-material event's banner (Global: Augment Mission, EXP materials, the role names).",
+ "source": "Image/etc2/banner_roleexAll_001.aif",
+ "styles": {
+  "main": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffeab0",
+   "outline": "#5a0800",
+   "outline_width": 3,
+   "glow": "#ff6020a0",
+   "glow_radius": 2,
+   "align": "right"
+  },
+  "sub": {
+   "size": 18,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#5a1000",
+   "outline_width": 2,
+   "align": "right",
+   "clear": "none"
+  },
+  "tag": {
+   "size": 15,
+   "bold": 1,
+   "fill": "#ffffff",
+   "align": "left"
+  }
+ },
+ "labels": [
+  {
+   "jp": "経験値素材ミッション",
+   "text": "EXP Material Mission",
+   "box": [
+    166,
+    66,
+    286,
+    38
+   ],
+   "style": "main",
+   "cover": [
+    162,
+    42,
+    296,
+    68
+   ]
+  },
+  {
+   "jp": "全種",
+   "text": "All Roles",
+   "box": [
+    250,
+    45,
+    202,
+    22
+   ],
+   "style": "sub"
+  },
+  {
+   "jp": "全日解放",
+   "text": "Open All Day",
+   "box": [
+    66,
+    26,
+    90,
+    22
+   ],
+   "style": "tag",
+   "cover": [
+    64,
+    26,
+    90,
+    22
+   ],
+   "clear": "inpaint"
+  }
+ ]
+}

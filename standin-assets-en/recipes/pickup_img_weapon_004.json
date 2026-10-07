@@ -1,0 +1,177 @@
+{
+ "note": "A factor weapon pick-up panel (Umbral Blast).",
+ "source": "Image/etc2/pickup_img_weapon_004.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  },
+  "band_b": {
+   "clear": "shade",
+   "clear_color": "#08142cc0"
+  },
+  "wname": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#2a1000",
+   "outline_width": 4,
+   "glow": "#ffc040a0",
+   "glow_radius": 3,
+   "align": "right",
+   "clear": "none"
+  },
+  "wname_b": {
+   "size": 34,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "none"
+  },
+  "type": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#3a0000",
+   "outline_width": 2,
+   "align": "left",
+   "clear": "inpaint"
+  },
+  "head": {
+   "size": 36,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#2a1000",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "inpaint"
+  },
+  "title": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#fff0c0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  },
+  "line": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "wlist": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 2,
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "big": {
+   "size": 52,
+   "bold": 3,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ファクター",
+   "text": "Factor",
+   "box": [
+    176,
+    32,
+    220,
+    56
+   ],
+   "style": "head",
+   "cover": [
+    172,
+    30,
+    196,
+    60
+   ]
+  },
+  {
+   "jp": "銃",
+   "text": "Gun",
+   "box": [
+    716,
+    306,
+    160,
+    44
+   ],
+   "style": "type",
+   "cover": [
+    714,
+    310,
+    136,
+    40
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    430,
+    352,
+    450,
+    116
+   ],
+   "style": "erase",
+   "cover": [
+    430,
+    352,
+    450,
+    116
+   ]
+  },
+  {
+   "jp": "",
+   "text": "",
+   "box": [
+    430,
+    352,
+    450,
+    116
+   ],
+   "style": "band",
+   "cover": [
+    430,
+    352,
+    450,
+    116
+   ]
+  },
+  {
+   "jp": "シャドウビュレット",
+   "text": "Umbral Blast",
+   "box": [
+    440,
+    362,
+    430,
+    96
+   ],
+   "style": "wname"
+  }
+ ]
+}

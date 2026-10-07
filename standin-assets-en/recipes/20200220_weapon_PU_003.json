@@ -1,0 +1,134 @@
+{
+ "note": "A weapon pick-up panel (Lord Carnelian).",
+ "source": "Image/etc2/20200220_weapon_PU_003.aif",
+ "styles": {
+  "erase": {
+   "clear": "inpaint"
+  },
+  "band": {
+   "clear": "shade",
+   "clear_color": "#200400c0"
+  },
+  "band_b": {
+   "clear": "shade",
+   "clear_color": "#08142cc0"
+  },
+  "wname": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#ffffff",
+   "outline": "#2a1000",
+   "outline_width": 4,
+   "glow": "#ffc040a0",
+   "glow_radius": 3,
+   "align": "right",
+   "clear": "none"
+  },
+  "wname_b": {
+   "size": 34,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "none"
+  },
+  "type": {
+   "size": 26,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#3a0000",
+   "outline_width": 2,
+   "align": "left",
+   "clear": "inpaint"
+  },
+  "head": {
+   "size": 36,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#2a1000",
+   "outline_width": 3,
+   "align": "left",
+   "clear": "inpaint"
+  },
+  "title": {
+   "size": 50,
+   "bold": 3,
+   "fill": "#fff0c0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  },
+  "line": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "wlist": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#000000",
+   "outline_width": 2,
+   "clear": "inpaint",
+   "align": "left"
+  },
+  "cap": {
+   "size": 30,
+   "bold": 2,
+   "fill": "#ffffff",
+   "outline": "#0a1430",
+   "outline_width": 3,
+   "clear": "none"
+  },
+  "big": {
+   "size": 52,
+   "bold": 3,
+   "fill": "#ffe9a0",
+   "outline": "#3a0800",
+   "outline_width": 4,
+   "clear": "none"
+  }
+ },
+ "labels": [
+  {
+   "jp": "ロード・カーネリアン",
+   "text": "Lord Carnelian",
+   "box": [
+    196,
+    44,
+    360,
+    50
+   ],
+   "style": "wname_b",
+   "cover": [
+    196,
+    44,
+    300,
+    50
+   ],
+   "clear": "inpaint"
+  },
+  {
+   "jp": "杖",
+   "text": "Staff",
+   "box": [
+    700,
+    380,
+    150,
+    34
+   ],
+   "style": "type",
+   "cover": [
+    698,
+    380,
+    120,
+    34
+   ],
+   "size": 22
+  }
+ ]
+}

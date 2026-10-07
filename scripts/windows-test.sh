@@ -11,7 +11,8 @@
 #   viewer-boot    the viewer's boot (emulator-viewer/scripts/viewer_boot.sh): soa-viewer.exe
 #   shard-login    the tests/diff shard `login` on the three Windows targets (soa-emu.exe +
 #                  soa-server.exe, soa.exe --server + soa-server.exe, soa.exe in process); OUT/login/report.txt
-#   runtime-tests  soaruntime_tests.exe (the runtime's tests, the GDB stub's incl.), exit status 0
+#   runtime-tests  soaruntime_tests.exe (the runtime's tests, the GDB stub's incl.) and soa_sock_tests.exe
+#                  (common/sock.h over Winsock), exit status 0
 #   selftest       soa.exe --selftest and soa-server.exe --selftest (the native and server selftests on Windows), exit 0
 #   native-order   soa.exe --list-native byte-identical to build/port/soa's: the natives, selftests and
 #                  test hooks register in the same order (static-initializer order: cmake/init_order.cmake)
@@ -23,7 +24,7 @@
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
-[ $# -eq 3 ] || { sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+[ $# -eq 3 ] || { sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
 test=$1 out=$2 tmp=$3
 stage=${SOA_WIN_STAGE:-/mnt/c/soa-win}
 case $test in
@@ -32,7 +33,7 @@ case $test in
   viewer-boot) targets="soa-viewer" need="" ;;  # (its game: checked below)
   shard-login) targets="soa soa-emu soa-server" need="work/SOA-3.7.0-canonical-data.zip work/libSOA-3.7.0.so work/phone-3.7.0/PHONE.txt" ;;
   native-order) targets="soa" need="" ;;
-  runtime-tests) targets="soaruntime_tests" need="" ;;
+  runtime-tests) targets="soaruntime_tests soa_sock_tests" need="" ;;
   selftest) targets="soa soa-server" need="work/SOA-3.7.0-canonical-data.zip" ;;
   *) echo "windows-test: unknown test $test" >&2; exit 2 ;;
 esac
@@ -82,7 +83,15 @@ case $test in
       echo "FAIL: soaruntime_tests.exe exited $rc ($out/soaruntime_tests.log)"
       exit 1
     fi
-    echo "PASS: soaruntime_tests.exe ($(grep -ac '^ok' "$out/soaruntime_tests.log") checks)" ;;
+    rc=0
+    (cd "$stage" && timeout -k 10 120 ./build-win/common/soa_sock_tests.exe) > "$out/soa_sock_tests.log" 2>&1 || rc=$?
+    grep -a "^FAIL" "$out/soa_sock_tests.log" | head -20
+    if [ "$rc" != 0 ]; then
+      tail -5 "$out/soa_sock_tests.log"
+      echo "FAIL: soa_sock_tests.exe exited $rc ($out/soa_sock_tests.log)"
+      exit 1
+    fi
+    echo "PASS: soaruntime_tests.exe ($(grep -ac '^ok' "$out/soaruntime_tests.log") checks), soa_sock_tests.exe ($(grep -ac '^ok' "$out/soa_sock_tests.log") checks)" ;;
   selftest)
     # soa.exe's native selftests (the guest library booted once; those that read the 3.7.0 download
     # read the staged zip, as on Linux) and soa-server.exe's: a Windows-only native or server failure fails here (2026-10-06: two such

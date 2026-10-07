@@ -112,12 +112,12 @@ def test_the_real_list():
     for kind, root, rel in items:
         assert not rel.startswith((".claude/", "build/", ".git/", "docs/")), rel
         assert any(e.matches(rel) or e.matches(rel + "/") for e in entries), rel
-    # the programs' checkout markers are on it (port/src/core/paths.cpp, server/app/main.cpp,
-    # emulator/src/main.cpp, emulator-viewer/src/main.cpp is_repo)
+    # the programs' checkout marker is on it (common/include/soa/install.h is_checkout, all four programs)
     names = {e.path for e in entries}
-    for m in ["port/CMakeLists.txt", "server/CMakeLists.txt", "emulator/CMakeLists.txt", "emulator-viewer/CMakeLists.txt",
-              "runtime/CMakeLists.txt"]:
+    install_h = open(os.path.join(REPO, "common/include/soa/install.h")).read()
+    for m in ["CMakeLists.txt", "common/CMakeLists.txt"]:
         assert m in names, m
+        assert 'is_file(dir + "/%s")' % m in install_h, m
 
 
 def test_dry_run_writes_nothing(tmp_path):

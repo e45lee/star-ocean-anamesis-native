@@ -1,7 +1,13 @@
 // The POSIX calls our code makes that MinGW-w64 lacks or spells differently (port/PLAN.md 5b, W).
 // Force-included (-include) into every source of a target that links soa_compat, on Windows
-// only (cmake/win32.cmake), so portable code keeps its POSIX spelling. No <windows.h> here: its
-// macros (min/max, ERROR, ...) would leak into every file; what needs Win32 goes in posix_compat.cpp.
+// only (common/CMakeLists.txt), so portable code keeps its POSIX spelling. No <windows.h> here: its
+// macros (min/max, ERROR, ...) would leak into every file; what needs Win32 goes in
+// common/src/posix_compat_win32.cpp.
+//
+// The missing functions are inline wrappers under their real names (no macros: a macro would also
+// rename members and other namespaces' functions of that name), over the soa_* implementations.
+// `rename` alone stays a macro: the C runtime has its own (which won't replace a file), declared
+// in <stdio.h>.
 //
 // Semantics differ where Windows has no equivalent: no symlinks (lstat is stat, S_ISLNK is false),
 // no file modes (mkdir ignores the mode), no SIGPIPE (sockets don't raise it: MSG_NOSIGNAL is 0).
@@ -71,15 +77,19 @@ char* soa_mkdtemp(char* tmpl);
 }
 #endif
 
-#define realpath soa_realpath
-#define pread soa_pread
-#define strptime soa_strptime
 #define rename soa_rename
-#define gettid soa_gettid
-#define setenv soa_setenv
-#define unsetenv soa_unsetenv
-#define mkdtemp soa_mkdtemp
-#define lstat stat
+
+static inline char* realpath(const char* path, char* resolved) { return soa_realpath(path, resolved); }
+static inline ssize_t pread(int fd, void* buf, size_t n, long long offset) { return soa_pread(fd, buf, n, offset); }
+static inline char* strptime(const char* s, const char* fmt, struct tm* tm) { return soa_strptime(s, fmt, tm); }
+static inline int gettid(void) { return soa_gettid(); }
+static inline int setenv(const char* name, const char* value, int overwrite) { return soa_setenv(name, value, overwrite); }
+static inline int unsetenv(const char* name) { return soa_unsetenv(name); }
+#if __MINGW64_VERSION_MAJOR < 12  // (mingw-w64 12 has its own)
+static inline char* mkdtemp(char* tmpl) { return soa_mkdtemp(tmpl); }
+#endif
+// no symlinks: lstat is stat
+static inline int lstat(const char* path, struct stat* st) { return stat(path, st); }
 
 #ifdef __cplusplus
 // mkdir(path, mode): MinGW's mkdir takes the path only.

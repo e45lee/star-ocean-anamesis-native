@@ -1,4 +1,4 @@
-// common/win32/posix_compat.h's functions (Windows only).
+// common/win32/posix_compat.h's functions, and soa/install.h's exe_path_win32 (Windows only).
 #ifdef _WIN32
 #include "../win32/posix_compat.h"
 
@@ -7,6 +7,8 @@
 #include <io.h>
 #include <string.h>
 #include <windows.h>
+
+#include "soa/install.h"
 
 #include <stddef.h>
 
@@ -168,4 +170,11 @@ extern "C" char* soa_mkdtemp(char* tmpl) {
 namespace {
 __attribute__((constructor(101))) void unbuffer_stderr() { setvbuf(stderr, nullptr, _IONBF, 0); }
 }  // namespace
+// soa/install.h: the running executable's path, "" when unknown.
+std::string soa::install::exe_path_win32() {
+    std::vector<wchar_t> buf(32768);
+    DWORD n = GetModuleFileNameW(nullptr, buf.data(), (DWORD)buf.size());
+    if (n == 0 || n >= buf.size()) return "";
+    return std::filesystem::path(std::wstring(buf.data(), n)).string();
+}
 #endif

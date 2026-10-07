@@ -32,17 +32,13 @@
 #include <system_error>
 #include <vector>
 
-#ifdef _WIN32
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#endif
-
 namespace soa::install {
+
+#ifdef _WIN32
+// The running executable's path (GetModuleFileNameW, '\\' separators): common/src/posix_compat_win32.cpp
+// in soa_compat, so that this header needs no <windows.h> (posix_compat.h's rule).
+std::string exe_path_win32();
+#endif
 
 // The 3.7.0 APK as downloaded from APKPure (README.md "Game files"), the name tried first.
 inline constexpr const char* kApk370Name = "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk";
@@ -71,10 +67,7 @@ inline bool is_file(const std::string& p) {
 // The running executable's path ('/' separators on both platforms), "" when unknown.
 inline std::string exe_path() {
 #ifdef _WIN32
-    wchar_t buf[32768];
-    DWORD n = GetModuleFileNameW(nullptr, buf, (DWORD)(sizeof buf / sizeof buf[0]));
-    if (n == 0 || n >= sizeof buf / sizeof buf[0]) return "";
-    std::string s = std::filesystem::path(std::wstring(buf, n)).string();
+    std::string s = exe_path_win32();
 #else
     std::error_code ec;
     std::string s = std::filesystem::read_symlink("/proc/self/exe", ec).string();

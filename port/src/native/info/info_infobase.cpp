@@ -268,7 +268,8 @@ NATIVE_TEST("info/deserialize-child-children") {
             if (x != y) {
                 size_t i = 0;
                 while (i < x.size() && i < y.size() && x[i] == y[i]) i++;
-                t.fail("child %s at +%#x differs at %zu (%zu / %zu)", ch.cls->name, ch.offset, i, x.size(), y.size());
+                t.fail("child %s at +%#x differs at %llu (%llu / %llu)", ch.cls->name, ch.offset, (unsigned long long)i,
+                       (unsigned long long)x.size(), (unsigned long long)y.size());
             }
         }
     }

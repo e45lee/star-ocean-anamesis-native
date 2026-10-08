@@ -2,8 +2,8 @@
 // libSOA.so: work/libSOA-3.7.0.so (3.7.0, sha256 698d55b9fdf93c3573b2e71dd614451529e0f396779e5021c68cc423b2b98c5e)
 // Each info: InfoBase (info_layout.h), its properties (params_layout.h) and its children (infos, or
 // containers: InfoContainer), read from objects the lib builds, and what its Initialize does, run under
-// unicorn (port/src/native/info/README.md "Info classes"). 187 infos, 210 containers; 182 Initialize step
-// lists. Initialize left to the guest: CPartyInfo (no layout (no object of the class was built)); CPlayerInfo (a string property gets a default text (push_back by push_back)); CInfoManager (the manager's own Initialize (other members first)); CBattleLogInfo (no layout (no object of the class was built)); CWorldMapCellInfo (no layout (no object of the class was built)).
+// unicorn (port/src/native/info/README.md "Info classes"). 186 infos, 210 containers; 181 Initialize step
+// lists. Initialize left to the guest: CPartyInfo (no layout (no object of the class was built)); CPlayerInfo (a string property gets a default text (push_back by push_back)); CInfoManager (the manager's own Initialize (other members first)); CBattleLogInfo (no layout (no object of the class was built)); CWorldMapCellInfo (no layout (no object of the class was built)); CCharacterDecoSendInfo (no layout (no object of the class was built)).
 #ifndef SOA_NATIVE_INFO_GEN_INFO_CLASSES_H
 #define SOA_NATIVE_INFO_GEN_INFO_CLASSES_H
 
@@ -3325,7 +3325,7 @@ inline constexpr InfoStep kAddBuffByDeityCharacterInit[] = {
 };
 inline constexpr InfoClass kInfo_AddBuffByDeityCharacter{"AddBuffByDeityCharacter", "_ZTV23AddBuffByDeityCharacter", InfoKind::kInfo, sizeof(AddBuffByDeityCharacter), kAddBuffByDeityCharacterProps, {}, kAddBuffByDeityCharacterInit};
 
-// CPersonStatusInfo: 0x1680 bytes, 73 properties, 8 children.
+// CPersonStatusInfo: 0x1690 bytes, 73 properties, 8 children.
 class CPersonStatusInfo {
 public:
     InfoBase base;  // 0x000
@@ -3410,6 +3410,7 @@ public:
     UniverseDeityBoostInfo m_UniverseDeityBoostInfo;  // 0x11e8 UniverseDeityBoostInfo ("UniverseDeityBoostInfo")
     DeityInfo m_DeityInfo;  // 0x13d0 DeityInfo ("DeityInfo")
     AddBuffByDeityCharacter m_UniverseDeityBoostInfo_1498;  // 0x1498 AddBuffByDeityCharacter ("UniverseDeityBoostInfo")
+    u8 m_tail[0x10];  // 0x1680 plain data after the last member (copied as it is; the constructor leaves it)
 };
 static_assert(offsetof(CPersonStatusInfo, m_id) == 0x038);
 static_assert(offsetof(CPersonStatusInfo, m_player_id) == 0x068);
@@ -3492,7 +3493,8 @@ static_assert(offsetof(CPersonStatusInfo, m_UniverseAddStatusInfo) == 0x1000);
 static_assert(offsetof(CPersonStatusInfo, m_UniverseDeityBoostInfo) == 0x11e8);
 static_assert(offsetof(CPersonStatusInfo, m_DeityInfo) == 0x13d0);
 static_assert(offsetof(CPersonStatusInfo, m_UniverseDeityBoostInfo_1498) == 0x1498);
-static_assert(sizeof(CPersonStatusInfo) == 0x1680);
+static_assert(offsetof(CPersonStatusInfo, m_tail) == 0x1680);
+static_assert(sizeof(CPersonStatusInfo) == 0x1690);
 inline constexpr InfoProp kCPersonStatusInfoProps[] = {
     {0x038, InfoPropKind::kU64, false, 163},
     {0x068, InfoPropKind::kU32, false, 164},
@@ -3661,7 +3663,7 @@ inline constexpr InfoStep kCPersonStatusInfoInit[] = {
     {InfoStep::kChild, 0x13d0, nullptr, 0, 0},
     {InfoStep::kChild, 0x1498, nullptr, 0, 0},
 };
-inline constexpr InfoClass kInfo_CPersonStatusInfo{"CPersonStatusInfo", "_ZTV17CPersonStatusInfo", InfoKind::kInfo, sizeof(CPersonStatusInfo), kCPersonStatusInfoProps, kCPersonStatusInfoChildren, kCPersonStatusInfoInit};
+inline constexpr InfoClass kInfo_CPersonStatusInfo{"CPersonStatusInfo", "_ZTV17CPersonStatusInfo", InfoKind::kInfo, sizeof(CPersonStatusInfo), kCPersonStatusInfoProps, kCPersonStatusInfoChildren, kCPersonStatusInfoInit, nullptr, 0, {}, 0x10};
 
 // CRemoveFollowInfo: 0x68 bytes, 1 properties, 0 children.
 class CRemoveFollowInfo {
@@ -5359,30 +5361,6 @@ inline constexpr InfoClass kInfo_CAddDecoObjectInfoList{"CAddDecoObjectInfoList"
 inline constexpr InfoClass kInfo_CAddFriendGaugeInfoMap{"CAddFriendGaugeInfoMap", "_ZTV22CAddFriendGaugeInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFriendGaugeInfo, 8, {}};
 inline constexpr InfoClass kInfo_CAddMutualFollowIDInfo{"CAddMutualFollowIDInfo", "_ZTV22CAddMutualFollowIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 28}};
 inline constexpr InfoClass kInfo_CAddPresentBoxInfoList{"CAddPresentBoxInfoList", "_ZTV22CAddPresentBoxInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPresentBoxInfo, 8, {}};
-// CCharacterDecoSendInfo: 0xc8 bytes, 3 properties, 0 children.
-class CCharacterDecoSendInfo {
-public:
-    InfoBase base;  // 0x000
-    params::CParameterPropertyValue<u64, 162> m_character_id;  // 0x038 "character_id"
-    params::CParameterPropertyValue<u32, 163> m_hair_id;  // 0x068 "hair_id"
-    params::CParameterPropertyValue<u32, 164> m_pose_id;  // 0x098 "pose_id"
-};
-static_assert(offsetof(CCharacterDecoSendInfo, m_character_id) == 0x038);
-static_assert(offsetof(CCharacterDecoSendInfo, m_hair_id) == 0x068);
-static_assert(offsetof(CCharacterDecoSendInfo, m_pose_id) == 0x098);
-static_assert(sizeof(CCharacterDecoSendInfo) == 0xc8);
-inline constexpr InfoProp kCCharacterDecoSendInfoProps[] = {
-    {0x038, InfoPropKind::kU64, false, 162},
-    {0x068, InfoPropKind::kU32, false, 163},
-    {0x098, InfoPropKind::kU32, false, 164},
-};
-inline constexpr InfoStep kCCharacterDecoSendInfoInit[] = {
-    {InfoStep::kProperty, 0x038, "character_id", 8, 0x0},
-    {InfoStep::kProperty, 0x068, "hair_id", 4, 0x0},
-    {InfoStep::kProperty, 0x098, "pose_id", 4, 0x0},
-};
-inline constexpr InfoClass kInfo_CCharacterDecoSendInfo{"CCharacterDecoSendInfo", "_ZTV22CCharacterDecoSendInfo", InfoKind::kInfo, sizeof(CCharacterDecoSendInfo), kCCharacterDecoSendInfoProps, {}, kCCharacterDecoSendInfoInit};
-
 inline constexpr InfoClass kInfo_CDebugGearDropInfoList{"CDebugGearDropInfoList", "_ZTV22CDebugGearDropInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 414}};
 // CEquipWeaponResultPersonInfo: 0x98 bytes, 2 properties, 0 children.
 class CEquipWeaponResultPersonInfo {
@@ -7365,7 +7343,6 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(Sphere211TreasureInfo) \
     X(TowerScheduleInfo_S2C) \
     X(CActiveMissionListInfo) \
-    X(CCharacterDecoSendInfo) \
     X(CEquipWeaponResultPersonInfo) \
     X(CEquipWeaponResultItemInfo) \
     X(CEquipWeaponResultInfo) \
@@ -7463,6 +7440,136 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(CPlayerCharacterMasteryInfo, "_ZN27CPlayerCharacterMasteryInfoC2Ev") \
     X(DeepMissionEndResultPlayerInfo, "_ZN30DeepMissionEndResultPlayerInfoC2Ev") \
     /* end of INFO_CONSTRUCTORS */
+
+// X(Class, role, symbol): the exported copy constructors, destructors, operator=s and moves of the
+// infos above without a container inside (one per address).
+#define INFO_COPIES(X) \
+    X(CConfigInfo, CtorCopy, "_ZN11CConfigInfoC2ERKS_") \
+    X(CFollowPlayerInfo, CtorCopy, "_ZN17CFollowPlayerInfoC2ERKS_") \
+    X(CFollowPlayerInfo, Dtor, "_ZN17CFollowPlayerInfoD2Ev") \
+    X(CFollowPlayerInfo, Assign, "_ZN17CFollowPlayerInfoaSERKS_") \
+    X(CFollowPlayerInfo, Move, "_ZN17CFollowPlayerInfoC2EOS_") \
+    X(CFollowPlayerInfo, MoveAssign, "_ZN17CFollowPlayerInfoaSEOS_") \
+    X(CAttachedGearInfo, CtorCopy, "_ZN17CAttachedGearInfoC2ERKS_") \
+    X(CAttachedGearInfo, Assign, "_ZN17CAttachedGearInfoaSERKS_") \
+    X(CCharacterDecoObjectInfo, CtorCopy, "_ZN24CCharacterDecoObjectInfoC2ERKS_") \
+    X(CCharacterDecoObjectInfo, Dtor, "_ZN24CCharacterDecoObjectInfoD2Ev") \
+    X(CCharacterDecoObjectInfo, Assign, "_ZN24CCharacterDecoObjectInfoaSERKS_") \
+    X(UniverseAddStatusInfo, CtorCopy, "_ZN21UniverseAddStatusInfoC2ERKS_") \
+    X(UniverseAddStatusInfo, Assign, "_ZN21UniverseAddStatusInfoaSERKS_") \
+    X(UniverseAddStatusInfo, Move, "_ZN21UniverseAddStatusInfoC2EOS_") \
+    X(UniverseAddStatusInfo, MoveAssign, "_ZN21UniverseAddStatusInfoaSEOS_") \
+    X(CPlayerInfo, CtorCopy, "_ZN11CPlayerInfoC2ERKS_") \
+    X(CPlayerInfo, Dtor, "_ZN11CPlayerInfoD2Ev") \
+    X(CPlayerInfo, Assign, "_ZN11CPlayerInfoaSERKS_") \
+    X(CPlayerInfo, MoveAssign, "_ZN11CPlayerInfoaSEOS_") \
+    X(CCheckInInfo, CtorCopy, "_ZN12CCheckInInfoC2ERKS_") \
+    X(CCheckInInfo, Dtor, "_ZN12CCheckInInfoD2Ev") \
+    X(CWebViewInfoElement, CtorCopy, "_ZN19CWebViewInfoElementC2ERKS_") \
+    X(PartySetCharacterInfo, CtorCopy, "_ZN21PartySetCharacterInfoC2ERKS_") \
+    X(PartySetCharacterInfo, Assign, "_ZN21PartySetCharacterInfoaSERKS_") \
+    X(CBoxGachaInfo, CtorCopy, "_ZN13CBoxGachaInfoC2ERKS_") \
+    X(CBoxGachaInfo, Move, "_ZN13CBoxGachaInfoC2EOS_") \
+    X(CCampaignInfo, CtorCopy, "_ZN13CCampaignInfoC2ERKS_") \
+    X(CCampaignInfo, Dtor, "_ZN13CCampaignInfoD2Ev") \
+    X(CCoinInfo, CtorCopy, "_ZN9CCoinInfoC2ERKS_") \
+    X(CCoinInfo, Dtor, "_ZN9CCoinInfoD2Ev") \
+    X(CCoinInfo, Move, "_ZN9CCoinInfoC2EOS_") \
+    X(CItemShopInfo, CtorCopy, "_ZN13CItemShopInfoC2ERKS_") \
+    X(CItemShopInfo, Dtor, "_ZN13CItemShopInfoD2Ev") \
+    X(CWorldMapInfo, Dtor, "_ZN13CWorldMapInfoD2Ev") \
+    X(CBannerURLInfo, CtorCopy, "_ZN14CBannerURLInfoC2ERKS_") \
+    X(CGachaHashInfo, Dtor, "_ZN14CGachaHashInfoD2Ev") \
+    X(CGachaRateContentInfo, CtorCopy, "_ZN21CGachaRateContentInfoC2ERKS_") \
+    X(CGachaRateContentInfo, Dtor, "_ZN21CGachaRateContentInfoD2Ev") \
+    X(CStackItemInfo, Assign, "_ZN14CStackItemInfoaSERKS_") \
+    X(CStackItemInfo, MoveAssign, "_ZN14CStackItemInfoaSEOS_") \
+    X(CDropContentInfo, CtorCopy, "_ZN16CDropContentInfoC2ERKS_") \
+    X(CDropContentInfo, Dtor, "_ZN16CDropContentInfoD2Ev") \
+    X(CDropContentInfo, Move, "_ZN16CDropContentInfoC2EOS_") \
+    X(CExpirationInfo, CtorCopy, "_ZN15CExpirationInfoC2ERKS_") \
+    X(CExpirationInfo, Dtor, "_ZN15CExpirationInfoD2Ev") \
+    X(CExpirationInfo, MoveAssign, "_ZN15CExpirationInfoaSEOS_") \
+    X(CGachaCountInfo, Dtor, "_ZN15CGachaCountInfoD2Ev") \
+    X(UpdateMissionStartPlayerInfo, Dtor, "_ZN28UpdateMissionStartPlayerInfoD2Ev") \
+    X(UpdateMissionStartPlayerInfo, MoveAssign, "_ZN28UpdateMissionStartPlayerInfoaSEOS_") \
+    X(CPresentBoxInfo, CtorCopy, "_ZN15CPresentBoxInfoC2ERKS_") \
+    X(CPresentBoxInfo, Dtor, "_ZN15CPresentBoxInfoD2Ev") \
+    X(CPresentBoxInfo, Move, "_ZN15CPresentBoxInfoC2EOS_") \
+    X(CPresentBoxInfo, MoveAssign, "_ZN15CPresentBoxInfoaSEOS_") \
+    X(CAchievementInfo, CtorCopy, "_ZN16CAchievementInfoC2ERKS_") \
+    X(CAchievementInfo, Dtor, "_ZN16CAchievementInfoD2Ev") \
+    X(CAchievementInfo, Assign, "_ZN16CAchievementInfoaSERKS_") \
+    X(CAchievementInfo, MoveAssign, "_ZN16CAchievementInfoaSEOS_") \
+    X(CFooterBadgeInfo, CtorCopy, "_ZN16CFooterBadgeInfoC2ERKS_") \
+    X(CFooterBadgeInfo, Dtor, "_ZN16CFooterBadgeInfoD2Ev") \
+    X(CFriendGaugeInfo, CtorCopy, "_ZN16CFriendGaugeInfoC2ERKS_") \
+    X(CFriendGaugeInfo, Dtor, "_ZN16CFriendGaugeInfoD2Ev") \
+    X(CFriendGaugeInfo, Assign, "_ZN16CFriendGaugeInfoaSERKS_") \
+    X(CMissionDropInfo, CtorCopy, "_ZN16CMissionDropInfoC2ERKS_") \
+    X(CPlayMissionInfo, CtorCopy, "_ZN16CPlayMissionInfoC2ERKS_") \
+    X(CPlayMissionInfo, Move, "_ZN16CPlayMissionInfoC2EOS_") \
+    X(CServerBuildInfo, Dtor, "_ZN16CServerBuildInfoD2Ev") \
+    X(CT_WorldBossInfo, Dtor, "_ZN16CT_WorldBossInfoD2Ev") \
+    X(EventRankingInfo, CtorCopy, "_ZN16EventRankingInfoC2ERKS_") \
+    X(EventRankingInfo, Dtor, "_ZN16EventRankingInfoD2Ev") \
+    X(CUpdateCharacterInfo, CtorCopy, "_ZN20CUpdateCharacterInfoC2ERKS_") \
+    X(CUpdateCharacterInfo, Dtor, "_ZN20CUpdateCharacterInfoD2Ev") \
+    X(CBoxGachaListInfo, CtorCopy, "_ZN17CBoxGachaListInfoC2ERKS_") \
+    X(CBoxGachaListInfo, Move, "_ZN17CBoxGachaListInfoC2EOS_") \
+    X(CMissionStageInfo, CtorCopy, "_ZN17CMissionStageInfoC2ERKS_") \
+    X(CMissionStageInfo, Dtor, "_ZN17CMissionStageInfoD2Ev") \
+    X(UniverseDeityBoostInfo, CtorCopy, "_ZN22UniverseDeityBoostInfoC2ERKS_") \
+    X(UniverseDeityBoostInfo, Assign, "_ZN22UniverseDeityBoostInfoaSERKS_") \
+    X(UniverseDeityBoostInfo, Move, "_ZN22UniverseDeityBoostInfoC2EOS_") \
+    X(UniverseDeityBoostInfo, MoveAssign, "_ZN22UniverseDeityBoostInfoaSEOS_") \
+    X(CDeepSpaceMissionInfo, CtorCopy, "_ZN21CDeepSpaceMissionInfoC2ERKS_") \
+    X(CDeepSpaceMissionInfo, Dtor, "_ZN21CDeepSpaceMissionInfoD2Ev") \
+    X(CDeepSpaceMissionInfo, Assign, "_ZN21CDeepSpaceMissionInfoaSERKS_") \
+    X(CDeepSpaceMissionInfo, Move, "_ZN21CDeepSpaceMissionInfoC2EOS_") \
+    X(CDeepSpaceShipInfo, CtorCopy, "_ZN18CDeepSpaceShipInfoC2ERKS_") \
+    X(CDeepSpaceShipInfo, Dtor, "_ZN18CDeepSpaceShipInfoD2Ev") \
+    X(CDeepSpaceShipInfo, Assign, "_ZN18CDeepSpaceShipInfoaSERKS_") \
+    X(CDirectItemShopInfo, CtorCopy, "_ZN19CDirectItemShopInfoC2ERKS_") \
+    X(CDirectItemShopInfo, Dtor, "_ZN19CDirectItemShopInfoD2Ev") \
+    X(CGachaTestResultInfo, Dtor, "_ZN20CGachaTestResultInfoD2Ev") \
+    X(CGachaTestResultInfo, Move, "_ZN20CGachaTestResultInfoC2EOS_") \
+    X(CGiftGachaResultInfo, CtorCopy, "_ZN20CGiftGachaResultInfoC2ERKS_") \
+    X(CMissionDropItemInfo, CtorCopy, "_ZN20CMissionDropItemInfoC2ERKS_") \
+    X(CMissionDropItemInfo, Dtor, "_ZN20CMissionDropItemInfoD2Ev") \
+    X(CMissionDropItemInfo, Assign, "_ZN20CMissionDropItemInfoaSERKS_") \
+    X(CWorldBossPlayerInfo, CtorCopy, "_ZN20CWorldBossPlayerInfoC2ERKS_") \
+    X(CWorldBossPlayerInfo, Dtor, "_ZN20CWorldBossPlayerInfoD2Ev") \
+    X(CWorldBossPlayerInfo, Move, "_ZN20CWorldBossPlayerInfoC2EOS_") \
+    X(CWorldBossPlayerInfo, MoveAssign, "_ZN20CWorldBossPlayerInfoaSEOS_") \
+    X(Sphere211RankingInfo, Dtor, "_ZN20Sphere211RankingInfoD2Ev") \
+    X(SubscriptionPlanInfo, Dtor, "_ZN20SubscriptionPlanInfoD2Ev") \
+    X(CFollowPlayerListElementInfo, CtorCopy, "_ZN28CFollowPlayerListElementInfoC2ERKS_") \
+    X(CFollowPlayerListElementInfo, Dtor, "_ZN28CFollowPlayerListElementInfoD2Ev") \
+    X(CPremiumLoginBonusInfo, CtorCopy, "_ZN22CPremiumLoginBonusInfoC2ERKS_") \
+    X(CPremiumLoginBonusInfo, Dtor, "_ZN22CPremiumLoginBonusInfoD2Ev") \
+    X(EventRankingPlayerInfo, CtorCopy, "_ZN22EventRankingPlayerInfoC2ERKS_") \
+    X(Sphere211FloorAssetInfo, CtorCopy, "_ZN23Sphere211FloorAssetInfoC2ERKS_") \
+    X(Sphere211FloorAssetInfo, Dtor, "_ZN23Sphere211FloorAssetInfoD2Ev") \
+    X(Sphere211FloorAssetInfo, Move, "_ZN23Sphere211FloorAssetInfoC2EOS_") \
+    X(SubscriptionHistoryInfo, Dtor, "_ZN23SubscriptionHistoryInfoD2Ev") \
+    X(CBoostCharacterResultInfo, CtorCopy, "_ZN25CBoostCharacterResultInfoC2ERKS_") \
+    X(CBoostCharacterResultInfo, Move, "_ZN25CBoostCharacterResultInfoC2EOS_") \
+    X(CPersonAddStatusResultInfo, Dtor, "_ZN26CPersonAddStatusResultInfoD2Ev") \
+    X(SubscriptionCampaignResult, CtorCopy, "_ZN26SubscriptionCampaignResultC2ERKS_") \
+    X(SubscriptionGachaCountInfo, CtorCopy, "_ZN26SubscriptionGachaCountInfoC2ERKS_") \
+    X(SubscriptionGachaCountInfo, Dtor, "_ZN26SubscriptionGachaCountInfoD2Ev") \
+    X(CPlayerCharacterMasteryInfo, CtorCopy, "_ZN27CPlayerCharacterMasteryInfoC2ERKS_") \
+    X(CPlayerCharacterMasteryInfo, Dtor, "_ZN27CPlayerCharacterMasteryInfoD2Ev") \
+    X(CPlayerCharacterMasteryInfo, Move, "_ZN27CPlayerCharacterMasteryInfoC2EOS_") \
+    X(CWorldMapMissionElementInfo, CtorCopy, "_ZN27CWorldMapMissionElementInfoC2ERKS_") \
+    X(CDeepSpaceDebugCharacterInfo, Dtor, "_ZN28CDeepSpaceDebugCharacterInfoD2Ev") \
+    X(CPlayerCharacterFavorInfoElement, Dtor, "_ZN32CPlayerCharacterFavorInfoElementD2Ev") \
+    X(CDeepSpaceDebugRareMissionInfo, CtorCopy, "_ZN30CDeepSpaceDebugRareMissionInfoC2ERKS_") \
+    X(DeepMissionEndResultPlayerInfo, Dtor, "_ZN30DeepMissionEndResultPlayerInfoD2Ev") \
+    X(CMissionResultCharacterFavorInfo, CtorCopy, "_ZN32CMissionResultCharacterFavorInfoC2ERKS_") \
+    X(CMissionResultCharacterFavorInfo, Dtor, "_ZN32CMissionResultCharacterFavorInfoD2Ev") \
+    /* end of INFO_COPIES */
 
 // X(Class, Initialize symbol): every info above whose Initialize the natives take (one per address).
 #define INFO_INITIALIZERS(X) \
@@ -7588,7 +7695,6 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(Sphere211TreasureInfo, "_ZN21Sphere211TreasureInfo10InitializeEv") \
     X(TowerScheduleInfo_S2C, "_ZN21TowerScheduleInfo_S2C10InitializeEv") \
     X(CActiveMissionListInfo, "_ZN22CActiveMissionListInfo10InitializeEv") \
-    X(CCharacterDecoSendInfo, "_ZN22CCharacterDecoSendInfo10InitializeEv") \
     X(CEquipWeaponResultPersonInfo, "_ZN28CEquipWeaponResultPersonInfo10InitializeEv") \
     X(CEquipWeaponResultItemInfo, "_ZN26CEquipWeaponResultItemInfo10InitializeEv") \
     X(CEquipWeaponResultInfo, "_ZN22CEquipWeaponResultInfo10InitializeEv") \

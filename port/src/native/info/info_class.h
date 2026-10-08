@@ -41,16 +41,41 @@ struct InfoCode {
     // NameHash() = m_name's hash, the property). A child: its pParseName() (vtable slot 3) as a CHash32,
     // the child map's __emplace_unique_impl(that, the child), the child's Initialize (slot 2).
     static void Initialize(const InfoClass& C, u8* obj);
+    // The copy constructor: InfoBase's (the class's vtable; both maps by CSTLMap's copy constructor: the
+    // values as they are, so the copy's maps point at the source's properties and children: a guest
+    // quirk, kept), each property's (its vtable, m_next, m_named, the name's hash, the value as wide as it
+    // is; a string copy-constructed), each child's the same way.
+    static void CtorCopy(const InfoClass& C, u8* obj, const u8* src);
+    // The move constructor: the copy's, but a string takes the source's three words and leaves them 0
+    // (InfoBase has no move: its maps are copied).
+    static void Move(const InfoClass& C, u8* obj, u8* src);
+    // operator=: unless obj is src, both maps by __tree::__assign_multi(src's begin, end); each property's
+    // m_next, m_named, the hash, the value; a string assigned (libc++: in place when it fits, else
+    // __grow_by_and_replace; nothing for itself); each child's operator=. The vtables are left alone.
+    static void Assign(const InfoClass& C, u8* obj, const u8* src);
+    // operator=(&&): the same, but a string is cleared, shrunk (reserve(0): a long one's storage freed)
+    // and takes the source's three words, which are left 0.
+    static void MoveAssign(const InfoClass& C, u8* obj, u8* src);
+    // The destructor: the members from the last: a property's (a string's own vtable, its long storage
+    // freed) CParameterPropertyBase<N>'s vtable (~CHash32: a RET), a child's destructor; then InfoBase's:
+    // its vtable, the child map's nodes, the property map's (__tree::destroy(root); the fields stay).
+    static void Dtor(const InfoClass& C, u8* obj);
 };
 
 // The state the live check and the tests compare: every property's bytes (a string by content), both
 // maps' entries (key, the value's offset from the object), the children's, recursively.
 std::vector<u8> info_state(const InfoClass& C, const u8* obj);
+// The same without the maps' entries (their sizes kept): a source the checks copied (the copy's maps
+// point into the original) compared with the original.
+std::vector<u8> info_state_no_maps(const InfoClass& C, const u8* obj);
+// The bytes a destructor leaves that two runs can compare: every byte but the maps' fields (each run's
+// node pointers stay) and the strings' words.
+std::vector<u8> info_dtor_state(const InfoClass& C, const u8* obj);
 // Frees what Initialize allocated (the maps' nodes, recursively): the tests' clean-up.
 void info_free_maps(const InfoClass& C, u8* obj);
 
 // The checked guest functions of class C (info_class_bind.cpp).
-enum class InfoRole { Initialize, Ctor, kCount };
+enum class InfoRole { Initialize, Ctor, CtorCopy, Dtor, Assign, Move, MoveAssign, kCount };
 
 // TInfo<C>: the methods every info class has (each exported for some classes; gen/info_classes.h
 // INFO_INITIALIZERS / INFO_CONSTRUCTORS say which). Layout: C's.
@@ -62,6 +87,11 @@ class TInfo {
 public:
     void Initialize();  // _ZN<C>10InitializeEv (vtable slot 2)
     void Ctor();        // _ZN<C>C2Ev
+    void CtorCopy(const TInfo* o);   // _ZN<C>C2ERKS_
+    void Dtor();                     // _ZN<C>D2Ev
+    TInfo* Assign(const TInfo* o);   // _ZN<C>aSERKS_
+    void Move(TInfo* o);             // _ZN<C>C2EOS_
+    TInfo* MoveAssign(TInfo* o);     // _ZN<C>aSEOS_
 
     C c;
 };

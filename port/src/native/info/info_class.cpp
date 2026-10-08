@@ -14,6 +14,7 @@
 #include "native/common/guest_std.h"
 #include "native/hash/hash_layout.h"
 #include "native/info/info_guest.h"
+#include "native/libcxx/libcxx_string.h"
 
 namespace soa::native::info {
 
@@ -153,6 +154,130 @@ void InfoCode::Initialize(const InfoClass& C, u8* obj) {
     }
 }
 
+// ---- copies, assignments, moves, the destructor (infos without a container inside) ----
+
+namespace {
+
+AnyStringProperty* string_property(u8* obj, const InfoProp& d) { return reinterpret_cast<AnyStringProperty*>(obj + d.offset); }
+u8* value_bytes(u8* obj, const InfoProp& d) { return obj + d.offset + offsetof(AnyValueProperty, m_value); }
+const u8* value_bytes(const u8* obj, const InfoProp& d) { return obj + d.offset + offsetof(AnyValueProperty, m_value); }
+
+// basic_string::operator=(basic_string const&) as the copy assignment inlines it: nothing for itself; in
+// place when the source fits the capacity, else __grow_by_and_replace.
+void assign_string(params::String* dst, const params::String* src) {
+    if (dst == src) return;
+    u64 n = src->size();
+    const char* s = src->data();
+    u64 cap = dst->capacity();
+    if (n > cap) {
+        u64 sz = dst->size();
+        dst->__grow_by_and_replace(cap, n - cap, sz, 0, sz, n, s);
+        return;
+    }
+    char* to = dst->is_long() ? dst->r.l.data : reinterpret_cast<char*>(&dst->r.s.data[0]);
+    if (n) std::memmove(to, s, n);
+    to[n] = 0;
+    if (dst->is_long()) dst->r.l.size = n;
+    else dst->r.s.head.size = static_cast<u8>(n << 1);
+}
+
+// The source's three words taken, the source's left 0.
+void steal_string(params::String* dst, params::String* src) {
+    std::memcpy(dst, src, sizeof *dst);
+    std::memset(src, 0, sizeof *src);
+}
+
+enum class Copy { kCopy, kMove };
+
+void copy_into(const InfoClass& C, u8* obj, u8* src, Copy how) {
+    const InfoResolved& R = resolve(C);
+    static const u64 hash_vtable = g::sym("_ZTVN9Framework7CHash32E") + 16;
+    auto* base = reinterpret_cast<InfoBase*>(obj);
+    auto* sb = reinterpret_cast<const InfoBase*>(src);
+    base->vtable = reinterpret_cast<const void*>(R.vtable);
+    g::CopyPropertyMap(&base->m_properties, &sb->m_properties);
+    g::CopyChildMap(&base->m_children, &sb->m_children);
+    for (size_t i = 0; i < C.props.size(); i++) {
+        const InfoProp& d = C.props[i];
+        AnyProperty* p = property(obj, d);
+        const AnyProperty* q = property(src, d);
+        p->base.vtable = reinterpret_cast<const void*>(R.vt_final[i]);
+        p->base.m_next = q->base.m_next;
+        p->m_named = q->m_named;
+        p->m_name.vtable = hash_vtable;
+        p->m_name.m_hash = q->m_name.m_hash;
+        if (d.kind != InfoPropKind::kString) std::memcpy(value_bytes(obj, d), value_bytes(src, d), value_width(d.kind));
+        else if (how == Copy::kMove) steal_string(&string_property(obj, d)->m_value, &string_property(src, d)->m_value);
+        else libcxx::string_copy_construct(&string_property(obj, d)->m_value, string_property(src, d)->m_value);
+    }
+    for (const InfoChild& ch : C.children) copy_into(*ch.cls, obj + ch.offset, src + ch.offset, how);
+    if (C.tail) std::memcpy(obj + C.size - C.tail, src + C.size - C.tail, C.tail);
+}
+
+void assign_from(const InfoClass& C, u8* obj, u8* src, Copy how) {
+    auto* base = reinterpret_cast<InfoBase*>(obj);
+    auto* sb = reinterpret_cast<const InfoBase*>(src);
+    if (obj != src) {
+        g::AssignPropertyMap(&base->m_properties, &sb->m_properties);
+        g::AssignChildMap(&base->m_children, &sb->m_children);
+    }
+    for (const InfoProp& d : C.props) {
+        AnyProperty* p = property(obj, d);
+        const AnyProperty* q = property(src, d);
+        p->base.m_next = q->base.m_next;
+        p->m_named = q->m_named;
+        p->m_name.m_hash = q->m_name.m_hash;
+        if (d.kind != InfoPropKind::kString) {
+            std::memmove(value_bytes(obj, d), value_bytes(src, d), value_width(d.kind));
+        } else if (how == Copy::kCopy) {
+            assign_string(&string_property(obj, d)->m_value, &string_property(src, d)->m_value);
+        } else {
+            // clear(), reserve(0) (a long string shrinks: its storage freed), then the source's words
+            params::String& v = string_property(obj, d)->m_value;
+            if (v.is_long()) g::StlFree(v.r.l.data);
+            std::memset(&v, 0, sizeof v);
+            steal_string(&v, &string_property(src, d)->m_value);
+        }
+    }
+    for (const InfoChild& ch : C.children) assign_from(*ch.cls, obj + ch.offset, src + ch.offset, how);
+    if (C.tail) std::memmove(obj + C.size - C.tail, src + C.size - C.tail, C.tail);
+}
+
+}  // namespace
+
+void InfoCode::CtorCopy(const InfoClass& C, u8* obj, const u8* src) { copy_into(C, obj, const_cast<u8*>(src), Copy::kCopy); }
+void InfoCode::Move(const InfoClass& C, u8* obj, u8* src) { copy_into(C, obj, src, Copy::kMove); }
+void InfoCode::Assign(const InfoClass& C, u8* obj, const u8* src) { assign_from(C, obj, const_cast<u8*>(src), Copy::kCopy); }
+void InfoCode::MoveAssign(const InfoClass& C, u8* obj, u8* src) { assign_from(C, obj, src, Copy::kMove); }
+
+void InfoCode::Dtor(const InfoClass& C, u8* obj) {
+    const InfoResolved& R = resolve(C);
+    static const u64 infobase_vtable = g::sym("_ZTV8InfoBase") + 16;
+    auto* base = reinterpret_cast<InfoBase*>(obj);
+    base->vtable = reinterpret_cast<const void*>(R.vtable);
+    // the members from the last (properties and children interleave by offset)
+    size_t pi = C.props.size(), ci = C.children.size();
+    while (pi || ci) {
+        bool child = ci && (!pi || C.children[ci - 1].offset > C.props[pi - 1].offset);
+        if (child) {
+            const InfoChild& ch = C.children[--ci];
+            Dtor(*ch.cls, obj + ch.offset);
+            continue;
+        }
+        const InfoProp& d = C.props[--pi];
+        AnyProperty* p = property(obj, d);
+        if (d.kind == InfoPropKind::kString) {
+            p->base.vtable = reinterpret_cast<const void*>(R.vt_final[pi]);
+            params::String& v = string_property(obj, d)->m_value;
+            if (v.is_long()) g::StlFree(v.r.l.data);
+        }
+        p->base.vtable = reinterpret_cast<const void*>(R.vt_base[pi]);
+    }
+    base->vtable = reinterpret_cast<const void*>(infobase_vtable);
+    g::DestroyChildTree(&base->m_children);
+    g::DestroyPropertyTree(&base->m_properties);
+}
+
 // ---- the state the checks compare, the tests' clean-up ----
 
 namespace {
@@ -192,8 +317,11 @@ u64 relative(const void* p, Span top, u64 other) {
     return (v - other) | (u64(1) << 63);
 }
 
+thread_local bool t_maps = true;  // (info_state_no_maps: the map sizes only)
+
 void map_state(std::vector<u8>& out, const PropertyMap& m, Span top) {
     put(out, &m.size, 8);
+    if (!t_maps) return;
     u64 lo = ~u64(0);
     each_node(m, [&](const PropertyNode* n) { lo = std::min(lo, reinterpret_cast<u64>(n->value.second)); });
     each_node(m, [&](const PropertyNode* n) {
@@ -234,6 +362,7 @@ void state(std::vector<u8>& out, const InfoClass& C, const u8* obj, Span top) {
     }
     for (const InfoProp& d : C.props) prop_state(out, d, obj, top);
     for (const InfoChild& ch : C.children) state(out, *ch.cls, obj + ch.offset, top);
+    put(out, obj + C.size - C.tail, C.tail);
 }
 
 void prop_state(std::vector<u8>& out, const InfoProp& d, const u8* obj, Span top) {
@@ -258,6 +387,35 @@ void prop_state(std::vector<u8>& out, const InfoProp& d, const u8* obj, Span top
 std::vector<u8> info_state(const InfoClass& C, const u8* obj) {
     std::vector<u8> out;
     state(out, C, obj, Span{reinterpret_cast<u64>(obj), reinterpret_cast<u64>(obj) + C.size});
+    return out;
+}
+
+std::vector<u8> info_state_no_maps(const InfoClass& C, const u8* obj) {
+    t_maps = false;
+    std::vector<u8> out = info_state(C, obj);
+    t_maps = true;
+    return out;
+}
+
+std::vector<u8> info_dtor_state(const InfoClass& K, const u8* obj) {
+    std::vector<u8> mask(K.size, 1);
+    auto clear = [&](size_t off, size_t n) { std::fill(mask.begin() + off, mask.begin() + off + n, 0); };
+    std::vector<std::pair<const InfoClass*, size_t>> todo{{&K, 0}};
+    while (!todo.empty()) {
+        auto [c, at] = todo.back();
+        todo.pop_back();
+        clear(at + offsetof(InfoBase, m_properties), 0x30);
+        if (c->kind != InfoKind::kInfo) {
+            clear(at + 0x38, 0x18);
+            continue;
+        }
+        for (const InfoProp& d : c->props)
+            if (d.kind == InfoPropKind::kString) clear(at + d.offset + 0x28, 0x18);
+        for (const InfoChild& ch : c->children) todo.push_back({ch.cls, at + ch.offset});
+    }
+    std::vector<u8> out;
+    for (size_t i = 0; i < K.size; i++)
+        if (mask[i]) out.push_back(obj[i]);
     return out;
 }
 

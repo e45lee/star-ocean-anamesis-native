@@ -654,6 +654,16 @@
       "name": "InfoProp"
      },
      "size": 8
+    },
+    {
+     "offset": 92,
+     "name": "tail",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
     }
    ],
    "size": 96,

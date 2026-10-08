@@ -69,4 +69,31 @@ void DestroyChildTree(PropertyMap* m) {
     guest_call(f, {reinterpret_cast<u64>(m), reinterpret_cast<u64>(m->root)});
 }
 
+void CopyPropertyMap(PropertyMap* m, const PropertyMap* src) {
+    static const u64 f = sym("_ZN9Framework7CSTLMapIjP18IParameterPropertyEC2ERKS3_");
+    guest_call(f, {reinterpret_cast<u64>(m), reinterpret_cast<u64>(src)});
+}
+
+void CopyChildMap(PropertyMap* m, const PropertyMap* src) {
+    static const u64 f = sym("_ZN9Framework7CSTLMapIjP8InfoBaseEC2ERKS3_");
+    guest_call(f, {reinterpret_cast<u64>(m), reinterpret_cast<u64>(src)});
+}
+
+namespace {
+constexpr const char* kAssignMulti = "14__assign_multiINS_21__tree_const_iteratorIS4_PNS_11__tree_nodeIS4_PvEElEEEEvT_SL_";
+void assign_multi(u64 f, PropertyMap* m, const PropertyMap* src) {
+    guest_call(f, {reinterpret_cast<u64>(m), reinterpret_cast<u64>(src->begin_node), reinterpret_cast<u64>(&src->root)});
+}
+}  // namespace
+
+void AssignPropertyMap(PropertyMap* m, const PropertyMap* src) {
+    static const u64 f = tree_sym(kPropTree, kAssignMulti);
+    assign_multi(f, m, src);
+}
+
+void AssignChildMap(PropertyMap* m, const PropertyMap* src) {
+    static const u64 f = tree_sym(kChildTree, kAssignMulti);
+    assign_multi(f, m, src);
+}
+
 }  // namespace soa::native::info::g

@@ -71,6 +71,7 @@ CONTAINER_SIZE = 0x50  # InfoBase + a CSTLVector / CSTLMap (0x18) at +0x38
 # Classes whose layout isn't properties and children only (the walk can't read it; a new entry needs a look).
 UNFIT_LAYOUT = {
     "14CBattleLogInfo": "members of another kind after the properties (the constructor writes +0x548..)",
+    "22CCharacterDecoSendInfo": "an array of CCharacterDecoObjectInfo after the properties (+0xc8: new[], a count, delete[] by its destructor)",
 }
 
 # Classes whose Initialize isn't the shape the natives implement (a new entry needs a look at the code).
@@ -174,6 +175,7 @@ class Lib:
 class Shape:
     def __init__(self, cls, kind, size, props=(), children=()):
         self.cls, self.kind, self.size, self.props, self.children = cls, kind, size, list(props), list(children)
+        self.tail = 0  # plain bytes after the last property or child (sizeof - size): set by generate()
 
     def sig(self):
         return (self.cls, self.kind, self.size, tuple(self.props), tuple((o, c.sig()) for o, c in self.children))
@@ -270,7 +272,7 @@ class Runner:
             import uemu
             n = min(0x8000, uemu.STACK_TOP - e.x(0)) if e.x(0) < uemu.STACK_TOP else 0x8000
             self.capture.append((e.x(0), e.read(e.x(0), n)))
-            e.uc.emu_stop()
+            self.ev.append(("captured",))
         return 1
 
     def call(self, sym, *args, watch=None):
@@ -298,6 +300,7 @@ def capture_shapes(X, R):
     E, S = X.E, X.S
     found = {}
     X.other_members = {}
+    X.sizes = {}  # class -> {(sizeof the lib's code uses, where)}
     # 1. CInfoManager's constructor: every info it keeps
     size = 0x20000
     buf = E.alloc(size, 0xEE)
@@ -351,6 +354,11 @@ def capture_shapes(X, R):
         except Exception:  # (after the capture the run goes on with what the harness doesn't model)
             pass
         caps, R.capture = R.capture, None
+        # the vector's first storage (push_back into an empty vector: capacity 1) is sizeof(T)
+        after = R.ev[[e[0] for e in R.ev].index("captured") + 1:] if ("captured",) in R.ev else []
+        allocs = [e[1] for e in after if e[0] == "alloc"]
+        if allocs:
+            X.sizes.setdefault(t, set()).add((allocs[0], sym))
         for addr, data in caps[:1]:
             rq, lim = readers(data)
             if X.vt_class.get(rq(0)) == t:
@@ -378,7 +386,12 @@ def map_captures(X):
     import uemu
     E = uemu.Emu(X.L)
     S = X.S
-    E.hook_addr(S[SYM_ALLOCATE], lambda e: e.alloc(e.x(0) + 0x100, 0xEE))
+    last = [0]
+
+    def allocate(e):
+        last[0] = e.x(0)
+        return e.alloc(e.x(0) + 0x100, 0xEE)
+    E.hook_addr(S[SYM_ALLOCATE], allocate)
     E.hook_addr(S[SYM_FREE], lambda e: None)
     E.hook_addr(S[SYM_HASH_D1], lambda e: e.x(0))
     E.hook_import("memset", lambda e: (e.uc.mem_write(e.x(0), bytes([e.x(1) & 255]) * e.x(2)), e.x(0))[1])
@@ -395,6 +408,8 @@ def map_captures(X):
     def at_init(t):
         def f(e):
             got[t] = (cur[0], e.read(e.x(0), 0x2000))
+            # the node (its key at +0x20, T at +0x28) was the last allocation: sizeof(T) is its size - 0x28
+            X.sizes.setdefault(t, set()).add((last[0] - 0x28, cur[0]))
             raise Stop()
         return f
     rx = re.compile(r"^_ZN12IInfoBaseMapI([a-z])(\d+\w+?)E16DeserializeChildEPKN4Aska4ASON6AValue4AMapE$")
@@ -521,6 +536,47 @@ def check_steps(X, shape, steps):
     return [p[0] for p in shape.props if p[0] not in seen] + [o for o in kids if o not in seen]
 
 
+def build(X, shapes, m, buf, at):
+    """An object of class m at buf + at as the default constructor leaves it (InfoCode::Ctor)."""
+    E = X.E
+    sh = shapes[m]
+    a = buf + at
+    E.uc.mem_write(a, struct.pack("<QQQQQQQ", X.S["_ZTV" + m] + 16, a + 0x10, 0, 0, a + 0x28, 0, 0))
+    if sh.kind != "plain":
+        body = (a + 0x40, 0, 0) if sh.kind == "map" else (0, 0, 0)
+        E.uc.mem_write(a + 0x38, struct.pack("<QQQ", *body))
+        return
+    hvt = X.S["_ZTVN9Framework7CHash32E"] + 16
+    for p in sh.props:
+        E.uc.mem_write(a + p[0], struct.pack("<QQ", X.S[p[5]] + 16, 0))
+        E.uc.mem_write(a + p[0] + 0x10, b"\0")
+        E.uc.mem_write(a + p[0] + 0x18, struct.pack("<QI", hvt, 0))
+        if p[1] == "string":
+            E.uc.mem_write(a + p[0] + 0x28, b"\0" * 24)
+    for o, c in sh.children:
+        build(X, shapes, c.cls, buf, at + o)
+
+
+def check_destructor(X, R, shapes, m, sym):
+    """"" when m's destructor (or copy constructor) writes only inside the layout (its tail, plain data, only
+    a copy constructor), else what it writes past it."""
+    size = shapes[m].size
+    buf = X.E.alloc(size + 0x400, 0xEE)
+    build(X, shapes, m, buf, 0)
+    try:
+        if "ERKS_" in sym:  # a copy constructor: into a second buffer, from the built object
+            dst = X.E.alloc(size + 0x400, 0xEE)
+            evs = R.call(sym, dst, buf, watch=(dst, dst + size + 0x400))
+            buf = dst
+        else:
+            evs = R.call(sym, buf, watch=(buf, buf + size + 0x400))
+    except Exception as ex:
+        return "%s doesn't run on the layout (%r)" % (sym, ex)
+    end = size if "ERKS_" in sym else size - shapes[m].tail
+    past = [e[1] - buf for e in evs if e[0] == "w" and e[1] >= buf + end]
+    return ("%s writes +%#x past the properties and children (%#x): members of another kind" % (sym, past[0], size)) if past else ""
+
+
 def check_namehash(X, shapes):
     """Every property vtable's slot 2 is CParameterPropertyBase<N>::NameHash: `add x0, x0, #0x18` and a tail
     call (through the PLT) of one function, `ldr w0, [x0, #8]; ret` (CHash32's hash): the natives read
@@ -564,6 +620,18 @@ def generate(lib_path):
             X.extent[m] = max(s[1] + 0x30 for s in steps if s[0] == "prop") if any(s[0] == "prop" for s in steps) else 0x38
     found = capture_shapes(X, R)
     errors, shapes, unshaped = [], {}, []
+    # sizeof as the lib's code uses it: more than the properties and children is a tail of plain bytes when
+    # nothing the generator runs writes it (the constructor's EE reading, the destructor below); less is an error
+    tails = {}
+    for m, ss in X.sizes.items():
+        for sz, where in ss:
+            for _, sh in found.get(m, []):
+                if sh.size > sz and m not in X.other_members:
+                    X.other_members[m] = "%s uses sizeof %#x, the properties and children end at %#x" % (where, sz, sh.size)
+                elif sh.size < sz:
+                    if tails.get(m, sz - sh.size) != sz - sh.size:
+                        X.other_members[m] = "%s: two sizeofs" % where
+                    tails[m] = sz - sh.size
     for m in sorted(X.chain):
         rs = found.get(m) or []
         if m in X.other_members:
@@ -571,8 +639,6 @@ def generate(lib_path):
             if m not in UNFIT_LAYOUT:
                 errors.append("%s: %s" % (m, X.other_members[m]))
             continue
-        if m in UNFIT_LAYOUT:
-            errors.append("%s fits now: take it out of UNFIT_LAYOUT" % m)
         if not rs:
             unshaped.append(m)
             continue
@@ -584,7 +650,30 @@ def generate(lib_path):
                                                                         for s, w in sigs.items())))
             continue
         shapes[m] = rs[0][1]
+    for m, n in tails.items():
+        if m in shapes:
+            shapes[m].tail = n
+            shapes[m].size += n
     check_namehash(X, shapes)
+    # each exported destructor and copy constructor, run on an object built from the layout (0xEE after
+    # it): it may write only inside the layout (a write past it: members of another kind the walk didn't see)
+    for m in sorted(shapes):
+        if shapes[m].kind != "plain":
+            continue
+        for group in (("D2Ev", "D1Ev"), ("C2ERKS_", "C1ERKS_")):
+            syms = [x for x in ("_ZN%s%s" % (m, g) for g in group) if x in X.S]
+            why = check_destructor(X, R, shapes, m, syms[0]) if syms else ""
+            if why and m not in X.other_members:
+                if m not in UNFIT_LAYOUT:
+                    errors.append("%s: %s" % (m, why))
+                X.other_members[m] = why
+    for m in list(shapes):
+        if m in X.other_members:
+            del shapes[m]
+            unshaped.append(m)
+    for m in UNFIT_LAYOUT:
+        if m not in X.other_members:
+            errors.append("%s fits now: take it out of UNFIT_LAYOUT" % m)
     inits, unfit, never = {}, {}, {}
     for m in sorted(X.chain):
         if "_ZN%s10InitializeEv" % m not in X.S or X.container(m):
@@ -766,6 +855,10 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
             used.add(name)
             members.append((off, name))
             out.append("    %s %s;  // 0x%03x %s" % (ty, name, off, note))
+        if sh.tail:
+            members.append((sh.size - sh.tail, "m_tail"))
+            out.append("    u8 m_tail[0x%x];  // 0x%03x plain data after the last member (copied as it is; the constructor leaves it)" % (
+                sh.tail, sh.size - sh.tail))
         out.append("};")
         for off, name in members:
             out.append("static_assert(offsetof(%s, %s) == 0x%03x);" % (cls, name, off))
@@ -790,10 +883,11 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
                 else:
                     out.append("    {InfoStep::kChild, 0x%03x, nullptr, 0, 0}," % st[1])
             out.append("};")
-        out.append('inline constexpr InfoClass kInfo_%s{"%s", "_ZTV%s", InfoKind::kInfo, sizeof(%s), %s, %s, %s};' % (
+        tail = ", nullptr, 0, {}, 0x%x" % sh.tail if sh.tail else ""
+        out.append('inline constexpr InfoClass kInfo_%s{"%s", "_ZTV%s", InfoKind::kInfo, sizeof(%s), %s, %s, %s%s};' % (
             cls, cpp_name(m), m, cls,
             ("k%sProps" % cls) if sh.props else "{}", ("k%sChildren" % cls) if sh.children else "{}",
-            ("k%sInit" % cls) if m in inits else "{}"))
+            ("k%sInit" % cls) if m in inits else "{}", tail))
         if m in init_sym:
             table.append('    X(%s, "%s") \\' % (cls, init_sym[m]))
         out.append("")
@@ -814,6 +908,28 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
     out.append("#define INFO_CONSTRUCTORS(X) \\")
     out += ctors
     out.append("    /* end of INFO_CONSTRUCTORS */")
+    out.append("")
+    # the copies, destructors, assignments and moves of the infos without a container anywhere inside
+    # (a container's copy copies its elements: not taken yet)
+    def has_container(m):
+        return any(c.kind != "plain" or has_container(c.cls) for o, c in shapes[m].children)
+    roles = [("CtorCopy", "C2ERKS_"), ("CtorCopy", "C1ERKS_"), ("Dtor", "D2Ev"), ("Dtor", "D1Ev"), ("Assign", "aSERKS_"),
+             ("Move", "C2EOS_"), ("Move", "C1EOS_"), ("MoveAssign", "aSEOS_")]
+    rows = []
+    for m in names:
+        if has_container(m):
+            continue
+        for role, suffix in roles:
+            sym = "_ZN%s%s" % (m, suffix)
+            a = X.S.get(sym)
+            if a and a not in seen:
+                seen.add(a)
+                rows.append('    X(%s, %s, "%s") \\' % (ident(m), role, sym))
+    out.append("// X(Class, role, symbol): the exported copy constructors, destructors, operator=s and moves of the")
+    out.append("// infos above without a container inside (one per address).")
+    out.append("#define INFO_COPIES(X) \\")
+    out += rows
+    out.append("    /* end of INFO_COPIES */")
     out.append("")
     out.append("// X(Class, Initialize symbol): every info above whose Initialize the natives take (one per address).")
     out.append("#define INFO_INITIALIZERS(X) \\")

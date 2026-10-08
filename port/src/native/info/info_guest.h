@@ -29,5 +29,11 @@ void EmplaceProperty(PropertyMap* m, u32 key, void* property);
 void EmplaceChild(PropertyMap* m, const void* hash, void* child);
 void DestroyPropertyTree(PropertyMap* m);
 void DestroyChildTree(PropertyMap* m);
+// CSTLMap<unsigned, IParameterProperty*> / <unsigned, InfoBase*>'s copy constructors and
+// __tree::__assign_multi(first, last) (operator= of the maps).
+void CopyPropertyMap(PropertyMap* m, const PropertyMap* src);
+void CopyChildMap(PropertyMap* m, const PropertyMap* src);
+void AssignPropertyMap(PropertyMap* m, const PropertyMap* src);
+void AssignChildMap(PropertyMap* m, const PropertyMap* src);
 
 }  // namespace soa::native::info::g

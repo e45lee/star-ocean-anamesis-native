@@ -4,9 +4,14 @@
 // native, then the original on the same object (a second Initialize names and defaults the same and
 // inserts nothing new: every key is in the maps already) and the state (info_state: properties, both
 // maps relative to the object, the children's) must be what the native left; the constructor the same
-// way, on the object's bytes.
+// way, on the object's bytes. The copies, moves and assignments: the native on the object, the original
+// on a temporary (a copy of the target or the source as they were, by the native copy constructor), the
+// states compared (the source's too after a move), the temporaries destroyed; the destructor: the
+// original on a copy, every word but the maps' and the strings' compared.
+#include <algorithm>
 #include <cstring>
 #include <string>
+#include <vector>
 
 #include "native/common/native.h"
 #include "native/common/native_method.h"
@@ -76,13 +81,151 @@ void TInfo<C>::Ctor() {
 
 namespace {
 
+// A copy of an object of class K for the original to work on: its bytes (the padding included), then the
+// native copy constructor (its own maps and strings), then its own vtable back (the object may be of a
+// class derived from K: a derived class's operator= and destructor call K's). Destroyed by the native
+// destructor unless the original destroyed it.
+void clone(const InfoClass& K, u8* to, const u8* from) {
+    std::memcpy(to, from, K.size);
+    InfoCode::CtorCopy(K, to, from);
+    std::memcpy(to, from, 8);
+}
+struct Temp {
+    const InfoClass& K;
+    std::vector<u8> b;
+    Temp(const InfoClass& k, const u8* from) : K(k), b(k.size) { clone(K, b.data(), from); }
+    ~Temp() { InfoCode::Dtor(K, b.data()); }
+    u8* p() { return b.data(); }
+};
+
+// "" when the states agree, else what differs and where.
+std::string state_diff(const InfoClass& K, const u8* n, const u8* g, const char* what, bool maps = true) {
+    std::vector<u8> a = maps ? info_state(K, n) : info_state_no_maps(K, n), b = maps ? info_state(K, g) : info_state_no_maps(K, g);
+    if (a == b) return "";
+    size_t i = 0;
+    while (i < a.size() && i < b.size() && a[i] == b[i]) i++;
+    char m[160];
+    snprintf(m, sizeof m, "%s differs at state byte %llu of %llu / %llu (vtable %#llx)", what, (unsigned long long)i,
+             (unsigned long long)a.size(), (unsigned long long)b.size(),
+             (unsigned long long)*reinterpret_cast<const u64*>(n));
+    return m;
+}
+
+void report(Fn& f, const InfoClass& K, bool ok, const char* what) {
+    fam().result(f, ok ? Outcome::Ok : Outcome::Mismatch, ok ? "" : std::string(K.name) + ": " + what);
+}
+
+}  // namespace
+
+template <class C>
+void TInfo<C>::CtorCopy(const TInfo* o) {
+    const InfoClass& K = InfoTraits<C>::cls;
+    Fn* f = InfoFns<C>::fn[(int)InfoRole::CtorCopy];
+    InfoCode::CtorCopy(K, bytes_of(this), reinterpret_cast<const u8*>(o));
+    if (f && fam().due(*f)) {
+        live::RunBothFamily::Scope scope;
+        std::vector<u8> g(K.size);
+        guest_call(f->orig, {reinterpret_cast<u64>(g.data()), reinterpret_cast<u64>(o)});
+        bool ok = info_state(K, bytes_of(this)) == info_state(K, g.data());
+        InfoCode::Dtor(K, g.data());
+        report(*f, K, ok, "the copy differs");
+    }
+}
+
+template <class C>
+void TInfo<C>::Move(TInfo* o) {
+    const InfoClass& K = InfoTraits<C>::cls;
+    Fn* f = InfoFns<C>::fn[(int)InfoRole::Move];
+    auto* src = reinterpret_cast<u8*>(o);
+    if (f && fam().due(*f)) {
+        live::RunBothFamily::Scope scope;
+        Temp src2(K, src);  // (the source as it was, for the original)
+        InfoCode::Move(K, bytes_of(this), src);
+        std::vector<u8> g(K.size);
+        guest_call(f->orig, {reinterpret_cast<u64>(g.data()), reinterpret_cast<u64>(src2.p())});
+        bool ok = info_state(K, bytes_of(this)) == info_state(K, g.data()) && info_state_no_maps(K, src) == info_state_no_maps(K, src2.p());
+        InfoCode::Dtor(K, g.data());
+        report(*f, K, ok, "the moved object or the source differs");
+        return;
+    }
+    InfoCode::Move(K, bytes_of(this), src);
+}
+
+template <class C>
+TInfo<C>* TInfo<C>::Assign(const TInfo* o) {
+    const InfoClass& K = InfoTraits<C>::cls;
+    Fn* f = InfoFns<C>::fn[(int)InfoRole::Assign];
+    auto* src = reinterpret_cast<const u8*>(o);
+    if (f && fam().due(*f) && src != bytes_of(this)) {
+        live::RunBothFamily::Scope scope;
+        Temp t(K, bytes_of(this));  // (the target as it was, for the original)
+        InfoCode::Assign(K, bytes_of(this), src);
+        guest_call(f->orig, {reinterpret_cast<u64>(t.p()), reinterpret_cast<u64>(src)});
+        report(*f, K, info_state(K, bytes_of(this)) == info_state(K, t.p()), "the assigned object differs");
+        return this;
+    }
+    InfoCode::Assign(K, bytes_of(this), src);
+    return this;
+}
+
+template <class C>
+TInfo<C>* TInfo<C>::MoveAssign(TInfo* o) {
+    const InfoClass& K = InfoTraits<C>::cls;
+    Fn* f = InfoFns<C>::fn[(int)InfoRole::MoveAssign];
+    auto* src = reinterpret_cast<u8*>(o);
+    if (f && fam().due(*f) && src != bytes_of(this)) {
+        live::RunBothFamily::Scope scope;
+        Temp t(K, bytes_of(this)), src2(K, src);
+        InfoCode::MoveAssign(K, bytes_of(this), src);
+        guest_call(f->orig, {reinterpret_cast<u64>(t.p()), reinterpret_cast<u64>(src2.p())});
+        std::string why = state_diff(K, bytes_of(this), t.p(), "the assigned object") + state_diff(K, src, src2.p(), " the source", false);
+        report(*f, K, why.empty(), why.c_str());
+        return this;
+    }
+    InfoCode::MoveAssign(K, bytes_of(this), src);
+    return this;
+}
+
+template <class C>
+void TInfo<C>::Dtor() {
+    const InfoClass& K = InfoTraits<C>::cls;
+    Fn* f = InfoFns<C>::fn[(int)InfoRole::Dtor];
+    if (f && fam().due(*f)) {
+        live::RunBothFamily::Scope scope;
+        std::vector<u8> g(K.size);
+        clone(K, g.data(), bytes_of(this));  // (a copy for the original to destroy)
+        guest_call(f->orig, {reinterpret_cast<u64>(g.data())});
+        InfoCode::Dtor(K, bytes_of(this));
+        report(*f, K, info_dtor_state(K, bytes_of(this)) == info_dtor_state(K, g.data()), "the destroyed object differs");
+        return;
+    }
+    InfoCode::Dtor(K, bytes_of(this));
+}
+
+namespace {
+
+template <class C>
+HostFn host_of(InfoRole r) {
+    using T = TInfo<C>;
+    switch (r) {
+        case InfoRole::Initialize: return wrap_method<&T::Initialize>();
+        case InfoRole::Ctor: return wrap_method<&T::Ctor>();
+        case InfoRole::CtorCopy: return wrap_method<&T::CtorCopy>();
+        case InfoRole::Dtor: return wrap_method<&T::Dtor>();
+        case InfoRole::Assign: return wrap_method<&T::Assign>();
+        case InfoRole::Move: return wrap_method<&T::Move>();
+        case InfoRole::MoveAssign: return wrap_method<&T::MoveAssign>();
+        case InfoRole::kCount: break;
+    }
+    return nullptr;
+}
+
 template <class C>
 bool bind(InfoRole r, const char* sym) {
     Fn* f = new Fn(fam(), sym);  // (lives as long as the process: the registry keeps &f->orig)
     InfoFns<C>::fn[(int)r] = f;
     static const std::string note = std::string("info: ") + InfoTraits<C>::cls.name + " (generic info)";
-    HostFn h = r == InfoRole::Initialize ? wrap_method<&TInfo<C>::Initialize>() : wrap_method<&TInfo<C>::Ctor>();
-    register_native_function({sym, h, note.c_str(), nullptr, &f->orig, nullptr, "TInfo<C>"});
+    register_native_function({sym, host_of<C>(r), note.c_str(), nullptr, &f->orig, nullptr, "TInfo<C>"});
     return true;
 }
 
@@ -92,6 +235,9 @@ INFO_INITIALIZERS(INFO_BIND_INIT)
 #define INFO_BIND_CTOR(C, SYM) [[maybe_unused]] const bool NATIVE_CONCAT(info_ctor_, C) = bind<C>(InfoRole::Ctor, SYM);
 INFO_CONSTRUCTORS(INFO_BIND_CTOR)
 #undef INFO_BIND_CTOR
+#define INFO_BIND_COPY(C, ROLE, SYM) [[maybe_unused]] const bool NATIVE_CONCAT(info_##ROLE##_, C) = bind<C>(InfoRole::ROLE, SYM);
+INFO_COPIES(INFO_BIND_COPY)
+#undef INFO_BIND_COPY
 
 }  // namespace
 

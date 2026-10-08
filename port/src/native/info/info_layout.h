@@ -105,7 +105,7 @@ static_assert(sizeof(InfoBase) == 0x38);
 // ---- the info classes (gen/info_classes.h, tools/gen_infos.py) ------------------------------------------
 //
 // Every class derived from InfoBase is an InfoBase, its properties (params_layout.h) and its children,
-// embedded: other infos, or containers. The 187 info classes' layouts are generated (read from objects the
+// embedded: other infos, or containers. The 186 info classes' layouts are generated (read from objects the
 // lib builds, under unicorn); their code differs per class only in these lists, so the natives are one
 // generic code over a class's InfoClass (info_class.cpp).
 
@@ -158,6 +158,9 @@ struct InfoClass {
     const InfoClass* elem = nullptr;
     u8 key_size = 0;
     InfoProp elem_prop = {};
+    // Plain data after the last property or child (sizeof as the lib's code uses it, minus where they end):
+    // the copies copy it as it is; the constructor, Initialize and the destructor leave it.
+    u32 tail = 0;
 };
 
 }  // namespace soa::native::info

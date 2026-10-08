@@ -16,9 +16,9 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 | `NameIndexMap` (std::map<unsigned, unsigned long>) | 0x18 | the row / column hashes | libcxx's tree |
 | `InfoBase` | 0x38 | the constructors, Initialize, DeserializeChild (port/decomp/info/person_status.c) | typed (the base) |
 | `InfoContainer` (InfoBaseArray<T>, IInfoBaseMap<K, T>, InfoBaseValueArray<T, P>) | 0x50 | the vmi typeinfos (InfoBase, then a CSTLVector / CSTLMap at +0x38), the constructors in CInfoManager's | typed (generic); 210 container classes in the generated header |
-| the info classes (`CPlayerInfo`, `CPersonInfo`, ... 187) | each its own | generated: [`gen/info_classes.h`](gen/info_classes.h) ("Info classes" below) | typed, static_asserted |
+| the info classes (`CPlayerInfo`, `CPersonInfo`, ... 186) | each its own | generated: [`gen/info_classes.h`](gen/info_classes.h) ("Info classes" below) | typed, static_asserted |
 
-## Info classes (187, generated)
+## Info classes (186, generated)
 
 Every class derived from InfoBase (by its typeinfo: 741 with the containers and templates) is an
 InfoBase, its properties (params_layout.h) and its children, embedded: infos, or containers (0x50: an
@@ -38,13 +38,20 @@ the last one Initialize names is another object's. `NameHash()` is checked to be
 `CParameterPropertyBase<N>::NameHash` is `add x0, x0, #0x18` and a tail call of one `ldr w0, [x0, #8]`), so
 the natives read `m_name`'s hash. The output: per class a typed layout (child members named by the child
 class's `pParseName()`), its property, child and Initialize-step tables, and `INFO_CLASSES`,
-`INFO_CONSTRUCTORS` (30 exported default constructors), `INFO_INITIALIZERS` (182). T0 `generated` reruns it
+`INFO_CONSTRUCTORS` (30 exported default constructors), `INFO_COPIES` (126), `INFO_INITIALIZERS` (181). T0 `generated` reruns it
 in `--check` mode.
 
 Left to the guest: `CPlayerInfo::Initialize` (its `name` gets a default text through
 `CParameterPropertyBase<53>::CryptString`), `CInfoManager::Initialize` (the manager's own), and the classes
-without a layout: `CBattleLogInfo` (members of another kind after its properties), `CPartyInfo`,
-`CWorldMapCellInfo` (no object of the class is built where the generator can run it).
+without a layout: `CBattleLogInfo`, `CCharacterDecoSendInfo` (members of another kind after their properties),
+`CPartyInfo`, `CWorldMapCellInfo` (no object of the class is built where the generator can run it).
+
+Sizes: where the lib's code uses a class's sizeof (a vector's first storage in `InfoBaseArray<T>::DeserializeArray`,
+a map node in `IInfoBaseMap<K, T>::DeserializeChild`), it must be where the properties and children end, or more:
+then the rest is plain data nothing the generator runs writes (`CPersonStatusInfo`'s last 0x10 bytes, after its
+`AddBuffByDeityCharacter` child: its copy constructor copies them as two words), a `m_tail` the copies copy. Each
+exported destructor and copy constructor runs on an object built from the layout and may not write past it
+(`CCharacterDecoSendInfo`'s destructor deletes an array at +0xc8: left to the guest).
 
 Quirks kept: `CPresentBoxReceiveInfo`'s child at +0x1d8 (`CPresentBoxReceiveDecoInfoList`) is never
 initialized nor registered by its Initialize; `AddBuffByDeityCharacter` (a child of `CPersonStatusInfo`)
@@ -58,16 +65,21 @@ temporary for every element a list or map holds: `InfoBaseArray<T>::DeserializeA
 |---|---|---|---|
 | `CInteroperateParameter::IsExist(row)`, `IsExist(row, col)`, `ConvertToRow`, `ConvertToColumn` (lower_bound in the hash maps), `IsValue` / `IsString` / `Value(row, col)` (ConvertToRow, then the CSV's slot on (row, col + 1)) | [`info_interoperate.cpp`](info_interoperate.cpp) | `info/interoperate` (a table the guest builds from CSV text) | run-both (the result registers) |
 | `InfoBase::DeserializeChild` (each key's property gets Deserialize(map); each key's child DeserializeArray / DeserializeChild) | [`info_infobase.cpp`](info_infobase.cpp) | `info/deserialize-child` (CPersonStatusInfo), `info/deserialize-child-children` (its children: an info, a list of infos, a list of values, a number map; the whole state, the elements included) | the original rerun after the native, every property compared (infos without children only: a child's array would be appended twice; the differential test covers them) |
-| `TInfo<C>`: `C::Initialize` (182 classes: [`gen/info_classes.h`](gen/info_classes.h) `INFO_INITIALIZERS`), `C::C()` (C2, 30 classes) | [`info_class.cpp`](info_class.cpp), bound by [`info_class_bind.cpp`](info_class_bind.cpp) | `info/initialize` (every class: the guest's and the native's Initialize on objects built alike, the state compared), `info/constructors` (every exported one, on the same buffer) ([`info_class_test.cpp`](info_class_test.cpp)) | run-both on the object itself: the original after the native (a second Initialize inserts nothing new), `info_state` compared (properties, both maps relative to the object, the children's); the constructor's bytes |
+| `TInfo<C>`: `C::Initialize` (181 classes: [`gen/info_classes.h`](gen/info_classes.h) `INFO_INITIALIZERS`), `C::C()` (C2, 30 classes), and for the infos without a container inside (`INFO_COPIES`, 126): the copy constructor (45), `~C` (43), `operator=` (13), the move constructor (15), `operator=(&&)` (10) | [`info_class.cpp`](info_class.cpp), bound by [`info_class_bind.cpp`](info_class_bind.cpp) | `info/initialize` (every class: the guest's and the native's Initialize on objects built alike, the state compared), `info/constructors` (every exported one, on the same buffer), `info/copies` (every copy, move, assignment and destructor on objects with random values and strings) ([`info_class_test.cpp`](info_class_test.cpp)) | Initialize, the constructor: run-both on the object itself (a second Initialize inserts nothing new; `info_state` compared: properties, both maps relative to the object, the children's); the copies, moves and assignments: the original on a clone of the target / the source as they were; the destructor: the original on a clone, every byte but the maps' and strings' compared |
 
-**Live check** (`soa --live-check info[:every=N][:only=..][:out=FILE]`, [`info_family.h`](info_family.h)): Results (battle-gacha, `every=1`, PASS): 200,000 checks, 0 mismatches (IsExist(row) 48,281, Value(row, col)
+**Live check** (`soa --live-check info[:every=N][:only=..][:out=FILE]`, [`info_family.h`](info_family.h)): Results
+(`every=1`, `only=` the info classes' natives and DeserializeChild, PASS, all 0 mismatches): battle-gacha 14,592 checks
+(DeserializeChild 3,945, CAchievementInfo's destructor 4,500 and Initialize 2,700, UniverseAddStatusInfo's copy 561,
+...), `session:home` 32,562 (CAchievementInfo's destructor 10,795 and copy 2,283, UniverseAddStatusInfo's copy 2,155,
+...), `session:home --lang en` 32,591. The CInteroperateParameter lookups (battle-gacha, `every=1`): 200,000 checks, 0 mismatches (IsExist(row) 48,281, Value(row, col)
 147,768, DeserializeChild 3,951); an earlier run 201,613 / 0.
 
 ## Next (not done)
 
-- The info classes' copy constructors (52 exported), destructors (61), `operator=` (19), move
-  constructors (22): the copy copies both maps (`CSTLMap(CSTLMap const&)`, values as they are: they point
-  into the source) and each child; the containers' copies copy their elements.
+- The copies, destructors, assignments and moves of the infos with a container inside (CPersonInfo,
+  CPersonStatusInfo, CFollowPersonInfo, CItemInfo, ...: 46 symbols): a container's copy copies its elements
+  (a vector: `Allocate(bytes, "STL_Vector.h", 0x20)` and each T's copy; a map: `__emplace_hint_unique_key_args`
+  per element), its destructor destroys them.
 - `InfoBaseArray<T>::DeserializeArray` (59), `IInfoBaseMap<K, T>::DeserializeChild` (88): T's constructor,
   Initialize, DeserializeChild, the copy into the vector / node, ~T.
 - `CPlayerInfo::Initialize` (the `CryptString` default), `CInfoManager`'s constructor (every info inlined:

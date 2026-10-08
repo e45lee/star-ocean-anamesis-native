@@ -299,6 +299,18 @@ class Built:
     pass
 
 
+def row_glossary(glossary, note):
+    """The glossary a table row is checked against: without the terms its note waives
+    ("glossary-waive: ハナ, リン (why)"): a term the Japanese only seems to contain (an idiom such as
+    ハナから "from the start", a stammered name), which the check would otherwise demand. The note
+    says why; a waived term is still checked in every other row."""
+    if not glossary or not note or "glossary-waive:" not in note:
+        return glossary
+    terms = note.split("glossary-waive:", 1)[1].split("(", 1)[0].split(";", 1)[0]
+    waived = {t.strip() for t in terms.split(",") if t.strip()}
+    return {k: v for k, v in glossary.items() if k not in waived}
+
+
 def finish(ctx, glossary, source, en, ja):
     """(served English in the master encoding, problems) of one candidate for a JP row (`ja` in the
     master encoding; "" for a new message_id). Folding, %% in printf rows, and for derived rows a
@@ -433,13 +445,13 @@ def build(ctx):
         b.klass[mid] = klass
         b.candidates[klass] += 1
         if t and t["source"] in MACHINE and mid not in b.ours:
-            e, probs, _ = finish(ctx, glossary, t["source"], t["en"], ja)
+            e, probs, _ = finish(ctx, row_glossary(glossary, t["note"]), t["source"], t["en"], ja)
             if not probs:
                 b.ours[mid] = (h, e, t["source"])  # committed even where a derived row wins
         for c in cands:
             if len(c) == 2:  # a table row: finish it now (the glossary may have changed)
                 source = c[0]
-                e, probs, rebroken = finish(ctx, glossary, source, c[1], ja)
+                e, probs, rebroken = finish(ctx, row_glossary(glossary, t["note"]), source, c[1], ja)
                 w = widths(font, C.unesc(ja), C.unesc(e))
                 if not probs:
                     b.ours[mid] = (h, e, source)
@@ -653,14 +665,14 @@ def build_story(ctx, glossary, tables=None):
             if t and t["source"] in MACHINE:
                 cands.append((t["source"], t["en"]))
             if t:  # our row, committed whenever it passes (even where a derived line wins)
-                e, probs, _ = story_finish(ctx, glossary, t["source"], t["en"], ja)
+                e, probs, _ = story_finish(ctx, row_glossary(glossary, t["note"]), t["source"], t["en"], ja)
                 if not probs:
                     s.ours[mid] = (h, e, t["source"])
             failed = False
             for cand in cands:
                 if len(cand) == 2:
                     source = cand[0]
-                    e, probs, nl = story_finish(ctx, glossary, source, cand[1], ja)
+                    e, probs, nl = story_finish(ctx, row_glossary(glossary, t["note"]), source, cand[1], ja)
                 else:
                     source, e, probs, nl = cand
                 if probs:
@@ -1025,7 +1037,7 @@ def cmd_set(ctx, a):
     if sl is not None:
         text = a.text.replace("\r\n", "\n").replace("\n", "\\n")
         g = glossary_dict(glossary_rows(ctx))
-        e, probs, _ = story_finish(ctx, g, a.source, text, sl[1])
+        e, probs, _ = story_finish(ctx, row_glossary(g, a.note), a.source, text, sl[1])
         if probs and not a.force:
             print(f"{a.id}: {json.dumps(probs, ensure_ascii=False)} (fix the text or pass --force)", file=sys.stderr)
             return 1
@@ -1040,7 +1052,7 @@ def cmd_set(ctx, a):
     ja = src.jp_rows.get(a.id)
     text = a.text.replace("\r\n", "\n").replace("\n", "\\n")
     g = glossary_dict(glossary_rows(ctx))
-    e, probs, _ = finish(ctx, g, a.source, text, ja or "")
+    e, probs, _ = finish(ctx, row_glossary(g, a.note), a.source, text, ja or "")
     if probs and not a.force:
         print(f"{a.id}: {json.dumps(probs, ensure_ascii=False)} (fix the text or pass --force)", file=sys.stderr)
         return 1

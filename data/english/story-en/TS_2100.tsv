@@ -56,6 +56,7 @@ message_id	ja_sha1	en	source
 2101_020_37	3653f3dbdb9fdeb561454afc6ed2cae6afcfedea	Mastima. You're surprisingly\nkind, aren't you?	machine
 2101_020_38	632ec345ecec55b715bbf50d16f237e2d8f0a3fd	...Hm?	machine
 2101_020_39	13b6c804e0884213ee58e06dab2cdda80347ea69	But I don't want you\nmisunderstanding one thing.\nThe Captain, Valka, and of\ncourse myself,	machine
+2101_020_40	a0b3b4872ca0a94b31d69e7524180820f43accb5	I know full well that "common sense"\nnever existed in this universe to begin\nwith. That is the kind of journey we\nhave made.	agent
 2101_020_41	fbce01312d92d052c7a2215ab3173cec17eb0758	Are you referring to the\nconclusion of that business\nwith the Burning Death?	machine
 2101_020_42	a6fcd388f4ed49af8164d1838479d95f1387f1b2	If you already know, then this\nwill be brief.	machine
 2101_020_43	4df0260ba2e90cc5ca524bcfa794134a78562759	The Captain, Eve, and Coro all risked\ntheir lives to face the calamity of\nLevarance, even though there was\nnothing to be gained from it.	machine
@@ -76,6 +77,7 @@ message_id	ja_sha1	en	source
 2101_020_58	c4583d9c32368dc7c3e5bf303710af79f1f594d6	For Tika, for Euwin and the\nothers, and of course for\nMastima, we shall fight!	machine
 2101_020_59	ec7837bc0e84303ebdedc3864755a092b683000b	Verda has made his point, but\nmay I double-check with the\nrest of you?	machine
 2101_020_61	8e0ff44235d73b438fb29cd4b184eef4a7087806	I see. ...And you?	machine
+2101_020_62	69c4b18af94fd7e288a0897ccaf4ec1e741d6561	...It is true that we, the Hardier\nWarrior of Morphus, have a\ngreat mission.	machine
 2101_020_63	d5be403d33d506ffa2f9f5212b0f2acbdaa4dffe	But I have learned from my father, the\ngreatest of all warriors, that the core\nof that mission is to protect the\npeaceful lives of every living soul.	machine
 2101_020_64	2095f43fd916a0f4afb2180b67789a81f65c7916	Fighting Givel here and now is\nsomething I must do for my\nown sake as well.	machine
 2101_020_65	9fe1952f76ffe8d6f4e205fb21ae10347b10e560	Fighting Givel here and now is\nsomething I must do for my\nown sake as well.	machine
@@ -103,6 +105,7 @@ message_id	ja_sha1	en	source
 2101_030_10	cde54800ff1a0d6ca5323bfd156d6f7c56f61b9e	Eh? Ah, well, that's...	machine
 2101_030_100	480c822e778ca6543558fdcec4222feba81c6fcf	...Oh, it's nothing.	machine
 2101_030_103	e9607179efbf12a0ecf4dcfea7dbcf42becad580	Hmm... quite so.	machine
+2101_030_104	90f36c24c3038dfc99f970eb0341a87e9565c38c	Eve's safety is our top priority, but\nsince we don't know the enemy's hand,\nwe'll have to rely on Mastima and Coro\nand adapt as we go.	agent
 2101_030_105	294890414d2fedfbc57d621f4e840e95f5526dd8	We'll gather as much intel as\npossible on Baschen's Imperial\nCastle and feed the data to\nCoro before we set out.	machine
 2101_030_11	431a5a37d350190902ab8c605085fd383f0104f5	Let's not sweat the small stuff.\nI'm the only one who\nunderstands the specifications\nof this modified ship.	machine
 2101_030_12	7d2038d88a230381e5c8cc1d9257d1f182d4cccc	Give me the seat for now! Until\nthe briefing is over...	machine

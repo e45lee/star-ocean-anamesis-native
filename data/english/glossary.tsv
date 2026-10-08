@@ -465,7 +465,7 @@ ja	en	kind	variants	source	note
 サーフェリオ	Surferio	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 サーヴァントコロデビル	Servant Corodevil	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 サーヴァントパンプキン	Servant Pumpkin	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-サー・ユーイン	Sir Ewin	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+サー・ユーイン	Sir Euwin	name	Sir Ewin	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: made consistent with ユーイン = Euwin (the name the M2 pass and the story rows use; was Sir Ewin, kept as a variant)
 ザフィケル	Zaphkiel	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 シウコアトル	Xiuhcoatl	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 シェル・プレス	Shell Press	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -1146,7 +1146,7 @@ ja	en	kind	variants	source	note
 ユーイチ	Yuichi	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ユーイチ・オークヴィル	Yuichi Oakville	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ユーイン	Euwin	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-ユーイン・ラクスター	Ewin Laxter	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+ユーイン・ラクスター	Euwin Laxter	name	Ewin Laxter	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: made consistent with ユーイン = Euwin (the name the M2 pass and the story rows use; was Ewin Laxter, kept as a variant)
 ライアス	Lias	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ライトクロス	Light Cross	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ライトニング・ブロッサム	Lightning Blossom	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -1156,7 +1156,7 @@ ja	en	kind	variants	source	note
 ライブステージ	Live Stage	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ライブハンマー	Live Hammer	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ライムライト	Limelight	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-ラクスター	Rakstar	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+ラクスター	Laxter	name	Rakstar	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: made consistent with ユーイン = Euwin and ユーイン・ラクスター = Euwin Laxter (the name the story rows use; was Rakstar, kept as a variant)
 ラクール	Lacuer	name		human	Global's spelling in its official text (Q8; glossary-weak listed the M2 machine name as contradicted)
 ラクール	Lacour	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ラジアータ	Radiata	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0

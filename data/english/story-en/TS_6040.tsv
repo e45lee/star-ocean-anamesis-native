@@ -129,6 +129,7 @@ message_id	ja_sha1	en	source
 6041_030_17	e8a53c7a4ca0662c4996a34139e79a1d6af59682	For breaking the Overman\nbecause of our own\ncircumstances.	machine
 6041_030_18	7c3433aac8b59d2bc82ccce23939886ef92c0ce2	...It's okay. It's been fixed, so\nI'm not worried about it\nanymore.	machine
 6041_030_19	c3a0e3579981b797bbef9ada4ddcdbe270e51b77	Even so, you've spent years\nbuilding this ship piece by\npiece, haven't you, Lavarnia?	machine
+6041_030_20	adcb4fa230dd68e2a36f6d7da003b1dd8987cdfc	Even if the functions are restored,\nLavarnia, you spent so much time\ncarefully choosing every single part for\nthe Overman,	machine
 6041_030_21	9681f60ab6fea62bcbe10f3d3804851d4ff829dc	that you carefully crafted,\nchoosing every single part for\nthe Overman.	machine
 6041_030_22	fa42444eca9184d489e0230190a70436b73a74f5	...It's not your fault, Euwin. I'm\nthe one who decided to take\neveryone out into space.	machine
 6041_030_23	12f426d1a870550376fddbe7306b5c0cdc6031cd	...Thank you.	machine
@@ -142,6 +143,7 @@ message_id	ja_sha1	en	source
 6041_030_31	02594f7bd609ffd65729cad45b07037145fd9fa7	I see...	machine
 6041_030_32	43d7bfa184bebb65bba5731a65b74d00291ff80c	My father saw me tuning the\nOverman and tried to give me\nplenty of high-end parts.	machine
 6041_030_33	c1b907dc62beeb43b861d8cedf972622e7dad608	But I refused. Because if I did...	machine
+6041_030_34	6912afbc5394645e88608915c611f6d8ea73d76b	Then it wouldn't be something\nLavarnia built herself, right?	machine
 6041_030_35	882d39d0caa5e0caad727cfe7021d456725f614c	...You really value the feelings\nof those who create things,\ndon't you, Euwin?	machine
 6041_030_36	66733892a8b6c10ca65eb2132cea7906cd9d6f60	Welch has always been that\nway.	machine
 6041_030_37	108464b24ab87c7742233df2bb5586e3da54bddb	...Welch?	machine
@@ -160,6 +162,7 @@ message_id	ja_sha1	en	source
 6041_030_51	79c75e77c7e0edc8937b8fe3888078e7311da7d9	If we can manage to resolve the\nCaptain's troubles and return to the\nStardust Bazaar, I'd be happy if you\ncould continue being friends with Welch.	machine
 6041_030_52	2e7a127b1274645398b399e3caaa83a98962a423	...Wait, what do you mean?	machine
 6041_030_53	0e285529d6fa018597fe90c3afe660d24fdcc9af	We managed to send Heath back to\nthe mothership, but from here on, we'll\nlikely be heading straight into the\nmiddle of the war between Raza and\nOber.	machine
+6041_030_54	168cf3ef8675c3cc9b010337938d08031a5fd6a3	I can't let Lavarnia and the\nOverman get dragged into\nsomething like that. I'm sure\nthe Captain would agree.	machine
 6041_030_55	a6c91d000a73971b823812f17448b42c0a768b51	...No way.	machine
 6041_030_56	64782b4ee0da3a0f4c11e45d51ee7fe5e092693c	Of course, we'll properly\ncompensate you later for the\nship Eve damaged and the\nGems that were stolen.	machine
 6041_030_57	843e67f75f55ea1e85dbda49eaf17f8c5ec9eb30	...That's... not necessary\nanymore.	machine
@@ -673,6 +676,7 @@ message_id	ja_sha1	en	source
 6043_250_16	2bc4c038cb5f459918f1efa1b5b167ab0d55c9b4	I don't know why, but you're\nprotecting Givel, aren't you!	machine
 6043_250_17	c4b8c6690cf795ee8700deb348b5c7ba13b2b92e	But I'm sorry, no matter the\nreason, you're the one who's\ncompletely lost her way right\nnow!	machine
 6043_250_18	809ee713f13a17771262a9598f9c68f1d20182fa	As your comrade... I cannot\njust stand by and overlook\nyour actions!	machine
+6043_250_19	be1cb937f5e69b9d2581b99ba162acd394e43914	Kar...lyn, stop... I'm begging\nyou...!	agent
 6043_250_20	52719da0e72916ba2b05ba00fd79c53ee0e4483a	...Hmph, I can't stand watching\nthis.	machine
 6043_250_21	24198637976e6f010e15060dd699c8d2a38fb23f	Mastima!	machine
 6043_250_22	cdd8448e9de5962d7d77dace6c15fd6e1489df2e	What?!	machine

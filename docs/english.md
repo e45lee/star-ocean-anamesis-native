@@ -1052,7 +1052,7 @@ Agent `en-textclean-sweep`, 2026-10-07: every screen the named sessions reach, p
 - **Pictures without a recipe:** 46 sprites (the item list's lock buttons and tabs `tab.csf`, Deep Space's 探査率 / 進行中 / 今すぐ帰還 badges, the character detail's round buttons, イベントメニュー, 全件取得, 強化開始, the Sphere 211 result titles…) and the title screen's buttons.
 - **Data rows (machine):** narrow breaks at the Japanese width (`uimsg_full_stamina` 5 lines of 13 characters; 528 `uimsg` dialogs are broken narrower than the Japanese), lists merged into prose (`uimsg_item_confirmation_sell_1` and siblings: 10 lines over the buttons), a table's cells re-broken as prose (`uimsg_able_use_money`), one reversed meaning (`uimsg_drop_bonus_on_this_condition` "+10 drops every 1 hits"), long labels (691 weapon and item descriptions of 5+ lines), terms rendered several ways (転移 as Warp / Transfer / Teleport, OHS / One-Handed). Official rows with problems: the typo "Blue EXP Misisons" (`name_event_exp_blue`), "Not enough SP." (`error_message_text_10004`), "Delete" for 修正する (`uimsg_button_back`).
 - **Client wrap and fit** (for the E10 / E13 owner): the header description (FS18, no custom size) is wrapped at the room it has when first drawn (63 px at x 645) and hangs a second line below the header on almost every menu; long header titles are drawn over the description; menu buttons' text runs over their left icon; fixed-size labels shrink a two-line wrap to about 40 % ("Change Equipment, Skills, and Assists"); labels wider than their icon or card ("Limit Break", "To Exceed Connect"); labels running into their value ("Continuous Clear Count", "Max Transfer Floor"); list rows wrapped at the screen edge instead of the row frame (the item exchange); a tag-mode ticker (character guide) running off both edges; and the story window: `1010_030_02` (5 lines) is drawn at full size over Skip / Auto although E13's hooks are installed, and no shrink was logged.
-- **Story:** 25 lines of 13 Scenario files have no English, so those files are served Japanese as a whole (`TS_2010`, `TS_2040`, `TS_2050`, `TS_2060`, `TS_2070`, `TS_2090`, `TS_2100`, `TS_6020`, `TS_6040`, `TS_6050`, `TS_D076`, `TS_D093`, `TS_E036`).
+- **Story:** 25 lines of 13 Scenario files have no English, so those files are served Japanese as a whole (`TS_2010`, `TS_2040`, `TS_2050`, `TS_2060`, `TS_2070`, `TS_2090`, `TS_2100`, `TS_6020`, `TS_6040`, `TS_6050`, `TS_D076`, `TS_D093`, `TS_E036`). **Fixed after the sweep ([7.16](#716-the-follow-ups-story-gaps-the-profile-and-back-log-data-rows)): all 64 files are served.**
 - **Before the English master:** the first download dialog and the title screen are Japanese (they show before the `-en` master is fetched); not a gap in the table.
 
 **Fixed in this branch:**
@@ -1454,7 +1454,18 @@ Agent `en-textclean`, 2026-10-07. One breaker, `soa::text::break_lines` (`common
 
 ### 7.16 The follow-ups: story gaps, the profile and back log, data rows
 
-(agent `en-followup`; to be written.)
+Agent `en-followup`, 2026-10-07, after the sweep (7.12).
+
+**The 25 story lines without English (all 64 story files complete and served now).** The 25 lines of 13 files (`story-missing.tsv` of the sweep) were translated by the 31B (`story-fix`) on 2026-10-07 but refused by the checks (`work/english/mt-rejected-story.tsv`). Why, and what was done:
+
+| Lines | Why refused | Done |
+|---|---|---|
+| `2018_290_41`, `2018_300_09`, `2043_130_31`, `2061_010_22` (+ `2051_020_24`) | the machine glossary contradicted itself: ユーイン = Euwin (the name 310 story rows use) but ユーイン・ラクスター = Ewin Laxter, サー・ユーイン = Sir Ewin, ラクスター = Rakstar | the three glossary rows made consistent (Euwin Laxter, Sir Euwin, Laxter; the old spellings kept as variants, so no served row changes); the 31B's answers then pass and were imported |
+| `2072_110_17`, `2091_050_58`, `2101_020_62`, `6024_190_04`, `6041_030_20/34/54`, `D076_030_05`, `D076_050_20`, `D093_020_09`, `E036_060_26`, `2067_270_04`, `6053_220_13` | the engine left out a name (Eve, Tika, Lavarnia, Nel, Clair, Crowe, Chisato: "you" for ラヴァーニアさん), stretched a sound without end, or changed a tag | sent again with what was wrong (`english_mt_run.py story-retry`: the story-fix request plus the refused English and, per problem, the rule it broke; prompt `v2+story-v1+fix+retry1`, `work/english/followup/mt/story-retry.jsonl`, 18 lines in 0.7 min); these 13 passed and are machine rows |
+| `2012_040_12`, `2042_070_48`, `D093_020_06`, `2067_270_01` | the retry still repeated the colour tag, wrote "a Copy" mid-sentence, merged the ship and its captain ("the Accura Crow, F. Almedio"), or ran away (CAPTAIII…) | `agent` rows (7.9): the engine's wording where it was right, the error mended |
+| `2101_020_40`, `2101_030_104`, `6043_250_19` | the glossary check's false hits: ハナから is "from the start" (not the name Hana), 臨機応変 the idiom "adapt as we go" (not the skill Expedient Adaptation), カー……リン Karlyn stammered (not Lin) | `agent` rows whose note waives that term for that row only (`glossary-waive: ハナ (why)`; `english_text.py row_glossary`, `tests/test_english_text.py::test_glossary_waiver`); `2101_020_40` also had its subject dropped |
+
+Result (`tools/english_text.py build`): story **21,663 of 21,663 lines English** (official 5,037, machine 17,031, agent 7), **64 of 64 files complete**; `soa-server --english` logs `english story: 64 tables, 64 files served, 0 incomplete` (was 51).
 
 ### 7.17 Global's official wording: problems for the user to decide
 

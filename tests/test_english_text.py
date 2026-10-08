@@ -142,6 +142,19 @@ def test_glossary_check(font):
     assert C.check("紋章石が不足", "Not enough crests.", font, g)["glossary"] == [["紋章石", "Gems"]]
 
 
+def test_glossary_waiver(font):
+    """A table row's note may waive glossary terms the Japanese only seems to contain (ハナから is
+    "from the start", not the name Hana): only that row, only those terms."""
+    g = {"ハナ": {"en": "Hana", "variants": [], "kind": "name", "source": "official"},
+         "紋章石": {"en": "Gems", "variants": [], "kind": "ui", "source": "official"}}
+    ja, en = "ハナから紋章石はない", "There were never any Gems to begin with."
+    assert C.check(ja, en, font, g)["glossary"] == [["ハナ", "Hana"]]
+    w = T.row_glossary(g, "glossary-waive: ハナ (ハナから: from the start); the engine's text")
+    assert set(w) == {"紋章石"} and C.check(ja, en, font, w) == {}
+    assert T.row_glossary(g, "glossary-waive: ハナ, 紋章石 (why)") == {}
+    assert T.row_glossary(g, "a note without a waiver") is g and T.row_glossary(g, "") is g
+
+
 # ---------------------------------------------------------------- E3
 
 def test_e3_rewrites():

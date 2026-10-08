@@ -19,6 +19,7 @@ message_id	ja_sha1	en	source	engine	date	editor	note
 2061_010_19	851ed2a88e7ad87e9f48aa8835ea47b718a0b54e	Sir Ewin.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1+fix/llama.cpp-b11443/t0	2026-10-07		
 2061_010_20	269f33cdc0892992361ed594bb320cf8196d1eb0	Or, based on your introduction,\nshould I call you Sir Laxter?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2061_010_21	adbcfabd1f71ce917984a033ba24aeda5a4cc56d	Euwin is fine. To me, my noble\nfamily name is nothing more\nthan a tool.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+2061_010_22	8bffb6d8cbea30699adda142b53279029354c8ea	Then, Sir Euwin. And the ladies\nof Daftine as well.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1+fix/llama.cpp-b11443/t0	2026-10-07		
 2061_010_23	6cfaf2b6ce49def50d3d37c8df67f0b580093ce6	We have the safety and time\nhere to process the truth. I\ncan see that you are injured\nand exhausted. For a while, we\nshall stay here...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2061_010_24	fa2afed4dabe98c44c716cb44579459d7328ffc8	...Ugh.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2061_010_25	65ec20ea4f12d81edf265c1236b50b84d24ba998	Lady Welch? Is something...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
@@ -811,7 +812,9 @@ message_id	ja_sha1	en	source	engine	date	editor	note
 2066_240_79	41a082ee26e7e352cc208ed720250c1468a8b05b	I thought the light of civilization\nwould never shine upon\nOnelsen again...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2066_240_80	ca5b5fb8000336d2e16bdb109c5eb4ebd023be6a	I believed we were the last\nlonely humans left in the seas\nof this planet...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2066_240_81	e8524f68ec58e20359c0b135449760d840b5a5dd	But... the universe is still a vast\nplace, isn't it?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+2067_270_01	60d88f2ae71e02be2284026e7591b4ae74f54303	『Captaaain... Captain... CAPTAAAAAAAAAAAAAIN!! Captain, Captain, Captain, Captain, CAPTAAAAAAAAAAAAAIN!!!!』	agent		2026-10-07	en-followup	the engine ran away twice (CAPTAIII... without end); the stretched calls of the Japanese as in 2067_270_04
 2067_270_03	5ba9421cda18a3c1f608cdf877e0a1feabb62fc3	Wanya!?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1+fix/llama.cpp-b11443/t0	2026-10-07		
+2067_270_04	e43f70b88bd4b2d1b0c5a3ae316f4652f6aee7e4	『Captain! You're really the\nCaptain! This isn't a dream, is\nit, Captain?! You're safe, aren't\nyou?! CAPTAIIIIIIIIIIIIIIII!!』	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1+fix+retry1/llama.cpp-b11443/t0	2026-10-07		
 2067_270_05	f02a17ee1040ec20cb064ab39c11024182f3758d	Normally, I'd tell you to calm\ndown and give you a piece of\nmy mind, but...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1+fix/llama.cpp-b11443/t0	2026-10-07		
 2067_270_06	2af9b0f85b273f6c093030d8ea3f92a0b6424d23	Well... I suppose we can let it\nslide just this once.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1+fix/llama.cpp-b11443/t0	2026-10-07		
 2067_270_07	46c9eae55b09598fcd8a7456952cfa11f84777ac	That voice... I felt like I could\nhear it every now and then...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1+fix/llama.cpp-b11443/t0	2026-10-07		

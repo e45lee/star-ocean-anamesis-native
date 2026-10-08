@@ -82,7 +82,15 @@ yayoi's `b_*` bodies (`hook<K, Body>` runs `Body` when the family is off and no 
 HostFn can be named, the callee carries it (`expect`) and test `native/direct-callees` checks the
 registration has it; the test also checks every callee is a registered native of the subsystem it names
 (a typo or a removed native would silently keep the guest path) and that nothing is direct in
-`--selftest`. soa logs `natives calling natives: N of M callees as C++` at the install.
+`--selftest`. soa logs `natives calling natives: N of M callees as C++` at the install. Test
+`yayoi/direct-ason-calls` switches yayoi's ASON callees to C++ in `--selftest` (`set_direct_for_test`) and
+compares the document built that way with the one built through the guest entries.
+
+**Profiles:** `SOA_PROFILE`'s `calls.tsv` and the `[native]<symbol>` frames count a native when a level
+enters it through its thunk (from the JIT or a `guest_call`); a callee called as C++ is counted, and
+sampled, inside its caller (e.g. ASON::Malloc: 5.29M calls before, 5K after, almost all from
+EntityObject::Serialize). A native's own cost is in `SOA_PROFILE_HOST`'s `host.tsv`
+(`port/scripts/host_profile.py`), which samples the host PC.
 
 Render's two hooked callees (`LastMinuteDrawCommands_Textures`, `SetShaderProgramUniform`: guest code,
 hooked only so a draw's check can record them as markers) are called through the hook's trampoline to

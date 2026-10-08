@@ -383,12 +383,7 @@ float room(u64 label, Geometry* g) {
     guest_call(g_prs, {m, (u64)pos, 0, (u64)scale});
     float sx = scale[0] < 0 ? -scale[0] : scale[0];
     if (sx < 0.2f) return 0;  // opening animations: wait for the label's real size
-    // A label that grows with its text is laid out from its anchor; one with the anchor at 0 and right
-    // or centred alignment grows left or both ways (the menus' header descriptions: anchor 0,
-    // HT_Right, the text ending at x), so its room is on that side.
     float ax = l->m_anchorX, x = pos[0];
-    if (ax == 0 && l->m_hAlign == 2) ax = 1;
-    else if (ax == 0 && l->m_hAlign == 1) ax = 0.5f;
     float right = kScreenW - kMargin - x, left = x - kMargin;
     float r = 1e9f;
     if (ax < 1) r = right / (1 - ax);

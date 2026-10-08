@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <mutex>
+#include <set>
 #include <vector>
 
 #include "core/log.h"
@@ -18,7 +19,7 @@ namespace {
 constexpr const char* kTableRel = "data/english/master-en.tsv";
 constexpr const char* kHeader = "message_id\tja_sha1\ten\tsource";
 constexpr const char* kLabelsName = "labels.tsv";
-constexpr const char* kLabelsHeader = "ja\ten\tsource\tengine\tdate\teditor\tnote";
+constexpr const char* kLabelsHeader = "ja_sha1\ten\tsource\tengine\tdate\teditor\tnote";
 
 std::string sha1_of(const std::string& s) { return cdn::sha1_hex((const uint8_t*)s.data(), s.size()); }
 
@@ -129,14 +130,41 @@ bool load_labels(const std::string& path, Table& out, std::string* err) {
         }
         bool derived = f.size() == 7 && f[2] == "derived" && f[1].empty();
         bool ours = f.size() == 7 && !f[1].empty() && (f[2] == "machine" || f[2] == "agent" || f[2] == "human" || f[2] == "reviewed");
-        if (f[0].empty() || (!derived && !ours)) {
-            if (err) *err = path + ":" + std::to_string(n) + ": not seven fields with ja, and en with a source (or no en and \"derived\")";
+        bool hex = f[0].size() == 40 && f[0].find_first_not_of("0123456789abcdef") == std::string::npos;
+        if (!hex || (!derived && !ours)) {
+            if (err) *err = path + ":" + std::to_string(n) + ": not seven fields with a ja_sha1, and en with a source (or no en and \"derived\")";
             out.clear();
             return false;
         }
-        out[f[0]] = Entry{sha1_of(f[0]), f[1], f[2]};
+        out[f[0]] = Entry{f[0], f[1], f[2]};
     }
     return true;
+}
+
+std::string escape(const std::string& s) {
+    std::string o;
+    o.reserve(s.size());
+    for (char c : s) {
+        if (c == '\n') o += "\\n";
+        else o += c;
+    }
+    return o;
+}
+
+Table labels_by_text(const Table& rows, const std::set<std::string>& texts, std::vector<std::string>* stale) {
+    Table out;
+    std::set<std::string> seen;
+    for (auto& t : texts) {
+        std::string ja = escape(t);
+        auto it = rows.find(sha1_of(ja));
+        if (it == rows.end()) continue;
+        out[ja] = it->second;
+        seen.insert(it->first);
+    }
+    if (stale)
+        for (auto& [h, e] : rows)
+            if (!seen.count(h)) stale->push_back(h);
+    return out;
 }
 
 std::string story_dir() {

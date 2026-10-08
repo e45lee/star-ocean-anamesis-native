@@ -59,13 +59,18 @@ struct Side {
             std::memset(&b.m_block, 0, sizeof b.m_block);
             b.m_priority = 0;
         }
-        // (the free queue's unused slot is uninitialized heap memory: zeroed so the two sides compare)
-        for (u32 i = 0; i < d->m_freeBlocks.m_capacity; i++)
-            if (i == d->m_freeBlocks.m_write || i == d->m_freeBlocks.m_read) {
-                bool used = false;
-                for (s32 k = 0; k < kBlocks; k++) used |= d->m_freeBlocks.m_items[i] == &d->m_blocks[k];
-                if (!used) d->m_freeBlocks.m_items[i] = nullptr;
-            }
+        // The free queue's dead slots (not in m_read+1 .. m_write-1: a pop reads m_items[m_read+1], a
+        // push writes m_items[m_write]; after Setup the queue is full and m_items[m_read] is the one
+        // dead slot) are uninitialized heap memory: zeroed so the two sides compare. Whatever they
+        // hold, even a pointer that happens to name one of the blocks: the heap reuses addresses, and
+        // a stale &m_blocks[9] left by an earlier tenant of the same chunks once failed this test at
+        // step 0 ("B9 B0 B1 ..." against "0 B0 B1 ...").
+        const u32 cap = d->m_freeBlocks.m_capacity;
+        for (u32 i = 0; i < cap; i++) {
+            u32 from_read = (i + cap - d->m_freeBlocks.m_read) % cap, live = (d->m_freeBlocks.m_write + cap - d->m_freeBlocks.m_read) % cap;
+            if (live == 0) live = cap;  // (read == write: full)
+            if (from_read == 0 || from_read >= live) d->m_freeBlocks.m_items[i] = nullptr;
+        }
         std::memset(workers, 0, sizeof workers);
         *reinterpret_cast<u64*>(workers) = kWorkers;
         auto* w = reinterpret_cast<WorkerThread*>(workers + 8);

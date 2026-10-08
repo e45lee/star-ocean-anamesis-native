@@ -339,7 +339,7 @@ public:
     float m_stiffness;           // 0x184: the link solver's (fast mode) stiffness
     float m_param188;            // 0x188: scaled by Scale
     float m_contactFriction;     // 0x18c: the step's contact friction summed (0 each step)
-    u8 unk_190[8];               // 0x190
+    ADMJoint* m_parentJoint;     // 0x190: the joint the IK turns for this one (StandardIK)
     u8 m_lengthDirty;            // 0x198: set when a link's length was measured to it
     u8 m_isRoot;                 // 0x199 (SetRoot)
     u8 m_writesPosture;          // 0x19a: the node has a parent (Init): Flush writes the posture
@@ -347,7 +347,7 @@ public:
     u8 m_flags0;                 // 0x19c: bit 0 fixed (follows the animation)
     u8 m_flags1;                 // 0x19d: bit 0 gravity, bit 1 damping, bit 6 external acceleration
     u8 m_index19e;               // 0x19e
-    u8 m_contact;                // 0x19f: bit 0 touched this step (0 each step), bit 1 ...; UpdateVelocity scales by m_contactDamping
+    u8 m_contact;                // 0x19f: bit 0 touched this step, bit 1 also its own group's (0 each step); UpdateVelocity damps when set, StandardIK scales m_contactDamping by 0.9 (at least 0.6) after bit 1
     u8 unk_1a0[0x10];            // 0x1a0
     HierarchicalObjectContainer* m_node;  // 0x1b0
     float m_contactDamping;      // 0x1b8: 0.8 each step
@@ -369,6 +369,7 @@ static_assert(offsetof(ADMJoint, m_blendWeight) == 0x174);
 static_assert(offsetof(ADMJoint, m_damping) == 0x178);
 static_assert(offsetof(ADMJoint, m_mass) == 0x180);
 static_assert(offsetof(ADMJoint, m_stiffness) == 0x184);
+static_assert(offsetof(ADMJoint, m_parentJoint) == 0x190);
 static_assert(offsetof(ADMJoint, m_lengthDirty) == 0x198);
 static_assert(offsetof(ADMJoint, m_isRoot) == 0x199);
 static_assert(offsetof(ADMJoint, m_flags0) == 0x19c);
@@ -395,6 +396,16 @@ struct ADMSolver {
     // zero), the tangential part reduced by the contact friction, damped when touched; the previous
     // rotation from calc.
     static void UpdateVelocity(ADMJoint* j, ADM_CALC_DATA* calc, bool rest, float inv_dt);
+    // FUN_0242a08c: *out = calc's rotation turned by the angle between the directions from calc's
+    // position to the child's animated position (child_calc) and to its simulated one (in calc's
+    // space: the rotation axis through calc's inverse), unless the child is fixed (m_flags0 bit 2) or
+    // the angle is below the one cos(angle) = 1 - eps / factor allows. All NEON: FRSQRTE / FRECPE
+    // with Newton steps, a vectorized acos and sin / cos polynomials.
+    static void AimRotation(Quaternion* out, ADM_CALC_DATA* calc, ADMJoint* child, ADM_CALC_DATA* child_calc, float factor);
+    // FUN_02429d78: calc's rotation aimed (AimRotation), then slerped towards the joint's m_rotation70
+    // by its m_param170 (m_flags1 bit 2) and towards m_rotation80 by m_blendWeight * blend, both
+    // rates adjusted to `steps` sub-steps of length dt.
+    static void BlendRotation(ADMJoint* j, ADM_CALC_DATA* calc, ADMJoint* child, ADM_CALC_DATA* child_calc, u32 steps, float blend, float dt);
 };
 
 // A root of the ADM's joint chains: its first joint's index and the number of joints in the chain
@@ -445,6 +456,9 @@ public:
     // repeated up to `repeat` times until every joint is slower than `rest_speed`.
     static void SimulateMain(ArticulatedDynamicsManagerBase* adm, ADMJoint* first, ADMJoint* end, u32 iterations, s32 step0, s32 steps,
                              u32 ik_steps, u32 repeat, float dt, float inv_dt, float rest_speed);
+    // StandardIK<ADM, true>: per root chain, the joints' calc data from their simulated positions,
+    // each IK joint's parent turned towards it (BlendRotation), the velocities (UpdateVelocity).
+    static void StandardIK(ArticulatedDynamicsManagerBase* adm, u32 steps, float dt, float inv_dt);
     // ArticulatedDynamicsManager::Simulate: the step count and length from dt and the base dt.
     bool Simulate(float dt, u32 repeat, float rest_speed);
 

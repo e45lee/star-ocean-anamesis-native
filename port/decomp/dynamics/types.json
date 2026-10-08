@@ -1411,15 +1411,10 @@
     },
     {
      "offset": 400,
-     "name": "unk_190",
+     "name": "m_parentJoint",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 8
+      "kind": "ptr",
+      "to": "ADMJoint"
      },
      "size": 8
     },

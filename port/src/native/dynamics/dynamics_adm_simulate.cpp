@@ -229,7 +229,10 @@ void ArticulatedDynamicsManagerBase::SimulateMain(ArticulatedDynamicsManagerBase
                 if (!ik) guest_invoke<void>(fn_ik_false(), adm, ik_steps, dt, inv_dt);
                 guest_invoke<void>(fn_collision_and_constraint(), adm, first, end, collision_count, constraints, dt);
             }
-            if (ik) guest_invoke<void>(fn_ik_true(), adm, ik_steps, dt, inv_dt);
+            if (ik) {
+                if (checking()) guest_invoke<void>(fn_ik_true(), adm, ik_steps, dt, inv_dt);
+                else StandardIK(adm, ik_steps, dt, inv_dt);
+            }
             else guest_invoke<void>(fn_finalize(), adm, ik_steps, dt, inv_dt);
         }
         if (!no_rest_test) {
@@ -250,6 +253,84 @@ void ArticulatedDynamicsManagerBase::SimulateMain(ArticulatedDynamicsManagerBase
             }
         }
         if (++pass >= repeat) return;
+    }
+}
+
+namespace {
+GUEST_FN(fn_apply_vector, "_ZNK4Aska6Matrix11ApplyVectorEPNS_6VectorEPKS1_")
+// MatrixCalcFunc with an explicit parent.
+void MatrixCalcWith(ADM_CALC_DATA* c, ADM_CALC_DATA* parent) {
+    guest_call(fn_matrix_calc(), {(u64)&c->m_matrix, (u64)&c->m_position, (u64)&c->m_rotation, (u64)&c->m_orientation, (u64)&c->m_scale,
+                                  parent ? (u64)&parent->m_scale : 0, (u64)parent});
+}
+// The joint's position in `space`'s frame: inverse(space) * position.
+void LocalPosition(const ADM_CALC_DATA* space, const Vector* pos, Vector* out) {
+    alignas(16) Matrix m;
+    alignas(16) Vector v;
+    guest_call(fn_invert_low_error(), {(u64)space, (u64)&m});
+    guest_call(fn_apply_vector(), {(u64)&m, (u64)&v, (u64)pos});
+    *out = v;
+}
+// A free joint's position from its calc data, then its velocity (UpdateVelocity).
+void FinishJoint(ADMJoint* j, ADM_CALC_DATA* c, bool blend, float inv_dt) {
+    if (!(j->m_flags0 & 1)) j->m_position = Vector{c->m_matrix.m[0][3], c->m_matrix.m[1][3], c->m_matrix.m[2][3], 1.0f};
+    if (checking()) guest_invoke<void>(main_lib()->base + kFunUpdateVelocity, j, c, (u32)blend, inv_dt);
+    else ADMSolver::UpdateVelocity(j, c, blend, inv_dt);
+}
+}  // namespace
+
+void ArticulatedDynamicsManagerBase::StandardIK(ArticulatedDynamicsManagerBase* adm, u32 steps, float dt, float inv_dt) {
+    const s32 roots = adm->m_rootCount;
+    if (roots < 1) return;
+    const float blend_rate = adm->m_blendRate;
+    const F damp_scale(0.9f), damp_min(0.6f);  // (.rodata 0x2707bf4, 0x276c774)
+    for (s32 i = 0; i < roots; i++) {
+        const ADMRoot& r = adm->m_roots[i];
+        ADMJoint* joints = adm->m_joints;
+        const s64 first = (s32)r.m_first;
+        u32 count = r.m_count;
+        ADMJoint* root = joints + first;
+        const bool blend = adm->m_motionBlend != 0;
+        auto* rc = reinterpret_cast<ADM_CALC_DATA*>((u64)adm->m_rootCalc + (u64)i * sizeof(ADM_CALC_DATA));
+        if (root->m_flags1 & 0x20) root->m_calc.m_rotation = root->m_rotation70;
+        if (!root->m_lengthDirty && !(root->m_flags0 & 1)) {
+            if (rc) LocalPosition(rc, &root->m_position, &root->m_calc.m_position);
+            else root->m_calc.m_position = root->m_position;
+        }
+        MatrixCalcWith(&root->m_calc, rc);
+        if (count == 1) {
+            FinishJoint(root, &root->m_calc, blend, inv_dt);
+            continue;
+        }
+        ADMJoint* prev = root;
+        for (u32 k = 1 - count; k != 0; k++) {
+            ADMJoint* c = prev + 1;
+            ADMJoint* p = c->m_parentJoint;
+            ADM_CALC_DATA* pc = &p->m_calc;
+            if (c->m_contact & 2) {  // (touched last step)
+                F d = F(c->m_contactDamping) * damp_scale;
+                c->m_contactDamping = !(d == d) ? damp_min.v : (d > damp_min ? d.v : damp_min.v);  // (FMAXNM)
+            }
+            ADMJoint* turned = nullptr;
+            if (!((c->m_flags0 & 1) | c->m_lengthDirty)) {
+                LocalPosition(pc, &c->m_position, &c->m_calc.m_position);
+            } else if (c->m_flags0 & 2) {
+                MatrixCalc(pc);
+                MatrixCalcWith(&c->m_calc, pc);
+                if (checking())
+                    guest_invoke<void>(main_lib()->base + kFunBlendRotation, p, pc, c, &c->m_calc, steps, blend_rate, dt);
+                else
+                    ADMSolver::BlendRotation(p, pc, c, &c->m_calc, steps, blend_rate, dt);
+                MatrixCalc(pc);
+                FinishJoint(p, pc, blend, inv_dt);
+                turned = p;
+            }
+            if (c->m_flags1 & 0x20) c->m_calc.m_rotation = c->m_rotation70;
+            MatrixCalcWith(&c->m_calc, pc);
+            if (turned != prev) FinishJoint(prev, &prev->m_calc, blend, inv_dt);
+            prev = c;
+        }
+        FinishJoint(prev, &prev->m_calc, blend, inv_dt);
     }
 }
 
@@ -317,6 +398,8 @@ DYN_SIM("_ZN4Aska30ArticulatedDynamicsManagerBase15InterpolateRootINS_26Articula
         &live::leaf_function<&Adm::InterpolateRoot>, "Aska::ArticulatedDynamicsManagerBase::InterpolateRoot<ADM>");
 DYN_SIM("_ZN4Aska26ArticulatedDynamicsManager29PreprocessBeforeInternalForceIS0_EEvPT_PNS_8ADMJointES5_ffjjb",
         &live::leaf_function<&Adm::PreprocessBeforeInternalForce>, "Aska::ArticulatedDynamicsManager::PreprocessBeforeInternalForce<ADM>");
+DYN_SIM("_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi",
+        &live::leaf_function<&Adm::StandardIK>, "Aska::ArticulatedDynamicsManagerBase::StandardIK<ADM, true>");
 DYN_SIM("_ZN4Aska26ArticulatedDynamicsManager12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf", &live::leaf_function<&Adm::SimulateMain>,
         "Aska::ArticulatedDynamicsManager::SimulateMain<ADM>");
 static int dyn_sim_simulate = family().extra(family().add_leaf("_ZN4Aska26ArticulatedDynamicsManager8SimulateEfjf", &live::leaf_method<&Adm::Simulate>,

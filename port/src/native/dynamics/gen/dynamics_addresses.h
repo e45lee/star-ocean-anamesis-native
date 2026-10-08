@@ -20,4 +20,6 @@ inline constexpr std::uint64_t kVaddrWorldCollisionCount = 0x2ccdaa0;  // _ZN4As
 inline constexpr std::uint64_t kVaddrWorldConstraintCount = 0x2ccdaa1;  // _ZN4Aska30ArticulatedDynamicsManagerBase19m_ucWorldConstraintE (object, 1 bytes); u8
 inline constexpr std::uint64_t kVaddrWorldCollisionList = 0x2ccdaa8;  // _ZN4Aska30ArticulatedDynamicsManagerBase21m_pWorldCollisionListE (object, 128 bytes); DynamicsPrimitive*[]
 inline constexpr std::uint64_t kVaddrWorldConstraintList = 0x2ccdb50;  // _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldConstraintListE (object, 128 bytes); DynamicsPrimitive*[]
+inline constexpr std::uint64_t kFunAimRotation = 0x232a08c;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_26ArticulatedDynamicsManagerEEEvPT_ffi; FUN_0242a08c (ADMSolver::AimRotation)
+inline constexpr std::uint64_t kFunBlendRotation = 0x2329d78;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi; FUN_02429d78 (ADMSolver::BlendRotation)
 }  // namespace soa::native::dynamics

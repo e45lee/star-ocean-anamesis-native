@@ -53,6 +53,9 @@ denormals), compared bit for bit.
 | FUN_0242a9f4 `ADMSolver::ResolveContact` (the contact response) | `dynamics_adm_solver.cpp` | `dynamics/resolve-contact` | 36K checks, 0 mismatches |
 | FUN_0242ac84 `ADMSolver::UpdateVelocity` | `dynamics_adm_solver.cpp` | `dynamics/update-velocity` | 608K checks, 0 mismatches |
 
+| `StandardIK<ADM, true>` | `dynamics_adm_simulate.cpp` | `dynamics/standard-ik` | 38K checks, 0 mismatches (`only=10StandardIK`) |
+| FUN_02429d78 `ADMSolver::BlendRotation` (aim, then slerps by the step-adjusted rates) | `dynamics_adm_solver.cpp` | `dynamics/blend-rotation` | 423K checks, 0 mismatches (`only=@0x2329d78`) |
+| FUN_0242a08c `ADMSolver::AimRotation` (NEON: the 3x3 inverse, FRSQRTE / FRECPE, a vectorized acos and sin / cos) | `dynamics_adm_solver.cpp` | `dynamics/aim-rotation` | 360K checks, 0 mismatches (`only=@0x232a08c`) |
 | `ArticulatedDynamicsManager::Simulate(float, unsigned, float)` | `dynamics_adm_simulate.cpp` | `dynamics/simulate` | 36K checks, 0 mismatches (91 races) |
 | `SimulateMain<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/simulate` | 32K checks, 0 mismatches (83 races; `only=12SimulateMain`) |
 | `PreprocessBeforeInternalForce<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/preprocess` | 37K checks, 0 mismatches (`only=PreprocessBeforeInternalForce`) |
@@ -60,8 +63,7 @@ denormals), compared bit for bit.
 | `CollisionSetting<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/collision-setting` | 38K checks, 0 mismatches |
 
 Still guest code in the solver (called from the natives): `CollisionAndConstraint<ADM>` (2.6 KB, the NEON
-inverse), `StandardIK<ADM, true>` and its rotation helpers FUN_02429d78 / FUN_0242a08c (2.4 KB of
-NEON with FRSQRTE / FRECPE), `MatrixPreFixAndMotionBlend<true>`, the force-emitter functor,
+inverse), `MatrixPreFixAndMotionBlend<true>`, the force-emitter functor,
 `StandardIK<false>` / `Finalize` (not executed in the measured flows), `MatrixCalcFunc` (not dynamics').
 
 **Live-check runs:** a native checked on every call runs its nested natives unchecked, so the solver

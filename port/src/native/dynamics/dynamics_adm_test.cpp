@@ -4,6 +4,7 @@
 // native, compared byte for byte. The nodes (HierarchicalObjectContainer::
 // m_flags bit 0, render_layout.h's "matrix fixed", is the stale mark: UpdateHierarchically sets it
 // on the subtree, MakeMatrix clears it): a fake node has no children, MakeMatrix is a no-op.
+#include <cstdio>
 #include <cstring>
 #include <functional>
 #include <memory>
@@ -45,7 +46,15 @@ public:
     std::string diff(const std::vector<std::vector<u8>>& a, const std::vector<std::vector<u8>>& b) const {
         for (size_t i = 0; i < a.size(); i++)
             for (size_t k = 0; k < a[i].size(); k++)
-                if (a[i][k] != b[i][k]) return "buffer " + std::to_string(i) + " +0x" + std::to_string(k);
+                if (a[i][k] != b[i][k]) {
+                    char h[160];
+                    size_t w = k & ~size_t(3);
+                    u32 gv = 0, nv = 0;
+                    std::memcpy(&gv, &a[i][w], 4);
+                    std::memcpy(&nv, &b[i][w], 4);
+                    std::snprintf(h, sizeof h, "buffer %zu +0x%zx (word +0x%zx: guest %08x, native %08x)", i, k, w, (unsigned)gv, (unsigned)nv);
+                    return h;
+                }
         return "";
     }
     ~Arena() {
@@ -516,6 +525,121 @@ NATIVE_TEST("dynamics/simulate") {
         compare_runs(t, a, bad2, k, std::function<void()>([&] { gr = guest_invoke<bool>(fn2, m, repeat, dt * 2, rest); }),
                      std::function<void()>([&] { nr = m->Simulate(dt * 2, repeat, rest); }));
         bad2.check(k, gr == nr, "result");
+    }
+}
+
+}  // namespace soa::native::dynamics
+
+namespace soa::native::dynamics {
+
+namespace {
+// A joint calc / child pair for the rotation helpers: rotation matrices with translations, unit
+// rotations, the child's simulated position near its animated one (or at right angles: the acos's
+// branches), special floats in a share of the cases.
+struct AimCase {
+    ADM_CALC_DATA* calc;
+    ADMJoint* child;
+    ADM_CALC_DATA* child_calc;
+};
+AimCase make_aim(TestContext& t, Arena& a, int special) {
+    AimCase c;
+    c.calc = a.alloc<ADM_CALC_DATA>(t, sizeof(ADM_CALC_DATA), special);
+    c.child = a.alloc<ADMJoint>(t, sizeof(ADMJoint), special);
+    c.child_calc = a.alloc<ADM_CALC_DATA>(t, sizeof(ADM_CALC_DATA), special);
+    c.calc->m_matrix = rand_matrix(t, special);
+    c.calc->m_rotation = rand_quaternion(t, special);
+    c.child_calc->m_matrix = rand_matrix(t, special);
+    c.child->m_flags0 = (u8)(t.rand_int(0, 7) ? 0 : 4);
+    const Matrix& m = c.calc->m_matrix;
+    Matrix& cm = c.child_calc->m_matrix;
+    Vector d{rand_float(t, 2, special), rand_float(t, 2, special), rand_float(t, 2, special), 0};
+    cm.m[0][3] = m.m[0][3] + d.x, cm.m[1][3] = m.m[1][3] + d.y, cm.m[2][3] = m.m[2][3] + d.z;
+    switch (t.rand_int(0, 4)) {
+    case 0:  // nearly the same direction
+        c.child->m_position = Vector{cm.m[0][3] + rand_float(t, 0.01f, 0), cm.m[1][3] + rand_float(t, 0.01f, 0), cm.m[2][3], 1};
+        break;
+    case 1:  // at right angles (about)
+        c.child->m_position = Vector{m.m[0][3] - d.y, m.m[1][3] + d.x, m.m[2][3] + rand_float(t, 1e-6f, 0), 1};
+        break;
+    case 2:  // opposite (about)
+        c.child->m_position = Vector{m.m[0][3] - d.x, m.m[1][3] - d.y, m.m[2][3] - d.z + rand_float(t, 0.1f, 0), 1};
+        break;
+    default:
+        c.child->m_position = Vector{m.m[0][3] + rand_float(t, 2, special), m.m[1][3] + rand_float(t, 2, special), m.m[2][3] + rand_float(t, 2, special), 1};
+    }
+    return c;
+}
+}  // namespace
+
+NATIVE_TEST("dynamics/aim-rotation") {
+    Mismatches bad{t, "ADMSolver::AimRotation"};
+    const u64 fn = main_lib()->base + kFunAimRotation;
+    for (int k = 0; k < 30000; k++) {
+        int special = k < 24000 ? 0 : 150;
+        Arena a;
+        AimCase c = make_aim(t, a, special);
+        auto* q = a.alloc<Quaternion>(t, sizeof(Quaternion));
+        float factor = t.rand_int(0, 3) ? 1.0f + std::fabs(rand_float(t, 3, 0)) : rand_float(t, 5, special);
+        compare_runs(t, a, bad, k, std::function<void()>([&] { guest_invoke<void>(fn, q, c.calc, c.child, c.child_calc, factor); }),
+                     std::function<void()>([&] { ADMSolver::AimRotation(q, c.calc, c.child, c.child_calc, factor); }));
+    }
+}
+
+NATIVE_TEST("dynamics/blend-rotation") {
+    Mismatches bad{t, "ADMSolver::BlendRotation"};
+    const u64 fn = main_lib()->base + kFunBlendRotation;
+    for (int k = 0; k < 20000; k++) {
+        int special = k < 16000 ? 0 : 150;
+        Arena a;
+        AimCase c = make_aim(t, a, special);
+        auto* j = a.alloc<ADMJoint>(t, sizeof(ADMJoint), special);
+        j->m_flags1 = (u8)t.rand_int(0, 255);
+        j->m_rotation70 = rand_quaternion(t, special);
+        j->m_rotation80 = rand_quaternion(t, special);
+        j->m_param170 = std::fabs(rand_float(t, 1.2f, special));
+        j->m_blendWeight = std::fabs(rand_float(t, 1.2f, special));
+        u32 steps = (u32)t.rand_int(0, 5);
+        float dt = t.rand_int(0, 1) ? 0.016f + rand_float(t, 0.01f, 0) : rand_float(t, 0.05f, special);
+        float blend = rand_float(t, 1.2f, special);
+        compare_runs(t, a, bad, k, std::function<void()>([&] { guest_invoke<void>(fn, j, c.calc, c.child, c.child_calc, steps, blend, dt); }),
+                     std::function<void()>([&] { ADMSolver::BlendRotation(j, c.calc, c.child, c.child_calc, steps, blend, dt); }));
+    }
+}
+
+}  // namespace soa::native::dynamics
+
+namespace soa::native::dynamics {
+
+// StandardIK<ADM, true>: chains with IK joints (m_flags0 bit 1: the parent turned towards them),
+// fixed / dirty joints, the rot70 override (m_flags1 bit 5), contact damping (bit 1).
+NATIVE_TEST("dynamics/standard-ik") {
+    Mismatches bad{t, "StandardIK<ADM, true>"};
+    const u64 fn = t.sym("_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi");
+    for (int k = 0; k < 3000; k++) {
+        int special = k < 2400 ? 0 : 150;
+        Arena a;
+        int n = t.rand_int(1, 6);
+        AdmSet s = make_adm(t, a, n, true, special);
+        ArticulatedDynamicsManagerBase* m = s.adm;
+        for (s32 r = 0; r < m->m_rootCount; r++) {
+            const ADMRoot& root = m->m_roots[r];
+            for (u32 i = 0; i < root.m_count; i++) {
+                ADMJoint* j = s.js.array + root.m_first + i;
+                j->m_parentJoint = i ? j - 1 : nullptr;
+                j->m_flags0 = (u8)(t.rand_int(0, 3) ? 2 : t.rand_int(0, 255));
+                j->m_lengthDirty = (u8)(t.rand_int(0, 5) == 0);
+                j->m_calc.m_rotation = rand_quaternion(t, special);
+                j->m_calc.m_matrix = rand_matrix(t, special);
+                j->m_rotation70 = rand_quaternion(t, special);
+                j->m_rotation80 = rand_quaternion(t, special);
+            }
+        }
+        for (s32 r = 0; r < m->m_rootCount; r++) m->m_rootCalc[r].m_matrix = rand_matrix(t, special);
+        if (k % 11 == 0 && m->m_rootCount == 1) m->m_rootCalc = nullptr;
+        u32 steps = (u32)t.rand_int(1, 4);
+        float dt = 0.016f + rand_float(t, 0.01f, 0), inv = 1.0f / dt;
+        compare_runs(t, a, bad, k, std::function<void()>([&] { guest_invoke<void>(fn, m, steps, dt, inv); }),
+                     std::function<void()>([&] { ArticulatedDynamicsManagerBase::StandardIK(m, steps, dt, inv); }));
     }
 }
 

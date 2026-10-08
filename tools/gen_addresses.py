@@ -24,11 +24,11 @@ addresses.txt, one entry per line ('#' starts a comment outside a string):
                                                     TEXT\\0 occurs, also as the tail of a longer string
     NAME  str  "...TAIL"         [ref FUNC]         a whole string (a NUL before it) ending with TAIL
     NAME  at   0xVADDR [TYPE]     ref FUNC          an address without a symbol or text to find it by
-                                                    (a function-local static, a .rodata table); FUNC
-                                                    must reference it
+                                                    (a function-local static, a .rodata table, a local
+                                                    function FUNC calls); FUNC must reference it
 
 FUNC is a function's symbol; `ref FUNC` keeps only the candidates FUNC's code addresses (ADRP + ADD /
-LDR / STR, LDR literal), so a string that occurs several times, or an `at` vaddr, is tied to the code
+LDR / STR, LDR literal, BL / B targets), so a string that occurs several times, or an `at` vaddr, is tied to the code
 that uses it. A `str` with more than one candidate left is an error. TYPE (`at` only) adds the value
 the table holds in the lib to the comment: f32, u32[N], ...
 
@@ -93,7 +93,7 @@ class Lib:
         return [s for s in self.secs if s[0] in (".rodata",)]
 
     def refs(self, func):
-        """Every address FUNC's code computes (ADRP + ADD / LDR / STR, ADR, LDR literal)."""
+        """Every address FUNC's code computes (ADRP + ADD / LDR / STR, ADR, LDR literal) or calls (BL / B)."""
         if func in self._refs:
             return self._refs[func]
         if func not in self.syms:
@@ -116,6 +116,8 @@ class Lib:
                         out.add(page[o.mem.base] + o.mem.disp)
                 if ins.mnemonic.startswith("ldr") and len(ops) == 2 and ops[1].type == ARM64_OP_IMM:
                     out.add(ops[1].imm)  # LDR (literal)
+                if ins.mnemonic in ("bl", "b") and len(ops) == 1 and ops[0].type == ARM64_OP_IMM:
+                    out.add(ops[0].imm)  # BL / B: a local function the code calls
         self._refs[func] = out
         return out
 

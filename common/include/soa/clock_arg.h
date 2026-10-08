@@ -9,6 +9,8 @@
 #include <ctime>
 #include <string>
 
+#include "soa/local_time.h"
+
 namespace soa {
 
 // The time `s` names (Unix seconds); 0 when it is unparsable.
@@ -17,8 +19,7 @@ inline int64_t parse_clock_arg(const std::string& s) {
     if (sscanf(s.c_str(), "%d-%d-%d %d:%d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec) >= 3) {
         tm.tm_year -= 1900;
         tm.tm_mon -= 1;
-        tm.tm_isdst = -1;
-        return (int64_t)mktime(&tm);
+        return soa::mktime_local(&tm);
     }
     char* end = nullptr;
     long long v = strtoll(s.c_str(), &end, 10);

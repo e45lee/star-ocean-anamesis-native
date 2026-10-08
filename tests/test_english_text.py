@@ -65,10 +65,12 @@ def test_counts_reproduce_english_md(built):
     (id-ws), 83 by memory-ws (2 of them were template rows); 120 credit rows by id (official-credit:
     the illustrator's Japanese name and romanization) and 59 more by memory through them; 40 by
     official-near (Global's English for a Japanese text changed only in punctuation or an
-    abbreviation)."""
+    abbreviation); 580 language-neutral rows by exact memory and 48 by template (memory-neutral,
+    template-neutral: ＡＴＫ＋２０％ → "ATK +20%"), still classed neutral."""
     ws = collections.Counter((r, built.klass[m]) for m, r in built.matched.items())
     assert ws == {("id-ws", "official"): 57, ("id-ws", "official_e3"): 5, ("memory-ws", "exact_ws"): 83,
-                  ("official-credit", "official"): 120, ("official-near", "official_near"): 40}
+                  ("official-credit", "official"): 120, ("official-near", "official_near"): 40,
+                  ("memory-neutral", "neutral"): 580, ("template-neutral", "neutral"): 48}
     assert built.candidates["official"] == 19145 + 57 + 120
     assert built.candidates["exact"] == 6265 + 59
     assert built.candidates["exact_ws"] == 83
@@ -762,3 +764,15 @@ def test_near_ja():
     assert not C.near_ja("スキル３連携以上の時にクリティカル率＋５０％", "スキル３連携以上の時にクリティカル発生率＋５０％",
                          "AP cost -30% during combos of 3 or more skills")                           # Global's English is another text
     assert not C.near_ja(None, "地球", "Earth")
+
+
+def test_neutral_rows_take_the_memory(built):
+    """english.md 7.9 step 4 (memory-neutral, 2026-10-08): a language-neutral row takes Global's
+    English for the same Japanese (seed and factor effects, full-width credits), as memory."""
+    src = T.Ctx().src
+    rows = {m: built.out[m] for m, r in built.matched.items() if r.endswith("-neutral")}
+    assert len(rows) == 628
+    assert all(not C.has_kana(src.jp_rows[m]) and s in ("memory", "template") for m, (_, _, s) in rows.items())
+    hits = {src.jp_rows[m]: e for m, (_, e, _) in rows.items()}
+    assert hits["ＡＴＫ＋２０％"] == "ATK +20%"
+    assert hits["ｍｏｔ"] == "mot"

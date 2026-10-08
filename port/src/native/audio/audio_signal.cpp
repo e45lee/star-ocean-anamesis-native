@@ -28,6 +28,7 @@ struct SignalObs {
     SLVoice* pre[AudioSignalNotify::kSlots];
     SLVoice* post[AudioSignalNotify::kSlots];
     std::vector<std::pair<u64, u64>> calls;  // Handler: (voice, slot) in order
+    u64 vtables[AudioSignalNotify::kSlots];  // Handler: each voice's vtable as the native saw it
 };
 thread_local SignalObs* t_obs = nullptr;
 
@@ -51,7 +52,10 @@ void AudioSignalNotify::Handler(u64 /*arg*/) {
     for (int i = 0; i < kSlots; i++) {
         SLVoice* voice = m_voices[i];
         if (!voice) continue;
-        if (t_obs) t_obs->calls.emplace_back((u64)voice, (u64)i);
+        if (t_obs) {
+            t_obs->calls.emplace_back((u64)voice, (u64)i);
+            t_obs->vtables[i] = *reinterpret_cast<const u64*>(voice);
+        }
         guest_call(voice_slot_audio_signal(voice), {(u64)voice, (u64)i});
     }
     if (t_obs) std::memcpy(t_obs->post, m_voices, sizeof m_voices);
@@ -147,9 +151,11 @@ void count_checked(Cpu& c) {
     live::check_getter(c, g_count, wrap_method<&AudioSignalNotify::GetSignalCount>(), 0xffffffffu);
 }
 
-// Handler: the native for real (its voice calls logged), then the guest original on a shadow of the slots
-// it saw, with SLVoice::AudioSignal answered by the check's stub on this thread: the calls, in order,
-// must match. Skipped when a voice's slot 10 isn't SLVoice::AudioSignal (a class the stub doesn't cover).
+// Handler: the native for real (its voice calls logged, each voice's vtable as it was), then the guest
+// original on a shadow notify whose slots hold proxies of those voices (just their vtables: a voice
+// deleted right after the native's run doesn't matter), with SLVoice::AudioSignal answered by the
+// check's stub: the calls, in order, must match. Skipped when a voice's slot 10 isn't
+// SLVoice::AudioSignal (a class the stub doesn't cover).
 void handler_checked(Cpu& c) {
     if (!live::check_due(g_handler)) return wrap_method<&AudioSignalNotify::Handler>()(c);
     auto* self = reinterpret_cast<AudioSignalNotify*>(c.x(0));
@@ -164,15 +170,25 @@ void handler_checked(Cpu& c) {
     t_obs = &obs;
     self->Handler(c.x(1));
     t_obs = nullptr;
-    for (auto& [voice, slot] : obs.calls)
-        if (voice_slot_audio_signal(reinterpret_cast<const SLVoice*>(voice)) != target)
+    alignas(16) u64 proxies[AudioSignalNotify::kSlots][2] = {};
+    SLVoice* slots[AudioSignalNotify::kSlots] = {};
+    for (auto& [voice, slot] : obs.calls) {
+        if (reinterpret_cast<const u64*>(obs.vtables[slot])[AudioSignalNotify::kSlotVoiceAudioSignal] != target)
             return live::check_result(g_handler, live::Outcome::Skipped, "a voice of another class");
-    ShadowNotify sh(*self, obs.pre);
+        proxies[slot][0] = obs.vtables[slot];
+        slots[slot] = reinterpret_cast<SLVoice*>(proxies[slot]);
+    }
+    auto real_of = [&](u64 p) -> u64 {
+        for (int i = 0; i < AudioSignalNotify::kSlots; i++)
+            if (p == (u64)proxies[i]) return (u64)obs.pre[i];
+        return p;
+    };
+    ShadowNotify sh(*self, slots);
     std::vector<std::pair<u64, u64>> guest_calls;
     {
         live::ReplaySession s;
         s.answer(stub, [&](Cpu& cc) {
-            guest_calls.emplace_back(cc.x(0), cc.x(1));
+            guest_calls.emplace_back(real_of(cc.x(0)), cc.x(1));
             cc.set_x(0, 0);
         });
         live::drop_stale_code(target);
@@ -181,7 +197,7 @@ void handler_checked(Cpu& c) {
     std::string why;
     if (guest_calls != obs.calls)
         why = "voice calls: native " + std::to_string(obs.calls.size()) + " guest " + std::to_string(guest_calls.size());
-    if (why.empty()) why = slots_diff(obs.pre, sh.n.m_voices);
+    if (why.empty()) why = slots_diff(slots, sh.n.m_voices);
     live::check_result(g_handler, why.empty() ? live::Outcome::Ok : live::Outcome::Mismatch, why);
 }
 

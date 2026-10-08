@@ -1,0 +1,953 @@
+{
+ "subsystem": "dynamics",
+ "generated_by": "tools/subsystem.py export-types dynamics",
+ "header": "port/src/native/dynamics/dynamics_layout.h",
+ "structs": [
+  {
+   "name": "DYNAMICS_PRIMITIVE",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_response0",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_response1",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_owner",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "DYNAMICS_CAPSULE",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_head",
+     "type": {
+      "kind": "struct",
+      "name": "DYNAMICS_PRIMITIVE"
+     },
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "m_segment",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Segment",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 64,
+     "name": "m_otherSegment",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Segment",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 96,
+     "name": "m_velocity",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 112,
+     "name": "m_current",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 128,
+     "name": "m_radius",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 132,
+     "name": "unk_84",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    }
+   ],
+   "size": 144,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x21a1954",
+     "symbol": "_ZN4Aska16DYNAMICS_CAPSULE16TestIntersectionEPS0_bPNS_6VectorEPfS4_",
+     "name": "TestIntersection"
+    },
+    {
+     "ghidra": "0x21a1aac",
+     "symbol": "_ZN4Aska16DYNAMICS_CAPSULE21TestIntersectionLocalER13__Float32x4_tS2_S2_PS0_bPKNS_6VectorEPS4_PfS8_",
+     "name": "TestIntersectionLocal"
+    },
+    {
+     "ghidra": "0x21a1d04",
+     "symbol": "_ZN4Aska16DYNAMICS_CAPSULE22TestIntersectionSphereEPKNS_6VectorEfPS1_",
+     "name": "TestIntersectionSphere"
+    },
+    {
+     "ghidra": "0x21a1e40",
+     "symbol": "_ZN4Aska16DYNAMICS_CAPSULE16TestIntersectionEPKNS_6VectorEfPS1_",
+     "name": "TestIntersection"
+    }
+   ]
+  },
+  {
+   "name": "DYNAMICS_CUBE",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_head",
+     "type": {
+      "kind": "struct",
+      "name": "DYNAMICS_PRIMITIVE"
+     },
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "m_center",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 48,
+     "name": "m_halfExtents",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 64,
+     "name": "m_axis",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "bytes",
+       "ctype": "Vector"
+      },
+      "count": 3
+     },
+     "size": 48
+    },
+    {
+     "offset": 112,
+     "name": "m_world",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 176,
+     "name": "m_invWorld",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 240,
+     "name": "m_velocity",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 256,
+     "name": "m_current",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 272,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x21a1f7c",
+     "symbol": "_ZN4Aska13DYNAMICS_CUBE16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_",
+     "name": "TestIntersection"
+    },
+    {
+     "ghidra": "0x21a2290",
+     "symbol": "_ZN4Aska13DYNAMICS_CUBE21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_",
+     "name": "TestIntersectionLocal"
+    },
+    {
+     "ghidra": "0x21a26b8",
+     "symbol": "_ZN4Aska13DYNAMICS_CUBE22TestIntersectionSphereEPKNS_6VectorEfPS1_",
+     "name": "TestIntersectionSphere"
+    },
+    {
+     "ghidra": "0x21a2880",
+     "symbol": "_ZN4Aska13DYNAMICS_CUBE16TestIntersectionEPKNS_6VectorEfPS1_",
+     "name": "TestIntersection"
+    }
+   ]
+  },
+  {
+   "name": "DYNAMICS_SPHERE",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_head",
+     "type": {
+      "kind": "struct",
+      "name": "DYNAMICS_PRIMITIVE"
+     },
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "m_radius",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 48,
+     "name": "m_center",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 64,
+     "name": "m_velocity",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 80,
+     "name": "m_current",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 96,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x21761e0",
+     "symbol": "_ZN4Aska15DYNAMICS_SPHERE22TestIntersectionSphereEPKNS_6VectorEfPS1_",
+     "name": "TestIntersectionSphere"
+    },
+    {
+     "ghidra": "0x21a29a0",
+     "symbol": "_ZN4Aska15DYNAMICS_SPHERE21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_",
+     "name": "TestIntersectionLocal"
+    }
+   ]
+  },
+  {
+   "name": "DYNAMICS_PLANE",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_head",
+     "type": {
+      "kind": "struct",
+      "name": "DYNAMICS_PRIMITIVE"
+     },
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "m_normal",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 48,
+     "name": "m_point",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 64,
+     "name": "m_velocity",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 80,
+     "name": "m_current",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 96,
+   "align": 8
+  },
+  {
+   "name": "DynamicsPrimitive",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 32,
+     "name": "m_handler",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "unk_28",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_localPosition",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 64,
+     "name": "unk_40",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 80,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": "DYNAMICS_PRIMITIVE"
+     },
+     "size": 8
+    },
+    {
+     "offset": 88,
+     "name": "unk_58",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    }
+   ],
+   "size": 96,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x219f600",
+     "symbol": "_ZN4Aska17DynamicsPrimitive5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x219f658",
+     "symbol": "_ZNK4Aska17DynamicsPrimitive3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x219f6a4",
+     "symbol": "_ZN4Aska17DynamicsPrimitive3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x21a0e38",
+     "symbol": "_ZN4Aska17DynamicsPrimitiveD0Ev",
+     "name": "~DynamicsPrimitive"
+    },
+    {
+     "ghidra": "0x21a0e60",
+     "symbol": "_ZNK4Aska17DynamicsPrimitive10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x21a0e9c",
+     "symbol": "_ZN4Aska17DynamicsPrimitive10DeleteThisEv",
+     "name": "DeleteThis"
+    },
+    {
+     "ghidra": "0x21a0ebc",
+     "symbol": "_ZN4Aska17DynamicsPrimitive8AddRefExEv",
+     "name": "AddRefEx"
+    },
+    {
+     "ghidra": "0x21a0ecc",
+     "symbol": "_ZN4Aska17DynamicsPrimitive20CreateParticleObjectEv",
+     "name": "CreateParticleObject"
+    },
+    {
+     "ghidra": "0x21a0ed4",
+     "symbol": "_ZN4Aska17DynamicsPrimitive6UpdateEfb",
+     "name": "Update"
+    },
+    {
+     "ghidra": "0x21a0ed8",
+     "symbol": "_ZN4Aska17DynamicsPrimitive5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x21a0edc",
+     "symbol": "_ZN4Aska17DynamicsPrimitive16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_",
+     "name": "TestIntersection"
+    },
+    {
+     "ghidra": "0x21a0ee4",
+     "symbol": "_ZN4Aska17DynamicsPrimitive21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_",
+     "name": "TestIntersectionLocal"
+    },
+    {
+     "ghidra": "0x21a0eec",
+     "symbol": "_ZN4Aska17DynamicsPrimitive22TestIntersectionSphereEPKNS_6VectorEfPS1_",
+     "name": "TestIntersectionSphere"
+    },
+    {
+     "ghidra": "0x21a0ef4",
+     "symbol": "_ZN4Aska17DynamicsPrimitive16TestIntersectionEPKNS_6VectorEfPS1_",
+     "name": "TestIntersection"
+    }
+   ]
+  },
+  {
+   "name": "DynamicsSphere",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "DynamicsPrimitive"
+     },
+     "size": 96
+    },
+    {
+     "offset": 96,
+     "name": "m_shape",
+     "type": {
+      "kind": "struct",
+      "name": "DYNAMICS_SPHERE"
+     },
+     "size": 96
+    }
+   ],
+   "size": 192,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x219fcd4",
+     "symbol": "_ZN4Aska14DynamicsSphere3RunEv",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x219fd78",
+     "symbol": "_ZN4Aska14DynamicsSphere5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x219fd88",
+     "symbol": "_ZN4Aska14DynamicsSphere20CreateParticleObjectEv",
+     "name": "CreateParticleObject"
+    },
+    {
+     "ghidra": "0x219fdd4",
+     "symbol": "_ZN4Aska14DynamicsSphere5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x219fe34",
+     "symbol": "_ZN4Aska14DynamicsSphere11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x219ff1c",
+     "symbol": "_ZNK4Aska14DynamicsSphere3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x219ff74",
+     "symbol": "_ZN4Aska14DynamicsSphere3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x21a111c",
+     "symbol": "_ZN4Aska14DynamicsSphereD0Ev",
+     "name": "~DynamicsSphere"
+    },
+    {
+     "ghidra": "0x21a1144",
+     "symbol": "_ZNK4Aska14DynamicsSphere10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x21a1198",
+     "symbol": "_ZN4Aska14DynamicsSphere6UpdateEfb",
+     "name": "Update"
+    },
+    {
+     "ghidra": "0x21a11f4",
+     "symbol": "_ZN4Aska14DynamicsSphere16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_",
+     "name": "TestIntersection"
+    },
+    {
+     "ghidra": "0x21a1334",
+     "symbol": "_ZN4Aska14DynamicsSphere21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_",
+     "name": "TestIntersectionLocal"
+    },
+    {
+     "ghidra": "0x21a1348",
+     "symbol": "_ZN4Aska14DynamicsSphere22TestIntersectionSphereEPKNS_6VectorEfPS1_",
+     "name": "TestIntersectionSphere"
+    },
+    {
+     "ghidra": "0x21a145c",
+     "symbol": "_ZN4Aska14DynamicsSphere16TestIntersectionEPKNS_6VectorEfPS1_",
+     "name": "TestIntersection"
+    }
+   ]
+  },
+  {
+   "name": "DynamicsCapsule",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "DynamicsPrimitive"
+     },
+     "size": 96
+    },
+    {
+     "offset": 96,
+     "name": "m_shape",
+     "type": {
+      "kind": "struct",
+      "name": "DYNAMICS_CAPSULE"
+     },
+     "size": 144
+    }
+   ],
+   "size": 240,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x219ffd4",
+     "symbol": "_ZN4Aska15DynamicsCapsule3RunEv",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x21a02a0",
+     "symbol": "_ZN4Aska15DynamicsCapsule5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x21a02b0",
+     "symbol": "_ZN4Aska15DynamicsCapsule20CreateParticleObjectEv",
+     "name": "CreateParticleObject"
+    },
+    {
+     "ghidra": "0x21a02fc",
+     "symbol": "_ZN4Aska15DynamicsCapsule5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x21a03bc",
+     "symbol": "_ZN4Aska15DynamicsCapsule11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x21a04c4",
+     "symbol": "_ZNK4Aska15DynamicsCapsule3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x21a0574",
+     "symbol": "_ZN4Aska15DynamicsCapsule3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x21a0efc",
+     "symbol": "_ZN4Aska15DynamicsCapsuleD0Ev",
+     "name": "~DynamicsCapsule"
+    },
+    {
+     "ghidra": "0x21a0f24",
+     "symbol": "_ZNK4Aska15DynamicsCapsule10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x21a0f78",
+     "symbol": "_ZN4Aska15DynamicsCapsule6UpdateEfb",
+     "name": "Update"
+    },
+    {
+     "ghidra": "0x21a0fd8",
+     "symbol": "_ZN4Aska15DynamicsCapsule16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_",
+     "name": "TestIntersection"
+    },
+    {
+     "ghidra": "0x21a0fe4",
+     "symbol": "_ZN4Aska15DynamicsCapsule21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_",
+     "name": "TestIntersectionLocal"
+    },
+    {
+     "ghidra": "0x21a0ff8",
+     "symbol": "_ZN4Aska15DynamicsCapsule22TestIntersectionSphereEPKNS_6VectorEfPS1_",
+     "name": "TestIntersectionSphere"
+    },
+    {
+     "ghidra": "0x21a1000",
+     "symbol": "_ZN4Aska15DynamicsCapsule16TestIntersectionEPKNS_6VectorEfPS1_",
+     "name": "TestIntersection"
+    }
+   ]
+  },
+  {
+   "name": "DynamicsCube",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "DynamicsPrimitive"
+     },
+     "size": 96
+    },
+    {
+     "offset": 96,
+     "name": "m_shape",
+     "type": {
+      "kind": "struct",
+      "name": "DYNAMICS_CUBE"
+     },
+     "size": 272
+    }
+   ],
+   "size": 368,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x219f6f0",
+     "symbol": "_ZN4Aska12DynamicsCube3RunEv",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x219fa3c",
+     "symbol": "_ZN4Aska12DynamicsCube5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x219fa4c",
+     "symbol": "_ZN4Aska12DynamicsCube20CreateParticleObjectEv",
+     "name": "CreateParticleObject"
+    },
+    {
+     "ghidra": "0x219fa98",
+     "symbol": "_ZN4Aska12DynamicsCube5CloneEPKNS_11IAnimatableE",
+     "name": "Clone"
+    },
+    {
+     "ghidra": "0x219fb10",
+     "symbol": "_ZN4Aska12DynamicsCube11CreateCloneEPKNS_11IAnimatableE",
+     "name": "CreateClone"
+    },
+    {
+     "ghidra": "0x219fbe8",
+     "symbol": "_ZNK4Aska12DynamicsCube3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x219fc5c",
+     "symbol": "_ZN4Aska12DynamicsCube3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x21a1008",
+     "symbol": "_ZN4Aska12DynamicsCubeD0Ev",
+     "name": "~DynamicsCube"
+    },
+    {
+     "ghidra": "0x21a1030",
+     "symbol": "_ZNK4Aska12DynamicsCube10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x21a1084",
+     "symbol": "_ZN4Aska12DynamicsCube6UpdateEfb",
+     "name": "Update"
+    },
+    {
+     "ghidra": "0x21a10ec",
+     "symbol": "_ZN4Aska12DynamicsCube16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_",
+     "name": "TestIntersection"
+    },
+    {
+     "ghidra": "0x21a10f8",
+     "symbol": "_ZN4Aska12DynamicsCube21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_",
+     "name": "TestIntersectionLocal"
+    },
+    {
+     "ghidra": "0x21a110c",
+     "symbol": "_ZN4Aska12DynamicsCube22TestIntersectionSphereEPKNS_6VectorEfPS1_",
+     "name": "TestIntersectionSphere"
+    },
+    {
+     "ghidra": "0x21a1114",
+     "symbol": "_ZN4Aska12DynamicsCube16TestIntersectionEPKNS_6VectorEfPS1_",
+     "name": "TestIntersection"
+    }
+   ]
+  },
+  {
+   "name": "DynamicsPlane",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "DynamicsPrimitive"
+     },
+     "size": 96
+    },
+    {
+     "offset": 96,
+     "name": "m_shape",
+     "type": {
+      "kind": "struct",
+      "name": "DYNAMICS_PLANE"
+     },
+     "size": 96
+    }
+   ],
+   "size": 192,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x21a06a8",
+     "symbol": "_ZN4Aska13DynamicsPlane3RunEv",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x21a07d8",
+     "symbol": "_ZN4Aska13DynamicsPlane5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x21a07e8",
+     "symbol": "_ZN4Aska13DynamicsPlane20CreateParticleObjectEv",
+     "name": "CreateParticleObject"
+    },
+    {
+     "ghidra": "0x21a1570",
+     "symbol": "_ZN4Aska13DynamicsPlaneD0Ev",
+     "name": "~DynamicsPlane"
+    },
+    {
+     "ghidra": "0x21a1598",
+     "symbol": "_ZNK4Aska13DynamicsPlane10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x21a15ec",
+     "symbol": "_ZN4Aska13DynamicsPlane6UpdateEfb",
+     "name": "Update"
+    },
+    {
+     "ghidra": "0x21a1648",
+     "symbol": "_ZN4Aska13DynamicsPlane16TestIntersectionEPKNS_6VectorEfPS1_",
+     "name": "TestIntersection"
+    }
+   ]
+  }
+ ]
+}

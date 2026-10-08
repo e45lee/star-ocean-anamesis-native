@@ -1,0 +1,764 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x2072c94	0x2172c94	604	_ZN4Aska30ArticulatedDynamicsManagerBase5ScaleEfPNS_10AsfHandlerE	Aska::ArticulatedDynamicsManagerBase::Scale(float, Aska::AsfHandler*)	adm	decompiled	
+0x2072f00	0x2172f00	508	_ZN4Aska30ArticulatedDynamicsManagerBase21SimulateNotifyHandlerEf	Aska::ArticulatedDynamicsManagerBase::SimulateNotifyHandler(float)	adm	decompiled	
+0x20730fc	0x21730fc	216	_ZN4Aska30ArticulatedDynamicsManagerBase12ConvergeMainEiff	Aska::ArticulatedDynamicsManagerBase::ConvergeMain(int, float, float)	adm	decompiled	
+0x20731d4	0x21731d4	144	_ZN4Aska30ArticulatedDynamicsManagerBase15ResetPrimitivesEv	Aska::ArticulatedDynamicsManagerBase::ResetPrimitives()	adm	decompiled	
+0x2073264	0x2173264	164	_ZN4Aska30ArticulatedDynamicsManagerBase17AddWorldCollisionEPNS_17DynamicsPrimitiveEh	Aska::ArticulatedDynamicsManagerBase::AddWorldCollision(Aska::DynamicsPrimitive*, unsigned char)	adm	decompiled	
+0x2073308	0x2173308	128	_ZN4Aska30ArticulatedDynamicsManagerBase32WorldCollisionOrConstraintExistsEPNS_17DynamicsPrimitiveE	Aska::ArticulatedDynamicsManagerBase::WorldCollisionOrConstraintExists(Aska::DynamicsPrimitive*)	adm	decompiled	
+0x2073388	0x2173388	284	_ZN4Aska30ArticulatedDynamicsManagerBase20DeleteWorldCollisionEPNS_17DynamicsPrimitiveEb	Aska::ArticulatedDynamicsManagerBase::DeleteWorldCollision(Aska::DynamicsPrimitive*, bool)	adm	decompiled	
+0x20734a4	0x21734a4	308	_ZN4Aska30ArticulatedDynamicsManagerBase23DeleteAllWorldCollisionEh	Aska::ArticulatedDynamicsManagerBase::DeleteAllWorldCollision(unsigned char)	adm	decompiled	
+0x20735d8	0x21735d8	192	_ZN4Aska30ArticulatedDynamicsManagerBase19CountWorldCollisionEv	Aska::ArticulatedDynamicsManagerBase::CountWorldCollision()	adm	decompiled	
+0x2073698	0x2173698	192	_ZN4Aska30ArticulatedDynamicsManagerBase20CountWorldConstraintEv	Aska::ArticulatedDynamicsManagerBase::CountWorldConstraint()	adm	decompiled	
+0x2073758	0x2173758	168	_ZN4Aska30ArticulatedDynamicsManagerBase18AddWorldConstraintEPNS_17DynamicsPrimitiveEh	Aska::ArticulatedDynamicsManagerBase::AddWorldConstraint(Aska::DynamicsPrimitive*, unsigned char)	adm	decompiled	
+0x2073800	0x2173800	284	_ZN4Aska30ArticulatedDynamicsManagerBase21DeleteWorldConstraintEPNS_17DynamicsPrimitiveEb	Aska::ArticulatedDynamicsManagerBase::DeleteWorldConstraint(Aska::DynamicsPrimitive*, bool)	adm	decompiled	
+0x207391c	0x217391c	308	_ZN4Aska30ArticulatedDynamicsManagerBase24DeleteAllWorldConstraintEh	Aska::ArticulatedDynamicsManagerBase::DeleteAllWorldConstraint(unsigned char)	adm	decompiled	
+0x2073a50	0x2173a50	292	_ZN4Aska30ArticulatedDynamicsManagerBase44MakeDynamicsPrimitiveListWithDependencyOfADMEPPNS_17DynamicsPrimitiveE	Aska::ArticulatedDynamicsManagerBase::MakeDynamicsPrimitiveListWithDependencyOfADM(Aska::DynamicsPrimitive**)	adm	decompiled	
+0x2073b74	0x2173b74	536	_ZN4Aska30ArticulatedDynamicsManagerBase46UpdateDynamicsPrimitiveListWithDependencyOfADMEj	Aska::ArticulatedDynamicsManagerBase::UpdateDynamicsPrimitiveListWithDependencyOfADM(unsigned int)	adm	decompiled	
+0x2073d8c	0x2173d8c	92	_ZN4Aska30ArticulatedDynamicsManagerBase5FlushEv	Aska::ArticulatedDynamicsManagerBase::Flush()	adm	decompiled	
+0x2073de8	0x2173de8	32	_ZN4Aska30ArticulatedDynamicsManagerBase19AllocConstraintListEPPhi	Aska::ArticulatedDynamicsManagerBase::AllocConstraintList(unsigned char**, int)	adm	decompiled	
+0x2073e08	0x2173e08	464	_ZN4Aska30ArticulatedDynamicsManagerBase17InitParentOfRootsEPPhi	Aska::ArticulatedDynamicsManagerBase::InitParentOfRoots(unsigned char**, int)	adm	decompiled	
+0x2073fd8	0x2173fd8	556	_ZN4Aska30ArticulatedDynamicsManagerBase10InitJointsEPPh	Aska::ArticulatedDynamicsManagerBase::InitJoints(unsigned char**)	adm	decompiled	
+0x2074204	0x2174204	144	_ZN4Aska30ArticulatedDynamicsManagerBase27ReserveJointParamsForUpdateEv	Aska::ArticulatedDynamicsManagerBase::ReserveJointParamsForUpdate()	adm	decompiled	
+0x2074294	0x2174294	976	_ZN4Aska30ArticulatedDynamicsManagerBase11PrepareCalcEf	Aska::ArticulatedDynamicsManagerBase::PrepareCalc(float)	adm	decompiled	
+0x2074664	0x2174664	476	_ZN4Aska8ADMJoint11PrepareCalcEv	Aska::ADMJoint::PrepareCalc()	adm	decompiled	
+0x2074840	0x2174840	336	_ZN4Aska8ADMJoint5FlushEv	Aska::ADMJoint::Flush()	adm	decompiled	
+0x2074990	0x2174990	128	_ZNK4Aska30ArticulatedDynamicsManagerBase5GetDtEv	Aska::ArticulatedDynamicsManagerBase::GetDt() const	adm	decompiled	
+0x2074a10	0x2174a10	180	_ZN4Aska30ArticulatedDynamicsManagerBase14CheckGroupLinkEPNS_8ADMJointEi	Aska::ArticulatedDynamicsManagerBase::CheckGroupLink(Aska::ADMJoint*, int)	adm	decompiled	
+0x2074ac4	0x2174ac4	184	_ZN4Aska30ArticulatedDynamicsManagerBase14CheckMoveLargeEf	Aska::ArticulatedDynamicsManagerBase::CheckMoveLarge(float)	adm	decompiled	
+0x2074b7c	0x2174b7c	956	_ZN4Aska30ArticulatedDynamicsManagerBase3RunEv	Aska::ArticulatedDynamicsManagerBase::Run()	adm	decompiled	
+0x2074f38	0x2174f38	396	_ZN4Aska30ArticulatedDynamicsManagerBase8ConvergeEifi	Aska::ArticulatedDynamicsManagerBase::Converge(int, float, int)	adm	decompiled	
+0x20750c4	0x21750c4	220	_ZN4Aska30ArticulatedDynamicsManagerBase20RemoveExtraPrimitiveEPNS_17DynamicsPrimitiveE	Aska::ArticulatedDynamicsManagerBase::RemoveExtraPrimitive(Aska::DynamicsPrimitive*)	adm	decompiled	
+0x20751a0	0x21751a0	220	_ZN4Aska30ArticulatedDynamicsManagerBase20RemoveExtraCollisionEPNS_17DynamicsPrimitiveE	Aska::ArticulatedDynamicsManagerBase::RemoveExtraCollision(Aska::DynamicsPrimitive*)	adm	decompiled	
+0x207527c	0x217527c	216	_ZN4Aska30ArticulatedDynamicsManagerBase23RemoveAllExtraPrimitiveEv	Aska::ArticulatedDynamicsManagerBase::RemoveAllExtraPrimitive()	adm	decompiled	
+0x2075354	0x2175354	216	_ZN4Aska30ArticulatedDynamicsManagerBase23RemoveAllExtraCollisionEv	Aska::ArticulatedDynamicsManagerBase::RemoveAllExtraCollision()	adm	decompiled	
+0x207542c	0x217542c	44	_ZN4Aska30ArticulatedDynamicsManagerBase17AddExtraCollisionEPNS_17DynamicsPrimitiveEmmj	Aska::ArticulatedDynamicsManagerBase::AddExtraCollision(Aska::DynamicsPrimitive*, unsigned long, unsigned long, unsigned int)	adm	decompiled	
+0x2075458	0x2175458	368	_ZN4Aska30ArticulatedDynamicsManagerBase21AddExtraPrimitiveMainERNS_21DynamicsPrimitiveListEPNS_17DynamicsPrimitiveEmmj	Aska::ArticulatedDynamicsManagerBase::AddExtraPrimitiveMain(Aska::DynamicsPrimitiveList&, Aska::DynamicsPrimitive*, unsigned long, unsigned long, unsigned int)	adm	decompiled	
+0x20755c8	0x21755c8	840	_ZN4Aska30ArticulatedDynamicsManagerBase37AddExtraCollisionFromCollisionHandlerEPKNS_16CollisionHandlerEttmmj	Aska::ArticulatedDynamicsManagerBase::AddExtraCollisionFromCollisionHandler(Aska::CollisionHandler const*, unsigned short, unsigned short, unsigned long, unsigned long, unsigned int)	adm	decompiled	
+0x2075910	0x2175910	172	_ZN4Aska30ArticulatedDynamicsManagerBase37AddExtraCollisionFromCollisionHandlerEPKNS_10AsfHandlerEPKNS_16CollisionHandlerEttmmj	Aska::ArticulatedDynamicsManagerBase::AddExtraCollisionFromCollisionHandler(Aska::AsfHandler const*, Aska::CollisionHandler const*, unsigned short, unsigned short, unsigned long, unsigned long, unsigned int)	adm	decompiled	
+0x20759bc	0x21759bc	8	_ZN4Aska30ArticulatedDynamicsManagerBase8DumpOpenEPKci	Aska::ArticulatedDynamicsManagerBase::DumpOpen(char const*, int)	adm	decompiled	
+0x20759c4	0x21759c4	8	_ZN4Aska30ArticulatedDynamicsManagerBase4DumpEPKci	Aska::ArticulatedDynamicsManagerBase::Dump(char const*, int)	adm	decompiled	
+0x20759cc	0x21759cc	8	_ZN4Aska30ArticulatedDynamicsManagerBase9DumpCloseEPKc	Aska::ArticulatedDynamicsManagerBase::DumpClose(char const*)	adm	decompiled	
+0x20759d4	0x21759d4	132	_ZN4Aska30ArticulatedDynamicsManagerBase17SearchOrginalDataEPNS_10AsfHandlerES2_i	Aska::ArticulatedDynamicsManagerBase::SearchOrginalData(Aska::AsfHandler*, Aska::AsfHandler*, int)	adm	decompiled	
+0x2075a5c	0x2175a5c	416	_ZN4Aska30ArticulatedDynamicsManagerBaseD2Ev	Aska::ArticulatedDynamicsManagerBase::~ArticulatedDynamicsManagerBase()	adm	decompiled	
+0x2075bfc	0x2175bfc	4	_ZN4Aska30ArticulatedDynamicsManagerBaseD0Ev	Aska::ArticulatedDynamicsManagerBase::~ArticulatedDynamicsManagerBase()	adm	decompiled	
+0x2075c00	0x2175c00	56	_ZNK4Aska30ArticulatedDynamicsManagerBase10GetClassIDEi	Aska::ArticulatedDynamicsManagerBase::GetClassID(int) const	adm	decompiled	
+0x2075c38	0x2175c38	4	_ZN4Aska8Dynamics5CloneEPKNS_11IAnimatableE	Aska::Dynamics::Clone(Aska::IAnimatable const*)	manager	decompiled	
+0x2075c3c	0x2175c3c	8	_ZN4Aska8Dynamics11CreateCloneEPKNS_11IAnimatableE	Aska::Dynamics::CreateClone(Aska::IAnimatable const*)	manager	decompiled	
+0x2075c44	0x2175c44	8	_ZNK4Aska8Dynamics3GetEmPv	Aska::Dynamics::Get(unsigned long, void*) const	manager	decompiled	
+0x2075c4c	0x2175c4c	8	_ZN4Aska8Dynamics3SetEmPKv	Aska::Dynamics::Set(unsigned long, void const*)	manager	decompiled	
+0x2075c54	0x2175c54	32	_ZN4Aska30ArticulatedDynamicsManagerBase10DeleteThisEv	Aska::ArticulatedDynamicsManagerBase::DeleteThis()	adm	decompiled	
+0x2075c74	0x2175c74	16	_ZN4Aska30ArticulatedDynamicsManagerBase8AddRefExEv	Aska::ArticulatedDynamicsManagerBase::AddRefEx()	adm	decompiled	
+0x2075c84	0x2175c84	4	_ZN4Aska8Dynamics29OnMakeListFromDynamicsManagerEv	Aska::Dynamics::OnMakeListFromDynamicsManager()	manager	decompiled	
+0x2075c88	0x2175c88	8	_ZNK4Aska8Dynamics7GetTypeEv	Aska::Dynamics::GetType() const	manager	decompiled	
+0x2075c90	0x2175c90	8	_ZN4Aska8Dynamics7SetTypeEh	Aska::Dynamics::SetType(unsigned char)	manager	decompiled	
+0x2075c98	0x2175c98	8	_ZNK4Aska30ArticulatedDynamicsManagerBase19GetDefaultTaskLevelEv	Aska::ArticulatedDynamicsManagerBase::GetDefaultTaskLevel() const	adm	decompiled	
+0x207619c	0x217619c	40	_ZNK4Aska8Dynamics10GetClassIDEi	Aska::Dynamics::GetClassID(int) const	manager	decompiled	
+0x20761c4	0x21761c4	4	_ZN4Aska8Dynamics3RunEv	Aska::Dynamics::Run()	manager	decompiled	
+0x20761c8	0x21761c8	20	_ZN4Aska8Dynamics10DeleteThisEv	Aska::Dynamics::DeleteThis()	manager	decompiled	
+0x20761dc	0x21761dc	4	_ZN4Aska8Dynamics8AddRefExEv	Aska::Dynamics::AddRefEx()	manager	decompiled	
+0x20761e0	0x21761e0	276	_ZN4Aska15DYNAMICS_SPHERE22TestIntersectionSphereEPKNS_6VectorEfPS1_	Aska::DYNAMICS_SPHERE::TestIntersectionSphere(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x207666c	0x217666c	76	_ZN4Aska24DynamicsPrimitiveElementD2Ev	Aska::DynamicsPrimitiveElement::~DynamicsPrimitiveElement()	primitives	decompiled	
+0x20767d4	0x21767d4	84	_ZN4Aska24DynamicsPrimitiveElementD0Ev	Aska::DynamicsPrimitiveElement::~DynamicsPrimitiveElement()	primitives	decompiled	
+0x2076828	0x2176828	8	_ZNK4Aska15DynamicsHandler7GetTypeEv	Aska::DynamicsHandler::GetType() const	manager	decompiled	
+0x2076830	0x2176830	24	_ZN4Aska24DynamicsPrimitiveElement3RunEi	Aska::DynamicsPrimitiveElement::Run(int)	primitives	decompiled	
+0x2076848	0x2176848	8	_ZN4Aska15DynamicsHandler30IsNeedToSortByProcessHeavinessEv	Aska::DynamicsHandler::IsNeedToSortByProcessHeaviness()	manager	decompiled	
+0x2076850	0x2176850	8	_ZN4Aska15DynamicsHandler16IsHeavierHandlerEPS0_	Aska::DynamicsHandler::IsHeavierHandler(Aska::DynamicsHandler*)	manager	decompiled	
+0x2076858	0x2176858	4	_ZN4Aska15DynamicsHandler29OnMakeListFromDynamicsManagerEv	Aska::DynamicsHandler::OnMakeListFromDynamicsManager()	manager	decompiled	
+0x207685c	0x217685c	36	_ZN4Aska15DynamicsHandler14IsAddToDynListEv	Aska::DynamicsHandler::IsAddToDynList()	manager	decompiled	
+0x2076880	0x2176880	8	_ZNK4Aska15DynamicsHandler10GetClassIDEi	Aska::DynamicsHandler::GetClassID(int) const	manager	decompiled	
+0x209c210	0x219c210	240	_ZN4Aska16CollisionHandler14DecompressDataEPKv	Aska::CollisionHandler::DecompressData(void const*)	manager	decompiled	
+0x209c300	0x219c300	60	_ZN4Aska16CollisionHandler7SetDataEPKv	Aska::CollisionHandler::SetData(void const*)	manager	decompiled	
+0x209c33c	0x219c33c	64	_ZN4Aska16CollisionHandler10AttachDataEPKv	Aska::CollisionHandler::AttachData(void const*)	manager	decompiled	
+0x209c37c	0x219c37c	92	_ZN4Aska16CollisionHandler12GetAcfHeaderEPNS_3AFF8AskaFileE	Aska::CollisionHandler::GetAcfHeader(Aska::AFF::AskaFile*)	manager	decompiled	
+0x209c3d8	0x219c3d8	244	_ZN4Aska16CollisionHandler10CreateDataEv	Aska::CollisionHandler::CreateData()	manager	decompiled	
+0x209c4cc	0x219c4cc	156	_ZN4Aska16CollisionHandler15PreAttachObjectEv	Aska::CollisionHandler::PreAttachObject()	manager	decompiled	
+0x209c568	0x219c568	352	_ZN4Aska16CollisionHandler12AttachObjectEPNS_10AsfHandlerE	Aska::CollisionHandler::AttachObject(Aska::AsfHandler*)	manager	decompiled	
+0x209c6c8	0x219c6c8	124	_ZNK4Aska16CollisionHandler12GetAcfObjectEiPNS_9AcfObjectE	Aska::CollisionHandler::GetAcfObject(int, Aska::AcfObject*) const	manager	decompiled	
+0x209c744	0x219c744	40	_ZNK4Aska16CollisionHandler25GetObjectLinkedWithBranchEPNS_19AcfSphereTreeBranchE	Aska::CollisionHandler::GetObjectLinkedWithBranch(Aska::AcfSphereTreeBranch*) const	manager	decompiled	
+0x209c76c	0x219c76c	40	_ZNK4Aska16CollisionHandler23GetObjectLinkedWithLeafEPNS_17AcfSphereTreeLeafE	Aska::CollisionHandler::GetObjectLinkedWithLeaf(Aska::AcfSphereTreeLeaf*) const	manager	decompiled	
+0x209c794	0x219c794	4	_ZN4Aska16CollisionHandler15EnableCollisionEjb	Aska::CollisionHandler::EnableCollision(unsigned int, bool)	manager	decompiled	
+0x209c798	0x219c798	148	_ZNK4Aska16CollisionHandler12SearchByNameEPKci	Aska::CollisionHandler::SearchByName(char const*, int) const	manager	decompiled	
+0x209c82c	0x219c82c	128	_ZNK4Aska16CollisionHandler12SearchByNameEPKc	Aska::CollisionHandler::SearchByName(char const*) const	manager	decompiled	
+0x209c8ac	0x219c8ac	124	_ZNK4Aska16CollisionHandler17SearchIndexByNameEPKc	Aska::CollisionHandler::SearchIndexByName(char const*) const	manager	decompiled	
+0x209c928	0x219c928	296	_ZNK4Aska16CollisionHandler3GetEmPv	Aska::CollisionHandler::Get(unsigned long, void*) const	manager	decompiled	
+0x209ca50	0x219ca50	224	_ZN4Aska16CollisionHandler12GetAcfObjectEjPKvPKNS_9AcfObjectEm	Aska::CollisionHandler::GetAcfObject(unsigned int, void const*, Aska::AcfObject const*, unsigned long)	manager	decompiled	
+0x209cb30	0x219cb30	152	_ZN4Aska16CollisionHandler3SetEmPKv	Aska::CollisionHandler::Set(unsigned long, void const*)	manager	decompiled	
+0x209cbc8	0x219cbc8	524	_ZN4Aska16CollisionHandler12SetAcfObjectEPbPPNS_6VectorEjPKvPKNS_9AcfObjectEm	Aska::CollisionHandler::SetAcfObject(bool*, Aska::Vector**, unsigned int, void const*, Aska::AcfObject const*, unsigned long)	manager	decompiled	
+0x209cdd4	0x219cdd4	1436	_ZN4Aska16CollisionHandler14UpdateBoundingEjPNS_6VectorE	Aska::CollisionHandler::UpdateBounding(unsigned int, Aska::Vector*)	manager	decompiled	
+0x209d370	0x219d370	4	_ZN4Aska16CollisionHandler13EnableAcfNodeEPKNS_17AcfSphereTreeLeafEtb	Aska::CollisionHandler::EnableAcfNode(Aska::AcfSphereTreeLeaf const*, unsigned short, bool)	manager	decompiled	
+0x209d374	0x219d374	80	_ZN4Aska16CollisionHandler6DetachEv	Aska::CollisionHandler::Detach()	manager	decompiled	
+0x209d3c4	0x219d3c4	12	_ZN4Aska16CollisionHandler19UpdateLocalBoundingEPNS_23AcfPrimitiveData_sphereE	Aska::CollisionHandler::UpdateLocalBounding(Aska::AcfPrimitiveData_sphere*)	manager	decompiled	
+0x209d3d0	0x219d3d0	68	_ZN4Aska16CollisionHandler19UpdateLocalBoundingEPNS_21AcfPrimitiveData_cubeE	Aska::CollisionHandler::UpdateLocalBounding(Aska::AcfPrimitiveData_cube*)	manager	decompiled	
+0x209d414	0x219d414	24	_ZN4Aska16CollisionHandler19UpdateLocalBoundingEPNS_24AcfPrimitiveData_capsuleE	Aska::CollisionHandler::UpdateLocalBounding(Aska::AcfPrimitiveData_capsule*)	manager	decompiled	
+0x209d42c	0x219d42c	108	_ZN4Aska16CollisionHandler10MakeMatrixEv	Aska::CollisionHandler::MakeMatrix()	manager	decompiled	
+0x209d498	0x219d498	716	_ZN4Aska16CollisionHandler14ExpandBoundingEv	Aska::CollisionHandler::ExpandBounding()	manager	decompiled	
+0x209d764	0x219d764	104	_ZN4Aska16CollisionHandlerD2Ev	Aska::CollisionHandler::~CollisionHandler()	manager	decompiled	
+0x209d7cc	0x219d7cc	112	_ZN4Aska16CollisionHandlerD0Ev	Aska::CollisionHandler::~CollisionHandler()	manager	decompiled	
+0x209d83c	0x219d83c	24	_ZNK4Aska16CollisionHandler10GetClassIDEi	Aska::CollisionHandler::GetClassID(int) const	manager	decompiled	
+0x209d854	0x219d854	48	_ZN4Aska15DynamicsHandler17SetDispatchHandleEim	Aska::DynamicsHandler::SetDispatchHandle(int, unsigned long)	manager	decompiled	
+0x209d884	0x219d884	40	_ZN4Aska15DynamicsHandler25SetDirtyToDynamicsManagerEj	Aska::DynamicsHandler::SetDirtyToDynamicsManager(unsigned int)	manager	decompiled	
+0x209d8ac	0x219d8ac	72	_ZN4Aska15DynamicsHandler8SetLevelEj	Aska::DynamicsHandler::SetLevel(unsigned int)	manager	decompiled	
+0x209d8f4	0x219d8f4	508	_ZN4Aska15DynamicsHandler14NormalizedFlagERj	Aska::DynamicsHandler::NormalizedFlag(unsigned int&)	manager	decompiled	
+0x209daf0	0x219daf0	36	_ZN4Aska15DynamicsHandler7SetTypeEh	Aska::DynamicsHandler::SetType(unsigned char)	manager	decompiled	
+0x209db14	0x219db14	40	_ZN4Aska15DynamicsHandler23SetDirtyChangeParameterEv	Aska::DynamicsHandler::SetDirtyChangeParameter()	manager	decompiled	
+0x209db3c	0x219db3c	48	_ZN4Aska15DynamicsHandlerD1Ev	Aska::DynamicsHandler::~DynamicsHandler()	manager	decompiled	
+0x209db6c	0x219db6c	60	_ZN4Aska15DynamicsHandlerD0Ev	Aska::DynamicsHandler::~DynamicsHandler()	manager	decompiled	
+0x209dba8	0x219dba8	4	_ZN4Aska15DynamicsHandler3RunEi	Aska::DynamicsHandler::Run(int)	manager	decompiled	
+0x209df20	0x219df20	116	_ZN4Aska15DynamicsManager10InitializeEv	Aska::DynamicsManager::Initialize()	manager	decompiled	
+0x209df94	0x219df94	152	_ZN4Aska15DynamicsManager22GetForceEmitterManagerEv	Aska::DynamicsManager::GetForceEmitterManager()	manager	decompiled	
+0x209e080	0x219e080	240	_ZN4Aska15DynamicsManagerC2Ev	Aska::DynamicsManager::DynamicsManager()	manager	decompiled	
+0x209e170	0x219e170	148	_ZN4Aska15DynamicsManagerD2Ev	Aska::DynamicsManager::~DynamicsManager()	manager	decompiled	
+0x209e218	0x219e218	24	_ZN4Aska15DynamicsManagerD0Ev	Aska::DynamicsManager::~DynamicsManager()	manager	decompiled	
+0x209e230	0x219e230	120	_ZN4Aska15DynamicsManager22CheckSameDispatchGroupEPNS_15DynamicsHandlerES2_	Aska::DynamicsManager::CheckSameDispatchGroup(Aska::DynamicsHandler*, Aska::DynamicsHandler*)	manager	decompiled	
+0x209e2a8	0x219e2a8	124	_ZN4Aska15DynamicsManager17MakeDispatchGroupERPPNS_15DynamicsHandlerES3_S3_	Aska::DynamicsManager::MakeDispatchGroup(Aska::DynamicsHandler**&, Aska::DynamicsHandler**, Aska::DynamicsHandler**)	manager	decompiled	
+0x209e324	0x219e324	304	_ZN4Aska15DynamicsManager3RunEi	Aska::DynamicsManager::Run(int)	manager	decompiled	
+0x209e454	0x219e454	1536	_ZN4Aska15DynamicsManager16MakeDynamicsListEv	Aska::DynamicsManager::MakeDynamicsList()	manager	decompiled	
+0x209ea54	0x219ea54	44	_ZN4Aska15DynamicsManager19IncrementLevelCountEj	Aska::DynamicsManager::IncrementLevelCount(unsigned int)	manager	decompiled	
+0x209ea80	0x219ea80	32	_ZN4Aska15DynamicsManager19DecrementLevelCountEj	Aska::DynamicsManager::DecrementLevelCount(unsigned int)	manager	decompiled	
+0x209eaa0	0x219eaa0	200	_ZN4Aska15DynamicsManager3AddEPNS_15DynamicsHandlerEj	Aska::DynamicsManager::Add(Aska::DynamicsHandler*, unsigned int)	manager	decompiled	
+0x209eb68	0x219eb68	76	_ZN4Aska15DynamicsManager6ExistsEPNS_15DynamicsHandlerE	Aska::DynamicsManager::Exists(Aska::DynamicsHandler*)	manager	decompiled	
+0x209ebd8	0x219ebd8	200	_ZN4Aska15DynamicsManager6AddTopEPNS_15DynamicsHandlerEj	Aska::DynamicsManager::AddTop(Aska::DynamicsHandler*, unsigned int)	manager	decompiled	
+0x209ecc4	0x219ecc4	236	_ZN4Aska15DynamicsManager6InsertEPNS_15DynamicsHandlerES2_j	Aska::DynamicsManager::Insert(Aska::DynamicsHandler*, Aska::DynamicsHandler*, unsigned int)	manager	decompiled	
+0x209edd0	0x219edd0	232	_ZN4Aska15DynamicsManager6DeleteEPNS_15DynamicsHandlerE	Aska::DynamicsManager::Delete(Aska::DynamicsHandler*)	manager	decompiled	
+0x209eef8	0x219eef8	128	_ZN4Aska15DynamicsManager11ChangeLevelEPNS_15DynamicsHandlerEj	Aska::DynamicsManager::ChangeLevel(Aska::DynamicsHandler*, unsigned int)	manager	decompiled	
+0x209ef78	0x219ef78	76	_ZN4Aska15DynamicsManager21SetDynamicsListBufferEPh	Aska::DynamicsManager::SetDynamicsListBuffer(unsigned char*)	manager	decompiled	
+0x209efc4	0x219efc4	92	_ZN4Aska9ADMObject5CloneEPKNS_11IAnimatableE	Aska::ADMObject::Clone(Aska::IAnimatable const*)	adm	decompiled	
+0x209f020	0x219f020	104	_ZN4Aska9ADMObject11CreateCloneEPKNS_11IAnimatableE	Aska::ADMObject::CreateClone(Aska::IAnimatable const*)	adm	decompiled	
+0x209f088	0x219f088	296	_ZN4Aska9ADMObjectC2Ev	Aska::ADMObject::ADMObject()	adm	decompiled	
+0x209f1b0	0x219f1b0	84	_ZNK4Aska9ADMObject3GetEmPv	Aska::ADMObject::Get(unsigned long, void*) const	adm	decompiled	
+0x209f204	0x219f204	84	_ZN4Aska9ADMObject3SetEmPKv	Aska::ADMObject::Set(unsigned long, void const*)	adm	decompiled	
+0x209f260	0x219f260	60	_ZN4Aska9ADMObjectD2Ev	Aska::ADMObject::~ADMObject()	adm	decompiled	
+0x209f29c	0x219f29c	68	_ZN4Aska9ADMObjectD0Ev	Aska::ADMObject::~ADMObject()	adm	decompiled	
+0x209f2e0	0x219f2e0	88	_ZNK4Aska9ADMObject10GetClassIDEi	Aska::ADMObject::GetClassID(int) const	adm	decompiled	
+0x209f350	0x219f350	64	_ZNK4Aska15DynamicsManager10GetClassIDEi	Aska::DynamicsManager::GetClassID(int) const	manager	decompiled	
+0x209f390	0x219f390	24	_ZN4Aska12DynamicsWaitD0Ev	Aska::DynamicsWait::~DynamicsWait()	manager	decompiled	
+0x209f3a8	0x219f3a8	64	_ZNK4Aska12DynamicsWait10GetClassIDEi	Aska::DynamicsWait::GetClassID(int) const	manager	decompiled	
+0x209f3e8	0x219f3e8	8	_ZNK4Aska12DynamicsWait15GetDefaultLevelEv	Aska::DynamicsWait::GetDefaultLevel() const	manager	decompiled	
+0x209f3f0	0x219f3f0	88	_ZN4Aska12DynamicsWait3RunEi	Aska::DynamicsWait::Run(int)	manager	decompiled	
+0x209f448	0x219f448	24	_ZN4Aska27DynamicsForceEmitterManager11_UpdateTaskD0Ev	Aska::DynamicsForceEmitterManager::_UpdateTask::~_UpdateTask()	forces	decompiled	
+0x209f460	0x219f460	40	_ZN4Aska27DynamicsForceEmitterManager11_UpdateTask3RunEi	Aska::DynamicsForceEmitterManager::_UpdateTask::Run(int)	forces	decompiled	
+0x209f488	0x219f488	88	_ZN4Aska27DynamicsForceEmitterManagerD2Ev	Aska::DynamicsForceEmitterManager::~DynamicsForceEmitterManager()	forces	decompiled	
+0x209f4e0	0x219f4e0	96	_ZN4Aska27DynamicsForceEmitterManagerD0Ev	Aska::DynamicsForceEmitterManager::~DynamicsForceEmitterManager()	forces	decompiled	
+0x209f600	0x219f600	88	_ZN4Aska17DynamicsPrimitive5CloneEPKNS_11IAnimatableE	Aska::DynamicsPrimitive::Clone(Aska::IAnimatable const*)	primitives	decompiled	
+0x209f658	0x219f658	76	_ZNK4Aska17DynamicsPrimitive3GetEmPv	Aska::DynamicsPrimitive::Get(unsigned long, void*) const	primitives	decompiled	
+0x209f6a4	0x219f6a4	76	_ZN4Aska17DynamicsPrimitive3SetEmPKv	Aska::DynamicsPrimitive::Set(unsigned long, void const*)	primitives	decompiled	
+0x209f6f0	0x219f6f0	844	_ZN4Aska12DynamicsCube3RunEv	Aska::DynamicsCube::Run()	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x209fa3c	0x219fa3c	16	_ZN4Aska12DynamicsCube5ResetEv	Aska::DynamicsCube::Reset()	primitives	decompiled	
+0x209fa4c	0x219fa4c	76	_ZN4Aska12DynamicsCube20CreateParticleObjectEv	Aska::DynamicsCube::CreateParticleObject()	primitives	decompiled	
+0x209fa98	0x219fa98	120	_ZN4Aska12DynamicsCube5CloneEPKNS_11IAnimatableE	Aska::DynamicsCube::Clone(Aska::IAnimatable const*)	primitives	decompiled	
+0x209fb10	0x219fb10	216	_ZN4Aska12DynamicsCube11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsCube::CreateClone(Aska::IAnimatable const*)	primitives	decompiled	
+0x209fbe8	0x219fbe8	116	_ZNK4Aska12DynamicsCube3GetEmPv	Aska::DynamicsCube::Get(unsigned long, void*) const	primitives	decompiled	
+0x209fc5c	0x219fc5c	120	_ZN4Aska12DynamicsCube3SetEmPKv	Aska::DynamicsCube::Set(unsigned long, void const*)	primitives	decompiled	
+0x209fcd4	0x219fcd4	164	_ZN4Aska14DynamicsSphere3RunEv	Aska::DynamicsSphere::Run()	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x209fd78	0x219fd78	16	_ZN4Aska14DynamicsSphere5ResetEv	Aska::DynamicsSphere::Reset()	primitives	decompiled	
+0x209fd88	0x219fd88	76	_ZN4Aska14DynamicsSphere20CreateParticleObjectEv	Aska::DynamicsSphere::CreateParticleObject()	primitives	decompiled	
+0x209fdd4	0x219fdd4	96	_ZN4Aska14DynamicsSphere5CloneEPKNS_11IAnimatableE	Aska::DynamicsSphere::Clone(Aska::IAnimatable const*)	primitives	decompiled	
+0x209fe34	0x219fe34	232	_ZN4Aska14DynamicsSphere11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsSphere::CreateClone(Aska::IAnimatable const*)	primitives	decompiled	
+0x209ff1c	0x219ff1c	88	_ZNK4Aska14DynamicsSphere3GetEmPv	Aska::DynamicsSphere::Get(unsigned long, void*) const	primitives	decompiled	
+0x209ff74	0x219ff74	96	_ZN4Aska14DynamicsSphere3SetEmPKv	Aska::DynamicsSphere::Set(unsigned long, void const*)	primitives	decompiled	
+0x209ffd4	0x219ffd4	716	_ZN4Aska15DynamicsCapsule3RunEv	Aska::DynamicsCapsule::Run()	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a02a0	0x21a02a0	16	_ZN4Aska15DynamicsCapsule5ResetEv	Aska::DynamicsCapsule::Reset()	primitives	decompiled	
+0x20a02b0	0x21a02b0	76	_ZN4Aska15DynamicsCapsule20CreateParticleObjectEv	Aska::DynamicsCapsule::CreateParticleObject()	primitives	decompiled	
+0x20a02fc	0x21a02fc	192	_ZN4Aska15DynamicsCapsule5CloneEPKNS_11IAnimatableE	Aska::DynamicsCapsule::Clone(Aska::IAnimatable const*)	primitives	decompiled	
+0x20a03bc	0x21a03bc	264	_ZN4Aska15DynamicsCapsule11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsCapsule::CreateClone(Aska::IAnimatable const*)	primitives	decompiled	
+0x20a04c4	0x21a04c4	176	_ZNK4Aska15DynamicsCapsule3GetEmPv	Aska::DynamicsCapsule::Get(unsigned long, void*) const	primitives	decompiled	
+0x20a0574	0x21a0574	308	_ZN4Aska15DynamicsCapsule3SetEmPKv	Aska::DynamicsCapsule::Set(unsigned long, void const*)	primitives	decompiled	
+0x20a06a8	0x21a06a8	304	_ZN4Aska13DynamicsPlane3RunEv	Aska::DynamicsPlane::Run()	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a07d8	0x21a07d8	16	_ZN4Aska13DynamicsPlane5ResetEv	Aska::DynamicsPlane::Reset()	primitives	decompiled	
+0x20a07e8	0x21a07e8	76	_ZN4Aska13DynamicsPlane20CreateParticleObjectEv	Aska::DynamicsPlane::CreateParticleObject()	primitives	decompiled	
+0x20a0834	0x21a0834	556	_ZN4Aska14DynamicsSquare3RunEv	Aska::DynamicsSquare::Run()	primitives	decompiled	
+0x20a0a60	0x21a0a60	16	_ZN4Aska14DynamicsSquare5ResetEv	Aska::DynamicsSquare::Reset()	primitives	decompiled	
+0x20a0a70	0x21a0a70	76	_ZN4Aska14DynamicsSquare20CreateParticleObjectEv	Aska::DynamicsSquare::CreateParticleObject()	primitives	decompiled	
+0x20a0abc	0x21a0abc	108	_ZNK4Aska14DynamicsSquare3GetEmPv	Aska::DynamicsSquare::Get(unsigned long, void*) const	primitives	decompiled	
+0x20a0b28	0x21a0b28	136	_ZN4Aska14DynamicsSquare3SetEmPKv	Aska::DynamicsSquare::Set(unsigned long, void const*)	primitives	decompiled	
+0x20a0e38	0x21a0e38	40	_ZN4Aska17DynamicsPrimitiveD0Ev	Aska::DynamicsPrimitive::~DynamicsPrimitive()	primitives	decompiled	
+0x20a0e60	0x21a0e60	60	_ZNK4Aska17DynamicsPrimitive10GetClassIDEi	Aska::DynamicsPrimitive::GetClassID(int) const	primitives	decompiled	
+0x20a0e9c	0x21a0e9c	32	_ZN4Aska17DynamicsPrimitive10DeleteThisEv	Aska::DynamicsPrimitive::DeleteThis()	primitives	decompiled	
+0x20a0ebc	0x21a0ebc	16	_ZN4Aska17DynamicsPrimitive8AddRefExEv	Aska::DynamicsPrimitive::AddRefEx()	primitives	decompiled	
+0x20a0ecc	0x21a0ecc	8	_ZN4Aska17DynamicsPrimitive20CreateParticleObjectEv	Aska::DynamicsPrimitive::CreateParticleObject()	primitives	decompiled	
+0x20a0ed4	0x21a0ed4	4	_ZN4Aska17DynamicsPrimitive6UpdateEfb	Aska::DynamicsPrimitive::Update(float, bool)	primitives	decompiled	
+0x20a0ed8	0x21a0ed8	4	_ZN4Aska17DynamicsPrimitive5ResetEv	Aska::DynamicsPrimitive::Reset()	primitives	decompiled	
+0x20a0edc	0x21a0edc	8	_ZN4Aska17DynamicsPrimitive16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_	Aska::DynamicsPrimitive::TestIntersection(Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a0ee4	0x21a0ee4	8	_ZN4Aska17DynamicsPrimitive21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_	Aska::DynamicsPrimitive::TestIntersectionLocal(__Float32x4_t&, __Float32x4_t&, __Float32x4_t&, Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector const*, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a0eec	0x21a0eec	8	_ZN4Aska17DynamicsPrimitive22TestIntersectionSphereEPKNS_6VectorEfPS1_	Aska::DynamicsPrimitive::TestIntersectionSphere(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a0ef4	0x21a0ef4	8	_ZN4Aska17DynamicsPrimitive16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DynamicsPrimitive::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a0efc	0x21a0efc	40	_ZN4Aska15DynamicsCapsuleD0Ev	Aska::DynamicsCapsule::~DynamicsCapsule()	primitives	decompiled	
+0x20a0f24	0x21a0f24	84	_ZNK4Aska15DynamicsCapsule10GetClassIDEi	Aska::DynamicsCapsule::GetClassID(int) const	primitives	decompiled	
+0x20a0f78	0x21a0f78	96	_ZN4Aska15DynamicsCapsule6UpdateEfb	Aska::DynamicsCapsule::Update(float, bool)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a0fd8	0x21a0fd8	12	_ZN4Aska15DynamicsCapsule16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_	Aska::DynamicsCapsule::TestIntersection(Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a0fe4	0x21a0fe4	20	_ZN4Aska15DynamicsCapsule21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_	Aska::DynamicsCapsule::TestIntersectionLocal(__Float32x4_t&, __Float32x4_t&, __Float32x4_t&, Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector const*, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a0ff8	0x21a0ff8	8	_ZN4Aska15DynamicsCapsule22TestIntersectionSphereEPKNS_6VectorEfPS1_	Aska::DynamicsCapsule::TestIntersectionSphere(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a1000	0x21a1000	8	_ZN4Aska15DynamicsCapsule16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DynamicsCapsule::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a1008	0x21a1008	40	_ZN4Aska12DynamicsCubeD0Ev	Aska::DynamicsCube::~DynamicsCube()	primitives	decompiled	
+0x20a1030	0x21a1030	84	_ZNK4Aska12DynamicsCube10GetClassIDEi	Aska::DynamicsCube::GetClassID(int) const	primitives	decompiled	
+0x20a1084	0x21a1084	104	_ZN4Aska12DynamicsCube6UpdateEfb	Aska::DynamicsCube::Update(float, bool)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a10ec	0x21a10ec	12	_ZN4Aska12DynamicsCube16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_	Aska::DynamicsCube::TestIntersection(Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a10f8	0x21a10f8	20	_ZN4Aska12DynamicsCube21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_	Aska::DynamicsCube::TestIntersectionLocal(__Float32x4_t&, __Float32x4_t&, __Float32x4_t&, Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector const*, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a110c	0x21a110c	8	_ZN4Aska12DynamicsCube22TestIntersectionSphereEPKNS_6VectorEfPS1_	Aska::DynamicsCube::TestIntersectionSphere(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a1114	0x21a1114	8	_ZN4Aska12DynamicsCube16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DynamicsCube::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a111c	0x21a111c	40	_ZN4Aska14DynamicsSphereD0Ev	Aska::DynamicsSphere::~DynamicsSphere()	primitives	decompiled	
+0x20a1144	0x21a1144	84	_ZNK4Aska14DynamicsSphere10GetClassIDEi	Aska::DynamicsSphere::GetClassID(int) const	primitives	decompiled	
+0x20a1198	0x21a1198	92	_ZN4Aska14DynamicsSphere6UpdateEfb	Aska::DynamicsSphere::Update(float, bool)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a11f4	0x21a11f4	320	_ZN4Aska14DynamicsSphere16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_	Aska::DynamicsSphere::TestIntersection(Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector*, float*, float*)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a1334	0x21a1334	20	_ZN4Aska14DynamicsSphere21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_	Aska::DynamicsSphere::TestIntersectionLocal(__Float32x4_t&, __Float32x4_t&, __Float32x4_t&, Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector const*, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a1348	0x21a1348	276	_ZN4Aska14DynamicsSphere22TestIntersectionSphereEPKNS_6VectorEfPS1_	Aska::DynamicsSphere::TestIntersectionSphere(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a145c	0x21a145c	276	_ZN4Aska14DynamicsSphere16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DynamicsSphere::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a1570	0x21a1570	40	_ZN4Aska13DynamicsPlaneD0Ev	Aska::DynamicsPlane::~DynamicsPlane()	primitives	decompiled	
+0x20a1598	0x21a1598	84	_ZNK4Aska13DynamicsPlane10GetClassIDEi	Aska::DynamicsPlane::GetClassID(int) const	primitives	decompiled	
+0x20a15ec	0x21a15ec	92	_ZN4Aska13DynamicsPlane6UpdateEfb	Aska::DynamicsPlane::Update(float, bool)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a1648	0x21a1648	124	_ZN4Aska13DynamicsPlane16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DynamicsPlane::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a16c4	0x21a16c4	40	_ZN4Aska14DynamicsSquareD0Ev	Aska::DynamicsSquare::~DynamicsSquare()	primitives	decompiled	
+0x20a16ec	0x21a16ec	84	_ZNK4Aska14DynamicsSquare10GetClassIDEi	Aska::DynamicsSquare::GetClassID(int) const	primitives	decompiled	
+0x20a1740	0x21a1740	92	_ZN4Aska14DynamicsSquare6UpdateEfb	Aska::DynamicsSquare::Update(float, bool)	primitives	decompiled	
+0x20a179c	0x21a179c	8	_ZN4Aska14DynamicsSquare16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DynamicsSquare::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a17a4	0x21a17a4	84	_ZN4Aska25DynamicsPrimitiveListPoolD0Ev	Aska::DynamicsPrimitiveListPool::~DynamicsPrimitiveListPool()	primitives	decompiled	
+0x20a1954	0x21a1954	344	_ZN4Aska16DYNAMICS_CAPSULE16TestIntersectionEPS0_bPNS_6VectorEPfS4_	Aska::DYNAMICS_CAPSULE::TestIntersection(Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector*, float*, float*)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a1aac	0x21a1aac	600	_ZN4Aska16DYNAMICS_CAPSULE21TestIntersectionLocalER13__Float32x4_tS2_S2_PS0_bPKNS_6VectorEPS4_PfS8_	Aska::DYNAMICS_CAPSULE::TestIntersectionLocal(__Float32x4_t&, __Float32x4_t&, __Float32x4_t&, Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector const*, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a1d04	0x21a1d04	316	_ZN4Aska16DYNAMICS_CAPSULE22TestIntersectionSphereEPKNS_6VectorEfPS1_	Aska::DYNAMICS_CAPSULE::TestIntersectionSphere(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a1e40	0x21a1e40	316	_ZN4Aska16DYNAMICS_CAPSULE16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DYNAMICS_CAPSULE::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a1f7c	0x21a1f7c	788	_ZN4Aska13DYNAMICS_CUBE16TestIntersectionEPNS_16DYNAMICS_CAPSULEEbPNS_6VectorEPfS5_	Aska::DYNAMICS_CUBE::TestIntersection(Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a2290	0x21a2290	1064	_ZN4Aska13DYNAMICS_CUBE21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_	Aska::DYNAMICS_CUBE::TestIntersectionLocal(__Float32x4_t&, __Float32x4_t&, __Float32x4_t&, Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector const*, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a26b8	0x21a26b8	456	_ZN4Aska13DYNAMICS_CUBE22TestIntersectionSphereEPKNS_6VectorEfPS1_	Aska::DYNAMICS_CUBE::TestIntersectionSphere(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a2880	0x21a2880	288	_ZN4Aska13DYNAMICS_CUBE16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DYNAMICS_CUBE::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	tested	dynamics_primitives.cpp; live check 0 mismatches (battle-gacha)
+0x20a29a0	0x21a29a0	468	_ZN4Aska15DYNAMICS_SPHERE21TestIntersectionLocalER13__Float32x4_tS2_S2_PNS_16DYNAMICS_CAPSULEEbPKNS_6VectorEPS5_PfS9_	Aska::DYNAMICS_SPHERE::TestIntersectionLocal(__Float32x4_t&, __Float32x4_t&, __Float32x4_t&, Aska::DYNAMICS_CAPSULE*, bool, Aska::Vector const*, Aska::Vector*, float*, float*)	primitives	decompiled	
+0x20a2b74	0x21a2b74	272	_ZN4Aska15DYNAMICS_SQUARE16TestIntersectionEPKNS_6VectorEfPS1_	Aska::DYNAMICS_SQUARE::TestIntersection(Aska::Vector const*, float, Aska::Vector*)	primitives	decompiled	
+0x20a9814	0x21a9814	176	_ZN4Aska29IntegratedDynamicsEnvironment3RunEi	Aska::IntegratedDynamicsEnvironment::Run(int)	ide	decompiled	
+0x20a98c4	0x21a98c4	16	_ZN4Aska29IntegratedDynamicsEnvironment11IsAvailableEv	Aska::IntegratedDynamicsEnvironment::IsAvailable()	ide	decompiled	
+0x20a98d4	0x21a98d4	80	_ZN4Aska29IntegratedDynamicsEnvironment11FrameUpdateEv	Aska::IntegratedDynamicsEnvironment::FrameUpdate()	ide	decompiled	
+0x20a9924	0x21a9924	108	_ZN4Aska29IntegratedDynamicsEnvironment3AddEPNS_11AABB_MinMaxE	Aska::IntegratedDynamicsEnvironment::Add(Aska::AABB_MinMax*)	ide	decompiled	
+0x20a9990	0x21a9990	108	_ZN4Aska29IntegratedDynamicsEnvironment3AddEPNS_6VectorE	Aska::IntegratedDynamicsEnvironment::Add(Aska::Vector*)	ide	decompiled	
+0x20a99fc	0x21a99fc	108	_ZN4Aska29IntegratedDynamicsEnvironment3AddEPNS_12HeightObjectE	Aska::IntegratedDynamicsEnvironment::Add(Aska::HeightObject*)	ide	decompiled	
+0x20a9a68	0x21a9a68	108	_ZN4Aska29IntegratedDynamicsEnvironment3AddEPNS_16CollisionHandlerEPv	Aska::IntegratedDynamicsEnvironment::Add(Aska::CollisionHandler*, void*)	ide	decompiled	
+0x20a9ad4	0x21a9ad4	108	_ZN4Aska29IntegratedDynamicsEnvironment3AddEPNS_5LightE	Aska::IntegratedDynamicsEnvironment::Add(Aska::Light*)	ide	decompiled	
+0x20a9b40	0x21a9b40	48	_ZN4Aska29IntegratedDynamicsEnvironment3SetEmPNS_11AABB_MinMaxE	Aska::IntegratedDynamicsEnvironment::Set(unsigned long, Aska::AABB_MinMax*)	ide	decompiled	
+0x20a9b70	0x21a9b70	48	_ZN4Aska29IntegratedDynamicsEnvironment3SetEmPNS_6VectorE	Aska::IntegratedDynamicsEnvironment::Set(unsigned long, Aska::Vector*)	ide	decompiled	
+0x20a9ba0	0x21a9ba0	48	_ZN4Aska29IntegratedDynamicsEnvironment3SetEmPNS_12HeightObjectE	Aska::IntegratedDynamicsEnvironment::Set(unsigned long, Aska::HeightObject*)	ide	decompiled	
+0x20a9bd0	0x21a9bd0	48	_ZN4Aska29IntegratedDynamicsEnvironment3SetEmPNS_16CollisionHandlerE	Aska::IntegratedDynamicsEnvironment::Set(unsigned long, Aska::CollisionHandler*)	ide	decompiled	
+0x20a9c00	0x21a9c00	20	_ZN4Aska29IntegratedDynamicsEnvironment7GetTypeEm	Aska::IntegratedDynamicsEnvironment::GetType(unsigned long)	ide	decompiled	
+0x20a9c14	0x21a9c14	20	_ZN4Aska29IntegratedDynamicsEnvironment8SetDirtyEm	Aska::IntegratedDynamicsEnvironment::SetDirty(unsigned long)	ide	decompiled	
+0x20a9c28	0x21a9c28	108	_ZN4Aska29IntegratedDynamicsEnvironment6DeleteEm	Aska::IntegratedDynamicsEnvironment::Delete(unsigned long)	ide	decompiled	
+0x20a9c94	0x21a9c94	228	_ZN4Aska29IntegratedDynamicsEnvironment9DeleteAllEv	Aska::IntegratedDynamicsEnvironment::DeleteAll()	ide	decompiled	
+0x20a9d78	0x21a9d78	28	_ZN4Aska29IntegratedDynamicsEnvironment24IsBelongToSpacePartitionEm	Aska::IntegratedDynamicsEnvironment::IsBelongToSpacePartition(unsigned long)	ide	decompiled	
+0x20a9d94	0x21a9d94	16	_ZN4Aska29IntegratedDynamicsEnvironment16SetMemoryManagerEPNS_13MemoryManagerE	Aska::IntegratedDynamicsEnvironment::SetMemoryManager(Aska::MemoryManager*)	ide	decompiled	
+0x20a9da4	0x21a9da4	168	_ZN4Aska29IntegratedDynamicsEnvironment5BuildEv	Aska::IntegratedDynamicsEnvironment::Build()	ide	decompiled	
+0x20a9e4c	0x21a9e4c	336	_ZN4Aska29IntegratedDynamicsEnvironment6ModifyEv	Aska::IntegratedDynamicsEnvironment::Modify()	ide	decompiled	
+0x20a9f9c	0x21a9f9c	92	_ZN4Aska29IntegratedDynamicsEnvironment9IntersectEPKNS_3RayEt	Aska::IntegratedDynamicsEnvironment::Intersect(Aska::Ray const*, unsigned short)	ide	decompiled	
+0x20a9ff8	0x21a9ff8	92	_ZN4Aska29IntegratedDynamicsEnvironment9IntersectEPKNS_7SegmentEt	Aska::IntegratedDynamicsEnvironment::Intersect(Aska::Segment const*, unsigned short)	ide	decompiled	
+0x20aa054	0x21aa054	112	_ZN4Aska29IntegratedDynamicsEnvironment25FindIntersectNearestPointEPNS_6VectorEPKNS_3RayEt	Aska::IntegratedDynamicsEnvironment::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray const*, unsigned short)	ide	decompiled	
+0x20aa0c4	0x21aa0c4	112	_ZN4Aska29IntegratedDynamicsEnvironment25FindIntersectNearestPointEPNS_6VectorEPKNS_7SegmentEt	Aska::IntegratedDynamicsEnvironment::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment const*, unsigned short)	ide	decompiled	
+0x20aa134	0x21aa134	112	_ZN4Aska29IntegratedDynamicsEnvironment26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPKNS_3RayEt	Aska::IntegratedDynamicsEnvironment::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray const*, unsigned short)	ide	decompiled	
+0x20aa1a4	0x21aa1a4	112	_ZN4Aska29IntegratedDynamicsEnvironment26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPKNS_7SegmentEt	Aska::IntegratedDynamicsEnvironment::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment const*, unsigned short)	ide	decompiled	
+0x20aa214	0x21aa214	116	_ZN4Aska29IntegratedDynamicsEnvironment9GetHeightEPNS_18IDE_ResultOfHeightEPNS_6VectorEjt	Aska::IntegratedDynamicsEnvironment::GetHeight(Aska::IDE_ResultOfHeight*, Aska::Vector*, unsigned int, unsigned short)	ide	decompiled	
+0x20aa288	0x21aa288	116	_ZN4Aska29IntegratedDynamicsEnvironment31FindIntersectNearestObjectArrayEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEjt	Aska::IntegratedDynamicsEnvironment::FindIntersectNearestObjectArray(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned int, unsigned short)	ide	decompiled	
+0x20aa2fc	0x21aa2fc	116	_ZN4Aska29IntegratedDynamicsEnvironment31FindIntersectNearestObjectArrayEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEjt	Aska::IntegratedDynamicsEnvironment::FindIntersectNearestObjectArray(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned int, unsigned short)	ide	decompiled	
+0x20aa370	0x21aa370	108	_ZN4Aska29IntegratedDynamicsEnvironment20FindIntersectObjectsEPNS_7INotifyEPKNS_6VectorEt	Aska::IntegratedDynamicsEnvironment::FindIntersectObjects(Aska::INotify*, Aska::Vector const*, unsigned short)	ide	decompiled	
+0x20aa3dc	0x21aa3dc	108	_ZN4Aska29IntegratedDynamicsEnvironment20FindIntersectObjectsEPNS_7INotifyEPKNS_3BoxEt	Aska::IntegratedDynamicsEnvironment::FindIntersectObjects(Aska::INotify*, Aska::Box const*, unsigned short)	ide	decompiled	
+0x20aa448	0x21aa448	172	_ZN4Aska29IntegratedDynamicsEnvironment24PostFindIntersectObjectsEPNS_23IDE_ResultOfFindObjectsEiPjS3_PNS_7INotifyEPKNS_3BoxEjt	Aska::IntegratedDynamicsEnvironment::PostFindIntersectObjects(Aska::IDE_ResultOfFindObjects*, int, unsigned int*, unsigned int*, Aska::INotify*, Aska::Box const*, unsigned int, unsigned short)	ide	decompiled	
+0x20aa4f4	0x21aa4f4	16	_ZN4Aska29IntegratedDynamicsEnvironment29PostFindIntersectObjects_WaitEv	Aska::IntegratedDynamicsEnvironment::PostFindIntersectObjects_Wait()	ide	decompiled	
+0x20aa504	0x21aa504	100	_ZN4Aska29IntegratedDynamicsEnvironment23FindIntersectPrimitivesEPNS_18IDEIntersectNotifyE	Aska::IntegratedDynamicsEnvironment::FindIntersectPrimitives(Aska::IDEIntersectNotify*)	ide	decompiled	
+0x20aa568	0x21aa568	188	_ZN4Aska29IntegratedDynamicsEnvironment6AttachEPNS_16IDEPrimitiveBaseEiS2_i	Aska::IntegratedDynamicsEnvironment::Attach(Aska::IDEPrimitiveBase*, int, Aska::IDEPrimitiveBase*, int)	ide	decompiled	
+0x20aa624	0x21aa624	176	_ZN4Aska29IntegratedDynamicsEnvironmentC2ENS_26_EnumIDESpacePartitionTypeE	Aska::IntegratedDynamicsEnvironment::IntegratedDynamicsEnvironment(Aska::_EnumIDESpacePartitionType)	ide	decompiled	
+0x20aa6d4	0x21aa6d4	96	_ZN4Aska29IntegratedDynamicsEnvironmentD1Ev	Aska::IntegratedDynamicsEnvironment::~IntegratedDynamicsEnvironment()	ide	decompiled	
+0x20aa734	0x21aa734	104	_ZN4Aska29IntegratedDynamicsEnvironmentD0Ev	Aska::IntegratedDynamicsEnvironment::~IntegratedDynamicsEnvironment()	ide	decompiled	
+0x20aa79c	0x21aa79c	40	_ZNK4Aska29IntegratedDynamicsEnvironment3GetEmPv	Aska::IntegratedDynamicsEnvironment::Get(unsigned long, void*) const	ide	decompiled	
+0x20aa7c4	0x21aa7c4	40	_ZN4Aska29IntegratedDynamicsEnvironment3SetEmPKv	Aska::IntegratedDynamicsEnvironment::Set(unsigned long, void const*)	ide	decompiled	
+0x20aa7ec	0x21aa7ec	64	_ZNK4Aska29IntegratedDynamicsEnvironment10GetClassIDEi	Aska::IntegratedDynamicsEnvironment::GetClassID(int) const	ide	decompiled	
+0x20e5d2c	0x21e5d2c	116	_ZN4Aska21DynamicsPrimitiveListD0Ev	Aska::DynamicsPrimitiveList::~DynamicsPrimitiveList()	primitives	decompiled	
+0x20e5da0	0x21e5da0	312	_ZN4Aska20DynamicsForceEmitterC2Ev	Aska::DynamicsForceEmitter::DynamicsForceEmitter()	forces	decompiled	
+0x20e6314	0x21e6314	8	_ZN4Aska16IDEPrimitiveBase15CheckToDispatchEPNS_3RayEt	Aska::IDEPrimitiveBase::CheckToDispatch(Aska::Ray*, unsigned short)	ide	decompiled	
+0x20e631c	0x21e631c	8	_ZN4Aska16IDEPrimitiveBase15CheckToDispatchEPNS_7SegmentEt	Aska::IDEPrimitiveBase::CheckToDispatch(Aska::Segment*, unsigned short)	ide	decompiled	
+0x20e6324	0x21e6324	8	_ZN4Aska16IDEPrimitiveBase15CheckToDispatchEPKNS_6VectorEt	Aska::IDEPrimitiveBase::CheckToDispatch(Aska::Vector const*, unsigned short)	ide	decompiled	
+0x20e632c	0x21e632c	8	_ZN4Aska16IDEPrimitiveBase15CheckToDispatchEPKNS_3BoxEt	Aska::IDEPrimitiveBase::CheckToDispatch(Aska::Box const*, unsigned short)	ide	decompiled	
+0x20e6334	0x21e6334	4	_ZN4Aska16IDEPrimitiveBase6UpdateEv	Aska::IDEPrimitiveBase::Update()	ide	decompiled	
+0x20e6338	0x21e6338	8	_ZN4Aska16IDEPrimitiveBase9IntersectEPNS_3RayEt	Aska::IDEPrimitiveBase::Intersect(Aska::Ray*, unsigned short)	ide	decompiled	
+0x20e6340	0x21e6340	8	_ZN4Aska16IDEPrimitiveBase9IntersectEPNS_7SegmentEt	Aska::IDEPrimitiveBase::Intersect(Aska::Segment*, unsigned short)	ide	decompiled	
+0x20e6348	0x21e6348	8	_ZN4Aska16IDEPrimitiveBase25FindIntersectNearestPointEPNS_6VectorEPNS_3RayEt	Aska::IDEPrimitiveBase::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray*, unsigned short)	ide	decompiled	
+0x20e6350	0x21e6350	8	_ZN4Aska16IDEPrimitiveBase25FindIntersectNearestPointEPNS_6VectorEPNS_7SegmentEt	Aska::IDEPrimitiveBase::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment*, unsigned short)	ide	decompiled	
+0x20e6358	0x21e6358	8	_ZN4Aska16IDEPrimitiveBase26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEt	Aska::IDEPrimitiveBase::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned short)	ide	decompiled	
+0x20e6360	0x21e6360	8	_ZN4Aska16IDEPrimitiveBase26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEt	Aska::IDEPrimitiveBase::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned short)	ide	decompiled	
+0x20e6368	0x21e6368	4	_ZN4Aska16IDEPrimitiveBase20FindIntersectObjectsEPNS_7INotifyEPKNS_6VectorEt	Aska::IDEPrimitiveBase::FindIntersectObjects(Aska::INotify*, Aska::Vector const*, unsigned short)	ide	decompiled	
+0x20e636c	0x21e636c	4	_ZN4Aska16IDEPrimitiveBase20FindIntersectObjectsEPNS_7INotifyEPKNS_3BoxEt	Aska::IDEPrimitiveBase::FindIntersectObjects(Aska::INotify*, Aska::Box const*, unsigned short)	ide	decompiled	
+0x20e7af0	0x21e7af0	20	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EED2Ev	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::~IDEPrimitiveOBB()	ide_templates	decompiled	
+0x20e7b04	0x21e7b04	4	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EED0Ev	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::~IDEPrimitiveOBB()	ide_templates	decompiled	
+0x20e7b08	0x21e7b08	1216	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE6UpdateEv	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::Update()	ide_templates	decompiled	
+0x20e7fc8	0x21e7fc8	8	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_3RayEt	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x20e7fd0	0x21e7fd0	8	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_7SegmentEt	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x20e7fd8	0x21e7fd8	116	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_3RayEt	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x20e804c	0x21e804c	116	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_7SegmentEt	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x20e80c0	0x21e80c0	136	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEt	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x20e8148	0x21e8148	136	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEt	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x20e81d0	0x21e81d0	72	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE20FindIntersectObjectsEPNS_7INotifyEPKNS_6VectorEt	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectObjects(Aska::INotify*, Aska::Vector const*, unsigned short)	ide_templates	decompiled	
+0x20e8218	0x21e8218	72	_ZN4Aska15IDEPrimitiveOBBILNS_26_EnumIDESpacePartitionTypeE0EE20FindIntersectObjectsEPNS_7INotifyEPKNS_3BoxEt	Aska::IDEPrimitiveOBB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectObjects(Aska::INotify*, Aska::Box const*, unsigned short)	ide_templates	decompiled	
+0x20e8260	0x21e8260	4	_ZN4Aska16IDEPrimitiveBaseD2Ev	Aska::IDEPrimitiveBase::~IDEPrimitiveBase()	ide	decompiled	
+0x2324184	0x2424184	56	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEEC1Ev	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::DynamicsListHandler()	manager	decompiled	
+0x23241bc	0x24241bc	12	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE5ClearEv	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::Clear()	manager	decompiled	
+0x23241c8	0x24241c8	4	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEED1Ev	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::~DynamicsListHandler()	manager	decompiled	
+0x23241cc	0x24241cc	24	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEED0Ev	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::~DynamicsListHandler()	manager	decompiled	
+0x23241e4	0x24241e4	8	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE8GetCountEv	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::GetCount()	manager	decompiled	
+0x23241ec	0x24241ec	24	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE2AtEj	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::At(unsigned int)	manager	decompiled	
+0x2324204	0x2424204	8	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE10LOOP_STARTEv	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::LOOP_START()	manager	decompiled	
+0x232420c	0x242420c	12	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE8LOOP_ENDEPS1_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::LOOP_END(Aska::ArticulatedDynamicsManagerBase*)	manager	decompiled	
+0x2324218	0x2424218	12	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE9LOOP_NEXTERPS1_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::LOOP_NEXT(Aska::ArticulatedDynamicsManagerBase*&)	manager	decompiled	
+0x2324224	0x2424224	64	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE3AddEPS1_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::Add(Aska::ArticulatedDynamicsManagerBase*)	manager	decompiled	
+0x2324264	0x2424264	92	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE6AddTopEPS1_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::AddTop(Aska::ArticulatedDynamicsManagerBase*)	manager	decompiled	
+0x23242c0	0x24242c0	192	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE6InsertEPS1_S3_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::Insert(Aska::ArticulatedDynamicsManagerBase*, Aska::ArticulatedDynamicsManagerBase*)	manager	decompiled	
+0x2324380	0x2424380	140	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE6DeleteEPS1_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::Delete(Aska::ArticulatedDynamicsManagerBase*)	manager	decompiled	
+0x232440c	0x242440c	40	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE6ExistsEPS1_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::Exists(Aska::ArticulatedDynamicsManagerBase*)	manager	decompiled	
+0x2324434	0x2424434	84	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE14DeleteFromListEPS1_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::DeleteFromList(Aska::ArticulatedDynamicsManagerBase*)	manager	decompiled	
+0x2324488	0x2424488	12	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE9DeleteAllEv	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::DeleteAll()	manager	decompiled	
+0x2324494	0x2424494	40	_ZN4Aska19DynamicsListHandlerINS_30ArticulatedDynamicsManagerBaseEE8GetIndexEPS1_	Aska::DynamicsListHandler<Aska::ArticulatedDynamicsManagerBase>::GetIndex(Aska::ArticulatedDynamicsManagerBase*)	manager	decompiled	
+0x23244bc	0x24244bc	128	_ZN4Aska10ADMHandlerC2EPNS_10AsfHandlerE	Aska::ADMHandler::ADMHandler(Aska::AsfHandler*)	adm	decompiled	
+0x232453c	0x242453c	52	_ZN4Aska10ADMHandler6AttachEPNS_10AsfHandlerE	Aska::ADMHandler::Attach(Aska::AsfHandler*)	adm	decompiled	
+0x2324570	0x2424570	112	_ZN4Aska10ADMHandlerD1Ev	Aska::ADMHandler::~ADMHandler()	adm	decompiled	
+0x23245e0	0x24245e0	80	_ZN4Aska10ADMHandler5ClearEv	Aska::ADMHandler::Clear()	adm	decompiled	
+0x2324630	0x2424630	112	_ZThn80_N4Aska10ADMHandlerD1Ev	non-virtual thunk to Aska::ADMHandler::~ADMHandler()	adm	decompiled	
+0x23246a0	0x24246a0	120	_ZN4Aska10ADMHandlerD0Ev	Aska::ADMHandler::~ADMHandler()	adm	decompiled	
+0x2324718	0x2424718	120	_ZThn80_N4Aska10ADMHandlerD0Ev	non-virtual thunk to Aska::ADMHandler::~ADMHandler()	adm	decompiled	
+0x2324790	0x2424790	448	_ZN4Aska10ADMHandler3RunEi	Aska::ADMHandler::Run(int)	adm	decompiled	
+0x23249fc	0x24249fc	172	_ZN4Aska10ADMHandler9CallFlushEv	Aska::ADMHandler::CallFlush()	adm	decompiled	
+0x2324aa8	0x2424aa8	204	_ZN4Aska10ADMHandler16IsHeavierHandlerEPNS_15DynamicsHandlerE	Aska::ADMHandler::IsHeavierHandler(Aska::DynamicsHandler*)	adm	decompiled	
+0x2324b74	0x2424b74	1280	_ZN4Aska10ADMHandler19SortProcessSequenceEv	Aska::ADMHandler::SortProcessSequence()	adm	decompiled	
+0x2325074	0x2425074	224	_ZN4Aska10ADMHandler14CeckNeedToSortEPjjPNS_30ArticulatedDynamicsManagerBaseES3_PPNS_17DynamicsPrimitiveEj	Aska::ADMHandler::CeckNeedToSort(unsigned int*, unsigned int, Aska::ArticulatedDynamicsManagerBase*, Aska::ArticulatedDynamicsManagerBase*, Aska::DynamicsPrimitive**, unsigned int)	adm	decompiled	
+0x2325154	0x2425154	168	_ZN4Aska10ADMHandler17CheckDependentADMEPNS_30ArticulatedDynamicsManagerBaseES2_	Aska::ADMHandler::CheckDependentADM(Aska::ArticulatedDynamicsManagerBase*, Aska::ArticulatedDynamicsManagerBase*)	adm	decompiled	
+0x23251fc	0x24251fc	36	_ZN4Aska10ADMHandler29OnMakeListFromDynamicsManagerEv	Aska::ADMHandler::OnMakeListFromDynamicsManager()	adm	decompiled	
+0x2325220	0x2425220	84	_ZN4Aska10ADMHandler14IsAddToDynListEv	Aska::ADMHandler::IsAddToDynList()	adm	decompiled	
+0x2325274	0x2425274	100	_ZN4Aska10ADMHandler3AddEPNS_30ArticulatedDynamicsManagerBaseE	Aska::ADMHandler::Add(Aska::ArticulatedDynamicsManagerBase*)	adm	decompiled	
+0x23252d8	0x24252d8	220	_ZN4Aska10ADMHandler6InsertEPNS_30ArticulatedDynamicsManagerBaseES2_	Aska::ADMHandler::Insert(Aska::ArticulatedDynamicsManagerBase*, Aska::ArticulatedDynamicsManagerBase*)	adm	decompiled	
+0x23253b4	0x24253b4	172	_ZN4Aska10ADMHandler6DeleteEPNS_30ArticulatedDynamicsManagerBaseE	Aska::ADMHandler::Delete(Aska::ArticulatedDynamicsManagerBase*)	adm	decompiled	
+0x2325460	0x2425460	120	_ZN4Aska10ADMHandler14DeleteFromListEPNS_30ArticulatedDynamicsManagerBaseE	Aska::ADMHandler::DeleteFromList(Aska::ArticulatedDynamicsManagerBase*)	adm	decompiled	
+0x23254d8	0x24254d8	100	_ZN4Aska10ADMHandler9DeleteAllEv	Aska::ADMHandler::DeleteAll()	adm	decompiled	
+0x232553c	0x242553c	220	_ZN4Aska10ADMHandler6ImportEPS0_	Aska::ADMHandler::Import(Aska::ADMHandler*)	adm	decompiled	
+0x2325618	0x2425618	240	_ZN4Aska10ADMHandler6ExportEPS0_	Aska::ADMHandler::Export(Aska::ADMHandler*)	adm	decompiled	
+0x2325708	0x2425708	256	_ZN4Aska10ADMHandler9ExportAllEv	Aska::ADMHandler::ExportAll()	adm	decompiled	
+0x2325808	0x2425808	56	_ZN4Aska10ADMHandler6UpdateEv	Aska::ADMHandler::Update()	adm	decompiled	
+0x2325844	0x2425844	8	_ZN4Aska10ADMHandler30IsNeedToSortByProcessHeavinessEv	Aska::ADMHandler::IsNeedToSortByProcessHeaviness()	adm	decompiled	
+0x232584c	0x242584c	588	_ZN4Aska8ADMJoint12InitCalcDataEv	Aska::ADMJoint::InitCalcData()	adm	decompiled	
+0x2325a98	0x2425a98	12	_ZN4Aska8ADMJoint7SetRootEt	Aska::ADMJoint::SetRoot(unsigned short)	adm	decompiled	
+0x2325aa4	0x2425aa4	96	_ZN4Aska8ADMJoint21CheckLengthFromParentEv	Aska::ADMJoint::CheckLengthFromParent()	adm	decompiled	
+0x2325b04	0x2425b04	172	_ZN4Aska8ADMJoint4InitEv	Aska::ADMJoint::Init()	adm	decompiled	
+0x2325bb0	0x2425bb0	36	_ZN4Aska8ADMJoint12DefaultParamEv	Aska::ADMJoint::DefaultParam()	adm	decompiled	
+0x2325bd4	0x2425bd4	240	_ZN4Aska8ADMJoint5ScaleEf	Aska::ADMJoint::Scale(float)	adm	decompiled	
+0x2325cc4	0x2425cc4	656	_ZNK4Aska8ADMJoint3GetEmPv	Aska::ADMJoint::Get(unsigned long, void*) const	adm	decompiled	
+0x2325f54	0x2425f54	860	_ZN4Aska8ADMJoint3SetEmPKv	Aska::ADMJoint::Set(unsigned long, void const*)	adm	decompiled	
+0x23262b0	0x24262b0	4	_ZN4Aska8ADMJoint10ReleaseAllEv	Aska::ADMJoint::ReleaseAll()	adm	decompiled	
+0x23262b4	0x24262b4	20	_ZN4Aska8ADMJointD2Ev	Aska::ADMJoint::~ADMJoint()	adm	decompiled	
+0x23262c8	0x24262c8	40	_ZN4Aska8ADMJointD0Ev	Aska::ADMJoint::~ADMJoint()	adm	decompiled	
+0x23262f0	0x24262f0	24	_ZNK4Aska8ADMJoint10GetClassIDEi	Aska::ADMJoint::GetClassID(int) const	adm	decompiled	
+0x2326308	0x2426308	2712	_ZN4Aska26ArticulatedDynamicsManager6AttachEPKNS_10ADMHandlerEPKNS_3AFF29AsfArticulatedDynamicsManagerEb	Aska::ArticulatedDynamicsManager::Attach(Aska::ADMHandler const*, Aska::AFF::AsfArticulatedDynamicsManager const*, bool)	adm	decompiled	
+0x2326da0	0x2426da0	68	_ZN4Aska26ArticulatedDynamicsManager14CalcBufferSizeEiiiii	Aska::ArticulatedDynamicsManager::CalcBufferSize(int, int, int, int, int)	adm	decompiled	
+0x2326de4	0x2426de4	232	_ZN4Aska26ArticulatedDynamicsManager8SimulateEfjf	Aska::ArticulatedDynamicsManager::Simulate(float, unsigned int, float)	adm	decompiled	
+0x2326ecc	0x2426ecc	904	_ZN4Aska26ArticulatedDynamicsManager12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf	void Aska::ArticulatedDynamicsManager::SimulateMain<Aska::ArticulatedDynamicsManager>(Aska::ArticulatedDynamicsManager*, Aska::ADMJoint*, Aska::ADMJoint*, unsigned int, int, int, unsigned int, float, float, unsigned int, float)	adm_templates	decompiled	
+0x2327254	0x2427254	4	_ZN4Aska26ArticulatedDynamicsManager5CloneEPKNS_11IAnimatableE	Aska::ArticulatedDynamicsManager::Clone(Aska::IAnimatable const*)	adm	decompiled	
+0x2327258	0x2427258	420	_ZN4Aska26ArticulatedDynamicsManager11CreateCloneEPKNS_11IAnimatableE	Aska::ArticulatedDynamicsManager::CreateClone(Aska::IAnimatable const*)	adm	decompiled	
+0x23273fc	0x24273fc	344	_ZNK4Aska26ArticulatedDynamicsManager3GetEmPv	Aska::ArticulatedDynamicsManager::Get(unsigned long, void*) const	adm	decompiled	
+0x2327554	0x2427554	584	_ZN4Aska26ArticulatedDynamicsManager3SetEmPKv	Aska::ArticulatedDynamicsManager::Set(unsigned long, void const*)	adm	decompiled	
+0x232779c	0x242779c	24	_ZN4Aska26ArticulatedDynamicsManagerD0Ev	Aska::ArticulatedDynamicsManager::~ArticulatedDynamicsManager()	adm	decompiled	
+0x23277b4	0x24277b4	80	_ZNK4Aska26ArticulatedDynamicsManager10GetClassIDEi	Aska::ArticulatedDynamicsManager::GetClassID(int) const	adm	decompiled	
+0x2327804	0x2427804	4	_ZN4Aska26ArticulatedDynamicsManager12CallSimulateEfjf	Aska::ArticulatedDynamicsManager::CallSimulate(float, unsigned int, float)	adm	decompiled	
+0x2327808	0x2427808	516	_ZN4Aska26ArticulatedDynamicsManager29PreprocessBeforeInternalForceIS0_EEvPT_PNS_8ADMJointES5_ffjjb	void Aska::ArticulatedDynamicsManager::PreprocessBeforeInternalForce<Aska::ArticulatedDynamicsManager>(Aska::ArticulatedDynamicsManager*, Aska::ADMJoint*, Aska::ADMJoint*, float, float, unsigned int, unsigned int, bool)	adm_templates	decompiled	
+0x2327a0c	0x2427a0c	928	_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb0EEEvPT_ffi	void Aska::ArticulatedDynamicsManagerBase::StandardIK<Aska::ArticulatedDynamicsManager, false>(Aska::ArticulatedDynamicsManager*, float, float, int)	adm_templates	decompiled	
+0x2327dac	0x2427dac	2608	_ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_jjf	void Aska::ArticulatedDynamicsManagerBase::CollisionAndConstraint<Aska::ArticulatedDynamicsManager>(Aska::ArticulatedDynamicsManager*, Aska::ADMJoint*, Aska::ADMJoint*, unsigned int, unsigned int, float)	adm_templates	decompiled	
+0x23287dc	0x24287dc	1052	_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi	void Aska::ArticulatedDynamicsManagerBase::StandardIK<Aska::ArticulatedDynamicsManager, true>(Aska::ArticulatedDynamicsManager*, float, float, int)	adm_templates	decompiled	
+0x2328bf8	0x2428bf8	1188	_ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_26ArticulatedDynamicsManagerEEEvPT_ffi	void Aska::ArticulatedDynamicsManagerBase::Finalize<Aska::ArticulatedDynamicsManager>(Aska::ArticulatedDynamicsManager*, float, float, int)	adm_templates	decompiled	
+0x232909c	0x242909c	604	_ZN4Aska30ArticulatedDynamicsManagerBase15InterpolateRootINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_fjj	void Aska::ArticulatedDynamicsManagerBase::InterpolateRoot<Aska::ArticulatedDynamicsManager>(Aska::ArticulatedDynamicsManager*, Aska::ADMJoint*, Aska::ADMJoint*, float, unsigned int, unsigned int)	adm_templates	decompiled	
+0x23292f8	0x24292f8	392	_ZN4Aska30ArticulatedDynamicsManagerBase16CollisionSettingINS_26ArticulatedDynamicsManagerEEEvPT_jj	void Aska::ArticulatedDynamicsManagerBase::CollisionSetting<Aska::ArticulatedDynamicsManager>(Aska::ArticulatedDynamicsManager*, unsigned int, unsigned int)	adm_templates	decompiled	
+0x2329480	0x2429480	536	_ZN4Aska26ArticulatedDynamicsManager26MatrixPreFixAndMotionBlendILb1EEEvPNS_13ADM_CALC_DATAEPNS_8ADMJointEjfffPNS_6VectorEb	void Aska::ArticulatedDynamicsManager::MatrixPreFixAndMotionBlend<true>(Aska::ADM_CALC_DATA*, Aska::ADMJoint*, unsigned int, float, float, float, Aska::Vector*, bool)	adm_templates	decompiled	
+0x2329698	0x2429698	300	_ZN4Aska8ADMJoint13ExternalForceEfffPKNS_6VectorEPNS_13ADM_CALC_DATAEb	Aska::ADMJoint::ExternalForce(float, float, float, Aska::Vector const*, Aska::ADM_CALC_DATA*, bool)	adm	decompiled	
+0x23297c4	0x24297c4	464	_Z39Functor_ExternalForceEmitterCalculationIN4Aska26ArticulatedDynamicsManagerENS0_20DynamicsForceEmitterEEvPT_PNS0_8ADMJointEPPT0_jfj	void Functor_ExternalForceEmitterCalculation<Aska::ArticulatedDynamicsManager, Aska::DynamicsForceEmitter>(Aska::ArticulatedDynamicsManager*, Aska::ADMJoint*, Aska::DynamicsForceEmitter**, unsigned int, float, unsigned int)	adm_local	decompiled	
+0x2329994	0x2429994	0	FUN_02429994	FUN_02429994	adm_local	decompiled	
+0x2329d78	0x2429d78	0	FUN_02429d78	FUN_02429d78	adm_local	decompiled	
+0x232a08c	0x242a08c	0	FUN_0242a08c	FUN_0242a08c	adm_local	decompiled	
+0x232a9f4	0x242a9f4	0	FUN_0242a9f4	FUN_0242a9f4	adm_local	decompiled	
+0x232ac84	0x242ac84	0	FUN_0242ac84	FUN_0242ac84	adm_local	decompiled	
+0x232ae04	0x242ae04	216	_ZN4Aska28ArticulatedDynamicsManagerMP10ConstraintEPNS_13LinkListParamEi	Aska::ArticulatedDynamicsManagerMP::Constraint(Aska::LinkListParam*, int)	adm	decompiled	
+0x232aedc	0x242aedc	3344	_ZN4Aska28ArticulatedDynamicsManagerMP6AttachEPKNS_10ADMHandlerEPKNS_3AFF29AsfArticulatedDynamicsManagerEb	Aska::ArticulatedDynamicsManagerMP::Attach(Aska::ADMHandler const*, Aska::AFF::AsfArticulatedDynamicsManager const*, bool)	adm	decompiled	
+0x232bbec	0x242bbec	336	_ZN4Aska28ArticulatedDynamicsManagerMP22CalcLinkListBufferSizeEv	Aska::ArticulatedDynamicsManagerMP::CalcLinkListBufferSize()	adm	decompiled	
+0x232bd3c	0x242bd3c	344	_ZN4Aska28ArticulatedDynamicsManagerMP14CreateLinkListEv	Aska::ArticulatedDynamicsManagerMP::CreateLinkList()	adm	decompiled	
+0x232be94	0x242be94	568	_ZN4Aska28ArticulatedDynamicsManagerMP18InitializeLinkListEv	Aska::ArticulatedDynamicsManagerMP::InitializeLinkList()	adm	decompiled	
+0x232c0cc	0x242c0cc	52	_ZN4Aska28ArticulatedDynamicsManagerMPD2Ev	Aska::ArticulatedDynamicsManagerMP::~ArticulatedDynamicsManagerMP()	adm	decompiled	
+0x232c100	0x242c100	60	_ZN4Aska28ArticulatedDynamicsManagerMPD0Ev	Aska::ArticulatedDynamicsManagerMP::~ArticulatedDynamicsManagerMP()	adm	decompiled	
+0x232c13c	0x242c13c	68	_ZN4Aska28ArticulatedDynamicsManagerMP14CalcBufferSizeEiiiii	Aska::ArticulatedDynamicsManagerMP::CalcBufferSize(int, int, int, int, int)	adm	decompiled	
+0x232c180	0x242c180	232	_ZN4Aska28ArticulatedDynamicsManagerMP8SimulateEfjf	Aska::ArticulatedDynamicsManagerMP::Simulate(float, unsigned int, float)	adm	decompiled	
+0x232c268	0x242c268	904	_ZN4Aska28ArticulatedDynamicsManagerMP12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf	void Aska::ArticulatedDynamicsManagerMP::SimulateMain<Aska::ArticulatedDynamicsManagerMP>(Aska::ArticulatedDynamicsManagerMP*, Aska::ADMJoint*, Aska::ADMJoint*, unsigned int, int, int, unsigned int, float, float, unsigned int, float)	adm_templates	decompiled	
+0x232c5f0	0x242c5f0	4	_ZN4Aska28ArticulatedDynamicsManagerMP5CloneEPKNS_11IAnimatableE	Aska::ArticulatedDynamicsManagerMP::Clone(Aska::IAnimatable const*)	adm	decompiled	
+0x232c5f4	0x242c5f4	440	_ZN4Aska28ArticulatedDynamicsManagerMP11CreateCloneEPKNS_11IAnimatableE	Aska::ArticulatedDynamicsManagerMP::CreateClone(Aska::IAnimatable const*)	adm	decompiled	
+0x232c7ac	0x242c7ac	344	_ZNK4Aska28ArticulatedDynamicsManagerMP3GetEmPv	Aska::ArticulatedDynamicsManagerMP::Get(unsigned long, void*) const	adm	decompiled	
+0x232c904	0x242c904	584	_ZN4Aska28ArticulatedDynamicsManagerMP3SetEmPKv	Aska::ArticulatedDynamicsManagerMP::Set(unsigned long, void const*)	adm	decompiled	
+0x232cb4c	0x242cb4c	208	_ZN4Aska28ArticulatedDynamicsManagerMP13CalcIKLinkCntEPNS_8ADMJointE	Aska::ArticulatedDynamicsManagerMP::CalcIKLinkCnt(Aska::ADMJoint*)	adm	decompiled	
+0x232cc1c	0x242cc1c	1560	_ZN4Aska28ArticulatedDynamicsManagerMP15GetAccelerationIS0_NS_8ADMJointEEEvPT_fPNS_13LinkListParamEi	void Aska::ArticulatedDynamicsManagerMP::GetAcceleration<Aska::ArticulatedDynamicsManagerMP, Aska::ADMJoint>(Aska::ArticulatedDynamicsManagerMP*, float, Aska::LinkListParam*, int)	adm_templates	decompiled	
+0x232d234	0x242d234	80	_ZNK4Aska28ArticulatedDynamicsManagerMP10GetClassIDEi	Aska::ArticulatedDynamicsManagerMP::GetClassID(int) const	adm	decompiled	
+0x232d284	0x242d284	4	_ZN4Aska28ArticulatedDynamicsManagerMP12CallSimulateEfjf	Aska::ArticulatedDynamicsManagerMP::CallSimulate(float, unsigned int, float)	adm	decompiled	
+0x232d288	0x242d288	528	_ZN4Aska28ArticulatedDynamicsManagerMP29PreprocessBeforeInternalForceIS0_EEvPT_PNS_8ADMJointES5_ffjjb	void Aska::ArticulatedDynamicsManagerMP::PreprocessBeforeInternalForce<Aska::ArticulatedDynamicsManagerMP>(Aska::ArticulatedDynamicsManagerMP*, Aska::ADMJoint*, Aska::ADMJoint*, float, float, unsigned int, unsigned int, bool)	adm_templates	decompiled	
+0x232d498	0x242d498	928	_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_28ArticulatedDynamicsManagerMPELb0EEEvPT_ffi	void Aska::ArticulatedDynamicsManagerBase::StandardIK<Aska::ArticulatedDynamicsManagerMP, false>(Aska::ArticulatedDynamicsManagerMP*, float, float, int)	adm_templates	decompiled	
+0x232d838	0x242d838	2608	_ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_28ArticulatedDynamicsManagerMPEEEvPT_PNS_8ADMJointES6_jjf	void Aska::ArticulatedDynamicsManagerBase::CollisionAndConstraint<Aska::ArticulatedDynamicsManagerMP>(Aska::ArticulatedDynamicsManagerMP*, Aska::ADMJoint*, Aska::ADMJoint*, unsigned int, unsigned int, float)	adm_templates	decompiled	
+0x232e268	0x242e268	1052	_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_28ArticulatedDynamicsManagerMPELb1EEEvPT_ffi	void Aska::ArticulatedDynamicsManagerBase::StandardIK<Aska::ArticulatedDynamicsManagerMP, true>(Aska::ArticulatedDynamicsManagerMP*, float, float, int)	adm_templates	decompiled	
+0x232e684	0x242e684	1188	_ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_28ArticulatedDynamicsManagerMPEEEvPT_ffi	void Aska::ArticulatedDynamicsManagerBase::Finalize<Aska::ArticulatedDynamicsManagerMP>(Aska::ArticulatedDynamicsManagerMP*, float, float, int)	adm_templates	decompiled	
+0x232eb28	0x242eb28	604	_ZN4Aska30ArticulatedDynamicsManagerBase15InterpolateRootINS_28ArticulatedDynamicsManagerMPEEEvPT_PNS_8ADMJointES6_fjj	void Aska::ArticulatedDynamicsManagerBase::InterpolateRoot<Aska::ArticulatedDynamicsManagerMP>(Aska::ArticulatedDynamicsManagerMP*, Aska::ADMJoint*, Aska::ADMJoint*, float, unsigned int, unsigned int)	adm_templates	decompiled	
+0x232ed84	0x242ed84	392	_ZN4Aska30ArticulatedDynamicsManagerBase16CollisionSettingINS_28ArticulatedDynamicsManagerMPEEEvPT_jj	void Aska::ArticulatedDynamicsManagerBase::CollisionSetting<Aska::ArticulatedDynamicsManagerMP>(Aska::ArticulatedDynamicsManagerMP*, unsigned int, unsigned int)	adm_templates	decompiled	
+0x232ef0c	0x242ef0c	504	_ZN4Aska28ArticulatedDynamicsManagerMP17CalcPenduramAccelIS0_NS_8ADMJointEEEvPT_f	void Aska::ArticulatedDynamicsManagerMP::CalcPenduramAccel<Aska::ArticulatedDynamicsManagerMP, Aska::ADMJoint>(Aska::ArticulatedDynamicsManagerMP*, float)	adm_templates	decompiled	
+0x232f104	0x242f104	536	_ZN4Aska28ArticulatedDynamicsManagerMP26MatrixPreFixAndMotionBlendILb1EEEvPNS_13ADM_CALC_DATAEPNS_8ADMJointEjfffPNS_6VectorEb	void Aska::ArticulatedDynamicsManagerMP::MatrixPreFixAndMotionBlend<true>(Aska::ADM_CALC_DATA*, Aska::ADMJoint*, unsigned int, float, float, float, Aska::Vector*, bool)	adm_templates	decompiled	
+0x232f31c	0x242f31c	340	_ZN4Aska8ADMJoint15ExternalForceMPEfffPKNS_6VectorEPNS_13ADM_CALC_DATAEb	Aska::ADMJoint::ExternalForceMP(float, float, float, Aska::Vector const*, Aska::ADM_CALC_DATA*, bool)	adm	decompiled	
+0x23383c0	0x24383c0	56	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEEC2Ev	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::DynamicsListHandler()	manager	decompiled	
+0x23383f8	0x24383f8	12	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE5ClearEv	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::Clear()	manager	decompiled	
+0x2338404	0x2438404	4	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEED1Ev	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::~DynamicsListHandler()	manager	decompiled	
+0x2338408	0x2438408	24	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEED0Ev	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::~DynamicsListHandler()	manager	decompiled	
+0x2338420	0x2438420	8	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE8GetCountEv	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::GetCount()	manager	decompiled	
+0x2338428	0x2438428	24	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE2AtEj	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::At(unsigned int)	manager	decompiled	
+0x2338440	0x2438440	8	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE10LOOP_STARTEv	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::LOOP_START()	manager	decompiled	
+0x2338448	0x2438448	12	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE8LOOP_ENDEPS1_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::LOOP_END(Aska::DynamicsPrimitive*)	manager	decompiled	
+0x2338454	0x2438454	12	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE9LOOP_NEXTERPS1_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::LOOP_NEXT(Aska::DynamicsPrimitive*&)	manager	decompiled	
+0x2338460	0x2438460	64	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE3AddEPS1_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::Add(Aska::DynamicsPrimitive*)	manager	decompiled	
+0x23384a0	0x24384a0	92	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE6AddTopEPS1_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::AddTop(Aska::DynamicsPrimitive*)	manager	decompiled	
+0x23384fc	0x24384fc	192	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE6InsertEPS1_S3_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::Insert(Aska::DynamicsPrimitive*, Aska::DynamicsPrimitive*)	manager	decompiled	
+0x23385bc	0x24385bc	140	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE6DeleteEPS1_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::Delete(Aska::DynamicsPrimitive*)	manager	decompiled	
+0x2338648	0x2438648	40	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE6ExistsEPS1_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::Exists(Aska::DynamicsPrimitive*)	manager	decompiled	
+0x2338670	0x2438670	84	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE14DeleteFromListEPS1_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::DeleteFromList(Aska::DynamicsPrimitive*)	manager	decompiled	
+0x23386c4	0x24386c4	12	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE9DeleteAllEv	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::DeleteAll()	manager	decompiled	
+0x23386d0	0x24386d0	40	_ZN4Aska19DynamicsListHandlerINS_17DynamicsPrimitiveEE8GetIndexEPS1_	Aska::DynamicsListHandler<Aska::DynamicsPrimitive>::GetIndex(Aska::DynamicsPrimitive*)	manager	decompiled	
+0x2339144	0x2439144	68	_ZN4Aska21DynamicsCommandNotify9SetNotifyEPNS_7INotifyEPNS0_10_ArgumentsES2_Pj	Aska::DynamicsCommandNotify::SetNotify(Aska::INotify*, Aska::DynamicsCommandNotify::_Arguments*, Aska::INotify*, unsigned int*)	manager	decompiled	
+0x2339188	0x2439188	184	_ZN4Aska21DynamicsCommandNotify7HandlerEm	Aska::DynamicsCommandNotify::Handler(unsigned long)	manager	decompiled	
+0x2339240	0x2439240	4	_ZN4Aska21DynamicsCommandNotifyD0Ev	Aska::DynamicsCommandNotify::~DynamicsCommandNotify()	manager	decompiled	
+0x2339244	0x2439244	4	_ZNK4Aska20DynamicsForceEmitter3GetEmPv	Aska::DynamicsForceEmitter::Get(unsigned long, void*) const	forces	decompiled	
+0x2339248	0x2439248	4	_ZN4Aska20DynamicsForceEmitter3SetEmPKv	Aska::DynamicsForceEmitter::Set(unsigned long, void const*)	forces	decompiled	
+0x233924c	0x243924c	228	_ZN4Aska17DynamicsWorldWind10_WorldWind3RunEi	Aska::DynamicsWorldWind::_WorldWind::Run(int)	forces	decompiled	
+0x2339330	0x2439330	52	_ZN4Aska17DynamicsWorldWind20CreateParticleObjectEv	Aska::DynamicsWorldWind::CreateParticleObject()	forces	decompiled	
+0x2339364	0x2439364	8	_ZN4Aska17DynamicsWorldWind5CloneEPKNS_11IAnimatableE	Aska::DynamicsWorldWind::Clone(Aska::IAnimatable const*)	forces	decompiled	
+0x233936c	0x243936c	8	_ZN4Aska20DynamicsForceEmitter5CloneEPKNS_11IAnimatableE	Aska::DynamicsForceEmitter::Clone(Aska::IAnimatable const*)	forces	decompiled	
+0x2339374	0x2439374	280	_ZN4Aska17DynamicsWorldWind11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsWorldWind::CreateClone(Aska::IAnimatable const*)	forces	decompiled	
+0x233948c	0x243948c	96	_ZNK4Aska17DynamicsWorldWind3GetEmPv	Aska::DynamicsWorldWind::Get(unsigned long, void*) const	forces	decompiled	
+0x23394ec	0x24394ec	104	_ZN4Aska17DynamicsWorldWind3SetEmPKv	Aska::DynamicsWorldWind::Set(unsigned long, void const*)	forces	decompiled	
+0x2339554	0x2439554	108	_ZN4Aska16DynamicsOmniWind9_OmniWind3RunEi	Aska::DynamicsOmniWind::_OmniWind::Run(int)	forces	decompiled	
+0x23395c0	0x24395c0	52	_ZN4Aska16DynamicsOmniWind20CreateParticleObjectEv	Aska::DynamicsOmniWind::CreateParticleObject()	forces	decompiled	
+0x23395f4	0x24395f4	8	_ZN4Aska16DynamicsOmniWind5CloneEPKNS_11IAnimatableE	Aska::DynamicsOmniWind::Clone(Aska::IAnimatable const*)	forces	decompiled	
+0x23395fc	0x24395fc	280	_ZN4Aska16DynamicsOmniWind11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsOmniWind::CreateClone(Aska::IAnimatable const*)	forces	decompiled	
+0x2339714	0x2439714	112	_ZNK4Aska16DynamicsOmniWind3GetEmPv	Aska::DynamicsOmniWind::Get(unsigned long, void*) const	forces	decompiled	
+0x2339784	0x2439784	124	_ZN4Aska16DynamicsOmniWind3SetEmPKv	Aska::DynamicsOmniWind::Set(unsigned long, void const*)	forces	decompiled	
+0x2339800	0x2439800	364	_ZN4Aska18DynamicsCircleWind11_CircleWind3RunEi	Aska::DynamicsCircleWind::_CircleWind::Run(int)	forces	decompiled	
+0x233996c	0x243996c	52	_ZN4Aska18DynamicsCircleWind20CreateParticleObjectEv	Aska::DynamicsCircleWind::CreateParticleObject()	forces	decompiled	
+0x23399a0	0x24399a0	8	_ZN4Aska18DynamicsCircleWind5CloneEPKNS_11IAnimatableE	Aska::DynamicsCircleWind::Clone(Aska::IAnimatable const*)	forces	decompiled	
+0x23399a8	0x24399a8	292	_ZN4Aska18DynamicsCircleWind11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsCircleWind::CreateClone(Aska::IAnimatable const*)	forces	decompiled	
+0x2339acc	0x2439acc	128	_ZNK4Aska18DynamicsCircleWind3GetEmPv	Aska::DynamicsCircleWind::Get(unsigned long, void*) const	forces	decompiled	
+0x2339b4c	0x2439b4c	144	_ZN4Aska18DynamicsCircleWind3SetEmPKv	Aska::DynamicsCircleWind::Set(unsigned long, void const*)	forces	decompiled	
+0x2339bdc	0x2439bdc	112	_ZN4Aska20DynamicsAcceleration13_Acceleration3RunEi	Aska::DynamicsAcceleration::_Acceleration::Run(int)	forces	decompiled	
+0x2339c4c	0x2439c4c	52	_ZN4Aska20DynamicsAcceleration20CreateParticleObjectEv	Aska::DynamicsAcceleration::CreateParticleObject()	forces	decompiled	
+0x2339c80	0x2439c80	8	_ZN4Aska20DynamicsAcceleration5CloneEPKNS_11IAnimatableE	Aska::DynamicsAcceleration::Clone(Aska::IAnimatable const*)	forces	decompiled	
+0x2339c88	0x2439c88	268	_ZN4Aska20DynamicsAcceleration11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsAcceleration::CreateClone(Aska::IAnimatable const*)	forces	decompiled	
+0x2339d94	0x2439d94	96	_ZNK4Aska20DynamicsAcceleration3GetEmPv	Aska::DynamicsAcceleration::Get(unsigned long, void*) const	forces	decompiled	
+0x2339df4	0x2439df4	96	_ZN4Aska20DynamicsAcceleration3SetEmPKv	Aska::DynamicsAcceleration::Set(unsigned long, void const*)	forces	decompiled	
+0x2339e54	0x2439e54	72	_ZN4Aska19DynamicsAirFriction12_AirFriction3RunEi	Aska::DynamicsAirFriction::_AirFriction::Run(int)	forces	decompiled	
+0x2339e9c	0x2439e9c	52	_ZN4Aska19DynamicsAirFriction20CreateParticleObjectEv	Aska::DynamicsAirFriction::CreateParticleObject()	forces	decompiled	
+0x2339ed0	0x2439ed0	8	_ZN4Aska19DynamicsAirFriction5CloneEPKNS_11IAnimatableE	Aska::DynamicsAirFriction::Clone(Aska::IAnimatable const*)	forces	decompiled	
+0x2339ed8	0x2439ed8	268	_ZN4Aska19DynamicsAirFriction11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsAirFriction::CreateClone(Aska::IAnimatable const*)	forces	decompiled	
+0x2339fe4	0x2439fe4	96	_ZNK4Aska19DynamicsAirFriction3GetEmPv	Aska::DynamicsAirFriction::Get(unsigned long, void*) const	forces	decompiled	
+0x233a044	0x243a044	104	_ZN4Aska19DynamicsAirFriction3SetEmPKv	Aska::DynamicsAirFriction::Set(unsigned long, void const*)	forces	decompiled	
+0x233a0ac	0x243a0ac	108	_ZN4Aska19DynamicsGravitation12_Gravitation3RunEi	Aska::DynamicsGravitation::_Gravitation::Run(int)	forces	decompiled	
+0x233a118	0x243a118	52	_ZN4Aska19DynamicsGravitation20CreateParticleObjectEv	Aska::DynamicsGravitation::CreateParticleObject()	forces	decompiled	
+0x233a14c	0x243a14c	8	_ZN4Aska19DynamicsGravitation5CloneEPKNS_11IAnimatableE	Aska::DynamicsGravitation::Clone(Aska::IAnimatable const*)	forces	decompiled	
+0x233a154	0x243a154	268	_ZN4Aska19DynamicsGravitation11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsGravitation::CreateClone(Aska::IAnimatable const*)	forces	decompiled	
+0x233a260	0x243a260	84	_ZNK4Aska19DynamicsGravitation3GetEmPv	Aska::DynamicsGravitation::Get(unsigned long, void*) const	forces	decompiled	
+0x233a2b4	0x243a2b4	84	_ZN4Aska19DynamicsGravitation3SetEmPKv	Aska::DynamicsGravitation::Set(unsigned long, void const*)	forces	decompiled	
+0x233a308	0x243a308	24	_ZN4Aska20DynamicsForceEmitterD0Ev	Aska::DynamicsForceEmitter::~DynamicsForceEmitter()	forces	decompiled	
+0x233a320	0x243a320	88	_ZNK4Aska20DynamicsForceEmitter10GetClassIDEi	Aska::DynamicsForceEmitter::GetClassID(int) const	forces	decompiled	
+0x233a378	0x243a378	8	_ZN4Aska20DynamicsForceEmitter11CreateCloneEPKNS_11IAnimatableE	Aska::DynamicsForceEmitter::CreateClone(Aska::IAnimatable const*)	forces	decompiled	
+0x233a380	0x243a380	8	_ZN4Aska20DynamicsForceEmitter18GetDynamicsHandlerEv	Aska::DynamicsForceEmitter::GetDynamicsHandler()	forces	decompiled	
+0x233a388	0x243a388	4	_ZN4Aska20DynamicsForceEmitter9EmitForceEfPKNS_6VectorEPS1_f	Aska::DynamicsForceEmitter::EmitForce(float, Aska::Vector const*, Aska::Vector*, float)	forces	decompiled	
+0x233a38c	0x243a38c	48	_ZN4Aska20DynamicsForceEmitter17SetDispatchHandleEim	Aska::DynamicsForceEmitter::SetDispatchHandle(int, unsigned long)	forces	decompiled	
+0x233a3bc	0x243a3bc	36	_ZN4Aska20DynamicsForceEmitter17GetDispatchHandleEi	Aska::DynamicsForceEmitter::GetDispatchHandle(int)	forces	decompiled	
+0x233a3e0	0x243a3e0	8	_ZN4Aska20DynamicsForceEmitter20CreateParticleObjectEv	Aska::DynamicsForceEmitter::CreateParticleObject()	forces	decompiled	
+0x233a3e8	0x243a3e8	24	_ZN4Aska17DynamicsWorldWind10_WorldWindD0Ev	Aska::DynamicsWorldWind::_WorldWind::~_WorldWind()	forces	decompiled	
+0x233a400	0x243a400	44	_ZN4Aska17DynamicsWorldWindD2Ev	Aska::DynamicsWorldWind::~DynamicsWorldWind()	forces	decompiled	
+0x233a42c	0x243a42c	52	_ZN4Aska17DynamicsWorldWindD0Ev	Aska::DynamicsWorldWind::~DynamicsWorldWind()	forces	decompiled	
+0x233a460	0x243a460	68	_ZNK4Aska17DynamicsWorldWind10GetClassIDEi	Aska::DynamicsWorldWind::GetClassID(int) const	forces	decompiled	
+0x233a4a4	0x243a4a4	8	_ZN4Aska17DynamicsWorldWind18GetDynamicsHandlerEv	Aska::DynamicsWorldWind::GetDynamicsHandler()	forces	decompiled	
+0x233a4ac	0x243a4ac	72	_ZN4Aska17DynamicsWorldWind9EmitForceEfPKNS_6VectorEPS1_f	Aska::DynamicsWorldWind::EmitForce(float, Aska::Vector const*, Aska::Vector*, float)	forces	decompiled	
+0x233a4f4	0x243a4f4	24	_ZN4Aska16DynamicsOmniWind9_OmniWindD0Ev	Aska::DynamicsOmniWind::_OmniWind::~_OmniWind()	forces	decompiled	
+0x233a50c	0x243a50c	44	_ZN4Aska16DynamicsOmniWindD2Ev	Aska::DynamicsOmniWind::~DynamicsOmniWind()	forces	decompiled	
+0x233a538	0x243a538	52	_ZN4Aska16DynamicsOmniWindD0Ev	Aska::DynamicsOmniWind::~DynamicsOmniWind()	forces	decompiled	
+0x233a56c	0x243a56c	68	_ZNK4Aska16DynamicsOmniWind10GetClassIDEi	Aska::DynamicsOmniWind::GetClassID(int) const	forces	decompiled	
+0x233a5b0	0x243a5b0	8	_ZN4Aska16DynamicsOmniWind18GetDynamicsHandlerEv	Aska::DynamicsOmniWind::GetDynamicsHandler()	forces	decompiled	
+0x233a5b8	0x243a5b8	332	_ZN4Aska16DynamicsOmniWind9EmitForceEfPKNS_6VectorEPS1_f	Aska::DynamicsOmniWind::EmitForce(float, Aska::Vector const*, Aska::Vector*, float)	forces	decompiled	
+0x233a704	0x243a704	8	_ZNK4Aska16DynamicsOmniWind19GetDefaultTaskLevelEv	Aska::DynamicsOmniWind::GetDefaultTaskLevel() const	forces	decompiled	
+0x233a70c	0x243a70c	24	_ZN4Aska18DynamicsCircleWind11_CircleWindD0Ev	Aska::DynamicsCircleWind::_CircleWind::~_CircleWind()	forces	decompiled	
+0x233a724	0x243a724	44	_ZN4Aska18DynamicsCircleWindD2Ev	Aska::DynamicsCircleWind::~DynamicsCircleWind()	forces	decompiled	
+0x233a750	0x243a750	52	_ZN4Aska18DynamicsCircleWindD0Ev	Aska::DynamicsCircleWind::~DynamicsCircleWind()	forces	decompiled	
+0x233a784	0x243a784	68	_ZNK4Aska18DynamicsCircleWind10GetClassIDEi	Aska::DynamicsCircleWind::GetClassID(int) const	forces	decompiled	
+0x233a7c8	0x243a7c8	8	_ZN4Aska18DynamicsCircleWind18GetDynamicsHandlerEv	Aska::DynamicsCircleWind::GetDynamicsHandler()	forces	decompiled	
+0x233a7d0	0x243a7d0	244	_ZN4Aska18DynamicsCircleWind9EmitForceEfPKNS_6VectorEPS1_f	Aska::DynamicsCircleWind::EmitForce(float, Aska::Vector const*, Aska::Vector*, float)	forces	decompiled	
+0x233a8c4	0x243a8c4	24	_ZN4Aska20DynamicsAcceleration13_AccelerationD0Ev	Aska::DynamicsAcceleration::_Acceleration::~_Acceleration()	forces	decompiled	
+0x233a8dc	0x243a8dc	44	_ZN4Aska20DynamicsAccelerationD2Ev	Aska::DynamicsAcceleration::~DynamicsAcceleration()	forces	decompiled	
+0x233a908	0x243a908	52	_ZN4Aska20DynamicsAccelerationD0Ev	Aska::DynamicsAcceleration::~DynamicsAcceleration()	forces	decompiled	
+0x233a93c	0x243a93c	68	_ZNK4Aska20DynamicsAcceleration10GetClassIDEi	Aska::DynamicsAcceleration::GetClassID(int) const	forces	decompiled	
+0x233a980	0x243a980	8	_ZN4Aska20DynamicsAcceleration18GetDynamicsHandlerEv	Aska::DynamicsAcceleration::GetDynamicsHandler()	forces	decompiled	
+0x233a988	0x243a988	4	_ZN4Aska20DynamicsAcceleration9EmitForceEfPKNS_6VectorEPS1_f	Aska::DynamicsAcceleration::EmitForce(float, Aska::Vector const*, Aska::Vector*, float)	forces	decompiled	
+0x233a98c	0x243a98c	24	_ZN4Aska19DynamicsAirFriction12_AirFrictionD0Ev	Aska::DynamicsAirFriction::_AirFriction::~_AirFriction()	forces	decompiled	
+0x233a9a4	0x243a9a4	44	_ZN4Aska19DynamicsAirFrictionD2Ev	Aska::DynamicsAirFriction::~DynamicsAirFriction()	forces	decompiled	
+0x233a9d0	0x243a9d0	52	_ZN4Aska19DynamicsAirFrictionD0Ev	Aska::DynamicsAirFriction::~DynamicsAirFriction()	forces	decompiled	
+0x233aa04	0x243aa04	68	_ZNK4Aska19DynamicsAirFriction10GetClassIDEi	Aska::DynamicsAirFriction::GetClassID(int) const	forces	decompiled	
+0x233aa48	0x243aa48	8	_ZN4Aska19DynamicsAirFriction18GetDynamicsHandlerEv	Aska::DynamicsAirFriction::GetDynamicsHandler()	forces	decompiled	
+0x233aa50	0x243aa50	4	_ZN4Aska19DynamicsAirFriction9EmitForceEfPKNS_6VectorEPS1_f	Aska::DynamicsAirFriction::EmitForce(float, Aska::Vector const*, Aska::Vector*, float)	forces	decompiled	
+0x233aa54	0x243aa54	24	_ZN4Aska19DynamicsGravitation12_GravitationD0Ev	Aska::DynamicsGravitation::_Gravitation::~_Gravitation()	forces	decompiled	
+0x233aa6c	0x243aa6c	44	_ZN4Aska19DynamicsGravitationD2Ev	Aska::DynamicsGravitation::~DynamicsGravitation()	forces	decompiled	
+0x233aa98	0x243aa98	52	_ZN4Aska19DynamicsGravitationD0Ev	Aska::DynamicsGravitation::~DynamicsGravitation()	forces	decompiled	
+0x233aacc	0x243aacc	68	_ZNK4Aska19DynamicsGravitation10GetClassIDEi	Aska::DynamicsGravitation::GetClassID(int) const	forces	decompiled	
+0x233ab10	0x243ab10	8	_ZN4Aska19DynamicsGravitation18GetDynamicsHandlerEv	Aska::DynamicsGravitation::GetDynamicsHandler()	forces	decompiled	
+0x233ab18	0x243ab18	4	_ZN4Aska19DynamicsGravitation9EmitForceEfPKNS_6VectorEPS1_f	Aska::DynamicsGravitation::EmitForce(float, Aska::Vector const*, Aska::Vector*, float)	forces	decompiled	
+0x233ab1c	0x243ab1c	132	_ZN4Aska27DynamicsForceEmitterManager3AddEPNS_20DynamicsForceEmitterE	Aska::DynamicsForceEmitterManager::Add(Aska::DynamicsForceEmitter*)	forces	decompiled	
+0x233aba0	0x243aba0	132	_ZN4Aska27DynamicsForceEmitterManager6AddTopEPNS_20DynamicsForceEmitterE	Aska::DynamicsForceEmitterManager::AddTop(Aska::DynamicsForceEmitter*)	forces	decompiled	
+0x233ac24	0x243ac24	156	_ZN4Aska27DynamicsForceEmitterManager6InsertEPNS_20DynamicsForceEmitterES2_	Aska::DynamicsForceEmitterManager::Insert(Aska::DynamicsForceEmitter*, Aska::DynamicsForceEmitter*)	forces	decompiled	
+0x233acc0	0x243acc0	184	_ZN4Aska27DynamicsForceEmitterManager6DeleteEPNS_20DynamicsForceEmitterE	Aska::DynamicsForceEmitterManager::Delete(Aska::DynamicsForceEmitter*)	forces	decompiled	
+0x233ad78	0x243ad78	56	_ZN4Aska27DynamicsForceEmitterManager21RemoveFromRuntimeListEPNS_20DynamicsForceEmitterE	Aska::DynamicsForceEmitterManager::RemoveFromRuntimeList(Aska::DynamicsForceEmitter*)	forces	decompiled	
+0x233adb0	0x243adb0	64	_ZN4Aska27DynamicsForceEmitterManager15PreAllocateListEPPNS_20DynamicsForceEmitterEi	Aska::DynamicsForceEmitterManager::PreAllocateList(Aska::DynamicsForceEmitter**, int)	forces	decompiled	
+0x233adf0	0x243adf0	192	_ZN4Aska27DynamicsForceEmitterManager16MakeDynamicsListEv	Aska::DynamicsForceEmitterManager::MakeDynamicsList()	forces	decompiled	
+0x233aeb0	0x243aeb0	192	_ZN4Aska27DynamicsForceEmitterManager15UpdateWorldWindEv	Aska::DynamicsForceEmitterManager::UpdateWorldWind()	forces	decompiled	
+0x23455ac	0x24455ac	28	_ZN4Aska23IDEPrimitiveListHandlerC1Ev	Aska::IDEPrimitiveListHandler::IDEPrimitiveListHandler()	ide	decompiled	
+0x23455c8	0x24455c8	4	_ZN4Aska23IDEPrimitiveListHandlerD2Ev	Aska::IDEPrimitiveListHandler::~IDEPrimitiveListHandler()	ide	decompiled	
+0x23455cc	0x24455cc	4	_ZN4Aska23IDEPrimitiveListHandlerD0Ev	Aska::IDEPrimitiveListHandler::~IDEPrimitiveListHandler()	ide	decompiled	
+0x23455d0	0x24455d0	12	_ZN4Aska23IDEPrimitiveListHandler6AttachEPNS_16IDEPrimitiveBaseES2_j	Aska::IDEPrimitiveListHandler::Attach(Aska::IDEPrimitiveBase*, Aska::IDEPrimitiveBase*, unsigned int)	ide	decompiled	
+0x23455dc	0x24455dc	56	_ZN4Aska23IDEPrimitiveListHandler3AddEPNS_16IDEPrimitiveBaseE	Aska::IDEPrimitiveListHandler::Add(Aska::IDEPrimitiveBase*)	ide	decompiled	
+0x2345614	0x2445614	72	_ZN4Aska23IDEPrimitiveListHandler6RemoveEPNS_16IDEPrimitiveBaseE	Aska::IDEPrimitiveListHandler::Remove(Aska::IDEPrimitiveBase*)	ide	decompiled	
+0x234565c	0x244565c	48	_ZN4Aska23IDEPrimitiveListHandler6ExistsEPNS_16IDEPrimitiveBaseE	Aska::IDEPrimitiveListHandler::Exists(Aska::IDEPrimitiveBase*)	ide	decompiled	
+0x234568c	0x244568c	12	_ZN4Aska23IDEPrimitiveListHandler5ClearEv	Aska::IDEPrimitiveListHandler::Clear()	ide	decompiled	
+0x2345698	0x2445698	32	_ZN4Aska23IDEPrimitiveListHandler7GetNodeEj	Aska::IDEPrimitiveListHandler::GetNode(unsigned int)	ide	decompiled	
+0x23456b8	0x24456b8	112	_ZN4Aska23IDEPrimitiveListHandler4SwapEPNS_16IDEPrimitiveBaseES2_	Aska::IDEPrimitiveListHandler::Swap(Aska::IDEPrimitiveBase*, Aska::IDEPrimitiveBase*)	ide	decompiled	
+0x2345728	0x2445728	48	_ZN4Aska20IDESpacePartitionBVHC2Ev	Aska::IDESpacePartitionBVH::IDESpacePartitionBVH()	ide	decompiled	
+0x2345758	0x2445758	156	_ZN4Aska20IDESpacePartitionBVHD2Ev	Aska::IDESpacePartitionBVH::~IDESpacePartitionBVH()	ide	decompiled	
+0x23457f4	0x24457f4	164	_ZN4Aska20IDESpacePartitionBVHD0Ev	Aska::IDESpacePartitionBVH::~IDESpacePartitionBVH()	ide	decompiled	
+0x2345898	0x2445898	124	_ZN4Aska20IDESpacePartitionBVH6UpdateEPNS_23IDEPrimitiveListHandlerE	Aska::IDESpacePartitionBVH::Update(Aska::IDEPrimitiveListHandler*)	ide	decompiled	
+0x2345914	0x2445914	32	_ZN4Aska20IDESpacePartitionBVH19IsBelongToHierarchyEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEE	Aska::IDESpacePartitionBVH::IsBelongToHierarchy(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2345934	0x2445934	664	_ZN4Aska20IDESpacePartitionBVH20UpdateBoundHierarchyEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEE	Aska::IDESpacePartitionBVH::UpdateBoundHierarchy(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2345bcc	0x2445bcc	56	_ZN4Aska20IDESpacePartitionBVH5BuildEPNS_23IDEPrimitiveListHandlerE	Aska::IDESpacePartitionBVH::Build(Aska::IDEPrimitiveListHandler*)	ide	decompiled	
+0x2345c04	0x2445c04	1024	_ZN4Aska20IDESpacePartitionBVH15CreateHierarchyEPNS_23IDEPrimitiveListHandlerE	Aska::IDESpacePartitionBVH::CreateHierarchy(Aska::IDEPrimitiveListHandler*)	ide	decompiled	
+0x2346004	0x2446004	16	_ZN4Aska20IDESpacePartitionBVH6ModifyEPNS_23IDEPrimitiveListHandlerE	Aska::IDESpacePartitionBVH::Modify(Aska::IDEPrimitiveListHandler*)	ide	decompiled	
+0x2346014	0x2446014	580	_ZN4Aska20IDESpacePartitionBVH15ModifyHierarchyEPNS_23IDEPrimitiveListHandlerE	Aska::IDESpacePartitionBVH::ModifyHierarchy(Aska::IDEPrimitiveListHandler*)	ide	decompiled	
+0x2346258	0x2446258	136	_ZN4Aska20IDESpacePartitionBVH20InstanciatePrimitiveEPNS_11AABB_MinMaxE	Aska::IDESpacePartitionBVH::InstanciatePrimitive(Aska::AABB_MinMax*)	ide	decompiled	
+0x23462e0	0x24462e0	360	_ZN4Aska17IDESpacePartition5AllocINS_16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EEENS_11AABB_MinMaxEEEPT_PT0_	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>* Aska::IDESpacePartition::Alloc<Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>, Aska::AABB_MinMax>(Aska::AABB_MinMax*)	ide_templates	decompiled	
+0x2346448	0x2446448	124	_ZN4Aska20IDESpacePartitionBVH20InstanciatePrimitiveEPNS_6VectorE	Aska::IDESpacePartitionBVH::InstanciatePrimitive(Aska::Vector*)	ide	decompiled	
+0x23464c4	0x24464c4	304	_ZN4Aska17IDESpacePartition5AllocINS_18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EEENS_6VectorEEEPT_PT0_	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>* Aska::IDESpacePartition::Alloc<Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>, Aska::Vector>(Aska::Vector*)	ide_templates	decompiled	
+0x23465f4	0x24465f4	160	_ZN4Aska20IDESpacePartitionBVH20InstanciatePrimitiveEPNS_12HeightObjectE	Aska::IDESpacePartitionBVH::InstanciatePrimitive(Aska::HeightObject*)	ide	decompiled	
+0x2346694	0x2446694	292	_ZN4Aska17IDESpacePartition5AllocINS_24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EEENS_12HeightObjectEEEPT_PT0_	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>* Aska::IDESpacePartition::Alloc<Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>, Aska::HeightObject>(Aska::HeightObject*)	ide_templates	decompiled	
+0x23467b8	0x24467b8	60	_ZN4Aska20IDESpacePartitionBVH20InstanciatePrimitiveEPNS_16CollisionHandlerEPv	Aska::IDESpacePartitionBVH::InstanciatePrimitive(Aska::CollisionHandler*, void*)	ide	decompiled	
+0x23467f4	0x24467f4	144	_ZN4Aska17IDESpacePartition5AllocINS_28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EEENS_16CollisionHandlerEEEPT_PT0_	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>* Aska::IDESpacePartition::Alloc<Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>, Aska::CollisionHandler>(Aska::CollisionHandler*)	ide_templates	decompiled	
+0x2346884	0x2446884	784	_ZN4Aska20IDESpacePartitionBVH20InstanciatePrimitiveEPNS_5LightE	Aska::IDESpacePartitionBVH::InstanciatePrimitive(Aska::Light*)	ide	decompiled	
+0x2346b94	0x2446b94	96	_ZN4Aska20IDESpacePartitionBVH3SetEPNS_16IDEPrimitiveBaseEPNS_11AABB_MinMaxE	Aska::IDESpacePartitionBVH::Set(Aska::IDEPrimitiveBase*, Aska::AABB_MinMax*)	ide	decompiled	
+0x2346bf4	0x2446bf4	64	_ZN4Aska20IDESpacePartitionBVH3SetEPNS_16IDEPrimitiveBaseEPNS_6VectorE	Aska::IDESpacePartitionBVH::Set(Aska::IDEPrimitiveBase*, Aska::Vector*)	ide	decompiled	
+0x2346c34	0x2446c34	92	_ZN4Aska20IDESpacePartitionBVH3SetEPNS_16IDEPrimitiveBaseEPNS_12HeightObjectE	Aska::IDESpacePartitionBVH::Set(Aska::IDEPrimitiveBase*, Aska::HeightObject*)	ide	decompiled	
+0x2346c90	0x2446c90	36	_ZN4Aska20IDESpacePartitionBVH3SetEPNS_16IDEPrimitiveBaseEPNS_16CollisionHandlerE	Aska::IDESpacePartitionBVH::Set(Aska::IDEPrimitiveBase*, Aska::CollisionHandler*)	ide	decompiled	
+0x2346cb4	0x2446cb4	172	_ZN4Aska20IDESpacePartitionBVH3SetEPNS_16IDEPrimitiveBaseEPNS_3BoxEPNS_18HierarchicalObjectE	Aska::IDESpacePartitionBVH::Set(Aska::IDEPrimitiveBase*, Aska::Box*, Aska::HierarchicalObject*)	ide	decompiled	
+0x2346d60	0x2446d60	720	_ZN4Aska20IDESpacePartitionBVH6DeleteEPNS_16IDEPrimitiveBaseE	Aska::IDESpacePartitionBVH::Delete(Aska::IDEPrimitiveBase*)	ide	decompiled	
+0x2347030	0x2447030	136	_ZN4Aska20IDESpacePartitionBVH9DeleteAllEv	Aska::IDESpacePartitionBVH::DeleteAll()	ide	decompiled	
+0x23470b8	0x24470b8	136	_ZN4Aska20IDESpacePartitionBVH15DeleteAllBranchEv	Aska::IDESpacePartitionBVH::DeleteAllBranch()	ide	decompiled	
+0x2347140	0x2447140	104	_ZN4Aska20IDESpacePartitionBVH9IntersectEPKNS_3RayEt	Aska::IDESpacePartitionBVH::Intersect(Aska::Ray const*, unsigned short)	ide	decompiled	
+0x23471a8	0x24471a8	104	_ZN4Aska20IDESpacePartitionBVH9IntersectEPKNS_7SegmentEt	Aska::IDESpacePartitionBVH::Intersect(Aska::Segment const*, unsigned short)	ide	decompiled	
+0x2347210	0x2447210	152	_ZN4Aska20IDESpacePartitionBVH25FindIntersectNearestPointEPNS_6VectorEPKNS_3RayEt	Aska::IDESpacePartitionBVH::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray const*, unsigned short)	ide	decompiled	
+0x23472a8	0x24472a8	152	_ZN4Aska20IDESpacePartitionBVH25FindIntersectNearestPointEPNS_6VectorEPKNS_7SegmentEt	Aska::IDESpacePartitionBVH::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment const*, unsigned short)	ide	decompiled	
+0x2347340	0x2447340	216	_ZN4Aska20IDESpacePartitionBVH26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPKNS_3RayEt	Aska::IDESpacePartitionBVH::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray const*, unsigned short)	ide	decompiled	
+0x2347418	0x2447418	216	_ZN4Aska20IDESpacePartitionBVH26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPKNS_7SegmentEt	Aska::IDESpacePartitionBVH::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment const*, unsigned short)	ide	decompiled	
+0x23474f0	0x24474f0	288	_ZN4Aska20IDESpacePartitionBVH9GetHeightEPNS_18IDE_ResultOfHeightEPNS_6VectorEjt	Aska::IDESpacePartitionBVH::GetHeight(Aska::IDE_ResultOfHeight*, Aska::Vector*, unsigned int, unsigned short)	ide	decompiled	
+0x2347610	0x2447610	1128	_ZN4Aska20IDESpacePartitionBVH26CollisionDetectionForArrayINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE2ELNS_37_Enum_IDECollisionDetectionOutputTypeE3EEELb0EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetectionForArray<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)2, (Aska::_Enum_IDECollisionDetectionOutputType)3>, false>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)2, (Aska::_Enum_IDECollisionDetectionOutputType)3>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x2347a78	0x2447a78	168	_ZN4Aska20IDESpacePartitionBVH31FindIntersectNearestObjectArrayEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEjt	Aska::IDESpacePartitionBVH::FindIntersectNearestObjectArray(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned int, unsigned short)	ide	decompiled	
+0x2347b20	0x2447b20	168	_ZN4Aska20IDESpacePartitionBVH31FindIntersectNearestObjectArrayEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEjt	Aska::IDESpacePartitionBVH::FindIntersectNearestObjectArray(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned int, unsigned short)	ide	decompiled	
+0x2347bc8	0x2447bc8	584	_ZN4Aska20IDESpacePartitionBVH8SetBoundEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEE	Aska::IDESpacePartitionBVH::SetBound(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2347e10	0x2447e10	600	_ZN4Aska20IDESpacePartitionBVH8SetBoundEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEES4_	Aska::IDESpacePartitionBVH::SetBound(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2348068	0x2448068	116	_ZN4Aska20IDESpacePartitionBVH6RevertEPNS_23IDEPrimitiveListHandlerE	Aska::IDESpacePartitionBVH::Revert(Aska::IDEPrimitiveListHandler*)	ide	decompiled	
+0x23480dc	0x24480dc	316	_ZN4Aska20IDESpacePartitionBVH11DivideGroupEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEE	Aska::IDESpacePartitionBVH::DivideGroup(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2348218	0x2448218	1720	_ZN4Aska20IDESpacePartitionBVH12DivideBranchEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEE	Aska::IDESpacePartitionBVH::DivideBranch(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x23488d0	0x24488d0	4	_ZN4Aska20IDESpacePartitionBVH10FixUpGroupEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEE	Aska::IDESpacePartitionBVH::FixUpGroup(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x23488d4	0x24488d4	180	_ZN4Aska20IDESpacePartitionBVH10DevideAxisEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEE	Aska::IDESpacePartitionBVH::DevideAxis(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2348988	0x2448988	504	_ZN4Aska20IDESpacePartitionBVH13ForceAddChildEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEES4_	Aska::IDESpacePartitionBVH::ForceAddChild(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2348b80	0x2448b80	228	_ZN4Aska20IDESpacePartitionBVH23ModifyHierarchyRecursivEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEES4_	Aska::IDESpacePartitionBVH::ModifyHierarchyRecursiv(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2348c64	0x2448c64	648	_ZN4Aska20IDESpacePartitionBVH12ModifyParentEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEES4_	Aska::IDESpacePartitionBVH::ModifyParent(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x2348eec	0x2448eec	468	_ZN4Aska20IDESpacePartitionBVH14ModifyChildrenEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEES4_	Aska::IDESpacePartitionBVH::ModifyChildren(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x23490c0	0x24490c0	32	_ZN4Aska20IDESpacePartitionBVH23FindIntersectPrimitivesEPNS_18IDEIntersectNotifyE	Aska::IDESpacePartitionBVH::FindIntersectPrimitives(Aska::IDEIntersectNotify*)	ide	decompiled	
+0x23490e0	0x24490e0	140	_ZN4Aska20IDESpacePartitionBVH29FindIntersectPrimitives_Main0EPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEEPNS_18IDEIntersectNotifyE	Aska::IDESpacePartitionBVH::FindIntersectPrimitives_Main0(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::IDEIntersectNotify*)	ide	decompiled	
+0x234916c	0x244916c	212	_ZN4Aska20IDESpacePartitionBVH29FindIntersectPrimitives_Main1EPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEES4_PNS_18IDEIntersectNotifyEb	Aska::IDESpacePartitionBVH::FindIntersectPrimitives_Main1(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::IDEIntersectNotify*, bool)	ide	decompiled	
+0x2349240	0x2449240	884	_ZN4Aska20IDESpacePartitionBVH19IntersectPrimitivesEPNS_18SpacePartitionDataILNS_26_EnumIDESpacePartitionTypeE0EEES4_	Aska::IDESpacePartitionBVH::IntersectPrimitives(Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*, Aska::SpacePartitionData<(Aska::_EnumIDESpacePartitionType)0>*)	ide	decompiled	
+0x23495b4	0x24495b4	84	_ZN4Aska20IDESpacePartitionBVH20FindIntersectObjectsEPNS_7INotifyEPKNS_6VectorEt	Aska::IDESpacePartitionBVH::FindIntersectObjects(Aska::INotify*, Aska::Vector const*, unsigned short)	ide	decompiled	
+0x2349608	0x2449608	288	_ZN4Aska20IDESpacePartitionBVH24PostFindIntersectObjectsEPNS_23IDE_ResultOfFindObjectsEiPjS3_PNS_7INotifyEPKNS_3BoxEjt	Aska::IDESpacePartitionBVH::PostFindIntersectObjects(Aska::IDE_ResultOfFindObjects*, int, unsigned int*, unsigned int*, Aska::INotify*, Aska::Box const*, unsigned int, unsigned short)	ide	decompiled	
+0x2349728	0x2449728	4	_ZN4Aska20IDESpacePartitionBVH29PostFindIntersectObjects_WaitEv	Aska::IDESpacePartitionBVH::PostFindIntersectObjects_Wait()	ide	decompiled	
+0x234972c	0x244972c	288	_ZN4Aska20IDESpacePartitionBVH20FindIntersectObjectsEPNS_7INotifyEPKNS_3BoxEt	Aska::IDESpacePartitionBVH::FindIntersectObjects(Aska::INotify*, Aska::Box const*, unsigned short)	ide	decompiled	
+0x234984c	0x244984c	72	_ZN4Aska20IDESpacePartitionBVH6AttachEPNS_16IDEPrimitiveBaseEiS2_i	Aska::IDESpacePartitionBVH::Attach(Aska::IDEPrimitiveBase*, int, Aska::IDEPrimitiveBase*, int)	ide	decompiled	
+0x2349894	0x2449894	8	_ZN4Aska20IDESpacePartitionBVH7GetTypeEv	Aska::IDESpacePartitionBVH::GetType()	ide	decompiled	
+0x234989c	0x244989c	16	_ZN4Aska20IDESpacePartitionBVH11IsAvailableEv	Aska::IDESpacePartitionBVH::IsAvailable()	ide	decompiled	
+0x23498ac	0x24498ac	8	_ZNK4Aska20IDESpacePartitionBVH7IsCleanEv	Aska::IDESpacePartitionBVH::IsClean() const	ide	decompiled	
+0x23498b4	0x24498b4	12	_ZN4Aska20IDESpacePartitionBVH8SetCleanEb	Aska::IDESpacePartitionBVH::SetClean(bool)	ide	decompiled	
+0x23498c0	0x24498c0	296	_ZN4Aska33IDESpacePartitionBVH_BoundingAABB3SetEPNS_16CollisionHandlerE	Aska::IDESpacePartitionBVH_BoundingAABB::Set(Aska::CollisionHandler*)	ide	decompiled	
+0x23499e8	0x24499e8	248	_ZN4Aska33IDESpacePartitionBVH_BoundingAABB6ResizeEPS0_	Aska::IDESpacePartitionBVH_BoundingAABB::Resize(Aska::IDESpacePartitionBVH_BoundingAABB*)	ide	decompiled	
+0x2349ae0	0x2449ae0	20	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EED2Ev	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::~IDEPrimitiveAABB()	ide_templates	decompiled	
+0x2349af4	0x2449af4	4	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EED0Ev	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::~IDEPrimitiveAABB()	ide_templates	decompiled	
+0x2349af8	0x2449af8	8	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_3RayEt	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x2349b00	0x2449b00	8	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_7SegmentEt	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x2349b08	0x2449b08	116	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_3RayEt	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x2349b7c	0x2449b7c	116	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_7SegmentEt	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x2349bf0	0x2449bf0	136	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEt	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x2349c78	0x2449c78	136	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEt	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x2349d00	0x2449d00	96	_ZN4Aska16IDEPrimitiveAABBILNS_26_EnumIDESpacePartitionTypeE0EE20FindIntersectObjectsEPNS_7INotifyEPKNS_6VectorEt	Aska::IDEPrimitiveAABB<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectObjects(Aska::INotify*, Aska::Vector const*, unsigned short)	ide_templates	decompiled	
+0x2349d60	0x2449d60	20	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EED2Ev	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::~IDEPrimitiveSphere()	ide_templates	decompiled	
+0x2349d74	0x2449d74	4	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EED0Ev	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::~IDEPrimitiveSphere()	ide_templates	decompiled	
+0x2349d78	0x2449d78	8	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_3RayEt	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x2349d80	0x2449d80	12	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_7SegmentEt	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x2349d8c	0x2449d8c	116	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_3RayEt	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x2349e00	0x2449e00	116	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_7SegmentEt	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x2349e74	0x2449e74	136	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEt	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x2349efc	0x2449efc	136	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEt	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x2349f84	0x2449f84	88	_ZN4Aska18IDEPrimitiveSphereILNS_26_EnumIDESpacePartitionTypeE0EE20FindIntersectObjectsEPNS_7INotifyEPKNS_6VectorEt	Aska::IDEPrimitiveSphere<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectObjects(Aska::INotify*, Aska::Vector const*, unsigned short)	ide_templates	decompiled	
+0x2349fdc	0x2449fdc	4	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EED0Ev	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::~IDEPrimitiveHeightObject()	ide_templates	decompiled	
+0x2349fe0	0x2449fe0	24	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE15CheckToDispatchEPNS_3RayEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::CheckToDispatch(Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x2349ff8	0x2449ff8	24	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE15CheckToDispatchEPNS_7SegmentEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::CheckToDispatch(Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x234a010	0x244a010	12	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE15CheckToDispatchEPKNS_3BoxEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::CheckToDispatch(Aska::Box const*, unsigned short)	ide_templates	decompiled	
+0x234a01c	0x244a01c	136	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE6UpdateEv	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::Update()	ide_templates	decompiled	
+0x234a0a4	0x244a0a4	52	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_3RayEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x234a0d8	0x244a0d8	52	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_7SegmentEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x234a10c	0x244a10c	40	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_3RayEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x234a134	0x244a134	40	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_7SegmentEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x234a15c	0x244a15c	88	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x234a1b4	0x244a1b4	88	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x234a20c	0x244a20c	16	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE20FindIntersectObjectsEPNS_7INotifyEPKNS_6VectorEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectObjects(Aska::INotify*, Aska::Vector const*, unsigned short)	ide_templates	decompiled	
+0x234a21c	0x244a21c	24	_ZN4Aska24IDEPrimitiveHeightObjectILNS_26_EnumIDESpacePartitionTypeE0EE15CheckToDispatchEPNS_6VectorEt	Aska::IDEPrimitiveHeightObject<(Aska::_EnumIDESpacePartitionType)0>::CheckToDispatch(Aska::Vector*, unsigned short)	ide_templates	decompiled	
+0x234a234	0x244a234	4	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EED0Ev	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::~IDEPrimitiveCollisionHandler()	ide_templates	decompiled	
+0x234a238	0x244a238	24	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE15CheckToDispatchEPNS_3RayEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::CheckToDispatch(Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x234a250	0x244a250	24	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE15CheckToDispatchEPNS_7SegmentEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::CheckToDispatch(Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x234a268	0x244a268	12	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE15CheckToDispatchEPKNS_3BoxEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::CheckToDispatch(Aska::Box const*, unsigned short)	ide_templates	decompiled	
+0x234a274	0x244a274	164	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE6UpdateEv	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::Update()	ide_templates	decompiled	
+0x234a318	0x244a318	20	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_3RayEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x234a32c	0x244a32c	24	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE9IntersectEPNS_7SegmentEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::Intersect(Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x234a344	0x244a344	68	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_3RayEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x234a388	0x244a388	68	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE25FindIntersectNearestPointEPNS_6VectorEPNS_7SegmentEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x234a3cc	0x244a3cc	80	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned short)	ide_templates	decompiled	
+0x234a41c	0x244a41c	80	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned short)	ide_templates	decompiled	
+0x234a46c	0x244a46c	24	_ZN4Aska28IDEPrimitiveCollisionHandlerILNS_26_EnumIDESpacePartitionTypeE0EE15CheckToDispatchEPNS_6VectorEt	Aska::IDEPrimitiveCollisionHandler<(Aska::_EnumIDESpacePartitionType)0>::CheckToDispatch(Aska::Vector*, unsigned short)	ide_templates	decompiled	
+0x234a484	0x244a484	320	_ZN4Aska20IDESpacePartitionBVH18CollisionDetectionINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE0EEELb1EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetection<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)0>, true>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)0>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234a5c4	0x244a5c4	320	_ZN4Aska20IDESpacePartitionBVH18CollisionDetectionINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE0EEELb1EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetection<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)0>, true>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)0>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234a704	0x244a704	396	_ZN4Aska20IDESpacePartitionBVH18CollisionDetectionINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE1EEELb1EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetection<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)1>, true>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)1>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234a890	0x244a890	396	_ZN4Aska20IDESpacePartitionBVH18CollisionDetectionINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE1EEELb1EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetection<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)1>, true>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)1>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234aa1c	0x244aa1c	428	_ZN4Aska20IDESpacePartitionBVH18CollisionDetectionINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE2EEELb1EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetection<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)2>, true>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)2>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234abc8	0x244abc8	428	_ZN4Aska20IDESpacePartitionBVH18CollisionDetectionINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE2EEELb1EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetection<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)2>, true>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)2>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234ad74	0x244ad74	416	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE2ELNS_37_Enum_IDECollisionDetectionOutputTypeE3EE23CheckCollisionDetectionILb0EEEbPjjPNS_16IDEPrimitiveBaseE	bool Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)2, (Aska::_Enum_IDECollisionDetectionOutputType)3>::CheckCollisionDetection<false>(unsigned int*, unsigned int, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234af14	0x244af14	1060	_ZN4Aska20IDESpacePartitionBVH26CollisionDetectionForArrayINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE3ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EEELb0EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetectionForArray<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)3, (Aska::_Enum_IDECollisionDetectionOutputType)4>, false>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)3, (Aska::_Enum_IDECollisionDetectionOutputType)4>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234b338	0x244b338	436	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE3ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EE23CheckCollisionDetectionILb0EEEbPjjPNS_16IDEPrimitiveBaseE	bool Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)3, (Aska::_Enum_IDECollisionDetectionOutputType)4>::CheckCollisionDetection<false>(unsigned int*, unsigned int, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234b4ec	0x244b4ec	1060	_ZN4Aska20IDESpacePartitionBVH26CollisionDetectionForArrayINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE4ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EEELb0EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetectionForArray<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)4, (Aska::_Enum_IDECollisionDetectionOutputType)4>, false>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)4, (Aska::_Enum_IDECollisionDetectionOutputType)4>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234b910	0x244b910	436	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE4ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EE23CheckCollisionDetectionILb0EEEbPjjPNS_16IDEPrimitiveBaseE	bool Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)4, (Aska::_Enum_IDECollisionDetectionOutputType)4>::CheckCollisionDetection<false>(unsigned int*, unsigned int, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234bac4	0x244bac4	4	_ZN4Aska12IDEPrimitiveILNS_26_EnumIDESpacePartitionTypeE0ELNS_21_EnumIDEPrimitiveTypeE0EED0Ev	Aska::IDEPrimitive<(Aska::_EnumIDESpacePartitionType)0, (Aska::_EnumIDEPrimitiveType)0>::~IDEPrimitive()	ide_templates	decompiled	
+0x234bac8	0x244bac8	288	_ZN4Aska20IDESpacePartitionBVH18CollisionDetectionINS_27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE5ELNS_37_Enum_IDECollisionDetectionOutputTypeE5EEELb1EEEvPT_PNS_16IDEPrimitiveBaseE	void Aska::IDESpacePartitionBVH::CollisionDetection<Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)5, (Aska::_Enum_IDECollisionDetectionOutputType)5>, true>(Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)5, (Aska::_Enum_IDECollisionDetectionOutputType)5>*, Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x234bdf0	0x244bdf0	108	_ZN4Aska23RigidBodyConstraintBaseD0Ev	Aska::RigidBodyConstraintBase::~RigidBodyConstraintBase()	rigidbody	decompiled	
+0x234be5c	0x244be5c	96	_ZN4Aska23RigidBodyConstraintBase6AttachEPKNS_10AsfHandlerEPKNS_3AFF9AskaChunkE	Aska::RigidBodyConstraintBase::Attach(Aska::AsfHandler const*, Aska::AFF::AskaChunk const*)	rigidbody	decompiled	
+0x234bebc	0x244bebc	660	_ZN4Aska23RigidBodyConstraintNail12CreateBulletEv	Aska::RigidBodyConstraintNail::CreateBullet()	rigidbody	decompiled	
+0x234c150	0x244c150	1256	_ZN4Aska24RigidBodyConstraintHinge12CreateBulletEv	Aska::RigidBodyConstraintHinge::CreateBullet()	rigidbody	decompiled	
+0x234c638	0x244c638	1940	_ZN4Aska25RigidBodyConstraintSixDOF12CreateBulletEv	Aska::RigidBodyConstraintSixDOF::CreateBullet()	rigidbody	decompiled	
+0x234cdcc	0x244cdcc	1276	_ZN4Aska25RigidBodyConstraintSlider12CreateBulletEv	Aska::RigidBodyConstraintSlider::CreateBullet()	rigidbody	decompiled	
+0x234d2c8	0x244d2c8	764	_ZN4Aska23RigidBodyConstraintCone12CreateBulletEv	Aska::RigidBodyConstraintCone::CreateBullet()	rigidbody	decompiled	
+0x234d5c4	0x244d5c4	8	_ZN4Aska23RigidBodyConstraintBase12CreateBulletEv	Aska::RigidBodyConstraintBase::CreateBullet()	rigidbody	decompiled	
+0x234d5cc	0x244d5cc	108	_ZN4Aska23RigidBodyConstraintNailD0Ev	Aska::RigidBodyConstraintNail::~RigidBodyConstraintNail()	rigidbody	decompiled	
+0x234d638	0x244d638	108	_ZN4Aska24RigidBodyConstraintHingeD0Ev	Aska::RigidBodyConstraintHinge::~RigidBodyConstraintHinge()	rigidbody	decompiled	
+0x234d6a4	0x244d6a4	108	_ZN4Aska25RigidBodyConstraintSixDOFD0Ev	Aska::RigidBodyConstraintSixDOF::~RigidBodyConstraintSixDOF()	rigidbody	decompiled	
+0x234d710	0x244d710	100	_ZN4Aska23RigidBodyConstraintBaseD1Ev	Aska::RigidBodyConstraintBase::~RigidBodyConstraintBase()	rigidbody	decompiled	
+0x234d774	0x244d774	108	_ZN4Aska25RigidBodyConstraintSliderD0Ev	Aska::RigidBodyConstraintSlider::~RigidBodyConstraintSlider()	rigidbody	decompiled	
+0x234d7e0	0x244d7e0	108	_ZN4Aska23RigidBodyConstraintConeD0Ev	Aska::RigidBodyConstraintCone::~RigidBodyConstraintCone()	rigidbody	decompiled	
+0x234d980	0x244d980	488	_ZN4Aska16RigidBodyManager10InitBulletEv	Aska::RigidBodyManager::InitBullet()	rigidbody	decompiled	
+0x234db98	0x244db98	168	_ZN4Aska16RigidBodyManagerC1Ev	Aska::RigidBodyManager::RigidBodyManager()	rigidbody	decompiled	
+0x234dc40	0x244dc40	192	_ZN4Aska16RigidBodyManagerD2Ev	Aska::RigidBodyManager::~RigidBodyManager()	rigidbody	decompiled	
+0x234dd00	0x244dd00	148	_ZN4Aska16RigidBodyManager12DeleteBulletEv	Aska::RigidBodyManager::DeleteBullet()	rigidbody	decompiled	
+0x234dda8	0x244dda8	24	_ZN4Aska16RigidBodyManagerD0Ev	Aska::RigidBodyManager::~RigidBodyManager()	rigidbody	decompiled	
+0x234ddc0	0x244ddc0	36	_ZN4Aska16RigidBodyManager3AddEPNS_22RigidBodyPrimitiveBaseE	Aska::RigidBodyManager::Add(Aska::RigidBodyPrimitiveBase*)	rigidbody	decompiled	
+0x234de08	0x244de08	64	_ZN4Aska16RigidBodyManager6RemoveEPNS_22RigidBodyPrimitiveBaseE	Aska::RigidBodyManager::Remove(Aska::RigidBodyPrimitiveBase*)	rigidbody	decompiled	
+0x234de88	0x244de88	272	_ZN4Aska16RigidBodyManager8SimulateEv	Aska::RigidBodyManager::Simulate()	rigidbody	decompiled	
+0x234df98	0x244df98	104	_ZN4Aska16RigidBodyManager10ResetSceneEv	Aska::RigidBodyManager::ResetScene()	rigidbody	decompiled	
+0x234e000	0x244e000	20	_ZN4Aska16RigidBodyManager3RunEi	Aska::RigidBodyManager::Run(int)	rigidbody	decompiled	
+0x234e014	0x244e014	8	_ZNK4Aska16RigidBodyManager3GetEmPv	Aska::RigidBodyManager::Get(unsigned long, void*) const	rigidbody	decompiled	
+0x234e01c	0x244e01c	124	_ZN4Aska16RigidBodyManager3SetEmPKv	Aska::RigidBodyManager::Set(unsigned long, void const*)	rigidbody	decompiled	
+0x234e098	0x244e098	64	_ZNK4Aska16RigidBodyManager10GetClassIDEi	Aska::RigidBodyManager::GetClassID(int) const	rigidbody	decompiled	
+0x234e0d8	0x244e0d8	8	_ZNK4Aska16RigidBodyManager15GetDefaultLevelEv	Aska::RigidBodyManager::GetDefaultLevel() const	rigidbody	decompiled	
+0x234e318	0x244e318	180	_ZN4Aska22RigidBodyPrimitiveBaseD0Ev	Aska::RigidBodyPrimitiveBase::~RigidBodyPrimitiveBase()	rigidbody	decompiled	
+0x234e3cc	0x244e3cc	212	_ZN4Aska22RigidBodyPrimitiveBase5ResetEv	Aska::RigidBodyPrimitiveBase::Reset()	rigidbody	decompiled	
+0x234e4a0	0x244e4a0	332	_ZN4Aska22RigidBodyPrimitiveBase12SetTransformEPKNS_6VectorEPKNS_10QuaternionE	Aska::RigidBodyPrimitiveBase::SetTransform(Aska::Vector const*, Aska::Quaternion const*)	rigidbody	decompiled	
+0x234e5ec	0x244e5ec	68	_ZN4Aska22RigidBodyPrimitiveBase17SetLinearVelocityEPKNS_6VectorE	Aska::RigidBodyPrimitiveBase::SetLinearVelocity(Aska::Vector const*)	rigidbody	decompiled	
+0x234e630	0x244e630	68	_ZN4Aska22RigidBodyPrimitiveBase18SetAngularVelocityEPKNS_6VectorE	Aska::RigidBodyPrimitiveBase::SetAngularVelocity(Aska::Vector const*)	rigidbody	decompiled	
+0x234e674	0x244e674	916	_ZN4Aska22RigidBodyPrimitiveBase17LocalCreateBulletEv	Aska::RigidBodyPrimitiveBase::LocalCreateBullet()	rigidbody	decompiled	
+0x234ea08	0x244ea08	200	_ZNK4Aska22RigidBodyPrimitiveBase3GetEmPv	Aska::RigidBodyPrimitiveBase::Get(unsigned long, void*) const	rigidbody	decompiled	
+0x234ead0	0x244ead0	204	_ZN4Aska22RigidBodyPrimitiveBase3SetEmPKv	Aska::RigidBodyPrimitiveBase::Set(unsigned long, void const*)	rigidbody	decompiled	
+0x234eb9c	0x244eb9c	164	_ZN4Aska24RigidBodyPrimitiveSphere12CreateBulletEv	Aska::RigidBodyPrimitiveSphere::CreateBullet()	rigidbody	decompiled	
+0x234ec40	0x244ec40	212	_ZNK4Aska24RigidBodyPrimitiveSphere3GetEmPv	Aska::RigidBodyPrimitiveSphere::Get(unsigned long, void*) const	rigidbody	decompiled	
+0x234ed14	0x244ed14	300	_ZN4Aska22RigidBodyPrimitiveCube12CreateBulletEv	Aska::RigidBodyPrimitiveCube::CreateBullet()	rigidbody	decompiled	
+0x234ee40	0x244ee40	272	_ZNK4Aska22RigidBodyPrimitiveCube3GetEmPv	Aska::RigidBodyPrimitiveCube::Get(unsigned long, void*) const	rigidbody	decompiled	
+0x234ef50	0x244ef50	140	_ZN4Aska25RigidBodyPrimitiveCapsule12CreateBulletEv	Aska::RigidBodyPrimitiveCapsule::CreateBullet()	rigidbody	decompiled	
+0x234efdc	0x244efdc	264	_ZNK4Aska25RigidBodyPrimitiveCapsule3GetEmPv	Aska::RigidBodyPrimitiveCapsule::Get(unsigned long, void*) const	rigidbody	decompiled	
+0x234f0e4	0x244f0e4	228	_ZN4Aska26RigidBodyPrimitiveCylinder12CreateBulletEv	Aska::RigidBodyPrimitiveCylinder::CreateBullet()	rigidbody	decompiled	
+0x234f1c8	0x244f1c8	264	_ZNK4Aska26RigidBodyPrimitiveCylinder3GetEmPv	Aska::RigidBodyPrimitiveCylinder::Get(unsigned long, void*) const	rigidbody	decompiled	
+0x234f2d0	0x244f2d0	140	_ZN4Aska22RigidBodyPrimitiveCone12CreateBulletEv	Aska::RigidBodyPrimitiveCone::CreateBullet()	rigidbody	decompiled	
+0x234f35c	0x244f35c	264	_ZNK4Aska22RigidBodyPrimitiveCone3GetEmPv	Aska::RigidBodyPrimitiveCone::Get(unsigned long, void*) const	rigidbody	decompiled	
+0x234f464	0x244f464	124	_ZN4Aska23RigidBodyPrimitivePlane12CreateBulletEv	Aska::RigidBodyPrimitivePlane::CreateBullet()	rigidbody	decompiled	
+0x234f4e0	0x244f4e0	212	_ZNK4Aska23RigidBodyPrimitivePlane3GetEmPv	Aska::RigidBodyPrimitivePlane::Get(unsigned long, void*) const	rigidbody	decompiled	
+0x234f5b4	0x244f5b4	8	_ZN4Aska22RigidBodyPrimitiveSoft12CreateBulletEv	Aska::RigidBodyPrimitiveSoft::CreateBullet()	rigidbody	decompiled	
+0x234f5bc	0x244f5bc	64	_ZNK4Aska22RigidBodyPrimitiveBase10GetClassIDEi	Aska::RigidBodyPrimitiveBase::GetClassID(int) const	rigidbody	decompiled	
+0x234f5fc	0x244f5fc	8	_ZN4Aska22RigidBodyPrimitiveBase12CreateBulletEv	Aska::RigidBodyPrimitiveBase::CreateBullet()	rigidbody	decompiled	
+0x234f604	0x244f604	8	_ZN4Aska22RigidBodyPrimitiveBase10IsSoftBodyEv	Aska::RigidBodyPrimitiveBase::IsSoftBody()	rigidbody	decompiled	
+0x234f60c	0x244f60c	180	_ZN4Aska24RigidBodyPrimitiveSphereD0Ev	Aska::RigidBodyPrimitiveSphere::~RigidBodyPrimitiveSphere()	rigidbody	decompiled	
+0x234f6c0	0x244f6c0	88	_ZNK4Aska24RigidBodyPrimitiveSphere10GetClassIDEi	Aska::RigidBodyPrimitiveSphere::GetClassID(int) const	rigidbody	decompiled	
+0x234f718	0x244f718	180	_ZN4Aska22RigidBodyPrimitiveCubeD0Ev	Aska::RigidBodyPrimitiveCube::~RigidBodyPrimitiveCube()	rigidbody	decompiled	
+0x234f7cc	0x244f7cc	88	_ZNK4Aska22RigidBodyPrimitiveCube10GetClassIDEi	Aska::RigidBodyPrimitiveCube::GetClassID(int) const	rigidbody	decompiled	
+0x234f824	0x244f824	180	_ZN4Aska25RigidBodyPrimitiveCapsuleD0Ev	Aska::RigidBodyPrimitiveCapsule::~RigidBodyPrimitiveCapsule()	rigidbody	decompiled	
+0x234f8d8	0x244f8d8	88	_ZNK4Aska25RigidBodyPrimitiveCapsule10GetClassIDEi	Aska::RigidBodyPrimitiveCapsule::GetClassID(int) const	rigidbody	decompiled	
+0x234f930	0x244f930	180	_ZN4Aska26RigidBodyPrimitiveCylinderD0Ev	Aska::RigidBodyPrimitiveCylinder::~RigidBodyPrimitiveCylinder()	rigidbody	decompiled	
+0x234f9e4	0x244f9e4	88	_ZNK4Aska26RigidBodyPrimitiveCylinder10GetClassIDEi	Aska::RigidBodyPrimitiveCylinder::GetClassID(int) const	rigidbody	decompiled	
+0x234fa3c	0x244fa3c	180	_ZN4Aska22RigidBodyPrimitiveConeD0Ev	Aska::RigidBodyPrimitiveCone::~RigidBodyPrimitiveCone()	rigidbody	decompiled	
+0x234faf0	0x244faf0	88	_ZNK4Aska22RigidBodyPrimitiveCone10GetClassIDEi	Aska::RigidBodyPrimitiveCone::GetClassID(int) const	rigidbody	decompiled	
+0x234fb48	0x244fb48	172	_ZN4Aska22RigidBodyPrimitiveBaseD2Ev	Aska::RigidBodyPrimitiveBase::~RigidBodyPrimitiveBase()	rigidbody	decompiled	
+0x234fbf4	0x244fbf4	180	_ZN4Aska23RigidBodyPrimitivePlaneD0Ev	Aska::RigidBodyPrimitivePlane::~RigidBodyPrimitivePlane()	rigidbody	decompiled	
+0x234fca8	0x244fca8	88	_ZNK4Aska23RigidBodyPrimitivePlane10GetClassIDEi	Aska::RigidBodyPrimitivePlane::GetClassID(int) const	rigidbody	decompiled	
+0x234fd00	0x244fd00	180	_ZN4Aska22RigidBodyPrimitiveSoftD0Ev	Aska::RigidBodyPrimitiveSoft::~RigidBodyPrimitiveSoft()	rigidbody	decompiled	
+0x234fdb4	0x244fdb4	88	_ZNK4Aska22RigidBodyPrimitiveSoft10GetClassIDEi	Aska::RigidBodyPrimitiveSoft::GetClassID(int) const	rigidbody	decompiled	
+0x234fe0c	0x244fe0c	8	_ZN4Aska22RigidBodyPrimitiveSoft10IsSoftBodyEv	Aska::RigidBodyPrimitiveSoft::IsSoftBody()	rigidbody	decompiled	
+0x25a28e0	0x26a28e0	196	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE0EE8DispatchEPNS_16IDEPrimitiveBaseE	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)0>::Dispatch(Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x25a29a4	0x26a29a4	196	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE0EE8DispatchEPNS_16IDEPrimitiveBaseE	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)0>::Dispatch(Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x25a2a68	0x26a2a68	196	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE1EE8DispatchEPNS_16IDEPrimitiveBaseE	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)1>::Dispatch(Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x25a2b2c	0x26a2b2c	196	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE1EE8DispatchEPNS_16IDEPrimitiveBaseE	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)1>::Dispatch(Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x25a2bf0	0x26a2bf0	196	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE2EE8DispatchEPNS_16IDEPrimitiveBaseE	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)2>::Dispatch(Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x25a2cb4	0x26a2cb4	196	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE2EE8DispatchEPNS_16IDEPrimitiveBaseE	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)2>::Dispatch(Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x25a2d78	0x26a2d78	260	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE2ELNS_37_Enum_IDECollisionDetectionOutputTypeE3EE8DispatchEPNS_16IDEPrimitiveBaseEj	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)2, (Aska::_Enum_IDECollisionDetectionOutputType)3>::Dispatch(Aska::IDEPrimitiveBase*, unsigned int)	ide_templates	decompiled	
+0x25a2e7c	0x26a2e7c	248	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE3ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EE8DispatchEPNS_16IDEPrimitiveBaseEj	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)3, (Aska::_Enum_IDECollisionDetectionOutputType)4>::Dispatch(Aska::IDEPrimitiveBase*, unsigned int)	ide_templates	decompiled	
+0x25a2f74	0x26a2f74	248	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE4ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EE8DispatchEPNS_16IDEPrimitiveBaseEj	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)4, (Aska::_Enum_IDECollisionDetectionOutputType)4>::Dispatch(Aska::IDEPrimitiveBase*, unsigned int)	ide_templates	decompiled	
+0x25a306c	0x26a306c	196	_ZN4Aska27IDE_CollisionDetectionParamILNS_36_Enum_IDECollisionDetectionInputTypeE5ELNS_37_Enum_IDECollisionDetectionOutputTypeE5EE8DispatchEPNS_16IDEPrimitiveBaseE	Aska::IDE_CollisionDetectionParam<(Aska::_Enum_IDECollisionDetectionInputType)5, (Aska::_Enum_IDECollisionDetectionOutputType)5>::Dispatch(Aska::IDEPrimitiveBase*)	ide_templates	decompiled	
+0x25a3130	0x26a3130	132	_ZN4Aska21IDE_SyncNotifyOfEvent8PostSyncEPiPNS_5EventE	Aska::IDE_SyncNotifyOfEvent::PostSync(int*, Aska::Event*)	ide	decompiled	
+0x25a31b4	0x26a31b4	224	_ZN4Aska21IDE_SyncNotifyOfEvent4WaitEPi	Aska::IDE_SyncNotifyOfEvent::Wait(int*)	ide	decompiled	
+0x25a3294	0x26a3294	8	_ZN4Aska21IDE_SyncNotifyOfEvent7HandlerEm	Aska::IDE_SyncNotifyOfEvent::Handler(unsigned long)	ide	decompiled	
+0x25a329c	0x26a329c	4	_ZN4Aska21IDE_SyncNotifyOfEventD0Ev	Aska::IDE_SyncNotifyOfEvent::~IDE_SyncNotifyOfEvent()	ide	decompiled	
+0x25a32a0	0x26a32a0	60	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE0EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)0>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a32dc	0x26a32dc	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE0EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)0>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a32e0	0x26a32e0	60	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE0EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)0>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a331c	0x26a331c	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE0EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)0>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a3320	0x26a3320	148	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE1EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)1>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a33b4	0x26a33b4	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE1EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)1>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a33b8	0x26a33b8	148	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE1EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)1>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a344c	0x26a344c	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE1EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)1>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a3450	0x26a3450	176	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE2EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)2>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a3500	0x26a3500	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE0ELNS_37_Enum_IDECollisionDetectionOutputTypeE2EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)0, (Aska::_Enum_IDECollisionDetectionOutputType)2>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a3504	0x26a3504	176	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE2EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)2>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a35b4	0x26a35b4	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE1ELNS_37_Enum_IDECollisionDetectionOutputTypeE2EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)1, (Aska::_Enum_IDECollisionDetectionOutputType)2>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a35b8	0x26a35b8	284	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE2ELNS_37_Enum_IDECollisionDetectionOutputTypeE3EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)2, (Aska::_Enum_IDECollisionDetectionOutputType)3>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a36d4	0x26a36d4	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE2ELNS_37_Enum_IDECollisionDetectionOutputTypeE3EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)2, (Aska::_Enum_IDECollisionDetectionOutputType)3>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a36d8	0x26a36d8	208	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE3ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)3, (Aska::_Enum_IDECollisionDetectionOutputType)4>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a37a8	0x26a37a8	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE3ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)3, (Aska::_Enum_IDECollisionDetectionOutputType)4>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a37ac	0x26a37ac	208	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE4ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)4, (Aska::_Enum_IDECollisionDetectionOutputType)4>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a387c	0x26a387c	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE4ELNS_37_Enum_IDECollisionDetectionOutputTypeE4EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)4, (Aska::_Enum_IDECollisionDetectionOutputType)4>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a3880	0x26a3880	28	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE5ELNS_37_Enum_IDECollisionDetectionOutputTypeE5EE7HandlerEm	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)5, (Aska::_Enum_IDECollisionDetectionOutputType)5>::Handler(unsigned long)	ide_templates	decompiled	
+0x25a389c	0x26a389c	4	_ZN4Aska28IDE_NotifyCollisionDetectionILNS_36_Enum_IDECollisionDetectionInputTypeE5ELNS_37_Enum_IDECollisionDetectionOutputTypeE5EED0Ev	Aska::IDE_NotifyCollisionDetection<(Aska::_Enum_IDECollisionDetectionInputType)5, (Aska::_Enum_IDECollisionDetectionOutputType)5>::~IDE_NotifyCollisionDetection()	ide_templates	decompiled	
+0x25a38a0	0x26a38a0	100	_ZN4Aska17IDESpacePartition9GetHeightEPNS_18IDE_ResultOfHeightEPNS_6VectorEjt	Aska::IDESpacePartition::GetHeight(Aska::IDE_ResultOfHeight*, Aska::Vector*, unsigned int, unsigned short)	ide	decompiled	
+0x25a3904	0x26a3904	96	_ZN4Aska17IDESpacePartition31FindIntersectNearestObjectArrayEPNS_25IDE_ResultOfNearestObjectEPNS_3RayEjt	Aska::IDESpacePartition::FindIntersectNearestObjectArray(Aska::IDE_ResultOfNearestObject*, Aska::Ray*, unsigned int, unsigned short)	ide	decompiled	
+0x25a3964	0x26a3964	96	_ZN4Aska17IDESpacePartition31FindIntersectNearestObjectArrayEPNS_25IDE_ResultOfNearestObjectEPNS_7SegmentEjt	Aska::IDESpacePartition::FindIntersectNearestObjectArray(Aska::IDE_ResultOfNearestObject*, Aska::Segment*, unsigned int, unsigned short)	ide	decompiled	
+0x25a39c4	0x26a39c4	4	_ZN4Aska17IDESpacePartitionD2Ev	Aska::IDESpacePartition::~IDESpacePartition()	ide	decompiled	
+0x25a39c8	0x26a39c8	4	_ZN4Aska17IDESpacePartitionD0Ev	Aska::IDESpacePartition::~IDESpacePartition()	ide	decompiled	
+0x25a39cc	0x26a39cc	8	_ZN4Aska17IDESpacePartition11IsAvailableEv	Aska::IDESpacePartition::IsAvailable()	ide	decompiled	
+0x25a39d4	0x26a39d4	100	_ZN4Aska17IDESpacePartition6DeleteEPNS_16IDEPrimitiveBaseE	Aska::IDESpacePartition::Delete(Aska::IDEPrimitiveBase*)	ide	decompiled	
+0x25a3a38	0x26a3a38	4	_ZN4Aska17IDESpacePartition9DeleteAllEv	Aska::IDESpacePartition::DeleteAll()	ide	decompiled	
+0x25a3a3c	0x26a3a3c	8	_ZN4Aska17IDESpacePartition9IntersectEPKNS_3RayEt	Aska::IDESpacePartition::Intersect(Aska::Ray const*, unsigned short)	ide	decompiled	
+0x25a3a44	0x26a3a44	8	_ZN4Aska17IDESpacePartition9IntersectEPKNS_7SegmentEt	Aska::IDESpacePartition::Intersect(Aska::Segment const*, unsigned short)	ide	decompiled	
+0x25a3a4c	0x26a3a4c	8	_ZN4Aska17IDESpacePartition25FindIntersectNearestPointEPNS_6VectorEPKNS_3RayEt	Aska::IDESpacePartition::FindIntersectNearestPoint(Aska::Vector*, Aska::Ray const*, unsigned short)	ide	decompiled	
+0x25a3a54	0x26a3a54	8	_ZN4Aska17IDESpacePartition25FindIntersectNearestPointEPNS_6VectorEPKNS_7SegmentEt	Aska::IDESpacePartition::FindIntersectNearestPoint(Aska::Vector*, Aska::Segment const*, unsigned short)	ide	decompiled	
+0x25a3a5c	0x26a3a5c	8	_ZN4Aska17IDESpacePartition26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPKNS_3RayEt	Aska::IDESpacePartition::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Ray const*, unsigned short)	ide	decompiled	
+0x25a3a64	0x26a3a64	8	_ZN4Aska17IDESpacePartition26FindIntersectNearestObjectEPNS_25IDE_ResultOfNearestObjectEPKNS_7SegmentEt	Aska::IDESpacePartition::FindIntersectNearestObject(Aska::IDE_ResultOfNearestObject*, Aska::Segment const*, unsigned short)	ide	decompiled	
+0x25a3a6c	0x26a3a6c	4	_ZN4Aska17IDESpacePartition20FindIntersectObjectsEPNS_7INotifyEPKNS_6VectorEt	Aska::IDESpacePartition::FindIntersectObjects(Aska::INotify*, Aska::Vector const*, unsigned short)	ide	decompiled	
+0x25a3a70	0x26a3a70	4	_ZN4Aska17IDESpacePartition20FindIntersectObjectsEPNS_7INotifyEPKNS_3BoxEt	Aska::IDESpacePartition::FindIntersectObjects(Aska::INotify*, Aska::Box const*, unsigned short)	ide	decompiled	
+0x25a3a74	0x26a3a74	4	_ZN4Aska17IDESpacePartition24PostFindIntersectObjectsEPNS_23IDE_ResultOfFindObjectsEiPjS3_PNS_7INotifyEPKNS_3BoxEjt	Aska::IDESpacePartition::PostFindIntersectObjects(Aska::IDE_ResultOfFindObjects*, int, unsigned int*, unsigned int*, Aska::INotify*, Aska::Box const*, unsigned int, unsigned short)	ide	decompiled	
+0x25a3a78	0x26a3a78	4	_ZN4Aska17IDESpacePartition29PostFindIntersectObjects_WaitEv	Aska::IDESpacePartition::PostFindIntersectObjects_Wait()	ide	decompiled	
+0x25a3a7c	0x26a3a7c	4	_ZN4Aska17IDESpacePartition23FindIntersectPrimitivesEPNS_18IDEIntersectNotifyE	Aska::IDESpacePartition::FindIntersectPrimitives(Aska::IDEIntersectNotify*)	ide	decompiled	
+0x25a3a80	0x26a3a80	8	_ZNK4Aska17IDESpacePartition7IsCleanEv	Aska::IDESpacePartition::IsClean() const	ide	decompiled	
+0x25a3a88	0x26a3a88	4	_ZN4Aska17IDESpacePartition8SetCleanEb	Aska::IDESpacePartition::SetClean(bool)	ide	decompiled	

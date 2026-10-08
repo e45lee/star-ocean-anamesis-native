@@ -1,0 +1,5 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/dynamics_addresses.h).
+kVaddrUnitX            sym _ZN4Aska17DynamicsPrimitive8m_vUnitXE   # Vector (1, 0, 0, w): DynamicsCube::Run's X axis
+kVaddrUnitY            sym _ZN4Aska17DynamicsPrimitive8m_vUnitYE   # Vector: the Y axis (DynamicsCube, DynamicsPlane::Run)
+kVaddrUnitZ            sym _ZN4Aska17DynamicsPrimitive8m_vUnitZE   # Vector: the Z axis
+kRigidInverseLastRow   at 0x26dbb30 f32[4] ref _ZN4Aska12DynamicsCube3RunEv   # the inverse's last row (0, 0, 0, 1); also the Reset value of the primitives' velocity

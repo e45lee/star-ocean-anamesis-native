@@ -53,6 +53,12 @@ std::string View::name(u64 v) const {
             return b;
         }
     }
+    for (const Region& r : regions)
+        if (v >= r.base && v < r.base + r.size) {
+            if (v == r.base) return r.name;
+            snprintf(b, sizeof b, "%s+%#" PRIx64, r.name.c_str(), v - r.base);
+            return b;
+        }
     const u64 d = (u64)real_dispatcher();
     if (v >= d && v < d + sizeof(kernel::MessageDispatcher)) {
         snprintf(b, sizeof b, "D+%#" PRIx64, v - d);
@@ -65,13 +71,33 @@ std::string View::text(const Call& c) const {
     std::string o = kind_name(c.kind);
     o += "(";
     // the out-pointer of the PostMessage forms: the caller's stack, named by being there
-    const int out = c.kind == CallKind::PostTask ? 9 : c.kind == CallKind::Post ? 7 : -1;
+    u32 stack = 0;  // the arguments that point into the caller's frame (bits)
+    switch (c.kind) {
+    case CallKind::PostTask: stack = 1u << 9; break;
+    case CallKind::Post: stack = 1u << 7; break;
+    case CallKind::FillMatrix: stack = 1u << 1; break;
+    case CallKind::Affect: stack = 3u << 1; break;
+    case CallKind::Emit: stack = 3u << 2; break;
+    case CallKind::Render: stack = 1u << 1; break;
+    default: break;
+    }
+    // the values (not pointers) among the arguments
+    u32 values = 0;
+    switch (c.kind) {
+    case CallKind::Affect: values = 3u << 3; break;
+    case CallKind::Emit: values = 1u << 1 | 1u << 4; break;
+    case CallKind::Random: values = 1; break;
+    case CallKind::SetAnimation: values = 1u << 1; break;
+    case CallKind::Render: values = 0xfu << 2; break;
+    default: break;
+    }
     for (int i = 0; i < c.n; i++) {
         if (i) o += ", ";
-        if (i == out) o += c.x[i] ? "S" : "0";
+        if (stack >> i & 1) o += c.x[i] ? "S" : "0";
+        else if (values >> i & 1) o += hex(c.x[i]);
         else o += name(c.x[i]);
     }
-    if (c.kind == CallKind::Simulate) o += ", dt " + hex(c.f0);
+    if (c.kind == CallKind::Simulate || c.kind == CallKind::Affect || c.kind == CallKind::Render) o += ", dt " + hex(c.f0);
     o += ") -> " + hex(c.ret);
     if (c.kind == CallKind::GetDt) o += " " + hex(c.fret);
     return o;
@@ -267,6 +293,51 @@ void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
             call.x[1] = (u32)c.x(1);
             call.n = 2;
             break;
+        case CallKind::FillMatrix:
+            call.x[0] = c.x(0);
+            call.x[1] = c.x(1);
+            call.n = 2;
+            break;
+        case CallKind::Affect:
+            call.x[0] = c.x(0);
+            call.x[1] = c.x(1);
+            call.x[2] = c.x(2);
+            std::memcpy(&call.x[3], (const void*)c.x(1), 16);
+            call.n = 5;
+            call.f0 = (u32)c.v(0).lo;
+            break;
+        case CallKind::Random:
+            call.x[0] = (u32)c.x(0);
+            call.n = 1;
+            break;
+        case CallKind::Emit: {
+            call.x[0] = c.x(0);
+            call.x[1] = (u32)c.x(1);
+            call.x[2] = c.x(2);
+            call.x[3] = c.x(3);
+            const auto* ctx = reinterpret_cast<const EmitContext*>(c.x(2));
+            u32 dt;
+            std::memcpy(&dt, &ctx->m_dt, 4);
+            call.x[4] = dt | (u64)ctx->m_flags << 32;
+            call.n = 5;
+            break;
+        }
+        case CallKind::SetAnimation:
+            call.x[0] = c.x(0);
+            call.x[1] = (u32)c.x(1);
+            call.n = 2;
+            break;
+        case CallKind::Render: {
+            const auto* rb = reinterpret_cast<const ParticleRenderableBase*>(c.x(0));
+            call.x[0] = c.x(0);
+            call.x[1] = c.x(1);
+            call.x[2] = c.x(2) & 0xff;
+            std::memcpy(&call.x[3], &rb->m_emitterPosition, 16);
+            call.x[5] = (u32)rb->m_activeCount;
+            call.n = 6;
+            call.f0 = (u32)c.v(0).lo;
+            break;
+        }
         case CallKind::Simulate: call.f0 = (u32)c.v(0).lo; [[fallthrough]];
         default:
             call.x[0] = c.x(0);
@@ -282,12 +353,16 @@ void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
             call.ret = s->ret;
             call.fret = s->fret;
             call.serial = s->serial;
+            std::memcpy(call.out, s->out, sizeof call.out);
+            call.nout = s->nout;
         } else {
             answered = false;
             if (error.empty()) error = "guest call " + std::to_string(log.size()) + " (" + kind_name(k) + "): not in the native's";
         }
         const int out = k == CallKind::PostTask ? 9 : k == CallKind::Post ? 7 : -1;
         if (out >= 0 && call.x[out] && answered) *reinterpret_cast<u32*>(call.x[out]) = call.serial;
+        if (answered && call.nout && (k == CallKind::FillMatrix || k == CallKind::Affect))
+            std::memcpy(reinterpret_cast<void*>(call.x[1]), call.out, call.nout);
         c.set_x(0, call.ret);
         if (k == CallKind::GetDt) {
             float f;
@@ -314,6 +389,16 @@ void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
         const CallKind k = s.kind;
         rs.answer(name, [respond, k](Cpu& c) { respond(k, c); });
     }
+    for (const auto& [addr, k] : extra) {
+        const char* name = live::ensure_stub(addr);
+        if (!name) {
+            error = std::string("can't stub ") + kind_name(k);
+            return;
+        }
+        live::drop_stale_code(addr);
+        const CallKind kk = k;
+        rs.answer(name, [respond, kk](Cpu& c) { respond(kk, c); });
+    }
     rs.answer("particles:prepare", [respond](Cpu& c) { respond(CallKind::Prepare, c); });
     rs.answer("particles:simulate", [respond](Cpu& c) { respond(CallKind::Simulate, c); });
     rs.answer("particles:trap", [this](Cpu& c) {
@@ -324,6 +409,19 @@ void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
     for (u64 v : x) a.i(v);
     if (s0) a.f(*s0);
     result = guest_call(fn, a);
+}
+
+u64 sym_fill_matrix() {
+    static const u64 a = guest::sym("_ZN4Aska16IParticleEmitter17FillMatrixContextEPNS0_13MatrixContextE");
+    return a;
+}
+u64 sym_random() {
+    static const u64 a = guest::sym("_ZN4Aska6RandomEj");
+    return a;
+}
+u64 sym_set_animation() {
+    static const u64 a = guest::sym("_ZN4Aska15IParticleObject12SetAnimationEi");
+    return a;
 }
 
 }  // namespace soa::native::particles

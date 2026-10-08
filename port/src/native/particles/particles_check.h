@@ -33,6 +33,11 @@ live::ShadowFamily& family();
 struct View {
     const ParticleManager* m = nullptr;
     std::vector<const IParticleEmitter*> e;
+    struct Region {
+        u64 base, size;
+        std::string name;
+    };
+    std::vector<Region> regions;  // more named objects ("O", "R": Simulate's object, renderable)
     std::string name(u64 v) const;
     // One call as text, its pointers named (a PostMessage's out-pointer as "S" / "0": the caller's stack).
     std::string text(const Call& c) const;
@@ -89,14 +94,25 @@ struct GuestRun {
     const std::vector<Call>* script = nullptr;
     size_t next = 0;
     std::function<void(Call&, size_t)> answer;  // instead of `script` (Recorder::answer)
-    size_t perKind[8] = {};
+    size_t perKind[(int)CallKind::kCount] = {};
     std::vector<Call> log;
     std::string error;
     std::function<void(size_t, Call&)> after;
+    std::vector<std::pair<u64, CallKind>> extra;  // more callees to stub (Simulate's), by guest address
     GuestResult result{};
     // Runs fn(x..., s0 when given).
     void run(u64 fn, std::initializer_list<u64> x, const float* s0 = nullptr);
 };
+
+// The guest addresses of Simulate's shared callees (FillMatrixContext, Random, SetAnimation).
+u64 sym_fill_matrix();
+u64 sym_random();
+u64 sym_set_animation();
+
+// The bound Simulate instantiations (particles_simulate.cpp, from gen/particles_instantiations.inc).
+size_t simulate_rows();
+const char* simulate_row_symbol(size_t i);
+const IParticleEmitter::Instantiation& simulate_row(size_t i);
 
 // "first difference" of two texts (empty when equal), for check messages.
 std::string first_diff(const std::string& native, const std::string& guest);

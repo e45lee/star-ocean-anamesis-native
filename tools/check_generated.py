@@ -8,6 +8,7 @@ parallel, against the same lib:
   - tools/gen_addresses.py --check            port/src/native/*/gen/*_addresses.h (and kLibSha256)
   - tools/gen_fakeapi_tables.py --check       port/src/native/api/gen/fakeapi_tables.inc
   - tools/gen_params_instantiations.py --check port/src/native/params/gen/params_instantiations.inc
+  - tools/gen_master_elements.py --check     port/src/native/master/gen/master_elements.h
   - tools/api_wire.py --check                 port/src/native/api/gen/wire_table.inc and
                                               server/net/gen/wire_decode.inc
 The lib: --lib, else work/libSOA-3.7.0.so, else lib/arm64-v8a/libSOA.so extracted from the 3.7.0 APK
@@ -34,6 +35,7 @@ GENERATORS = [
     ["tools/gen_addresses.py", "--check"],
     ["tools/gen_fakeapi_tables.py", "--check", "port/src/native/api/gen/fakeapi_tables.inc"],
     ["tools/gen_params_instantiations.py", "--check", "port/src/native/params/gen/params_instantiations.inc"],
+    ["tools/gen_master_elements.py", "--check", "port/src/native/master/gen/master_elements.h"],
     ["tools/api_wire.py", "--check"],
 ]
 

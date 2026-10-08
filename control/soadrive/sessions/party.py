@@ -47,43 +47,53 @@ def main(o):
     s = common.port_run(o, common.port_config(o, limit=2400))
     states = {}
 
+    def screen(name, xy, shot=None, **kw):
+        return common.tap_to_screen(s, name, xy, shot, **kw)
+
+    def saved(name, rx, shot):
+        """戻る saves the set (UpdatePartySet; one tap: a second would leave the party top)."""
+        common.tap_to_log(s, name, "100:1120", rx, shot, secs=30, tries=1, fatal=True)
+
     def body(s):
         common.port_login(s)
+        common.settle(s, mask=common.HOME_MASK)
         states[1] = party(s, "1-boot")
         # Footer "キャラクター" -> CPhase_PartyComposition (0xb), the 3.7.0 character menu.
-        s.tap_log(mission.phase(11), 120, 20, 3, "tap:180:1245", name="キャラクター -> the character menu")
-        s.ctl("wait:6000", s.shot_cmd("03-character-menu"))
-        s.ctl("tap:364:325", "wait:6000", s.shot_cmd("04-party-top"))  # パーティ編成: party set 1
-        s.ctl("tap:620:1120", "wait:5000", s.shot_cmd("05-member-select"))  # メンバー変更
-        # Slot 1, then the first character of the list's second row.
-        s.ctl("tap:212:325", "wait:1500", "tap:95:725", "wait:2500", s.shot_cmd("06-member-changed"))
-        # 戻る saves the set (UpdatePartySet) and returns to the party top.
-        s.ctl("tap:100:1120")
-        s.wait_log(r"UpdatePartySet: party 1 ", 30, name="UpdatePartySet: party 1")
-        s.ctl("wait:4000", s.shot_cmd("07-party-saved"))
+        common.tap_to_phase(s, "キャラクター -> the character menu", "180:1245", 11, "03-character-menu", secs=120,
+                            mask=common.HOME_MASK, fatal=True)
+        screen("パーティ編成: party set 1", "364:325", "04-party-top")
+        screen("メンバー変更", "620:1120", "05-member-select")
+        # Slot 1, then the first character of the list's second row (selections: no retap; the
+        # saved set checks them)
+        common.tap_settled(s, "212:325")
+        common.tap_settled(s, "95:725", "06-member-changed")
+        saved("UpdatePartySet: party 1", r"UpdatePartySet: party 1 ", "07-party-saved")
         states[2] = party(s, "2-saved")
         # Swipe to party set 2 (2/10), change its slot 1 to the second character of the list's second
         # row and save it: the last saved set becomes the current party.
-        s.ctl("drag:600:600:150:600", "wait:3000", s.shot_cmd("08-party-2"))
-        s.ctl("tap:620:1120", "wait:5000", "tap:212:325", "wait:1500", "tap:230:725", "wait:2500", s.shot_cmd("09-party-2-changed"))
-        s.ctl("tap:100:1120")
-        s.wait_log(r"UpdatePartySet: party 2 ", 30, name="UpdatePartySet: party 2")
-        s.ctl("wait:4000", s.shot_cmd("10-party-2-saved"))
+        # (once: the sets after 1 show the same members, so only the 1/10 -> 2/10 changes, too little to
+        # tell a lost swipe; UpdatePartySet: party 2 checks it)
+        s.ctl("drag:600:600:150:600")
+        common.settle(s, "08-party-2")
+        screen("メンバー変更", "620:1120")
+        common.tap_settled(s, "212:325")
+        common.tap_settled(s, "230:725", "09-party-2-changed")
+        saved("UpdatePartySet: party 2", r"UpdatePartySet: party 2 ", "10-party-2-saved")
         states[3] = party(s, "3-saved-2")
         # 戻る to the character menu, footer ホーム.
-        s.ctl("tap:100:1120", "wait:4000", s.shot_cmd("11-character-menu"))
-        s.tap_log(mission.phase(4), 60, 20, 3, "tap:60:1245", name="ホーム -> home")
-        s.ctl("wait:6000", s.shot_cmd("12-home"))
+        screen("戻る -> the character menu", "100:1120", "11-character-menu")
+        common.tap_to_phase(s, "ホーム -> home", "60:1245", 4, "12-home", mask=common.HOME_MASK, fatal=True)
         # Home character: interactive mode -> お気に入り変更 (the restored 3.7.0 CAdjutantSelect) -> the
         # third one -> UpdateHome -> the home shows it.
-        s.ctl("tap:90:740", "wait:5000", "tap:180:1245", "wait:5000", s.shot_cmd("12a-favorite-select"))
-        s.ctl("tap:362:330")
-        s.wait_log(r"UpdateHome: ", 30, name="UpdateHome")
-        s.ctl("wait:3000", s.shot_cmd("12b-favorite-changed"), "tap:364:800", "wait:5000", s.shot_cmd("12c-home-new-favorite"))
-        s.ctl("tap:60:1245", "wait:5000")
+        screen("会話モード", "90:740", mask=common.HOME_MASK)
+        screen("お気に入り変更", "180:1245", "12a-favorite-select")
+        common.tap_to_log(s, "UpdateHome", "362:330", r"UpdateHome: ", "12b-favorite-changed", secs=30, tries=1, fatal=True)
+        screen("閉じる", "364:800", "12c-home-new-favorite")
+        screen("ホーム", "60:1245", mask=common.HOME_MASK)
         # Battle: MissionStart takes the player's current party (the set just saved).
         mission.port_start(s, m)
         s.wait_log(r"MissionStart mission", 60, name="MissionStart")
+        # fixed waits: two pictures of the fight at about 25 and 33 s, nothing to wait for
         s.ctl("wait:25000", s.shot_cmd("13-battle"), "wait:8000", s.shot_cmd("14-battle"))
 
     if not common.drive(s, body):

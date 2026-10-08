@@ -20,6 +20,7 @@ Targets: port-inproc (the phase lines and the in-process server's campaign lines
 import os
 import re
 
+from .. import popups
 from ..flows import mission
 from . import common
 
@@ -40,42 +41,51 @@ def main(o):
     s = common.port_run(o, common.port_config(o, args, limit=2400, seed_rng=None))
     x = os.environ.get("HOME_MISSION_X") or "270"
 
+    def screen(name, xy, shot=None, **kw):
+        return common.tap_to_screen(s, name, xy, shot, **kw)
+
     def body(s):
         common.port_login(s)
+        common.settle(s, mask=common.HOME_MASK)
         # ミッション -> the episode list; Episode 1 is the third banner (scroll down first).
-        s.ctl("wait:500")
         common.episode_list(s, "%s:1085" % x)
-        s.ctl("wait:5000", "drag:364:850:364:400", "wait:2000", s.shot_cmd("03-episodes"))
-        s.tap_log(mission.phase(5), 120, 20, 3, "tap:364:805", name="Episode 1 -> the planet select")
-        s.ctl("wait:8000", s.shot_cmd("04-planets"))
+        common.settle(s)
+        s.ctl("drag:364:850:364:400")
+        common.settle(s, "03-episodes")
+        common.tap_to_phase(s, "Episode 1 -> the planet select", "364:805", 5, "04-planets", secs=120, fatal=True)
         # The next planet (Mere), then Start: its mission map.
-        s.ctl("tap:660:520", "wait:3000", s.shot_cmd("05-planet-mere"))
-        s.ctl("tap:587:795", "wait:7000", s.shot_cmd("06-mission-map"))
+        screen("Mere", "660:520", "05-planet-mere")
+        screen("出撃 -> the mission map", "587:795", "06-mission-map")
         # 1-05 (mf01_001, "New") -> detail -> single play -> no rental -> party 1 -> start -> confirm.
-        s.ctl("tap:363:665", "wait:4000", s.shot_cmd("07-mission-detail"))
-        s.ctl("tap:364:905", "wait:5000", s.shot_cmd("08-rental"))
-        s.ctl("tap:620:1120", "wait:5000", s.shot_cmd("09-party"))
+        screen("1-05 -> its detail", "363:665", "07-mission-detail")
+        screen("シングルプレイ開始 -> the rental list", "364:905", "08-rental")
+        screen("選択しない -> the party", "620:1120", "09-party", is_screen=popups.is_party_start)
         mission.open_mission_confirm(s)
         s.ctl(s.shot_cmd("10-confirm"))
         mission.start_mission(s, "ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, mission.phase(15)), secs=120, opened=True)
         s.wait_log(mission.phase(15), 120, name="決定 -> CPhase_Battle")
         s.wait_log(r"campaign: MissionStart", 60, name="campaign: MissionStart")
+        # a fixed wait: a picture of the fight, nothing to wait for (battle_shots then waits for its end)
         s.ctl("wait:15000", s.shot_cmd("11-battle"))
         mission.battle_shots(s, 12, 60, 5000)
         s.wait_log(r"campaign: cleared mf01_001", 30, name="campaign: cleared mf01_001")
-        s.ctl("wait:4000", s.shot_cmd("60-result"))
+        common.settle(s, "60-result", hold=2)
         # The result pages (OK at the same spot) until the game is back on the mission map (phase 5).
         mission.results_until(s, mission.phase(5), 61, 75, 4000, name="the result pages -> the mission map")
-        s.ctl("wait:8000", s.shot_cmd("80-map-after-clear"))
+        common.settle(s, "80-map-after-clear", hold=2)
         # The story mission that 1-05 unlocked (mc01_030, "New" above 1-05) -> detail -> play.
-        s.ctl("tap:490:530", "wait:4000", s.shot_cmd("81-story-detail"))
-        s.ctl("tap:515:720", "wait:10000", s.shot_cmd("82-story"))  # ストーリー開始
-        # A few lines of the scene, then スキップ -> はい; the scene's end sends MissionTalk.
+        screen("the story mission -> its detail", "490:530", "81-story-detail")
+        common.tap_to_log(s, "ストーリー開始 -> the scene", "515:720", mission.phase(3), secs=60, tries=1, fatal=True, wait_still=False)
+        common.settle(s, "82-story", hold=2)
+        # A few lines of the scene (each tap one line: not made again), then スキップ -> はい; the
+        # scene's end sends MissionTalk.
         for i in (83, 84, 85):
-            s.ctl("tap:364:1000", "wait:3000", s.shot_cmd("%d-story" % i))
-        s.ctl("tap:115:1240", "wait:2000", s.shot_cmd("86-skip"), "tap:515:742")
-        s.wait_log(r"campaign: story scene played: mc01_030", 90, name="campaign: story scene played: mc01_030")
-        s.ctl("wait:8000", s.shot_cmd("96-after-story"), "wait:6000", s.shot_cmd("97-map"))
+            common.tap_settled(s, "364:1000", "%d-story" % i)
+        screen("スキップ", "115:1240", "86-skip")
+        common.tap_to_log(s, "campaign: story scene played: mc01_030", "515:742", r"campaign: story scene played: mc01_030",
+                          secs=90, tries=1, fatal=True, wait_still=False)
+        common.settle(s, "96-after-story", hold=2)
+        common.settle(s, "97-map", hold=3)
 
     ok = common.drive(s, body)
     for ln in open(s.client_log, errors="replace").read().splitlines():

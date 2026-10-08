@@ -18,7 +18,8 @@ import re
 import sqlite3
 import sys
 
-from ..flows import mission
+from .. import ui370
+from ..flows import gacha, mission
 from . import common
 
 TARGETS = ("port-inproc",)
@@ -37,26 +38,30 @@ def main(o):
 
     def draw(s, step):
         """10連ガチャ -> 決定, the presentation, the result (次へ, 閉じる): back on the banner."""
-        s.tap_log(r"step-up chain .* step %d -> %d" % (step, step + 1), 40, 15, 3, "tap:540:945", "wait:3000", "tap:515:800",
-                  name="step %d of the step-up gacha" % step)
-        s.ctl("wait:6000", s.shot_cmd("c%d-summon" % step), "tap:364:1190", "wait:12000", "tap:364:650", "wait:4000", "tap:364:650",
-              "wait:4000", "tap:577:1199", "wait:5000")
-        s.ctl(s.shot_cmd("c%d-result" % step), "tap:364:1002", "wait:4000", "tap:364:1002", "wait:4000",
-              s.shot_cmd("c%d-banner-after" % step))
+        common.settle(s, mask=common.GACHA_MASK)
+        s.ctl("tap:" + ui370.GACHA_10)
+        gacha.open_confirm(s)
+        common.tap_to_log(s, "step %d of the step-up gacha" % step, ui370.GACHA_DECIDE, r"step-up chain .* step %d -> %d" % (step, step + 1),
+                          secs=40, tries=1, fatal=True, wait_still=False)
+        gacha.summon(s, shot="c%d-result" % step, loading_shot="c%d-summon" % step)
+        gacha.close_result(s)
+        common.settle(s, "c%d-banner-after" % step, mask=common.GACHA_MASK)
 
     def body(s):
         common.port_login(s, notice=None, bonus=None, home=None)
-        s.ctl("wait:3000", s.shot_cmd("02-home"))
+        common.settle(s, "02-home", mask=common.HOME_MASK)
         show(s.state("1-boot"))
         # 1. mf01_003 with its surprise enemy.
         mission.port_start(s, "mf01_003")
         s.wait_log(r"MissionStart mission .*surprise enemy", 60, name="MissionStart with the surprise enemy")
+        # a fixed wait: a picture of the battle's loading screen, nothing to wait for
         s.ctl("wait:1500", s.shot_cmd("03-battle-loading"))
         mission.battle_shots(s, 10, 90, 4000)
         s.wait_log(r"mission_end\.msgp", 30, name="the battle ended (MissionEnd)")
-        s.ctl("wait:4000", s.shot_cmd("a0-result"), "wait:4000", s.shot_cmd("a1-result"))
+        common.settle(s, "a0-result", hold=2)
+        common.settle(s, "a1-result", hold=3)
         mission.results_until(s, mission.phase(4), 2, 14, 4000, fmt="a%02d-result", name="the result pages -> home")
-        s.ctl("wait:6000", s.shot_cmd("b0-home"))
+        common.settle(s, "b0-home", mask=common.HOME_MASK)
         st[2] = s.state("2-after-surprise-battle")
         show(st[2])
         for ln in open(s.client_log, errors="replace").read().splitlines():
@@ -64,12 +69,13 @@ def main(o):
                 print(ln)
         # 2. Step-up gacha: step 1, then step 2 of gacha_pickup_role_1011's chain, through the gacha
         # screen (the footer's ガチャ; at 2021-05-25 its first recommended banner, ステップ 1/10).
-        s.tap_log(r"request GetGachaInData", 60, 20, 3, "tap:425:1250", name="ガチャ -> GetGachaInData")
-        s.ctl("wait:8000", "tap:100:175", "wait:3000", "tap:360:320", "wait:5000", s.shot_cmd("c0-stepup-banner"))
+        common.tap_to_log(s, "ガチャ -> GetGachaInData", "425:1250", r"request GetGachaInData", mask=common.GACHA_MASK, fatal=True)
+        # おすすめ (the tab the screen opens on: no change to wait for)
+        common.tap_settled(s, ui370.GACHA_TAB_RECOMMENDED, mask=common.GACHA_MASK)
+        common.tap_to_screen(s, "the first banner", ui370.GACHA_FIRST_BANNER, "c0-stepup-banner", mask=common.GACHA_MASK)
         draw(s, 1)
         draw(s, 2)
-        s.tap_log(mission.phase(4), 60, 15, 4, "tap:60:1250", name="ホーム -> home")
-        s.ctl("wait:6000", s.shot_cmd("c9-home-after-stepup"))
+        common.tap_to_phase(s, "ホーム -> home", "60:1250", 4, "c9-home-after-stepup", every=15, tries=4, mask=common.HOME_MASK, fatal=True)
         st[3] = s.state("3-after-stepup")
         show(st[3])
         # 3. Stamina 0: the start of mf01_001 is refused (10004) and the client shows its error dialog.
@@ -80,9 +86,9 @@ def main(o):
         c.close()
         s.ctl("mission:mf01_001", "phase:0xf")
         s.wait_log(r"refused by the local server with error 10004", 90, name="MissionStart refused with 10004")
-        s.ctl("wait:3000", s.shot_cmd("d0-error-dialog"))
-        s.ctl("tap:364:712", "wait:6000", s.shot_cmd("d1-after-ok"))
-        s.ctl("wait:6000", s.shot_cmd("d2-after-ok"))
+        common.settle(s, "d0-error-dialog", hold=2)
+        common.tap_to_screen(s, "the error dialog: OK", "364:712", "d1-after-ok")
+        common.settle(s, "d2-after-ok", hold=3)
         show(s.state("4-after-refusal"))
 
     if not common.drive(s, body):

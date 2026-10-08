@@ -128,6 +128,7 @@ def body(s):
     s.wait_for("Login -> LoginResult (decoded)", 60, lambda: s.in_packets(r"< LoginResult .* data\{"))
     if s.target != "port-inproc":
         s.wait_for("Login's GetPlayerRes", 30, lambda: s.in_packets(r"< GetPlayerRes .*ends the login request"))
+    # a fixed wait: a picture of the screen 8 s after the login (the data check after it waits for itself)
     s.ctl("wait:8000", s.shot_cmd("after-login"))
     if s.predownloaded:
         s.note("the game data is on the phone (EMU_DATA / SOA_PHONE); no download")
@@ -135,7 +136,8 @@ def body(s):
     if not s.predownloaded:
         s.check("master bundle (B/1115774b/b9a9e011.bin)", s.in_client(r"/Android/B/1115774b/b9a9e011\.bin"))
     if os.environ.get("SESSION_PLAY", "1") == "0":
-        s.ctl("wait:5000", s.shot_cmd("home-notice"), "tap:364:1133", "wait:10000", s.shot_cmd("home"))
+        common.settle(s, "home-notice", hold=2)
+        common.tap_to_screen(s, "the notice board: 閉じる", "364:1133", "home", mask=common.HOME_MASK)
         return
     try:
         line = _popups.login_popups(s.fifo, s.client_log, s.layout.shot_path("notice"), s.layout.shot_path("login-bonus"),

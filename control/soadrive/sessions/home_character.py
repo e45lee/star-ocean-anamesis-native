@@ -141,6 +141,8 @@ def main(o):
             except Abort as e:
                 if "login popups" not in str(e) or not s.alive():
                     raise
+            # Fixed waits from here: this session's pictures are of the character's motion at set times
+            # after a tap or the start of the idle (what the character does when), not of screens.
             if o.movie:  # first: the idle from the start, then the taps
                 record_movie(s, o, os.path.join(o.out, label + ".mp4"))
                 c("wait:8000")
@@ -166,7 +168,7 @@ def main(o):
                     c("tap:" + SWITCH_2D3D)
                     s.check("2D/3D変更 -> Home3DAnd2DSwitching %s" % mode,
                             s.poll(20, lambda: count(s, r"Home3DAnd2DSwitching: " + mode) > before))
-                    c("wait:5000", s.shot_cmd(name))
+                    common.settle(s, name, hold=2)  # the switched home (it moves: settled as calm)
 
         ok = common.drive(s, body)
         short = person.split("_")[0]  # cc0015: the illustrations and voices use the short id

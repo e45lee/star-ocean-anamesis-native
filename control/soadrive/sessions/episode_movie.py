@@ -48,8 +48,9 @@ def main(o):
     info = {}
 
     def episode_list(shot):
+        common.settle(s, mask=common.HOME_MASK)
         common.episode_list(s, "%s:1085" % x)
-        s.ctl("wait:6000", s.shot_cmd(shot))
+        common.settle(s, shot, hold=2)
 
     def body(s):
         # A phone that carries the pack: no manifest .bin GET, and in the save flow no bundle GET either.
@@ -62,11 +63,12 @@ def main(o):
             episode_list("03-episodes-before")
             if s.in_client(r"GET .*Android/EP%s/" % ep):
                 s.fail("Episode %s's data was fetched before it was asked for" % ep)
-            s.ctl("tap:364:" + y, "wait:3000", s.shot_cmd("03-download-needed"))
+            common.tap_to_screen(s, "the episode -> its download question", "364:" + y, "03-download-needed")
             s.tap_log(P(1), 60, 10, 3, "tap:515:800", name="はい -> the title")
             # the title's dialog (閉じる 364:713), TAP TO START (no Login: the client is logged in), the
             # data phase: the episode's download dialog (ダウンロード), its bundles, 完了, home.
-            s.ctl("wait:4000", s.shot_cmd("03-title-dialog"), "tap:364:713", "wait:3000")
+            common.settle(s, "03-title-dialog", hold=2)
+            common.tap_to_screen(s, "the title's dialog: 閉じる", "364:713")
             s.tap_log(r"GET .*" + epget, 90, 10, 6, "tap:364:1000", name="TAP TO START -> version_latest_ep%s" % ep)
             s.tap_log(r"GET .*/Android/EP%s/" % ep, 60, 10, 6, "wait:3000", "tap:515:800", name="Episode %s's download started" % ep)
         # The pack's download: its manifest and bundles; done when no GET is logged for 20 s.
@@ -92,30 +94,37 @@ def main(o):
             s.tap_log(P(4), 180, 10, 15, "tap:364:790", name="完了 -> home")
             launch.popups(s, None, None)
         # その他 -> scroll -> Episodeデータ管理: the episodes and their state; 閉じる.
-        s.ctl("tap:665:1250", "wait:5000", "drag:364:900:364:300:800", "wait:2000", "drag:364:900:364:300:800", "wait:2000",
-              "tap:364:595", "wait:3000", s.shot_cmd("05-episode-data"), "tap:215:1043", "wait:2000")
-        s.tap_log(P(4), 60, 15, 4, "tap:60:1240", name="ホーム -> home")
-        s.ctl("wait:3000")
+        common.settle(s, mask=common.HOME_MASK)
+        common.tap_to_phase(s, "その他", "665:1250", 12, mask=common.HOME_MASK, fatal=True)
+        for _ in range(2):
+            s.ctl("drag:364:900:364:300:800")
+            common.settle(s)
+        common.tap_to_screen(s, "Episodeデータ管理", "364:595", "05-episode-data")
+        common.tap_to_screen(s, "Episodeデータ管理: 閉じる", "215:1043")
+        common.tap_to_phase(s, "ホーム -> home", "60:1240", 4, every=15, tries=4, mask=common.HOME_MASK, fatal=True)
         episode_list("06-episodes")
         s.ctl("tap:364:" + y)
         s.wait_log(r"campaign: GetWorldMapInfoList", 120, name="the world map (GetWorldMapInfoList)")
-        s.ctl("wait:8000", s.shot_cmd("07-worldmap"))
+        common.settle(s, "07-worldmap", hold=2)
         # The STORY point (Episode 2 in the middle of the map, Episode 3 left of it) -> 1-01 -> story start.
-        s.ctl("tap:240:650" if ep == "3" else "tap:360:640")
-        s.ctl("wait:4000", "tap:364:410", "wait:4000", s.shot_cmd("08-mission"), "tap:515:714")
-        s.wait_log(P(3), 120, name="the scene (phase 3)")
+        common.tap_to_screen(s, "the STORY point", "240:650" if ep == "3" else "360:640")
+        common.tap_to_screen(s, "1-01", "364:410", "08-mission")
+        common.tap_to_log(s, "the scene (phase 3)", "515:714", P(3), secs=120, tries=1, fatal=True, wait_still=False)
         # Auto mode, then fast-forward; no taps from here on (a tap while the movie plays skips it).
+        # A fixed wait: the scene's buttons appear after its intro and nothing marks that (as the
+        # tutorial's opening, flows/tutorial.py).
         s.ctl("wait:20000", s.shot_cmd("09-scene"), "tap:614:1240", "wait:1000", "tap:115:45")
         if not s.poll(750, lambda: s.in_client(r"PlayMovie\(")):
             s.fail("no movie")
         s.wait_log(r"movie: playing", 30, name="the movie started")
+        # a fixed wait: a picture of the movie at 5 s (a movie never holds still)
         s.ctl("wait:5000", s.shot_cmd("10-movie"))
         # The movie (124 s / 89 s) must end by itself, then the scene continues to its end.
         s.wait_log(r"movie: ended", 300, name="the movie ended")
-        s.ctl("wait:3000", s.shot_cmd("11-after-movie"))
+        common.settle(s, "11-after-movie", secs=15)
         s.wait_log(r"EndMissionTalk", 300, name="the scene ended (EndMissionTalk)")
         s.wait_log(r"story scene played", 30, name="story scene played")
-        s.ctl("wait:8000", s.shot_cmd("12-worldmap"))
+        common.settle(s, "12-worldmap", hold=2)
 
     if not common.drive(s, body):
         return 1

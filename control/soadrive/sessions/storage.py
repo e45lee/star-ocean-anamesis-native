@@ -56,83 +56,87 @@ def plant(db):
     return cap
 
 
-def server_step(s, rx, name, secs=40):
-    """Waits for the next server-log line matching rx (counted from the step's start)."""
-    before = milestones.count(s.server_log, rx)
-    return lambda: s.wait_for(name, secs, lambda: milestones.count(s.server_log, rx) > before)
+def step(s, name, rx, xy, shot=None, secs=40):
+    """A tap that sends a request: the server's line (common.tap_to_server), then the screen after it."""
+    return common.tap_to_server(s, name, rx, ["tap:" + xy], shot, secs)
 
 
-def item_menu(s, shot):
-    c = s.ctl
-    c("tap:60:1245", "wait:5000", ITEM_MENU, "wait:5000", "drag:364:900:364:300", "wait:2500", s.shot_cmd(shot))
+def screen(s, name, xy, shot=None, **kw):
+    return common.tap_to_screen(s, name, xy, shot, **kw)
+
+
+def select(s, *rows):
+    """Rows of a list ticked: a tick changes little and a second tap takes it off, so no retap;
+    the request after them (its server line with the count) checks them."""
+    for xy in rows:
+        common.tap_settled(s, xy)
+
+
+def item_menu(s, shot, from_home):
+    if not from_home:
+        common.tap_to_phase(s, "ホーム", "60:1245", 4, mask=common.HOME_MASK, fatal=True)
+    common.tap_to_phase(s, "アイテム", ITEM_MENU[4:], 9, fatal=True, mask=common.HOME_MASK)
+    s.ctl("drag:364:900:364:300")
+    common.settle(s, shot)
 
 
 def boot1(s):
-    c = s.ctl
     common.port_login(s, notice=None, bonus=None)
-    item_menu(s, "03-item-menu")
+    common.settle(s, mask=common.HOME_MASK)
+    item_menu(s, "03-item-menu", True)
     # 装備倉庫にしまう: three weapons -> 決定 -> 決定
-    c("tap:" + DEPOSIT, "wait:5000", s.shot_cmd("04-deposit"), "tap:" + ROW1, "wait:800", "tap:" + ROW2, "wait:800", "tap:" + ROW3,
-      "wait:800", "tap:" + DECIDE, "wait:3000", s.shot_cmd("05-deposit-confirm"))
-    done = server_step(s, r"DepositItem: 3 items into the storage", "DepositItem: three weapons stored")
-    c("tap:" + CONFIRM)
-    done()
-    c("wait:4000", s.shot_cmd("06-deposited"), "tap:" + CLOSE, "wait:2000")
+    screen(s, "装備倉庫にしまう", DEPOSIT, "04-deposit")
+    select(s, ROW1, ROW2, ROW3)
+    screen(s, "しまう: 決定", DECIDE, "05-deposit-confirm")
+    step(s, "DepositItem: three weapons stored", r"DepositItem: 3 items into the storage", CONFIRM, "06-deposited")
+    screen(s, "stored: 閉じる", CLOSE)
     # 取り出す: the first stored one
-    c("tap:" + SWITCH, "wait:5000", s.shot_cmd("07-withdraw"), "tap:" + ROW1, "wait:800", "tap:" + DECIDE, "wait:3000")
-    done = server_step(s, r"WithdrawItemFromStorage: 1 items back", "WithdrawItemFromStorage: one weapon back")
-    c("tap:" + CONFIRM)
-    done()
-    c("wait:4000", s.shot_cmd("08-withdrawn"), "tap:" + CLOSE, "wait:2000", "tap:" + BACK, "wait:4000")
+    screen(s, "取り出す", SWITCH, "07-withdraw")
+    select(s, ROW1)
+    screen(s, "取り出す: 決定", DECIDE)
+    step(s, "WithdrawItemFromStorage: one weapon back", r"WithdrawItemFromStorage: 1 items back", CONFIRM, "08-withdrawn")
+    screen(s, "withdrawn: 閉じる", CLOSE)
+    screen(s, "戻る", BACK)
     # 装備倉庫から売却: the first stored one; the ★3 warning's 決定
-    c("tap:" + SELL, "wait:5000", "tap:" + ROW1, "wait:800", "tap:" + DECIDE, "wait:3000", s.shot_cmd("09-sell-confirm"), "tap:" + CONFIRM,
-      "wait:3000", s.shot_cmd("10-sell-warning"))
-    done = server_step(s, r"SellItemsFromStorage: \+[0-9]+ FOL \(1 items\)", "SellItemsFromStorage: one weapon sold")
-    c("tap:515:800")
-    done()
-    c("wait:4000", s.shot_cmd("11-sold"), "tap:" + CLOSE, "wait:2000")
+    screen(s, "装備倉庫から売却", SELL)
+    select(s, ROW1)
+    screen(s, "売却: 決定", DECIDE, "09-sell-confirm")
+    screen(s, "売却: 決定 -> the ★3 warning", CONFIRM, "10-sell-warning")
+    step(s, "SellItemsFromStorage: one weapon sold", r"SellItemsFromStorage: \+[0-9]+ FOL \(1 items\)", "515:800", "11-sold")
+    screen(s, "sold: 閉じる", CLOSE)
     # the present box: the weapons' present (the first row; 全件取得 leaves equipment out) -> two
     # weapons fit, the third goes to the overflow box
-    done = server_step(s, r"overflow box: \+1 of item", "the present's third weapon went to the overflow box", 60)
-    c("tap:60:1245", "wait:6000", "tap:668:320", "wait:5000", s.shot_cmd("12-presents"), "tap:364:385")
-    done()
-    c("wait:4000", s.shot_cmd("13-received"), "tap:" + CLOSE, "wait:2000")
+    common.tap_to_phase(s, "ホーム", "60:1245", 4, mask=common.HOME_MASK, fatal=True)
+    common.tap_to_phase(s, "プレゼント", "668:320", 14, "12-presents", fatal=True)
+    step(s, "the present's third weapon went to the overflow box", r"overflow box: \+1 of item", "364:385", "13-received", 60)
+    screen(s, "received: 閉じる", CLOSE)
     # 一時保管庫から取り出す: the entry (NEW); 戻る clears the badge
-    item_menu(s, "14-item-menu")
-    done = server_step(s, r"GetOneTimeStorageInfo: 1 entries", "GetOneTimeStorageInfo: the entry listed")
-    c("tap:" + ONE_TIME)
-    done()
-    c("wait:4000", s.shot_cmd("15-one-time"))
-    done = server_step(s, r"ClearNewOneTimeStorageItem: 1 entries", "ClearNewOneTimeStorageItem: the badge cleared", 30)
-    c("tap:" + BACK)
-    done()
-    c("wait:3000", s.shot_cmd("16-back"))
+    item_menu(s, "14-item-menu", False)
+    step(s, "GetOneTimeStorageInfo: the entry listed", r"GetOneTimeStorageInfo: 1 entries", ONE_TIME, "15-one-time")
+    step(s, "ClearNewOneTimeStorageItem: the badge cleared", r"ClearNewOneTimeStorageItem: 1 entries", BACK, "16-back", 30)
 
 
 def boot2(s):
-    c = s.ctl
     common.port_login(s, notice=None, bonus=None)
-    item_menu(s, "r03-item-menu")
-    done = server_step(s, r"GetStorageInfo: 1 items in the storage", "after a re-login the storage holds the one weapon")
-    c("tap:" + WITHDRAW)
-    done()
-    c("wait:4000", s.shot_cmd("r04-storage"))
+    common.settle(s, mask=common.HOME_MASK)
+    item_menu(s, "r03-item-menu", True)
+    step(s, "after a re-login the storage holds the one weapon", r"GetStorageInfo: 1 items in the storage", WITHDRAW, "r04-storage")
     # しまう one more (room in the inventory for the box's weapon)
-    c("tap:" + SWITCH, "wait:5000", "tap:" + ROW1, "wait:800", "tap:" + DECIDE, "wait:3000")
-    done = server_step(s, r"DepositItem: 1 items into the storage", "DepositItem: one more stored")
-    c("tap:" + CONFIRM)
-    done()
-    c("wait:4000", "tap:" + CLOSE, "wait:2000", "tap:" + BACK, "wait:4000")
+    screen(s, "しまう", SWITCH)
+    select(s, ROW1)
+    screen(s, "しまう: 決定", DECIDE)
+    step(s, "DepositItem: one more stored", r"DepositItem: 1 items into the storage", CONFIRM)
+    screen(s, "stored: 閉じる", CLOSE)
+    screen(s, "戻る", BACK)
     # 一時保管庫: the entry -> the count dialog's 決定 -> 決定 -> 決定
-    done = server_step(s, r"GetOneTimeStorageInfo: 1 entries", "after a re-login the overflow box holds its entry")
-    c("tap:" + ONE_TIME)
-    done()
-    c("wait:4000", s.shot_cmd("r05-one-time"), "tap:" + ROW1, "wait:3000", s.shot_cmd("r06-count"), "tap:515:992", "wait:2000",
-      "tap:" + DECIDE, "wait:3000", s.shot_cmd("r07-confirm"))
-    done = server_step(s, r"(Bulk)?WithdrawItemFromOneTimeStorage: 1 items from the overflow box", "the box's weapon taken out")
-    c("tap:" + CONFIRM)
-    done()
-    c("wait:4000", s.shot_cmd("r08-taken"), "tap:" + CLOSE, "wait:2000", s.shot_cmd("r09-empty"))
+    step(s, "after a re-login the overflow box holds its entry", r"GetOneTimeStorageInfo: 1 entries", ONE_TIME, "r05-one-time")
+    # the entry ticked (選択中; a count dialog for a stack, whose 決定 is at 515:992: with one item
+    # none opens, and that tap hits nothing)
+    common.tap_settled(s, ROW1, "r06-count")
+    common.tap_settled(s, "515:992")
+    screen(s, "決定", DECIDE, "r07-confirm")
+    step(s, "the box's weapon taken out", r"(Bulk)?WithdrawItemFromOneTimeStorage: 1 items from the overflow box", CONFIRM, "r08-taken")
+    screen(s, "taken: 閉じる", CLOSE, "r09-empty")
 
 
 def main(o):

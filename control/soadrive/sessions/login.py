@@ -60,7 +60,7 @@ def main(o):
         popups.append(launch.login_to_home(s, "04-notice", "05-login-bonus", None, "02-download-dialog", "03-download-done"))
         with open(os.path.join(o.out, "popups.txt"), "w") as f:
             f.write(popups[-1] + "\n")
-        s.ctl("wait:5000", s.shot_cmd("07-home"))
+        common.settle(s, "07-home", mask=common.HOME_MASK)
         s.state("home")
 
     if not common.drive(s, body):

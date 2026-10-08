@@ -21,7 +21,6 @@ Targets: port-inproc (default), port-server (the server's lines are read from so
 import os
 import sqlite3
 
-from ..flows import mission
 from ..proc import repo_file
 from . import common
 
@@ -99,31 +98,40 @@ def main(o):
     s = common.port_run(o, common.port_config(o, limit=2400))
     got = {}
     s.before_client = lambda: got.update(plant(s.state_db))
-    c = s.ctl
+    def screen(name, xy, shot=None, **kw):
+        return common.tap_to_screen(s, name, xy, shot, **kw)
 
     def body(s):
         common.port_login(s, notice=None, bonus=None)
+        common.settle(s, mask=common.HOME_MASK)
         st0 = s.state("1-home")
         got["fol0"] = common.state_value(st0, r" fol ([0-9]+)")
         # ---- the inheritance
-        c("tap:" + ITEM, "wait:5000", s.shot_cmd("03-item-menu"), "tap:" + STRENGTHEN, "wait:5000", "tap:" + ACCESSORY_TAB, "wait:4000",
-          s.shot_cmd("04-accessories"), "tap:" + FIRST_ROW, "wait:5000", s.shot_cmd("05-base"), "tap:" + MATERIAL_SLOT, "wait:5000",
-          s.shot_cmd("06-materials"), "tap:" + SECOND_ROW, "wait:2000", "tap:" + OK_RIGHT, "wait:4000", s.shot_cmd("07-preview"),
-          "tap:" + OK_RIGHT, "wait:3000", s.shot_cmd("08-confirm-inherit"), "tap:" + DIALOG_OK, "wait:3000", s.shot_cmd("09-confirm-lost"),
-          "tap:" + DIALOG_OK, "wait:3000", s.shot_cmd("10-confirm-rare"))
-        s.tap_until("the confirmations -> InheritAccessory", 60, DIALOG_OK, lambda: s.in_server(r"InheritAccessory [0-9a-f]+: inherited item"))
-        # the 強化成功 animation (a tap skips it), the result (the inherited factor), 閉じる
-        c("wait:5000", s.shot_cmd("11-inherited"), "tap:364:700", "wait:4000", s.shot_cmd("11-result"), "tap:" + RESULT_CLOSE, "wait:3000",
-          s.shot_cmd("11-closed"))
+        common.tap_to_phase(s, "アイテム", ITEM, 9, "03-item-menu", mask=common.HOME_MASK, fatal=True)
+        screen("武器・アクセサリー強化", STRENGTHEN)
+        screen("アクセ", ACCESSORY_TAB, "04-accessories")
+        screen("the base: the first row", FIRST_ROW, "05-base")
+        screen("素材選択", MATERIAL_SLOT, "06-materials")
+        common.tap_settled(s, SECOND_ROW)  # the material ticked (no retap: a second would untick it)
+        screen("the material: 決定", OK_RIGHT, "07-preview")
+        screen("強化開始", OK_RIGHT, "08-confirm-inherit")
+        screen("the inheritance's 決定", DIALOG_OK, "09-confirm-lost")
+        screen("the lost material's 決定", DIALOG_OK, "10-confirm-rare")
+        # the last confirmation -> InheritAccessory (made again after 20 s without the line: one more
+        # confirmation); the 強化成功 animation waited out (the session used to tap it short at 364:700)
+        common.tap_to_server(s, "the confirmations -> InheritAccessory", r"InheritAccessory [0-9a-f]+: inherited item", ["tap:" + DIALOG_OK],
+                             "11-inherited", secs=20, hold=3)
+        s.keep_shot("11-result", s.layout.shot_path("11-inherited"))
+        screen("the result: 閉じる", RESULT_CLOSE, "11-closed")
         got["big"] = s.in_server(r"InheritAccessory [0-9a-f]+: \+[0-9]+ points \(big success\)")
         st1 = s.state("2-inherited")
         got["fol1"] = common.state_value(st1, r" fol ([0-9]+)")
         # ---- 自動設定
-        s.tap_log(mission.phase(11), 60, 8, 6, "tap:" + CHARACTER, name="キャラクター -> the character menu")
-        c("wait:5000", "tap:" + EQUIP, "wait:5000", s.shot_cmd("12-characters"), "tap:" + DAWN, "wait:5000", s.shot_cmd("13-equipment"),
-          "tap:" + OK_RIGHT, "wait:3000", s.shot_cmd("14-auto-confirm"))
-        s.tap_until("決定 -> EquipAuto", 60, AUTO_OK, lambda: s.in_server(r"EquipAuto [0-9a-f]+: weapon"))
-        c("wait:5000", s.shot_cmd("15-auto-equipped"))
+        common.tap_to_phase(s, "キャラクター -> the character menu", CHARACTER, 11, every=8, tries=6, fatal=True)
+        screen("装備・技・アシスト変更", EQUIP, "12-characters")
+        screen("ドーン", DAWN, "13-equipment")
+        screen("自動設定", OK_RIGHT, "14-auto-confirm")
+        common.tap_to_server(s, "決定 -> EquipAuto", r"EquipAuto [0-9a-f]+: weapon", ["tap:" + AUTO_OK], "15-auto-equipped", secs=20)
         got["st1"] = state(s.state_db)
 
     if not common.drive(s, body):
@@ -133,9 +141,11 @@ def main(o):
 
     def again(s2):
         common.port_login(s2, title="20-title", notice=None, bonus=None, home="21-home")
-        s2.ctl("tap:" + CHARACTER)
-        s2.wait_log(mission.phase(11), 120, name="キャラクター -> the character menu (after the re-login)")
-        s2.ctl("wait:5000", "tap:" + EQUIP, "wait:5000", "tap:" + DAWN, "wait:5000", s2.shot_cmd("22-equipment-after-relogin"))
+        common.settle(s2, mask=common.HOME_MASK)
+        common.tap_to_phase(s2, "キャラクター -> the character menu (after the re-login)", CHARACTER, 11, secs=120, mask=common.HOME_MASK,
+                            fatal=True)
+        common.tap_to_screen(s2, "装備・技・アシスト変更", EQUIP)
+        common.tap_to_screen(s2, "ドーン", DAWN, "22-equipment-after-relogin")
         got["st2"] = state(s2.state_db)
 
     if not common.drive(s2, again):

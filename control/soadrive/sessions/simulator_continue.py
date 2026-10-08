@@ -20,6 +20,7 @@ Targets: port-inproc (default), port-server (the server's lines are read from so
 import os
 import sqlite3
 
+from .. import popups
 from ..flows import mission
 from ..proc import repo_file
 from . import common
@@ -98,10 +99,11 @@ def main(o):
         common.port_login(s, notice=None, bonus=None)
         got["coins0"] = coins(s.state("1-home"))
         # ---- the battle simulator
-        c("tap:" + CHARACTER)
-        s.wait_log(mission.phase(11), 120, name="キャラクター -> the character menu")
-        c("wait:5000", "drag:364:900:364:300", "wait:2000", "drag:364:900:364:300", "wait:2500", s.shot_cmd("03-character-menu-end"))
-        c("tap:" + SIMULATOR, "wait:5000", s.shot_cmd("04-simulator-rental"), "tap:" + RENTAL_NONE, "wait:5000", s.shot_cmd("05-simulator-party"))
+        common.settle(s, mask=common.HOME_MASK)
+        common.tap_to_phase(s, "キャラクター -> the character menu", CHARACTER, 11, secs=120, mask=common.HOME_MASK, fatal=True)
+        common.scroll_to_end(s, "drag:364:900:364:300", "03-character-menu-end")
+        common.tap_to_screen(s, "バトルシミュレーター", SIMULATOR, "04-simulator-rental")
+        common.tap_to_screen(s, "選択しない -> the party", RENTAL_NONE, "05-simulator-party", is_screen=popups.is_party_start)
         mission.open_mission_confirm(s)
         c(s.shot_cmd("06-simulator-confirm"))
         mission.start_mission(s, "決定 -> TrainingMissionStart", lambda: s.in_server(r"TrainingMissionStart: mission [0-9]+, no play record"),
@@ -110,10 +112,12 @@ def main(o):
         s.check("no stamina for the simulator", s.in_server(r"\(master_training_mission\) .*stamina ([0-9]+) -> \1\b"))
         s.check("no play record after the simulator's start", play_rows(s.state_db) == 0)
         s.wait_log(mission.phase(15), 120, name="the simulator's battle (CPhase_Battle)")
-        c("wait:15000", s.shot_cmd("07-simulator-battle"), "tap:" + PAUSE, "wait:2500", s.shot_cmd("08-simulator-pause"), "tap:" + SIM_END,
-          "wait:2500", s.shot_cmd("09-simulator-end"), "tap:" + SIM_END_YES)
-        s.wait_log(mission.phase(11), 90, name="シミュレーター終了 -> the character menu")
-        c("wait:4000", s.shot_cmd("10-character-menu-again"))
+        # a fixed wait: a picture of the fight, nothing to wait for; the pause then stops it (a still screen)
+        c("wait:15000", s.shot_cmd("07-simulator-battle"))
+        common.tap_to_screen(s, "the pause button", PAUSE, "08-simulator-pause")
+        common.tap_to_screen(s, "シミュレーター終了", SIM_END, "09-simulator-end")
+        common.tap_to_log(s, "シミュレーター終了 -> the character menu", SIM_END_YES, mission.phase(11), "10-character-menu-again", secs=90,
+                          tries=1, fatal=True)
         # ---- a lost battle: the test setup, mf01_001, the defeat dialog twice
         got["setup"] = weaken(s.state_db)
         # the mission type back to the story's (CParameterUI+0x140: the simulator left 4 there, and
@@ -122,6 +126,7 @@ def main(o):
         mission.port_start(s, "mf01_001")
         s.tap_until("the defeat dialog's はい -> MissionContinue 1 (100 coins)", 300, CONTINUE_YES,
                     lambda: s.in_server(r"MissionContinue: mission [0-9]+ continued for 100 coins"), every=8)
+        # a fixed wait: a picture of the fight going on (a battle never holds still)
         c("wait:3000", s.shot_cmd("11-continued"))
         got["coins1"] = coins(s.state("2-continued"))
         s.check("the play stays open across the continue", play_rows(s.state_db) == 1)
@@ -131,7 +136,7 @@ def main(o):
 
         s._wait("the defeat dialog's いいえ -> retire (MissionContinue 0, MissionFailed)", 300,
                 lambda: s.in_server(r"MissionContinue: declined") and s.in_packets(r"> MissionFailed "), True, action=decline, every=8)
-        c("wait:8000", s.shot_cmd("12-retired"))
+        common.settle(s, "12-retired", hold=2)
         restore(s.state_db, got.pop("setup"))
         got["coins2"] = coins(s.state("3-retired"))
 

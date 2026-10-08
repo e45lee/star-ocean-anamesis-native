@@ -44,7 +44,7 @@ def body(s, name):
     launch.title(s, "title", retry=not common.env_on("NO_RETRY"))
     seeded.wire_login(s)
     s.wait_for("Login -> ProtocolError 19001 (no player)", 60, lambda: s.in_packets(r"< ProtocolError .*status=19001"))
-    s.ctl("wait:3000", s.shot_cmd("terms"))
+    common.settle(s, "terms", hold=2)
     # The terms dialog's 同意する, then the name dialog's field until the client opens its keyboard
     # (the dialog fades in; a tap during the fade is dropped).
     end = time.monotonic() + 90
@@ -65,6 +65,7 @@ def body(s, name):
     launch.data_check(s, lambda: s.in_packets(r"> MissionTalk"), "the opening scene (MissionTalk)", "download-dialog",
                       "download-done", first_tap=None)
     # Auto mode and fast-forward, then rounds of taps (flows/tutorial.py) until the mission-menu step.
+    # a fixed wait: the opening scene's buttons, as flows/tutorial.py entry() says
     s.ctl("wait:15000", s.shot_cmd("opening"))
     tutorial.auto_mode(s)
     tutorial.rounds(s, 4, int(os.environ.get("NEWPLAYER_STEPS") or 150), shot_fmt="tutorial-%03d")
@@ -73,7 +74,7 @@ def body(s, name):
     s.check("battle tutorial: MissionStart -> MissionStartRes", s.in_packets(r"< MissionStartRes"))
     s.check("battle tutorial: MissionEnd (battle log) -> MissionEndRes", s.in_packets(r"< MissionEndRes"))
     s.wait_for("UpdateTutorial(4) (the mission menu)", 30, tutorial.tut(s, 4))
-    tutorial.home_part(s, popups=False, home_wait=8000)
+    tutorial.home_part(s, popups=False)
     if PACKAGE_DIR:
         s.check("the server: no seed save, a fresh account (no --new-player)",
                 s.in_server(r"no seed save .*starting a fresh account") and not s.in_server(r"seeding from"))

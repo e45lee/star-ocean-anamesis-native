@@ -7,7 +7,7 @@ import os
 import subprocess
 import time
 
-from .. import screens, ui370
+from .. import screens, ui370, waits
 from ..proc import REPO
 from ..targets import Abort
 from . import launch
@@ -53,8 +53,7 @@ def entry(s):
     launch.title(s)
     s.tap_until("TAP TO START -> Login", 120, ui370.TITLE, lambda: s.in_packets(r"> Login "))
     s.wait_for("Login -> ProtocolError 19001 (no player)", 60, lambda: s.in_packets(r"< ProtocolError .*status=19001"))
-    s.ctl("wait:3000")
-    s.shot("02-terms")
+    waits.settle(s, "02-terms", hold=2)
     # 同意する, then the name field until the client opens its keyboard (a tap during the fade is lost).
     end = time.monotonic() + 90
     while not s.in_client(r"StartKeyboardActivity\("):
@@ -71,6 +70,9 @@ def entry(s):
     s.check('CreatePlayer carries "%s"' % PLAYER, s.in_packets(r'> CreatePlayer .*"%s"' % PLAYER))
     s.wait_for("Login -> LoginResult (the new player)", 60, lambda: s.in_packets(r"< LoginResult"))
     launch.data_check(s, lambda: s.in_packets(r"> MissionTalk"), "the opening scene (MissionTalk)")
+    # A fixed wait: the scene's オート / fast-forward buttons appear after its intro and nothing marks
+    # that (no log line, the scene never holds still); a tap before them only costs time (the rounds
+    # tap through the scenes either way).
     s.ctl("wait:15000")
     s.shot("04-opening", settle=False)
     auto_mode(s)
@@ -103,40 +105,41 @@ def rounds(s, k, limit=150, shot_fmt=None, on_round=None, stop=None):
     return i
 
 
-def home_part(s, popups=True, home_wait=3000):
+def home_part(s, popups=True):
     """From the mission-menu step (UpdateTutorial 4): planet Mere's map, 1-01 (ここをタップ) ->
     ストーリー開始 -> the story, skipped -> UpdateTutorial(6) -> "summoned companions" 次へ -> ホーム
     -> the home tutorial -> UpdateTutorial(9) -> the notice board and the LOGIN BONUS (popups=False:
-    left open, as the sessions' home shot always showed the board) -> home."""
-    s.ctl("wait:10000")
-    s.shot("05-tutorial-map")
-    s.ctl("tap:360:640", "wait:3000", "tap:515:714")
-    s.wait_for("1-01's story starts (MissionTalk mc01_010)", 90, lambda: s.in_packets(r"> MissionTalk .* 3991905094 "))
+    left open, as the sessions' home shot always showed the board) -> home. Each tap is made on a
+    settled screen (waits.py)."""
+    # the map after the battle's results (its pins drop in: settled twice in a row)
+    waits.settle(s, "05-tutorial-map", hold=2)
+    waits.tap_to_screen(s, "1-01 (ここをタップ) -> its detail", "360:640")
+    waits.tap_to_count(s, "ストーリー開始 -> 1-01's story starts (MissionTalk mc01_010)", s.packets, r"> MissionTalk .* 3991905094 ",
+                       ["tap:515:714"], secs=90)
     # スキップ, then はい, until the story ends: either tap is lost while its dialog fades in (seen
     # under load: the skip dialog open, はい never tapped), so the pair is repeated.
-    s.ctl("wait:12000")
     end = time.monotonic() + 120
     while not s.in_packets(r"> EndMissionTalk .* 3991905094 ") and s.alive() and time.monotonic() < end:
         s.ctl("tap:" + ui370.STORY_SKIP, "wait:2500", "tap:" + ui370.STORY_SKIP_YES)
         s.poll(8, lambda: s.in_packets(r"> EndMissionTalk .* 3991905094 "))
     s.wait_for("UpdateTutorial(6) (the story of 1-01)", 120, tut(s, 6))
-    s.ctl("wait:8000")
-    s.shot("06-companions")
-    s.ctl("tap:527:1090", "wait:3000", "tap:60:1240")
+    waits.settle(s, "06-companions", hold=2)
+    waits.tap_to_screen(s, "the summoned companions: 次へ", "527:1090")
+    # ホーム -> the home tutorial: tapped once (on the tutorial's home a second tap would be the
+    # dialog's), on the settled screen
+    s.ctl("tap:60:1240")
     s.wait_for("UpdateTutorial(7) (home)", 120, tut(s, 7))
     # The home tutorial: the present box (次へ), the gacha button (閉じる) -> UpdateTutorial(9).
-    s.ctl("wait:8000")
-    s.shot("07-home-tutorial", settle=False)
-    s.ctl("tap:525:1085", "wait:3000")
-    s.shot("08-home-tutorial-gacha", settle=False)
+    waits.settle(s, "07-home-tutorial", hold=2)
+    waits.tap_to_screen(s, "the home tutorial: 次へ", "525:1085", "08-home-tutorial-gacha")
     s.ctl("tap:525:1090")
     s.wait_for("UpdateTutorial(9) (the tutorial cleared)", 90, tut(s, 9))
     # The notice board (its page text only in-process: the port's web-view stand-in,
     # docs/client-changes.md, hence "info") and the LOGIN BONUS, then home.
     if popups:
         launch.popups(s, "08c-notice", "08d-login-bonus")
-    s.ctl("wait:%d" % home_wait)
-    s.shot("09-home")
+    # home (popups=False: the notice board over it, its page loading)
+    waits.settle(s, "09-home", mask=waits.HOME_MASK if popups else (), hold=2)
 
 
 def run(s):

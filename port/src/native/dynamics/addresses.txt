@@ -3,3 +3,7 @@ kVaddrUnitX            sym _ZN4Aska17DynamicsPrimitive8m_vUnitXE   # Vector (1, 
 kVaddrUnitY            sym _ZN4Aska17DynamicsPrimitive8m_vUnitYE   # Vector: the Y axis (DynamicsCube, DynamicsPlane::Run)
 kVaddrUnitZ            sym _ZN4Aska17DynamicsPrimitive8m_vUnitZE   # Vector: the Z axis
 kRigidInverseLastRow   at 0x26dbb30 f32[4] ref _ZN4Aska12DynamicsCube3RunEv   # the inverse's last row (0, 0, 0, 1); also the Reset value of the primitives' velocity
+kBlendFull             at 0x28c49e4 f32 ref _ZN4Aska30ArticulatedDynamicsManagerBase11PrepareCalcEf   # below it the ADM blends with the motion (0.9999)
+kFunSolveLink          at 0x2329994 ref _ZN4Aska26ArticulatedDynamicsManager12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf   # FUN_02429994: the link (distance) constraint (ADMSolver::SolveLink)
+kFunResolveContact     at 0x232a9f4 ref _ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_jjf   # FUN_0242a9f4: the contact response (ADMSolver::ResolveContact)
+kFunUpdateVelocity     at 0x232ac84 ref _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi   # FUN_0242ac84: the velocity update (ADMSolver::UpdateVelocity)

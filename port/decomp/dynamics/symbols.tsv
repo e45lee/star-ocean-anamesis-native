@@ -14,14 +14,14 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x207391c	0x217391c	308	_ZN4Aska30ArticulatedDynamicsManagerBase24DeleteAllWorldConstraintEh	Aska::ArticulatedDynamicsManagerBase::DeleteAllWorldConstraint(unsigned char)	adm	decompiled	
 0x2073a50	0x2173a50	292	_ZN4Aska30ArticulatedDynamicsManagerBase44MakeDynamicsPrimitiveListWithDependencyOfADMEPPNS_17DynamicsPrimitiveE	Aska::ArticulatedDynamicsManagerBase::MakeDynamicsPrimitiveListWithDependencyOfADM(Aska::DynamicsPrimitive**)	adm	decompiled	
 0x2073b74	0x2173b74	536	_ZN4Aska30ArticulatedDynamicsManagerBase46UpdateDynamicsPrimitiveListWithDependencyOfADMEj	Aska::ArticulatedDynamicsManagerBase::UpdateDynamicsPrimitiveListWithDependencyOfADM(unsigned int)	adm	decompiled	
-0x2073d8c	0x2173d8c	92	_ZN4Aska30ArticulatedDynamicsManagerBase5FlushEv	Aska::ArticulatedDynamicsManagerBase::Flush()	adm	decompiled	
+0x2073d8c	0x2173d8c	92	_ZN4Aska30ArticulatedDynamicsManagerBase5FlushEv	Aska::ArticulatedDynamicsManagerBase::Flush()	adm	tested	dynamics_adm.cpp / dynamics_adm_solver.cpp
 0x2073de8	0x2173de8	32	_ZN4Aska30ArticulatedDynamicsManagerBase19AllocConstraintListEPPhi	Aska::ArticulatedDynamicsManagerBase::AllocConstraintList(unsigned char**, int)	adm	decompiled	
 0x2073e08	0x2173e08	464	_ZN4Aska30ArticulatedDynamicsManagerBase17InitParentOfRootsEPPhi	Aska::ArticulatedDynamicsManagerBase::InitParentOfRoots(unsigned char**, int)	adm	decompiled	
 0x2073fd8	0x2173fd8	556	_ZN4Aska30ArticulatedDynamicsManagerBase10InitJointsEPPh	Aska::ArticulatedDynamicsManagerBase::InitJoints(unsigned char**)	adm	decompiled	
 0x2074204	0x2174204	144	_ZN4Aska30ArticulatedDynamicsManagerBase27ReserveJointParamsForUpdateEv	Aska::ArticulatedDynamicsManagerBase::ReserveJointParamsForUpdate()	adm	decompiled	
-0x2074294	0x2174294	976	_ZN4Aska30ArticulatedDynamicsManagerBase11PrepareCalcEf	Aska::ArticulatedDynamicsManagerBase::PrepareCalc(float)	adm	decompiled	
-0x2074664	0x2174664	476	_ZN4Aska8ADMJoint11PrepareCalcEv	Aska::ADMJoint::PrepareCalc()	adm	decompiled	
-0x2074840	0x2174840	336	_ZN4Aska8ADMJoint5FlushEv	Aska::ADMJoint::Flush()	adm	decompiled	
+0x2074294	0x2174294	976	_ZN4Aska30ArticulatedDynamicsManagerBase11PrepareCalcEf	Aska::ArticulatedDynamicsManagerBase::PrepareCalc(float)	adm	tested	dynamics_adm.cpp / dynamics_adm_solver.cpp
+0x2074664	0x2174664	476	_ZN4Aska8ADMJoint11PrepareCalcEv	Aska::ADMJoint::PrepareCalc()	adm	tested	dynamics_adm.cpp / dynamics_adm_solver.cpp
+0x2074840	0x2174840	336	_ZN4Aska8ADMJoint5FlushEv	Aska::ADMJoint::Flush()	adm	tested	dynamics_adm.cpp / dynamics_adm_solver.cpp
 0x2074990	0x2174990	128	_ZNK4Aska30ArticulatedDynamicsManagerBase5GetDtEv	Aska::ArticulatedDynamicsManagerBase::GetDt() const	adm	decompiled	
 0x2074a10	0x2174a10	180	_ZN4Aska30ArticulatedDynamicsManagerBase14CheckGroupLinkEPNS_8ADMJointEi	Aska::ArticulatedDynamicsManagerBase::CheckGroupLink(Aska::ADMJoint*, int)	adm	decompiled	
 0x2074ac4	0x2174ac4	184	_ZN4Aska30ArticulatedDynamicsManagerBase14CheckMoveLargeEf	Aska::ArticulatedDynamicsManagerBase::CheckMoveLarge(float)	adm	decompiled	
@@ -363,13 +363,13 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x232909c	0x242909c	604	_ZN4Aska30ArticulatedDynamicsManagerBase15InterpolateRootINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_fjj	void Aska::ArticulatedDynamicsManagerBase::InterpolateRoot<Aska::ArticulatedDynamicsManager>(Aska::ArticulatedDynamicsManager*, Aska::ADMJoint*, Aska::ADMJoint*, float, unsigned int, unsigned int)	adm_templates	decompiled	
 0x23292f8	0x24292f8	392	_ZN4Aska30ArticulatedDynamicsManagerBase16CollisionSettingINS_26ArticulatedDynamicsManagerEEEvPT_jj	void Aska::ArticulatedDynamicsManagerBase::CollisionSetting<Aska::ArticulatedDynamicsManager>(Aska::ArticulatedDynamicsManager*, unsigned int, unsigned int)	adm_templates	decompiled	
 0x2329480	0x2429480	536	_ZN4Aska26ArticulatedDynamicsManager26MatrixPreFixAndMotionBlendILb1EEEvPNS_13ADM_CALC_DATAEPNS_8ADMJointEjfffPNS_6VectorEb	void Aska::ArticulatedDynamicsManager::MatrixPreFixAndMotionBlend<true>(Aska::ADM_CALC_DATA*, Aska::ADMJoint*, unsigned int, float, float, float, Aska::Vector*, bool)	adm_templates	decompiled	
-0x2329698	0x2429698	300	_ZN4Aska8ADMJoint13ExternalForceEfffPKNS_6VectorEPNS_13ADM_CALC_DATAEb	Aska::ADMJoint::ExternalForce(float, float, float, Aska::Vector const*, Aska::ADM_CALC_DATA*, bool)	adm	decompiled	
+0x2329698	0x2429698	300	_ZN4Aska8ADMJoint13ExternalForceEfffPKNS_6VectorEPNS_13ADM_CALC_DATAEb	Aska::ADMJoint::ExternalForce(float, float, float, Aska::Vector const*, Aska::ADM_CALC_DATA*, bool)	adm	tested	dynamics_adm.cpp / dynamics_adm_solver.cpp
 0x23297c4	0x24297c4	464	_Z39Functor_ExternalForceEmitterCalculationIN4Aska26ArticulatedDynamicsManagerENS0_20DynamicsForceEmitterEEvPT_PNS0_8ADMJointEPPT0_jfj	void Functor_ExternalForceEmitterCalculation<Aska::ArticulatedDynamicsManager, Aska::DynamicsForceEmitter>(Aska::ArticulatedDynamicsManager*, Aska::ADMJoint*, Aska::DynamicsForceEmitter**, unsigned int, float, unsigned int)	adm_local	decompiled	
-0x2329994	0x2429994	0	FUN_02429994	FUN_02429994	adm_local	decompiled	
-0x2329d78	0x2429d78	0	FUN_02429d78	FUN_02429d78	adm_local	decompiled	
-0x232a08c	0x242a08c	0	FUN_0242a08c	FUN_0242a08c	adm_local	decompiled	
-0x232a9f4	0x242a9f4	0	FUN_0242a9f4	FUN_0242a9f4	adm_local	decompiled	
-0x232ac84	0x242ac84	0	FUN_0242ac84	FUN_0242ac84	adm_local	decompiled	
+0x2329994	0x2429994	996	FUN_02429994	FUN_02429994	adm_local	tested	ADMSolver::SolveLink (link constraint); dynamics_adm_solver.cpp
+0x2329d78	0x2429d78	788	FUN_02429d78	FUN_02429d78	adm_local	decompiled	IK rotation blend (StandardIK<true>)
+0x232a08c	0x242a08c	2408	FUN_0242a08c	FUN_0242a08c	adm_local	decompiled	IK rotation (FRSQRTE / FRECPE)
+0x232a9f4	0x242a9f4	656	FUN_0242a9f4	FUN_0242a9f4	adm_local	tested	ADMSolver::ResolveContact (contact response); dynamics_adm_solver.cpp
+0x232ac84	0x242ac84	384	FUN_0242ac84	FUN_0242ac84	adm_local	tested	ADMSolver::UpdateVelocity; dynamics_adm_solver.cpp
 0x232ae04	0x242ae04	216	_ZN4Aska28ArticulatedDynamicsManagerMP10ConstraintEPNS_13LinkListParamEi	Aska::ArticulatedDynamicsManagerMP::Constraint(Aska::LinkListParam*, int)	adm	decompiled	
 0x232aedc	0x242aedc	3344	_ZN4Aska28ArticulatedDynamicsManagerMP6AttachEPKNS_10ADMHandlerEPKNS_3AFF29AsfArticulatedDynamicsManagerEb	Aska::ArticulatedDynamicsManagerMP::Attach(Aska::ADMHandler const*, Aska::AFF::AsfArticulatedDynamicsManager const*, bool)	adm	decompiled	
 0x232bbec	0x242bbec	336	_ZN4Aska28ArticulatedDynamicsManagerMP22CalcLinkListBufferSizeEv	Aska::ArticulatedDynamicsManagerMP::CalcLinkListBufferSize()	adm	decompiled	

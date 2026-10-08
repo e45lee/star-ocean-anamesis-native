@@ -16,6 +16,11 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 | `Aska::DynamicsSphere` / `DynamicsCapsule` / `DynamicsCube` / `DynamicsPlane` | 0xc0 / 0xf0 / 0x170 / 0xc0 | `CreateClone`'s `operator new`, `Run`, `Update` (`primitives.c`) | typed, natives |
 | `DYNAMICS_PRIMITIVE` (the shape's head) | 0x20 | `CollisionAndConstraint` (`m_data`: two response floats, the owner ADM at 0x10) | typed |
 | `Aska::DYNAMICS_CAPSULE` / `DYNAMICS_CUBE` / `DYNAMICS_SPHERE` / plane | 0x90 / 0x110 / 0x60 / 0x60 | the thunks (`this + 0x60`), `Run`, `TestIntersection*`, `CollisionAndConstraint`'s stack capsule | typed, natives |
+| `Aska::ADMJoint` | 0x1c0 | `InitCalcData`, `Init`, `DefaultParam`, `PrepareCalc`, `Flush`, `ExternalForce` (`adm.c`), the templates' stride | typed (partly), natives |
+| `Aska::ADM_CALC_DATA` | 0xa0 | `ADMJoint + 0xb0`, the ADM's array at +0xa0; `MatrixCalcFunc`'s arguments | typed |
+| `ADMLink` (a joint's links / contact pairs) | 0x50 | `ADMJoint::PrepareCalc` (+0x28 length, +0x48 the other joint), `CollisionAndConstraint` (flags +0x20, friction +0x2c, bounce +0x30) | typed (partly) |
+| `Aska::ArticulatedDynamicsManagerBase` | (0x1c0 for `ArticulatedDynamicsManager`) | `PrepareCalc(float)`, `Flush`, `Simulate`, the templates | typed (to 0x110) |
+| `ADMSolver` (the local helpers after `Functor_ExternalForceEmitterCalculation<ADM>`) | - | `adm_local.c` | natives (by address) |
 
 ## Natives
 
@@ -39,9 +44,25 @@ denormals), compared bit for bit.
 | `DynamicsSphere::TestIntersection(Vector const*, float, Vector*)` | `dynamics_primitives.cpp` | `dynamics/sphere-point` | 78K checks, 0 mismatches |
 | `DynamicsPlane::TestIntersection(Vector const*, float, Vector*)` | `dynamics_primitives.cpp` | `dynamics/plane-point` | 367K checks, 0 mismatches |
 
+| `ADMJoint::PrepareCalc()` | `dynamics_adm.cpp` | `dynamics/joint-prepare-flush` | 508K checks, 0 mismatches (run with `only=ADMJoint11PrepareCalc`: below) |
+| `ADMJoint::Flush()` | `dynamics_adm.cpp` | `dynamics/joint-prepare-flush` | 36K checks, 0 mismatches |
+| `ADMJoint::ExternalForce(float, float, float, Vector const*, ADM_CALC_DATA*, bool)` | `dynamics_adm.cpp` | `dynamics/joint-external-force` | 608K checks, 0 mismatches |
+| `ArticulatedDynamicsManagerBase::PrepareCalc(float)` | `dynamics_adm.cpp` | `dynamics/adm-prepare-flush` | 34K checks, 0 mismatches |
+| `ArticulatedDynamicsManagerBase::Flush()` | `dynamics_adm.cpp` | `dynamics/adm-prepare-flush` | 30K checks, 0 mismatches |
+| FUN_02429994 `ADMSolver::SolveLink` (the link / distance constraint; NEON estimates) | `dynamics_adm_solver.cpp` | `dynamics/solve-link`, `dynamics/neon` | 434K checks, 0 mismatches |
+| FUN_0242a9f4 `ADMSolver::ResolveContact` (the contact response) | `dynamics_adm_solver.cpp` | `dynamics/resolve-contact` | 36K checks, 0 mismatches |
+| FUN_0242ac84 `ADMSolver::UpdateVelocity` | `dynamics_adm_solver.cpp` | `dynamics/update-velocity` | 608K checks, 0 mismatches |
+
+A native another native calls (ADMJoint::PrepareCalc from ArticulatedDynamicsManagerBase::PrepareCalc,
+ADMJoint::Flush from Flush) is called as C++ normally, but through its guest entry while the family's
+live check is on (`checking()`, dynamics_family.h), so a run with `only=` checks it on its own: the
+full run checks the caller every call and its nested calls run unchecked. The local helpers have no
+symbols: they are registered as `@0x...` from `addresses.txt` (`at ... ref` the caller that BLs to
+them; `tools/gen_addresses.py` finds BL / B targets).
+
 Races: the primitives run on the dynamics worker threads ("Aska::DynamicsWorker") while other workers
 move the same characters' shapes; a difference the check can attribute to another thread counts as a
-race, not a mismatch (as math's). The first run: 2.24M checks, 0 mismatches, 82 races.
+race, not a mismatch (as math's). The run with every native above: 4.12M checks, 0 mismatches, 48 races.
 
 Not ported (executed, but 4 instructions each): the primitives' `Reset()` (velocity = (0, 0, 0, 1)); the
 `DynamicsCapsule` / `DynamicsCube` `TestIntersection*` thunks (`this + 0x60`, a tail call).
@@ -58,6 +79,19 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
 | `anim` | co-developed: the IK controllers run from the ADM's notify (not touched yet) |
 
 ## RE notes
+
+- **NEON estimates:** the ADM solver uses FRECPE / FRSQRTE with one Newton step (FRECPS / FRSQRTS).
+  `dynamics_neon.cpp` is the ARM pseudocode (as dynarmic computes them under the JIT: the port's
+  layering keeps dynarmic's own headers out of port/); test `dynamics/neon` runs the four
+  instructions in a guest code page over every exponent and many fractions, NaNs, denormals, and
+  step operands with products near 2 / 3 (exact zeros, ties), bit for bit. The fused steps are
+  computed in double with a TwoSum remainder, so the single rounding is exact on any host libm.
+- **HierarchicalObjectContainer::m_flags bit 0** is the stale-matrix mark: `UpdateHierarchically` sets
+  it on the node's subtree (and returns at once when it is set already), `MakeMatrix` clears it (the
+  primitives' `Run` calls `MakeMatrix` when set). render_layout.h's comment ("matrix fixed (no
+  hierarchy update)") reads it the other way round.
+- **NaN branches:** an unordered FCMP takes `le` / `lt` / `pl` / `hi`: e.g. `ExternalForce` doesn't damp
+  with a NaN mass, `ResolveContact`'s fast-contact test (`b.le`) isn't fast on a NaN velocity.
 
 - **Calls out:** the natives make the guest's calls in the guest's order (the node's virtuals, the
   guest math helpers) as plain `guest_call`s: they are pure or idempotent, so a live check's replay of

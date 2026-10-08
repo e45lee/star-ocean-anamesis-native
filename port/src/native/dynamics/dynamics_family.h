@@ -62,6 +62,12 @@ inline u64 fn_addr(const char* sym) { return main_lib()->sym(sym); }
 
 // A guest call (pointer / integer arguments).
 inline u64 call(u64 fn, std::initializer_list<u64> args) { return guest_call(fn, args); }
+// A native calling another native of this family: as a C++ call normally; with the family's live
+// check on, through the guest entry (guest_call reaches the registered host function, i.e. the
+// check), so a native only other natives call is still compared with its original
+// (--live-check dynamics:only=...).
+inline bool checking() { return family().on.load(std::memory_order_relaxed); }
+
 // A virtual of the node: its vtable's slot.
 inline u64 vcall(const HierarchicalObject* h, int slot) {
     u64 fn = static_cast<const u64*>(h->base.link.vtable)[slot];

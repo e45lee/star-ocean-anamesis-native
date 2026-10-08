@@ -948,6 +948,1266 @@
      "name": "TestIntersection"
     }
    ]
+  },
+  {
+   "name": "ADM_CALC_DATA",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_matrix",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 64,
+     "name": "m_position",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 80,
+     "name": "m_rotation",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Quaternion",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 96,
+     "name": "m_scale",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 112,
+     "name": "m_orientation",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Quaternion",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 128,
+     "name": "m_parent",
+     "type": {
+      "kind": "ptr",
+      "to": "ADM_CALC_DATA"
+     },
+     "size": 8
+    },
+    {
+     "offset": 136,
+     "name": "unk_88",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 160,
+   "align": 8
+  },
+  {
+   "name": "ADMLink",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 33,
+     "name": "unk_21",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    },
+    {
+     "offset": 40,
+     "name": "m_length",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "m_friction",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 48,
+     "name": "m_bounce",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 52,
+     "name": "unk_34",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 64,
+     "name": "m_joint0",
+     "type": {
+      "kind": "ptr",
+      "to": "ADMJoint"
+     },
+     "size": 8
+    },
+    {
+     "offset": 72,
+     "name": "m_joint1",
+     "type": {
+      "kind": "ptr",
+      "to": "ADMJoint"
+     },
+     "size": 8
+    }
+   ],
+   "size": 80,
+   "align": 8
+  },
+  {
+   "name": "ADMJoint",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_position",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 32,
+     "name": "m_prevPosition",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 48,
+     "name": "unk_30",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 80,
+     "name": "m_velocity",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 96,
+     "name": "m_prevRotation",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Quaternion",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 112,
+     "name": "m_rotation70",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Quaternion",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 128,
+     "name": "m_rotation80",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Quaternion",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 144,
+     "name": "m_contactNormal",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 160,
+     "name": "m_pivot",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 176,
+     "name": "m_calc",
+     "type": {
+      "kind": "struct",
+      "name": "ADM_CALC_DATA"
+     },
+     "size": 160
+    },
+    {
+     "offset": 336,
+     "name": "unk_150",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 352,
+     "name": "m_links",
+     "type": {
+      "kind": "ptr",
+      "to": "ADMLink"
+     },
+     "size": 8
+    },
+    {
+     "offset": 360,
+     "name": "m_linkCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 364,
+     "name": "unk_16c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 368,
+     "name": "m_param170",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 372,
+     "name": "m_blendWeight",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 376,
+     "name": "m_damping",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 380,
+     "name": "m_dampingDown",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 384,
+     "name": "m_mass",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 388,
+     "name": "m_stiffness",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 392,
+     "name": "m_param188",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 396,
+     "name": "m_contactFriction",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 400,
+     "name": "unk_190",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 408,
+     "name": "m_lengthDirty",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 409,
+     "name": "m_isRoot",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 410,
+     "name": "m_writesPosture",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 411,
+     "name": "m_dampDownwards",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 412,
+     "name": "m_flags0",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 413,
+     "name": "m_flags1",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 414,
+     "name": "m_index19e",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 415,
+     "name": "m_contact",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 416,
+     "name": "unk_1a0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 432,
+     "name": "m_node",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 440,
+     "name": "m_contactDamping",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 444,
+     "name": "m_hasPivot",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 445,
+     "name": "unk_1bd",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 448,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2174664",
+     "symbol": "_ZN4Aska8ADMJoint11PrepareCalcEv",
+     "name": "PrepareCalc"
+    },
+    {
+     "ghidra": "0x2174840",
+     "symbol": "_ZN4Aska8ADMJoint5FlushEv",
+     "name": "Flush"
+    },
+    {
+     "ghidra": "0x242584c",
+     "symbol": "_ZN4Aska8ADMJoint12InitCalcDataEv",
+     "name": "InitCalcData"
+    },
+    {
+     "ghidra": "0x2425a98",
+     "symbol": "_ZN4Aska8ADMJoint7SetRootEt",
+     "name": "SetRoot"
+    },
+    {
+     "ghidra": "0x2425aa4",
+     "symbol": "_ZN4Aska8ADMJoint21CheckLengthFromParentEv",
+     "name": "CheckLengthFromParent"
+    },
+    {
+     "ghidra": "0x2425b04",
+     "symbol": "_ZN4Aska8ADMJoint4InitEv",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x2425bb0",
+     "symbol": "_ZN4Aska8ADMJoint12DefaultParamEv",
+     "name": "DefaultParam"
+    },
+    {
+     "ghidra": "0x2425bd4",
+     "symbol": "_ZN4Aska8ADMJoint5ScaleEf",
+     "name": "Scale"
+    },
+    {
+     "ghidra": "0x2425cc4",
+     "symbol": "_ZNK4Aska8ADMJoint3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x2425f54",
+     "symbol": "_ZN4Aska8ADMJoint3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x24262b0",
+     "symbol": "_ZN4Aska8ADMJoint10ReleaseAllEv",
+     "name": "ReleaseAll"
+    },
+    {
+     "ghidra": "0x24262b4",
+     "symbol": "_ZN4Aska8ADMJointD2Ev",
+     "name": "~ADMJoint"
+    },
+    {
+     "ghidra": "0x24262c8",
+     "symbol": "_ZN4Aska8ADMJointD0Ev",
+     "name": "~ADMJoint"
+    },
+    {
+     "ghidra": "0x24262f0",
+     "symbol": "_ZNK4Aska8ADMJoint10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x2429698",
+     "symbol": "_ZN4Aska8ADMJoint13ExternalForceEfffPKNS_6VectorEPNS_13ADM_CALC_DATAEb",
+     "name": "ExternalForce"
+    },
+    {
+     "ghidra": "0x242f31c",
+     "symbol": "_ZN4Aska8ADMJoint15ExternalForceMPEfffPKNS_6VectorEPNS_13ADM_CALC_DATAEb",
+     "name": "ExternalForceMP"
+    }
+   ]
+  },
+  {
+   "name": "ArticulatedDynamicsManagerBase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 64,
+     "name": "m_gravityWorld",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 80,
+     "name": "m_gravity",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 96,
+     "name": "m_jointCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 98,
+     "name": "m_linkCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 100,
+     "name": "m_collisionCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 102,
+     "name": "m_constraintCount",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 104,
+     "name": "unk_68",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "m_joints",
+     "type": {
+      "kind": "ptr",
+      "to": "ADMJoint"
+     },
+     "size": 8
+    },
+    {
+     "offset": 120,
+     "name": "m_linkList",
+     "type": {
+      "kind": "ptr",
+      "to": "ADMLink"
+     },
+     "size": 8
+    },
+    {
+     "offset": 128,
+     "name": "unk_80",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 88
+     },
+     "size": 88
+    },
+    {
+     "offset": 216,
+     "name": "m_enabled",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 217,
+     "name": "m_skipFlush",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 218,
+     "name": "m_resetVelocity",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 219,
+     "name": "unk_db",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 220,
+     "name": "m_motionBlend",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 221,
+     "name": "unk_dd",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 224,
+     "name": "m_flushed",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 225,
+     "name": "m_resetPending",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 226,
+     "name": "unk_e2",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 228,
+     "name": "m_resetRequest",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 229,
+     "name": "unk_e5",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 11
+     },
+     "size": 11
+    },
+    {
+     "offset": 240,
+     "name": "m_blendRate",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 244,
+     "name": "unk_f4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 256,
+     "name": "m_model",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 264,
+     "name": "m_gravityNode",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 272,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2172c94",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase5ScaleEfPNS_10AsfHandlerE",
+     "name": "Scale"
+    },
+    {
+     "ghidra": "0x2172f00",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase21SimulateNotifyHandlerEf",
+     "name": "SimulateNotifyHandler"
+    },
+    {
+     "ghidra": "0x21730fc",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase12ConvergeMainEiff",
+     "name": "ConvergeMain"
+    },
+    {
+     "ghidra": "0x21731d4",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase15ResetPrimitivesEv",
+     "name": "ResetPrimitives"
+    },
+    {
+     "ghidra": "0x2173264",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase17AddWorldCollisionEPNS_17DynamicsPrimitiveEh",
+     "name": "AddWorldCollision"
+    },
+    {
+     "ghidra": "0x2173308",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase32WorldCollisionOrConstraintExistsEPNS_17DynamicsPrimitiveE",
+     "name": "WorldCollisionOrConstraintExists"
+    },
+    {
+     "ghidra": "0x2173388",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase20DeleteWorldCollisionEPNS_17DynamicsPrimitiveEb",
+     "name": "DeleteWorldCollision"
+    },
+    {
+     "ghidra": "0x21734a4",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase23DeleteAllWorldCollisionEh",
+     "name": "DeleteAllWorldCollision"
+    },
+    {
+     "ghidra": "0x21735d8",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase19CountWorldCollisionEv",
+     "name": "CountWorldCollision"
+    },
+    {
+     "ghidra": "0x2173698",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase20CountWorldConstraintEv",
+     "name": "CountWorldConstraint"
+    },
+    {
+     "ghidra": "0x2173758",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase18AddWorldConstraintEPNS_17DynamicsPrimitiveEh",
+     "name": "AddWorldConstraint"
+    },
+    {
+     "ghidra": "0x2173800",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase21DeleteWorldConstraintEPNS_17DynamicsPrimitiveEb",
+     "name": "DeleteWorldConstraint"
+    },
+    {
+     "ghidra": "0x217391c",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase24DeleteAllWorldConstraintEh",
+     "name": "DeleteAllWorldConstraint"
+    },
+    {
+     "ghidra": "0x2173a50",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase44MakeDynamicsPrimitiveListWithDependencyOfADMEPPNS_17DynamicsPrimitiveE",
+     "name": "MakeDynamicsPrimitiveListWithDependencyOfADM"
+    },
+    {
+     "ghidra": "0x2173b74",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase46UpdateDynamicsPrimitiveListWithDependencyOfADMEj",
+     "name": "UpdateDynamicsPrimitiveListWithDependencyOfADM"
+    },
+    {
+     "ghidra": "0x2173d8c",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase5FlushEv",
+     "name": "Flush"
+    },
+    {
+     "ghidra": "0x2173de8",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase19AllocConstraintListEPPhi",
+     "name": "AllocConstraintList"
+    },
+    {
+     "ghidra": "0x2173e08",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase17InitParentOfRootsEPPhi",
+     "name": "InitParentOfRoots"
+    },
+    {
+     "ghidra": "0x2173fd8",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase10InitJointsEPPh",
+     "name": "InitJoints"
+    },
+    {
+     "ghidra": "0x2174204",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase27ReserveJointParamsForUpdateEv",
+     "name": "ReserveJointParamsForUpdate"
+    },
+    {
+     "ghidra": "0x2174294",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase11PrepareCalcEf",
+     "name": "PrepareCalc"
+    },
+    {
+     "ghidra": "0x2174990",
+     "symbol": "_ZNK4Aska30ArticulatedDynamicsManagerBase5GetDtEv",
+     "name": "GetDt"
+    },
+    {
+     "ghidra": "0x2174a10",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase14CheckGroupLinkEPNS_8ADMJointEi",
+     "name": "CheckGroupLink"
+    },
+    {
+     "ghidra": "0x2174ac4",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase14CheckMoveLargeEf",
+     "name": "CheckMoveLarge"
+    },
+    {
+     "ghidra": "0x2174b7c",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase3RunEv",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x2174f38",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase8ConvergeEifi",
+     "name": "Converge"
+    },
+    {
+     "ghidra": "0x21750c4",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase20RemoveExtraPrimitiveEPNS_17DynamicsPrimitiveE",
+     "name": "RemoveExtraPrimitive"
+    },
+    {
+     "ghidra": "0x21751a0",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase20RemoveExtraCollisionEPNS_17DynamicsPrimitiveE",
+     "name": "RemoveExtraCollision"
+    },
+    {
+     "ghidra": "0x217527c",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase23RemoveAllExtraPrimitiveEv",
+     "name": "RemoveAllExtraPrimitive"
+    },
+    {
+     "ghidra": "0x2175354",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase23RemoveAllExtraCollisionEv",
+     "name": "RemoveAllExtraCollision"
+    },
+    {
+     "ghidra": "0x217542c",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase17AddExtraCollisionEPNS_17DynamicsPrimitiveEmmj",
+     "name": "AddExtraCollision"
+    },
+    {
+     "ghidra": "0x2175458",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase21AddExtraPrimitiveMainERNS_21DynamicsPrimitiveListEPNS_17DynamicsPrimitiveEmmj",
+     "name": "AddExtraPrimitiveMain"
+    },
+    {
+     "ghidra": "0x21755c8",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase37AddExtraCollisionFromCollisionHandlerEPKNS_16CollisionHandlerEttmmj",
+     "name": "AddExtraCollisionFromCollisionHandler"
+    },
+    {
+     "ghidra": "0x2175910",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase37AddExtraCollisionFromCollisionHandlerEPKNS_10AsfHandlerEPKNS_16CollisionHandlerEttmmj",
+     "name": "AddExtraCollisionFromCollisionHandler"
+    },
+    {
+     "ghidra": "0x21759bc",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase8DumpOpenEPKci",
+     "name": "DumpOpen"
+    },
+    {
+     "ghidra": "0x21759c4",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase4DumpEPKci",
+     "name": "Dump"
+    },
+    {
+     "ghidra": "0x21759cc",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase9DumpCloseEPKc",
+     "name": "DumpClose"
+    },
+    {
+     "ghidra": "0x21759d4",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase17SearchOrginalDataEPNS_10AsfHandlerES2_i",
+     "name": "SearchOrginalData"
+    },
+    {
+     "ghidra": "0x2175a5c",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBaseD2Ev",
+     "name": "~ArticulatedDynamicsManagerBase"
+    },
+    {
+     "ghidra": "0x2175bfc",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBaseD0Ev",
+     "name": "~ArticulatedDynamicsManagerBase"
+    },
+    {
+     "ghidra": "0x2175c00",
+     "symbol": "_ZNK4Aska30ArticulatedDynamicsManagerBase10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x2175c54",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase10DeleteThisEv",
+     "name": "DeleteThis"
+    },
+    {
+     "ghidra": "0x2175c74",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase8AddRefExEv",
+     "name": "AddRefEx"
+    },
+    {
+     "ghidra": "0x2175c98",
+     "symbol": "_ZNK4Aska30ArticulatedDynamicsManagerBase19GetDefaultTaskLevelEv",
+     "name": "GetDefaultTaskLevel"
+    },
+    {
+     "ghidra": "0x2427a0c",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb0EEEvPT_ffi",
+     "name": "StandardIK<Aska::ArticulatedDynamicsManager, false>"
+    },
+    {
+     "ghidra": "0x2427dac",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_jjf",
+     "name": "CollisionAndConstraint<Aska::ArticulatedDynamicsManager>"
+    },
+    {
+     "ghidra": "0x24287dc",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi",
+     "name": "StandardIK<Aska::ArticulatedDynamicsManager, true>"
+    },
+    {
+     "ghidra": "0x2428bf8",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_26ArticulatedDynamicsManagerEEEvPT_ffi",
+     "name": "Finalize<Aska::ArticulatedDynamicsManager>"
+    },
+    {
+     "ghidra": "0x242909c",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase15InterpolateRootINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_fjj",
+     "name": "InterpolateRoot<Aska::ArticulatedDynamicsManager>"
+    },
+    {
+     "ghidra": "0x24292f8",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase16CollisionSettingINS_26ArticulatedDynamicsManagerEEEvPT_jj",
+     "name": "CollisionSetting<Aska::ArticulatedDynamicsManager>"
+    },
+    {
+     "ghidra": "0x242d498",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_28ArticulatedDynamicsManagerMPELb0EEEvPT_ffi",
+     "name": "StandardIK<Aska::ArticulatedDynamicsManagerMP, false>"
+    },
+    {
+     "ghidra": "0x242d838",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_28ArticulatedDynamicsManagerMPEEEvPT_PNS_8ADMJointES6_jjf",
+     "name": "CollisionAndConstraint<Aska::ArticulatedDynamicsManagerMP>"
+    },
+    {
+     "ghidra": "0x242e268",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_28ArticulatedDynamicsManagerMPELb1EEEvPT_ffi",
+     "name": "StandardIK<Aska::ArticulatedDynamicsManagerMP, true>"
+    },
+    {
+     "ghidra": "0x242e684",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_28ArticulatedDynamicsManagerMPEEEvPT_ffi",
+     "name": "Finalize<Aska::ArticulatedDynamicsManagerMP>"
+    },
+    {
+     "ghidra": "0x242eb28",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase15InterpolateRootINS_28ArticulatedDynamicsManagerMPEEEvPT_PNS_8ADMJointES6_fjj",
+     "name": "InterpolateRoot<Aska::ArticulatedDynamicsManagerMP>"
+    },
+    {
+     "ghidra": "0x242ed84",
+     "symbol": "_ZN4Aska30ArticulatedDynamicsManagerBase16CollisionSettingINS_28ArticulatedDynamicsManagerMPEEEvPT_jj",
+     "name": "CollisionSetting<Aska::ArticulatedDynamicsManagerMP>"
+    }
+   ]
+  },
+  {
+   "name": "ADMSolver",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1
   }
  ]
 }

@@ -10,4 +10,8 @@ inline constexpr std::uint64_t kVaddrUnitX = 0x2ccdc10;  // _ZN4Aska17DynamicsPr
 inline constexpr std::uint64_t kVaddrUnitY = 0x2ccdc20;  // _ZN4Aska17DynamicsPrimitive8m_vUnitYE (object, 16 bytes); Vector: the Y axis (DynamicsCube, DynamicsPlane::Run)
 inline constexpr std::uint64_t kVaddrUnitZ = 0x2ccdc30;  // _ZN4Aska17DynamicsPrimitive8m_vUnitZE (object, 16 bytes); Vector: the Z axis
 inline constexpr std::uint64_t kRigidInverseLastRow = 0x26dbb30;  // f32[4] {0.0, 0.0, 0.0, 1.0}, .rodata, used by _ZN4Aska12DynamicsCube3RunEv; the inverse's last row (0, 0, 0, 1); also the Reset value of the primitives' velocity
+inline constexpr std::uint64_t kBlendFull = 0x28c49e4;  // f32 {0.9998999834060669}, .rodata, used by _ZN4Aska30ArticulatedDynamicsManagerBase11PrepareCalcEf; below it the ADM blends with the motion (0.9999)
+inline constexpr std::uint64_t kFunSolveLink = 0x2329994;  // .text, used by _ZN4Aska26ArticulatedDynamicsManager12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf; FUN_02429994: the link (distance) constraint (ADMSolver::SolveLink)
+inline constexpr std::uint64_t kFunResolveContact = 0x232a9f4;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_jjf; FUN_0242a9f4: the contact response (ADMSolver::ResolveContact)
+inline constexpr std::uint64_t kFunUpdateVelocity = 0x232ac84;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi; FUN_0242ac84: the velocity update (ADMSolver::UpdateVelocity)
 }  // namespace soa::native::dynamics

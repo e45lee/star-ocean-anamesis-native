@@ -5,7 +5,7 @@ Files (data/english/, committed):
   master.tsv          the rows a person or an engine wrote: message_id, ja_sha1, en, source
                       (machine | agent | human | reviewed; agent: an AI agent wrote it, ranked as machine), engine, date, editor, note. Official, memory and
                       template English is NOT stored: the build derives it from the two master DBs.
-  glossary.tsv        ja, en, kind, variants, source (human | machine), note. Global's terms
+  glossary.tsv        ja, en, kind, variants, avoid, source (human | machine), note. Global's terms
                       (official, Q8) are derived at load time (english_core.build_glossary), not stored.
   client-strings.tsv  message_id, en, note: the client's new strings (port_en_*), merged as human
                       rows with an empty ja_sha1.
@@ -88,7 +88,7 @@ import english_core as C  # noqa: E402
 DATA = REPO / "data/english"
 WORK = REPO / "work/english"
 TABLE_COLS = ["message_id", "ja_sha1", "en", "source", "engine", "date", "editor", "note"]
-GLOSSARY_COLS = ["ja", "en", "kind", "variants", "source", "note"]
+GLOSSARY_COLS = ["ja", "en", "kind", "variants", "avoid", "source", "note"]
 CLIENT_COLS = ["message_id", "en", "note"]
 OUT_COLS = ["message_id", "ja_sha1", "en", "source"]
 REJECT_COLS = ["message_id", "ja_sha1", "engine", "date", "en", "problems"]
@@ -307,14 +307,16 @@ def cmd_glossary_weak(ctx, a):
 
 
 def glossary_dict(rows):
-    """{ja: {"en", "variants", "kind", "source"}}: per term the human row, else the official, else the
-    machine one (M2's new names). A row with an empty en removes the term."""
+    """{ja: {"en", "variants", "avoid", "kind", "source"}}: per term the human row, else the official,
+    else the machine one (M2's new names). A row with an empty en removes the term. `avoid`: English
+    words a row with the term must not use (the term splits of english.md 7.18; glossary_misses)."""
     best = {}
     for r in rows:
         cur = best.get(r["ja"])
         if cur is None or GLOSSARY_RANK[r["source"]] < GLOSSARY_RANK[cur["source"]]:
             best[r["ja"]] = r
     return {ja: {"en": r["en"], "variants": [v for v in r["variants"].split(" | ") if v],
+                 "avoid": [v for v in (r.get("avoid") or "").split(" | ") if v],
                  "kind": r["kind"], "source": r["source"]}
             for ja, r in sorted(best.items()) if r["en"]}
 

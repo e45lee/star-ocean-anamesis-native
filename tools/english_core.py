@@ -663,15 +663,34 @@ def _gloss_forms(term):
     return {f for f in forms if f}
 
 
+def glossary_avoided(flat, avoid):
+    """The first of a term's avoided English words (glossary.tsv `avoid`) that `flat` (_gloss_norm'd)
+    uses: a word starting with it ("Evol" is Evolve, Evolution, evolved), case and accents ignored;
+    else None."""
+    for a in avoid:
+        if re.search(r"(?<![a-z0-9])" + re.escape(_gloss_norm(a)), flat):
+            return a
+    return None
+
+
 def glossary_misses(ja, en, glossary):
     """[[term, english]] of the glossary terms in `ja` whose English (or an accepted variant) isn't in
-    `en`; case, line breaks, accents, a label's trailing colon and a plural/singular don't count."""
+    `en`; case, line breaks, accents, a label's trailing colon and a plural/singular don't count.
+    [term, english, "avoid: WORD"] when `en` uses one of the term's avoided words (a term split the
+    user decided, english.md 7.18: 進化 is Augment, never Evolve), even beside the term's English."""
     flat = _gloss_norm(en)
 
     def used(term):
         return any(f in flat for f in _gloss_forms(term))
-    return [[t, glossary[t]["en"]] for t in glossary_hits(ja, glossary)
-            if not used(glossary[t]["en"]) and not any(used(v) for v in glossary[t]["variants"])]
+    out = []
+    for t in glossary_hits(ja, glossary):
+        g = glossary[t]
+        bad = glossary_avoided(flat, g.get("avoid") or ())
+        if bad:
+            out.append([t, g["en"], "avoid: " + bad])
+        elif not used(g["en"]) and not any(used(v) for v in g["variants"]):
+            out.append([t, g["en"]])
+    return out
 
 
 def runaway(ja, en):

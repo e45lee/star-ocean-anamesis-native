@@ -142,6 +142,31 @@ def test_glossary_check(font):
     assert C.check("紋章石が不足", "Not enough crests.", font, g)["glossary"] == [["紋章石", "Gems"]]
 
 
+def test_glossary_avoid(font):
+    """A term's avoided words (glossary.tsv `avoid`, the term splits of english.md 7.18) fail a row even
+    beside the term's English; a word starting with one counts (Evol: Evolve, evolution)."""
+    g = {"進化": {"en": "Augment", "variants": [], "avoid": ["Evol"], "kind": "ui", "source": "human"},
+         "アシスト": {"en": "Assist", "variants": [], "avoid": ["Assistance"], "kind": "ui", "source": "human"}}
+    assert C.check("進化する", "Augment", font, g) == {}
+    assert C.check("進化素材", "Augmentation Material", font, g) == {}
+    assert C.check("進化する", "Evolve", font, g)["glossary"] == [["進化", "Augment", "avoid: Evol"]]
+    assert C.check("進化する", "Augment (evolution)", font, g)["glossary"] == [["進化", "Augment", "avoid: Evol"]]
+    assert C.check("アシスト起動", "Assistance Activated", font, g)["glossary"] == [["アシスト", "Assist", "avoid: Assistance"]]
+    assert C.check("アシスト起動", "Assist Activated", font, g) == {}
+    assert C.check("レボリューション", "Revolution", font, g) == {}  # no term in the Japanese: no check
+
+
+def test_glossary_term_splits():
+    """The user's term splits of 2026-10-08 (english.md 7.18) are glossary rows that flag the old words."""
+    g = T.glossary_dict(T.glossary_rows(T.Ctx()))
+    want = {"進化": ("Augment", "Evol"), "強化": ("Enhance", "Strengthen"), "アシスト": ("Assist", "Assistance"),
+            "転移": ("Warp", "Teleport"), "景色": ("Scenery", "Scenic"), "絶景写真": ("Superb Scenery Photo", "Scenic"),
+            "風景写真": ("Scenery Photo", "Landscape")}
+    for ja, (en, avoid) in want.items():
+        assert g[ja]["en"] == en and avoid in g[ja]["avoid"], ja
+    assert g["片手剣"]["en"] == "OHS" and "One-handed Sword" in g["片手剣"]["variants"]
+
+
 def test_glossary_waiver(font):
     """A table row's note may waive glossary terms the Japanese only seems to contain (ハナから is
     "from the start", not the name Hana): only that row, only those terms."""

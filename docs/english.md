@@ -677,7 +677,7 @@ These are checks in the build (and in `tools/english_mt.py`'s `check()`), for MT
 **The source of truth is a translation table in the repo, not engine output and not a database.**
 
 - **Layout** (`data/english/`; built 2026-10-06, see "As built" below):
-  - `glossary.tsv`: `ja, en, kind, variants, source (official|human), note`. Generated from Global, then edited by hand; a `human` row wins over a generated one and survives regeneration.
+  - `glossary.tsv`: `ja, en, kind, variants, avoid, source (official|human), note`. Generated from Global, then edited by hand; a `human` row wins over a generated one and survives regeneration. `avoid` (2026-10-08, [7.18](#718-the-term-splits-decided-2026-10-08)): words a row with the term must not use.
   - `master.tsv`: one row per JP `message_id` that isn't official by id: `message_id, ja_sha1, en, source, engine, date, editor, note`.
   - `story/TS_xxxx.tsv`: the same per story file, **without the Japanese text** (it is not in git; 7.6 below).
   - Sorted by `message_id`, UTF-8, `\n` as the two characters, so diffs are one line per row and a build is byte-reproducible.
@@ -1532,11 +1532,13 @@ Result (`tools/english_text.py build`): story **21,663 of 21,663 lines English**
 - **No master row is Japanese any more.** The 37 master texts the 31B's answers had failed (`mt-rejected.tsv`; specifiers reordered, tags, kana left in, names left out, a runaway) were sent again with what was wrong (`english_mt_run.py ui-retry`, `work/english/followup/mt/ui-retry.jsonl`, 35 texts in 1.5 min): 36 pass as machine rows after four machine glossary rows were mended (エサ = Feed, was "Barnie Feed"; バーニィクッキー = Bunny Cookie, was "Barny Cookie" against Global's Bunny; the plurals Half-Elves and Scoutmen as variants), and `uimsg_buy_premium_explan2` is an `agent` row (the engine kept the Japanese list dots and ran the list together). Every master row with Japanese text now has English: 65,429 rows (agent 20, human 36, machine 37,376, memory 6,348, official 19,239, template 2,410).
 - **Left as they are, and why:**
   - space only (a header description or label longer than its room, Japanese-width breaks, 691 item descriptions of 5+ lines, 1,505 factor rows of 3+ lines, the `name_ds_bonus_*` and `stepup_botton_message_*` families): the user's rule is to shrink, not shorten; the client fits them (E10, 7.15);
-  - term splits that need a decision, not a fix: 進化 Augment (Global) vs Evolve (machine), 強化 Strengthen vs Enhance, アシスト Assistance vs Assists, 片手剣 OHS vs One-Handed (and two trait names), 転移 Teleport / Transfer / Warp, Scenery vs Scenic Photo; a glossary row each would settle them for a later MT pass;
+  - term splits that need a decision, not a fix: 進化 Augment (Global) vs Evolve (machine), 強化 Strengthen vs Enhance, アシスト Assistance vs Assists, 片手剣 OHS vs One-Handed (and two trait names), 転移 Teleport / Transfer / Warp, Scenery vs Scenic Photo; a glossary row each would settle them for a later MT pass (**decided by the user on 2026-10-08 and applied: [7.18](#718-the-term-splits-decided-2026-10-08)**);
   - faithful to the Japanese: `uimsg_extra_top_info` "(Temp)" (the Japanese has (仮)), the talent name ending in a period (`talentName_021_005_006_201/202`);
   - `uimsg_rentalbonus_num*` are human rows (the user's); the achievement reward line "200 gems" is not master text.
 
 ### 7.17 Global's official wording: problems for the user to decide
+
+**Decided (the user, 2026-10-08): kept as Global wrote it.** No `human` row overrides any of the rows below; Global's official English is served as it is, its errors included (the typo, "Not enough SP.", "Delete", the missing warning, "Myiddok, Faykreed IV" for Planet Daftine and the rest). The table stays as the record of what was found. The one term split in it (`uimsg_chara_evolution_name`, 進化) was settled the other way round: Global's Augment is kept and our machine rows follow it ([7.18](#718-the-term-splits-decided-2026-10-08)).
 
 Official rows (Global's English, 7.9) are never overridden by us. These read wrong in the 3.7.0 client; each would need a `human` row (`english_text.py set ID TEXT --by NAME`) if the user decides to change it. Found in the sweep (7.12) and this pass; fit-only problems (too long for a box) are not listed: the client shrinks them.
 
@@ -1550,11 +1552,49 @@ Official rows (Global's English, 7.9) are never overridden by us. These read wro
 | `uimsg_deep_space_exploration_rate_up` | 上昇探査率 | Raise Exploration Rate | reads as an action; it labels the exploration rate a return gained | Exploration Rate Up |
 | `uimsg_sort_order_desc` | 降順 | Des. | unclear abbreviation (the ascending one is "Asc.") | Desc. |
 | `uimsg_miss_no_rental` | レンタルなし | No Loans | the loan list's button says "No Loan" (our English art, `mission_rental`) for the same choice | No Loan |
-| `uimsg_chara_evolution_name` | 進化 | Augment | a term split: Global says Augment (101 rows), our machine rows say Evolve / Evolution for 進化 | keep Augment and align the machine rows (a glossary row and a re-check), or Evolve everywhere |
+| `uimsg_chara_evolution_name` | 進化 | Augment | a term split: Global says Augment (101 rows), our machine rows say Evolve / Evolution for 進化 | keep Augment and align the machine rows (a glossary row and a re-check), or Evolve everywhere. **Done: Augment, the machine rows aligned (7.18)** |
 | `cp0014_b01a_prmsg_05` (and by text memory 24 more `cp00xx_*_prmsg_05` rows and `message_2nd_planet_01`) | 惑星ダフティーネ | Myiddok, Faykreed IV | wrong: Global's row gives Welch's birthplace for "Planet Daftine"; our text memory (7.9, exact Japanese) copies it to every profile of the Daftine characters (Tika's profile shows "Birthplace: Myiddok, Faykreed IV") and to the EP2 planet name | Planet Daftine (a `human` row for the 26 ids, or a rule that keeps this Global row out of the memory) |
 | `uimsg_full_stamina`, `uimsg_deep_space_quick_return_confirm` | — | "…restored. \nIt cannot…", "…shuttle now. \nIs this OK?" | a space before the line break (invisible; harmless) | drop the space |
 
 Not a problem: `message_ac_ind_05` "Campaign Draws" for ピックアップガチャ is Global's own term (39 of the 59 Global rows with ピックアップガチャ say Campaign).
+
+### 7.18 The term splits (decided 2026-10-08)
+
+Agent `en-terms`, 2026-10-08. The user settled the six term splits of 7.16 ("term splits that need a decision") and 7.17's 進化 row: Global's word where Global has one, applied to our **machine and agent rows only** (official, memory and template rows are Global's and are never changed; 7.17 is kept as Global wrote it).
+
+| Term | English | Was (machine) | Glossary row (`human`) |
+|---|---|---|---|
+| 進化 | **Augment** (Augmentation, augmented …; Global: 115 rows Augment, 49 Augmentation) | Evolve, Evolution | `Augment`, avoid `Evol` |
+| 強化 | **Enhance** (Enhancement, enhancing …; Global: 153 Enhance, 24 Enhancement) | Strengthen (37 rows, not 3), upgrade (9), power up / Power-Up Set / Boost Set (12), and by hand reinforced, increases, make stronger | `Enhance` (variant Enhancing), avoid `Strengthen` |
+| アシスト | **Assist** | Assistance (295 rows: "Assistance Activated/X") | `Assist`, avoid `Assistance` |
+| 片手剣 | **Global's form for the kind of text** (below) | One-Handed Sword and OHS mixed | the demoted row made `OHS`, variants `One-handed Sword`, `One-handed` |
+| 転移 | **Warp** (Global: 超距離転移装置 Hyper-Distance Warp Device) | Teleport, Teleportation, Transfer | `Warp`, avoid `Teleport`, `Transfer` |
+| 景色 | **Scenery** | Scenic, view | `Scenery`, avoid `Scenic` |
+
+**Two photo coins, not one term.** The "Scenic Photo" rows were not 景色 but **絶景写真** (item_coin_233/234, a photo of a superb view), and 風景写真 (item_coin_232, a scenery photo) was "Landscape Photo" in some rows and "Scenery Photo" in others: two coins with their own exchanges. Giving both "Scenery Photo" would make two items one name, so 風景写真 is **Scenery Photo** (glossary row, avoid Landscape, Scenic) and 絶景写真 **Superb Scenery Photo** (glossary row, avoid Scenic): Scenery for Scenic as decided, and the coins still told apart. A name for the user to confirm.
+
+**片手剣, the rule from Global's own rows** (Global has 片手剣 in 20 rows with English): **OHS** in names and tight labels (the filter `uimsg_filter_sword` OHS, `OHS Hammer: Cap Inc.`, `5★ OHS Coin Exchange`, `5★ OHS Sword Coin Set`); **one-handed sword** in prose (item and gear descriptions, help texts, factors: "A one-handed sword that delivers…", "Coin exchangeable for any 5★ one-handed sword"); **One-handed Sword(s)** where a title spells it out (the draw titles "Daily Weapons Campaign Draw: One-handed Swords", "Normal Short-range Weapons: One-handed Swords, Arms, Great Swords": Global's capital O and small h). Applied: the gear names (`uimsg_gear_sword_*`, and the gear's name inside a set's description) and the role / weapon tag of a loading tip ("Fidel (Attacker/OHS)") are OHS; descriptions and help texts one-handed sword ("customize your one-handed sword", "A slender one-handed sword."); the draw and ticket titles One-handed Sword(s). The glossary row accepts either form, so the check can't enforce the rule per text; the rule is this paragraph.
+
+**Senses the term doesn't cover** (a waiver, `glossary-waive: TERM (why)` in the row's note, the text unchanged, 7.16): 進化 in its natural sense (the story's evolution of species and civilizations, 8 lines; the Grigori's 異常進化 "abnormal evolution" in 11 profiles; the mission 9-07 進化したＡＩ "Evolved AI"; a boss's 究極進化); 転移 where the text only seems to have it (回転移動 a rotation, 2 skill texts; 相転移 a phase transition, 1 line); インタ／ビュー broken over two lines in the Guide captions 1045/1046 (not the name Inta). 強化スーツ, Welch's suit, is a name of its own: glossary row **Power Suit** (avoid Reinforced Suit, Powered Suit), its 8 rows made consistent. Global's story never says Warp: its own lines say "teleportation device" for 時空転移装置 (`B013_030_06`); the user's rule includes the story, so our 13 story lines with 転移 say warp ("It had been warped to the Azurite system", "space-time warp shield").
+
+**How it was done.** A mechanical replacement over the rows whose Japanese has the term: whole words, the match's case kept (Evolve → Augment, evolution → augmentation, Strengthen → Enhance, Teleport LV / Transfer LV → Warp LV, Assistance → Assist, Scenic Photo → Superb Scenery Photo, Landscape Photo → Scenery Photo, 片手剣 per the rule above); a multi-line master or label row whose breaks were the import's greedy re-break was re-broken at the same budget (the widest Japanese line, at least 200 px), other breaks kept; story lines are re-broken by the build anyway. **A row whose only change is the term stays `machine`** (engine, date kept) with a note `term (en-terms 2026-10-08, english.md 7.18): 進化 Augment, …`: the engine's text with a word swapped is still the engine's text, and the user's review queue for `agent` rows stays the rows an agent really wrote. **Rows reworded beyond the term are `agent` rows** (editor en-terms, note says what and keeps the engine's name): 22 rows (19 master, 3 story), where the swap left no term ("make them stronger", "power up", "increases", "the view", "it was snowing"), read wrong (a noun "enhancing", an intransitive "has augmented": Global's characters *are augmented*), or the machine text was garbled ("Inta"). The 46 "Assist Active/" and "Assist Activation/" rows of アシスト起動 were made "Assist Activated/" as the other 244.
+
+| Term | Rows changed (machine kept) | Reworded (agent) | Waived |
+|---|---:|---:|---:|
+| 進化 | 87 master | 7 master | 13 master, 8 story |
+| 強化 | 53 master, 1 label (an agent row, the term only) | 13 master | — |
+| 強化スーツ | 4 master, 2 story | — | — |
+| アシスト | 295 master | — | — |
+| 片手剣 | 74 master | — | — |
+| 転移 | 20 master, 11 story | 2 story | 2 master, 1 story |
+| 景色 | — | 1 master, 1 story | — |
+| 絶景写真 / 風景写真 | 13 / 9 master | 3 / — master | — |
+
+(A row with two terms counts under both; rows reworded for 進化's grammar also hold 強化 or アシスト.) Master 581 rows changed (13 only a waiver), story 25 (16 texts, 9 waivers), labels 1.
+
+**Going forward.** The glossary check fails a machine, agent, human or reviewed row whose Japanese has the term and whose English misses the term's English (as before) **or uses one of its `avoid` words** (new column `avoid` of `glossary.tsv`: a word starting with it, case and accents ignored: `Evol` is Evolve, evolution, evolved; `english_core.glossary_avoided`, `glossary_misses` reports `[term, english, "avoid: WORD"]`; tests `test_glossary_avoid`, `test_glossary_term_splits`). So an MT import or a `set` with Evolve, Strengthen, Assistance, Teleport, Transfer or Scenic for these terms is refused. The avoid words are needed because the term check is a substring test: "Assistance" contains "assist", so `Assist` alone could never flag it. Official rows only warn (`report`'s `glossary-warnings.tsv`), as before.
+
+**Found on the way, not fixed:** `TS_6060`'s machine lines `6062_115_41` to `_46` and `_49` hold shifted or doubled English (`_42` says `_41`'s line, `_44` repeats `_43`, `_49` repeats `_48`): a chunk the engine misaligned; `_42` has a waiver so the check passes, the lines want a retranslation.
 
 ## 8. English UI art
 

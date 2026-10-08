@@ -57,18 +57,29 @@ using MathMatrix = math::Matrix;  // Aska::Matrix
 // emitters' Simulate (port/decomp/particles/object.c, emitter_hot.c); the rest not recovered yet.
 class IParticleObject {
 public:
+    static constexpr int kSlotPrepare = 3;  // vtable: 0 / 1 the destructors, 2 Attach, 3 Prepare, 4 Reset, 5 BeginParticles
+
     const void* vtable;           // 0x000: _ZTVN4Aska15IParticleObjectE + 0x10 (a concrete object's)
-    u8 unk_008[0x140 - 0x008];    // 0x008
+    u8 unk_008[0x10c - 0x008];    // 0x008
+    u32 m_textureId;              // 0x10c: the texture's id (IParticleEmitter::Prepare: Texture + 0x18)
+    u8 unk_110[0x120 - 0x110];    // 0x110
+    IParticleEmitter* m_nextEmitter;  // 0x120: the next emitter of the chain PrepareMatricesTraverse walks
+    u8 unk_128[0x140 - 0x128];    // 0x128
     const u8* m_animData;         // 0x140: the texture animations (SetAnimation walks them)
     u8 unk_148[0x16c - 0x148];    // 0x148: SetAnimation's current animation (0x148), frames (0x158)
     u32 m_animation;              // 0x16c: the current animation's index (SetAnimation)
     u8 unk_170[0x178 - 0x170];    // 0x170: (0x174: SetAnimation clears it)
     u32 m_animParam;              // 0x178: the texture unit's parameter (Simulate copies it every frame)
-    u8 unk_17c[0x1f4 - 0x17c];    // 0x17c
-    u16 m_animFlags;              // 0x1f4: bit 11 / bit 12 (SetAnimation), 0 at construction
+    u8 unk_17c[0x1ac - 0x17c];    // 0x17c
+    u16 m_renderLayer;            // 0x1ac: 0xc at construction (Prepare: SetRenderLayer)
+    u8 unk_1ae[0x1f4 - 0x1ae];    // 0x1ae
+    u16 m_animFlags;              // 0x1f4: bit 1 Prepare's SetRenderLayer flag, bit 11 / bit 12 (SetAnimation), 0 at construction
     u8 m_renderFlags;             // 0x1f6: bit 0 the texture unit's flag bit 2 (Simulate), bit 1 at construction
     u8 unk_1f7[0xa10 - 0x1f7];    // 0x1f7
 };
+static_assert(offsetof(IParticleObject, m_textureId) == 0x10c);
+static_assert(offsetof(IParticleObject, m_nextEmitter) == 0x120);
+static_assert(offsetof(IParticleObject, m_renderLayer) == 0x1ac);
 static_assert(offsetof(IParticleObject, m_animData) == 0x140);
 static_assert(offsetof(IParticleObject, m_animation) == 0x16c);
 static_assert(offsetof(IParticleObject, m_animParam) == 0x178);
@@ -130,14 +141,22 @@ public:
     MathVector m_emitterPosition;  // 0x860: the emitter's position at its last Simulate
     u8 unk_870[0x8b4 - 0x870];  // 0x870
     s32 m_activeCount;       // 0x8b4: the particles alive (Simulate clears it, IsEmitting = != 0)
-    u8 unk_8b8[0xf50 - 0x8b8];  // 0x8b8
+    u8 unk_8b8[0x9c0 - 0x8b8];  // 0x8b8
+    u64 m_textureName;       // 0x9c0: the object's texture (its animation data + 0x10; Prepare)
+    u8 unk_9c8[8];           // 0x9c8
+    const void* m_texture;   // 0x9d0: TextureManager::QueryTextureEx(m_textureName) (0: not found yet)
+    u8 unk_9d8[0xf50 - 0x9d8];  // 0x9d8
     u32 m_stamp[2];          // 0xf50: per half, the manager's m_fillFrame it was filled in (0: never)
     u32 m_buffer;            // 0xf58: the half being filled
-    u8 unk_f5c[0xfe0 - 0xf5c];  // 0xf5c
+    u8 m_lodFlags;           // 0xf5c: bit 6: Prepare clears the renderable's m_hoc.m_flags bit 4
+    u8 unk_f5d[0xfe0 - 0xf5d];  // 0xf5d
 };
 static_assert(offsetof(ParticleRenderableBase, m_emitterPosition) == 0x860);
 static_assert(offsetof(ParticleRenderableBase, m_activeCount) == 0x8b4);
+static_assert(offsetof(ParticleRenderableBase, m_textureName) == 0x9c0);
+static_assert(offsetof(ParticleRenderableBase, m_texture) == 0x9d0);
 static_assert(offsetof(ParticleRenderableBase, m_stamp) == 0xf50);
+static_assert(offsetof(ParticleRenderableBase, m_lodFlags) == 0xf5c);
 static_assert(offsetof(ParticleRenderableBase, m_buffer) == 0xf58);
 static_assert(sizeof(ParticleRenderableBase) == 0xfe0);
 
@@ -166,7 +185,15 @@ public:
     static constexpr u8 kEmitStopWhenStill = 1 << 3;
     static constexpr u8 kEmitScaleFromMatrix = 1 << 4;
 
+    static constexpr int kSlotWorldMatrix = 19, kSlotSetWorldMatrix = 20, kSlotMakeMatrix = 21, kSlotSetPosition = 26,
+                         kSlotSetPosture = 29, kSlotSetScale = 32;  // (HierarchicalObject's)
+
     bool SkipThisFrame() const;             // _ZNK4Aska16IParticleEmitter13SkipThisFrameEv
+    void Prepare();                         // slot 45  _ZN4Aska16IParticleEmitter7PrepareEv
+    void PrepareMatrices();                 // _ZN4Aska16IParticleEmitter15PrepareMatricesEv
+    void PrepareMatricesTraverse();         // _ZN4Aska16IParticleEmitter23PrepareMatricesTraverseEv
+    void FillMatrixContext(MatrixContext* m);  // _ZN4Aska16IParticleEmitter17FillMatrixContextEPNS0_13MatrixContextE
+    FastCriticalSection* SimulateLock();    // (host) m_simulateLock, made on first use (null when that fails)
     bool IsEmitting() const;                // slot 50  _ZNK4Aska16IParticleEmitter10IsEmittingEv
     s32 GetActiveNumberOfParticles() const; // slot 54  _ZNK4Aska16IParticleEmitter26GetActiveNumberOfParticlesEv
 
@@ -202,7 +229,7 @@ public:
     u8 unk_20c[3];                // 0x20c: 0 at construction
     u8 m_matrixMode;              // 0x20f: FillMatrixContext: 1 = matrices made on demand; RunLow skips it for Simulate
     u8 m_linkMode;                // 0x210: RunLow / Kick make no matrices for it when set; Simulate needs m_matrixBuffer for 1 / 2
-    u8 unk_211;                   // 0x211
+    u8 m_linkModeNext;            // 0x211: Prepare copies it to m_linkMode
     u8 unk_212;                   // 0x212: 0 at construction
     u8 m_waitBuffer;              // 0x213: its renderable's buffer wasn't ready (RunLow); RunAfterRendering dispatches it
     u16 m_flags;                  // 0x214: kFlag* (kFlagEnabled at construction)
@@ -215,7 +242,7 @@ public:
     u8 m_emitFlags;               // 0x2d9: kEmit* (bits 0-5 cleared at construction)
     u8 unk_2da[6];                // 0x2da
     MathVector m_lastPosition;    // 0x2e0: kEmitStopWhenStill: where it was at the first Simulate (and since)
-    u8 unk_2f0[0x10];             // 0x2f0: the zero vector at construction
+    MathVector m_prevPosition;    // 0x2f0: (zero at construction; PrepareMatrices' reset: the translation, w 1)
     u8 m_stopped;                 // 0x300: kEmitStopWhenStill: it came within 0.1 of m_lastPosition
     u8 m_resetMatrices;           // 0x301: PrepareMatrices resets 0x2ec.. then (Reset sets it)
     u8 unk_302[0xe];              // 0x302

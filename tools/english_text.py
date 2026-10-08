@@ -401,7 +401,14 @@ class Derived:
                 self.matched[mid] = "official-credit"  # english.md 7.9: a name and its romanization
             if klass is None:
                 if not C.has_kana(ja):
+                    # english.md 7.9 step 4 (memory-neutral, the user's decision of 2026-10-08): a
+                    # language-neutral row (ＡＴＫ＋２０％, ｍｏｔ) takes Global's English-width text
+                    # for the same Japanese through the memory; still "neutral" (never needed)
                     klass = "neutral"
+                    m, kind = mem.lookup(ja) if ja else (None, None)
+                    if m is not None:
+                        cands.append(("template" if kind == "template" else "memory", m))
+                        self.matched[mid] = "memory-neutral" if kind != "template" else "template-neutral"
                 else:
                     m, kind = mem.lookup(ja)
                     near = src.official_near(mid, ja) if m is None else None

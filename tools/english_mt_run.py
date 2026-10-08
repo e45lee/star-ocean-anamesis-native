@@ -27,6 +27,9 @@ Usage:
                                                      # per request with context (story-fix.jsonl)
   tools/english_mt_run.py shorten                    # E7: machine story lines over four window lines,
                                                      # rewritten shorter (story-short.jsonl)
+  tools/english_mt_run.py labels --dump DIR          # the layout labels (english.md 7.14): each row of
+                                                     # data/english/labels.tsv without English in DIR/labels-en.tsv
+                                                     # (soa-server --english-dump DIR), labels.jsonl
   tools/english_mt_run.py status                     # rows done per checkpoint
 Options: --slots N (4), --port P (18431), --limit N (stop after N new items), --out DIR,
          --redo KEYS (translate these checkpoint keys again, e.g. rows import-mt rejected after a
@@ -91,7 +94,10 @@ Answer with one JSON object and nothing else: {"en": "<English>", "proper_noun":
 
 def user_prompt(kind, mid, ja, glossary, terms):
     hits = E.glossary_hits(ja, glossary, terms)
-    k = "story dialogue line" if kind == "story" else f"UI/system text (message_id {mid})"
+    if kind == "label":  # a fixed text of a screen layout (english.md 7.14)
+        k = "UI layout label (a fixed button, heading, caption or note drawn on a screen)"
+    else:
+        k = "story dialogue line" if kind == "story" else f"UI/system text (message_id {mid})"
     gl = "".join(f"\n{t} = {glossary[t]['en']}" for t in hits)
     return f"Kind: {k}\nGlossary:{gl or ' (none)'}\nJapanese:\n{ja}"
 
@@ -625,6 +631,36 @@ def cmd_story_fix(a):
     run_batch(a, items, a.out / "story-fix.jsonl", req, row)
 
 
+LABELS_VERSION = "v2-label"  # the v2 system prompt; the user prompt's kind is a layout label
+
+
+def cmd_labels(a):
+    """The layout labels (english.md 7.14): each row of data/english/labels.tsv that soa-server's
+    --english-dump (DIR/labels-en.tsv) gives no English, once; imported by english_text.py import-mt
+    into labels.tsv as machine rows."""
+    if not a.dump:
+        sys.exit("labels: --dump DIR (soa-server --english-dump DIR) is required")
+    src, g = load_glossary()
+    terms = sorted(g, key=len, reverse=True)
+    have = set()
+    for line in open(pathlib.Path(a.dump) / "labels-en.tsv", encoding="utf-8").read().splitlines()[1:]:
+        have.add(line.split("\t", 1)[0])
+    rows = [ln.split("\t") for ln in (REPO / "data/english/labels.tsv").read_text(encoding="utf-8").splitlines()[1:]]
+    gap = sorted(r[0] for r in rows if r and r[0] not in have)
+    items = [(E.sha1(ja), ja) for ja in gap]
+    print(f"[labels] {len(items)} labels without English", flush=True)
+
+    def req(ja):
+        text = ja.replace("\\n", "\n")
+        return SYSTEM, user_prompt("label", "", text, g, terms), max(200, 3 * len(text) + 100)
+
+    def row(k, ja, txt, finish):
+        if len(txt) > 1 and txt[0] == txt[-1] and txt[0] in '"「':
+            txt = txt[1:-1]
+        return {"key": k, "ja_sha1": k, "ja": ja, "mt": txt, "finish": finish, "kind": "label", "prompt": LABELS_VERSION}
+    run_batch(a, items, a.out / "labels.jsonl", req, row)
+
+
 def cmd_status(a):
     for p in sorted(a.out.glob("*.jsonl")):
         n = sum(1 for _ in open(p, encoding="utf-8"))
@@ -633,7 +669,8 @@ def cmd_status(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["names", "ui", "story", "story-fix", "shorten", "status"])
+    ap.add_argument("cmd", choices=["names", "ui", "story", "story-fix", "shorten", "labels", "status"])
+    ap.add_argument("--dump", help="labels: soa-server --english-dump's folder (its labels-en.tsv)")
     ap.add_argument("--model", choices=sorted(MODELS), default="31b")
     ap.add_argument("--slots", type=int, default=4)
     ap.add_argument("--port", type=int, default=18431)
@@ -649,7 +686,7 @@ def main():
     a.out.mkdir(parents=True, exist_ok=True)
     global YIELD_TO_CLIENTS
     YIELD_TO_CLIENTS = not a.share_gpu
-    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "shorten": cmd_shorten, "story-fix": cmd_story_fix, "status": cmd_status}[a.cmd](a)
+    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "shorten": cmd_shorten, "story-fix": cmd_story_fix, "labels": cmd_labels, "status": cmd_status}[a.cmd](a)
 
 
 if __name__ == "__main__":

@@ -637,3 +637,27 @@ def test_box_rows(font):
     assert rows["x_hmmsg_03"][9] == "wide" and rows["x_hmmsg_03"][7] == 1  # one word: no break
     s = T.box_summary(list(rows.values()))["home-talk"]
     assert s["rows"] == 3 and s["fit_after_rebreak"] == 2  # the 810 px word does not fit
+
+
+# ---------------------------------------------------------------- the layout labels (english.md 7.14)
+
+def test_labels_committed_rows_pass():
+    """data/english/labels.tsv: canonical form, every row with English passes the master checks."""
+    assert T.main(["labels", "--check"]) == 0
+
+
+def test_labels_mt_import(data, tmp_path):
+    """import-mt with "kind": "label" rows: machine rows into labels.tsv; failing ones rejected, ours kept."""
+    rows = [{"ja": "閉じる", "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
+            {"ja": "%d個", "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
+            {"ja": "戻る", "en": "Back", "source": "human", "engine": "", "date": "", "editor": "x", "note": ""}]
+    (data / "labels.tsv").write_text(T.tsv_text(T.LABEL_COLS, rows), encoding="utf-8")
+    prov = {"model": "m", "quant": "q", "prompt": "v2-label", "llama_build": "b", "temperature": 0, "date": "2026-10-07", "kind": "label"}
+    ck = tmp_path / "labels.jsonl"
+    ck.write_text("\n".join(json.dumps({**prov, "ja": ja, "mt": mt}, ensure_ascii=False)
+                            for ja, mt in [("閉じる", "Close"), ("%d個", "Pieces"), ("戻る", "Return")]) + "\n", encoding="utf-8")
+    run(data, "import-mt", str(ck))
+    got = {r["ja"]: r for r in T.read_tsv(data / "labels.tsv", T.LABEL_COLS)}
+    assert got["閉じる"]["en"] == "Close" and got["閉じる"]["source"] == "machine"
+    assert got["%d個"]["source"] == "derived"  # the specifier is missing: rejected
+    assert got["戻る"]["en"] == "Back"

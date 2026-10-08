@@ -3,11 +3,14 @@
 // server/src/english_art and its tests: the game font, the recipe, the text renderer, the cover.
 // All arithmetic is integer, so a build gives the same bytes on every platform.
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
 
 #include <soa/aska_image.h>
+
+#include "soaserver/english_art.h"
 
 namespace soa {
 class FileTree;
@@ -129,5 +132,26 @@ void apply_label(Canvas& c, const Font& font, const Label& label, Rect sprite, c
 // XOR'd under `en_rel`. *png_out (when not null) gets the edited picture. False and *err on failure.
 bool apply_recipe(const Recipe& recipe, const Bytes& source_plain, const Font& font, const std::string& en_rel, Bytes& out, Canvas* png_out,
                   std::string* err);
+
+// ---- the layout labels (docs/english.md 7.14) ---------------------------------------------------
+// Called with the text of each LabelText / ButtonText str value of a node tree (the .msgp member of
+// a scene); returns its replacement, or nullptr to keep it.
+using LabelFn = std::function<const std::string*(const std::string& text)>;
+// Walks the msgpack stream `msgp`; with `out`, writes it again with the replaced labels (the smallest
+// str header for a new text) and every other byte as it was. *replaced: the labels fn replaced.
+// False and *err on a malformed stream.
+bool rewrite_labels(const Bytes& msgp, const LabelFn& fn, Bytes* out, size_t* replaced = nullptr, std::string* err = nullptr);
+// The labels of `labels` a scene's node trees have (the scene's decrypted bytes; only the members up
+// to its last .msgp are decoded).
+bool scene_labels(const Bytes& source_plain, const LabelTable& labels, LabelTable& found, std::string* err = nullptr);
+// A scene's decoded ISF image with its node trees' labels replaced (the image laid out again,
+// aska::isf_repack); unchanged when none matches. *replaced: how many.
+bool edit_labels(Bytes& isf, const LabelTable& labels, size_t* replaced, std::string* err);
+// The recipe's labels drawn into the decoded image `isf` (the changed blocks re-encoded, the sum updated).
+bool edit_image(const Recipe& recipe, Bytes& isf, const Font& font, Canvas* png_out, std::string* err);
+// The -en file of a source: the recipe's image edit (when not null), then the layout labels (when
+// not null), SLZ'd and ADLD XOR'd under `en_rel`.
+bool apply_scene(const Recipe* recipe, const LabelTable* labels, const Bytes& source_plain, const Font& font, const std::string& en_rel, Bytes& out,
+                 Canvas* png_out, size_t* replaced, std::string* err);
 
 }  // namespace soa::server::english_art

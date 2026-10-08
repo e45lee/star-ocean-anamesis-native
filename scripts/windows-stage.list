@@ -26,6 +26,7 @@ data/basmaster-3.8.0.sqlite3                                     # soa-server.ex
 data/basmaster-gl.sqlite3                                        # the Global master: --english (soa.exe, soa-server.exe derive the English tables)
 data/english/master-en.tsv                                       # our English rows: --english (soa.exe, soa-server.exe; server/src/master/english_text.cpp)
 data/english/story-en/                                           # our English story lines, beside master-en.tsv: --english (english_text.cpp story_dir)
+data/english/labels.tsv                                          # the layout labels: --english (english_text.cpp labels_path)
 data/english/client-strings.tsv                                  # the port's English client strings: soa.exe --selftest (ui/lang_test.cpp)
 data/saves/seed/Game.xml                                         # the sanitized seed: --seed (the sessions, control/soadrive/targets.py), the selftests
 data/saves/client/Game.xml                                       # the sanitized client save: soa-server.exe --selftest

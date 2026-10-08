@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <mutex>
+#include <vector>
 
 #include "core/log.h"
 #include "soaserver/cdn.h"
@@ -16,6 +17,8 @@ namespace soa::server::english {
 namespace {
 constexpr const char* kTableRel = "data/english/master-en.tsv";
 constexpr const char* kHeader = "message_id\tja_sha1\ten\tsource";
+constexpr const char* kLabelsName = "labels.tsv";
+constexpr const char* kLabelsHeader = "ja\ten\tsource\tengine\tdate\teditor\tnote";
 
 std::string sha1_of(const std::string& s) { return cdn::sha1_hex((const uint8_t*)s.data(), s.size()); }
 
@@ -77,6 +80,63 @@ std::string table_path() {
     const ServerConfig& c = config();
     if (!c.english_text.empty()) return c.english_text;
     return find_repo_file(kTableRel);
+}
+
+std::string unescape(const std::string& s) {
+    std::string o;
+    for (size_t i = 0; i < s.size(); i++) {
+        if (s[i] == '\\' && i + 1 < s.size() && s[i + 1] == 'n') {
+            o += '\n';
+            i++;
+        } else o += s[i];
+    }
+    return o;
+}
+
+std::string labels_path() {
+    const ServerConfig& c = config();
+    if (!c.english_text.empty()) {
+        size_t slash = c.english_text.find_last_of("/\\");
+        std::string f = (slash == std::string::npos ? std::string(".") : c.english_text.substr(0, slash)) + "/" + kLabelsName;
+        struct stat s;
+        return stat(f.c_str(), &s) == 0 && S_ISREG(s.st_mode) ? f : "";
+    }
+    return find_repo_file(std::string("data/english/") + kLabelsName);
+}
+
+bool load_labels(const std::string& path, Table& out, std::string* err) {
+    out.clear();
+    std::ifstream in(path, std::ios::binary);
+    if (!in) {
+        if (err) *err = "cannot read " + path;
+        return false;
+    }
+    std::string line;
+    if (!std::getline(in, line) || line != kLabelsHeader) {
+        if (err) *err = path + ": the first line is not \"" + std::string(kLabelsHeader) + "\"";
+        return false;
+    }
+    size_t n = 1;
+    while (std::getline(in, line)) {
+        n++;
+        if (line.empty()) continue;
+        std::vector<std::string> f;
+        for (size_t p = 0;;) {
+            size_t t = line.find('\t', p);
+            f.push_back(line.substr(p, t == std::string::npos ? std::string::npos : t - p));
+            if (t == std::string::npos) break;
+            p = t + 1;
+        }
+        bool derived = f.size() == 7 && f[2] == "derived" && f[1].empty();
+        bool ours = f.size() == 7 && !f[1].empty() && (f[2] == "machine" || f[2] == "agent" || f[2] == "human" || f[2] == "reviewed");
+        if (f[0].empty() || (!derived && !ours)) {
+            if (err) *err = path + ":" + std::to_string(n) + ": not seven fields with ja, and en with a source (or no en and \"derived\")";
+            out.clear();
+            return false;
+        }
+        out[f[0]] = Entry{sha1_of(f[0]), f[1], f[2]};
+    }
+    return true;
 }
 
 std::string story_dir() {

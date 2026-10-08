@@ -16,6 +16,12 @@ Files (data/english/, committed):
                       committed (the user's decision of 2026-10-07; docs/english.md 7.9 is the spec).
   story/TS_xxxx.tsv   machine/human/reviewed rows of one Scenario file (columns as master.tsv; no
                       Japanese: ja_sha1 is the SHA-1 of the line's text_value with REAL newlines)
+  labels.tsv          the layout labels to translate (english.md 7.14): ja (master encoding), en, source,
+                      engine, date, editor, note, sorted by ja. Only the Japanese listed here is replaced
+                      in the scenes' node trees (placeholders such as ああああ are left out). A row is
+                      "derived" with no en (the server takes the English of the master row with the same
+                      Japanese, or Global's memory, at build time; english_derive.h resolve_labels) or our
+                      own English (machine | agent | human | reviewed), checked as a master row.
   story-en/TS_xxxx.tsv
                       GENERATED: our story rows per Scenario file, after the strict story checks
                       and the re-break to the 480 px message window. Needs the download's
@@ -49,9 +55,14 @@ Usage:
                                                  text doesn't follow (>= half of >= 3 rows): --apply
                                                  removes them with human rows; also lists machine names
                                                  Global's text contradicts
+  tools/english_text.py labels [--check]        check labels.tsv (format, order, every row with English passes
+                                                 the machine checks); exit 1 on a problem
+  tools/english_text.py label-set JA TEXT --by NAME [--source agent|human] [--note N]
+                                                 our English for a layout label (JA in the master encoding)
   tools/english_text.py import-mt CHECKPOINT.jsonl [--replace]
                                                  machine rows from the MT runner's checkpoint (master
-                                                 rows, or story rows: "kind": "story"); rows failing
+                                                 rows, story rows: "kind": "story", or layout labels:
+                                                 "kind": "label", into labels.tsv); rows failing
                                                  the checks go to work/english/mt-rejected.tsv
                                                  (mt-rejected-story.tsv)
 Common options: --data DIR (data/english) --master DB --gl DB --scenario DIR --font FILE --no-build
@@ -77,6 +88,7 @@ GLOSSARY_COLS = ["ja", "en", "kind", "variants", "source", "note"]
 CLIENT_COLS = ["message_id", "en", "note"]
 OUT_COLS = ["message_id", "ja_sha1", "en", "source"]
 REJECT_COLS = ["message_id", "ja_sha1", "engine", "date", "en", "problems"]
+LABEL_COLS = ["ja", "en", "source", "engine", "date", "editor", "note"]
 HUMAN = ("human", "reviewed")
 # Rows an engine or an agent wrote, which a person has not checked: served only where no official,
 # memory or template row passes (english.md 7.9 step 7). `agent` is a row an AI agent wrote by hand
@@ -1271,19 +1283,124 @@ def cmd_import_csv(ctx, a):
 
 # ---------------------------------------------------------------- import-mt
 
+def read_labels(ctx):
+    rows = read_tsv(ctx.path("labels.tsv"), LABEL_COLS)
+    t = {}
+    for r in rows:
+        if r["ja"] in t:
+            raise ValueError(f"labels.tsv: {r['ja']} twice")
+        ok = (r["source"] == "derived" and not r["en"]) or (r["en"] and r["source"] in MACHINE + HUMAN)
+        if not ok:
+            raise ValueError(f"labels.tsv: {r['ja']}: source {r['source']!r} with en {r['en']!r}")
+        t[r["ja"]] = r
+    return t
+
+
+def write_labels(ctx, t):
+    write_if_changed(ctx.path("labels.tsv"), tsv_text(LABEL_COLS, [t[k] for k in sorted(t)]))
+
+
+def label_problems(ctx, glossary, r):
+    """The checks of a master row (english.md 7.9 step 6; tags strict for machine/agent) for a label's English."""
+    _, probs, _ = finish(ctx, glossary, r["source"], r["en"], r["ja"])
+    return probs
+
+
+def cmd_labels(ctx, a):
+    t = read_labels(ctx)
+    g = glossary_dict(glossary_rows(ctx))
+    bad = 0
+    for ja in sorted(t):
+        r = t[ja]
+        if r["source"] == "derived":
+            continue
+        probs = label_problems(ctx, g, r)
+        if probs:
+            bad += 1
+            print(f"{ja}: {json.dumps(probs, ensure_ascii=False)}", file=sys.stderr)
+    text = tsv_text(LABEL_COLS, [t[k] for k in sorted(t)])
+    stale = ctx.path("labels.tsv").read_text(encoding="utf-8") != text
+    if stale:
+        print("labels.tsv: not in the canonical form (sorted by ja); run without --check to rewrite", file=sys.stderr)
+        if not a.check:
+            write_labels(ctx, t)
+    n = collections.Counter(r["source"] for r in t.values())
+    print(json.dumps(dict(sorted(n.items()))), f"{bad} failing")
+    return 1 if bad or (stale and a.check) else 0
+
+
+def cmd_label_set(ctx, a):
+    t = read_labels(ctx)
+    ja = a.ja.replace("\r\n", "\n").replace("\n", "\\n")
+    if ja not in t:
+        print(f"{ja}: not a row of labels.tsv (add the label first)", file=sys.stderr)
+        return 1
+    text = a.text.replace("\r\n", "\n").replace("\n", "\\n")
+    r = {"ja": ja, "en": text, "source": a.source, "engine": "", "date": a.date or today(), "editor": a.by, "note": a.note or ""}
+    probs = label_problems(ctx, glossary_dict(glossary_rows(ctx)), r)
+    if probs and not a.force:
+        print(f"{ja}: {json.dumps(probs, ensure_ascii=False)} (fix the text or pass --force)", file=sys.stderr)
+        return 1
+    t[ja] = r
+    write_labels(ctx, t)
+    print(f"{ja}: {a.source} label row by {a.by}")
+    return 0
+
+
+def import_mt_labels(ctx, a, rows, n):
+    t = read_labels(ctx)
+    g = glossary_dict(glossary_rows(ctx))
+    font = ctx.fnt
+    rej_path = ctx.work / "mt-rejected-labels.tsv"
+    rejected = {}
+    for r in rows:
+        ja = r["ja"]
+        cur = t.get(ja)
+        if cur is None:
+            n["label: not in labels.tsv"] += 1
+            continue
+        if cur["source"] in HUMAN or (cur["source"] in MACHINE and not a.replace):
+            n["label: kept " + cur["source"]] += 1
+            continue
+        jn = C.unesc(ja)
+        en, probs = C.post_one({"ja": ja, "budget": font.widest(jn), "multiline": "\n" in jn}, r["mt"], font, g)
+        probs.pop("width", None)
+        row = {"ja": ja, "en": C.esc(en), "source": "machine", "engine": engine_name(r), "date": r.get("date", ""),
+               "editor": "", "note": ""}
+        if not probs:
+            probs = label_problems(ctx, g, row)
+        if probs:
+            rejected[ja] = {"message_id": ja, "ja_sha1": C.sha1(ja), "engine": row["engine"], "date": row["date"],
+                            "en": row["en"], "problems": json.dumps(probs, ensure_ascii=False)}
+            n["label: rejected"] += 1
+            continue
+        t[ja] = row
+        n["label: imported"] += 1
+    write_labels(ctx, t)
+    if rejected:
+        rej_path.parent.mkdir(parents=True, exist_ok=True)
+        rej_path.write_text(tsv_text(REJECT_COLS, [rejected[k] for k in sorted(rejected)]), encoding="utf-8")
+        print(f"rejected labels: {rej_path}", file=sys.stderr)
+
+
 def engine_name(r):
     return f"{r['model']}/{r['quant']}/{r['prompt']}/llama.cpp-{r['llama_build']}/t{r['temperature']}"
 
 
 def cmd_import_mt(ctx, a):
+    n = collections.Counter()
+    with open(a.checkpoint, encoding="utf-8") as f:
+        lines = [json.loads(x) for x in f if x.strip()]
+    label_rows = [r for r in lines if r.get("kind") == "label"]
+    if label_rows:  # layout labels: labels.tsv only (english.md 7.14)
+        import_mt_labels(ctx, a, label_rows, n)
+        print(json.dumps(dict(sorted(n.items())), ensure_ascii=False))
+        return 0
     b = build(ctx)
     src, font = ctx.src, ctx.fnt
     table = ctx.table()
     rej_path = ctx.work / "mt-rejected.tsv"
     rejected = {r["message_id"]: r for r in read_tsv(rej_path, REJECT_COLS)}
-    n = collections.Counter()
-    with open(a.checkpoint, encoding="utf-8") as f:
-        lines = [json.loads(x) for x in f if x.strip()]
     def is_story(r):
         return r.get("kind") == "story" or "lines" in r
     story_rows = [r for r in lines if is_story(r)]
@@ -1449,6 +1566,17 @@ def main(argv=None):
     p.add_argument("--out", required=True)
     p = sub.add_parser("glossary-weak")
     p.add_argument("--apply", action="store_true", help="add the human rows that remove the weak terms")
+    p = sub.add_parser("labels")
+    p.add_argument("--check", action="store_true")
+    p = sub.add_parser("label-set")
+    p.add_argument("ja")
+    p.add_argument("text")
+    p.add_argument("--by", required=True)
+    p.add_argument("--note")
+    p.add_argument("--date")
+    p.add_argument("--force", action="store_true")
+    p.add_argument("--source", choices=("human", "agent"), default="human",
+                   help="agent: an AI agent wrote it (ranked like machine; --by names the agent)")
     p = sub.add_parser("import-mt")
     p.add_argument("checkpoint")
     p.add_argument("--replace", action="store_true",
@@ -1458,7 +1586,8 @@ def main(argv=None):
     cmds = {"build": cmd_build, "report": cmd_report, "show": cmd_show, "set": cmd_set, "review": cmd_review,
             "stale": cmd_stale, "export-po": cmd_export_po, "import-po": cmd_import_po,
             "export-csv": cmd_export_csv, "import-csv": cmd_import_csv, "import-mt": cmd_import_mt,
-            "glossary-weak": cmd_glossary_weak, "derive": cmd_derive}
+            "glossary-weak": cmd_glossary_weak, "derive": cmd_derive,
+            "labels": cmd_labels, "label-set": cmd_label_set}
     return cmds[a.cmd](ctx, a)
 
 

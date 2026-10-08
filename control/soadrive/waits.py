@@ -100,18 +100,19 @@ def tap_settled(s, xy, shot=None, mask=(), secs=20):
 
 
 def tap_to_screen(s, name, xy, shot=None, is_screen=None, secs=40, tries=3, retap_after=6, mask=(), changed=0.02,
-                  fatal=True, cmds=None):
+                  fatal=True, cmds=None, hold=1):
     """Taps xy (or sends cmds) and waits until the screen it leads to settles (settle):
     is_screen(path) (a popups.is_* fingerprint), or without one any screen that differs from the
     one tapped (RMSE above `changed` at screens.WATCH_SIZE). A lost tap (the screen still the one
     tapped, and settled, `retap_after` s after the tap) is made again, at most `tries` taps in all.
     PASS / FAIL name (gave_up: Abort when fatal); keeps the screen as SHOT. Returns its path or
     None. For taps whose effect is a log line (a phase, a request), tap_to_log is the better wait;
-    for a tap that changes little or toggles, tap_settled."""
+    for a tap that changes little or toggles, tap_settled. hold: as settle's (a screen that pauses
+    before its next part comes by itself)."""
     before = s.scratch(".before.png")
     if look(s, ".before.png") is None:
         before = None
-    w = screens.Watch(s.send, s.scratch(".screen.png"), mask)
+    w = screens.Watch(s.send, s.scratch(".screen.png"), mask, hold=hold)
     taps, tapped, settled = 0, 0.0, False
     end = time.monotonic() + secs
     while True:

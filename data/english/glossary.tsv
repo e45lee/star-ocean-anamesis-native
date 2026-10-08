@@ -109,6 +109,7 @@ ja	en	kind	variants	avoid	source	note
 インフェルノグレイヴ	Inferno Grave	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 インフェルノミラージュ	Inferno Mirage	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 インペリアルレイ	Imperial Ray	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+イヴリーシュ	Evelysse	character		Eve$ | Evreesh | Leash	human	the user's decision 2026-10-08 (en-evelysse, english.md 7.18): Global's name Evelysse everywhere in our rows (Global's own text says Eve in 128 rows, Evelysse in 32; those stay); Global's own term (official), the human row adds the avoid words
 イヴリーーーシュ	Evelysse	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 イーエヌツー	EnII	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 イージス・ウィング・エッジ	Aegis Wing Edge	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -1219,7 +1220,7 @@ ja	en	kind	variants	avoid	source	note
 リンガ	Ringa	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 リヴァイ	Levi	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 リーサルウェポン	Lethal Weapon	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-リーシュ	Eve	name	Evelysse		human	Global's spelling in its official text (Q8; glossary-weak listed the M2 machine name as contradicted)
+リーシュ	Evelysse	name		Eve$ | Leash	human	the user's decision 2026-10-08 (en-evelysse, english.md 7.18): Global's name Evelysse everywhere in our rows (Global's own text says Eve in 128 rows, Evelysse in 32; those stay); was Eve (Global's spelling in its official text, Q8)
 リーシュ	Leash	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 リーン	Lean	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 リーンベル	Leenbell	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -1263,7 +1264,7 @@ ja	en	kind	variants	avoid	source	note
 レディ・ウェルチ	Lady Welch	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 レディ・カーリン	Lady Karlyn	name	Lady Carlin		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: made consistent with カーリン = Karlyn (was Lady Carlin, kept as a variant)
 レディ・ラヴァーニア	Lady Lavarnia	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-レディ・リーシュ	Lady Eve	name	Lady Leash		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: made consistent with リーシュ = Eve (human row, Global) (was Lady Leash, kept as a variant)
+レディ・リーシュ	Lady Evelysse	name		Eve$ | Leash	human	the user's decision 2026-10-08 (en-evelysse, english.md 7.18): Global's name Evelysse everywhere in our rows (Global's own text says Eve in 128 rows, Evelysse in 32; those stay); was Lady Eve (machine: M2 name pass 2026-10-06, en-followup 2026-10-07), Lady Leash before
 レプリカマスク	Replica Mask	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 レプリケーター	Replicator	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 レモングミ	Lemon Gummy	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0

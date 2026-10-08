@@ -35,7 +35,7 @@ message_id	ja_sha1	en	source
 6041_010_19	40c8b57d7c5d122035f3885d767a1554e3126845	we can no longer simply ignore\nthe conflict between Raza and\nOber.	machine
 6041_010_20	6c080d5082748eda22973b325ba40aaf465c50c2	Did... something happen?	machine
 6041_010_21	1c759f77ac00a9d8dc2e69874c0bef7c1750fb0e	It may not be as simple as\nending the war, like it was with\nDaftine.	machine
-6041_010_22	b9b2345f3fba0818695f3aad0fe06c2641ff22ad	But even if we find Eve and\nbring her back now, we cannot\nsimply leave the Azurite\nsystem.	machine
+6041_010_22	b9b2345f3fba0818695f3aad0fe06c2641ff22ad	But even if we find Evelysse\nand bring her back now, we\ncannot simply leave the Azurite\nsystem.	machine
 6041_010_23	a7c6a8b54bc8bfadd030e0f7c63258ca236ed7ea	...And what does everyone else\nthink?	machine
 6041_010_24	1025e4209810dabb22830ab62921f6e4e52c1293	Our individual goals may differ, but we\nare all in agreement that we cannot\nstand by and watch the battle between\nRaza and Ober.	machine
 6041_010_25	ce43ab91b57ba8894915ed6ce82d7c04491cfc15	I see. That's a relief. I thought\nRicardo might be against it.	machine
@@ -80,7 +80,7 @@ message_id	ja_sha1	en	source
 6041_010_66	4f51a753f84cbec61af42b8a4a07d938d186a170	<font color=blue>Tika</font> Honestly! Valka, please\ncontinue!	machine
 6041_010_67	afea328471d912883fc390c677bbe49e64b41e96	<font color=blue>Valka</font> Hehe. Anyway, there are\ntoo many unnatural points\nregarding this Phantom\nincident.	machine
 6041_010_68	94d40b24a050f2ee57d89a36ef38d5b70816fb3a	But if you think back, we\nencountered something similar\nto the Phantoms even before\nwe entered the Azurite system.	machine
-6041_010_69	2cd06d20724eef0f6fae97ac18d522af85e93208	<font color=blue>Tika</font> ...The black monsters Givel\nsummoned. ...And... Eve's...	machine
+6041_010_69	2cd06d20724eef0f6fae97ac18d522af85e93208	<font color=blue>Tika</font> ...The black monsters Givel\nsummoned. ...And... Evelysse's...	machine
 6041_010_70	c1072dbbd015e2e960a60eaa189ceaad2cf80415	<font color=blue>Mastima</font> Hmph! Hmph!!	machine
 6041_010_71	d35cc701176269706f7fb559695fb607ce9580c4	<font color=blue>Tika</font> Ma-sti-ma! Be quiet!!	machine
 6041_010_72	9a77471d131068fb2bf2cff4d4aff0a1044a6121	<font color=blue>Henri</font> Are you suggesting that\nGivel is the one creating the\nPhantoms now?	machine
@@ -91,8 +91,8 @@ message_id	ja_sha1	en	source
 6041_010_77	9ffcc0153159144dd4c25406a5b0dd81b54245cd	<font color=blue>Tika</font> Now that you mention it,\nthat's true.	machine
 6041_010_78	93f1405b3a08994663443501347395033f1ba8ea	<font color=blue>Heath</font> Those guys showed\nsome real guts facing off\nagainst the black McKinley\nships.	machine
 6041_010_79	c52f385922b1f3c9028979b32881a5bd7a3dae1e	<font color=blue>Valka</font> Furthermore, Phantoms are\nfundamentally hostile to all life. That\nmakes it all the more inexplicable that\nthey are currently acting only in Ober's\nfavor.	machine
-6041_010_80	b25152840f586c664c07f7828289bf3be659de61	The problem lies in the footage\nof Lady Eve that Lady Karlyn\nsummoned at the Urza System.	agent
-6041_010_81	298d41ad2c2fe38cc6a5a0436e734c62f5eff71f	<font color=blue>Karlyn</font> You mean the one\nwhere Eve saw Givel?	machine
+6041_010_80	b25152840f586c664c07f7828289bf3be659de61	The problem lies in the footage\nof Lady Evelysse that Lady\nKarlyn summoned at the Urza\nSystem.	agent
+6041_010_81	298d41ad2c2fe38cc6a5a0436e734c62f5eff71f	<font color=blue>Karlyn</font> You mean the one\nwhere Evelysse saw Givel?	machine
 6041_010_82	7cc4144934e62ee191ff4a8177bbd672254fead2	<font color=blue>Valka</font> If that was a recording from after\nwe defeated Givel... then I suspect the\nperson appearing alongside Givel holds\nthe key to this situation.	machine
 6041_010_83	5116716345d3fee660070607876ac1ea3e1427ea	<font color=blue>Karlyn</font> You mean someone is\ncontrolling Givel, just like Givel\nwas controlling the Beast\nWitches?	machine
 6041_010_84	f34ca1dc7756aab1fe75baa8e42f65cb51642e61	To be able to do something like\nthat to Givel...	machine
@@ -109,7 +109,7 @@ message_id	ja_sha1	en	source
 6041_010_96	b65d219b7665cb51db2458b5fdedbc181cd6280b	You're saying that figure was\nAsmodeus?	machine
 6041_010_97	2130c27a12c9d221a6c465345af0d3c32e8dd595	I believe that is highly likely.	machine
 6041_010_98	c3c0301794f597a294ab8b4c6562479029f2be05	Regardless, whether we are\nuncovering the secrets of the\nPhantom,	machine
-6041_010_99	b0d2c2d273eb090a4077ab608d2421c0c4f1f827	or searching for Eve and Givel,\nthe clue we should be pursuing\nis...	machine
+6041_010_99	b0d2c2d273eb090a4077ab608d2421c0c4f1f827	or searching for Evelysse and\nGivel, the clue we should be\npursuing is...	machine
 6041_030_01	3762a71e622248cb542a322a3d4467844b595940	A few hours later...	machine
 6041_030_02	03e68fcfec10458498d27c01bfb77a4ae63405af	Is the Overman all fixed up?	machine
 6041_030_03	a523e190ffc05dc60e545cf2344dc7240413d0e6	...Yeah. Isabel's technicians\nhandled all the major repairs.	machine
@@ -139,7 +139,7 @@ message_id	ja_sha1	en	source
 6041_030_27	031c139a7ba050a1425ac9abc74a71a731c3c3a3	Is that so?	machine
 6041_030_28	42d5daad0806673115ee18d40f1dcf78b6957a8b	I think the software\nperformance improved since\nCoro is on board,	machine
 6041_030_29	3cf683f5420b7cfb9e615bb39492c60fe888084f	but even then, a ship built and\nmaintained by a family in a\nBazaar dock would probably be\nfar superior.	machine
-6041_030_30	2c5cf72496967516276deecd841677d7b29e46a0	It doesn't even have a warp drive like a\nwarship. If it weren't for Eve, the\nOverman would never have been used\nfor a deal like this.	machine
+6041_030_30	2c5cf72496967516276deecd841677d7b29e46a0	It doesn't even have a warp drive like a\nwarship. If it weren't for Evelysse, the\nOverman would never have been used\nfor a deal like this.	machine
 6041_030_31	02594f7bd609ffd65729cad45b07037145fd9fa7	I see...	machine
 6041_030_32	43d7bfa184bebb65bba5731a65b74d00291ff80c	My father saw me tuning the\nOverman and tried to give me\nplenty of high-end parts.	machine
 6041_030_33	c1b907dc62beeb43b861d8cedf972622e7dad608	But I refused. Because if I did...	machine
@@ -164,7 +164,7 @@ message_id	ja_sha1	en	source
 6041_030_53	0e285529d6fa018597fe90c3afe660d24fdcc9af	We managed to send Heath back to\nthe mothership, but from here on, we'll\nlikely be heading straight into the\nmiddle of the war between Raza and\nOber.	machine
 6041_030_54	168cf3ef8675c3cc9b010337938d08031a5fd6a3	I can't let Lavarnia and the\nOverman get dragged into\nsomething like that. I'm sure\nthe Captain would agree.	machine
 6041_030_55	a6c91d000a73971b823812f17448b42c0a768b51	...No way.	machine
-6041_030_56	64782b4ee0da3a0f4c11e45d51ee7fe5e092693c	Of course, we'll properly\ncompensate you later for the\nship Eve damaged and the\nGems that were stolen.	machine
+6041_030_56	64782b4ee0da3a0f4c11e45d51ee7fe5e092693c	Of course, we'll properly\ncompensate you later for the\nship Evelysse damaged and the\nGems that were stolen.	machine
 6041_030_57	843e67f75f55ea1e85dbda49eaf17f8c5ec9eb30	...That's... not necessary\nanymore.	machine
 6041_030_58	5590ff8011105dbc9611adfe36ab2f63edc164d3	Huh?	machine
 6041_030_59	ee1516aeea6e88ea0cad10c289be4bc1274a9ddc	I received more than enough in\nexchange for the Gems. It's\nmore than enough to cover the\ndamaged ship, too. So...	machine
@@ -184,7 +184,7 @@ message_id	ja_sha1	en	source
 6041_035_12	aec6c532e4d50ca45f0699d1ace7e7342d753857	What?! No, but... there's no\nreason for Ms. Lavarnia to\nthrow herself into danger like\nthat...!	machine
 6041_035_13	447ca4845ccbb96dbe24937a218a772c85ac3a50	She wants to challenge the\nworld with something she\ncreated. That's more than\nenough of a reason!	machine
 6041_035_14	17f8d1fc934da08a934afa5db0988e3613051900	What!?	machine
-6041_035_15	361b176124d44a941ce5da2199e8e8ec9fc9c891	Anyway, we're probably just\ngoing to go blast those\nblack-clad creeps or go look\nfor Eve and Givel.	machine
+6041_035_15	361b176124d44a941ce5da2199e8e8ec9fc9c891	Anyway, we're probably just\ngoing to go blast those\nblack-clad creeps or go look\nfor Evelysse and Givel.	machine
 6041_035_16	d31065b35e180197761a056282ea24e41812dc08	But you're not planning on\ngoing around explaining all that\nto the people of Raza and\nOber, right?	machine
 6041_035_17	ece7504581386aa7a34b679a9f65a27305edc768	Well... probably not.	machine
 6041_035_18	65dbb3287d2847e67714f52e9cfc625fcd9c0b35	But if we keep wandering\naround here in Coro's ship, the\npeople of Raza and Ober who\ndon't know the situation...	machine
@@ -259,7 +259,7 @@ message_id	ja_sha1	en	source
 6042_100_01	be396c9ab25b4518fcdf78b16905aaeba6581479	All crew, check your harnesses.\nThe Overman is launching!	machine
 6042_100_02	4cffbcc8e5b5f684d7df0b35ac9e3f2b8c632e7c	Systems are all green. No space\nvessels or excessive concentrations of\nsilicon-based matter detected in the\nvicinity. I judge that we will be safe for\na while.	machine
 6042_100_03	35afcf9e9da546caaf9db5b2c98ea5de71e82845	Alright, let's go over the plan. Thanks\nto Isabel's group, we know the state of\nthe war, but we've jumped out here\nwithout any idea of the current\nsituation.	machine
-6042_100_04	3bc9567df0061d948555dae6d44ce0eaaf1214b4	We don't even know where our\ncomrade Eve is, so how are we\nsupposed to track down Givel\nand Asmodeus?	machine
+6042_100_04	3bc9567df0061d948555dae6d44ce0eaaf1214b4	We don't even know where our\ncomrade Evelysse is, so how\nare we supposed to track\ndown Givel and Asmodeus?	machine
 6042_100_05	134b064e0bcd2a3259500afd9e499cba3b29d504	I have an idea about that.\nPlease, listen!	machine
 6042_100_06	612f6299e08c91e95b557569f3a35ed4c9d2d99e	Hm?	machine
 6042_100_07	f1449198546e958d4911da8dba4d17d9b4986ede	I have been awaiting this\ncommunication. I have just\nfinished constructing the\nrequested program.	machine
@@ -488,7 +488,7 @@ message_id	ja_sha1	en	source
 6042_150_32	7da947c8c7b8d05c208314f1df7bf6cc3003c69f	T-this is...!!	machine
 6042_150_34	55721992d8ae086104d0927d438bc1ce7381522f	...No... it can't be.	machine
 6042_150_35	13b6c389c499f0f30dbb4cb3b7a59cf8b7873ccc	...This is the Silvarant, flagship\nof the Ober Space Force First\nFleet. ...Captain. Coro. Do you\nread me?	machine
-6042_150_36	3b814b3aa2c582f4eacb800f6f350da90d24a0fc	"Eve... Big sister..."	machine
+6042_150_36	3b814b3aa2c582f4eacb800f6f350da90d24a0fc	"Evelysse... Big sister..."	machine
 6043_200_01	7b2d6b26c15ce83cc64d5ab8adfc2c3a4115ad4c	...We have arrived at the\ndesignated point. No other\nstarships in the vicinity, except\nfor that one.	machine
 6043_200_02	21afb3969b3d200d6bdc4f7bf702cbb4c3b15815	"Battle ship Silvarant," my foot.\nThey really had me spooked.	machine
 6043_200_03	8846fdc82c3e954132dd0627ce6616c04c6559d8	I'd never heard the name, so I\nthought it was some new model\nor something, but it's just a\nridiculously old transport ship.	machine
@@ -500,16 +500,16 @@ message_id	ja_sha1	en	source
 6043_200_09	73bdd3017fd3628e6624e9a3d2c0fe9ed2cc5bda	You've gotta be kidding me...	machine
 6043_200_10	1ad4eb6c1d59e49eb0946d0727b64142b4965d90	On the bright side... despite the\nship's massive size, it seems\nonly a skeleton crew is\nassigned to operate it.	machine
 6043_200_11	b5166f60c57b9b563697df649c5de021057e22c2	I bet it's just crawling with\nPhantoms once we get inside,\nanyway.	machine
-6043_200_12	b5b7d9e4f1d0fcb780dff9770a01e6e2b6171419	We still have to go. After all,\nBig Sister Eve is in there.	machine
+6043_200_12	b5b7d9e4f1d0fcb780dff9770a01e6e2b6171419	We still have to go. After all,\nEvelysse is in there.	agent
 6043_200_13	f9752c18be685fb04f8e215fbd677028484c32f5	This is a message from Asmodeus,\nCommander-in-Chief of the Ober Space\nForce. We are aware that you are\nsearching for traces of the Phantom\nfleet in the nearby sector.	machine
 6043_200_14	8e56b25fed900515d603ba472e2c735ecdd965e2	We wish to provide your ship with\ninformation regarding the truth of the\nwar between Raza and Ober. Therefore,\nwe request a face-to-face meeting with\nthe person in charge.	machine
 6043_200_15	07ad978efd433d2f689fcfe8f068b48b1e2b0bf6	I have sent the designated\ncoordinates. I look forward to a\npositive response. ...That is all.\nEnding transmission.	machine
-6043_200_16	c9c7133b625230222387cf8310b2889289145ac7	...I see. The most baffling thing\nfor us is Eve's current\nsituation.	machine
+6043_200_16	c9c7133b625230222387cf8310b2889289145ac7	...I see. The most baffling thing\nfor us is Evelysse's current\nsituation.	machine
 6043_200_17	e944c1b395296cae99a693cdda9f6e51f0117082	Until we understand that, we\ncannot leave the Azurite\nsystem, even if the interstellar\nwar were to end.	machine
 6043_200_18	db22be1ee215b25a8ac5be00027b2b0cf7d7b712	I hate to be the killjoy here,\nbut this has "trap" written all\nover it.	machine
 6043_200_19	632002993a44444ffd5341b435bf7ee369623218	I don't know how Evelysse\nherself is involved with Ober,\nbut I doubt she'll just come\nback quietly in this situation.	machine
 6043_200_20	31f4af30831acab3b30f690566f0e010be570906	Oh, give it a rest! It doesn't\nhelp to keep complaining when\nour main target has finally\ntaken the bait!	machine
-6043_200_21	abb0b66d26c95e049c596eda9d73a60a3a8146a5	Trap or no trap, we'll blast\nthrough everything and drag\nEve back here even if we have\nto tie her up!	machine
+6043_200_21	abb0b66d26c95e049c596eda9d73a60a3a8146a5	Trap or no trap, we'll blast\nthrough everything and drag\nEvelysse back here even if we\nhave to tie her up!	machine
 6043_200_22	8cb51e3468361f7b71620221ea1716db08233a22	...You're right. And it seems like\nthey're more than ready to\nwelcome us.	machine
 6043_200_23	26c32c0fb2da65e39e4b321911dea5b91ccdc2f8	Tractor Beam confirmed from\nthe battleship Silvarant.\nLavarnia, Captain, are we\ngood?	machine
 6043_200_25	97a27b2ad1b219c4087cea1aacf7eff7255ad6ed	We're good. We have a\nmechanism to cut the beam if\nthings go south. We can still\nescape.	machine
@@ -526,10 +526,10 @@ message_id	ja_sha1	en	source
 6043_200_37	9686043a378980504c06c489bb7cf5025ec8fcdf	Why are you only telling me!	machine
 6043_200_38	4d517764ddbb3a39e50ccfe69004bd708e37ec04	Don't worry, Mr. Euwin. I'll make\nsure to cover Welch's back.	machine
 6043_200_39	a6674ed8b327cf3f67e54dcd36615cbd9a9d7f9e	Lover... not you too...	machine
-6043_200_40	c74af91e44a933db9098cb97e2592677ac492b76	No matter where it is, we just\nhave to keep moving. Big sister\nValka, do you think big sister\nEve is on this ship?	machine
-6043_200_41	c118103d9cdeab904bb744db1990a6b12ecbd59d	I have detected a biological\nsignature near the bridge.\nThere is a high probability that\nit is Lady Eve.	agent
+6043_200_40	c74af91e44a933db9098cb97e2592677ac492b76	No matter where it is, we just\nhave to keep moving. Big sister\nValka, do you think Evelysse is\non this ship?	agent
+6043_200_41	c118103d9cdeab904bb744db1990a6b12ecbd59d	I have detected a biological\nsignature near the bridge.\nThere is a high probability that\nit is Lady Evelysse.	agent
 6043_200_42	4417f61f5ff8483943220ff0878801a425ae460f	However, there are two other\nbiological signatures as well...	machine
-6043_200_43	645badba8dd254ddef9b16808baba393699852c8	It could be Asmodeus, and maybe Givel.\nEither way, we have no choice but to\ngo. Captain, let's hurry and rescue\nEve...	machine
+6043_200_43	645badba8dd254ddef9b16808baba393699852c8	It could be Asmodeus, and maybe Givel.\nEither way, we have no choice but to\ngo. Captain, let's hurry and rescue\nEvelysse...	machine
 6043_200_44	644877cca632dc7dddc58cd7be9e11802d42121b	?! Everyone, get back!!	machine
 6043_200_45	fbff1680d6df1bb54f86bccdaf98877304b9507d	It's... it's huge! What is this\nthing?!	machine
 6043_200_46	d426c1c4e9ebeedf8b1ef2f138754a0c9313fac7	Nngh! It's the same model as the one\nthat appeared in Cosmo City on the\nsatellite Mastima. Watch out, Heath,\nthis one's tough!	machine
@@ -574,22 +574,22 @@ message_id	ja_sha1	en	source
 6043_230_21	13361151de46128fb37cd9eebdec761cc7df1f9b	Hmm. It seems you haven't\nquite grasped the situation.\nWhy don't you explain it to\nthem?	machine
 6043_230_22	b4e5dadbbfbaf97fefe6209cc3363a18584dc4eb	...Yes, explain! What is going on\nhere?!	machine
 6043_230_24	8b936fcf2c3bab2635728b468723a0be2f5e264b	...I had a bad feeling about\nthis... but I didn't think it would\nbe like this...!	machine
-6043_230_25	6198567e243bea0582c68f4da2c4f801bbcc489c	Explain yourself, Eve!! What is\nthe meaning of this!!	machine
-6043_230_26	0f8d5dffa6adc73a03f81b6f40ebf00bfa2df55e	Lady Eve... I demand an\nexplanation. The person inside\nthat capsule behind you...	agent
+6043_230_25	6198567e243bea0582c68f4da2c4f801bbcc489c	Explain yourself, Evelysse!!\nWhat is the meaning of this!!	machine
+6043_230_26	0f8d5dffa6adc73a03f81b6f40ebf00bfa2df55e	Lady Evelysse... I demand an\nexplanation. The person inside\nthat capsule behind you...	agent
 6043_230_27	8c6ad80741178a32f627f92da496b9b11960a053	Is that Givel?	machine
-6043_230_29	b7f21d84978c4e5b125cd4e51e7daf838ae98826	We won't know if you stay\nquiet! Eve!!	machine
+6043_230_29	b7f21d84978c4e5b125cd4e51e7daf838ae98826	We won't know if you stay\nquiet! Evelysse!!	machine
 6043_230_30	48d3034ccdc3c53e5a19cfec93fba3e260256a2d	Karlyn, calm down!	machine
 6043_230_31	5076e400519bf5ffa5e61327538e62edfe07f189	How can you be so calm right\nnow?!	machine
-6043_230_32	0192823f65cde3cb8931b4d5011d7be99a940c7f	With Givel in that state, it\nmeans Eve must have been the\none who summoned that\nPhantom!!	machine
-6043_230_33	cdaa86947bf30224cae730942e51c82012048130	Eve... surely she wouldn't...	machine
+6043_230_32	0192823f65cde3cb8931b4d5011d7be99a940c7f	With Givel in that state, it\nmeans Evelysse must have\nbeen the one who summoned\nthat Phantom!!	machine
+6043_230_33	cdaa86947bf30224cae730942e51c82012048130	Evelysse... surely she wouldn't...	machine
 6043_230_34	603fd59e087f5ca90f66bd5068c6a6730cdf6eb7	Why have you been silent this\nwhole time?! If it's not true,\nthen say so!	machine
 6043_230_35	172d5b96ba5313d3fe6dac6f7059e01b7121e921	Good grief, being scolded by your own\ncomrades is quite harsh, Evelysse. If it's\ntoo difficult for you to answer, shall I\ndo it for you?	machine
-6043_230_37	baf0f596d3948af33866a12b5c31b2dc2f95b549	Eve... why...?	machine
+6043_230_37	baf0f596d3948af33866a12b5c31b2dc2f95b549	Evelysse... why...?	machine
 6043_230_38	201d16b1c0a94f770b9f8bc1fb542f69d7b5b3ea	It is exactly as you imagined,\nwoman of Foxtail.	machine
 6043_230_39	6dfb536270c9bc34e7f0c0f3367b8d874ac29821	The Phantoms you were\nfighting so noisily on this scrap\nof a ship were summoned by\nEvelysse.	machine
-6043_230_40	1ba5cdee92138b4dc3e530634544c6a71a078b67	Summoned by Lady Eve...\nImpossible!!	agent
+6043_230_40	1ba5cdee92138b4dc3e530634544c6a71a078b67	Summoned by Lady Evelysse...\nImpossible!!	agent
 6043_230_41	87d6bdc5e71712cf7c35544a9637ce95478e41a2	Yes, but do not misunderstand. It would\nbe misplaced to blame her for the\nPhantom fleet currently overwhelming\nRaza's forces in the Azurite system.	machine
-6043_230_42	aaae0e405de5a803e1f759ac1a0e021a55bf3bc2	Then, does Givel, who is\nstanding behind Eve, have\nsomething to do with this?	machine
+6043_230_42	aaae0e405de5a803e1f759ac1a0e021a55bf3bc2	Then, does Givel, who is\nstanding behind Evelysse, have\nsomething to do with this?	machine
 6043_230_43	8a553f4865815ca16d837edc2baa1e46865feca1	I see. You're a Lycanthrope.\nYou aren't an Ober, but an ally\nof Evelysse.	machine
 6043_230_44	01a86ff691be4a659b079589dfd734d416bb7f08	In that case, it's no wonder you\nrecognize this man. You're half\nright.	machine
 6043_230_45	8611d722a791ffe382b306c44fc7b7aa15be7dc8	The Phantom you fought on\nthis ship was summoned by\nEvelysse's will.	machine
@@ -616,13 +616,13 @@ message_id	ja_sha1	en	source
 6043_230_68	7579e7e1941777b8b6388d5ed2df4ebcbc259177	Ending this. And how exactly do you\nintend to do that? No matter who\nemerges victorious, the eventual\noutcome remains the same.	machine
 6043_230_69	7d0441673bb685ecb32d16e1447f806ff9a3dc33	...Ugh! What is with this guy?!\nHe's even more condescending\nthan Givel!	machine
 6043_230_70	2ecf2b7f53454f63dbdfacc31f2eaaa842953201	Hey, Welch!	machine
-6043_230_71	dbe5cf24a65d7120c9514d4195563e116942762b	Eve! What on earth are you\ndoing standing next to this\nobvious villain!	machine
+6043_230_71	dbe5cf24a65d7120c9514d4195563e116942762b	Evelysse! What on earth are\nyou doing standing next to this\nobvious villain!	machine
 6043_230_72	2d107e99a3220541794a908a55445807158a9e91	The Captain, Verda, and Tika\nare all waiting for you! Get\nback here right now!!	machine
 6043_230_73	89e32523d8d8aee0a745105dcd11bfa3668aa0db	That would be problematic.\nSince the Giverese are in such\na state, I must have Evelysse\nserve as my proxy.	machine
 6043_230_74	3972301f03bd934eb3199b6e9ecd7fd480421b5a	Don't be ridiculous!!	machine
 6043_230_75	8b97fa38b48788dcdaf3ad0a6a0685b9f922495a	Hmm. Very well, Evelysse. Let\nus use Givel for a\ndemonstration so your\ncomrades can understand.	machine
 6043_230_76	eb2c5fdc430e0b32c78831b349c527089ba29f48	W-wait! Stop! I'll cooperate with\nyou until the very end!	machine
-6043_230_77	7de1e8365931ac01742b3ebae5f803cab98c18ae	Eve!!	machine
+6043_230_77	7de1e8365931ac01742b3ebae5f803cab98c18ae	Evelysse!!	machine
 6043_230_78	cc4752bc1ce932c9ba15339077a72550105aeeb4	It seems your comrades are\nnot convinced. Rest assured, I\nhave no intention of harming\nthem.	machine
 6043_230_79	4fa663c65b2328265e7f515c6fb6c966c0af8b88	Instead...	machine
 6043_230_80	95f668c015b15535b2321569015cb5478fb75eba	I shall dispose of the rat who\nbrought these pests here.	machine
@@ -668,10 +668,10 @@ message_id	ja_sha1	en	source
 6043_250_07	0884d409811cb14a7f769afd406f70afae1ca6a7	...Why don't I tell you what\nhappened? Evelysse, I could\neven recreate it right here if\nyou'd like.	machine
 6043_250_09	4d81e22434ccd1ddec40b716950dc3a71f29d486	Hmph, it can't be helped then.\nPerhaps I'll have Givel do a bit\nmore work?	machine
 6043_250_10	02c72504b4e6216d75bff724a281933f87812618	...! T-that's...	machine
-6043_250_11	31e0899481f9849216e9a35255132dac19c418eb	What on earth is going on...? It\nlooks as though Givel is being\nused as a hostage to control\nEve.	machine
+6043_250_11	31e0899481f9849216e9a35255132dac19c418eb	What on earth is going on...? It\nlooks as though Givel is being\nused as a hostage to control\nEvelysse.	machine
 6043_250_12	25739af8b46b696ebf88f30fc4c9682e4897e149	Since we're at it, maybe I'll\nprepare another Phantom ship\nand sink this entire world of\nSilvarant.	machine
 6043_250_13	a40b7d7014013c26d4d3d89ef04c891330314dc5	Stop... stop it!!	machine
-6043_250_14	a568cda15eb3fb863aace0df97ac1bc370e8f796	Eve! What on earth are you\ndoing?! Stop this madness\nright now!!	machine
+6043_250_14	a568cda15eb3fb863aace0df97ac1bc370e8f796	Evelysse! What on earth are\nyou doing?! Stop this madness\nright now!!	machine
 6043_250_15	9d87377c9cfada237059008a969aa877aa1bd31d	K-Karlyn!	machine
 6043_250_16	2bc4c038cb5f459918f1efa1b5b167ab0d55c9b4	I don't know why, but you're\nprotecting Givel, aren't you!	machine
 6043_250_17	c4b8c6690cf795ee8700deb348b5c7ba13b2b92e	But I'm sorry, no matter the\nreason, you're the one who's\ncompletely lost her way right\nnow!	machine
@@ -688,11 +688,11 @@ message_id	ja_sha1	en	source
 6043_250_30	ef4bbbac8efb799d9f73b2ea9cfac632d8dd5feb	Mista Heath: You've gotta be\nkidding me!!	machine
 6043_250_31	9e21f15282fed240f216ea3695ef326eae9e41a6	Guh!!	machine
 6043_250_32	b8fbba2faa45c1fd5f0c0b7dab50c61b9e7e3967	Prepare to dieeeeeee!!	machine
-6043_250_33	f95ac63fea61dbf9a2de36edd371f9f19af71fda	Eve! Get over here, quickly!	machine
+6043_250_33	f95ac63fea61dbf9a2de36edd371f9f19af71fda	Evelysse! Get over here,\nquickly!	machine
 6043_250_34	a0c3d8869b23665f9ffe184488549b95abfb02a9	...!!	machine
-6043_250_35	1f936fccc4c733a321f8051c791721cefda54f17	Eve! What are you hesitating\nfor! Come here this instant!!	machine
+6043_250_35	1f936fccc4c733a321f8051c791721cefda54f17	Evelysse! What are you\nhesitating for! Come here this\ninstant!!	machine
 6043_250_36	78b009d6f103742d8b8205d929b2b5cdd4263e0c	...I'm sorry, I...!	machine
-6043_250_37	4e9c9ea319408f66205040af480e643c2d654ec2	Eve!! What has come over you!\nWhat is making you do this!!	machine
+6043_250_37	4e9c9ea319408f66205040af480e643c2d654ec2	Evelysse!! What has come over\nyou! What is making you do\nthis!!	machine
 6043_250_38	1a5ba7fa876e9fc951f14a703c8506a978cbd4ea	Hm, this is bad! Mista Heath!\nGet away!!	machine
 6043_250_39	01a55a6bc45e8ca7cb6656b6259a1cd4d8d0c209	Mista Heath: What!!	machine
 6043_250_40	232a7209c1fcad5bc592fd933f2e3ebe01af3eeb	Dammit! The vibrations\nsuddenly intensified! Don't tell\nme the whole ship is...!	machine
@@ -736,12 +736,12 @@ message_id	ja_sha1	en	source
 6043_250_78	9ac4aff949e0b9ffac0b72b9d434df4cce5e9b2a	That is something we can only know\nonce we ask him ourselves. Though,\nthere is no telling if he will be honest\nwith us.	machine
 6043_250_79	1f6d9f135541b0988356a255cc9ea7cb0b2121b1	...I'll make him talk.	machine
 6043_250_80	9848d0cd27e4614e1508b60e043c30295318ace5	Tika...	machine
-6043_250_81	8cb901f9bf46608d194f2ee5f734cce8b600ffdd	Big sister Eve... was crying.	machine
+6043_250_81	8cb901f9bf46608d194f2ee5f734cce8b600ffdd	Evelysse... was crying.	agent
 6043_250_82	a9f9d511a4deb53ddb0a6367961d1ea430241cca	Hmm...	machine
-6043_250_83	d157943683cc7d9a65bd2984a5d5d3addadbb764	Big sister Eve had Givel taken\nas a hostage...	machine
-6043_250_84	5cab1bfc58ebe69c15ba94bfad7ec0bc1b93e532	I don't know why big sister Eve\ntried to protect Givel...	machine
-6043_250_85	9aa48ede15b7dfba23577a453129ae36d6328dc0	One thing is for sure: Givel is\nthe reason big sister Eve was\ncrying.	machine
-6043_250_86	ceb939ad0864aa4c5325cf637beabb7955d75ed2	Making big sister Eve suffer\nover and over... I will never\nforgive him.	machine
+6043_250_83	d157943683cc7d9a65bd2984a5d5d3addadbb764	Evelysse had Givel taken as a\nhostage...	agent
+6043_250_84	5cab1bfc58ebe69c15ba94bfad7ec0bc1b93e532	I don't know why Evelysse tried\nto protect Givel...	agent
+6043_250_85	9aa48ede15b7dfba23577a453129ae36d6328dc0	One thing is for sure: Givel is\nthe reason Evelysse was\ncrying.	agent
+6043_250_86	ceb939ad0864aa4c5325cf637beabb7955d75ed2	Making Evelysse suffer over\nand over... I will never forgive\nhim.	agent
 6043_250_87	ec91776f705c53994278475f3b903e4244fc31f9	...Indeed.	machine
 6043_250_88	921df8a38ee11ed153e3f764a532d041b37732d0	Hey, everyone! I told you the\nship is sinking! We have to\nevacuate, now!	machine
 6043_250_89	c97b00e80b139f2d34b2d6482df54bd8dc637608	Dammit! We let the enemy boss\nget away and we're all beat to\nhell! Curse it all!	machine

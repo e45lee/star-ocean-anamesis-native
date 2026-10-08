@@ -1,13 +1,13 @@
 message_id	ja_sha1	en	source
 D026_010_01	eda24dff7c5599543ae8d8453a2c9b2b106a2fb4	Ugh... I had no idea it would be\nthis cold... I can't go on...	machine
-D026_010_02	952b6c984f002d7d6afab63597788b3ba8601b3f	Eve: Rena, stay strong! Our\nparadise should be just beyond\nthis blizzard!	machine
-D026_010_03	9e129ea5a0ab3a773b48e180db6784e1d418dc46	You're right, Eve. Just a little\nfurther... Yes, once we cross\nthat mountain...	machine
+D026_010_02	952b6c984f002d7d6afab63597788b3ba8601b3f	Evelysse: Rena, stay strong!\nOur paradise should be just\nbeyond this blizzard!	machine
+D026_010_03	9e129ea5a0ab3a773b48e180db6784e1d418dc46	You're right, Evelysse. Just a\nlittle further... Yes, once we\ncross that mountain...	machine
 D026_010_04	aeac3229f55741563e77d39823e9ed939c2ebbf6	Ri-tan, Rena-tan, you're both\nway too careless, dressing like\nthat for a snowy mountain.	machine
 D026_010_05	0f395a11b716f8b27960e46c01aa1f7fc7a499e9	But Coro told us the resupply point\nwas a town where we could enjoy\nnatural hot springs... I never imagined it\nwould be surrounded by snowy\nmountains like this.	machine
-D026_010_06	a770bb74df42306e057f37af6bb07e0f225b8fe8	Eve: Honestly, Coro is unbelievable! I\nknow we have to avoid being noticed\nby the locals, but he didn't have to\nwarp us down into the middle of the\nmountains!	machine
+D026_010_06	a770bb74df42306e057f37af6bb07e0f225b8fe8	Evelysse: Honestly, Coro is\nunbelievable! I know we have to avoid\nbeing noticed by the locals, but he\ndidn't have to warp us down into the\nmiddle of the mountains!	machine
 D026_010_07	7eb46acb64cafc0db06078f720ff8cc3e5861177	Once we reach the town, Lymle\nwill make you some warm\ncoats, so just hang in there\nuntil then.	machine
 D026_010_08	d08cb477ea55a0b9e969e11372f32af5b916b3b1	That's right. Lymle, like me,\ncomes from a region with\nheavy snowfall.	machine
-D026_010_09	83f4af32d9f1b5a7c237de941ff4ba8f92e2542c	Eve, Rena, snowy lands are wonderful.\nIt's precisely because of this harsh\nenvironment that one develops a strong\nheart that isn't easily shaken―just like\nher.	machine
+D026_010_09	83f4af32d9f1b5a7c237de941ff4ba8f92e2542c	Evelysse, Rena, snowy lands are\nwonderful. It's precisely because of this\nharsh environment that one develops a\nstrong heart that isn't easily\nshaken―just like her.	machine
 D026_010_10	673d369f9c174a41123643b92d5ea84b9b73a6bc	Exactly. "Old-tan" actually says\nsomething useful once in a\nwhile.	machine
 D026_010_11	a7e15d16acb8a6dae983f36dcfa7ee3aa940a749	Old...!?	machine
 D026_010_12	017d8179803ed09670d703ecf731d9f206677e49	What are you so surprised\nabout? That's what Riri-tan\nalways calls you.	machine
@@ -52,9 +52,9 @@ D026_020_01	ed52848c0b3e91155d4b472df630d4003852f7a1	Finally, a town! A real,\nh
 D026_020_02	224d2aaebaa9077c51daeb514d656ba5f074f93d	Townman: What's this? You lot\nactually thought this was still a\nhot spring resort? Those dried\nup five years ago.	machine
 D026_020_04	0359ad9247c411b7f7eb0e58f68241822102399a	Townman: Tough luck. All that's\nleft here are bathtubs buried in\nsnow and souvenirs that\nnobody wants to buy.	machine
 D026_020_05	75ec85248f86dff987cfbb8f3c5fd00633b2bef7	No... does that mean Coro gave us fake\ninformation about the hot spring\ntown...? And we walked all the way\nthrough the snowy mountains for\nnothing...	machine
-D026_020_06	d34a5e196c9427db89551deba63c7fcb95bdee1c	Stay strong, Eve! It's a shame,\nbut we did manage to get\nFrost to town. Let's focus on\nfinding Frost's family.	machine
+D026_020_06	d34a5e196c9427db89551deba63c7fcb95bdee1c	Stay strong, Evelysse! It's a\nshame, but we did manage to\nget Frost to town. Let's focus\non finding Frost's family.	machine
 D026_020_07	3178848415c9e0270674f7d73ef90671b01329c1	You're right! Once we find Frost's\nfamily, I'm going to make Coro find the\nbest hot spring in this entire star\nsystem!	machine
-D026_020_08	2a0969d20f6d05da6491d8c647bd80ac8a731f8a	But, Eve. Frost is gone.	machine
+D026_020_08	2a0969d20f6d05da6491d8c647bd80ac8a731f8a	But, Evelysse. Frost is gone.	machine
 D026_020_09	f1a9157bc0b4560f7942a7423c4dd472b7e33e01	Huh? You're right! Where did\nyou go, Frost?!	machine
 D026_020_10	7d79c0184825f2abeac9fc1ce52f535bcafe0007	Hmm, look there, behind that\nshop! Isn't that Frost?	machine
 D026_020_11	c86cf17b8ba2059cb9255960ac011625269e0288	...Eh? Frost, what are you\ndoing?! If you pull that cloth\nfrom under the pile of\nmerchandise...!	machine
@@ -335,7 +335,7 @@ D026_080_11	f2113cb76ffdf9619e19f3e284b974066d86b005	What... a slipper?	machine
 D026_080_12	d5442cc9209e4dc7459afe87d3327cc71c72f5d8	First round, here we go! Sarah,\nlet's do this, myah!	machine
 D026_080_13	124ed6ef338c0fb389e8472e137ccc9e78773f2d	I'm ready, Meri!	machine
 D026_080_15	1045dfde2029fde7ace4313945d23276787c8307	What, the two of them are in\nthis too!?	machine
-D026_080_16	2d90a610d5d5b9107c0281d786fe3666105bf8f5	I won't lose, even against\n<player> and Eve!	machine
+D026_080_16	2d90a610d5d5b9107c0281d786fe3666105bf8f5	I won't lose, even against\n<player> and Evelysse!	machine
 D026_080_17	4737214a581625c8855f10f7907c4a9f736e77ba	Fuwaaa! The "Hairdryer Racket"\ncord is wrapping all around my\nbody!	machine
 D026_080_18	f66234a9f56d41b6f3df736672fafe2611d06960	Myamyam!! Sarah's cord is\ncoming this way too!!	machine
 D026_080_19	a32487e4fea4518278e1b0def0571f10fbfc0ec4	Alright, first round cleared! I was\nworried about what would happen if the\nSlipper Racket hit something, but it has\na handle, so it's actually pretty easy!	machine
@@ -345,14 +345,14 @@ D026_080_23	453fa34adc6eb8e5cca4d13ffa77db0b8d4f1381	Alright! Next up is the\nse
 D026_080_24	481c3aba443c3432bb8779a8689952f9dde1ede2	Well, it would be frustrating to\nlose after coming this far! Let's\ndo this, Welch!	machine
 D026_080_25	bab2701d3d1c6fd593fbaaecfb722b261c9930f9	...Um, aren't there a bit too\nmany of our friends in this\ntournament?	machine
 D026_080_27	e72b4bf7fd46633e3a804ef708aac23cb7195d99	Still, it doesn't matter who shows up,\nI'm going to win! There's no way I'll lose\nto something as heavy-looking as a\n"Wok Racket"!	machine
-D026_080_28	fcd435a311e44085e387b99c81dd2f4db8af664d	Hehehe, you're naive, Eve! I'm a\nblacksmith! I've been swinging a\nhammer every single day for years! I'll\nshow you I can handle a wok!	machine
+D026_080_28	fcd435a311e44085e387b99c81dd2f4db8af664d	Hehehe, you're naive, Evelysse! I'm a\nblacksmith! I've been swinging a\nhammer every single day for years! I'll\nshow you I can handle a wok!	machine
 D026_080_29	9465dadc352843b77232c727e608721d10a5264f	Ugh... I can't imagine continuing\nto swing a wok for a full set...	machine
 D026_080_30	1f9c0b723754a1b727530ab60a4c367b959e7692	If only we'd finished the match\nsooner...	machine
 D026_080_31	b1e9bb2d4d2a0393b598f7a603a1d301e804f9ef	*Pant, pant*... That semi-final\nwas definitely a brutal fight.	machine
 D026_080_32	84deaa830b0ad42a94486d1f8760dcb05ff2fa45	(Urgh... my arm still feels off...)	machine
 D026_080_34	f0410a488f6f14626da7bc299fd89fc2713cb5f9	What? You're telling me to\nstop smashing? Why? I can't\nwin unless I go on the\noffensive!	machine
 D026_080_35	7c6a35c1b2120539b8aedf322bceaa4b681e34ce	Ah, I see. True, that Slipper\nRacket is too soft, so you can't\nreally put any power into the\nball.	machine
-D026_080_36	dc91670c9e1798fb1e82c6b18e5ba7f47057357b	And because you're forcing yourself to\nhit fast shots despite that, it seems\nlike it's putting a huge strain on Eve's\narm.	machine
+D026_080_36	dc91670c9e1798fb1e82c6b18e5ba7f47057357b	And because you're forcing yourself to\nhit fast shots despite that, it seems\nlike it's putting a huge strain on\nEvelysse's arm.	machine
 D026_080_38	ab6d3c949ea4264cdeb51601f940179548866e37	You're saying I should switch to\na strategy of just defending\nand waiting for the opponent\nto mess up...	machine
 D026_080_39	3100fef847da168caba7bc8f7f1a9459448ac376	It's true that everyone is using\nweird rackets, so the chance\nof a mistake is high. But with\nthat strategy...	machine
 D026_080_40	7920af4d1267994c6591e5641e232015740a3cbf	Tournament Organizer: Now,\nthe moment you've all been\nwaiting for―the finals!! Finalists,\nplease step forward!!	machine
@@ -377,10 +377,10 @@ D026_080_60	a3e0c4958b19e141bc092795046cb9a4ee3d28ef	So... this is where it ends
 D026_080_61	3818ae70987fff42e63642e2de966a5d9b68e154	We did it!!! <player>, we won!	machine
 D026_080_62	f7e0efbf592366e0b7698e2adde7ab82754874a3	Tournament Organizer: A brilliant\nvictory! The champions are this lovely\ncouple! I take it the secret to your\nsuccess was the power of love?	machine
 D026_080_64	bdaec72860c4be6deae48d4861291d5be72ea436	Wh-what?! Where is this\ncoming from?! We aren't a\ncouple!!	machine
-D026_080_65	0cc9f9fb50657e2ebbd2e3fe3887b4675a5bcfa1	Eve, it's hard to believe you\nwhen you're clinging to him like\nthat.	machine
+D026_080_65	0cc9f9fb50657e2ebbd2e3fe3887b4675a5bcfa1	Evelysse, it's hard to believe\nyou when you're clinging to him\nlike that.	machine
 D026_080_66	1743d2b4a5f7fc2e3254b1987fbc0f25f354ab44	Waaaaah! I was just so happy\nwe won, I couldn't help it...!!	machine
 D026_080_67	c3af682b83e501c98961a1a484fcbc4904dad783	I-I'm going to hit the hot\nsprings!! I'm all sweaty and it\nfeels gross! U-um, you handle\nthe prize for me, okay?!	machine
-D026_080_69	f7c08867557bf53467f2d10164bfd51d397a9452	Eve certainly has a lot of\nenergy. Perhaps I shall\nchallenge her to another match\nlater. I won't lose next time!	machine
+D026_080_69	f7c08867557bf53467f2d10164bfd51d397a9452	Evelysse certainly has a lot of\nenergy. Perhaps I shall\nchallenge her to another match\nlater. I won't lose next time!	machine
 D026_080_70	39ec831f74051bd9f87f0a0872cd58dfbac6b863	I think you have plenty of\nenergy too, Victor...	machine
 D026_080_71	f96520dc545326485652c82042b51ab17e070cd7	But Captain! I had to push\nmyself to the limit just to beat\nthose two...	machine
 D026_080_73	b1b4712cb292707be512b0c55920945c2488e7fa	Forfeit?! You can't be serious...\nwe're only one win away from\nvictory!	machine
@@ -395,7 +395,7 @@ D026_080_82	5aa6459da6f58df63d60c57d2ec0f3fad17d47bd	Uh... Captain... do we even
 D026_080_84	0abd6466a332081094fd1d708b2faaf463e1036c	If we have a stone that big, the\nship won't be able to fly, mya~.	machine
 D026_080_85	6d0595ee75a1728ac8d292c5151688650cb56c14	L-let's politely return it...	machine
 D026_080_87	8d30190d2aecd83b4cac92005642e510c02513e6	You're right. Looking at that\nprize, I'm glad we didn't win.	machine
-D026_080_88	fb929ccce77b89b3cd958baca69295b455d9db88	Eve, I asked one of the staff members,\nand they said the hot springs here are\ngreat for sore muscles. It might help\nwith the pain in your arms.	machine
+D026_080_88	fb929ccce77b89b3cd958baca69295b455d9db88	Evelysse, I asked one of the staff\nmembers, and they said the hot springs\nhere are great for sore muscles. It\nmight help with the pain in your arms.	machine
 D026_080_89	a1d9a09da445cac6889e4609fe070140d6bdb4da	I worked up quite a sweat, so\nthis is perfect!	machine
 D026_080_90	bec1c8aec2e8463f87f9cb37d1fd85024a8bf14b	Hehe, why don't you join me,\n<player>?	machine
 D026_080_92	2cfbf8c811698a4767259fdb95b5b655e3c844bc	O-obviously I'm joking! Don't\nactually get flustered! Anyway,\nI'm heading in!!	machine

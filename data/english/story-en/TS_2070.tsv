@@ -27,7 +27,7 @@ message_id	ja_sha1	en	source
 2071_010_27	01e989c44c7f40799df547abea54be89ff64e350	Aaaah... no, no, no, please don't\nlook at me like that! It's almost\nstarting to feel good! Ahhh,\nright, right!	machine
 2071_010_28	bc2ec24111a1fe2c6096b70f39af15302ceedec1	Karlyn! Euwin!	machine
 2071_010_29	8f30eb242cfdd67a3705cb02c7d790a311b2f7a1	...What is it?	machine
-2071_010_30	907e83607c22faba3cc06ea7bf0ae1b3cd39483c	Oh... uh, you're that one, right?\nThe voice we'd occasionally\nhear coming from around Eve\nand the others...?	machine
+2071_010_30	907e83607c22faba3cc06ea7bf0ae1b3cd39483c	Oh... uh, you're that one, right?\nThe voice we'd occasionally\nhear coming from around\nEvelysse and the others...?	machine
 2071_010_31	1c54405b9ce680d9efd42fb20211322e506795f8	I mean, what exactly are you?	machine
 2071_010_32	bc43ba1887e78e0d9be0f57f43d16702b6737759	I am the GFSS-3214F's\noperation system AI,\nOCAI-880-56 model!	machine
 2071_010_34	84b5975641bba0356420345d471534309c7f2f94	Coro, you're doing this on\npurpose, aren't you?	machine
@@ -55,9 +55,9 @@ message_id	ja_sha1	en	source
 2071_020_12	f58d4166d11c7df7a0bdaf7afec482347c2aca85	<font color=blue>Coro</font> Actually, it seems that the\npolitical upheaval in the Baschen\nImperial Capital is heavily involved in\nthis large-scale offensive.	machine
 2071_020_13	83180b7650184d61c0d5da9a58c4e2d6130fe508	<font color=blue>Euwin</font> A political upheaval?	machine
 2071_020_14	29e5a208e220c18c4ba944f4979f13042a0aca1e	<font color=blue>Coro</font> This is just a guess, but...	machine
-2071_020_15	13fb9d500298205dc2dc43105789720cf3df3747	It's possible that the Baschen\nEmperor was sent somewhere\nelse, just like what happened\nto Eve and the others.	machine
+2071_020_15	13fb9d500298205dc2dc43105789720cf3df3747	It's possible that the Baschen\nEmperor was sent somewhere\nelse, just like what happened\nto Evelysse and the others.	machine
 2071_020_16	aea21b40d13eb6044f0f66480effbee2a5b5f346	<font color=blue>Euwin</font> What!?	machine
-2071_020_17	4fbeb7a7d4f01618a67c21f8f26863991a6af7b9	<font color=blue>Valka</font> I couldn't detect any biological\nsignatures other than Lady Eve's group\nwithin a 50km radius of my starship,\nbut...	agent
+2071_020_17	4fbeb7a7d4f01618a67c21f8f26863991a6af7b9	<font color=blue>Valka</font> I couldn't detect any biological\nsignatures other than Lady Evelysse's\ngroup within a 50km radius of my\nstarship, but...	agent
 2071_020_18	931537940e084de0c6aa48809dd4814fafb25d73	<font color=blue>Coro</font> Regardless, I get the\nfeeling that something went\ndown in the Imperial Capital\nwhile the Emperor was away.	machine
 2071_020_19	38064632c8520ae9bcadc8eeadbec5c794f418bc	<font color=blue>Karlyn</font> I bet the Crown Prince\nseized power.	machine
 2071_020_20	81760c8481cbced7d46b69320e30f8a5837b461e	<font color=blue>Welch</font> The Crown Prince?	machine
@@ -85,7 +85,7 @@ message_id	ja_sha1	en	source
 2071_020_44	a9a1d5384af17d0bdf2290bf04ac3b925d9aa547	...While we are still in the\nverification stage, we lack any\nevidence to deny it.	machine
 2071_020_45	3bdd5c7b647fe63e21b34cfd5b313425d800fec9	Optically speaking, the creatures\ninhabiting Daftes and the Thornite used\nby Karlyn Kayson show an extremely\nhigh rate of similarity.	machine
 2071_020_46	30a4e95acb9b2823e0d94a9b93e1b566e664d2f8	If the beastmen of Daftes,\nLady Karlyn's "beasts,"	agent
-2071_020_47	eaf1b9c3f669ee82e58af6b597eb182e45f2a4c5	and the Thornite mentioned by\nLady Eve and the others are\nall the same thing,	agent
+2071_020_47	eaf1b9c3f669ee82e58af6b597eb182e45f2a4c5	and the Thornite mentioned by\nLady Evelysse and the others\nare all the same thing,	agent
 2071_020_48	57f59782d34668613ec823d183faa708918205ca	then it's highly probable that\nthese beastmen were\ndeveloped as high-spec\nbiological weapons...	machine
 2071_020_49	8dbee8b069211f92aead8586ecdd612683ae2486	I am a soldier! I kill the enemy!\nNo matter what means I have\nto use!	machine
 2071_020_50	bd573ca5e44cc2a7851654265d01929005a9508d	But... but that doesn't mean\nI've fallen so low that I'd\nmanipulate innocent people and\nhide in their shadows!!	machine
@@ -164,7 +164,7 @@ message_id	ja_sha1	en	source
 2071_050_43	5f985d086e3e7db0a2ff689afda4e6837e29f110	The Holy Land War was born\nfrom people making\nassumptions about things they\ndidn't understand.	machine
 2071_050_44	622b169a8b91e3e91e0b63e10a54b58406be94a8	It's a war where not a single\nperson fighting actually knows\nthe truth.	machine
 2071_050_45	fda46ab3c67c4a4b09808c4540f122abbdb3ab84	If we leave the unknown as it\nis, we... Daftine... will never\nreach the future where Tika\nexists.	machine
-2071_050_46	54b83df4c15c8738a1e7a8bd94b97a663c81c46f	Captain, Eve, Verda,	machine
+2071_050_46	54b83df4c15c8738a1e7a8bd94b97a663c81c46f	Captain, Evelysse, Verda,	machine
 2071_050_47	4916b185d1151718211ee6750ea4f95968ea78b6	Valka, Henri.	machine
 2071_050_48	ffef6734a7150179826eea7bfdf99286d25cf546	Coro, Rekoro, will you lend me\nyour strength?	machine
 2071_050_49	c7b476c3a38ca2840e7ca487aa84589168c16fae	With your incredible,\nmysterious powers,	machine
@@ -196,17 +196,17 @@ message_id	ja_sha1	en	source
 2072_100_12	955767ff47b923fe521f17b077469d4b61168856	<font color=blue>Rekoro</font> As a life pod AI, it is\npathetic that I am forced to\nchoose the option of "neglect."	machine
 2072_100_13	16d2d9fa0f30ea3c87a90eaaa4e2cd80e4cc7ffb	<font color=blue>Henri</font> It happens.	machine
 2072_100_14	9ddf4e7d0cb1d196b80fdc47223b9cf2b0bc4d19	It's only natural for Karlyn,\nEuwin, and Welch to feel some\nmental strain when they think\nof their homelands.	machine
-2072_100_15	9699af4f485929322a56b7b4b7654db05cc82111	<font color=blue>Rekoro</font> Even so, I cannot\nfathom Eve's reaction.	machine
+2072_100_15	9699af4f485929322a56b7b4b7654db05cc82111	<font color=blue>Rekoro</font> Even so, I cannot\nfathom Evelysse's reaction.	machine
 2072_100_16	7d4af4007a24d431ebefb9c4bcf362c260facbc9	I understand that she wishes\nfor peace in Daftine from a\nhumanitarian perspective.	machine
 2072_100_17	58dad09ae7fe44d21fcee387aab44ec55d18173f	But she should have no direct stake in\nDaftine's political situation, yet she has\nremained locked in her room since that\nconversation.	machine
-2072_100_18	334cd93e60f8fd3bbfbe30772214868863281c1c	<font color=blue>Tika</font> I wonder if Big Sister Eve\nis okay...	machine
+2072_100_18	334cd93e60f8fd3bbfbe30772214868863281c1c	<font color=blue>Tika</font> I wonder if Evelysse is\nokay...	agent
 2072_100_19	6ea1665813cf806b84eb89f8db0826574466b9b3	<font color=blue>Henri</font> She is likely dwelling on\nwhat Karlyn and Verda said.	machine
 2072_100_20	97b426bb83dc6944f54463a043e95e75952eb381	<font color=blue>Tika</font> Huh?	machine
 2072_100_21	6b3b8244ea04525d45fd39762d6ba1a9da9cb4df	<font color=blue>Henri</font> Karlyn, though she didn't know at\nthe time, summoned my kin against\ntheir will and forced them to fight on\nthe battlefield.	machine
 2072_100_22	0514e2f89ee5df2f59f50cfbb43116d351cc8d33	Karlyn was deeply pained by\nthis, feeling that she had\ntrampled upon human dignity.	machine
 2072_100_23	e734e273dd518547fcf0b6121c15a48bf48ef125	<font color=blue>Tika</font> Oh...	machine
-2072_100_24	d1cae9eef02efd4e231d7dc674e7890b2df54f82	<font color=blue>Henri</font> Eve is likely asking\nherself where she stands in all\nof this, and she cannot find an\nanswer.	machine
-2072_100_25	6b8b258ec3251e331613609621f1d2a788f52175	<font color=blue>Tika</font> That can't be...! But, Eve\nis...	machine
+2072_100_24	d1cae9eef02efd4e231d7dc674e7890b2df54f82	<font color=blue>Henri</font> Evelysse is likely asking\nherself where she stands in all\nof this, and she cannot find an\nanswer.	machine
+2072_100_25	6b8b258ec3251e331613609621f1d2a788f52175	<font color=blue>Tika</font> That can't be...! But,\nEvelysse is...	machine
 2072_100_26	b87435871431b4c65d0ba6c359902360a7708ab6	...Likely, there is no one but\nyou who can rouse her spirit.	machine
 2072_100_27	e33b6237186ceade41d155c97afe12e104ca4c97	Go to her.	machine
 2072_100_28	d9964b59abc17536bfd158f4c18fdfcf76fee7c3	...Yeah, I will!	machine
@@ -217,7 +217,7 @@ message_id	ja_sha1	en	source
 2072_100_33	8950effe041cf69cc426aff8bef7243edd88a29c	Respecting their judgment and letting\nthem gain experience interacting with\nothers on their own is also a form of\n"parental love."	machine
 2072_100_34	235833f444ce35165c8a8a59937cca588b9d8a6a	This is by no means "neglect."	machine
 2072_100_35	a8486c54e8d5c773627be6bec966be8989e0aa6a	...Humans are still so\nincomprehensible.	machine
-2072_110_01	6e5ae462a40288953605b1497c21ba44d5fb2dc9	Big sister Eve...? Are you\nokay?	machine
+2072_110_01	6e5ae462a40288953605b1497c21ba44d5fb2dc9	Evelysse...? Are you okay?	agent
 2072_110_02	159d5705ef3b3b7558ac9ab8f4805153457fb1e5	Oh, Tika.	machine
 2072_110_03	8901996e7c7adf4753dbd300fb3026efc991d306	Is everything alright?	machine
 2072_110_04	6a790e7837757ee073e659f78af788b80a5bea14	I suppose. I'm just... a little\ntired.	machine
@@ -230,19 +230,19 @@ message_id	ja_sha1	en	source
 2072_110_12	f021fea11dcfb5f6c3d4d92c6f7d0b9649092d0b	I've brought them all on a journey\nthrough the cosmos, across space and\ntime, with no guarantee that I can even\nsend them home.	machine
 2072_110_13	f390e9cfbd35a33ac9ca96da95de599d1e9e9057	But... it saved me.	machine
 2072_110_14	0fceb3bc5a6c5ca70e261fdfa0417fa04389ca69	What...?	machine
-2072_110_15	c9026eac83af7b9ef577fa03f4dcb759bc302fb2	I was saved because you were\nhere, Big Sister Eve.	machine
+2072_110_15	c9026eac83af7b9ef577fa03f4dcb759bc302fb2	I was saved because you were\nhere, Evelysse.	agent
 2072_110_16	d39d4222dd83d3ced56c8c4157555956beafb8d9	Tika, but still...	machine
-2072_110_17	325bcf54ac340fd044992cac1cb9bbf83ee5b947	Because Big Sister Eve and\nthe others saved Big Sister\nVerda, I was...	machine
+2072_110_17	325bcf54ac340fd044992cac1cb9bbf83ee5b947	Because Evelysse and the\nothers saved Verda, I was...	agent
 2072_110_18	be1af6db7905017c6ed18cf59062dfe40ed90954	I was able to survive, even\nacross time.	machine
 2072_110_19	6724a1c6b007d585e482745037fc592240c2f856	Please, don't deny that...	machine
-2072_110_20	4e9d41f8320c3ffe21c9360f2b428882efbcee2e	Right now... you're all I have,\nBig Sister Eve.	machine
+2072_110_20	4e9d41f8320c3ffe21c9360f2b428882efbcee2e	Right now... you're all I have,\nEvelysse.	agent
 2072_110_21	15e9ba8b4e6025ccded4af6fa5cab4092448c774	...Tika.	machine
-2072_110_22	24721201b29913454d4f1c14382490949a132a92	Big Sister Eve is someone who\nuses her power to help others.	machine
+2072_110_22	24721201b29913454d4f1c14382490949a132a92	Evelysse is someone who uses\nher power to help others.	agent
 2072_110_23	13588dc36cc78e0629f8308a4be75cad5da79e3b	You're not someone who uses\npower to hurt people.	machine
 2072_110_24	e880553c782f8f2fac99aecf25049a7ba8a5b974	Even Big Sister Karlyn fought\nwith that power because she\nwanted to protect the people\nof Baschen...	machine
 2072_110_25	87833a2d1cc87446094d5470acaf639580ab6633	But that man, Givel...	machine
 2072_110_26	f110676319b334da090e5538dfd09ee868e6f12b	I felt like he didn't even think\nof humans as people.	machine
-2072_110_27	983255004f5ec29b9166031fa33f69dd75ff28ff	He's not like you, Eve.	machine
+2072_110_27	983255004f5ec29b9166031fa33f69dd75ff28ff	He's not like you, Evelysse.	machine
 2072_110_28	15e9ba8b4e6025ccded4af6fa5cab4092448c774	...Tika.	machine
 2072_110_29	f47c2202137d1b59dadc22709709198fc92451a6	That's why we can't... let\nsomeone like him have\nDaftine's future.	machine
 2072_150_01	4d0c4f9b007089b9be53c1fc1fe3dae746a54ae2	I'm relieved that the flight has\nbeen so smooth so far.	machine
@@ -308,7 +308,7 @@ message_id	ja_sha1	en	source
 2073_160_09	eb295e8d62dbb76858f007ca23c67740581ced3e	<font color=blue>Rekoro</font> True. Unless someone had the\ntechnical skill to crack the electronic\nlock, they wouldn't have known how to\nopen that door.	machine
 2073_160_10	06619995b339373143625d45d73c124e9e20f7ee	<font color=blue>Henri</font> So, whoever hid the Holy Land of\nAsyl ensured it would only reveal itself\nwhen the conditions for the\nMoonshadow Ladder's descent were\nmet...	machine
 2073_160_11	0ce9589c3e724627c028385fa4b4a544eca1def0	...and otherwise, its existence\nremains completely\nundetectable.	machine
-2073_160_12	d12186e8f337a6d7b4ddd35db3097118d5c286d1	<font color=blue>Eve</font> So in the end, we just\nhave to wait for the ladder to\ndescend? We can't intervene in\nthe war like that.	machine
+2073_160_12	d12186e8f337a6d7b4ddd35db3097118d5c286d1	<font color=blue>Evelysse</font> So in the end, we just\nhave to wait for the ladder to\ndescend? We can't intervene in\nthe war like that.	machine
 2073_160_13	d47eec5a5992e3057d46fd5b5f409086ab964bbf	<font color=blue>Coro</font> I've thought about it, and since it's\ncalled a "Holy Land," I think it must be\nat least larger than the facility where\nMs. Henri and the others were.	machine
 2073_160_14	be6c74198e0aa08f929eb24788a3387cc683b45d	I think the methods for\ndisguising something of that\nscale would be quite limited.	machine
 2073_160_15	2c8454f48f59f14ec7bfaee361ff9b3dc236a239	For now, we are searching while\nconsidering mechanical technology,\nCrest Science, and even concealment\nvia some kind of natural phenomenon...	machine
@@ -403,8 +403,8 @@ message_id	ja_sha1	en	source
 2073_170_35	bfea0ed52004b23281615a072a35f04856965ab5	Thank you, Rekoro!	machine
 2073_170_37	d72f04109f1725d99554614045c97d6cc6b8a7bd	Then I'm in too.	machine
 2073_170_38	64de6be9809c336f1936c48bfb4549e743938586	I shall join you as well...	machine
-2073_170_39	f5aea8df5d398258bc613924e12f022ade6ee9b1	Now, now, Captain, Eve,\nVerda―just wait a second.\nThere's no point in all of us\ncrowding in there.	machine
-2073_170_40	7bc4c35c76d515be35da9533d2ca5ac19d670ced	That Givel guy seemed obsessed with\nEve. If too many of us end up as\nprisoners, word might get back to him,\nand he might try something.	machine
+2073_170_39	f5aea8df5d398258bc613924e12f022ade6ee9b1	Now, now, Captain, Evelysse,\nVerda―just wait a second.\nThere's no point in all of us\ncrowding in there.	machine
+2073_170_40	7bc4c35c76d515be35da9533d2ca5ac19d670ced	That Givel guy seemed obsessed with\nEvelysse. If too many of us end up as\nprisoners, word might get back to him,\nand he might try something.	machine
 2073_170_41	3bccb5e6ca15e07d335c174a4645c0bbcff6d5a4	Right, Eu?	machine
 2073_170_42	4f90df4e9fb385c6f4bc6179dcb2804be731c5e4	Huh!? I mean, that's true, but...	machine
 2073_170_43	58e3119c06a291cb02c480f81d82bfb5e5f747ac	With Karlyn, Valka, Henri, and\neven little Eu there, Tika should\nbe in little danger,	machine
@@ -450,7 +450,7 @@ message_id	ja_sha1	en	source
 2074_180_24	f4e1b1099223d23ebb6497f887d31d0e3b2afeb4	<font color=blue>Coro</font> After that, Rekoro, Valka,\nand Henri will provide frequent,\ndetailed updates...	machine
 2074_180_25	fdac0bb8518e210a819d5e32751737ba34ffae86	We will also keep a close watch\non the Imperial Capital for any\nsuspicious activity.	machine
 2074_180_26	d23d38553546967f5919b5b762471e63def62186	If the masked man appears before any\nanomalies occur in the Imperial Capital,\nthe plan is a success. Otherwise, it's a\nfailure, and we'll have to think of our\nnext move.	machine
-2074_180_27	19e4795f53a09343853a98cefdf47a4167e60686	<font color=blue>Eve</font>: In the meantime, we'll\ncontinue to put all our efforts\ninto searching for the Holy\nLand.	machine
+2074_180_27	19e4795f53a09343853a98cefdf47a4167e60686	<font color=blue>Evelysse</font>: In the meantime, we'll\ncontinue to put all our efforts\ninto searching for the Holy\nLand.	machine
 2074_180_28	6e407333b8609d8917195fc8166ef417d3c8d1bd	<font color=blue>Valka</font>: Captain. Separately,\nthere is something else I want\nyou to continue investigating.	machine
 2074_180_30	11d986e0096b3eac388b407eb651c6b2272d50d3	<font color=blue>Valka</font>: The search for the\nentity that brought down my\nship. I simply cannot let it go.	machine
 2074_180_31	e5f82730e82aec364644a9181bb89baf6b8baa54	<font color=blue>Coro</font>: But... we've already been\nover this so many times...	machine

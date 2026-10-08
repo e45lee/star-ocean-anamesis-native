@@ -7,8 +7,8 @@ message_id	ja_sha1	en	source
 2061_010_06	1132b092ce5ca2130ecd5127956fd18a7dbfefe1	<font color=blue>Valka</font> Both the Kingdom of Rubarika\nand the Baschen Empire are nations\nlocated upon a massive planet called\nDaftine,	machine
 2061_010_07	5fee6c7c4478c32e4317716fd1549dc4a4a1a527	and the planet Daftine floats\nwithin a vast, endless sea of\nstars.	machine
 2061_010_08	a9041d456c530c42c12f145148785e74d385f11c	This world, Daftes, is the twin\nof Daftine. They are a binary\nplanet system.	machine
-2061_010_09	f506f8eaff6c5b16b3673501492df0451b728f72	<font color=blue>Euwin</font> ...Did Eve and the others\nknow about this?	machine
-2061_010_10	840cdfb72646b1fcd38b8018093304f81b07b41e	<font color=blue>Eve</font> ...Yes.	machine
+2061_010_09	f506f8eaff6c5b16b3673501492df0451b728f72	<font color=blue>Euwin</font> ...Did Evelysse and the\nothers know about this?	machine
+2061_010_10	840cdfb72646b1fcd38b8018093304f81b07b41e	<font color=blue>Evelysse</font> ...Yes.	machine
 2061_010_11	ee494620a08f3ccdb8af2dfccc9446666b896b57	<font color=blue>Verda</font> My apologies... it was\nnot my intention to hide this\nfrom you out of malice...	machine
 2061_010_13	37cb4c09f77e3aa04ebcc2a529253eaa1d1dc547	<font color=blue>Euwin</font> True, as the Captain said, if\nsomeone had just told me this out of\nthe blue, I wouldn't have believed it\neither...	machine
 2061_010_14	424ee72dd8cc21200dbc978c39f8d0d88243c528	In fact, they still don't quite\nbelieve it.	machine
@@ -28,14 +28,14 @@ message_id	ja_sha1	en	source
 2061_010_28	c1bd277f23f354eb5e3ab267feb925a80a4794ae	No... NO WAYYYYY!!	machine
 2061_010_29	13a8b5968fad4b0273c5a645b11b52b119144df9	Oof!?	machine
 2061_010_30	6400c7f3a61f23510f01d2771ab30899543a1401	This is insane! What is this!?\nNot just Rubarika, but the\nentire world of Daftine is\nfloating in a giant void!?	machine
-2061_010_31	62fce9c175083aecf41914df4e720cc0014a1709	Whoa!! So Eve, Verda, and the\nCaptain all came from beyond\nthe stars!?	machine
+2061_010_31	62fce9c175083aecf41914df4e720cc0014a1709	Whoa!! So Evelysse, Verda, and\nthe Captain all came from\nbeyond the stars!?	machine
 2061_010_32	67b4169217568f1c1ff7ccb43c43bc3c5c240ee9	And Tika might have even\ncome from the future!?	machine
 2061_010_33	552ac13059f41a3805e3386c18ba24941dcdd40f	What is this!? This is too much!\nI'm getting so hyped right now!	machine
 2061_020_01	fa2afed4dabe98c44c716cb44579459d7328ffc8	...Ugh.	machine
 2061_020_02	ae84256ba9e2ad7ef0566322a08fbd3b189bf898	...Lady Welch... this is going to\nbe a shock...	machine
 2061_020_03	c1bd277f23f354eb5e3ab267feb925a80a4794ae	Ugh... No way! You've gotta be\nkidding me!!	machine
 2061_020_04	6400c7f3a61f23510f01d2771ab30899543a1401	Whoa, whoa, what is this?! Not\njust Rubarika, but the entire\nworld of Daftine is floating in a\nmassive void?!	machine
-2061_020_05	62fce9c175083aecf41914df4e720cc0014a1709	Holy cow!! So Eve, Verda, and\nthe Captain all came from\nbeyond the stars?!	machine
+2061_020_05	62fce9c175083aecf41914df4e720cc0014a1709	Holy cow!! So Evelysse, Verda,\nand the Captain all came from\nbeyond the stars?!	machine
 2061_020_06	67b4169217568f1c1ff7ccb43c43bc3c5c240ee9	And as for Tika, she might\nhave even come from the\nfuture?!	machine
 2061_020_07	552ac13059f41a3805e3386c18ba24941dcdd40f	What is that?! What is that?!\nI'm getting so hyped right now!	machine
 2061_020_08	7952de57042a90bf3a2146a20596f7319b251b1b	Hey! You're Valka, right?!	machine
@@ -85,7 +85,7 @@ message_id	ja_sha1	en	source
 2061_020_53	f845ca23dd7396a077b6d897d44287781d6fbcb2	...Yeah! I'm off.	machine
 2061_020_54	f8220daecf7dcc0b2e8df2393edf51a96af1d7a2	<font color=blue>Rekoro</font> Tika! Me too...!	machine
 2061_020_56	b25b5de0e29ee25ea378ce37fd53e13f1c9786b0	<font color=blue>Rekoro</font> Captain! Why are you\nstopping me!	machine
-2061_020_57	15096a01c5fd105dd719de6df54d94a47bb1c61c	<font color=blue>Eve</font> Hold on, Captain, are you\nokay? Letting Tika go off by\nherself...	machine
+2061_020_57	15096a01c5fd105dd719de6df54d94a47bb1c61c	<font color=blue>Evelysse</font> Hold on, Captain, are\nyou okay? Letting Tika go off\nby herself...	machine
 2061_020_59	3cfe93f0548b3be53811e829b22b2ede5d2a9cf6	<font color=blue>Valka</font> There are no dangerous\ncreatures in the vicinity.	machine
 2061_020_60	649eec370a38e164309e5a6d14078b7b3a73f78a	Lady Karlyn appears to have\nbeen a soldier for your enemy\nforces, yet she has left her\nweapon behind.	agent
 2061_020_61	b7dbfd58ce4bcf7d6684fb8835a316f8ed7ef572	Her heart rate and pulse\nshowed significant agitation in\nresponse to what I said.	machine
@@ -95,18 +95,18 @@ message_id	ja_sha1	en	source
 2061_020_65	a303b7c3bb368e19cd90f99a98b899addc496f60	This is a prime opportunity for\nMiss Tika's emotional growth.	machine
 2061_020_66	cc6a788816d628abfec925e1c80906db293390a3	If you are anxious about Lady\nKarlyn's movements, I shall link\nAI Rekoro's sensors with those\nof my ship.	agent
 2061_020_67	1a06b40de2dbd52ffa3507c6b46897fa8cc283fd	You may use that to monitor\nthe two of them.	machine
-2061_020_68	656a1da41b5df8a6e1221b7917cf12525aaae298	Lady Eve, would that be\nacceptable to you as well?	agent
+2061_020_68	656a1da41b5df8a6e1221b7917cf12525aaae298	Lady Evelysse, would that be\nacceptable to you as well?	agent
 2061_020_69	9cec16471ccb20944abd6b87672bf2f6788e9860	<font color=blue>Rekoro</font> ...Please do.	machine
-2061_020_70	09f82e6cc642dc0cdb1649521e83dc3a0c4746ed	<font color=blue>Eve</font> If Rekoro and the Captain\nare okay with it...	machine
+2061_020_70	09f82e6cc642dc0cdb1649521e83dc3a0c4746ed	<font color=blue>Evelysse</font> If Rekoro and the\nCaptain are okay with it...	machine
 2061_020_71	f1ba6c2b75b45c6328cc8984043ed08a60122aea	<font color=blue>Valka</font> ...It is done.	machine
-2061_020_72	7ce7aa9a66a7fce705be2b7158ec01fbbb8725e1	<font color=blue>Eve</font> Such incredible technology.\nYou're linked with the ship,\naren't you?	machine
-2061_020_73	d09a7cd3eafc23dc0363033153ef3cddebf3aa35	<font color=blue>Eve</font> Now, to the main point.\nWhat on earth are you doing\nhere on Daftes?	machine
+2061_020_72	7ce7aa9a66a7fce705be2b7158ec01fbbb8725e1	<font color=blue>Evelysse</font> Such incredible\ntechnology. You're linked with\nthe ship, aren't you?	machine
+2061_020_73	d09a7cd3eafc23dc0363033153ef3cddebf3aa35	<font color=blue>Evelysse</font> Now, to the main\npoint. What on earth are you\ndoing here on Daftes?	machine
 2061_020_74	b203781a3c7dc4c070f782ff26f1835683b12d32	<font color=blue>Verda</font> Even taking into account that\nyou hail from some advanced planet\ncalled "EnII," you're quick to understand\nthe situation on Daftine.	machine
 2061_020_75	e2f1d96ae50379be513d2cc60624aa1c88af0cc1	Between your body's sensors and the\nequipment on this ship, you've been\nmonitoring Daftine, haven't you? For\nwhat purpose?	machine
 2061_020_76	fa7ae331f5b748aa8fd0eae69df15825325639e4	<font color=blue>Valka</font> ...Let me make this clear\nfirst.	machine
 2061_020_77	efa051daa18c80fa8867353b4786319eeaeebcf6	Neither I nor <font color=yellow>EnII</font> harbor any ill\nwill or malicious intent toward\nthe planets of Daftine or\nDaftes.	machine
 2061_020_78	eacc370f1f05b8b35b6e9677071c4c3d8360aef5	Originally, I was supposed to\nland on the <font color=yellow>satellite Mastima</font>.	machine
-2061_020_79	e392e48ab3740a6ae691f0970389e15745140809	<font color=blue>Eve</font> Satellite Mastima...? By\nsatellite, you mean a moon?	machine
+2061_020_79	e392e48ab3740a6ae691f0970389e15745140809	<font color=blue>Evelysse</font> Satellite Mastima...?\nBy satellite, you mean a moon?	machine
 2061_020_80	cfb303ce93dfc87c5ee84615cf7e44ce31977194	<font color=blue>Valka</font> Exactly. Satellite\nMastima is the moon of the\nplanet Daftine.	machine
 2061_020_81	9fe55e173ec27479d1e9a8ac020053ef49d17a8b	On Daftine, it is known as the entity\nthat lowers the Moonshadow Ladder,\nconnecting Daftes, the moon, and\nDaftine at the end of the Holy War.	machine
 2061_020_82	dd6c0e33dc0c0bbff050695da8e03a727bb16bb0	And unraveling the mystery of that\nMoonshadow Ladder was the primary\nreason I was dispatched to this sector\nof space.	machine
@@ -169,9 +169,9 @@ message_id	ja_sha1	en	source
 2061_040_12	a4f023056e5d3a31be6cc29fe15e27029a6008f5	So, stay away from her.	machine
 2061_040_13	093f725dd320102578b21e76bd54456cefaa7cc0	Whaaaaat!? Why not!!	machine
 2061_040_14	34a17818918b07c1fa7c9765beef8e1a6518c1b2	I have a lot I want to say, but if\nyou join in, we'll never make\nany progress.	machine
-2061_040_15	ea82d41032bd64f9efb35e0c36d31bbd2d10a605	Captain, Eve, Verda. Go ahead\nwith the necessary discussion!\nI'll hold the line here!!	machine
+2061_040_15	ea82d41032bd64f9efb35e0c36d31bbd2d10a605	Captain, Evelysse, Verda. Go\nahead with the necessary\ndiscussion! I'll hold the line\nhere!!	machine
 2061_040_16	e0d22ff16d65d3c4ae87ef3f87a0774b8a8eea6f	You meanie, Eu-boy!!	machine
-2061_040_18	7821eb1b93d975c84fecf7e7b565157c609d100e	Eve: Hang in there a bit longer,\nEuwin!	machine
+2061_040_18	7821eb1b93d975c84fecf7e7b565157c609d100e	Evelysse: Hang in there a bit\nlonger, Euwin!	machine
 2061_040_19	6b5b2de99d394c310bf473996c13c6090a9245af	He truly is an indispensable\nman for our journey...	machine
 2061_040_20	583c9def76d80c9c5d135b02210653b3cb32a412	<font color=blue>Verda</font> Ahem. Now then, sorry,	machine
 2061_040_21	1dacb3c42968d1d68c4588eebdbc4198bdcd5d88	Well, you say you've been\nobserving Daftine and Daftes...	machine
@@ -180,12 +180,12 @@ message_id	ja_sha1	en	source
 2061_040_24	a707c65ae388ac49ffd07f070153f8ddbef722ec	<font color=blue>Verda</font> Then why are you on\nDaftes?	machine
 2061_040_25	a97ae39cbf1f406cd54610bf4a53f650c1c22344	<font color=blue>Valka</font> ...It is a pathetic story.	machine
 2061_040_26	e54bba704e45aa0c50859baf5fd8ec6d9589d46a	...I was shot down.	machine
-2061_040_27	dea2a46ea09f77e3947748f2199e8c149a850df9	<font color=blue>Eve</font> Shot down!?	machine
+2061_040_27	dea2a46ea09f77e3947748f2199e8c149a850df9	<font color=blue>Evelysse</font> Shot down!?	machine
 2061_040_28	f2b9fff6d7f2018cd872066368fe510367148989	<font color=blue>Verda</font> How did that happen!?	machine
 2061_040_29	86701ab612183647e95d4caa04b6c1030c71a3ea	<font color=blue>Valka</font> To be honest, I don't\nknow myself.	machine
 2061_040_30	d688bfab328b277f9845aa5dd801095390b9633d	I scrutinized every piece of data left on\nthe ship, but I couldn't find any footage\nor trace of whoever shot me down.	machine
 2061_040_31	e3555c986d9390073cdcf7f79e2eaea69a61d4bd	There is no doubt, however,\nthat it was an attack by an\nadvanced planetary power.	machine
-2061_040_32	677bb83689327c49cb3455eecb26470d210c6420	<font color=blue>Eve</font> An attack by an invisible\nadvanced planetary power...	machine
+2061_040_32	677bb83689327c49cb3455eecb26470d210c6420	<font color=blue>Evelysse</font> An attack by an\ninvisible advanced planetary\npower...	machine
 2061_040_33	c71745f4178c3ef5a22b3c65402ae0c05f67dad8	...Does that mean...	machine
 2061_040_34	c9b04075d0262b922f51b8c79f4bb362451ff8c6	<font color=blue>Verda</font> Aye... it's remarkably\nsimilar to the situation the\nLevarance fleet encountered.	machine
 2061_040_35	3bd135bd69eedd2cb2fa96a7ff4a8af9ae3edae9	<font color=blue>Valka</font> Both I and the ship's AI\nwere using long-range sensors\nto scan the civilization levels of\nboth planets,	machine
@@ -196,17 +196,17 @@ message_id	ja_sha1	en	source
 2061_040_40	827307781e5b6c1224e71fca70230a67f0e63c07	<font color=blue>Valka</font> That is not uncommon\nfor a Hardier Warrior of\nMorphus; cold sleep is a\nfrequent practice in EnII.	machine
 2061_040_41	664e62edda5f5754d7beaf10915706488ab17ffe	<font color=blue>Verda</font> I suppose things differ\nfrom place to place...	machine
 2061_040_42	e4afdf1747fee5e88431fea7af02d07d90e65b51	Regardless, when we arrived in\nthis sector, we didn't see\nanything of the sort...	machine
-2061_040_43	dac34b3606caa01c2997bd8f97ee4610de865429	<font color=blue>Eve</font> Attacking so many ships\nwithout ever being seen...	machine
+2061_040_43	dac34b3606caa01c2997bd8f97ee4610de865429	<font color=blue>Evelysse</font> Attacking so many\nships without ever being seen...	machine
 2061_040_44	9388f080168fa3634ce5c28637a94f3c0fe7296d	That's just like a ghost ship\nfrom a scary story.	machine
-2061_040_45	2aeedd7684f271c090adfab654e807ed2ea28233	<font color=blue>Verda</font> A ghost ship? What are\nyou talking about, Eve? Such a\nthing...	machine
+2061_040_45	2aeedd7684f271c090adfab654e807ed2ea28233	<font color=blue>Verda</font> A ghost ship? What are\nyou talking about, Evelysse?\nSuch a thing...	machine
 2061_040_46	546156d383f860ede7e7c6263e5cfbd3cf6a86c4	<font color=blue>Valka</font> Is not impossible.	machine
 2061_040_47	e3589001ae37ab955443888e72e0d0a3caeb2302	<font color=blue>Verda</font> What?	machine
 2061_040_48	d1540cfc38c88ac023081a84f1a362a13382e4a2	<font color=blue>Valka</font> Once, there existed an\narmy of phantoms that plunged\nthe entire universe into terror.	machine
-2061_040_49	f5d0a24742c08ada958ed1ce2e36467b86458a77	<font color=blue>Eve</font> An army of phantoms...	machine
+2061_040_49	f5d0a24742c08ada958ed1ce2e36467b86458a77	<font color=blue>Evelysse</font> An army of\nphantoms...	machine
 2061_040_50	af7eb60eb4bef8532f60ebb2e62dd1e86134d865	<font color=blue>Valka</font> In this universe, there is\nno such thing as "common\nsense."	machine
 2061_040_51	8f44a3b59a9a9bb692f13377143ac6d8a065408e	There is only the accumulation\nof facts as they happen in the\nmoment.	machine
 2061_040_52	accf1e21898556e7aaf1d1a9073d5f0a9bb4551b	An invisible ghost starship...\nsuch a thing may very well\nexist.	machine
-2061_040_53	91612f81f3895c41a12dd3d14523fb7bec507d57	<font color=blue>Eve</font> Come to think of it, the\ncolony ship Tika was on...	machine
+2061_040_53	91612f81f3895c41a12dd3d14523fb7bec507d57	<font color=blue>Evelysse</font> Come to think of it,\nthe colony ship Tika was on...	machine
 2061_040_54	2b0f67729e8bd838079f45fb5c258cc4a8dafe65	<font color=blue>Verda</font> Rekoro did say that they\nnever saw the attackers...	machine
 2061_040_55	a2f11c2bc1b099eb2adc3d3248066a007f27a5f6	It couldn't be.	machine
 2061_040_56	77d2d49c484e4a80877d58dbeed50d3c00be98a6	Wait a second. This\nconversation is heading in a\nweird direction.	machine
@@ -236,7 +236,7 @@ message_id	ja_sha1	en	source
 2061_050_13	8670558e223bdb820ac5b0f11ce4a78e9f4c8371	Considering the distance from\nDaftes, it's not that far, but...	machine
 2061_050_14	834057dbacbaae2082d52800a8ca6796e91b31b8	Captain, Rekoro. Has\ncommunication with Coro been\nrestored?	machine
 2061_050_16	db53c7cd6faaecd8af37ebe40544f65ab1c13c87	<font color=blue>Rekoro</font> ...It is the same as the\nCaptain's. Communication with\nCoro has not been restored.	machine
-2061_050_17	ccc9f431655313cc88d3232a2ae93353fca22a55	<font color=blue>Eve</font> What about a distress\nsignal? Could we send Rekoro's\ndistress signal toward Coro...?	machine
+2061_050_17	ccc9f431655313cc88d3232a2ae93353fca22a55	<font color=blue>Evelysse</font> What about a distress\nsignal? Could we send Rekoro's\ndistress signal toward Coro...?	machine
 2061_050_18	6d70b60d14f2fce0f32ee366e1d4e7db480fd71b	<font color=blue>Rekoro</font> My wide-area signal\ntransmission function depends\non the transmission capabilities\nof the escape pod itself.	machine
 2061_050_19	a154747cc7c3f7aec0842198340920e7f522b214	The communication functions installed\nin this body are not designed for\ndistances between a planet's surface\nand its orbital path or beyond.	machine
 2061_050_20	e4ae8d66d8ad4fabc6e6610af2ddad477e0da7c8	<font color=blue>Euwin</font> So, you can't get a ship\nready.	machine
@@ -414,7 +414,7 @@ message_id	ja_sha1	en	source
 2063_120_26	6c209246d6863cf1f133639678783216cd30ef1e	...Thank you. Thanks to you,\nKarlyn, everyone is safe.	machine
 2063_120_28	c3ff227db7c0937ca35ae6b282d7522f9ee359d1	...Um... well.	machine
 2063_120_29	7a79c5688556096f0220bbf3193bce24571b435d	...Don't worry about it. Right\nnow, it would be far more\ntroublesome if you all died than\nif you stayed alive.	machine
-2064_150_02	29cacfabba92e86e5d90a0590d44db164cb23295	<font color=blue>Eve</font> There really is a city\nhere...!	machine
+2064_150_02	29cacfabba92e86e5d90a0590d44db164cb23295	<font color=blue>Evelysse</font> There really is a city\nhere...!	machine
 2064_150_03	a128346558b93a7b5bb421a2b2b02c9bde933fc5	<font color=blue>Verda</font> Now this is quite the\nmetropolis!	machine
 2064_150_04	eaee2199a28853ef2a4bbe65de870a47aba6cf9e	<font color=blue>Tika</font> I can't believe something\nlike this exists in Daftes...	machine
 2064_150_05	f547d2a3a8864b7f3a3365e3235bc46c6588ace6	<font color=blue>Euwin</font> I-is this really a city?\nThere are countless buildings\ntaller than the royal castle in\nRubarika!	machine
@@ -423,7 +423,7 @@ message_id	ja_sha1	en	source
 2064_150_08	9849809f38e42c65215a40a63b4a0ead765e13bf	<font color=blue>Valka</font> However, I know nothing\nmore beyond that.	machine
 2064_150_09	69f9964df15a3c396a4483f6f9346eee8b2b43a6	I can detect reactions indicating that a\nlarge energy-related facility is\noperational in the center of the city...	machine
 2064_150_10	19505669e5810824e4a1bd9ca1729b227e37bcb4	But due to numerous\nobstacles, I was unable to\nreach it.	machine
-2064_150_11	138edd0be6eaa258f4e6c659b19fb140ffe80a24	<font color=blue>Eve</font> Obstacles?	machine
+2064_150_11	138edd0be6eaa258f4e6c659b19fb140ffe80a24	<font color=blue>Evelysse</font> Obstacles?	machine
 2064_150_12	92a96d6abdda540c0d4195f3fb12c3bf95e1e616	<font color=blue>Valka</font> This city of Onelsen is\nthe stronghold of those\nwerewolves.	machine
 2064_150_13	e309e80211dbe8513883dfe06302b1976e8bc57a	They are equally ferocious, and\nI cannot face them alone.	machine
 2064_150_14	d3f6421a64acd3617062d5eecc395b8fc1a3b6e8	<font color=blue>Karlyn</font> ...True. The scent of\nthose wolves is everywhere; it's\nalmost enough to make my\nnose curl.	machine
@@ -456,7 +456,7 @@ message_id	ja_sha1	en	source
 2064_150_41	135ee761f50543c8771ba675905cefe1eaa62c42	<font color=blue>Tika</font> When I'm with everyone, I\nfeel brave.	machine
 2064_150_42	b135ad2cc0847337644040925a750d83e99e363a	<font color=blue>Valka</font> Yeah.	machine
 2064_150_43	0a004631e27ed28b225deef5d4c082b27f985a2e	<font color=blue>Karlyn</font> ...Tika.	machine
-2064_150_44	fac854c671fdec40cd7c7973893f8d7424fd1fc8	<font color=blue>Eve</font> Being alone is lonely, isn't\nit? We need to contact Coro\nsoon.	machine
+2064_150_44	fac854c671fdec40cd7c7973893f8d7424fd1fc8	<font color=blue>Evelysse</font> Being alone is lonely,\nisn't it? We need to contact\nCoro soon.	machine
 2064_150_45	1fce3ff8344b67fc0733a8a979a6cd5b8dbe459a	<font color=blue>Verda</font> He's likely crying his\neyes out by now.	machine
 2064_150_46	ab5a620cc16c0b80b7095093de4fb97883dd69e7	<font color=blue>Valka</font> That said, it'll be dark\nsoon. Let's wait until tomorrow\nto enter the city and camp in a\nsafe zone for today.	machine
 2064_150_47	1d7d84e6e7fb8f94d8c942aac69e3e6a8cb34357	Everyone, this way. There's a\nbuilding here with a structure\nthat the werewolves can't\nenter.	machine
@@ -510,7 +510,7 @@ message_id	ja_sha1	en	source
 2065_170_13	f46371d478d8799101113281a1db318f03a28c5d	It's a frighteningly simple\nconnection request signal.	machine
 2065_170_14	fec741d44a3d417d8db36b88537f4466c1018ab0	<font color=blue>Karlyn</font> What are they talking\nabout?	machine
 2065_170_15	ac418fe86694c78e87c09f9ef4014add3bbcb6bd	<font color=blue>Verda</font> Ah, how should I put\nthis... They're seeing things\nthat ordinary folk cannot.	machine
-2065_170_16	046b0fd8ba8c1123589408f2a5d2138f1627b9aa	<font color=blue>Eve</font> Verda, watch your\nphrasing!	machine
+2065_170_16	046b0fd8ba8c1123589408f2a5d2138f1627b9aa	<font color=blue>Evelysse</font> Verda, watch your\nphrasing!	machine
 2065_170_17	f1eaaa72f8326e8e03464f9c9941bc05ffbb4e9e	<font color=blue>Valka</font> Deploying firewall,\nattempting connection...\nAccessing...	machine
 2065_170_18	194f9d3be8c1cdc101c7675457be0b8db486ca58	What? This is far too easy...	machine
 2065_170_19	8b9cf9152583d01a148fbc386c8022d00bc60e37	AI Rekoro, it seems this is the\nMaster Key Code for this\nfacility.	machine
@@ -557,7 +557,7 @@ message_id	ja_sha1	en	source
 2065_170_64	c7e0259abfe37f24bb94c251797805f71d05cd81	I'm not blaming you. In\nexchange, you can see things\nthat I cannot. Keep a lookout\nfor those.	machine
 2065_170_65	ef261f25fc6abdc2b22d10b038f8b3c83f3e737c	I'll clear the path.	machine
 2065_170_66	aa466cd6f72e8d3b23d2c3b2f4bf53289fb6012d	Big sister Karlyn!	machine
-2065_170_67	254e3b9315b2acebc2e57d2b66c30bc492e284ee	Tika. You stay in the back with\nEve and Verda. Make sure you\ndon't stray from Valka and the\nothers.	machine
+2065_170_67	254e3b9315b2acebc2e57d2b66c30bc492e284ee	Tika. You stay in the back with\nEvelysse and Verda. Make sure\nyou don't stray from Valka and\nthe others.	machine
 2065_170_68	20e04c4fc82c28091a9f3b87dea095694f23122a	As for the Captain and Euwin...	machine
 2065_170_70	b44227c8dc09b8581959be4a1e77f0a42d460c69	You two can just stay behind\nme.	machine
 2065_170_71	11867065f045d3a64ba02c57d6863672ad3e8de0	That way, I'll feel reassured\nknowing you're glaring at me\nwith those scary faces.	machine
@@ -566,7 +566,7 @@ message_id	ja_sha1	en	source
 2065_170_74	cfef73e38d784653055ffb1be7256e8fcb5231c5	The feeling is mutual. Now, I\ncan sense the werewolves\napproaching from outside, so\nlet's move quickly.	machine
 2065_170_75	b85c0803b1d34889e2c5ca3415a43c2b7b8d373d	Okay!!	machine
 2065_170_76	4a554593c25a38d1804714947b21c0d25dfef3ad	Tika?	machine
-2065_170_77	ac99d55e058975dc9bfea0b7f298a94580a259a9	What are you doing, Tika?\nYou'll get caught in a scythe if\nyou stay there. Didn't I tell you\nto stay by Eve and Verda?	machine
+2065_170_77	ac99d55e058975dc9bfea0b7f298a94580a259a9	What are you doing, Tika? You'll get\ncaught in a scythe if you stay there.\nDidn't I tell you to stay by Evelysse and\nVerda?	machine
 2065_170_78	5f20e8031ce1ee72ee74e0549b7ab4e47684fe8e	But this hallway is still safe,\nright?	machine
 2065_170_79	4a479f294e518b72cda5f6fd6928304cdd8992a3	...I suppose so.	machine
 2065_170_80	5c79e2ca64eb71500dd89d66de33de9033c00e3a	Hehe... that makes me happy.	machine
@@ -618,7 +618,7 @@ message_id	ja_sha1	en	source
 2066_210_01	f3045384ed8042434de94afadf1cb886d8f903f7	<font color=blue>Euwin</font> D-did we... defeat them?	machine
 2066_210_02	979953e6555dcfe5ceee7ba8f1856bc5a5d61a62	<font color=blue>Welch</font> It's way too hard to tell\nif these things are actually\ndead!	machine
 2066_210_03	52d0520178ea8d11c8baea6a88e5ec835cea446a	<font color=blue>Valka</font> N-n-no problem. I'll\nconsider the repulsion\ncomplete. *Huff, puff!*	machine
-2066_210_04	0b307a42e82dc0d8f9bd1c88c4c855e03aaf3bf6	<font color=blue>Eve</font> But doesn't something feel off? I\nwas definitely confused at first, but I'm\nnot sure if they actually put up much\nof a fight...	machine
+2066_210_04	0b307a42e82dc0d8f9bd1c88c4c855e03aaf3bf6	<font color=blue>Evelysse</font> But doesn't something feel\noff? I was definitely confused at first,\nbut I'm not sure if they actually put up\nmuch of a fight...	machine
 2066_210_05	5e300dae3140b6f7646a6e3b9583dd37d36397db	<font color=blue>Valka</font> True, at first, I was\nscared to death.	machine
 2066_210_06	4b11b272953e7298e1817e44ae392ef436c1518d	<font color=blue>Welch</font> Right.	machine
 2066_210_07	366330c93d019e205652db0927745e5b8bad7f3b	<font color=blue>Valka</font> However, both the physical and\noptical weapons should have had much\nhigher expected power. I feel as though\ntheir functions were somehow\nrestricted.	machine
@@ -631,7 +631,7 @@ message_id	ja_sha1	en	source
 2066_210_14	6404296af3b143016eddfc1ed61ad2c7b51bae21	<font color=blue>Tika</font> Is the Guard Robot...\nglowing?	machine
 2066_210_15	2db6096c5fc291ec88179a9b08e10d26ea772a37	<font color=blue>Verda</font> Some other defense\nmechanism might still be\nactive!	machine
 2066_210_16	3bc253bf027929cc1ed0ac1f2a53e96f18e9fc23	<font color=blue>Rekoro</font> No, that's not it. This...\nthis signal is...?	machine
-2066_210_17	f3b3d03e5f4abe3e14d821e330493a491536d64e	<font color=blue>Eve</font> The door opened...	machine
+2066_210_17	f3b3d03e5f4abe3e14d821e330493a491536d64e	<font color=blue>Evelysse</font> The door opened...	machine
 2066_210_18	602a42f4debd702f72a08e5ed95bd1ac06115c5d	<font color=blue>Euwin</font> So it was designed to\nopen once this thing was\ndefeated?	machine
 2066_210_19	227d58a3e799f31c795c267ec9628619f4eef730	Everyone, stay on guard!!	machine
 2066_210_20	648890c857fdfeb6e1b228cf4f3630dc1b6616b5	Karlyn, what's wrong?	machine
@@ -673,7 +673,7 @@ message_id	ja_sha1	en	source
 2066_220_36	cdbf60812cebc88d468b519ea43e94fb83facae4	What's going on with this\nplanet and the city? Are you\nsome kind of "Messenger of\nDaftes"?	machine
 2066_220_37	6442ac25bbdb360dc6afb818ef9f708602f81a5a	<font color=blue>???</font> We... are unable to\nascertain the current state of\nthe planet and the city.	machine
 2066_220_38	e852327c026fb7942e6a838018ab208b4cdab927	I have never heard of a\n"Messenger of Daftes"... but I\nwonder if there are those\ncalled such on this planet now.	machine
-2066_220_40	095373b2c1b96838fd86ac2d7434a516a013d65a	<font color=blue>Eve</font> Yeah. Something's\nstrange... it feels like they have\nno idea what's actually\nhappening on this planet.	machine
+2066_220_40	095373b2c1b96838fd86ac2d7434a516a013d65a	<font color=blue>Evelysse</font> Yeah. Something's\nstrange... it feels like they have\nno idea what's actually\nhappening on this planet.	machine
 2066_220_41	cb3c4c0690188abeda064b6ba4e0f72861ac9061	<font color=blue>Valka</font> It seems we need to\nexchange information... I sense\nno hostility from them.	machine
 2066_220_42	1e0bbe2873c75127d55f6e4057154781b7cf062b	As you might have guessed, we had all\nencountered unforeseen circumstances\noutside the planet and ended up\nvisiting Onelsen.	machine
 2066_220_43	94a091987c6709ba50c7bd2a257d9ee29f13bd54	Mista...	machine
@@ -743,9 +743,9 @@ message_id	ja_sha1	en	source
 2066_240_08	5b27f93f288d7dfc13703f71d802a7257f36965b	There were some who\nmiraculously escaped infection\nand left the planet...	machine
 2066_240_09	9ccc1a46c143cf6ef797cf44eb068fc9bfe77f65	Unfortunately, there are no\nsigns of anyone returning over\nthe last 30,000 years.	machine
 2066_240_10	69a1a141d35c5f2a2f1586fc8c93712f45339aa4	I only hope they are living\nhappily on some distant star.	machine
-2066_240_11	26ed3401dac00d53ba578c1e49b2e9bf83dff497	<font color=blue>Eve</font>: I'm hoping I'm wrong, but...\nTika isn't from a colony ship, is\nshe?	machine
+2066_240_11	26ed3401dac00d53ba578c1e49b2e9bf83dff497	<font color=blue>Evelysse</font>: I'm hoping I'm wrong,\nbut... Tika isn't from a colony\nship, is she?	machine
 2066_240_12	45663f555a4aa43ad28059f88917c76c2a52a969	If the Tika who crossed\nthrough time was one of the\npeople of Daftes back then...	machine
-2066_240_13	19e09308cb4cc79e596b2e5157d012e7954702ce	<font color=blue>Valka</font> Calm yourself, Lady Eve.	agent
+2066_240_13	19e09308cb4cc79e596b2e5157d012e7954702ce	<font color=blue>Valka</font> Calm yourself, Lady\nEvelysse.	agent
 2066_240_14	2eee497d88bea797cfac377d0827c1365bf4a497	Valka: I can guarantee that\nMiss Tika is a citizen of\nDaftine, just like Sir Ewin, Lady\nWelch, and Lady Karlyn.	agent
 2066_240_15	f7a60db97863ff536316603f889e25e1c8a9705b	Valka: There are fundamental\ndifferences in the genetic\nstructures of Miss Tika and\nMista Henri.	machine
 2066_240_16	cd6066f8539a981065ad8326c02b615f28ad7c70	Valka: At the very least, there\nis no genetic correlation\nbetween the humans of Daftes\nand the humans of Daftine.	machine
@@ -757,7 +757,7 @@ message_id	ja_sha1	en	source
 2066_240_22	7d7b5d6f06394a60d54e570c0984ff8126c60597	<font color=blue>Henri</font> No, it makes me very\nhappy. That you, or someone,\nwould call out to me...	machine
 2066_240_23	a31374c95a6f23f6de3a53c8e2c33c63821a0ac2	Henri: If my memory serves me\ncorrectly, the neighboring\nplanet was judged unsuitable\nfor colonization at the time.	machine
 2066_240_24	4fefb6e5b4057926388d68a066bbaa3984c6b2c1	Henri: I'm actually moved to\nfind that humans were born\nthere and built a civilization.	machine
-2066_240_25	bded221147ed5a94a536ef3532332bba7d1059cd	<font color=blue>Eve</font> And on our end, we never\neven considered the binary\nstars as a destination for\ncolonization...	machine
+2066_240_25	bded221147ed5a94a536ef3532332bba7d1059cd	<font color=blue>Evelysse</font> And on our end, we\nnever even considered the\nbinary stars as a destination\nfor colonization...	machine
 2066_240_26	c3a462d270b94d7c45304cacde80bb325f94eb26	I wonder why.	machine
 2066_240_27	39c06a6e8945cf192cc6dd2c916a9c9b4554579a	<font color=blue>Tika</font> I... I didn't know people\nlived on Daftes...	machine
 2066_240_28	80b6c5fcda912416940d787d90424d7002dae0a8	I think everyone around me\nprobably didn't know either...	machine
@@ -772,7 +772,7 @@ message_id	ja_sha1	en	source
 2066_240_37	c2ba71211a1795b99082f7d92f912599c16af707	I cannot allow it! Onelsen,\nDaftes, and Henri's comrades\nmust not be destroyed!	machine
 2066_240_38	96e139331bb216f3017b93e459dae045e95b8fb7	Big sister Verda? What's\nwrong?	machine
 2066_240_39	350340764c2c425b9992541fe38ac4196442721b	For Tika's sake, and for\nDaftine's as well. This is a\ngrave matter.	machine
-2066_240_40	7e525b90b885fd92ca52a071931836298c24c9d7	Eve, Captain, do you remember\nwhat my grandfather became\nin the end?	machine
+2066_240_40	7e525b90b885fd92ca52a071931836298c24c9d7	Evelysse, Captain, do you\nremember what my grandfather\nbecame in the end?	machine
 2066_240_42	60c88b9773c5374262bd0426931a1283f7c93c80	Y-yes, of course, but...	machine
 2066_240_43	76f0cd5385539fc0d9e0abea00e7de353ee2bb9c	I am not trying to dwell on\nsentiment! Remember it.	machine
 2066_240_44	4c0fc6e2c61c54731617d72593a62804720ad271	The symptoms of my grandfather's\n<font color=yellow>Pyre Disease</font> were clearly different\nfrom those of other Pyre Disease\ncases.	machine
@@ -785,7 +785,7 @@ message_id	ja_sha1	en	source
 2066_240_51	f1ae91cb2cea540dfe2681a8fe16342c40eec66a	And remember, Grandfather\nwas capable of spatial warp!	machine
 2066_240_52	31c5c3d2cf42ac3ceeae1dd1b1d13b47f2326e0a	How exactly did we end up on\nDaftes this time? What was it\nthat transported us to this\nplanet in an instant?	machine
 2066_240_53	a64e4838a4810edc9f1948f58c416cd052c2e344	Ah!!	machine
-2066_240_54	244fcded7931ec222a90c595bd00aae91eecc043	That's right. The clash between\nEve and Givel's summoning sigil\narts.	machine
+2066_240_54	244fcded7931ec222a90c595bd00aae91eecc043	That's right. The clash between\nEvelysse and Givel's\nsummoning sigil arts.	machine
 2066_240_55	fcddb4cccb97b927b80567ccb84e96dc31b1c561	And the source of the "Beast\nof Baschen" summoned by\nKarlyn's sigil arts was likely this\nplanet, Daftes.	machine
 2066_240_56	f5bf182924a11aab78f0724368d5e49e31e5b1a1	Every beast that was\nsummoned had been\nThornite-ized.	machine
 2066_240_57	c854de99ff9996d78b0849c60dbb2060b2d3f92c	...This is a sick joke... This is\nthe worst...	machine

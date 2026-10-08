@@ -1,0 +1,7 @@
+# port/decomp/master/scope.txt: the guest functions the `master` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?CSimpleSqliteConnector<
+^(\S+ )?CMasterParameter\w*(<|::)
+^(\S+ )?CMaster(?!y)\w*(<|::)
+^(\S+ )?StringDB\w*::

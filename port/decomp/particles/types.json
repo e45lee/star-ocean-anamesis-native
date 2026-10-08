@@ -1,0 +1,1600 @@
+{
+ "subsystem": "particles",
+ "generated_by": "tools/subsystem.py export-types particles",
+ "header": "port/src/native/particles/particles_layout.h",
+ "structs": [
+  {
+   "name": "ParticleRenderableBase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::render::RenderableObject",
+      "size": 784
+     },
+     "size": 784
+    },
+    {
+     "offset": 784,
+     "name": "unk_310",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1444
+     },
+     "size": 1444
+    },
+    {
+     "offset": 2228,
+     "name": "m_activeCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 2232,
+     "name": "unk_8b8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1688
+     },
+     "size": 1688
+    },
+    {
+     "offset": 3920,
+     "name": "m_stamp",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 8
+    },
+    {
+     "offset": 3928,
+     "name": "m_buffer",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 3932,
+     "name": "unk_f5c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 132
+     },
+     "size": 132
+    }
+   ],
+   "size": 4064,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x229d31c",
+     "symbol": "_ZN4Aska22ParticleRenderableBase14GetBoundingBoxEb",
+     "name": "GetBoundingBox"
+    },
+    {
+     "ghidra": "0x229d334",
+     "symbol": "_ZN4Aska22ParticleRenderableBase18SetSystemColorRateEPKNS_6VectorE",
+     "name": "SetSystemColorRate"
+    },
+    {
+     "ghidra": "0x229d390",
+     "symbol": "_ZNK4Aska22ParticleRenderableBase15SystemColorRateEv",
+     "name": "SystemColorRate"
+    },
+    {
+     "ghidra": "0x229d398",
+     "symbol": "_ZN4Aska22ParticleRenderableBase12SetColorRateEPKNS_6VectorE",
+     "name": "SetColorRate"
+    },
+    {
+     "ghidra": "0x229d3f4",
+     "symbol": "_ZNK4Aska22ParticleRenderableBase9ColorRateEv",
+     "name": "ColorRate"
+    },
+    {
+     "ghidra": "0x229d3fc",
+     "symbol": "_ZN4Aska22ParticleRenderableBase21ComputeBoundingSphereEb",
+     "name": "ComputeBoundingSphere"
+    },
+    {
+     "ghidra": "0x22a497c",
+     "symbol": "_ZN4Aska22ParticleRenderableBaseC2Ev",
+     "name": "ParticleRenderableBase"
+    },
+    {
+     "ghidra": "0x22a4cd4",
+     "symbol": "_ZN4Aska22ParticleRenderableBaseD2Ev",
+     "name": "~ParticleRenderableBase"
+    },
+    {
+     "ghidra": "0x22a4e78",
+     "symbol": "_ZN4Aska22ParticleRenderableBase12DetachObjectEv",
+     "name": "DetachObject"
+    },
+    {
+     "ghidra": "0x22a4ec8",
+     "symbol": "_ZN4Aska22ParticleRenderableBase14ReleaseBuffersEv",
+     "name": "ReleaseBuffers"
+    },
+    {
+     "ghidra": "0x22a4f0c",
+     "symbol": "_ZN4Aska22ParticleRenderableBaseD0Ev",
+     "name": "~ParticleRenderableBase"
+    },
+    {
+     "ghidra": "0x22a4f4c",
+     "symbol": "_ZN4Aska22ParticleRenderableBasedlEPv",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22a4fb0",
+     "symbol": "_ZN4Aska22ParticleRenderableBase18ReleaseImmediatelyEv",
+     "name": "ReleaseImmediately"
+    },
+    {
+     "ghidra": "0x22a4fc8",
+     "symbol": "_ZN4Aska22ParticleRenderableBase12AttachObjectEPNS_15IParticleObjectE",
+     "name": "AttachObject"
+    },
+    {
+     "ghidra": "0x22a50b8",
+     "symbol": "_ZN4Aska22ParticleRenderableBase11InitBuffersEhiii",
+     "name": "InitBuffers"
+    },
+    {
+     "ghidra": "0x22a5150",
+     "symbol": "_ZN4Aska22ParticleRenderableBase16AttachMeshObjectEPNS_9AofObjectE",
+     "name": "AttachMeshObject"
+    },
+    {
+     "ghidra": "0x22a51fc",
+     "symbol": "_ZN4Aska22ParticleRenderableBase16DetachMeshObjectEv",
+     "name": "DetachMeshObject"
+    },
+    {
+     "ghidra": "0x22a525c",
+     "symbol": "_ZN4Aska22ParticleRenderableBase17CreateFillContextEPNS_19ParticleFillContextEj",
+     "name": "CreateFillContext"
+    },
+    {
+     "ghidra": "0x22a5378",
+     "symbol": "_ZN4Aska22ParticleRenderableBase17CreateDrawContextEPNS0_11DrawContextE",
+     "name": "CreateDrawContext"
+    },
+    {
+     "ghidra": "0x22a55cc",
+     "symbol": "_ZN4Aska22ParticleRenderableBase8SetupLodEv",
+     "name": "SetupLod"
+    },
+    {
+     "ghidra": "0x22a56a4",
+     "symbol": "_ZN4Aska22ParticleRenderableBase16SetRenderLayerIDEh",
+     "name": "SetRenderLayerID"
+    },
+    {
+     "ghidra": "0x22a570c",
+     "symbol": "_ZNK4Aska22ParticleRenderableBase10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x22a5750",
+     "symbol": "_ZN4Aska22ParticleRenderableBase16PerfCounterStartEv",
+     "name": "PerfCounterStart"
+    },
+    {
+     "ghidra": "0x22a5754",
+     "symbol": "_ZN4Aska22ParticleRenderableBase14PerfCounterEndEv",
+     "name": "PerfCounterEnd"
+    },
+    {
+     "ghidra": "0x22a5758",
+     "symbol": "_ZN4Aska22ParticleRenderableBase14SetRenderLayerEjb",
+     "name": "SetRenderLayer"
+    },
+    {
+     "ghidra": "0x22a582c",
+     "symbol": "_ZNK4Aska22ParticleRenderableBase11GetVBufSizeEv",
+     "name": "GetVBufSize"
+    },
+    {
+     "ghidra": "0x22a5850",
+     "symbol": "_ZN4Aska22ParticleRenderableBase5BeginEiii",
+     "name": "Begin"
+    },
+    {
+     "ghidra": "0x22a5904",
+     "symbol": "_ZN4Aska22ParticleRenderableBase4FillEPKNS_19ParticleFillContextEPKNS_15ParticleContextEi",
+     "name": "Fill"
+    },
+    {
+     "ghidra": "0x22a595c",
+     "symbol": "_ZN4Aska22ParticleRenderableBase8FillMeshEPKNS_19ParticleFillContextEPKNS_15ParticleContextEi",
+     "name": "FillMesh"
+    },
+    {
+     "ghidra": "0x22a5fa8",
+     "symbol": "_ZN4Aska22ParticleRenderableBase3EndEb",
+     "name": "End"
+    },
+    {
+     "ghidra": "0x22a6300",
+     "symbol": "_ZN4Aska22ParticleRenderableBase13NotifyTextureEv",
+     "name": "NotifyTexture"
+    },
+    {
+     "ghidra": "0x22a6448",
+     "symbol": "_ZN4Aska22ParticleRenderableBase18ReleaseShaderCacheEv",
+     "name": "ReleaseShaderCache"
+    },
+    {
+     "ghidra": "0x22a64c4",
+     "symbol": "_ZN4Aska22ParticleRenderableBase20PreliminarilyPrepareEPNS_12LightManagerE",
+     "name": "PreliminarilyPrepare"
+    },
+    {
+     "ghidra": "0x22a66a4",
+     "symbol": "_ZN4Aska22ParticleRenderableBase19PrepareForRenderingEPKNS_10RENDERINFOE",
+     "name": "PrepareForRendering"
+    },
+    {
+     "ghidra": "0x22a7be8",
+     "symbol": "_ZN4Aska22ParticleRenderableBase6RenderEPNS_13RenderContextEi",
+     "name": "Render"
+    },
+    {
+     "ghidra": "0x22a7e10",
+     "symbol": "_ZNK4Aska22ParticleRenderableBase13IsBufferReadyEv",
+     "name": "IsBufferReady"
+    },
+    {
+     "ghidra": "0x22a7e64",
+     "symbol": "_ZN4Aska22ParticleRenderableBasenwEmmb",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22a7e9c",
+     "symbol": "_ZN4Aska22ParticleRenderableBasenaEmmb",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22a7ed4",
+     "symbol": "_ZN4Aska22ParticleRenderableBasedaEPv",
+     "name": "operator"
+    }
+   ]
+  },
+  {
+   "name": "IParticleEmitter",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::render::HierarchicalObject",
+      "size": 408
+     },
+     "size": 408
+    },
+    {
+     "offset": 408,
+     "name": "m_id",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 412,
+     "name": "m_idle",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 413,
+     "name": "unk_19d",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 416,
+     "name": "m_dispatchLock",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 420,
+     "name": "unk_1a4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 424,
+     "name": "m_dispatchKey",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 432,
+     "name": "m_serial",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 436,
+     "name": "unk_1b4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 440,
+     "name": "m_object",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 448,
+     "name": "m_renderable",
+     "type": {
+      "kind": "ptr",
+      "to": "ParticleRenderableBase"
+     },
+     "size": 8
+    },
+    {
+     "offset": 456,
+     "name": "m_linked",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 464,
+     "name": "m_child",
+     "type": {
+      "kind": "ptr",
+      "to": "IParticleEmitter"
+     },
+     "size": 8
+    },
+    {
+     "offset": 472,
+     "name": "m_matrixBuffer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 480,
+     "name": "m_simulateLock",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 488,
+     "name": "unk_1e8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 20
+     },
+     "size": 20
+    },
+    {
+     "offset": 508,
+     "name": "m_unk1fc",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 512,
+     "name": "m_unk200",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 516,
+     "name": "m_unk204",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 520,
+     "name": "m_lastTime",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 524,
+     "name": "unk_20c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 527,
+     "name": "m_matrixMode",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 528,
+     "name": "m_linkMode",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 529,
+     "name": "unk_211",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 530,
+     "name": "unk_212",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 531,
+     "name": "m_waitBuffer",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 532,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 534,
+     "name": "unk_216",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 274
+     },
+     "size": 274
+    }
+   ],
+   "size": 808,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x204ee34",
+     "symbol": "_ZN4Aska16IParticleEmitternwEm",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x204ee84",
+     "symbol": "_ZN4Aska16IParticleEmitternaEm",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x2294a80",
+     "symbol": "_ZN4Aska16IParticleEmitterC2Ev",
+     "name": "IParticleEmitter"
+    },
+    {
+     "ghidra": "0x2294cf8",
+     "symbol": "_ZN4Aska16IParticleEmitter5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x2294d28",
+     "symbol": "_ZN4Aska16IParticleEmitterD1Ev",
+     "name": "~IParticleEmitter"
+    },
+    {
+     "ghidra": "0x2294d94",
+     "symbol": "_ZN4Aska16IParticleEmitterD0Ev",
+     "name": "~IParticleEmitter"
+    },
+    {
+     "ghidra": "0x2294d98",
+     "symbol": "_ZNK4Aska16IParticleEmitter10IsEmittingEv",
+     "name": "IsEmitting"
+    },
+    {
+     "ghidra": "0x2294db8",
+     "symbol": "_ZNK4Aska16IParticleEmitter26GetActiveNumberOfParticlesEv",
+     "name": "GetActiveNumberOfParticles"
+    },
+    {
+     "ghidra": "0x2294dd0",
+     "symbol": "_ZN4Aska16IParticleEmitter3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x2294dd4",
+     "symbol": "_ZNK4Aska16IParticleEmitter10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x2294e30",
+     "symbol": "_ZN4Aska16IParticleEmitter16PerfCounterStartEv",
+     "name": "PerfCounterStart"
+    },
+    {
+     "ghidra": "0x2294e34",
+     "symbol": "_ZN4Aska16IParticleEmitter14PerfCounterEndEv",
+     "name": "PerfCounterEnd"
+    },
+    {
+     "ghidra": "0x2294e38",
+     "symbol": "_ZNK4Aska16IParticleEmitter13SkipThisFrameEv",
+     "name": "SkipThisFrame"
+    },
+    {
+     "ghidra": "0x2294e6c",
+     "symbol": "_ZN4Aska16IParticleEmitter14GetBoundingBoxEb",
+     "name": "GetBoundingBox"
+    },
+    {
+     "ghidra": "0x2294e88",
+     "symbol": "_ZN4Aska16IParticleEmitter21VirtualBoundingSphereEv",
+     "name": "VirtualBoundingSphere"
+    },
+    {
+     "ghidra": "0x2294ecc",
+     "symbol": "_ZN4Aska16IParticleEmitter17EnableAttenuationEbbhf",
+     "name": "EnableAttenuation"
+    },
+    {
+     "ghidra": "0x2294efc",
+     "symbol": "_ZN4Aska16IParticleEmitter19SetConnectedEmitterEPS0_hh",
+     "name": "SetConnectedEmitter"
+    },
+    {
+     "ghidra": "0x2294f4c",
+     "symbol": "_ZN4Aska16IParticleEmitter15SetEmissionMeshEPNS_9AofObjectEf",
+     "name": "SetEmissionMesh"
+    },
+    {
+     "ghidra": "0x2294f58",
+     "symbol": "_ZN4Aska16IParticleEmitter14SetEmitterLinkEPS0_ihff",
+     "name": "SetEmitterLink"
+    },
+    {
+     "ghidra": "0x2294f90",
+     "symbol": "_ZN4Aska16IParticleEmitter7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x2295058",
+     "symbol": "_ZN4Aska16IParticleEmitter12DetachObjectEv",
+     "name": "DetachObject"
+    },
+    {
+     "ghidra": "0x2295088",
+     "symbol": "_ZN4Aska16IParticleEmitter16DetachRenderableEv",
+     "name": "DetachRenderable"
+    },
+    {
+     "ghidra": "0x22950f4",
+     "symbol": "_ZN4Aska16IParticleEmitter10DeleteThisEPNS_13DeleteManagerE",
+     "name": "DeleteThis"
+    },
+    {
+     "ghidra": "0x229511c",
+     "symbol": "_ZN4Aska16IParticleEmitter19DeleteThisNextFrameEPNS_13DeleteManagerE",
+     "name": "DeleteThisNextFrame"
+    },
+    {
+     "ghidra": "0x2295144",
+     "symbol": "_ZN4Aska16IParticleEmitter24DeleteThisAfterTwoFramesEPNS_13DeleteManagerE",
+     "name": "DeleteThisAfterTwoFrames"
+    },
+    {
+     "ghidra": "0x229516c",
+     "symbol": "_ZN4Aska16IParticleEmitter21DeleteThisImmediatelyEv",
+     "name": "DeleteThisImmediately"
+    },
+    {
+     "ghidra": "0x2295214",
+     "symbol": "_ZN4Aska16IParticleEmitter12AttachObjectEPNS_15IParticleObjectE",
+     "name": "AttachObject"
+    },
+    {
+     "ghidra": "0x2295248",
+     "symbol": "_ZN4Aska16IParticleEmitter16AttachRenderableEPKNS_3AFF18AsfParticleEmitterEPNS_22ParticleRenderableBaseE",
+     "name": "AttachRenderable"
+    },
+    {
+     "ghidra": "0x2295384",
+     "symbol": "_ZN4Aska16IParticleEmitter25DetachRenderableForRenderEv",
+     "name": "DetachRenderableForRender"
+    },
+    {
+     "ghidra": "0x22953c4",
+     "symbol": "_ZN4Aska16IParticleEmitter15PrepareMatricesEv",
+     "name": "PrepareMatrices"
+    },
+    {
+     "ghidra": "0x229568c",
+     "symbol": "_ZN4Aska16IParticleEmitter23PrepareMatricesTraverseEv",
+     "name": "PrepareMatricesTraverse"
+    },
+    {
+     "ghidra": "0x22956bc",
+     "symbol": "_ZN4Aska16IParticleEmitter18UpdateMatrixBufferEv",
+     "name": "UpdateMatrixBuffer"
+    },
+    {
+     "ghidra": "0x229582c",
+     "symbol": "_ZN4Aska16IParticleEmitter17FillMatrixContextEPNS0_13MatrixContextE",
+     "name": "FillMatrixContext"
+    },
+    {
+     "ghidra": "0x22958f4",
+     "symbol": "_ZN4Aska16IParticleEmitter7PrepareEv",
+     "name": "Prepare"
+    },
+    {
+     "ghidra": "0x2295cec",
+     "symbol": "_ZN4Aska16IParticleEmitter8OnActiveEb",
+     "name": "OnActive"
+    },
+    {
+     "ghidra": "0x2295d08",
+     "symbol": "_ZN4Aska16IParticleEmitter4KickEv",
+     "name": "Kick"
+    },
+    {
+     "ghidra": "0x2295d24",
+     "symbol": "_ZN4Aska16IParticleEmitter6AttachEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "Attach"
+    },
+    {
+     "ghidra": "0x229603c",
+     "symbol": "_ZN4Aska16IParticleEmitter28UpdateReceiveShadowConditionEv",
+     "name": "UpdateReceiveShadowCondition"
+    },
+    {
+     "ghidra": "0x2296088",
+     "symbol": "_ZN4Aska16IParticleEmitter14SetManualZFlagEb",
+     "name": "SetManualZFlag"
+    },
+    {
+     "ghidra": "0x22960a8",
+     "symbol": "_ZN4Aska16IParticleEmitter14SetShallowestZEf",
+     "name": "SetShallowestZ"
+    },
+    {
+     "ghidra": "0x22960c0",
+     "symbol": "_ZN4Aska16IParticleEmitter14GetShallowestZEv",
+     "name": "GetShallowestZ"
+    },
+    {
+     "ghidra": "0x22960cc",
+     "symbol": "_ZN4Aska16IParticleEmitter18SetAdjustShiftFlagEj",
+     "name": "SetAdjustShiftFlag"
+    },
+    {
+     "ghidra": "0x22960e4",
+     "symbol": "_ZN4Aska16IParticleEmitter14SetAdjustShiftEff",
+     "name": "SetAdjustShift"
+    },
+    {
+     "ghidra": "0x22973bc",
+     "symbol": "_ZN4Aska16IParticleEmitternwEmmb",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22973f4",
+     "symbol": "_ZN4Aska16IParticleEmitternaEmmb",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x229742c",
+     "symbol": "_ZN4Aska16IParticleEmitterdlEPvRKSt9nothrow_t",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x2297458",
+     "symbol": "_ZN4Aska16IParticleEmitterdaEPvRKSt9nothrow_t",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x2297484",
+     "symbol": "_ZN4Aska16IParticleEmitterdlEPv",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22974b0",
+     "symbol": "_ZN4Aska16IParticleEmitterdaEPv",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22974dc",
+     "symbol": "_ZN4Aska16IParticleEmitter4StopEv",
+     "name": "Stop"
+    },
+    {
+     "ghidra": "0x22974e0",
+     "symbol": "_ZN4Aska16IParticleEmitter22SetLandscapeConstraintEPNS_20ILandscapeConstraintE",
+     "name": "SetLandscapeConstraint"
+    },
+    {
+     "ghidra": "0x22974e4",
+     "symbol": "_ZNK4Aska16IParticleEmitter25GetTotalNumberOfParticlesEv",
+     "name": "GetTotalNumberOfParticles"
+    }
+   ]
+  },
+  {
+   "name": "ParticleManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::TaskManager",
+      "size": 4080
+     },
+     "size": 4080
+    },
+    {
+     "offset": 4080,
+     "name": "m_notify",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::INotify",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 4088,
+     "name": "m_time",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4092,
+     "name": "m_cs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::CriticalSection",
+      "size": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 4132,
+     "name": "unk_1024",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4136,
+     "name": "m_renderManager",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 4144,
+     "name": "m_event",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::Event",
+      "size": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 4248,
+     "name": "m_inFlight",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4252,
+     "name": "unk_109c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4256,
+     "name": "m_makeMatrix",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::INotify",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 4264,
+     "name": "m_fillFrame",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4268,
+     "name": "m_drawnFrame",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4272,
+     "name": "m_frameSlots",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 8
+    },
+    {
+     "offset": 4280,
+     "name": "m_deleteHandler",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::INotify",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 4288,
+     "name": "m_matrixList",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 4296,
+     "name": "m_matrixCount",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 4304,
+     "name": "m_dispatchList",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 4312,
+     "name": "m_dispatchCount",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 4320,
+     "name": "m_matrixStorage",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": "IParticleEmitter"
+      },
+      "count": 2048
+     },
+     "size": 16384
+    },
+    {
+     "offset": 20704,
+     "name": "m_dispatchStorage",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": "IParticleEmitter"
+      },
+      "count": 2048
+     },
+     "size": 16384
+    },
+    {
+     "offset": 37088,
+     "name": "m_buffersPending",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 37089,
+     "name": "unk_90e1",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 37096,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2297504",
+     "symbol": "_ZN4Aska15ParticleManagerC2Ev",
+     "name": "ParticleManager"
+    },
+    {
+     "ghidra": "0x22975d8",
+     "symbol": "_ZN4Aska15ParticleManagerD1Ev",
+     "name": "~ParticleManager"
+    },
+    {
+     "ghidra": "0x2297770",
+     "symbol": "_ZN4Aska15ParticleManagerD0Ev",
+     "name": "~ParticleManager"
+    },
+    {
+     "ghidra": "0x2297920",
+     "symbol": "_ZN4Aska15ParticleManager4InitEv",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x2297998",
+     "symbol": "_ZNK4Aska15ParticleManager10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x2297a10",
+     "symbol": "_ZNK4Aska15ParticleManager15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    },
+    {
+     "ghidra": "0x2297a28",
+     "symbol": "_ZN4Aska15ParticleManager18PreAllocateBuffersEv",
+     "name": "PreAllocateBuffers"
+    },
+    {
+     "ghidra": "0x2297a38",
+     "symbol": "_ZN4Aska15ParticleManager14ReleaseBuffersEv",
+     "name": "ReleaseBuffers"
+    },
+    {
+     "ghidra": "0x2297a48",
+     "symbol": "_ZN4Aska15ParticleManager3AddEPNS_21AnimatableLinkElementE",
+     "name": "Add"
+    },
+    {
+     "ghidra": "0x2297a94",
+     "symbol": "_ZN4Aska15ParticleManager6DeleteEPNS_21AnimatableLinkElementE",
+     "name": "Delete"
+    },
+    {
+     "ghidra": "0x2297afc",
+     "symbol": "_ZN4Aska15ParticleManager3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x2297b18",
+     "symbol": "_ZN4Aska15ParticleManager6RunLowEv",
+     "name": "RunLow"
+    },
+    {
+     "ghidra": "0x2297dd4",
+     "symbol": "_ZN4Aska15ParticleManager17RunAfterRenderingEv",
+     "name": "RunAfterRendering"
+    },
+    {
+     "ghidra": "0x2297f70",
+     "symbol": "_ZN4Aska15ParticleManager16DispatchEmittersEv",
+     "name": "DispatchEmitters"
+    },
+    {
+     "ghidra": "0x22980f0",
+     "symbol": "_ZN4Aska15ParticleManager15DispatchEmitterEPNS_16IParticleEmitterEb",
+     "name": "DispatchEmitter"
+    },
+    {
+     "ghidra": "0x22981ec",
+     "symbol": "_ZN4Aska15ParticleManager4KickEPNS_16IParticleEmitterE",
+     "name": "Kick"
+    },
+    {
+     "ghidra": "0x2298394",
+     "symbol": "_ZN4Aska15ParticleManager4TickEPNS_16IParticleEmitterEf",
+     "name": "Tick"
+    },
+    {
+     "ghidra": "0x22983c8",
+     "symbol": "_ZN4Aska15ParticleManager7HandlerEm",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x22986a4",
+     "symbol": "_ZN4Aska15ParticleManager13DeleteEmitterEPNS_16IParticleEmitterE",
+     "name": "DeleteEmitter"
+    },
+    {
+     "ghidra": "0x2298734",
+     "symbol": "_ZNK4Aska15ParticleManager3GetEmPv",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x2298774",
+     "symbol": "_ZN4Aska15ParticleManager3SetEmPKv",
+     "name": "Set"
+    },
+    {
+     "ghidra": "0x2298784",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleEPKNS_3AFF18AsfParticleEmitterEj",
+     "name": "CreateParticle"
+    },
+    {
+     "ghidra": "0x2298994",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures9LifeLimitENS_6StNULLEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> >"
+    },
+    {
+     "ghidra": "0x2298b30",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_6StNULLEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::StNULL>"
+    },
+    {
+     "ghidra": "0x2298cc0",
+     "symbol": "_ZN4Aska15ParticleManager6MallocEm",
+     "name": "Malloc"
+    },
+    {
+     "ghidra": "0x2298cf4",
+     "symbol": "_ZN4Aska15ParticleManager4FreeEPv",
+     "name": "Free"
+    },
+    {
+     "ghidra": "0x246d444",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x246d608",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > >"
+    },
+    {
+     "ghidra": "0x246d7ac",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_4LineENS_6StNULLEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > >"
+    },
+    {
+     "ghidra": "0x246d964",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS_6StNULLEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::StNULL> > >"
+    },
+    {
+     "ghidra": "0x24878c8",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x2487a94",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x2487c40",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x2487e00",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS_6StNULLEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::StNULL> > > >"
+    },
+    {
+     "ghidra": "0x24a34bc",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x24a3698",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x24a3854",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x24a3a24",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x24bfca0",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x24bfe74",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_7TextureENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x24c0028",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_7TextureENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x24c01f0",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_7TextureENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x24dfb34",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > > >"
+    },
+    {
+     "ghidra": "0x24dfd18",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x24dfedc",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_7TextureENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x24e00b4",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_14ColorAnimationENS2_INS3_7TextureENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x24ff588",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x24ff75c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x24ff910",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x24ffad8",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x251957c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x2519748",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x25198f4",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x2519ab4",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS_6StNULLEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::StNULL> > > >"
+    },
+    {
+     "ghidra": "0x2536908",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x2536adc",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x2536c90",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_14ColorAnimationENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x2536e58",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_14ColorAnimationENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x2556204",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > > >"
+    },
+    {
+     "ghidra": "0x25563e8",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x25565ac",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_14ColorAnimationENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x2556784",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_14ColorAnimationENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x2574b28",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x2574d04",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x2574ec0",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x2575090",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x2591f0c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x25920e0",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x2592294",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x259245c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x25b35c8",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x25b37a4",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x25b3960",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x25b3b30",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x25d7494",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > > > >"
+    },
+    {
+     "ghidra": "0x25d7680",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > > >"
+    },
+    {
+     "ghidra": "0x25d784c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > > >"
+    },
+    {
+     "ghidra": "0x25d7a2c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x25fb328",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > > >"
+    },
+    {
+     "ghidra": "0x25fb50c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x25fb6d0",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x25fb8a8",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x261ea0c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x261ebd8",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_7TextureENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x261ed84",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_7TextureENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > >"
+    },
+    {
+     "ghidra": "0x261ef44",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_7TextureENS_6StNULLEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::StNULL> > > >"
+    },
+    {
+     "ghidra": "0x263d120",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x263d2fc",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_7TextureENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x263d4b8",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_7TextureENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x263d688",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures5SpeedENS2_INS3_6MotionENS2_INS3_7TextureENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x265b37c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures12ProgrammableENS2_INS3_5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Programmable, Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > > > > >"
+    },
+    {
+     "ghidra": "0x265b558",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures12ProgrammableENS2_INS3_5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Programmable, Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > > > > >"
+    },
+    {
+     "ghidra": "0x266ef24",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures12ProgrammableENS2_INS3_5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_4LineENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Programmable, Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > > > > >"
+    },
+    {
+     "ghidra": "0x266f110",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures12ProgrammableENS2_INS3_5SpeedENS2_INS3_6MotionENS2_INS3_8RotationENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_9LifeLimitENS2_INS3_8DynamicsENS2_INS_24ParticleDynamicsFeatures8DynamicsENS_6StNULLEEEEEEEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::Programmable, Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Motion, Aska::FeatureList<Aska::ParticleFeatures::Rotation, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Dynamics, Aska::FeatureList<Aska::ParticleDynamicsFeatures::Dynamics, Aska::StNULL> > > > > > > > > >"
+    },
+    {
+     "ghidra": "0x26822ac",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures11CurveMotionENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_5SpeedENS2_INS3_9LifeLimitENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::CurveMotion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > > >"
+    },
+    {
+     "ghidra": "0x268248c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures11CurveMotionENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_5SpeedENS2_INS3_9LifeLimitENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::CurveMotion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::LifeLimit, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x268264c",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures11CurveMotionENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_5SpeedENS2_INS3_4LineENS_6StNULLEEEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::CurveMotion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::FeatureList<Aska::ParticleFeatures::Line, Aska::StNULL> > > > > >"
+    },
+    {
+     "ghidra": "0x2682820",
+     "symbol": "_ZN4Aska15ParticleManager14CreateParticleINS_11FeatureListINS_16ParticleFeatures11CurveMotionENS2_INS3_7TextureENS2_INS3_14ColorAnimationENS2_INS3_5SpeedENS_6StNULLEEEEEEEEEEEPNS_15ParticleEmitterIT_EEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "CreateParticle<Aska::FeatureList<Aska::ParticleFeatures::CurveMotion, Aska::FeatureList<Aska::ParticleFeatures::Texture, Aska::FeatureList<Aska::ParticleFeatures::ColorAnimation, Aska::FeatureList<Aska::ParticleFeatures::Speed, Aska::StNULL> > > > >"
+    }
+   ]
+  }
+ ]
+}

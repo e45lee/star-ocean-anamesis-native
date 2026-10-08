@@ -3,9 +3,10 @@ board (星の海と夢の渚, event_sww2020_93) -> its first story mc99_565 (ski
 unlocks the battle me99_1054 -> single play, no rental, party 1 -> the battle -> the result pages
 -> back on the board -> home. emulator/scripts/summer_demo.sh's event part, on every target."""
 import re
+import shutil
 import sqlite3
 
-from .. import proc, screens, ui370
+from .. import popups, proc, screens, ui370, waits
 from ..targets import Abort
 from . import launch, mission
 
@@ -69,60 +70,58 @@ def run(s):
 
     n = s.n_packets(r"> CheckEventRankingResult")
     s.tap_until("イベント -> the event menu (CheckEventRankingResult)", 60, ui370.HOME_EVENT, s.more_than(r"> CheckEventRankingResult", n))
-    s.ctl("wait:6000")
-    s.shot("03-event-list")
+    waits.settle(s, "03-event-list", mask=waits.EVENT_MASK, hold=2)
     # The rows in turn until one opens the beach board whose first story (232:840) opens a story
-    # popup (summer_demo.sh: the list is never scrolled).
+    # popup (summer_demo.sh: the list is never scrolled). Each tap waits for the screen it leads to
+    # (a note only when it doesn't come: the checks below tell the screens apart).
     board, pop = s.scratch("board.png"), s.scratch("story.png")
+    look = lambda name, xy, path: shutil.copyfile(waits.tap_to_screen(s, name, xy, mask=waits.EVENT_MASK, fatal=None) or waits.look(s), path)
     found = None
     for y in (525, 680, 830, 985):
-        s.send(["tap:364:%d" % y, "wait:7000", "shot:" + board])
+        look("the row at y=%d" % y, "364:%d" % y, board)
         if beach(board):
-            s.send(["tap:232:840", "wait:3000", "shot:" + pop])
+            look("the board's first story", "232:840", pop)
             if story_popup(pop):
                 found = y
                 break
             s.note("the row at y=%d opens a beach board without the story at 232:840" % y)
         else:
             s.note("the row at y=%d is not the beach board" % y)
-        s.send(["tap:" + ui370.BACK, "wait:5000", "shot:" + s.scratch("back.png")])
+        waits.tap_to_screen(s, "戻る", ui370.BACK, mask=waits.EVENT_MASK, fatal=None)
     if not s.check("the summer event board (水着イベント2020)%s" % (" at the row y=%d" % found if found else ""), found is not None):
         raise Abort("no event board")
     s.keep_shot("04-event-board", board)
     s.keep_shot("05-story-detail", pop)
     s.tap_until("story mc99_565 -> MissionTalk", 60, ui370.STORY_START, lambda: s.in_packets(r"> MissionTalk .* %d " % story))
-    s.ctl("wait:10000", "tap:" + ui370.STORY_SKIP, "wait:2000")
-    s.shot("06-story-skip", settle=False)
+    waits.settle(s, hold=2)  # the scene (its スキップ shows once it holds still a while)
+    waits.tap_to_screen(s, "スキップ -> the skip dialog", ui370.STORY_SKIP, "06-story-skip")
     n = s.n_packets(r"> CheckEventRankingResult")
     s.tap_until("story skipped (はい) -> EndMissionTalk", 60, ui370.STORY_SKIP_YES, lambda: s.in_packets(r"> EndMissionTalk .* %d 1" % story))
     s.wait_for("back on the board (CheckEventRankingResult)", 60, s.more_than(r"> CheckEventRankingResult", n))
-    s.ctl("wait:6000")
-    s.shot("07-board-story-cleared")
+    waits.settle(s, "07-board-story-cleared", mask=waits.EVENT_MASK, hold=2)
     # The battle the story unlocked, me99_1054 (right of the cleared story).
-    s.ctl("tap:685:655", "wait:4000")
-    s.shot("08-mission-detail")
-    s.ctl("tap:" + ui370.SINGLE_PLAY, "wait:5000", "tap:" + ui370.RENTAL_NONE, "wait:5000")
-    s.shot("09-party")
+    waits.tap_to_screen(s, "me99_1054 -> its detail", "685:655", "08-mission-detail", mask=waits.EVENT_MASK)
+    waits.tap_to_screen(s, "シングルプレイ開始", ui370.SINGLE_PLAY)
+    waits.tap_to_screen(s, "選択しない -> the party", ui370.RENTAL_NONE, "09-party", is_screen=popups.is_party_start)
     mission.open_mission_confirm(s)
     s.shot("10-start-confirm")
     mission.start_mission(s, "me99_1054 -> MissionStart -> MissionStartRes", lambda: s.in_packets(r"< MissionStartRes"), opened=True)
     s.check("MissionStart names me99_1054 (%d)" % battle, s.in_packets(r"> MissionStart .* %d " % battle))
+    # a fixed wait: a picture of the fight, nothing to wait for (the next wait is for its end)
     s.ctl("wait:15000")
     s.shot("11-battle", settle=False)
     s.wait_for("the battle: MissionEnd (battle log) -> MissionEndRes", 600, lambda: s.in_packets(r"< MissionEndRes"))
     s.check("server: me99_1054's first clear", s.in_server(r"MissionEnd mission %d: .*first clear" % battle))
     # (counted before the result pages: their last OK can already lead back to the board)
     n = s.n_packets(r"> CheckEventRankingResult")
-    s.ctl("wait:7000")
+    waits.settle(s, hold=2)
     for p in ("12-result-rewards", "13-result-drops", "14-result-exp"):
         if s.n_packets(r"> CheckEventRankingResult") > n:
             break
-        s.ctl("tap:" + ui370.RESULT_OK, "wait:4000")
-        s.shot(p, settle=False)
+        waits.tap_to_screen(s, "the result page's OK", ui370.RESULT_OK, p, tries=1, fatal=None)
     s.tap_until("the result pages -> back on the board (CheckEventRankingResult)", 90, ui370.RESULT_OK,
                 s.more_than(r"> CheckEventRankingResult", n))
-    s.ctl("wait:6000")
-    s.shot("15-board-after-clear")
+    waits.settle(s, "15-board-after-clear", mask=waits.EVENT_MASK, hold=2)
     st1 = open(s.scratch("state-1-home.txt")).read()
     st = s.state("2-after-battle")
     s.check("state: story mc99_565 cleared", re.search(r"^  mission %d: cleared" % story, st, re.M) is not None)
@@ -130,6 +129,5 @@ def run(s):
     s.check("state: mc99_566 unlocked by me99_1054", "unlocked mc99_566 (by me99_1054)" in st)
     coin = lambda t: int((re.search(r"^  stock item_coin_291 x(\d+)", t, re.M) or [0, 0])[1])
     s.check("state: event drops (item_coin_291 %d -> %d)" % (coin(st1), coin(st)), coin(st) > coin(st1))
-    s.ctl("tap:" + ui370.FOOTER_HOME, "wait:8000")
-    s.shot("16-home-after-event")
+    waits.tap_to_screen(s, "ホーム", ui370.FOOTER_HOME, "16-home-after-event", mask=waits.HOME_MASK)
     s.check("no ProtocolError in the packet log", not s.in_packets(r"< ProtocolError"))

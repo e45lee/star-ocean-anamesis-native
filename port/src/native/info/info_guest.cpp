@@ -5,6 +5,7 @@
 
 #include "native/common/gen/common_addresses.h"
 #include "native/common/guest_std.h"
+#include "native/info/gen/info_addresses.h"
 
 namespace soa::native::info::g {
 
@@ -26,6 +27,13 @@ void* StringAllocate(u64 n) {
     static const u64 f = sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj");
     return reinterpret_cast<void*>(guest_call(f, {n, at(native::kStrStlStringH), 0x1c}));
 }
+
+void* VectorAllocate(u64 bytes) {
+    static const u64 f = sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj");
+    return reinterpret_cast<void*>(guest_call(f, {bytes, at(kStlVectorH), 0x20}));
+}
+
+u64 call(u64 fn, std::initializer_list<u64> args) { return guest_call(fn, args); }
 
 void StlFree(void* p) {
     static const u64 f = sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv");

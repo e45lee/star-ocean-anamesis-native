@@ -45,6 +45,21 @@ std::string string_vtable_symbol(u32 n) {
 }
 std::string base_vtable_symbol(u32 n) { return "_ZTV22CParameterPropertyBaseILj" + std::to_string(n) + "EE"; }
 
+template <class F>
+void each_node(const PropertyMap& m, F f) {
+    auto* end = reinterpret_cast<const libcxx::tree_node_base*>(&m.root);
+    for (auto* n = reinterpret_cast<const libcxx::tree_node_base*>(m.begin_node); n != end;) {
+        f(reinterpret_cast<const PropertyNode*>(n));
+        if (n->right) {
+            n = n->right;
+            while (n->left) n = n->left;
+        } else {
+            while (n->parent->left != n) n = n->parent;
+            n = n->parent;
+        }
+    }
+}
+
 AnyProperty* property(u8* obj, const InfoProp& d) { return reinterpret_cast<AnyProperty*>(obj + d.offset); }
 const AnyProperty* property(const u8* obj, const InfoProp& d) { return reinterpret_cast<const AnyProperty*>(obj + d.offset); }
 const params::String& string_value(const u8* obj, const InfoProp& d) {
@@ -71,6 +86,13 @@ const InfoResolved& resolve(const InfoClass& C) {
     if (it != cache->end()) return it->second;
     InfoResolved R;
     R.vtable = g::sym(C.ztv) + 16;
+    if (C.kind == InfoKind::kValueArray) {
+        R.elem_vt_final = g::sym(value_vtable_symbol(C.elem_prop).c_str()) + 16;
+        R.elem_vt_base = g::sym(base_vtable_symbol(C.elem_prop.n).c_str()) + 16;
+    }
+    if (C.fn_copy) R.fn_copy = g::sym(C.fn_copy);
+    if (C.fn_destroy) R.fn_destroy = g::sym(C.fn_destroy);
+    if (C.fn_assign) R.fn_assign = g::sym(C.fn_assign);
     for (const InfoProp& p : C.props) {
         R.vt_final.push_back(g::sym((p.kind == InfoPropKind::kString ? string_vtable_symbol(p.n) : value_vtable_symbol(p)).c_str()) + 16);
         R.vt_base.push_back(g::sym(base_vtable_symbol(p.n).c_str()) + 16);
@@ -189,6 +211,85 @@ void steal_string(params::String* dst, params::String* src) {
 
 enum class Copy { kCopy, kMove };
 
+void copy_into(const InfoClass& C, u8* obj, u8* src, Copy how);
+void destroy(const InfoClass& C, u8* obj);
+
+using Tree = libcxx::tree<u8>;  // (a container's map: the node's key at +0x20, the element at +0x28)
+Tree& tree_of(u8* obj) { return *reinterpret_cast<Tree*>(&reinterpret_cast<InfoContainer*>(obj)->m_body); }
+
+// One property of an InfoBaseValueArray's vector (CParameterPropertyValue<T, N>): its copy constructor.
+void copy_value_property(const InfoClass& C, const InfoResolved& R, u8* to, const u8* from) {
+    static const u64 hash_vtable = g::sym("_ZTVN9Framework7CHash32E") + 16;
+    auto* p = reinterpret_cast<AnyProperty*>(to);
+    auto* q = reinterpret_cast<const AnyProperty*>(from);
+    p->base.vtable = reinterpret_cast<const void*>(R.elem_vt_final);
+    p->base.m_next = q->base.m_next;
+    p->m_named = q->m_named;
+    p->m_name.vtable = hash_vtable;
+    p->m_name.m_hash = q->m_name.m_hash;
+    std::memcpy(to + 0x28, from + 0x28, value_width(C.elem_prop.kind));
+}
+
+// A container's body. The vector (InfoBaseArray, InfoBaseValueArray): copied (storage of the source's size
+// from Allocate(bytes, "STL_Vector.h", 0x20), each element copy-constructed in order) or, by the move
+// constructor, taken (the source's three words, left 0). The map (IInfoBaseMap): copied either way (CSTLMap
+// declares a copy constructor: no move): empty, then each source element in order by the guest's
+// __emplace_hint_unique_key_args(end(), key, the element's pair).
+void copy_container(const InfoClass& C, const InfoResolved& R, u8* obj, u8* src, Copy how) {
+    auto* c = reinterpret_cast<InfoContainer*>(obj);
+    auto* sc = reinterpret_cast<InfoContainer*>(src);
+    if (C.kind == InfoKind::kMap) {
+        Tree& t = tree_of(obj);
+        t.root = nullptr;
+        t.size = 0;
+        t.begin_node = reinterpret_cast<libcxx::tree_node<u8>*>(t.end_node());
+        each_node(*reinterpret_cast<const PropertyMap*>(&sc->m_body), [&](const PropertyNode* n) {
+            const u8* pair = reinterpret_cast<const u8*>(n) + 0x20;
+            g::call(R.fn_copy, {reinterpret_cast<u64>(&t), reinterpret_cast<u64>(t.end_node()), reinterpret_cast<u64>(pair),
+                                reinterpret_cast<u64>(pair)});
+        });
+        return;
+    }
+    if (how == Copy::kMove) {
+        std::memcpy(c->m_body, sc->m_body, sizeof c->m_body);
+        std::memset(sc->m_body, 0, sizeof sc->m_body);
+        return;
+    }
+    c->m_body[0] = c->m_body[1] = c->m_body[2] = 0;
+    u64 bytes = sc->m_body[1] - sc->m_body[0];
+    if (!bytes) return;
+    u64 p = reinterpret_cast<u64>(g::VectorAllocate(bytes));
+    c->m_body[0] = c->m_body[1] = p;
+    c->m_body[2] = p + bytes;
+    u64 stride = C.kind == InfoKind::kValueArray ? 0x30 : C.elem->size;
+    for (u64 e = sc->m_body[0]; e != sc->m_body[1]; e += stride) {
+        if (C.kind == InfoKind::kValueArray) copy_value_property(C, R, reinterpret_cast<u8*>(c->m_body[1]), reinterpret_cast<const u8*>(e));
+        else copy_into(*C.elem, reinterpret_cast<u8*>(c->m_body[1]), reinterpret_cast<u8*>(e), Copy::kCopy);
+        c->m_body[1] += stride;
+    }
+}
+
+// A container's body destroyed: the vector's elements from the last (an info's destructor; a value
+// property's: CParameterPropertyBase<N>'s vtable), the end back at the beginning, the storage freed; the
+// map's nodes by the guest's __tree::destroy(root).
+void destroy_container(const InfoClass& C, const InfoResolved& R, u8* obj) {
+    auto* c = reinterpret_cast<InfoContainer*>(obj);
+    if (C.kind == InfoKind::kMap) {
+        Tree& t = tree_of(obj);
+        g::call(R.fn_destroy, {reinterpret_cast<u64>(&t), reinterpret_cast<u64>(t.root)});
+        return;
+    }
+    if (!c->m_body[0]) return;
+    u64 stride = C.kind == InfoKind::kValueArray ? 0x30 : C.elem->size;
+    for (u64 e = c->m_body[1]; e != c->m_body[0];) {
+        e -= stride;
+        if (C.kind == InfoKind::kValueArray) *reinterpret_cast<u64*>(e) = R.elem_vt_base;
+        else destroy(*C.elem, reinterpret_cast<u8*>(e));
+    }
+    c->m_body[1] = c->m_body[0];
+    g::StlFree(reinterpret_cast<void*>(c->m_body[0]));
+}
+
 void copy_into(const InfoClass& C, u8* obj, u8* src, Copy how) {
     const InfoResolved& R = resolve(C);
     static const u64 hash_vtable = g::sym("_ZTVN9Framework7CHash32E") + 16;
@@ -197,6 +298,7 @@ void copy_into(const InfoClass& C, u8* obj, u8* src, Copy how) {
     base->vtable = reinterpret_cast<const void*>(R.vtable);
     g::CopyPropertyMap(&base->m_properties, &sb->m_properties);
     g::CopyChildMap(&base->m_children, &sb->m_children);
+    if (C.kind != InfoKind::kInfo) return copy_container(C, R, obj, src, how);
     for (size_t i = 0; i < C.props.size(); i++) {
         const InfoProp& d = C.props[i];
         AnyProperty* p = property(obj, d);
@@ -220,6 +322,17 @@ void assign_from(const InfoClass& C, u8* obj, u8* src, Copy how) {
     if (obj != src) {
         g::AssignPropertyMap(&base->m_properties, &sb->m_properties);
         g::AssignChildMap(&base->m_children, &sb->m_children);
+    }
+    if (C.kind != InfoKind::kInfo) {
+        // the body (a move assignment too: the containers' copy assignment): the guest's vector::assign(first,
+        // last) / __tree::__assign_multi(first, last), unless it's itself
+        if (obj == src) return;
+        const InfoResolved& R = resolve(C);
+        auto* sc = reinterpret_cast<const InfoContainer*>(src);
+        u64 first = sc->m_body[0], last = sc->m_body[1];
+        if (C.kind == InfoKind::kMap) last = reinterpret_cast<u64>(&sc->m_body[1]);  // (end(): the end node)
+        g::call(R.fn_assign, {reinterpret_cast<u64>(&reinterpret_cast<InfoContainer*>(obj)->m_body), first, last});
+        return;
     }
     for (const InfoProp& d : C.props) {
         AnyProperty* p = property(obj, d);
@@ -250,18 +363,23 @@ void InfoCode::Move(const InfoClass& C, u8* obj, u8* src) { copy_into(C, obj, sr
 void InfoCode::Assign(const InfoClass& C, u8* obj, const u8* src) { assign_from(C, obj, const_cast<u8*>(src), Copy::kCopy); }
 void InfoCode::MoveAssign(const InfoClass& C, u8* obj, u8* src) { assign_from(C, obj, src, Copy::kMove); }
 
-void InfoCode::Dtor(const InfoClass& C, u8* obj) {
+void InfoCode::Dtor(const InfoClass& C, u8* obj) { destroy(C, obj); }
+
+namespace {
+
+void destroy(const InfoClass& C, u8* obj) {
     const InfoResolved& R = resolve(C);
     static const u64 infobase_vtable = g::sym("_ZTV8InfoBase") + 16;
     auto* base = reinterpret_cast<InfoBase*>(obj);
     base->vtable = reinterpret_cast<const void*>(R.vtable);
+    if (C.kind != InfoKind::kInfo) destroy_container(C, R, obj);
     // the members from the last (properties and children interleave by offset)
     size_t pi = C.props.size(), ci = C.children.size();
     while (pi || ci) {
         bool child = ci && (!pi || C.children[ci - 1].offset > C.props[pi - 1].offset);
         if (child) {
             const InfoChild& ch = C.children[--ci];
-            Dtor(*ch.cls, obj + ch.offset);
+            destroy(*ch.cls, obj + ch.offset);
             continue;
         }
         const InfoProp& d = C.props[--pi];
@@ -278,24 +396,12 @@ void InfoCode::Dtor(const InfoClass& C, u8* obj) {
     g::DestroyPropertyTree(&base->m_properties);
 }
 
+}  // namespace
+
 // ---- the state the checks compare, the tests' clean-up ----
 
 namespace {
 
-template <class F>
-void each_node(const PropertyMap& m, F f) {
-    auto* end = reinterpret_cast<const libcxx::tree_node_base*>(&m.root);
-    for (auto* n = reinterpret_cast<const libcxx::tree_node_base*>(m.begin_node); n != end;) {
-        f(reinterpret_cast<const PropertyNode*>(n));
-        if (n->right) {
-            n = n->right;
-            while (n->left) n = n->left;
-        } else {
-            while (n->parent->left != n) n = n->parent;
-            n = n->parent;
-        }
-    }
-}
 
 void put(std::vector<u8>& out, const void* p, size_t n) {
     out.insert(out.end(), static_cast<const u8*>(p), static_cast<const u8*>(p) + n);
@@ -307,17 +413,19 @@ void prop_state(std::vector<u8>& out, const InfoProp& d, const u8* obj, Span top
 // A pointer as the comparison sees it: into the top object, relative to it; else relative to `other`
 // (a copy's maps and m_next still point into the object it was copied from, a dead temporary: the
 // copy quirk; where that was differs between two runs, its layout doesn't), flagged; null as null.
+thread_local bool t_maps = true;  // (info_state_no_maps: the map sizes only)
+thread_local bool t_raw = false;  // (info_state_raw: pointers as they are)
+
 struct Span {
     u64 lo, hi;
 };
 u64 relative(const void* p, Span top, u64 other) {
     u64 v = reinterpret_cast<u64>(p);
-    if (!v) return 0;
+    if (!v || t_raw) return v;
     if (v >= top.lo && v < top.hi) return v - top.lo;
     return (v - other) | (u64(1) << 63);
 }
 
-thread_local bool t_maps = true;  // (info_state_no_maps: the map sizes only)
 
 void map_state(std::vector<u8>& out, const PropertyMap& m, Span top) {
     put(out, &m.size, 8);
@@ -387,6 +495,13 @@ void prop_state(std::vector<u8>& out, const InfoProp& d, const u8* obj, Span top
 std::vector<u8> info_state(const InfoClass& C, const u8* obj) {
     std::vector<u8> out;
     state(out, C, obj, Span{reinterpret_cast<u64>(obj), reinterpret_cast<u64>(obj) + C.size});
+    return out;
+}
+
+std::vector<u8> info_state_raw(const InfoClass& C, const u8* obj) {
+    t_raw = true;
+    std::vector<u8> out = info_state(C, obj);
+    t_raw = false;
     return out;
 }
 

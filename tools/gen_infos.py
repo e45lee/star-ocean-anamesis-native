@@ -754,6 +754,32 @@ def container_elem(X, m):
     raise Fail("%s: no container template in %s" % (m, X.chain[m]))
 
 
+def container_fns(X, m):
+    """The guest functions a container's natives call: (copy one element into the map: __emplace_hint_unique_key_args,
+    destroy the map's nodes: __tree::destroy, assign: vector::assign<E*> / __tree::__assign_multi); None when the lib
+    has none (one symbol each, or none)."""
+    e = container_elem(X, m)
+    if e[0] == "value":
+        t, n = e[1]
+        tm = [k for k, v in TYPES.items() if v[0] == t][0]
+        elem = "23CParameterPropertyValueI%sLj%dE18CPropertyConverterE" % (tm, n)
+    else:
+        elem = e[-1]
+    if e[0] == "map":
+        pre = "_ZNSt6__ndk16__treeINS_12__value_typeI%s%sEENS_19__map_value_compare" % ("j" if e[1] == 4 else "m", elem)
+        want = {"copy": "30__emplace_hint_unique_key_args", "destroy": "7destroyEPNS_11__tree_nodeI", "assign": "14__assign_multiI"}
+    else:
+        pre = "_ZNSt6__ndk16vectorI%sN9Framework13CSTLAllocatorI" % elem
+        want = {"assign": "6assignIPS"}
+    out = {}
+    for k, frag in want.items():
+        c = [n for n in X.S if n.startswith(pre) and frag in n]
+        if len(c) > 1:
+            raise Fail("%s: %d candidates for %s" % (m, len(c), k))
+        out[k] = c[0] if c else None
+    return out
+
+
 def order(X, shapes, names):
     out, done = [], set()
 
@@ -826,8 +852,10 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
                 t = e[-1]
                 ok = t in shapes and shapes[t].kind == "plain"
                 elem = "%s, %d, {}" % ("&kInfo_%s" % ident(t) if ok else "nullptr", e[1] if e[0] == "map" else 0)
-            out.append('inline constexpr InfoClass kInfo_%s{"%s", "_ZTV%s", InfoKind::%s, 0x%x, {}, {}, {}, %s};' % (
-                ident(m), cpp_name(m), m, ckind[sh.kind], CONTAINER_SIZE, elem))
+            fns = container_fns(X, m)
+            q = lambda k: ('"%s"' % fns[k]) if fns.get(k) else "nullptr"
+            out.append('inline constexpr InfoClass kInfo_%s{"%s", "_ZTV%s", InfoKind::%s, 0x%x, {}, {}, {}, %s, %s, %s, %s};' % (
+                ident(m), cpp_name(m), m, ckind[sh.kind], CONTAINER_SIZE, elem, q("copy"), q("destroy"), q("assign")))
             continue
         cls = ident(m)
         keys = keys_of.get(m, {})
@@ -883,7 +911,7 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
                 else:
                     out.append("    {InfoStep::kChild, 0x%03x, nullptr, 0, 0}," % st[1])
             out.append("};")
-        tail = ", nullptr, 0, {}, 0x%x" % sh.tail if sh.tail else ""
+        tail = ", nullptr, 0, {}, nullptr, nullptr, nullptr, 0x%x" % sh.tail if sh.tail else ""
         out.append('inline constexpr InfoClass kInfo_%s{"%s", "_ZTV%s", InfoKind::kInfo, sizeof(%s), %s, %s, %s%s};' % (
             cls, cpp_name(m), m, cls,
             ("k%sProps" % cls) if sh.props else "{}", ("k%sChildren" % cls) if sh.children else "{}",
@@ -911,22 +939,35 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
     out.append("")
     # the copies, destructors, assignments and moves of the infos without a container anywhere inside
     # (a container's copy copies its elements: not taken yet)
-    def has_container(m):
-        return any(c.kind != "plain" or has_container(c.cls) for o, c in shapes[m].children)
+    def can(m, role):
+        """Whether the natives can do `role` for class m: each container inside has what that needs (an
+        array its element's layout; a map its element's and the guest functions; an assignment the
+        guest's assign)."""
+        sh = shapes[m]
+        if sh.kind == "plain":
+            return all(can(c.cls, role) for o, c in sh.children)
+        e = container_elem(X, m)
+        fns = container_fns(X, m)
+        elem_ok = e[0] == "value" or (e[-1] in shapes and shapes[e[-1]].kind == "plain" and can(e[-1], role))
+        if role in ("Assign", "MoveAssign"):
+            return fns.get("assign") is not None
+        if role in ("CtorCopy", "Move"):
+            return elem_ok and (e[0] != "map" or fns.get("copy") is not None)
+        return elem_ok and (e[0] != "map" or fns.get("destroy") is not None)  # Dtor
     roles = [("CtorCopy", "C2ERKS_"), ("CtorCopy", "C1ERKS_"), ("Dtor", "D2Ev"), ("Dtor", "D1Ev"), ("Assign", "aSERKS_"),
              ("Move", "C2EOS_"), ("Move", "C1EOS_"), ("MoveAssign", "aSEOS_")]
     rows = []
     for m in names:
-        if has_container(m):
-            continue
         for role, suffix in roles:
+            if not can(m, role):
+                continue
             sym = "_ZN%s%s" % (m, suffix)
             a = X.S.get(sym)
             if a and a not in seen:
                 seen.add(a)
                 rows.append('    X(%s, %s, "%s") \\' % (ident(m), role, sym))
     out.append("// X(Class, role, symbol): the exported copy constructors, destructors, operator=s and moves of the")
-    out.append("// infos above without a container inside (one per address).")
+    out.append("// infos above whose containers the natives can handle (one per address).")
     out.append("#define INFO_COPIES(X) \\")
     out += rows
     out.append("    /* end of INFO_COPIES */")

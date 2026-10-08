@@ -98,9 +98,26 @@ struct Temp {
     u8* p() { return b.data(); }
 };
 
+// Where two objects' states first differ: the innermost child (path of offsets) whose own state differs.
+std::string where_differs(const InfoClass& K, const u8* a, const u8* b) {
+    if (K.kind == InfoKind::kInfo)
+        for (const InfoChild& ch : K.children)
+            if (info_state_raw(*ch.cls, a + ch.offset) != info_state_raw(*ch.cls, b + ch.offset)) {
+                char m[48];
+                snprintf(m, sizeof m, "+%#x %s/", ch.offset, ch.cls->name);
+                return m + where_differs(*ch.cls, a + ch.offset, b + ch.offset);
+            }
+    std::vector<u8> x = info_state_raw(K, a), y = info_state_raw(K, b);
+    size_t i = 0;
+    while (i < x.size() && i < y.size() && x[i] == y[i]) i++;
+    char m[96];
+    snprintf(m, sizeof m, "state byte %llu of %llu / %llu", (unsigned long long)i, (unsigned long long)x.size(), (unsigned long long)y.size());
+    return m;
+}
+
 // "" when the states agree, else what differs and where.
 std::string state_diff(const InfoClass& K, const u8* n, const u8* g, const char* what, bool maps = true) {
-    std::vector<u8> a = maps ? info_state(K, n) : info_state_no_maps(K, n), b = maps ? info_state(K, g) : info_state_no_maps(K, g);
+    std::vector<u8> a = maps ? info_state_raw(K, n) : info_state_no_maps(K, n), b = maps ? info_state_raw(K, g) : info_state_no_maps(K, g);
     if (a == b) return "";
     size_t i = 0;
     while (i < a.size() && i < b.size() && a[i] == b[i]) i++;
@@ -126,9 +143,10 @@ void TInfo<C>::CtorCopy(const TInfo* o) {
         live::RunBothFamily::Scope scope;
         std::vector<u8> g(K.size);
         guest_call(f->orig, {reinterpret_cast<u64>(g.data()), reinterpret_cast<u64>(o)});
-        bool ok = info_state(K, bytes_of(this)) == info_state(K, g.data());
+        bool ok = info_state_raw(K, bytes_of(this)) == info_state_raw(K, g.data());
+        std::string why = ok ? "" : "the copy differs at " + where_differs(K, bytes_of(this), g.data());
         InfoCode::Dtor(K, g.data());
-        report(*f, K, ok, "the copy differs");
+        report(*f, K, ok, why.c_str());
     }
 }
 
@@ -143,7 +161,7 @@ void TInfo<C>::Move(TInfo* o) {
         InfoCode::Move(K, bytes_of(this), src);
         std::vector<u8> g(K.size);
         guest_call(f->orig, {reinterpret_cast<u64>(g.data()), reinterpret_cast<u64>(src2.p())});
-        bool ok = info_state(K, bytes_of(this)) == info_state(K, g.data()) && info_state_no_maps(K, src) == info_state_no_maps(K, src2.p());
+        bool ok = info_state_raw(K, bytes_of(this)) == info_state_raw(K, g.data()) && info_state_no_maps(K, src) == info_state_no_maps(K, src2.p());
         InfoCode::Dtor(K, g.data());
         report(*f, K, ok, "the moved object or the source differs");
         return;
@@ -161,7 +179,8 @@ TInfo<C>* TInfo<C>::Assign(const TInfo* o) {
         Temp t(K, bytes_of(this));  // (the target as it was, for the original)
         InfoCode::Assign(K, bytes_of(this), src);
         guest_call(f->orig, {reinterpret_cast<u64>(t.p()), reinterpret_cast<u64>(src)});
-        report(*f, K, info_state(K, bytes_of(this)) == info_state(K, t.p()), "the assigned object differs");
+        bool ok = info_state_raw(K, bytes_of(this)) == info_state_raw(K, t.p());
+        report(*f, K, ok, ok ? "" : ("the assigned object differs at " + where_differs(K, bytes_of(this), t.p())).c_str());
         return this;
     }
     InfoCode::Assign(K, bytes_of(this), src);

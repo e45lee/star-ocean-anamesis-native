@@ -656,7 +656,34 @@
      "size": 8
     },
     {
-     "offset": 92,
+     "offset": 96,
+     "name": "fn_copy",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 104,
+     "name": "fn_destroy",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "fn_assign",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 120,
      "name": "tail",
      "type": {
       "kind": "int",
@@ -666,7 +693,7 @@
      "size": 4
     }
    ],
-   "size": 96,
+   "size": 128,
    "align": 8
   }
  ]

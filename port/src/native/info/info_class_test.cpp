@@ -4,6 +4,7 @@
 #include <cstring>
 #include <vector>
 
+#include "native/common/guest_std.h"
 #include "native/common/test.h"
 #include "native/info/info_class.h"
 #include "native/libcxx/libcxx_string.h"
@@ -37,8 +38,56 @@ const char* initialize_of(const InfoClass* K) {
     return nullptr;
 }
 
+void fill(TestContext& t, const InfoClass& K, u8* obj);
+
+// A container's body with 0..3 random elements: a vector's in storage of its own (Allocate), a map's
+// inserted by the guest's __emplace_hint_unique_key_args (keys 1, 2, 3: copies of a host object).
+void fill_container(TestContext& t, const InfoClass& K, u8* obj) {
+    auto* c = reinterpret_cast<InfoContainer*>(obj);
+    int n = t.rand_int(0, 3);
+    if (K.kind == InfoKind::kMap) {
+        if (!K.elem || !K.fn_copy) return;
+        auto& tree = *reinterpret_cast<libcxx::tree<u8>*>(&c->m_body);
+        for (int i = 0; i < n; i++) {
+            std::vector<u8> pair(8 + K.elem->size, 0xcc);
+            u64 key = i + 1;
+            std::memcpy(pair.data(), &key, K.key_size);
+            InfoCode::Ctor(*K.elem, pair.data() + 8);
+            fill(t, *K.elem, pair.data() + 8);
+            t.call(K.fn_copy, {reinterpret_cast<u64>(&tree), reinterpret_cast<u64>(tree.end_node()), reinterpret_cast<u64>(pair.data()),
+                               reinterpret_cast<u64>(pair.data())});
+            InfoCode::Dtor(*K.elem, pair.data() + 8);
+        }
+        return;
+    }
+    if (K.kind == InfoKind::kArray && !K.elem) return;
+    u64 stride = K.kind == InfoKind::kValueArray ? 0x30 : K.elem->size;
+    if (!n) return;
+    u64 p = reinterpret_cast<u64>(guest::stl_alloc(n * stride));
+    c->m_body[0] = c->m_body[1] = p;
+    c->m_body[2] = p + n * stride;
+    for (int i = 0; i < n; i++, c->m_body[1] += stride) {
+        auto* e = reinterpret_cast<u8*>(c->m_body[1]);
+        if (K.kind == InfoKind::kValueArray) {
+            // a CParameterPropertyValue<T, N>: the copy of a value property of a built info (any will do: the
+            // copies copy the vtable from the descriptor); here a value property by hand
+            std::memset(e, 0, stride);
+            char sym[160];
+            const char* tc = "jifbhm" + (int)K.elem_prop.kind;
+            snprintf(sym, sizeof sym, "_ZTV23CParameterPropertyValueI%cLj%uE18CPropertyConverterE", *tc, K.elem_prop.n);
+            *reinterpret_cast<u64*>(e) = t.sym(sym) + 16;
+            *reinterpret_cast<u64*>(e + 0x18) = t.sym("_ZTVN9Framework7CHash32E") + 16;
+            for (u32 b = 0; b < value_width(K.elem_prop.kind); b++) e[0x28 + b] = (u8)t.rand_u64();
+        } else {
+            InfoCode::Ctor(*K.elem, e);
+            fill(t, *K.elem, e);
+        }
+    }
+}
+
 // An object worth copying: built, initialized (the guest's, when the class has one), every value random,
-// every string random text (short or long: from the guest's allocator), the children the same way.
+// every string random text (short or long: from the guest's allocator), the children the same way, the
+// containers with a few elements.
 void fill(TestContext& t, const InfoClass& K, u8* obj) {
     for (const InfoProp& d : K.props) {
         u8* v = obj + d.offset + 0x28;
@@ -57,8 +106,10 @@ void fill(TestContext& t, const InfoClass& K, u8* obj) {
         libcxx::string_destroy(s);
         libcxx::string_copy_construct(s, tmp);
     }
-    for (const InfoChild& ch : K.children)
+    for (const InfoChild& ch : K.children) {
         if (ch.cls->kind == InfoKind::kInfo) fill(t, *ch.cls, obj + ch.offset);
+        else fill_container(t, *ch.cls, obj + ch.offset);
+    }
     for (u32 i = 0; i < K.tail; i++) obj[K.size - K.tail + i] = (u8)t.rand_u64();
 }
 

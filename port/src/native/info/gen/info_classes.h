@@ -58,8 +58,8 @@ inline constexpr InfoStep kCSkillInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CSkillInfo{"CSkillInfo", "_ZTV10CSkillInfo", InfoKind::kInfo, sizeof(CSkillInfo), kCSkillInfoProps, {}, kCSkillInfoInit};
 
-inline constexpr InfoClass kInfo_CStampList{"CStampList", "_ZTV10CStampList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 14}};
-inline constexpr InfoClass kInfo_CTitleList{"CTitleList", "_ZTV10CTitleList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 13}};
+inline constexpr InfoClass kInfo_CStampList{"CStampList", "_ZTV10CStampList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 14}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CTitleList{"CTitleList", "_ZTV10CTitleList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 13}, nullptr, nullptr, nullptr};
 // CConfigInfo: 0xd8 bytes, 3 properties, 0 children.
 class CConfigInfo {
 public:
@@ -252,7 +252,7 @@ inline constexpr InfoStep kCAttachedGearInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CAttachedGearInfo{"CAttachedGearInfo", "_ZTV17CAttachedGearInfo", InfoKind::kInfo, sizeof(CAttachedGearInfo), kCAttachedGearInfoProps, {}, kCAttachedGearInfoInit};
 
-inline constexpr InfoClass kInfo_CAttachedGearInfoList{"CAttachedGearInfoList", "_ZTV21CAttachedGearInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CAttachedGearInfo, 0, {}};
+inline constexpr InfoClass kInfo_CAttachedGearInfoList{"CAttachedGearInfoList", "_ZTV21CAttachedGearInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CAttachedGearInfo, 0, {}, nullptr, nullptr, "_ZNSt6__ndk16vectorI17CAttachedGearInfoN9Framework13CSTLAllocatorIS1_NS2_22CSTLVectorAllocatorInfEEEE6assignIPS1_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS1_NS_15iterator_traitsISA_E9referenceEEE5valueEvE4typeESA_SA_"};
 // CCharacterDecoObjectInfo: 0x3a8 bytes, 18 properties, 0 children.
 class CCharacterDecoObjectInfo {
 public:
@@ -337,8 +337,8 @@ inline constexpr InfoStep kCCharacterDecoObjectInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CCharacterDecoObjectInfo{"CCharacterDecoObjectInfo", "_ZTV24CCharacterDecoObjectInfo", InfoKind::kInfo, sizeof(CCharacterDecoObjectInfo), kCCharacterDecoObjectInfoProps, {}, kCCharacterDecoObjectInfoInit};
 
-inline constexpr InfoClass kInfo_CCharacterDecoObjectInfoList{"CCharacterDecoObjectInfoList", "_ZTV28CCharacterDecoObjectInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CCharacterDecoObjectInfo, 0, {}};
-inline constexpr InfoClass kInfo_UniverseEffectualTalentInfoList{"UniverseEffectualTalentInfoList", "_ZTV31UniverseEffectualTalentInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 131}};
+inline constexpr InfoClass kInfo_CCharacterDecoObjectInfoList{"CCharacterDecoObjectInfoList", "_ZTV28CCharacterDecoObjectInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CCharacterDecoObjectInfo, 0, {}, nullptr, nullptr, "_ZNSt6__ndk16vectorI24CCharacterDecoObjectInfoN9Framework13CSTLAllocatorIS1_NS2_22CSTLVectorAllocatorInfEEEE6assignIPS1_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS1_NS_15iterator_traitsISA_E9referenceEEE5valueEvE4typeESA_SA_"};
+inline constexpr InfoClass kInfo_UniverseEffectualTalentInfoList{"UniverseEffectualTalentInfoList", "_ZTV31UniverseEffectualTalentInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 131}, nullptr, nullptr, "_ZNSt6__ndk16vectorI23CParameterPropertyValueIjLj131E18CPropertyConverterEN9Framework13CSTLAllocatorIS3_NS4_22CSTLVectorAllocatorInfEEEE6assignIPS3_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS3_NS_15iterator_traitsISC_E9referenceEEE5valueEvE4typeESC_SC_"};
 // UniverseAddStatusInfo: 0x1e8 bytes, 9 properties, 0 children.
 class UniverseAddStatusInfo {
 public:
@@ -1137,7 +1137,7 @@ inline constexpr InfoStep kCItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CItemInfo{"CItemInfo", "_ZTV9CItemInfo", InfoKind::kInfo, sizeof(CItemInfo), kCItemInfoProps, kCItemInfoChildren, kCItemInfoInit};
 
-inline constexpr InfoClass kInfo_CAddItemList{"CAddItemList", "_ZTV12CAddItemList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CItemInfo, 8, {}};
+inline constexpr InfoClass kInfo_CAddItemList{"CAddItemList", "_ZTV12CAddItemList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm9CItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CCheckInInfo: 0x3f8 bytes, 18 properties, 0 children.
 class CCheckInInfo {
 public:
@@ -1262,7 +1262,7 @@ inline constexpr InfoStep kCWebViewInfoElementInit[] = {
 };
 inline constexpr InfoClass kInfo_CWebViewInfoElement{"CWebViewInfoElement", "_ZTV19CWebViewInfoElement", InfoKind::kInfo, sizeof(CWebViewInfoElement), kCWebViewInfoElementProps, {}, kCWebViewInfoElementInit};
 
-inline constexpr InfoClass kInfo_CWebViewInfo{"CWebViewInfo", "_ZTV12CWebViewInfo", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CWebViewInfoElement, 0, {}};
+inline constexpr InfoClass kInfo_CWebViewInfo{"CWebViewInfo", "_ZTV12CWebViewInfo", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CWebViewInfoElement, 0, {}, nullptr, nullptr, nullptr};
 // PartySetCharacterInfo: 0x1e8 bytes, 9 properties, 0 children.
 class PartySetCharacterInfo {
 public:
@@ -1311,7 +1311,7 @@ inline constexpr InfoStep kPartySetCharacterInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_PartySetCharacterInfo{"PartySetCharacterInfo", "_ZTV21PartySetCharacterInfo", InfoKind::kInfo, sizeof(PartySetCharacterInfo), kPartySetCharacterInfoProps, {}, kPartySetCharacterInfoInit};
 
-inline constexpr InfoClass kInfo_PartySetCharacterInfoList{"PartySetCharacterInfoList", "_ZTV25PartySetCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_PartySetCharacterInfo, 0, {}};
+inline constexpr InfoClass kInfo_PartySetCharacterInfoList{"PartySetCharacterInfoList", "_ZTV25PartySetCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_PartySetCharacterInfo, 0, {}, nullptr, nullptr, "_ZNSt6__ndk16vectorI21PartySetCharacterInfoN9Framework13CSTLAllocatorIS1_NS2_22CSTLVectorAllocatorInfEEEE6assignIPS1_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS1_NS_15iterator_traitsISA_E9referenceEEE5valueEvE4typeESA_SA_"};
 // PartySetInfo: 0x118 bytes, 3 properties, 1 children.
 class PartySetInfo {
 public:
@@ -1342,8 +1342,8 @@ inline constexpr InfoStep kPartySetInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_PartySetInfo{"PartySetInfo", "_ZTV12PartySetInfo", InfoKind::kInfo, sizeof(PartySetInfo), kPartySetInfoProps, kPartySetInfoChildren, kPartySetInfoInit};
 
-inline constexpr InfoClass kInfo_CAddStampList{"CAddStampList", "_ZTV13CAddStampList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 28}};
-inline constexpr InfoClass kInfo_CAddTitleList{"CAddTitleList", "_ZTV13CAddTitleList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 20}};
+inline constexpr InfoClass kInfo_CAddStampList{"CAddStampList", "_ZTV13CAddStampList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 28}, nullptr, nullptr, "_ZNSt6__ndk16vectorI23CParameterPropertyValueIjLj28E18CPropertyConverterEN9Framework13CSTLAllocatorIS3_NS4_22CSTLVectorAllocatorInfEEEE6assignIPS3_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS3_NS_15iterator_traitsISC_E9referenceEEE5valueEvE4typeESC_SC_"};
+inline constexpr InfoClass kInfo_CAddTitleList{"CAddTitleList", "_ZTV13CAddTitleList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 20}, nullptr, nullptr, nullptr};
 // CBoxGachaInfo: 0x218 bytes, 10 properties, 0 children.
 class CBoxGachaInfo {
 public:
@@ -1556,8 +1556,8 @@ inline constexpr InfoStep kCCoinInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CCoinInfo{"CCoinInfo", "_ZTV9CCoinInfo", InfoKind::kInfo, sizeof(CCoinInfo), kCCoinInfoProps, {}, kCCoinInfoInit};
 
-inline constexpr InfoClass kInfo_CCoinInfoList{"CCoinInfoList", "_ZTV13CCoinInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CCoinInfo, 8, {}};
-inline constexpr InfoClass kInfo_CFollowIDInfo{"CFollowIDInfo", "_ZTV13CFollowIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 16}};
+inline constexpr InfoClass kInfo_CCoinInfoList{"CCoinInfoList", "_ZTV13CCoinInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CCoinInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm9CCoinInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CFollowIDInfo{"CFollowIDInfo", "_ZTV13CFollowIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 16}, nullptr, nullptr, nullptr};
 // CGearInfo: 0x158 bytes, 6 properties, 0 children.
 class CGearInfo {
 public:
@@ -1594,8 +1594,8 @@ inline constexpr InfoStep kCGearInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CGearInfo{"CGearInfo", "_ZTV9CGearInfo", InfoKind::kInfo, sizeof(CGearInfo), kCGearInfoProps, {}, kCGearInfoInit};
 
-inline constexpr InfoClass kInfo_CGearInfoList{"CGearInfoList", "_ZTV13CGearInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGearInfo, 8, {}};
-inline constexpr InfoClass kInfo_CItemInfoList{"CItemInfoList", "_ZTV13CItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CItemInfo, 0, {}};
+inline constexpr InfoClass kInfo_CGearInfoList{"CGearInfoList", "_ZTV13CGearInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGearInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm9CGearInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CItemInfoList{"CItemInfoList", "_ZTV13CItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CItemInfo, 0, {}, nullptr, nullptr, nullptr};
 // CItemShopInfo: 0x168 bytes, 6 properties, 0 children.
 class CItemShopInfo {
 public:
@@ -1632,7 +1632,7 @@ inline constexpr InfoStep kCItemShopInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CItemShopInfo{"CItemShopInfo", "_ZTV13CItemShopInfo", InfoKind::kInfo, sizeof(CItemShopInfo), kCItemShopInfoProps, {}, kCItemShopInfoInit};
 
-inline constexpr InfoClass kInfo_CSkillInfoMap{"CSkillInfoMap", "_ZTV13CSkillInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 4, {}};
+inline constexpr InfoClass kInfo_CSkillInfoMap{"CSkillInfoMap", "_ZTV13CSkillInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 4, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIj15CSkillInfoArrayEENS_19__map_value_compareIjS3_NS_4lessIjEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CWorldMapInfo: 0x148 bytes, 5 properties, 0 children.
 class CWorldMapInfo {
 public:
@@ -1685,7 +1685,7 @@ inline constexpr InfoStep kCBannerURLInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CBannerURLInfo{"CBannerURLInfo", "_ZTV14CBannerURLInfo", InfoKind::kInfo, sizeof(CBannerURLInfo), kCBannerURLInfoProps, {}, kCBannerURLInfoInit};
 
-inline constexpr InfoClass kInfo_CFactorInfoMap{"CFactorInfoMap", "_ZTV14CFactorInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFactorInfo, 8, {}};
+inline constexpr InfoClass kInfo_CFactorInfoMap{"CFactorInfoMap", "_ZTV14CFactorInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFactorInfo, 8, {}, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFactorInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE30__emplace_hint_unique_key_argsImJRKNS_4pairIKmS2_EEEEENS_15__tree_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEENS_21__tree_const_iteratorIS3_SN_lEERKT_DpOT0_", "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFactorInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFactorInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE14__assign_multiINS_21__tree_const_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEEEEvT_SK_"};
 // CGachaHashInfo: 0x128 bytes, 4 properties, 0 children.
 class CGachaHashInfo {
 public:
@@ -1750,7 +1750,7 @@ inline constexpr InfoStep kCGachaRateContentInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CGachaRateContentInfo{"CGachaRateContentInfo", "_ZTV21CGachaRateContentInfo", InfoKind::kInfo, sizeof(CGachaRateContentInfo), kCGachaRateContentInfoProps, {}, kCGachaRateContentInfoInit};
 
-inline constexpr InfoClass kInfo_CGachaRateContentInfoList{"CGachaRateContentInfoList", "_ZTV25CGachaRateContentInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaRateContentInfo, 0, {}};
+inline constexpr InfoClass kInfo_CGachaRateContentInfoList{"CGachaRateContentInfoList", "_ZTV25CGachaRateContentInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaRateContentInfo, 0, {}, nullptr, nullptr, nullptr};
 // CGachaRateInfo: 0x1a8 bytes, 5 properties, 1 children.
 class CGachaRateInfo {
 public:
@@ -1829,8 +1829,8 @@ inline constexpr InfoStep kCStackItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CStackItemInfo{"CStackItemInfo", "_ZTV14CStackItemInfo", InfoKind::kInfo, sizeof(CStackItemInfo), kCStackItemInfoProps, {}, kCStackItemInfoInit};
 
-inline constexpr InfoClass kInfo_CStampSlotInfo{"CStampSlotInfo", "_ZTV14CStampSlotInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 21}};
-inline constexpr InfoClass kInfo_CUseResultStackItemMap{"CUseResultStackItemMap", "_ZTV22CUseResultStackItemMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 8, {}};
+inline constexpr InfoClass kInfo_CStampSlotInfo{"CStampSlotInfo", "_ZTV14CStampSlotInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 21}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CUseResultStackItemMap{"CUseResultStackItemMap", "_ZTV22CUseResultStackItemMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm14CStackItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", "_ZNSt6__ndk16__treeINS_12__value_typeIm14CStackItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE14__assign_multiINS_21__tree_const_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEEEEvT_SK_"};
 // CUseResultInfo: 0xe8 bytes, 2 properties, 1 children.
 class CUseResultInfo {
 public:
@@ -1901,7 +1901,7 @@ inline constexpr InfoStep kCWorldBossInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CWorldBossInfo{"CWorldBossInfo", "_ZTV14CWorldBossInfo", InfoKind::kInfo, sizeof(CWorldBossInfo), kCWorldBossInfoProps, {}, kCWorldBossInfoInit};
 
-inline constexpr InfoClass kInfo_CConfigInfoList{"CConfigInfoList", "_ZTV15CConfigInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CConfigInfo, 0, {}};
+inline constexpr InfoClass kInfo_CConfigInfoList{"CConfigInfoList", "_ZTV15CConfigInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CConfigInfo, 0, {}, nullptr, nullptr, nullptr};
 // CDropContentInfo: 0x248 bytes, 11 properties, 0 children.
 class CDropContentInfo {
 public:
@@ -1958,7 +1958,7 @@ inline constexpr InfoStep kCDropContentInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CDropContentInfo{"CDropContentInfo", "_ZTV16CDropContentInfo", InfoKind::kInfo, sizeof(CDropContentInfo), kCDropContentInfoProps, {}, kCDropContentInfoInit};
 
-inline constexpr InfoClass kInfo_CContentInfoMap{"CContentInfoMap", "_ZTV15CContentInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDropContentInfo, 8, {}};
+inline constexpr InfoClass kInfo_CContentInfoMap{"CContentInfoMap", "_ZTV15CContentInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDropContentInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CDropContentInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CDebugBonusInfo: 0xa8 bytes, 2 properties, 0 children.
 class CDebugBonusInfo {
 public:
@@ -2007,7 +2007,7 @@ inline constexpr InfoStep kCDecoObjectInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CDecoObjectInfo{"CDecoObjectInfo", "_ZTV15CDecoObjectInfo", InfoKind::kInfo, sizeof(CDecoObjectInfo), kCDecoObjectInfoProps, {}, kCDecoObjectInfoInit};
 
-inline constexpr InfoClass kInfo_CDeleteItemList{"CDeleteItemList", "_ZTV15CDeleteItemList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 267}};
+inline constexpr InfoClass kInfo_CDeleteItemList{"CDeleteItemList", "_ZTV15CDeleteItemList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 267}, nullptr, nullptr, nullptr};
 // CExpirationInfo: 0x168 bytes, 6 properties, 0 children.
 class CExpirationInfo {
 public:
@@ -2044,7 +2044,7 @@ inline constexpr InfoStep kCExpirationInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CExpirationInfo{"CExpirationInfo", "_ZTV15CExpirationInfo", InfoKind::kInfo, sizeof(CExpirationInfo), kCExpirationInfoProps, {}, kCExpirationInfoInit};
 
-inline constexpr InfoClass kInfo_CFollowInfoList{"CFollowInfoList", "_ZTV15CFollowInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
+inline constexpr InfoClass kInfo_CFollowInfoList{"CFollowInfoList", "_ZTV15CFollowInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CGachaCountInfo: 0x138 bytes, 5 properties, 0 children.
 class CGachaCountInfo {
 public:
@@ -2113,7 +2113,7 @@ inline constexpr InfoStep kUpdateMissionStartPlayerInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_UpdateMissionStartPlayerInfo{"UpdateMissionStartPlayerInfo", "_ZTV28UpdateMissionStartPlayerInfo", InfoKind::kInfo, sizeof(UpdateMissionStartPlayerInfo), kUpdateMissionStartPlayerInfoProps, {}, kUpdateMissionStartPlayerInfoInit};
 
-inline constexpr InfoClass kInfo_CUpdateStackItemInfoList{"CUpdateStackItemInfoList", "_ZTV24CUpdateStackItemInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 8, {}};
+inline constexpr InfoClass kInfo_CUpdateStackItemInfoList{"CUpdateStackItemInfoList", "_ZTV24CUpdateStackItemInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm14CStackItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", "_ZNSt6__ndk16__treeINS_12__value_typeIm14CStackItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE14__assign_multiINS_21__tree_const_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEEEEvT_SK_"};
 // CHostPlayerInfo: 0x1f0 bytes, 0 properties, 2 children.
 class CHostPlayerInfo {
 public:
@@ -2284,7 +2284,7 @@ inline constexpr InfoStep kCLimitBreakInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CLimitBreakInfo{"CLimitBreakInfo", "_ZTV15CLimitBreakInfo", InfoKind::kInfo, sizeof(CLimitBreakInfo), kCLimitBreakInfoProps, {}, kCLimitBreakInfoInit};
 
-inline constexpr InfoClass kInfo_CLockItemResult{"CLockItemResult", "_ZTV15CLockItemResult", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CItemInfo, 8, {}};
+inline constexpr InfoClass kInfo_CLockItemResult{"CLockItemResult", "_ZTV15CLockItemResult", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm9CItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CLoginBonusInfo: 0xc8 bytes, 3 properties, 0 children.
 class CLoginBonusInfo {
 public:
@@ -2309,7 +2309,7 @@ inline constexpr InfoStep kCLoginBonusInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CLoginBonusInfo{"CLoginBonusInfo", "_ZTV15CLoginBonusInfo", InfoKind::kInfo, sizeof(CLoginBonusInfo), kCLoginBonusInfoProps, {}, kCLoginBonusInfoInit};
 
-inline constexpr InfoClass kInfo_CPersonInfoList{"CPersonInfoList", "_ZTV15CPersonInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPersonInfo, 0, {}};
+inline constexpr InfoClass kInfo_CPersonInfoList{"CPersonInfoList", "_ZTV15CPersonInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPersonInfo, 0, {}, nullptr, nullptr, nullptr};
 // CPresentBoxInfo: 0x248 bytes, 10 properties, 0 children.
 class CPresentBoxInfo {
 public:
@@ -2362,9 +2362,9 @@ inline constexpr InfoStep kCPresentBoxInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPresentBoxInfo{"CPresentBoxInfo", "_ZTV15CPresentBoxInfo", InfoKind::kInfo, sizeof(CPresentBoxInfo), kCPresentBoxInfoProps, {}, kCPresentBoxInfoInit};
 
-inline constexpr InfoClass kInfo_CSellResultItemList{"CSellResultItemList", "_ZTV19CSellResultItemList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 12}};
-inline constexpr InfoClass kInfo_CSellResultStackItemMap{"CSellResultStackItemMap", "_ZTV23CSellResultStackItemMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 8, {}};
-inline constexpr InfoClass kInfo_CUpdateGearList{"CUpdateGearList", "_ZTV15CUpdateGearList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 230}};
+inline constexpr InfoClass kInfo_CSellResultItemList{"CSellResultItemList", "_ZTV19CSellResultItemList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 12}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CSellResultStackItemMap{"CSellResultStackItemMap", "_ZTV23CSellResultStackItemMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm14CStackItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", "_ZNSt6__ndk16__treeINS_12__value_typeIm14CStackItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE14__assign_multiINS_21__tree_const_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEEEEvT_SK_"};
+inline constexpr InfoClass kInfo_CUpdateGearList{"CUpdateGearList", "_ZTV15CUpdateGearList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 230}, nullptr, nullptr, nullptr};
 // CSellResultInfo: 0x1b8 bytes, 3 properties, 3 children.
 class CSellResultInfo {
 public:
@@ -2403,7 +2403,7 @@ inline constexpr InfoStep kCSellResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CSellResultInfo{"CSellResultInfo", "_ZTV15CSellResultInfo", InfoKind::kInfo, sizeof(CSellResultInfo), kCSellResultInfoProps, kCSellResultInfoChildren, kCSellResultInfoInit};
 
-inline constexpr InfoClass kInfo_PartySetInfoMap{"PartySetInfoMap", "_ZTV15PartySetInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_PartySetInfo, 8, {}};
+inline constexpr InfoClass kInfo_PartySetInfoMap{"PartySetInfoMap", "_ZTV15PartySetInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_PartySetInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm12PartySetInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CAchievementInfo: 0x198 bytes, 7 properties, 0 children.
 class CAchievementInfo {
 public:
@@ -2444,9 +2444,9 @@ inline constexpr InfoStep kCAchievementInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CAchievementInfo{"CAchievementInfo", "_ZTV16CAchievementInfo", InfoKind::kInfo, sizeof(CAchievementInfo), kCAchievementInfoProps, {}, kCAchievementInfoInit};
 
-inline constexpr InfoClass kInfo_CAddGearInfoList{"CAddGearInfoList", "_ZTV16CAddGearInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGearInfo, 8, {}};
-inline constexpr InfoClass kInfo_CBlacklistIDInfo{"CBlacklistIDInfo", "_ZTV16CBlacklistIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 11}};
-inline constexpr InfoClass kInfo_CCheckInInfoList{"CCheckInInfoList", "_ZTV16CCheckInInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CCheckInInfo, 0, {}};
+inline constexpr InfoClass kInfo_CAddGearInfoList{"CAddGearInfoList", "_ZTV16CAddGearInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGearInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm9CGearInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CBlacklistIDInfo{"CBlacklistIDInfo", "_ZTV16CBlacklistIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 11}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CCheckInInfoList{"CCheckInInfoList", "_ZTV16CCheckInInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CCheckInInfo, 0, {}, nullptr, nullptr, nullptr};
 // CCoinDepositInfo: 0x68 bytes, 1 properties, 0 children.
 class CCoinDepositInfo {
 public:
@@ -2575,9 +2575,9 @@ inline constexpr InfoStep kCGachaResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CGachaResultInfo{"CGachaResultInfo", "_ZTV16CGachaResultInfo", InfoKind::kInfo, sizeof(CGachaResultInfo), kCGachaResultInfoProps, {}, kCGachaResultInfoInit};
 
-inline constexpr InfoClass kInfo_CItemReceiveList{"CItemReceiveList", "_ZTV16CItemReceiveList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 101}};
-inline constexpr InfoClass kInfo_CLostItemIDsList{"CLostItemIDsList", "_ZTV16CLostItemIDsList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 33}};
-inline constexpr InfoClass kInfo_CMascontInfoList{"CMascontInfoList", "_ZTV16CMascontInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CMascontInfo, 8, {}};
+inline constexpr InfoClass kInfo_CItemReceiveList{"CItemReceiveList", "_ZTV16CItemReceiveList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 101}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CLostItemIDsList{"CLostItemIDsList", "_ZTV16CLostItemIDsList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 33}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CMascontInfoList{"CMascontInfoList", "_ZTV16CMascontInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CMascontInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm12CMascontInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CMissionDropInfo: 0xa8 bytes, 2 properties, 0 children.
 class CMissionDropInfo {
 public:
@@ -2962,8 +2962,8 @@ inline constexpr InfoStep kSubscriptionInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_SubscriptionInfo{"SubscriptionInfo", "_ZTV16SubscriptionInfo", InfoKind::kInfo, sizeof(SubscriptionInfo), kSubscriptionInfoProps, {}, kSubscriptionInfoInit};
 
-inline constexpr InfoClass kInfo_CAddCharacterList{"CAddCharacterList", "_ZTV17CAddCharacterList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPersonInfo, 8, {}};
-inline constexpr InfoClass kInfo_CUseEvolutionResult_StackItemInfoList{"CUseEvolutionResult_StackItemInfoList", "_ZTV37CUseEvolutionResult_StackItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 0, {}};
+inline constexpr InfoClass kInfo_CAddCharacterList{"CAddCharacterList", "_ZTV17CAddCharacterList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPersonInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CPersonInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CUseEvolutionResult_StackItemInfoList{"CUseEvolutionResult_StackItemInfoList", "_ZTV37CUseEvolutionResult_StackItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 0, {}, nullptr, nullptr, nullptr};
 // CUpdateCharacterInfo: 0x3c8 bytes, 19 properties, 0 children.
 class CUpdateCharacterInfo {
 public:
@@ -3090,7 +3090,7 @@ inline constexpr InfoStep kCAwakenResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CAwakenResultInfo{"CAwakenResultInfo", "_ZTV17CAwakenResultInfo", InfoKind::kInfo, sizeof(CAwakenResultInfo), kCAwakenResultInfoProps, kCAwakenResultInfoChildren, kCAwakenResultInfoInit};
 
-inline constexpr InfoClass kInfo_CBoxGachaInfoList{"CBoxGachaInfoList", "_ZTV17CBoxGachaInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoxGachaInfo, 8, {}};
+inline constexpr InfoClass kInfo_CBoxGachaInfoList{"CBoxGachaInfoList", "_ZTV17CBoxGachaInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoxGachaInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm13CBoxGachaInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CBoxGachaListInfo: 0x1e8 bytes, 9 properties, 0 children.
 class CBoxGachaListInfo {
 public:
@@ -3139,8 +3139,8 @@ inline constexpr InfoStep kCBoxGachaListInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CBoxGachaListInfo{"CBoxGachaListInfo", "_ZTV17CBoxGachaListInfo", InfoKind::kInfo, sizeof(CBoxGachaListInfo), kCBoxGachaListInfoProps, {}, kCBoxGachaListInfoInit};
 
-inline constexpr InfoClass kInfo_CCampaignInfoList{"CCampaignInfoList", "_ZTV17CCampaignInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CCampaignInfo, 0, {}};
-inline constexpr InfoClass kInfo_CGachaHashInfoList{"CGachaHashInfoList", "_ZTV18CGachaHashInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaHashInfo, 0, {}};
+inline constexpr InfoClass kInfo_CCampaignInfoList{"CCampaignInfoList", "_ZTV17CCampaignInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CCampaignInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CGachaHashInfoList{"CGachaHashInfoList", "_ZTV18CGachaHashInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaHashInfo, 0, {}, nullptr, nullptr, nullptr};
 // CGachaHashInfoListInfo: 0x88 bytes, 0 properties, 1 children.
 class CGachaHashInfoListInfo {
 public:
@@ -3157,9 +3157,9 @@ inline constexpr InfoStep kCGachaHashInfoListInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CGachaHashInfoListInfo{"CGachaHashInfoListInfo", "_ZTV22CGachaHashInfoListInfo", InfoKind::kInfo, sizeof(CGachaHashInfoListInfo), {}, kCGachaHashInfoListInfoChildren, kCGachaHashInfoListInfoInit};
 
-inline constexpr InfoClass kInfo_CGachaHashInfoMap{"CGachaHashInfoMap", "_ZTV17CGachaHashInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaHashInfoListInfo, 8, {}};
-inline constexpr InfoClass kInfo_CItemClearNewList{"CItemClearNewList", "_ZTV17CItemClearNewList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 115}};
-inline constexpr InfoClass kInfo_CItemShopInfoList{"CItemShopInfoList", "_ZTV17CItemShopInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CItemShopInfo, 0, {}};
+inline constexpr InfoClass kInfo_CGachaHashInfoMap{"CGachaHashInfoMap", "_ZTV17CGachaHashInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaHashInfoListInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm22CGachaHashInfoListInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CItemClearNewList{"CItemClearNewList", "_ZTV17CItemClearNewList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 115}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CItemShopInfoList{"CItemShopInfoList", "_ZTV17CItemShopInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CItemShopInfo, 0, {}, nullptr, nullptr, nullptr};
 // CMissionStageInfo: 0x318 bytes, 14 properties, 0 children.
 class CMissionStageInfo {
 public:
@@ -3228,7 +3228,7 @@ inline constexpr InfoStep kCMissionStageInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMissionStageInfo{"CMissionStageInfo", "_ZTV17CMissionStageInfo", InfoKind::kInfo, sizeof(CMissionStageInfo), kCMissionStageInfoProps, {}, kCMissionStageInfoInit};
 
-inline constexpr InfoClass kInfo_CNeighborInfoList{"CNeighborInfoList", "_ZTV17CNeighborInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
+inline constexpr InfoClass kInfo_CNeighborInfoList{"CNeighborInfoList", "_ZTV17CNeighborInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // UniverseDeityBoostInfo: 0x1e8 bytes, 9 properties, 0 children.
 class UniverseDeityBoostInfo {
 public:
@@ -3663,7 +3663,7 @@ inline constexpr InfoStep kCPersonStatusInfoInit[] = {
     {InfoStep::kChild, 0x13d0, nullptr, 0, 0},
     {InfoStep::kChild, 0x1498, nullptr, 0, 0},
 };
-inline constexpr InfoClass kInfo_CPersonStatusInfo{"CPersonStatusInfo", "_ZTV17CPersonStatusInfo", InfoKind::kInfo, sizeof(CPersonStatusInfo), kCPersonStatusInfoProps, kCPersonStatusInfoChildren, kCPersonStatusInfoInit, nullptr, 0, {}, 0x10};
+inline constexpr InfoClass kInfo_CPersonStatusInfo{"CPersonStatusInfo", "_ZTV17CPersonStatusInfo", InfoKind::kInfo, sizeof(CPersonStatusInfo), kCPersonStatusInfoProps, kCPersonStatusInfoChildren, kCPersonStatusInfoInit, nullptr, 0, {}, nullptr, nullptr, nullptr, 0x10};
 
 // CRemoveFollowInfo: 0x68 bytes, 1 properties, 0 children.
 class CRemoveFollowInfo {
@@ -3681,7 +3681,7 @@ inline constexpr InfoStep kCRemoveFollowInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CRemoveFollowInfo{"CRemoveFollowInfo", "_ZTV17CRemoveFollowInfo", InfoKind::kInfo, sizeof(CRemoveFollowInfo), kCRemoveFollowInfoProps, {}, kCRemoveFollowInfoInit};
 
-inline constexpr InfoClass kInfo_CSearchResultInfo{"CSearchResultInfo", "_ZTV17CSearchResultInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
+inline constexpr InfoClass kInfo_CSearchResultInfo{"CSearchResultInfo", "_ZTV17CSearchResultInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CUseStackItemInfo: 0x98 bytes, 2 properties, 0 children.
 class CUseStackItemInfo {
 public:
@@ -3814,11 +3814,11 @@ inline constexpr InfoStep kRankingResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_RankingResultInfo{"RankingResultInfo", "_ZTV17RankingResultInfo", InfoKind::kInfo, sizeof(RankingResultInfo), kRankingResultInfoProps, {}, kRankingResultInfoInit};
 
-inline constexpr InfoClass kInfo_CAddFollowInfoList{"CAddFollowInfoList", "_ZTV18CAddFollowInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
-inline constexpr InfoClass kInfo_CBannerURLInfoList{"CBannerURLInfoList", "_ZTV18CBannerURLInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CBannerURLInfo, 0, {}};
-inline constexpr InfoClass kInfo_CBlacklistInfoList{"CBlacklistInfoList", "_ZTV18CBlacklistInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
-inline constexpr InfoClass kInfo_CCommonWebSiteInfo{"CCommonWebSiteInfo", "_ZTV18CCommonWebSiteInfo", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CWebViewInfoElement, 0, {}};
-inline constexpr InfoClass kInfo_CCommonWebViewInfo{"CCommonWebViewInfo", "_ZTV18CCommonWebViewInfo", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CWebViewInfoElement, 0, {}};
+inline constexpr InfoClass kInfo_CAddFollowInfoList{"CAddFollowInfoList", "_ZTV18CAddFollowInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CBannerURLInfoList{"CBannerURLInfoList", "_ZTV18CBannerURLInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CBannerURLInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CBlacklistInfoList{"CBlacklistInfoList", "_ZTV18CBlacklistInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CCommonWebSiteInfo{"CCommonWebSiteInfo", "_ZTV18CCommonWebSiteInfo", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CWebViewInfoElement, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CCommonWebViewInfo{"CCommonWebViewInfo", "_ZTV18CCommonWebViewInfo", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CWebViewInfoElement, 0, {}, nullptr, nullptr, nullptr};
 // CComposeResultInfo: 0x288 bytes, 9 properties, 2 children.
 class CComposeResultInfo {
 public:
@@ -3877,7 +3877,7 @@ inline constexpr InfoStep kCComposeResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CComposeResultInfo{"CComposeResultInfo", "_ZTV18CComposeResultInfo", InfoKind::kInfo, sizeof(CComposeResultInfo), kCComposeResultInfoProps, kCComposeResultInfoChildren, kCComposeResultInfoInit};
 
-inline constexpr InfoClass kInfo_CDebugBonusInfoMap{"CDebugBonusInfoMap", "_ZTV18CDebugBonusInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDebugBonusInfo, 8, {}};
+inline constexpr InfoClass kInfo_CDebugBonusInfoMap{"CDebugBonusInfoMap", "_ZTV18CDebugBonusInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDebugBonusInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm15CDebugBonusInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CDeepSpaceMissionInfo: 0x248 bytes, 10 properties, 0 children.
 class CDeepSpaceMissionInfo {
 public:
@@ -3930,7 +3930,7 @@ inline constexpr InfoStep kCDeepSpaceMissionInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CDeepSpaceMissionInfo{"CDeepSpaceMissionInfo", "_ZTV21CDeepSpaceMissionInfo", InfoKind::kInfo, sizeof(CDeepSpaceMissionInfo), kCDeepSpaceMissionInfoProps, {}, kCDeepSpaceMissionInfoInit};
 
-inline constexpr InfoClass kInfo_CDeepSpaceMissionInfoMap{"CDeepSpaceMissionInfoMap", "_ZTV24CDeepSpaceMissionInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceMissionInfo, 8, {}};
+inline constexpr InfoClass kInfo_CDeepSpaceMissionInfoMap{"CDeepSpaceMissionInfoMap", "_ZTV24CDeepSpaceMissionInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceMissionInfo, 8, {}, "_ZNSt6__ndk16__treeINS_12__value_typeIm21CDeepSpaceMissionInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE30__emplace_hint_unique_key_argsImJRKNS_4pairIKmS2_EEEEENS_15__tree_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEENS_21__tree_const_iteratorIS3_SN_lEERKT_DpOT0_", "_ZNSt6__ndk16__treeINS_12__value_typeIm21CDeepSpaceMissionInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", "_ZNSt6__ndk16__treeINS_12__value_typeIm21CDeepSpaceMissionInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE14__assign_multiINS_21__tree_const_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEEEEvT_SK_"};
 // CDeepSpaceAreaInfo: 0x208 bytes, 8 properties, 1 children.
 class CDeepSpaceAreaInfo {
 public:
@@ -4021,7 +4021,7 @@ inline constexpr InfoStep kCDeepSpaceShipInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CDeepSpaceShipInfo{"CDeepSpaceShipInfo", "_ZTV18CDeepSpaceShipInfo", InfoKind::kInfo, sizeof(CDeepSpaceShipInfo), kCDeepSpaceShipInfoProps, {}, kCDeepSpaceShipInfoInit};
 
-inline constexpr InfoClass kInfo_CGachaRateInfoList{"CGachaRateInfoList", "_ZTV18CGachaRateInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaRateInfo, 0, {}};
+inline constexpr InfoClass kInfo_CGachaRateInfoList{"CGachaRateInfoList", "_ZTV18CGachaRateInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaRateInfo, 0, {}, nullptr, nullptr, nullptr};
 // CGradeUpResultInfo: 0x168 bytes, 3 properties, 2 children.
 class CGradeUpResultInfo {
 public:
@@ -4076,7 +4076,7 @@ inline constexpr InfoStep kCMasteryRewardInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMasteryRewardInfo{"CMasteryRewardInfo", "_ZTV18CMasteryRewardInfo", InfoKind::kInfo, sizeof(CMasteryRewardInfo), kCMasteryRewardInfoProps, {}, kCMasteryRewardInfoInit};
 
-inline constexpr InfoClass kInfo_CPresentBoxGetList{"CPresentBoxGetList", "_ZTV18CPresentBoxGetList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 77}};
+inline constexpr InfoClass kInfo_CPresentBoxGetList{"CPresentBoxGetList", "_ZTV18CPresentBoxGetList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 77}, nullptr, nullptr, nullptr};
 // CPurchasedItemInfo: 0xe8 bytes, 3 properties, 0 children.
 class CPurchasedItemInfo {
 public:
@@ -4101,8 +4101,8 @@ inline constexpr InfoStep kCPurchasedItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPurchasedItemInfo{"CPurchasedItemInfo", "_ZTV18CPurchasedItemInfo", InfoKind::kInfo, sizeof(CPurchasedItemInfo), kCPurchasedItemInfoProps, {}, kCPurchasedItemInfoInit};
 
-inline constexpr InfoClass kInfo_CStackItemInfoList{"CStackItemInfoList", "_ZTV18CStackItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 0, {}};
-inline constexpr InfoClass kInfo_CUniverseBoardList{"CUniverseBoardList", "_ZTV18CUniverseBoardList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_CStackItemInfoList{"CStackItemInfoList", "_ZTV18CStackItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CStackItemInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CUniverseBoardList{"CUniverseBoardList", "_ZTV18CUniverseBoardList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, "_ZNSt6__ndk16__treeINS_12__value_typeIm20CUniverseBoardIdListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE30__emplace_hint_unique_key_argsImJRKNS_4pairIKmS2_EEEEENS_15__tree_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEENS_21__tree_const_iteratorIS3_SN_lEERKT_DpOT0_", "_ZNSt6__ndk16__treeINS_12__value_typeIm20CUniverseBoardIdListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CWorldBossItemInfo: 0xc8 bytes, 3 properties, 0 children.
 class CWorldBossItemInfo {
 public:
@@ -4211,7 +4211,7 @@ inline constexpr InfoStep kCBoxGachaResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CBoxGachaResultInfo{"CBoxGachaResultInfo", "_ZTV19CBoxGachaResultInfo", InfoKind::kInfo, sizeof(CBoxGachaResultInfo), kCBoxGachaResultInfoProps, {}, kCBoxGachaResultInfoInit};
 
-inline constexpr InfoClass kInfo_CDecoObjectInfoList{"CDecoObjectInfoList", "_ZTV19CDecoObjectInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDecoObjectInfo, 0, {}};
+inline constexpr InfoClass kInfo_CDecoObjectInfoList{"CDecoObjectInfoList", "_ZTV19CDecoObjectInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDecoObjectInfo, 0, {}, nullptr, nullptr, nullptr};
 // CDirectItemShopInfo: 0x5b8 bytes, 26 properties, 0 children.
 class CDirectItemShopInfo {
 public:
@@ -4356,11 +4356,11 @@ inline constexpr InfoStep kCExchangeResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CExchangeResultInfo{"CExchangeResultInfo", "_ZTV19CExchangeResultInfo", InfoKind::kInfo, sizeof(CExchangeResultInfo), kCExchangeResultInfoProps, {}, kCExchangeResultInfoInit};
 
-inline constexpr InfoClass kInfo_CExpirationInfoList{"CExpirationInfoList", "_ZTV19CExpirationInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CExpirationInfo, 8, {}};
-inline constexpr InfoClass kInfo_CFooterBadgeInfoMap{"CFooterBadgeInfoMap", "_ZTV19CFooterBadgeInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_CFriendGaugeInfoMap{"CFriendGaugeInfoMap", "_ZTV19CFriendGaugeInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFriendGaugeInfo, 8, {}};
-inline constexpr InfoClass kInfo_CGachaCountInfoList{"CGachaCountInfoList", "_ZTV19CGachaCountInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaCountInfo, 8, {}};
-inline constexpr InfoClass kInfo_CLimitBreakInfoList{"CLimitBreakInfoList", "_ZTV19CLimitBreakInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CLimitBreakInfo, 8, {}};
+inline constexpr InfoClass kInfo_CExpirationInfoList{"CExpirationInfoList", "_ZTV19CExpirationInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CExpirationInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm15CExpirationInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CFooterBadgeInfoMap{"CFooterBadgeInfoMap", "_ZTV19CFooterBadgeInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20CFooterBadgeInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CFriendGaugeInfoMap{"CFriendGaugeInfoMap", "_ZTV19CFriendGaugeInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFriendGaugeInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CFriendGaugeInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CGachaCountInfoList{"CGachaCountInfoList", "_ZTV19CGachaCountInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaCountInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm15CGachaCountInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CLimitBreakInfoList{"CLimitBreakInfoList", "_ZTV19CLimitBreakInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CLimitBreakInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm15CLimitBreakInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CLimitBreakItemInfo: 0xf8 bytes, 4 properties, 0 children.
 class CLimitBreakItemInfo {
 public:
@@ -4389,7 +4389,7 @@ inline constexpr InfoStep kCLimitBreakItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CLimitBreakItemInfo{"CLimitBreakItemInfo", "_ZTV19CLimitBreakItemInfo", InfoKind::kInfo, sizeof(CLimitBreakItemInfo), kCLimitBreakItemInfoProps, {}, kCLimitBreakItemInfoInit};
 
-inline constexpr InfoClass kInfo_CLoginBonusInfoList{"CLoginBonusInfoList", "_ZTV19CLoginBonusInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CLoginBonusInfo, 0, {}};
+inline constexpr InfoClass kInfo_CLoginBonusInfoList{"CLoginBonusInfoList", "_ZTV19CLoginBonusInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CLoginBonusInfo, 0, {}, nullptr, nullptr, nullptr};
 // CMissionElementInfo: 0xf8 bytes, 4 properties, 0 children.
 class CMissionElementInfo {
 public:
@@ -4418,8 +4418,8 @@ inline constexpr InfoStep kCMissionElementInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMissionElementInfo{"CMissionElementInfo", "_ZTV19CMissionElementInfo", InfoKind::kInfo, sizeof(CMissionElementInfo), kCMissionElementInfoProps, {}, kCMissionElementInfoInit};
 
-inline constexpr InfoClass kInfo_CMutualFollowIDInfo{"CMutualFollowIDInfo", "_ZTV19CMutualFollowIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 22}};
-inline constexpr InfoClass kInfo_CPresentBoxInfoList{"CPresentBoxInfoList", "_ZTV19CPresentBoxInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxInfo, 0, {}};
+inline constexpr InfoClass kInfo_CMutualFollowIDInfo{"CMutualFollowIDInfo", "_ZTV19CMutualFollowIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 22}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CPresentBoxInfoList{"CPresentBoxInfoList", "_ZTV19CPresentBoxInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxInfo, 0, {}, nullptr, nullptr, nullptr};
 // CSaleGachaCountInfo: 0xc8 bytes, 3 properties, 0 children.
 class CSaleGachaCountInfo {
 public:
@@ -4468,8 +4468,8 @@ inline constexpr InfoStep kSetAssistResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_SetAssistResultInfo{"SetAssistResultInfo", "_ZTV19SetAssistResultInfo", InfoKind::kInfo, sizeof(SetAssistResultInfo), kSetAssistResultInfoProps, {}, kSetAssistResultInfoInit};
 
-inline constexpr InfoClass kInfo_SetAssistResultList{"SetAssistResultList", "_ZTV19SetAssistResultList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_SetAssistResultInfo, 0, {}};
-inline constexpr InfoClass kInfo_SubscriptionInfoMap{"SubscriptionInfoMap", "_ZTV19SubscriptionInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_SubscriptionInfo, 8, {}};
+inline constexpr InfoClass kInfo_SetAssistResultList{"SetAssistResultList", "_ZTV19SetAssistResultList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_SetAssistResultInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_SubscriptionInfoMap{"SubscriptionInfoMap", "_ZTV19SubscriptionInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_SubscriptionInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16SubscriptionInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CAddCharacterExpInfo: 0x188 bytes, 7 properties, 0 children.
 class CAddCharacterExpInfo {
 public:
@@ -4510,7 +4510,7 @@ inline constexpr InfoStep kCAddCharacterExpInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CAddCharacterExpInfo{"CAddCharacterExpInfo", "_ZTV20CAddCharacterExpInfo", InfoKind::kInfo, sizeof(CAddCharacterExpInfo), kCAddCharacterExpInfoProps, {}, kCAddCharacterExpInfoInit};
 
-inline constexpr InfoClass kInfo_CPlayerCharacterInfoList{"CPlayerCharacterInfoList", "_ZTV24CPlayerCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPersonStatusInfo, 0, {}};
+inline constexpr InfoClass kInfo_CPlayerCharacterInfoList{"CPlayerCharacterInfoList", "_ZTV24CPlayerCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPersonStatusInfo, 0, {}, nullptr, nullptr, nullptr};
 // CAttackActionListInfo: 0x68 bytes, 1 properties, 0 children.
 class CAttackActionListInfo {
 public:
@@ -4527,9 +4527,9 @@ inline constexpr InfoStep kCAttackActionListInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CAttackActionListInfo{"CAttackActionListInfo", "_ZTV21CAttackActionListInfo", InfoKind::kInfo, sizeof(CAttackActionListInfo), kCAttackActionListInfoProps, {}, kCAttackActionListInfoInit};
 
-inline constexpr InfoClass kInfo_CAttackActionListInfoList{"CAttackActionListInfoList", "_ZTV25CAttackActionListInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CAttackActionListInfo, 0, {}};
-inline constexpr InfoClass kInfo_CBattleResultGearUiList{"CBattleResultGearUiList", "_ZTV23CBattleResultGearUiList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_CBattleResultInheritUiList{"CBattleResultInheritUiList", "_ZTV26CBattleResultInheritUiList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_InheritItemInfo, 8, {}};
+inline constexpr InfoClass kInfo_CAttackActionListInfoList{"CAttackActionListInfoList", "_ZTV25CAttackActionListInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CAttackActionListInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CBattleResultGearUiList{"CBattleResultGearUiList", "_ZTV23CBattleResultGearUiList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm22_CAttachedGearInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CBattleResultInheritUiList{"CBattleResultInheritUiList", "_ZTV26CBattleResultInheritUiList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_InheritItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm15InheritItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CBattleParameterInfo: 0x1a8 bytes, 1 properties, 4 children.
 class CBattleParameterInfo {
 public:
@@ -4730,7 +4730,7 @@ inline constexpr InfoStep kCInformationSiteInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CInformationSiteInfo{"CInformationSiteInfo", "_ZTV20CInformationSiteInfo", InfoKind::kInfo, sizeof(CInformationSiteInfo), kCInformationSiteInfoProps, {}, kCInformationSiteInfoInit};
 
-inline constexpr InfoClass kInfo_CMissionDropInfoList{"CMissionDropInfoList", "_ZTV20CMissionDropInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropInfo, 0, {}};
+inline constexpr InfoClass kInfo_CMissionDropInfoList{"CMissionDropInfoList", "_ZTV20CMissionDropInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropInfo, 0, {}, nullptr, nullptr, nullptr};
 // CMissionDropItemInfo: 0x138 bytes, 5 properties, 0 children.
 class CMissionDropItemInfo {
 public:
@@ -4763,9 +4763,9 @@ inline constexpr InfoStep kCMissionDropItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMissionDropItemInfo{"CMissionDropItemInfo", "_ZTV20CMissionDropItemInfo", InfoKind::kInfo, sizeof(CMissionDropItemInfo), kCMissionDropItemInfoProps, {}, kCMissionDropItemInfoInit};
 
-inline constexpr InfoClass kInfo_CStepUpGachaInfoList{"CStepUpGachaInfoList", "_ZTV20CStepUpGachaInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStepUpGachaInfo, 8, {}};
-inline constexpr InfoClass kInfo_CStorageItemInfoList{"CStorageItemInfoList", "_ZTV20CStorageItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CStorageItemInfo, 0, {}};
-inline constexpr InfoClass kInfo_CUpdateDeityInfoList{"CUpdateDeityInfoList", "_ZTV20CUpdateDeityInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_DeityInfo, 8, {}};
+inline constexpr InfoClass kInfo_CStepUpGachaInfoList{"CStepUpGachaInfoList", "_ZTV20CStepUpGachaInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStepUpGachaInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CStepUpGachaInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CStorageItemInfoList{"CStorageItemInfoList", "_ZTV20CStorageItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CStorageItemInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CUpdateDeityInfoList{"CUpdateDeityInfoList", "_ZTV20CUpdateDeityInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_DeityInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm9DeityInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CUserFavorResultInfo: 0xc8 bytes, 3 properties, 0 children.
 class CUserFavorResultInfo {
 public:
@@ -4946,10 +4946,10 @@ inline constexpr InfoStep kSubscriptionPlanInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_SubscriptionPlanInfo{"SubscriptionPlanInfo", "_ZTV20SubscriptionPlanInfo", InfoKind::kInfo, sizeof(SubscriptionPlanInfo), kSubscriptionPlanInfoProps, {}, kSubscriptionPlanInfoInit};
 
-inline constexpr InfoClass kInfo_CAddedItemReceiveList{"CAddedItemReceiveList", "_ZTV21CAddedItemReceiveList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 108}};
-inline constexpr InfoClass kInfo_CBattleRentalInfoList{"CBattleRentalInfoList", "_ZTV21CBattleRentalInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
-inline constexpr InfoClass kInfo_CBoxGachaListInfoList{"CBoxGachaListInfoList", "_ZTV21CBoxGachaListInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoxGachaListInfo, 8, {}};
-inline constexpr InfoClass kInfo_CDeepSpaceAreaInfoMap{"CDeepSpaceAreaInfoMap", "_ZTV21CDeepSpaceAreaInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceAreaInfo, 8, {}};
+inline constexpr InfoClass kInfo_CAddedItemReceiveList{"CAddedItemReceiveList", "_ZTV21CAddedItemReceiveList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 108}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CBattleRentalInfoList{"CBattleRentalInfoList", "_ZTV21CBattleRentalInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CBoxGachaListInfoList{"CBoxGachaListInfoList", "_ZTV21CBoxGachaListInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoxGachaListInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm17CBoxGachaListInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CDeepSpaceAreaInfoMap{"CDeepSpaceAreaInfoMap", "_ZTV21CDeepSpaceAreaInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceAreaInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm18CDeepSpaceAreaInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CEventMaintenanceInfo: 0x98 bytes, 2 properties, 0 children.
 class CEventMaintenanceInfo {
 public:
@@ -5002,7 +5002,7 @@ inline constexpr InfoStep kCFollowPlayerListElementInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CFollowPlayerListElementInfo{"CFollowPlayerListElementInfo", "_ZTV28CFollowPlayerListElementInfo", InfoKind::kInfo, sizeof(CFollowPlayerListElementInfo), kCFollowPlayerListElementInfoProps, {}, kCFollowPlayerListElementInfoInit};
 
-inline constexpr InfoClass kInfo_CFollowPlayerListInfo{"CFollowPlayerListInfo", "_ZTV21CFollowPlayerListInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowPlayerListElementInfo, 8, {}};
+inline constexpr InfoClass kInfo_CFollowPlayerListInfo{"CFollowPlayerListInfo", "_ZTV21CFollowPlayerListInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowPlayerListElementInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm28CFollowPlayerListElementInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CGachaMaintenanceInfo: 0x98 bytes, 2 properties, 0 children.
 class CGachaMaintenanceInfo {
 public:
@@ -5023,7 +5023,7 @@ inline constexpr InfoStep kCGachaMaintenanceInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CGachaMaintenanceInfo{"CGachaMaintenanceInfo", "_ZTV21CGachaMaintenanceInfo", InfoKind::kInfo, sizeof(CGachaMaintenanceInfo), kCGachaMaintenanceInfoProps, {}, kCGachaMaintenanceInfoInit};
 
-inline constexpr InfoClass kInfo_CGachaResultInfoArray{"CGachaResultInfoArray", "_ZTV21CGachaResultInfoArray", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaResultInfo, 0, {}};
+inline constexpr InfoClass kInfo_CGachaResultInfoArray{"CGachaResultInfoArray", "_ZTV21CGachaResultInfoArray", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaResultInfo, 0, {}, nullptr, nullptr, nullptr};
 // CGearBarneyChanceInfo: 0x98 bytes, 2 properties, 0 children.
 class CGearBarneyChanceInfo {
 public:
@@ -5044,10 +5044,10 @@ inline constexpr InfoStep kCGearBarneyChanceInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CGearBarneyChanceInfo{"CGearBarneyChanceInfo", "_ZTV21CGearBarneyChanceInfo", InfoKind::kInfo, sizeof(CGearBarneyChanceInfo), kCGearBarneyChanceInfoProps, {}, kCGearBarneyChanceInfoInit};
 
-inline constexpr InfoClass kInfo_CMissionStageInfoList{"CMissionStageInfoList", "_ZTV21CMissionStageInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionStageInfo, 0, {}};
-inline constexpr InfoClass kInfo_CMissionCommonDropInfoList{"CMissionCommonDropInfoList", "_ZTV26CMissionCommonDropInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropInfo, 0, {}};
-inline constexpr InfoClass kInfo_CMissionRareDropInfoList{"CMissionRareDropInfoList", "_ZTV24CMissionRareDropInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropInfo, 0, {}};
-inline constexpr InfoClass kInfo_CBattleEvaluationDropInfoList{"CBattleEvaluationDropInfoList", "_ZTV29CBattleEvaluationDropInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_CMissionStageInfoList{"CMissionStageInfoList", "_ZTV21CMissionStageInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionStageInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CMissionCommonDropInfoList{"CMissionCommonDropInfoList", "_ZTV26CMissionCommonDropInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CMissionRareDropInfoList{"CMissionRareDropInfoList", "_ZTV24CMissionRareDropInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CBattleEvaluationDropInfoList{"CBattleEvaluationDropInfoList", "_ZTV29CBattleEvaluationDropInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20CMissionDropInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CMissionParameterInfo: 0x358 bytes, 8 properties, 5 children.
 class CMissionParameterInfo {
 public:
@@ -5114,7 +5114,7 @@ inline constexpr InfoStep kCMissionParameterInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMissionParameterInfo{"CMissionParameterInfo", "_ZTV21CMissionParameterInfo", InfoKind::kInfo, sizeof(CMissionParameterInfo), kCMissionParameterInfoProps, kCMissionParameterInfoChildren, kCMissionParameterInfoInit};
 
-inline constexpr InfoClass kInfo_CPresentBoxAddInfoList{"CPresentBoxAddInfoList", "_ZTV22CPresentBoxAddInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxInfo, 0, {}};
+inline constexpr InfoClass kInfo_CPresentBoxAddInfoList{"CPresentBoxAddInfoList", "_ZTV22CPresentBoxAddInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxInfo, 0, {}, nullptr, nullptr, nullptr};
 // CPresentBoxReceiveItemInfo: 0x98 bytes, 2 properties, 0 children.
 class CPresentBoxReceiveItemInfo {
 public:
@@ -5135,8 +5135,8 @@ inline constexpr InfoStep kCPresentBoxReceiveItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPresentBoxReceiveItemInfo{"CPresentBoxReceiveItemInfo", "_ZTV26CPresentBoxReceiveItemInfo", InfoKind::kInfo, sizeof(CPresentBoxReceiveItemInfo), kCPresentBoxReceiveItemInfoProps, {}, kCPresentBoxReceiveItemInfoInit};
 
-inline constexpr InfoClass kInfo_CPresentBoxReceiveItemInfoList{"CPresentBoxReceiveItemInfoList", "_ZTV30CPresentBoxReceiveItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveItemInfo, 0, {}};
-inline constexpr InfoClass kInfo_CPresentBoxReceiveStackItemInfoList{"CPresentBoxReceiveStackItemInfoList", "_ZTV35CPresentBoxReceiveStackItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveItemInfo, 0, {}};
+inline constexpr InfoClass kInfo_CPresentBoxReceiveItemInfoList{"CPresentBoxReceiveItemInfoList", "_ZTV30CPresentBoxReceiveItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveItemInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CPresentBoxReceiveStackItemInfoList{"CPresentBoxReceiveStackItemInfoList", "_ZTV35CPresentBoxReceiveStackItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveItemInfo, 0, {}, nullptr, nullptr, nullptr};
 // CPresentBoxReceiveCharacterInfo: 0x98 bytes, 2 properties, 0 children.
 class CPresentBoxReceiveCharacterInfo {
 public:
@@ -5157,7 +5157,7 @@ inline constexpr InfoStep kCPresentBoxReceiveCharacterInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPresentBoxReceiveCharacterInfo{"CPresentBoxReceiveCharacterInfo", "_ZTV31CPresentBoxReceiveCharacterInfo", InfoKind::kInfo, sizeof(CPresentBoxReceiveCharacterInfo), kCPresentBoxReceiveCharacterInfoProps, {}, kCPresentBoxReceiveCharacterInfoInit};
 
-inline constexpr InfoClass kInfo_CPresentBoxReceiveCharacterInfoList{"CPresentBoxReceiveCharacterInfoList", "_ZTV35CPresentBoxReceiveCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveCharacterInfo, 0, {}};
+inline constexpr InfoClass kInfo_CPresentBoxReceiveCharacterInfoList{"CPresentBoxReceiveCharacterInfoList", "_ZTV35CPresentBoxReceiveCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveCharacterInfo, 0, {}, nullptr, nullptr, nullptr};
 // CPresentBoxReceiveStampInfo: 0x68 bytes, 1 properties, 0 children.
 class CPresentBoxReceiveStampInfo {
 public:
@@ -5174,7 +5174,7 @@ inline constexpr InfoStep kCPresentBoxReceiveStampInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPresentBoxReceiveStampInfo{"CPresentBoxReceiveStampInfo", "_ZTV27CPresentBoxReceiveStampInfo", InfoKind::kInfo, sizeof(CPresentBoxReceiveStampInfo), kCPresentBoxReceiveStampInfoProps, {}, kCPresentBoxReceiveStampInfoInit};
 
-inline constexpr InfoClass kInfo_CPresentBoxReceiveStampInfoList{"CPresentBoxReceiveStampInfoList", "_ZTV31CPresentBoxReceiveStampInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveStampInfo, 0, {}};
+inline constexpr InfoClass kInfo_CPresentBoxReceiveStampInfoList{"CPresentBoxReceiveStampInfoList", "_ZTV31CPresentBoxReceiveStampInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveStampInfo, 0, {}, nullptr, nullptr, nullptr};
 // CPresentBoxReceiveDecoInfo: 0x68 bytes, 1 properties, 0 children.
 class CPresentBoxReceiveDecoInfo {
 public:
@@ -5191,7 +5191,7 @@ inline constexpr InfoStep kCPresentBoxReceiveDecoInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPresentBoxReceiveDecoInfo{"CPresentBoxReceiveDecoInfo", "_ZTV26CPresentBoxReceiveDecoInfo", InfoKind::kInfo, sizeof(CPresentBoxReceiveDecoInfo), kCPresentBoxReceiveDecoInfoProps, {}, kCPresentBoxReceiveDecoInfoInit};
 
-inline constexpr InfoClass kInfo_CPresentBoxReceiveDecoInfoList{"CPresentBoxReceiveDecoInfoList", "_ZTV30CPresentBoxReceiveDecoInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveDecoInfo, 0, {}};
+inline constexpr InfoClass kInfo_CPresentBoxReceiveDecoInfoList{"CPresentBoxReceiveDecoInfoList", "_ZTV30CPresentBoxReceiveDecoInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveDecoInfo, 0, {}, nullptr, nullptr, nullptr};
 // CPresentBoxReceiveTitleInfo: 0x68 bytes, 1 properties, 0 children.
 class CPresentBoxReceiveTitleInfo {
 public:
@@ -5208,9 +5208,9 @@ inline constexpr InfoStep kCPresentBoxReceiveTitleInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPresentBoxReceiveTitleInfo{"CPresentBoxReceiveTitleInfo", "_ZTV27CPresentBoxReceiveTitleInfo", InfoKind::kInfo, sizeof(CPresentBoxReceiveTitleInfo), kCPresentBoxReceiveTitleInfoProps, {}, kCPresentBoxReceiveTitleInfoInit};
 
-inline constexpr InfoClass kInfo_CPresentBoxReceiveTitleInfoList{"CPresentBoxReceiveTitleInfoList", "_ZTV31CPresentBoxReceiveTitleInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveTitleInfo, 0, {}};
-inline constexpr InfoClass kInfo_CPresentBoxReceiveGearInfoList{"CPresentBoxReceiveGearInfoList", "_ZTV30CPresentBoxReceiveGearInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 211}};
-inline constexpr InfoClass kInfo_CAddOneTimeStorageInfo{"CAddOneTimeStorageInfo", "_ZTV22CAddOneTimeStorageInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 135}};
+inline constexpr InfoClass kInfo_CPresentBoxReceiveTitleInfoList{"CPresentBoxReceiveTitleInfoList", "_ZTV31CPresentBoxReceiveTitleInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPresentBoxReceiveTitleInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CPresentBoxReceiveGearInfoList{"CPresentBoxReceiveGearInfoList", "_ZTV30CPresentBoxReceiveGearInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 211}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CAddOneTimeStorageInfo{"CAddOneTimeStorageInfo", "_ZTV22CAddOneTimeStorageInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 135}, nullptr, nullptr, nullptr};
 // CPresentBoxReceiveInfo: 0x318 bytes, 2 properties, 8 children; never named / initialized (sic): +0x1d8.
 class CPresentBoxReceiveInfo {
 public:
@@ -5288,8 +5288,8 @@ inline constexpr InfoStep kCPresentGetResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPresentGetResultInfo{"CPresentGetResultInfo", "_ZTV21CPresentGetResultInfo", InfoKind::kInfo, sizeof(CPresentGetResultInfo), {}, kCPresentGetResultInfoChildren, kCPresentGetResultInfoInit};
 
-inline constexpr InfoClass kInfo_CharacterChipInfoList{"CharacterChipInfoList", "_ZTV21CharacterChipInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CharacterChipInfo, 8, {}};
-inline constexpr InfoClass kInfo_RankingResultInfoList{"RankingResultInfoList", "_ZTV21RankingResultInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_RankingResultInfo, 0, {}};
+inline constexpr InfoClass kInfo_CharacterChipInfoList{"CharacterChipInfoList", "_ZTV21CharacterChipInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CharacterChipInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm17CharacterChipInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_RankingResultInfoList{"RankingResultInfoList", "_ZTV21RankingResultInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_RankingResultInfo, 0, {}, nullptr, nullptr, nullptr};
 // Sphere211TreasureInfo: 0x98 bytes, 2 properties, 0 children.
 class Sphere211TreasureInfo {
 public:
@@ -5330,9 +5330,9 @@ inline constexpr InfoStep kTowerScheduleInfo_S2CInit[] = {
 };
 inline constexpr InfoClass kInfo_TowerScheduleInfo_S2C{"TowerScheduleInfo_S2C", "_ZTV21TowerScheduleInfo_S2C", InfoKind::kInfo, sizeof(TowerScheduleInfo_S2C), kTowerScheduleInfo_S2CProps, {}, kTowerScheduleInfo_S2CInit};
 
-inline constexpr InfoClass kInfo_CPlanetInfoCategoryList{"CPlanetInfoCategoryList", "_ZTV23CPlanetInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPlanetInfo, 8, {}};
-inline constexpr InfoClass kInfo_CAreaInfoCategoryListList{"CAreaInfoCategoryListList", "_ZTV25CAreaInfoCategoryListList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_CMissionInfoCategoryList{"CMissionInfoCategoryList", "_ZTV24CMissionInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_CPlanetInfoCategoryList{"CPlanetInfoCategoryList", "_ZTV23CPlanetInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPlanetInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CPlanetInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CAreaInfoCategoryListList{"CAreaInfoCategoryListList", "_ZTV25CAreaInfoCategoryListList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm21CAreaInfoCategoryListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CMissionInfoCategoryList{"CMissionInfoCategoryList", "_ZTV24CMissionInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CMissionInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CActiveMissionListInfo: 0x128 bytes, 0 properties, 3 children.
 class CActiveMissionListInfo {
 public:
@@ -5357,11 +5357,11 @@ inline constexpr InfoStep kCActiveMissionListInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CActiveMissionListInfo{"CActiveMissionListInfo", "_ZTV22CActiveMissionListInfo", InfoKind::kInfo, sizeof(CActiveMissionListInfo), {}, kCActiveMissionListInfoChildren, kCActiveMissionListInfoInit};
 
-inline constexpr InfoClass kInfo_CAddDecoObjectInfoList{"CAddDecoObjectInfoList", "_ZTV22CAddDecoObjectInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDecoObjectInfo, 0, {}};
-inline constexpr InfoClass kInfo_CAddFriendGaugeInfoMap{"CAddFriendGaugeInfoMap", "_ZTV22CAddFriendGaugeInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFriendGaugeInfo, 8, {}};
-inline constexpr InfoClass kInfo_CAddMutualFollowIDInfo{"CAddMutualFollowIDInfo", "_ZTV22CAddMutualFollowIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 28}};
-inline constexpr InfoClass kInfo_CAddPresentBoxInfoList{"CAddPresentBoxInfoList", "_ZTV22CAddPresentBoxInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPresentBoxInfo, 8, {}};
-inline constexpr InfoClass kInfo_CDebugGearDropInfoList{"CDebugGearDropInfoList", "_ZTV22CDebugGearDropInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 414}};
+inline constexpr InfoClass kInfo_CAddDecoObjectInfoList{"CAddDecoObjectInfoList", "_ZTV22CAddDecoObjectInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDecoObjectInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CAddFriendGaugeInfoMap{"CAddFriendGaugeInfoMap", "_ZTV22CAddFriendGaugeInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFriendGaugeInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CFriendGaugeInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CAddMutualFollowIDInfo{"CAddMutualFollowIDInfo", "_ZTV22CAddMutualFollowIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 28}, nullptr, nullptr, "_ZNSt6__ndk16vectorI23CParameterPropertyValueIjLj28E18CPropertyConverterEN9Framework13CSTLAllocatorIS3_NS4_22CSTLVectorAllocatorInfEEEE6assignIPS3_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS3_NS_15iterator_traitsISC_E9referenceEEE5valueEvE4typeESC_SC_"};
+inline constexpr InfoClass kInfo_CAddPresentBoxInfoList{"CAddPresentBoxInfoList", "_ZTV22CAddPresentBoxInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPresentBoxInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm15CPresentBoxInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CDebugGearDropInfoList{"CDebugGearDropInfoList", "_ZTV22CDebugGearDropInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 414}, nullptr, nullptr, nullptr};
 // CEquipWeaponResultPersonInfo: 0x98 bytes, 2 properties, 0 children.
 class CEquipWeaponResultPersonInfo {
 public:
@@ -5382,7 +5382,7 @@ inline constexpr InfoStep kCEquipWeaponResultPersonInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CEquipWeaponResultPersonInfo{"CEquipWeaponResultPersonInfo", "_ZTV28CEquipWeaponResultPersonInfo", InfoKind::kInfo, sizeof(CEquipWeaponResultPersonInfo), kCEquipWeaponResultPersonInfoProps, {}, kCEquipWeaponResultPersonInfoInit};
 
-inline constexpr InfoClass kInfo_CEquipWeaponResultPersonInfoCategory{"CEquipWeaponResultPersonInfoCategory", "_ZTV36CEquipWeaponResultPersonInfoCategory", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEquipWeaponResultPersonInfo, 8, {}};
+inline constexpr InfoClass kInfo_CEquipWeaponResultPersonInfoCategory{"CEquipWeaponResultPersonInfoCategory", "_ZTV36CEquipWeaponResultPersonInfoCategory", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEquipWeaponResultPersonInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm28CEquipWeaponResultPersonInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CEquipWeaponResultItemInfo: 0x68 bytes, 1 properties, 0 children.
 class CEquipWeaponResultItemInfo {
 public:
@@ -5399,7 +5399,7 @@ inline constexpr InfoStep kCEquipWeaponResultItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CEquipWeaponResultItemInfo{"CEquipWeaponResultItemInfo", "_ZTV26CEquipWeaponResultItemInfo", InfoKind::kInfo, sizeof(CEquipWeaponResultItemInfo), kCEquipWeaponResultItemInfoProps, {}, kCEquipWeaponResultItemInfoInit};
 
-inline constexpr InfoClass kInfo_CEquipWeaponResultItemInfoCategory{"CEquipWeaponResultItemInfoCategory", "_ZTV34CEquipWeaponResultItemInfoCategory", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEquipWeaponResultItemInfo, 8, {}};
+inline constexpr InfoClass kInfo_CEquipWeaponResultItemInfoCategory{"CEquipWeaponResultItemInfoCategory", "_ZTV34CEquipWeaponResultItemInfoCategory", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEquipWeaponResultItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm26CEquipWeaponResultItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CEquipWeaponResultInfo: 0xd8 bytes, 0 properties, 2 children.
 class CEquipWeaponResultInfo {
 public:
@@ -5464,7 +5464,7 @@ inline constexpr InfoStep kCFriendGaugeUpdateInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CFriendGaugeUpdateInfo{"CFriendGaugeUpdateInfo", "_ZTV22CFriendGaugeUpdateInfo", InfoKind::kInfo, sizeof(CFriendGaugeUpdateInfo), kCFriendGaugeUpdateInfoProps, {}, kCFriendGaugeUpdateInfoInit};
 
-inline constexpr InfoClass kInfo_CMissionDropItemInfoList{"CMissionDropItemInfoList", "_ZTV24CMissionDropItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropItemInfo, 0, {}};
+inline constexpr InfoClass kInfo_CMissionDropItemInfoList{"CMissionDropItemInfoList", "_ZTV24CMissionDropItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropItemInfo, 0, {}, nullptr, nullptr, "_ZNSt6__ndk16vectorI20CMissionDropItemInfoN9Framework13CSTLAllocatorIS1_NS2_22CSTLVectorAllocatorInfEEEE6assignIPS1_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS1_NS_15iterator_traitsISA_E9referenceEEE5valueEvE4typeESA_SA_"};
 // CMissionDropStackItemInfo: 0x108 bytes, 4 properties, 0 children.
 class CMissionDropStackItemInfo {
 public:
@@ -5493,7 +5493,7 @@ inline constexpr InfoStep kCMissionDropStackItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMissionDropStackItemInfo{"CMissionDropStackItemInfo", "_ZTV25CMissionDropStackItemInfo", InfoKind::kInfo, sizeof(CMissionDropStackItemInfo), kCMissionDropStackItemInfoProps, {}, kCMissionDropStackItemInfoInit};
 
-inline constexpr InfoClass kInfo_CMissionDropStackItemInfoList{"CMissionDropStackItemInfoList", "_ZTV29CMissionDropStackItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropStackItemInfo, 0, {}};
+inline constexpr InfoClass kInfo_CMissionDropStackItemInfoList{"CMissionDropStackItemInfoList", "_ZTV29CMissionDropStackItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropStackItemInfo, 0, {}, nullptr, nullptr, "_ZNSt6__ndk16vectorI25CMissionDropStackItemInfoN9Framework13CSTLAllocatorIS1_NS2_22CSTLVectorAllocatorInfEEEE6assignIPS1_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS1_NS_15iterator_traitsISA_E9referenceEEE5valueEvE4typeESA_SA_"};
 // CMissionDropCharacterInfo: 0x98 bytes, 2 properties, 0 children.
 class CMissionDropCharacterInfo {
 public:
@@ -5514,7 +5514,7 @@ inline constexpr InfoStep kCMissionDropCharacterInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMissionDropCharacterInfo{"CMissionDropCharacterInfo", "_ZTV25CMissionDropCharacterInfo", InfoKind::kInfo, sizeof(CMissionDropCharacterInfo), kCMissionDropCharacterInfoProps, {}, kCMissionDropCharacterInfoInit};
 
-inline constexpr InfoClass kInfo_CMissionDropCharacterInfoList{"CMissionDropCharacterInfoList", "_ZTV29CMissionDropCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropCharacterInfo, 0, {}};
+inline constexpr InfoClass kInfo_CMissionDropCharacterInfoList{"CMissionDropCharacterInfoList", "_ZTV29CMissionDropCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CMissionDropCharacterInfo, 0, {}, nullptr, nullptr, "_ZNSt6__ndk16vectorI25CMissionDropCharacterInfoN9Framework13CSTLAllocatorIS1_NS2_22CSTLVectorAllocatorInfEEEE6assignIPS1_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS1_NS_15iterator_traitsISA_E9referenceEEE5valueEvE4typeESA_SA_"};
 // CMissionResultDropInfo: 0x208 bytes, 3 properties, 4 children.
 class CMissionResultDropInfo {
 public:
@@ -5597,8 +5597,8 @@ inline constexpr InfoStep kCPremiumLoginBonusInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPremiumLoginBonusInfo{"CPremiumLoginBonusInfo", "_ZTV22CPremiumLoginBonusInfo", InfoKind::kInfo, sizeof(CPremiumLoginBonusInfo), kCPremiumLoginBonusInfoProps, {}, kCPremiumLoginBonusInfoInit};
 
-inline constexpr InfoClass kInfo_CStackItemClearNewList{"CStackItemClearNewList", "_ZTV22CStackItemClearNewList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 40}};
-inline constexpr InfoClass kInfo_CUpdateStorageLockList{"CUpdateStorageLockList", "_ZTV22CUpdateStorageLockList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 98}};
+inline constexpr InfoClass kInfo_CStackItemClearNewList{"CStackItemClearNewList", "_ZTV22CStackItemClearNewList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 40}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CUpdateStorageLockList{"CUpdateStorageLockList", "_ZTV22CUpdateStorageLockList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 98}, nullptr, nullptr, nullptr};
 // EventRankingPlayerInfo: 0x78 bytes, 1 properties, 0 children.
 class EventRankingPlayerInfo {
 public:
@@ -5631,7 +5631,7 @@ inline constexpr InfoStep kSphere211CharacterInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_Sphere211CharacterInfo{"Sphere211CharacterInfo", "_ZTV22Sphere211CharacterInfo", InfoKind::kInfo, sizeof(Sphere211CharacterInfo), kSphere211CharacterInfoProps, {}, kSphere211CharacterInfoInit};
 
-inline constexpr InfoClass kInfo_CBoxGachaResultInfoList{"CBoxGachaResultInfoList", "_ZTV23CBoxGachaResultInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CBoxGachaResultInfo, 0, {}};
+inline constexpr InfoClass kInfo_CBoxGachaResultInfoList{"CBoxGachaResultInfoList", "_ZTV23CBoxGachaResultInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CBoxGachaResultInfo, 0, {}, nullptr, nullptr, nullptr};
 // CDeepSpaceCharacterInfo: 0xc8 bytes, 3 properties, 0 children.
 class CDeepSpaceCharacterInfo {
 public:
@@ -5656,7 +5656,7 @@ inline constexpr InfoStep kCDeepSpaceCharacterInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CDeepSpaceCharacterInfo{"CDeepSpaceCharacterInfo", "_ZTV23CDeepSpaceCharacterInfo", InfoKind::kInfo, sizeof(CDeepSpaceCharacterInfo), kCDeepSpaceCharacterInfoProps, {}, kCDeepSpaceCharacterInfoInit};
 
-inline constexpr InfoClass kInfo_CDirectItemShopInfoList{"CDirectItemShopInfoList", "_ZTV23CDirectItemShopInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDirectItemShopInfo, 0, {}};
+inline constexpr InfoClass kInfo_CDirectItemShopInfoList{"CDirectItemShopInfoList", "_ZTV23CDirectItemShopInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDirectItemShopInfo, 0, {}, nullptr, nullptr, nullptr};
 // CGachaDayLimitCountInfo: 0xf8 bytes, 4 properties, 0 children.
 class CGachaDayLimitCountInfo {
 public:
@@ -5685,7 +5685,7 @@ inline constexpr InfoStep kCGachaDayLimitCountInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CGachaDayLimitCountInfo{"CGachaDayLimitCountInfo", "_ZTV23CGachaDayLimitCountInfo", InfoKind::kInfo, sizeof(CGachaDayLimitCountInfo), kCGachaDayLimitCountInfoProps, {}, kCGachaDayLimitCountInfoInit};
 
-inline constexpr InfoClass kInfo_CLimitBreakItemInfoList{"CLimitBreakItemInfoList", "_ZTV23CLimitBreakItemInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CLimitBreakItemInfo, 8, {}};
+inline constexpr InfoClass kInfo_CLimitBreakItemInfoList{"CLimitBreakItemInfoList", "_ZTV23CLimitBreakItemInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CLimitBreakItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm19CLimitBreakItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CPartialMaintenanceInfo: 0x68 bytes, 1 properties, 0 children.
 class CPartialMaintenanceInfo {
 public:
@@ -5702,11 +5702,11 @@ inline constexpr InfoStep kCPartialMaintenanceInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPartialMaintenanceInfo{"CPartialMaintenanceInfo", "_ZTV23CPartialMaintenanceInfo", InfoKind::kInfo, sizeof(CPartialMaintenanceInfo), kCPartialMaintenanceInfoProps, {}, kCPartialMaintenanceInfoInit};
 
-inline constexpr InfoClass kInfo_CReceiveAchievementList{"CReceiveAchievementList", "_ZTV23CReceiveAchievementList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 103}};
-inline constexpr InfoClass kInfo_CSaleGachaCountInfoList{"CSaleGachaCountInfoList", "_ZTV23CSaleGachaCountInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CSaleGachaCountInfo, 8, {}};
-inline constexpr InfoClass kInfo_CUpdateBoxGachaInfoList{"CUpdateBoxGachaInfoList", "_ZTV23CUpdateBoxGachaInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoxGachaInfo, 8, {}};
-inline constexpr InfoClass kInfo_CUpdatedAchievementList{"CUpdatedAchievementList", "_ZTV23CUpdatedAchievementList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAchievementInfo, 8, {}};
-inline constexpr InfoClass kInfo_EventRankingInfoListMap{"EventRankingInfoListMap", "_ZTV23EventRankingInfoListMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_CReceiveAchievementList{"CReceiveAchievementList", "_ZTV23CReceiveAchievementList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 103}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CSaleGachaCountInfoList{"CSaleGachaCountInfoList", "_ZTV23CSaleGachaCountInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CSaleGachaCountInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm19CSaleGachaCountInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CUpdateBoxGachaInfoList{"CUpdateBoxGachaInfoList", "_ZTV23CUpdateBoxGachaInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoxGachaInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm13CBoxGachaInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CUpdatedAchievementList{"CUpdatedAchievementList", "_ZTV23CUpdatedAchievementList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAchievementInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CAchievementInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_EventRankingInfoListMap{"EventRankingInfoListMap", "_ZTV23EventRankingInfoListMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20EventRankingInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // Sphere211FloorAssetInfo: 0x268 bytes, 11 properties, 0 children.
 class Sphere211FloorAssetInfo {
 public:
@@ -5787,7 +5787,7 @@ inline constexpr InfoStep kSphere211FloorClearInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_Sphere211FloorClearInfo{"Sphere211FloorClearInfo", "_ZTV23Sphere211FloorClearInfo", InfoKind::kInfo, sizeof(Sphere211FloorClearInfo), kSphere211FloorClearInfoProps, {}, kSphere211FloorClearInfoInit};
 
-inline constexpr InfoClass kInfo_Sphere211RankingInfoMap{"Sphere211RankingInfoMap", "_ZTV23Sphere211RankingInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211RankingInfo, 8, {}};
+inline constexpr InfoClass kInfo_Sphere211RankingInfoMap{"Sphere211RankingInfoMap", "_ZTV23Sphere211RankingInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211RankingInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20Sphere211RankingInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // SubscriptionHistoryInfo: 0x128 bytes, 4 properties, 0 children.
 class SubscriptionHistoryInfo {
 public:
@@ -5816,7 +5816,7 @@ inline constexpr InfoStep kSubscriptionHistoryInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_SubscriptionHistoryInfo{"SubscriptionHistoryInfo", "_ZTV23SubscriptionHistoryInfo", InfoKind::kInfo, sizeof(SubscriptionHistoryInfo), kSubscriptionHistoryInfoProps, {}, kSubscriptionHistoryInfoInit};
 
-inline constexpr InfoClass kInfo_SubscriptionPlanInfoMap{"SubscriptionPlanInfoMap", "_ZTV23SubscriptionPlanInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_SubscriptionPlanInfo, 8, {}};
+inline constexpr InfoClass kInfo_SubscriptionPlanInfoMap{"SubscriptionPlanInfoMap", "_ZTV23SubscriptionPlanInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_SubscriptionPlanInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20SubscriptionPlanInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // UpdateUniverseLevelInfo: 0xc8 bytes, 3 properties, 0 children.
 class UpdateUniverseLevelInfo {
 public:
@@ -5841,10 +5841,10 @@ inline constexpr InfoStep kUpdateUniverseLevelInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_UpdateUniverseLevelInfo{"UpdateUniverseLevelInfo", "_ZTV23UpdateUniverseLevelInfo", InfoKind::kInfo, sizeof(UpdateUniverseLevelInfo), kUpdateUniverseLevelInfoProps, {}, kUpdateUniverseLevelInfoInit};
 
-inline constexpr InfoClass kInfo_CAchievementKindInfoList{"CAchievementKindInfoList", "_ZTV24CAchievementKindInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAchievementInfo, 8, {}};
-inline constexpr InfoClass kInfo_CAddCharacterExpInfoList{"CAddCharacterExpInfoList", "_ZTV24CAddCharacterExpInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAddCharacterExpInfo, 8, {}};
-inline constexpr InfoClass kInfo_CBlacklistPlayerListInfo{"CBlacklistPlayerListInfo", "_ZTV24CBlacklistPlayerListInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowPlayerListElementInfo, 8, {}};
-inline constexpr InfoClass kInfo_CDebugDropContentInfoMap{"CDebugDropContentInfoMap", "_ZTV24CDebugDropContentInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_CAchievementKindInfoList{"CAchievementKindInfoList", "_ZTV24CAchievementKindInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAchievementInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CAchievementInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CAddCharacterExpInfoList{"CAddCharacterExpInfoList", "_ZTV24CAddCharacterExpInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAddCharacterExpInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20CAddCharacterExpInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CBlacklistPlayerListInfo{"CBlacklistPlayerListInfo", "_ZTV24CBlacklistPlayerListInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowPlayerListElementInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm28CFollowPlayerListElementInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CDebugDropContentInfoMap{"CDebugDropContentInfoMap", "_ZTV24CDebugDropContentInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm25CDebugDropContentInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CDebugGearGenerationInfo: 0x158 bytes, 6 properties, 0 children.
 class CDebugGearGenerationInfo {
 public:
@@ -5897,7 +5897,7 @@ inline constexpr InfoStep kCDeepSpaceBonusApplyInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CDeepSpaceBonusApplyInfo{"CDeepSpaceBonusApplyInfo", "_ZTV24CDeepSpaceBonusApplyInfo", InfoKind::kInfo, sizeof(CDeepSpaceBonusApplyInfo), kCDeepSpaceBonusApplyInfoProps, {}, kCDeepSpaceBonusApplyInfoInit};
 
-inline constexpr InfoClass kInfo_CEventMaintenanceInfoMap{"CEventMaintenanceInfoMap", "_ZTV24CEventMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEventMaintenanceInfo, 8, {}};
+inline constexpr InfoClass kInfo_CEventMaintenanceInfoMap{"CEventMaintenanceInfoMap", "_ZTV24CEventMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEventMaintenanceInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm21CEventMaintenanceInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CExchangeMaintenanceInfo: 0x98 bytes, 2 properties, 0 children.
 class CExchangeMaintenanceInfo {
 public:
@@ -5934,9 +5934,9 @@ inline constexpr InfoStep kCExchangeShopExCountInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CExchangeShopExCountInfo{"CExchangeShopExCountInfo", "_ZTV24CExchangeShopExCountInfo", InfoKind::kInfo, sizeof(CExchangeShopExCountInfo), kCExchangeShopExCountInfoProps, {}, kCExchangeShopExCountInfoInit};
 
-inline constexpr InfoClass kInfo_CGachaMaintenanceInfoMap{"CGachaMaintenanceInfoMap", "_ZTV24CGachaMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaMaintenanceInfo, 8, {}};
-inline constexpr InfoClass kInfo_CGachaTestResultInfoList{"CGachaTestResultInfoList", "_ZTV24CGachaTestResultInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaTestResultInfo, 8, {}};
-inline constexpr InfoClass kInfo_CGearProbabilityInfoList{"CGearProbabilityInfoList", "_ZTV24CGearProbabilityInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 337}};
+inline constexpr InfoClass kInfo_CGachaMaintenanceInfoMap{"CGachaMaintenanceInfoMap", "_ZTV24CGachaMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaMaintenanceInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm21CGachaMaintenanceInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CGachaTestResultInfoList{"CGachaTestResultInfoList", "_ZTV24CGachaTestResultInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaTestResultInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20CGachaTestResultInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CGearProbabilityInfoList{"CGearProbabilityInfoList", "_ZTV24CGearProbabilityInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 337}, nullptr, nullptr, nullptr};
 // CItemBoostTestResultInfo: 0x98 bytes, 2 properties, 0 children.
 class CItemBoostTestResultInfo {
 public:
@@ -5977,8 +5977,8 @@ inline constexpr InfoStep kCMasterKiyakuVersionInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMasterKiyakuVersionInfo{"CMasterKiyakuVersionInfo", "_ZTV24CMasterKiyakuVersionInfo", InfoKind::kInfo, sizeof(CMasterKiyakuVersionInfo), kCMasterKiyakuVersionInfoProps, {}, kCMasterKiyakuVersionInfoInit};
 
-inline constexpr InfoClass kInfo_CUpdateCharacterInfoList{"CUpdateCharacterInfoList", "_ZTV24CUpdateCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CUpdateCharacterInfo, 0, {}};
-inline constexpr InfoClass kInfo_CWorldBossPlayerInfoList{"CWorldBossPlayerInfoList", "_ZTV24CWorldBossPlayerInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CWorldBossPlayerInfo, 8, {}};
+inline constexpr InfoClass kInfo_CUpdateCharacterInfoList{"CUpdateCharacterInfoList", "_ZTV24CUpdateCharacterInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CUpdateCharacterInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CWorldBossPlayerInfoList{"CWorldBossPlayerInfoList", "_ZTV24CWorldBossPlayerInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CWorldBossPlayerInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20CWorldBossPlayerInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CWorldMapMaintenanceInfo: 0x98 bytes, 2 properties, 0 children.
 class CWorldMapMaintenanceInfo {
 public:
@@ -6071,7 +6071,7 @@ inline constexpr InfoStep kCBoostCharacterResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CBoostCharacterResultInfo{"CBoostCharacterResultInfo", "_ZTV25CBoostCharacterResultInfo", InfoKind::kInfo, sizeof(CBoostCharacterResultInfo), kCBoostCharacterResultInfoProps, {}, kCBoostCharacterResultInfoInit};
 
-inline constexpr InfoClass kInfo_CDeepSpaceEndShipInfoList{"CDeepSpaceEndShipInfoList", "_ZTV25CDeepSpaceEndShipInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceShipInfo, 8, {}};
+inline constexpr InfoClass kInfo_CDeepSpaceEndShipInfoList{"CDeepSpaceEndShipInfoList", "_ZTV25CDeepSpaceEndShipInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceShipInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm18CDeepSpaceShipInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CEquipAccessoryResultPersonInfo: 0x98 bytes, 2 properties, 0 children.
 class CEquipAccessoryResultPersonInfo {
 public:
@@ -6092,7 +6092,7 @@ inline constexpr InfoStep kCEquipAccessoryResultPersonInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CEquipAccessoryResultPersonInfo{"CEquipAccessoryResultPersonInfo", "_ZTV31CEquipAccessoryResultPersonInfo", InfoKind::kInfo, sizeof(CEquipAccessoryResultPersonInfo), kCEquipAccessoryResultPersonInfoProps, {}, kCEquipAccessoryResultPersonInfoInit};
 
-inline constexpr InfoClass kInfo_CEquipAccessoryResultPersonInfoCategory{"CEquipAccessoryResultPersonInfoCategory", "_ZTV39CEquipAccessoryResultPersonInfoCategory", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEquipAccessoryResultPersonInfo, 8, {}};
+inline constexpr InfoClass kInfo_CEquipAccessoryResultPersonInfoCategory{"CEquipAccessoryResultPersonInfoCategory", "_ZTV39CEquipAccessoryResultPersonInfoCategory", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEquipAccessoryResultPersonInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm31CEquipAccessoryResultPersonInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CEquipAccessoryResultItemInfo: 0x68 bytes, 1 properties, 0 children.
 class CEquipAccessoryResultItemInfo {
 public:
@@ -6109,7 +6109,7 @@ inline constexpr InfoStep kCEquipAccessoryResultItemInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CEquipAccessoryResultItemInfo{"CEquipAccessoryResultItemInfo", "_ZTV29CEquipAccessoryResultItemInfo", InfoKind::kInfo, sizeof(CEquipAccessoryResultItemInfo), kCEquipAccessoryResultItemInfoProps, {}, kCEquipAccessoryResultItemInfoInit};
 
-inline constexpr InfoClass kInfo_CEquipAccessoryResultItemInfoCategory{"CEquipAccessoryResultItemInfoCategory", "_ZTV37CEquipAccessoryResultItemInfoCategory", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEquipAccessoryResultItemInfo, 8, {}};
+inline constexpr InfoClass kInfo_CEquipAccessoryResultItemInfoCategory{"CEquipAccessoryResultItemInfoCategory", "_ZTV37CEquipAccessoryResultItemInfoCategory", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CEquipAccessoryResultItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm29CEquipAccessoryResultItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CEquipAccessoryResultInfo: 0xd8 bytes, 0 properties, 2 children.
 class CEquipAccessoryResultInfo {
 public:
@@ -6130,8 +6130,8 @@ inline constexpr InfoStep kCEquipAccessoryResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CEquipAccessoryResultInfo{"CEquipAccessoryResultInfo", "_ZTV25CEquipAccessoryResultInfo", InfoKind::kInfo, sizeof(CEquipAccessoryResultInfo), {}, kCEquipAccessoryResultInfoChildren, kCEquipAccessoryResultInfoInit};
 
-inline constexpr InfoClass kInfo_CFavoriteDecoObjectResult{"CFavoriteDecoObjectResult", "_ZTV25CFavoriteDecoObjectResult", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDecoObjectInfo, 8, {}};
-inline constexpr InfoClass kInfo_CFriendGaugeUpdateInfoMap{"CFriendGaugeUpdateInfoMap", "_ZTV25CFriendGaugeUpdateInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFriendGaugeUpdateInfo, 8, {}};
+inline constexpr InfoClass kInfo_CFavoriteDecoObjectResult{"CFavoriteDecoObjectResult", "_ZTV25CFavoriteDecoObjectResult", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDecoObjectInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm15CDecoObjectInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CFriendGaugeUpdateInfoMap{"CFriendGaugeUpdateInfoMap", "_ZTV25CFriendGaugeUpdateInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFriendGaugeUpdateInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm22CFriendGaugeUpdateInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CGearGenerationInfoResult: 0x1b8 bytes, 3 properties, 3 children.
 class CGearGenerationInfoResult {
 public:
@@ -6170,8 +6170,8 @@ inline constexpr InfoStep kCGearGenerationInfoResultInit[] = {
 };
 inline constexpr InfoClass kInfo_CGearGenerationInfoResult{"CGearGenerationInfoResult", "_ZTV25CGearGenerationInfoResult", InfoKind::kInfo, sizeof(CGearGenerationInfoResult), kCGearGenerationInfoResultProps, kCGearGenerationInfoResultChildren, kCGearGenerationInfoResultInit};
 
-inline constexpr InfoClass kInfo_CGiftGachaResultInfoArray{"CGiftGachaResultInfoArray", "_ZTV25CGiftGachaResultInfoArray", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGiftGachaResultInfo, 0, {}};
-inline constexpr InfoClass kInfo_CGuideInformationInfoList{"CGuideInformationInfoList", "_ZTV25CGuideInformationInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 61}};
+inline constexpr InfoClass kInfo_CGiftGachaResultInfoArray{"CGiftGachaResultInfoArray", "_ZTV25CGiftGachaResultInfoArray", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGiftGachaResultInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CGuideInformationInfoList{"CGuideInformationInfoList", "_ZTV25CGuideInformationInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 61}, nullptr, nullptr, nullptr};
 // CMissionResultPresentInfo: 0xc8 bytes, 3 properties, 0 children.
 class CMissionResultPresentInfo {
 public:
@@ -6191,9 +6191,9 @@ inline constexpr InfoProp kCMissionResultPresentInfoProps[] = {
 };
 inline constexpr InfoClass kInfo_CMissionResultPresentInfo{"CMissionResultPresentInfo", "_ZTV25CMissionResultPresentInfo", InfoKind::kInfo, sizeof(CMissionResultPresentInfo), kCMissionResultPresentInfoProps, {}, {}};
 
-inline constexpr InfoClass kInfo_CWorldMapInfoCategoryList{"CWorldMapInfoCategoryList", "_ZTV25CWorldMapInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CWorldMapInfo, 8, {}};
-inline constexpr InfoClass kInfo_EventRankingPlayerInfoMap{"EventRankingPlayerInfoMap", "_ZTV25EventRankingPlayerInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_EventRankingPlayerInfo, 8, {}};
-inline constexpr InfoClass kInfo_EventRankingTopInfoListMap{"EventRankingTopInfoListMap", "_ZTV26EventRankingTopInfoListMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_CWorldMapInfoCategoryList{"CWorldMapInfoCategoryList", "_ZTV25CWorldMapInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CWorldMapInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm13CWorldMapInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_EventRankingPlayerInfoMap{"EventRankingPlayerInfoMap", "_ZTV25EventRankingPlayerInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_EventRankingPlayerInfo, 8, {}, "_ZNSt6__ndk16__treeINS_12__value_typeIm22EventRankingPlayerInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE30__emplace_hint_unique_key_argsImJRKNS_4pairIKmS2_EEEEENS_15__tree_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEENS_21__tree_const_iteratorIS3_SN_lEERKT_DpOT0_", "_ZNSt6__ndk16__treeINS_12__value_typeIm22EventRankingPlayerInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_EventRankingTopInfoListMap{"EventRankingTopInfoListMap", "_ZTV26EventRankingTopInfoListMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm23EventRankingTopInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // GetEventRankingResultInfo: 0x128 bytes, 0 properties, 3 children.
 class GetEventRankingResultInfo {
 public:
@@ -6218,7 +6218,7 @@ inline constexpr InfoStep kGetEventRankingResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_GetEventRankingResultInfo{"GetEventRankingResultInfo", "_ZTV25GetEventRankingResultInfo", InfoKind::kInfo, sizeof(GetEventRankingResultInfo), {}, kGetEventRankingResultInfoChildren, kGetEventRankingResultInfoInit};
 
-inline constexpr InfoClass kInfo_Sphere211CharacterInfoMap{"Sphere211CharacterInfoMap", "_ZTV25Sphere211CharacterInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211CharacterInfo, 8, {}};
+inline constexpr InfoClass kInfo_Sphere211CharacterInfoMap{"Sphere211CharacterInfoMap", "_ZTV25Sphere211CharacterInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211CharacterInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm22Sphere211CharacterInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // Sphere211TreasureDropInfo: 0x98 bytes, 2 properties, 0 children.
 class Sphere211TreasureDropInfo {
 public:
@@ -6239,8 +6239,8 @@ inline constexpr InfoStep kSphere211TreasureDropInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_Sphere211TreasureDropInfo{"Sphere211TreasureDropInfo", "_ZTV25Sphere211TreasureDropInfo", InfoKind::kInfo, sizeof(Sphere211TreasureDropInfo), kSphere211TreasureDropInfoProps, {}, kSphere211TreasureDropInfoInit};
 
-inline constexpr InfoClass kInfo_UpdatedEventRankingIdList{"UpdatedEventRankingIdList", "_ZTV25UpdatedEventRankingIdList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 40}};
-inline constexpr InfoClass kInfo_CAchievementActiveInfoList{"CAchievementActiveInfoList", "_ZTV26CAchievementActiveInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAchievementInfo, 8, {}};
+inline constexpr InfoClass kInfo_UpdatedEventRankingIdList{"UpdatedEventRankingIdList", "_ZTV25UpdatedEventRankingIdList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 40}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CAchievementActiveInfoList{"CAchievementActiveInfoList", "_ZTV26CAchievementActiveInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAchievementInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CAchievementInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CAreaInfo: 0xf8 bytes, 4 properties, 0 children.
 class CAreaInfo {
 public:
@@ -6269,8 +6269,8 @@ inline constexpr InfoStep kCAreaInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CAreaInfo{"CAreaInfo", "_ZTV9CAreaInfo", InfoKind::kInfo, sizeof(CAreaInfo), kCAreaInfoProps, {}, kCAreaInfoInit};
 
-inline constexpr InfoClass kInfo_CEventAreaInfoCategoryList{"CEventAreaInfoCategoryList", "_ZTV26CEventAreaInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAreaInfo, 8, {}};
-inline constexpr InfoClass kInfo_CFavorBonusContetsInfoList{"CFavorBonusContetsInfoList", "_ZTV26CFavorBonusContetsInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 81}};
+inline constexpr InfoClass kInfo_CEventAreaInfoCategoryList{"CEventAreaInfoCategoryList", "_ZTV26CEventAreaInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAreaInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm9CAreaInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CFavorBonusContetsInfoList{"CFavorBonusContetsInfoList", "_ZTV26CFavorBonusContetsInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 81}, nullptr, nullptr, nullptr};
 // CMissionDropTestResultInfo: 0x390 bytes, 0 properties, 1 children.
 class CMissionDropTestResultInfo {
 public:
@@ -6306,7 +6306,7 @@ inline constexpr InfoProp kCMissionResultRareDropInfoProps[] = {
 };
 inline constexpr InfoClass kInfo_CMissionResultRareDropInfo{"CMissionResultRareDropInfo", "_ZTV26CMissionResultRareDropInfo", InfoKind::kInfo, sizeof(CMissionResultRareDropInfo), kCMissionResultRareDropInfoProps, {}, {}};
 
-inline constexpr InfoClass kInfo_CPartialMaintenanceInfoMap{"CPartialMaintenanceInfoMap", "_ZTV26CPartialMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPartialMaintenanceInfo, 8, {}};
+inline constexpr InfoClass kInfo_CPartialMaintenanceInfoMap{"CPartialMaintenanceInfoMap", "_ZTV26CPartialMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPartialMaintenanceInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm23CPartialMaintenanceInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CPersonAddStatusResultInfo: 0x398 bytes, 18 properties, 0 children.
 class CPersonAddStatusResultInfo {
 public:
@@ -6391,12 +6391,12 @@ inline constexpr InfoStep kCPersonAddStatusResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPersonAddStatusResultInfo{"CPersonAddStatusResultInfo", "_ZTV26CPersonAddStatusResultInfo", InfoKind::kInfo, sizeof(CPersonAddStatusResultInfo), kCPersonAddStatusResultInfoProps, {}, kCPersonAddStatusResultInfoInit};
 
-inline constexpr InfoClass kInfo_CPremiumLoginBonusInfoList{"CPremiumLoginBonusInfoList", "_ZTV26CPremiumLoginBonusInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPremiumLoginBonusInfo, 0, {}};
-inline constexpr InfoClass kInfo_CTowerAreaInfoCategoryList{"CTowerAreaInfoCategoryList", "_ZTV26CTowerAreaInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAreaInfo, 8, {}};
-inline constexpr InfoClass kInfo_CUpdateStepUpGachaInfoList{"CUpdateStepUpGachaInfoList", "_ZTV26CUpdateStepUpGachaInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStepUpGachaInfo, 8, {}};
-inline constexpr InfoClass kInfo_CUpdateStorageItemInfoList{"CUpdateStorageItemInfoList", "_ZTV26CUpdateStorageItemInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStorageItemInfo, 8, {}};
-inline constexpr InfoClass kInfo_Sphere211FloorAssetInfoMap{"Sphere211FloorAssetInfoMap", "_ZTV26Sphere211FloorAssetInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211FloorAssetInfo, 8, {}};
-inline constexpr InfoClass kInfo_Sphere211RankingTopInfoMap{"Sphere211RankingTopInfoMap", "_ZTV26Sphere211RankingTopInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211RankingInfo, 8, {}};
+inline constexpr InfoClass kInfo_CPremiumLoginBonusInfoList{"CPremiumLoginBonusInfoList", "_ZTV26CPremiumLoginBonusInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CPremiumLoginBonusInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CTowerAreaInfoCategoryList{"CTowerAreaInfoCategoryList", "_ZTV26CTowerAreaInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAreaInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm9CAreaInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CUpdateStepUpGachaInfoList{"CUpdateStepUpGachaInfoList", "_ZTV26CUpdateStepUpGachaInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStepUpGachaInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CStepUpGachaInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CUpdateStorageItemInfoList{"CUpdateStorageItemInfoList", "_ZTV26CUpdateStorageItemInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStorageItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CStorageItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_Sphere211FloorAssetInfoMap{"Sphere211FloorAssetInfoMap", "_ZTV26Sphere211FloorAssetInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211FloorAssetInfo, 8, {}, "_ZNSt6__ndk16__treeINS_12__value_typeIm23Sphere211FloorAssetInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE30__emplace_hint_unique_key_argsImJRKNS_4pairIKmS2_EEEEENS_15__tree_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEENS_21__tree_const_iteratorIS3_SN_lEERKT_DpOT0_", "_ZNSt6__ndk16__treeINS_12__value_typeIm23Sphere211FloorAssetInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_Sphere211RankingTopInfoMap{"Sphere211RankingTopInfoMap", "_ZTV26Sphere211RankingTopInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211RankingInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20Sphere211RankingInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // SubscriptionCampaignResult: 0xa8 bytes, 2 properties, 0 children.
 class SubscriptionCampaignResult {
 public:
@@ -6449,9 +6449,9 @@ inline constexpr InfoStep kSubscriptionGachaCountInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_SubscriptionGachaCountInfo{"SubscriptionGachaCountInfo", "_ZTV26SubscriptionGachaCountInfo", InfoKind::kInfo, sizeof(SubscriptionGachaCountInfo), kSubscriptionGachaCountInfoProps, {}, kSubscriptionGachaCountInfoInit};
 
-inline constexpr InfoClass kInfo_TowerScheduleInfoArray_S2C{"TowerScheduleInfoArray_S2C", "_ZTV26TowerScheduleInfoArray_S2C", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_TowerScheduleInfo_S2C, 8, {}};
-inline constexpr InfoClass kInfo_CAchievementReceiveInfoList{"CAchievementReceiveInfoList", "_ZTV27CAchievementReceiveInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAchievementInfo, 8, {}};
-inline constexpr InfoClass kInfo_CEventMissionInfoCategoryList{"CEventMissionInfoCategoryList", "_ZTV29CEventMissionInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_TowerScheduleInfoArray_S2C{"TowerScheduleInfoArray_S2C", "_ZTV26TowerScheduleInfoArray_S2C", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_TowerScheduleInfo_S2C, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm21TowerScheduleInfo_S2CEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CAchievementReceiveInfoList{"CAchievementReceiveInfoList", "_ZTV27CAchievementReceiveInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CAchievementInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CAchievementInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CEventMissionInfoCategoryList{"CEventMissionInfoCategoryList", "_ZTV29CEventMissionInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CMissionInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CActiveEventMissionListInfo: 0xd8 bytes, 0 properties, 2 children.
 class CActiveEventMissionListInfo {
 public:
@@ -6472,7 +6472,7 @@ inline constexpr InfoStep kCActiveEventMissionListInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CActiveEventMissionListInfo{"CActiveEventMissionListInfo", "_ZTV27CActiveEventMissionListInfo", InfoKind::kInfo, sizeof(CActiveEventMissionListInfo), {}, kCActiveEventMissionListInfoChildren, kCActiveEventMissionListInfoInit};
 
-inline constexpr InfoClass kInfo_CTowerMissionInfoCategoryList{"CTowerMissionInfoCategoryList", "_ZTV29CTowerMissionInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_CTowerMissionInfoCategoryList{"CTowerMissionInfoCategoryList", "_ZTV29CTowerMissionInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CMissionInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CActiveTowerMissionListInfo: 0xd8 bytes, 0 properties, 2 children.
 class CActiveTowerMissionListInfo {
 public:
@@ -6523,9 +6523,9 @@ inline constexpr InfoStep kCBattleEvaluationResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CBattleEvaluationResultInfo{"CBattleEvaluationResultInfo", "_ZTV27CBattleEvaluationResultInfo", InfoKind::kInfo, sizeof(CBattleEvaluationResultInfo), kCBattleEvaluationResultInfoProps, kCBattleEvaluationResultInfoChildren, kCBattleEvaluationResultInfoInit};
 
-inline constexpr InfoClass kInfo_CDebugSphere211FloorNumList{"CDebugSphere211FloorNumList", "_ZTV27CDebugSphere211FloorNumList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 516}};
-inline constexpr InfoClass kInfo_CDeepSpaceCharacterInfoList{"CDeepSpaceCharacterInfoList", "_ZTV27CDeepSpaceCharacterInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceCharacterInfo, 8, {}};
-inline constexpr InfoClass kInfo_CExchangeMaintenanceInfoMap{"CExchangeMaintenanceInfoMap", "_ZTV27CExchangeMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CExchangeMaintenanceInfo, 8, {}};
+inline constexpr InfoClass kInfo_CDebugSphere211FloorNumList{"CDebugSphere211FloorNumList", "_ZTV27CDebugSphere211FloorNumList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 516}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CDeepSpaceCharacterInfoList{"CDeepSpaceCharacterInfoList", "_ZTV27CDeepSpaceCharacterInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceCharacterInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm23CDeepSpaceCharacterInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CExchangeMaintenanceInfoMap{"CExchangeMaintenanceInfoMap", "_ZTV27CExchangeMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CExchangeMaintenanceInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm24CExchangeMaintenanceInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CMissionResultCharacterInfo: 0xf8 bytes, 4 properties, 0 children.
 class CMissionResultCharacterInfo {
 public:
@@ -6554,7 +6554,7 @@ inline constexpr InfoStep kCMissionResultCharacterInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMissionResultCharacterInfo{"CMissionResultCharacterInfo", "_ZTV27CMissionResultCharacterInfo", InfoKind::kInfo, sizeof(CMissionResultCharacterInfo), kCMissionResultCharacterInfoProps, {}, kCMissionResultCharacterInfoInit};
 
-inline constexpr InfoClass kInfo_COneTimeStorageItemInfoList{"COneTimeStorageItemInfoList", "_ZTV27COneTimeStorageItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CStorageItemInfo, 0, {}};
+inline constexpr InfoClass kInfo_COneTimeStorageItemInfoList{"COneTimeStorageItemInfoList", "_ZTV27COneTimeStorageItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CStorageItemInfo, 0, {}, nullptr, nullptr, nullptr};
 // CPlayerCharacterMasteryInfo: 0x298 bytes, 12 properties, 0 children.
 class CPlayerCharacterMasteryInfo {
 public:
@@ -6615,8 +6615,8 @@ inline constexpr InfoStep kCPlayerCharacterMasteryInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CPlayerCharacterMasteryInfo{"CPlayerCharacterMasteryInfo", "_ZTV27CPlayerCharacterMasteryInfo", InfoKind::kInfo, sizeof(CPlayerCharacterMasteryInfo), kCPlayerCharacterMasteryInfoProps, {}, kCPlayerCharacterMasteryInfoInit};
 
-inline constexpr InfoClass kInfo_CUpdateAttachedGearInfoList{"CUpdateAttachedGearInfoList", "_ZTV27CUpdateAttachedGearInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_CUpdateBoxGachaListInfoList{"CUpdateBoxGachaListInfoList", "_ZTV27CUpdateBoxGachaListInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoxGachaListInfo, 8, {}};
+inline constexpr InfoClass kInfo_CUpdateAttachedGearInfoList{"CUpdateAttachedGearInfoList", "_ZTV27CUpdateAttachedGearInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm22_CAttachedGearInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CUpdateBoxGachaListInfoList{"CUpdateBoxGachaListInfoList", "_ZTV27CUpdateBoxGachaListInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoxGachaListInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm17CBoxGachaListInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CUpdateCharacterMasteryInfo: 0x2f8 bytes, 14 properties, 0 children.
 class CUpdateCharacterMasteryInfo {
 public:
@@ -6713,7 +6713,7 @@ inline constexpr InfoStep kCUpdateFavorByTapResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CUpdateFavorByTapResultInfo{"CUpdateFavorByTapResultInfo", "_ZTV27CUpdateFavorByTapResultInfo", InfoKind::kInfo, sizeof(CUpdateFavorByTapResultInfo), kCUpdateFavorByTapResultInfoProps, {}, kCUpdateFavorByTapResultInfoInit};
 
-inline constexpr InfoClass kInfo_CWorldMapMaintenanceInfoMap{"CWorldMapMaintenanceInfoMap", "_ZTV27CWorldMapMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CWorldMapMaintenanceInfo, 8, {}};
+inline constexpr InfoClass kInfo_CWorldMapMaintenanceInfoMap{"CWorldMapMaintenanceInfoMap", "_ZTV27CWorldMapMaintenanceInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CWorldMapMaintenanceInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm24CWorldMapMaintenanceInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CWorldMapMissionElementInfo: 0x1b8 bytes, 8 properties, 0 children.
 class CWorldMapMissionElementInfo {
 public:
@@ -6780,7 +6780,7 @@ inline constexpr InfoStep kCheckEventRankingResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CheckEventRankingResultInfo{"CheckEventRankingResultInfo", "_ZTV27CheckEventRankingResultInfo", InfoKind::kInfo, sizeof(CheckEventRankingResultInfo), kCheckEventRankingResultInfoProps, kCheckEventRankingResultInfoChildren, kCheckEventRankingResultInfoInit};
 
-inline constexpr InfoClass kInfo_RecentlyPlayedDetailInfoMap{"RecentlyPlayedDetailInfoMap", "_ZTV27RecentlyPlayedDetailInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
+inline constexpr InfoClass kInfo_RecentlyPlayedDetailInfoMap{"RecentlyPlayedDetailInfoMap", "_ZTV27RecentlyPlayedDetailInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // Sphere211TreasureResultInfo: 0x98 bytes, 2 properties, 0 children.
 class Sphere211TreasureResultInfo {
 public:
@@ -6801,12 +6801,12 @@ inline constexpr InfoStep kSphere211TreasureResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_Sphere211TreasureResultInfo{"Sphere211TreasureResultInfo", "_ZTV27Sphere211TreasureResultInfo", InfoKind::kInfo, sizeof(Sphere211TreasureResultInfo), kSphere211TreasureResultInfoProps, {}, kSphere211TreasureResultInfoInit};
 
-inline constexpr InfoClass kInfo_SubscriptionHistoryInfoList{"SubscriptionHistoryInfoList", "_ZTV27SubscriptionHistoryInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_SubscriptionHistoryInfo, 0, {}};
-inline constexpr InfoClass kInfo_UpdateUniverseAddStatusInfo{"UpdateUniverseAddStatusInfo", "_ZTV27UpdateUniverseAddStatusInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_UniverseAddStatusInfo, 8, {}};
-inline constexpr InfoClass kInfo_CAutoSelectedCharacterIDInfo{"CAutoSelectedCharacterIDInfo", "_ZTV28CAutoSelectedCharacterIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 13}};
-inline constexpr InfoClass kInfo_CBoostCharacterResultInfoMap{"CBoostCharacterResultInfoMap", "_ZTV28CBoostCharacterResultInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoostCharacterResultInfo, 8, {}};
-inline constexpr InfoClass kInfo_CDebugGearGenerationInfoList{"CDebugGearGenerationInfoList", "_ZTV28CDebugGearGenerationInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDebugGearGenerationInfo, 0, {}};
-inline constexpr InfoClass kInfo_CDeepSpaceActiveShipInfoList{"CDeepSpaceActiveShipInfoList", "_ZTV28CDeepSpaceActiveShipInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceShipInfo, 8, {}};
+inline constexpr InfoClass kInfo_SubscriptionHistoryInfoList{"SubscriptionHistoryInfoList", "_ZTV27SubscriptionHistoryInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_SubscriptionHistoryInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_UpdateUniverseAddStatusInfo{"UpdateUniverseAddStatusInfo", "_ZTV27UpdateUniverseAddStatusInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_UniverseAddStatusInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm21UniverseAddStatusInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CAutoSelectedCharacterIDInfo{"CAutoSelectedCharacterIDInfo", "_ZTV28CAutoSelectedCharacterIDInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 13}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CBoostCharacterResultInfoMap{"CBoostCharacterResultInfoMap", "_ZTV28CBoostCharacterResultInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBoostCharacterResultInfo, 8, {}, "_ZNSt6__ndk16__treeINS_12__value_typeIm25CBoostCharacterResultInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE30__emplace_hint_unique_key_argsImJRKNS_4pairIKmS2_EEEEENS_15__tree_iteratorIS3_PNS_11__tree_nodeIS3_PvEElEENS_21__tree_const_iteratorIS3_SN_lEERKT_DpOT0_", "_ZNSt6__ndk16__treeINS_12__value_typeIm25CBoostCharacterResultInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CDebugGearGenerationInfoList{"CDebugGearGenerationInfoList", "_ZTV28CDebugGearGenerationInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDebugGearGenerationInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CDeepSpaceActiveShipInfoList{"CDeepSpaceActiveShipInfoList", "_ZTV28CDeepSpaceActiveShipInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceShipInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm18CDeepSpaceShipInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CDeepSpaceDebugCharacterInfo: 0x198 bytes, 7 properties, 0 children.
 class CDeepSpaceDebugCharacterInfo {
 public:
@@ -6869,7 +6869,7 @@ inline constexpr InfoStep kCFavorBonusContetsResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CFavorBonusContetsResultInfo{"CFavorBonusContetsResultInfo", "_ZTV28CFavorBonusContetsResultInfo", InfoKind::kInfo, sizeof(CFavorBonusContetsResultInfo), kCFavorBonusContetsResultInfoProps, kCFavorBonusContetsResultInfoChildren, kCFavorBonusContetsResultInfoInit};
 
-inline constexpr InfoClass kInfo_CGachaDayLimitCountInfoArray{"CGachaDayLimitCountInfoArray", "_ZTV28CGachaDayLimitCountInfoArray", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaDayLimitCountInfo, 0, {}};
+inline constexpr InfoClass kInfo_CGachaDayLimitCountInfoArray{"CGachaDayLimitCountInfoArray", "_ZTV28CGachaDayLimitCountInfoArray", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGachaDayLimitCountInfo, 0, {}, nullptr, nullptr, nullptr};
 // CGachaMutationTestResultInfo: 0x108 bytes, 4 properties, 0 children.
 class CGachaMutationTestResultInfo {
 public:
@@ -6953,9 +6953,9 @@ inline constexpr InfoStep kCPlayerCharacterFavorInfoElementInit[] = {
 };
 inline constexpr InfoClass kInfo_CPlayerCharacterFavorInfoElement{"CPlayerCharacterFavorInfoElement", "_ZTV32CPlayerCharacterFavorInfoElement", InfoKind::kInfo, sizeof(CPlayerCharacterFavorInfoElement), kCPlayerCharacterFavorInfoElementProps, {}, kCPlayerCharacterFavorInfoElementInit};
 
-inline constexpr InfoClass kInfo_CPlayerCharacterFavorInfoMap{"CPlayerCharacterFavorInfoMap", "_ZTV28CPlayerCharacterFavorInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPlayerCharacterFavorInfoElement, 8, {}};
-inline constexpr InfoClass kInfo_CRemoveFamiliarCharacterList{"CRemoveFamiliarCharacterList", "_ZTV28CRemoveFamiliarCharacterList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 78}};
-inline constexpr InfoClass kInfo_Sphere211FollowFloorInfoList{"Sphere211FollowFloorInfoList", "_ZTV28Sphere211FollowFloorInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_Sphere211FollowFloorInfo, 0, {}};
+inline constexpr InfoClass kInfo_CPlayerCharacterFavorInfoMap{"CPlayerCharacterFavorInfoMap", "_ZTV28CPlayerCharacterFavorInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPlayerCharacterFavorInfoElement, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm32CPlayerCharacterFavorInfoElementEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CRemoveFamiliarCharacterList{"CRemoveFamiliarCharacterList", "_ZTV28CRemoveFamiliarCharacterList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 78}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_Sphere211FollowFloorInfoList{"Sphere211FollowFloorInfoList", "_ZTV28Sphere211FollowFloorInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_Sphere211FollowFloorInfo, 0, {}, nullptr, nullptr, nullptr};
 // Sphere211RentalCharacterInfo: 0x108 bytes, 4 properties, 0 children.
 class Sphere211RentalCharacterInfo {
 public:
@@ -6984,7 +6984,7 @@ inline constexpr InfoStep kSphere211RentalCharacterInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_Sphere211RentalCharacterInfo{"Sphere211RentalCharacterInfo", "_ZTV28Sphere211RentalCharacterInfo", InfoKind::kInfo, sizeof(Sphere211RentalCharacterInfo), kSphere211RentalCharacterInfoProps, {}, kSphere211RentalCharacterInfoInit};
 
-inline constexpr InfoClass kInfo_CWorldMapCellInfoCategoryList{"CWorldMapCellInfoCategoryList", "_ZTV29CWorldMapCellInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_CWorldMapCellInfoCategoryList{"CWorldMapCellInfoCategoryList", "_ZTV29CWorldMapCellInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm21CWorldMapCellInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // Sphere211FloorClearResultInfo: 0xc8 bytes, 3 properties, 0 children.
 class Sphere211FloorClearResultInfo {
 public:
@@ -7009,10 +7009,10 @@ inline constexpr InfoStep kSphere211FloorClearResultInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_Sphere211FloorClearResultInfo{"Sphere211FloorClearResultInfo", "_ZTV29Sphere211FloorClearResultInfo", InfoKind::kInfo, sizeof(Sphere211FloorClearResultInfo), kSphere211FloorClearResultInfoProps, {}, kSphere211FloorClearResultInfoInit};
 
-inline constexpr InfoClass kInfo_Sphere211RankingDetailInfoMap{"Sphere211RankingDetailInfoMap", "_ZTV29Sphere211RankingDetailInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
-inline constexpr InfoClass kInfo_Sphere211ReviveResultInfoList{"Sphere211ReviveResultInfoList", "_ZTV29Sphere211ReviveResultInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 36}};
-inline constexpr InfoClass kInfo_Sphere211TreasureDropInfoList{"Sphere211TreasureDropInfoList", "_ZTV29Sphere211TreasureDropInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_Sphere211TreasureDropInfo, 0, {}};
-inline constexpr InfoClass kInfo_CWorldMapMissionInfoCategoryList{"CWorldMapMissionInfoCategoryList", "_ZTV32CWorldMapMissionInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_Sphere211RankingDetailInfoMap{"Sphere211RankingDetailInfoMap", "_ZTV29Sphere211RankingDetailInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_Sphere211ReviveResultInfoList{"Sphere211ReviveResultInfoList", "_ZTV29Sphere211ReviveResultInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 36}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_Sphere211TreasureDropInfoList{"Sphere211TreasureDropInfoList", "_ZTV29Sphere211TreasureDropInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_Sphere211TreasureDropInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CWorldMapMissionInfoCategoryList{"CWorldMapMissionInfoCategoryList", "_ZTV32CWorldMapMissionInfoCategoryList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm24CWorldMapMissionInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CActiveWorldMapMissionListInfo: 0x128 bytes, 0 properties, 3 children.
 class CActiveWorldMapMissionListInfo {
 public:
@@ -7037,7 +7037,7 @@ inline constexpr InfoStep kCActiveWorldMapMissionListInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CActiveWorldMapMissionListInfo{"CActiveWorldMapMissionListInfo", "_ZTV30CActiveWorldMapMissionListInfo", InfoKind::kInfo, sizeof(CActiveWorldMapMissionListInfo), {}, kCActiveWorldMapMissionListInfoChildren, kCActiveWorldMapMissionListInfoInit};
 
-inline constexpr InfoClass kInfo_CDebugGearBarneyChanceInfoList{"CDebugGearBarneyChanceInfoList", "_ZTV30CDebugGearBarneyChanceInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGearBarneyChanceInfo, 0, {}};
+inline constexpr InfoClass kInfo_CDebugGearBarneyChanceInfoList{"CDebugGearBarneyChanceInfoList", "_ZTV30CDebugGearBarneyChanceInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CGearBarneyChanceInfo, 0, {}, nullptr, nullptr, nullptr};
 // CDebugGearGenerationInfoResult: 0x138 bytes, 2 properties, 2 children.
 class CDebugGearGenerationInfoResult {
 public:
@@ -7088,7 +7088,7 @@ inline constexpr InfoStep kCDeepSpaceDebugRareMissionInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CDeepSpaceDebugRareMissionInfo{"CDeepSpaceDebugRareMissionInfo", "_ZTV30CDeepSpaceDebugRareMissionInfo", InfoKind::kInfo, sizeof(CDeepSpaceDebugRareMissionInfo), kCDeepSpaceDebugRareMissionInfoProps, {}, kCDeepSpaceDebugRareMissionInfoInit};
 
-inline constexpr InfoClass kInfo_CPlayerCharacterMasteryInfoMap{"CPlayerCharacterMasteryInfoMap", "_ZTV30CPlayerCharacterMasteryInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPlayerCharacterMasteryInfo, 8, {}};
+inline constexpr InfoClass kInfo_CPlayerCharacterMasteryInfoMap{"CPlayerCharacterMasteryInfoMap", "_ZTV30CPlayerCharacterMasteryInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CPlayerCharacterMasteryInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm27CPlayerCharacterMasteryInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // DeepMissionEndResultPlayerInfo: 0x1f8 bytes, 9 properties, 0 children.
 class DeepMissionEndResultPlayerInfo {
 public:
@@ -7137,7 +7137,7 @@ inline constexpr InfoStep kDeepMissionEndResultPlayerInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_DeepMissionEndResultPlayerInfo{"DeepMissionEndResultPlayerInfo", "_ZTV30DeepMissionEndResultPlayerInfo", InfoKind::kInfo, sizeof(DeepMissionEndResultPlayerInfo), kDeepMissionEndResultPlayerInfoProps, {}, kDeepMissionEndResultPlayerInfoInit};
 
-inline constexpr InfoClass kInfo_Sphere211TreasureResultInfoMap{"Sphere211TreasureResultInfoMap", "_ZTV30Sphere211TreasureResultInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
+inline constexpr InfoClass kInfo_Sphere211TreasureResultInfoMap{"Sphere211TreasureResultInfoMap", "_ZTV30Sphere211TreasureResultInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm31Sphere211TreasureResultInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // Sphere211TreasureResultLotInfo: 0x68 bytes, 1 properties, 0 children.
 class Sphere211TreasureResultLotInfo {
 public:
@@ -7154,15 +7154,15 @@ inline constexpr InfoStep kSphere211TreasureResultLotInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_Sphere211TreasureResultLotInfo{"Sphere211TreasureResultLotInfo", "_ZTV30Sphere211TreasureResultLotInfo", InfoKind::kInfo, sizeof(Sphere211TreasureResultLotInfo), kSphere211TreasureResultLotInfoProps, {}, kSphere211TreasureResultLotInfoInit};
 
-inline constexpr InfoClass kInfo_SubscriptionCampaignResultList{"SubscriptionCampaignResultList", "_ZTV30SubscriptionCampaignResultList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_SubscriptionCampaignResult, 0, {}};
-inline constexpr InfoClass kInfo_SubscriptionGachaCountInfoList{"SubscriptionGachaCountInfoList", "_ZTV30SubscriptionGachaCountInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_SubscriptionGachaCountInfo, 0, {}};
-inline constexpr InfoClass kInfo_CBattleEvaluationResultInfoList{"CBattleEvaluationResultInfoList", "_ZTV31CBattleEvaluationResultInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBattleEvaluationResultInfo, 8, {}};
-inline constexpr InfoClass kInfo_CDeepSpaceBonusAllApplyInfoList{"CDeepSpaceBonusAllApplyInfoList", "_ZTV31CDeepSpaceBonusAllApplyInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_CDeepSpaceDebugCharacterInfoMap{"CDeepSpaceDebugCharacterInfoMap", "_ZTV31CDeepSpaceDebugCharacterInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceDebugCharacterInfo, 8, {}};
-inline constexpr InfoClass kInfo_COneTimeStorageItemClearNewList{"COneTimeStorageItemClearNewList", "_ZTV31COneTimeStorageItemClearNewList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 91}};
-inline constexpr InfoClass kInfo_PickupCharaterChipResultInfoMap{"PickupCharaterChipResultInfoMap", "_ZTV31PickupCharaterChipResultInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_Sphere211RentalCharacterInfoMap{"Sphere211RentalCharacterInfoMap", "_ZTV31Sphere211RentalCharacterInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211RentalCharacterInfo, 8, {}};
-inline constexpr InfoClass kInfo_CGachaMutationTestResultInfoList{"CGachaMutationTestResultInfoList", "_ZTV32CGachaMutationTestResultInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaMutationTestResultInfo, 8, {}};
+inline constexpr InfoClass kInfo_SubscriptionCampaignResultList{"SubscriptionCampaignResultList", "_ZTV30SubscriptionCampaignResultList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_SubscriptionCampaignResult, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_SubscriptionGachaCountInfoList{"SubscriptionGachaCountInfoList", "_ZTV30SubscriptionGachaCountInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_SubscriptionGachaCountInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CBattleEvaluationResultInfoList{"CBattleEvaluationResultInfoList", "_ZTV31CBattleEvaluationResultInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CBattleEvaluationResultInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm27CBattleEvaluationResultInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CDeepSpaceBonusAllApplyInfoList{"CDeepSpaceBonusAllApplyInfoList", "_ZTV31CDeepSpaceBonusAllApplyInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm28CDeepSpaceBonusApplyInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CDeepSpaceDebugCharacterInfoMap{"CDeepSpaceDebugCharacterInfoMap", "_ZTV31CDeepSpaceDebugCharacterInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CDeepSpaceDebugCharacterInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm28CDeepSpaceDebugCharacterInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_COneTimeStorageItemClearNewList{"COneTimeStorageItemClearNewList", "_ZTV31COneTimeStorageItemClearNewList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 91}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_PickupCharaterChipResultInfoMap{"PickupCharaterChipResultInfoMap", "_ZTV31PickupCharaterChipResultInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm33_PickupCharaterChipResultInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_Sphere211RentalCharacterInfoMap{"Sphere211RentalCharacterInfoMap", "_ZTV31Sphere211RentalCharacterInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211RentalCharacterInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm28Sphere211RentalCharacterInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CGachaMutationTestResultInfoList{"CGachaMutationTestResultInfoList", "_ZTV32CGachaMutationTestResultInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CGachaMutationTestResultInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm28CGachaMutationTestResultInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
 // CMissionResultCharacterFavorInfo: 0x168 bytes, 6 properties, 0 children.
 class CMissionResultCharacterFavorInfo {
 public:
@@ -7199,23 +7199,23 @@ inline constexpr InfoStep kCMissionResultCharacterFavorInfoInit[] = {
 };
 inline constexpr InfoClass kInfo_CMissionResultCharacterFavorInfo{"CMissionResultCharacterFavorInfo", "_ZTV32CMissionResultCharacterFavorInfo", InfoKind::kInfo, sizeof(CMissionResultCharacterFavorInfo), kCMissionResultCharacterFavorInfoProps, {}, kCMissionResultCharacterFavorInfoInit};
 
-inline constexpr InfoClass kInfo_CUpdateCharacterMasteryInfoArray{"CUpdateCharacterMasteryInfoArray", "_ZTV32CUpdateCharacterMasteryInfoArray", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CUpdateCharacterMasteryInfo, 0, {}};
-inline constexpr InfoClass kInfo_CWorldMapScenarioLibraryInfoList{"CWorldMapScenarioLibraryInfoList", "_ZTV32CWorldMapScenarioLibraryInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 10}};
-inline constexpr InfoClass kInfo_PickupCharaterChipResultInfoList{"PickupCharaterChipResultInfoList", "_ZTV32PickupCharaterChipResultInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 43}};
-inline constexpr InfoClass kInfo_CDebugSphere211CommonDropInfoList{"CDebugSphere211CommonDropInfoList", "_ZTV33CDebugSphere211CommonDropInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_CUpdateOneTimeStorageItemInfoList{"CUpdateOneTimeStorageItemInfoList", "_ZTV33CUpdateOneTimeStorageItemInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStorageItemInfo, 8, {}};
-inline constexpr InfoClass kInfo_Sphere211TreasureResultLotInfoMap{"Sphere211TreasureResultLotInfoMap", "_ZTV33Sphere211TreasureResultLotInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211TreasureResultLotInfo, 8, {}};
-inline constexpr InfoClass kInfo_CDeepSpaceDebugRareMissionInfoList{"CDeepSpaceDebugRareMissionInfoList", "_ZTV34CDeepSpaceDebugRareMissionInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDeepSpaceDebugRareMissionInfo, 0, {}};
-inline constexpr InfoClass kInfo_CExchangeShopExCountInfoCategoryMap{"CExchangeShopExCountInfoCategoryMap", "_ZTV35CExchangeShopExCountInfoCategoryMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_CExpirationPurchaseCampaignInfoList{"CExpirationPurchaseCampaignInfoList", "_ZTV35CExpirationPurchaseCampaignInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_CMissionResultCharacterCategoryInfo{"CMissionResultCharacterCategoryInfo", "_ZTV35CMissionResultCharacterCategoryInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CMissionResultCharacterInfo, 8, {}};
-inline constexpr InfoClass kInfo_CMissionResultCharacterFavorInfoMap{"CMissionResultCharacterFavorInfoMap", "_ZTV35CMissionResultCharacterFavorInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CMissionResultCharacterFavorInfo, 8, {}};
-inline constexpr InfoClass kInfo_Sphere211AutoMemberSelectResultInfo{"Sphere211AutoMemberSelectResultInfo", "_ZTV35Sphere211AutoMemberSelectResultInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 9}};
-inline constexpr InfoClass kInfo_CDebugFavorBonusContetsResultInfoList{"CDebugFavorBonusContetsResultInfoList", "_ZTV37CDebugFavorBonusContetsResultInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CFavorBonusContetsResultInfo, 0, {}};
-inline constexpr InfoClass kInfo_CUpdateDeepSpaceBonusAllApplyInfoList{"CUpdateDeepSpaceBonusAllApplyInfoList", "_ZTV37CUpdateDeepSpaceBonusAllApplyInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}};
-inline constexpr InfoClass kInfo_Sphere211RentalCharacterDetailInfoMap{"Sphere211RentalCharacterDetailInfoMap", "_ZTV37Sphere211RentalCharacterDetailInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}};
-inline constexpr InfoClass kInfo_UpdateUniverseEffectualTalentInfoList{"UpdateUniverseEffectualTalentInfoList", "_ZTV37UpdateUniverseEffectualTalentInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 137}};
-inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWorldBossMissionTimeBonusDropItemInfoList", "_ZTV42CWorldBossMissionTimeBonusDropItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CWorldBossItemInfo, 0, {}};
+inline constexpr InfoClass kInfo_CUpdateCharacterMasteryInfoArray{"CUpdateCharacterMasteryInfoArray", "_ZTV32CUpdateCharacterMasteryInfoArray", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CUpdateCharacterMasteryInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CWorldMapScenarioLibraryInfoList{"CWorldMapScenarioLibraryInfoList", "_ZTV32CWorldMapScenarioLibraryInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 10}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_PickupCharaterChipResultInfoList{"PickupCharaterChipResultInfoList", "_ZTV32PickupCharaterChipResultInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 43}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CDebugSphere211CommonDropInfoList{"CDebugSphere211CommonDropInfoList", "_ZTV33CDebugSphere211CommonDropInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm31CDebugSphere211CommonDropIdListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CUpdateOneTimeStorageItemInfoList{"CUpdateOneTimeStorageItemInfoList", "_ZTV33CUpdateOneTimeStorageItemInfoList", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CStorageItemInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm16CStorageItemInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_Sphere211TreasureResultLotInfoMap{"Sphere211TreasureResultLotInfoMap", "_ZTV33Sphere211TreasureResultLotInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_Sphere211TreasureResultLotInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm30Sphere211TreasureResultLotInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CDeepSpaceDebugRareMissionInfoList{"CDeepSpaceDebugRareMissionInfoList", "_ZTV34CDeepSpaceDebugRareMissionInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CDeepSpaceDebugRareMissionInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CExchangeShopExCountInfoCategoryMap{"CExchangeShopExCountInfoCategoryMap", "_ZTV35CExchangeShopExCountInfoCategoryMap", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm32CExchangeShopExCountInfoCategoryEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CExpirationPurchaseCampaignInfoList{"CExpirationPurchaseCampaignInfoList", "_ZTV35CExpirationPurchaseCampaignInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm20_CExpirationInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CMissionResultCharacterCategoryInfo{"CMissionResultCharacterCategoryInfo", "_ZTV35CMissionResultCharacterCategoryInfo", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CMissionResultCharacterInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm27CMissionResultCharacterInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_CMissionResultCharacterFavorInfoMap{"CMissionResultCharacterFavorInfoMap", "_ZTV35CMissionResultCharacterFavorInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CMissionResultCharacterFavorInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm32CMissionResultCharacterFavorInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_Sphere211AutoMemberSelectResultInfo{"Sphere211AutoMemberSelectResultInfo", "_ZTV35Sphere211AutoMemberSelectResultInfo", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU64, false, 9}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CDebugFavorBonusContetsResultInfoList{"CDebugFavorBonusContetsResultInfoList", "_ZTV37CDebugFavorBonusContetsResultInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CFavorBonusContetsResultInfo, 0, {}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CUpdateDeepSpaceBonusAllApplyInfoList{"CUpdateDeepSpaceBonusAllApplyInfoList", "_ZTV37CUpdateDeepSpaceBonusAllApplyInfoList", InfoKind::kMap, 0x50, {}, {}, {}, nullptr, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm28CDeepSpaceBonusApplyInfoListEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_Sphere211RentalCharacterDetailInfoMap{"Sphere211RentalCharacterDetailInfoMap", "_ZTV37Sphere211RentalCharacterDetailInfoMap", InfoKind::kMap, 0x50, {}, {}, {}, &kInfo_CFollowInfo, 8, {}, nullptr, "_ZNSt6__ndk16__treeINS_12__value_typeIm11CFollowInfoEENS_19__map_value_compareImS3_NS_4lessImEELb1EEEN9Framework13CSTLAllocatorIS3_NS8_19CSTLMapAllocatorInfEEEE7destroyEPNS_11__tree_nodeIS3_PvEE", nullptr};
+inline constexpr InfoClass kInfo_UpdateUniverseEffectualTalentInfoList{"UpdateUniverseEffectualTalentInfoList", "_ZTV37UpdateUniverseEffectualTalentInfoList", InfoKind::kValueArray, 0x50, {}, {}, {}, nullptr, 0, {0, InfoPropKind::kU32, false, 137}, nullptr, nullptr, nullptr};
+inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWorldBossMissionTimeBonusDropItemInfoList", "_ZTV42CWorldBossMissionTimeBonusDropItemInfoList", InfoKind::kArray, 0x50, {}, {}, {}, &kInfo_CWorldBossItemInfo, 0, {}, nullptr, nullptr, nullptr};
 
 // X(Class): every info above.
 #define INFO_CLASSES(X) \
@@ -7442,7 +7442,7 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     /* end of INFO_CONSTRUCTORS */
 
 // X(Class, role, symbol): the exported copy constructors, destructors, operator=s and moves of the
-// infos above without a container inside (one per address).
+// infos above whose containers the natives can handle (one per address).
 #define INFO_COPIES(X) \
     X(CConfigInfo, CtorCopy, "_ZN11CConfigInfoC2ERKS_") \
     X(CFollowPlayerInfo, CtorCopy, "_ZN17CFollowPlayerInfoC2ERKS_") \
@@ -7459,15 +7459,29 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(UniverseAddStatusInfo, Assign, "_ZN21UniverseAddStatusInfoaSERKS_") \
     X(UniverseAddStatusInfo, Move, "_ZN21UniverseAddStatusInfoC2EOS_") \
     X(UniverseAddStatusInfo, MoveAssign, "_ZN21UniverseAddStatusInfoaSEOS_") \
+    X(CFollowPersonInfo, CtorCopy, "_ZN17CFollowPersonInfoC2ERKS_") \
+    X(CFollowPersonInfo, Dtor, "_ZN17CFollowPersonInfoD2Ev") \
+    X(CFollowPersonInfo, Assign, "_ZN17CFollowPersonInfoaSERKS_") \
+    X(CFollowPersonInfo, Move, "_ZN17CFollowPersonInfoC2EOS_") \
+    X(CFollowPersonInfo, MoveAssign, "_ZN17CFollowPersonInfoaSEOS_") \
+    X(CPersonInfo, CtorCopy, "_ZN11CPersonInfoC2ERKS_") \
+    X(CPersonInfo, Dtor, "_ZN11CPersonInfoD2Ev") \
+    X(CPersonInfo, Move, "_ZN11CPersonInfoC2EOS_") \
     X(CPlayerInfo, CtorCopy, "_ZN11CPlayerInfoC2ERKS_") \
     X(CPlayerInfo, Dtor, "_ZN11CPlayerInfoD2Ev") \
     X(CPlayerInfo, Assign, "_ZN11CPlayerInfoaSERKS_") \
     X(CPlayerInfo, MoveAssign, "_ZN11CPlayerInfoaSEOS_") \
+    X(CItemInfo, CtorCopy, "_ZN9CItemInfoC2ERKS_") \
+    X(CItemInfo, Dtor, "_ZN9CItemInfoD2Ev") \
+    X(CItemInfo, Assign, "_ZN9CItemInfoaSERKS_") \
+    X(CItemInfo, Move, "_ZN9CItemInfoC2EOS_") \
+    X(CItemInfo, MoveAssign, "_ZN9CItemInfoaSEOS_") \
     X(CCheckInInfo, CtorCopy, "_ZN12CCheckInInfoC2ERKS_") \
     X(CCheckInInfo, Dtor, "_ZN12CCheckInInfoD2Ev") \
     X(CWebViewInfoElement, CtorCopy, "_ZN19CWebViewInfoElementC2ERKS_") \
     X(PartySetCharacterInfo, CtorCopy, "_ZN21PartySetCharacterInfoC2ERKS_") \
     X(PartySetCharacterInfo, Assign, "_ZN21PartySetCharacterInfoaSERKS_") \
+    X(PartySetInfo, Assign, "_ZN12PartySetInfoaSERKS_") \
     X(CBoxGachaInfo, CtorCopy, "_ZN13CBoxGachaInfoC2ERKS_") \
     X(CBoxGachaInfo, Move, "_ZN13CBoxGachaInfoC2EOS_") \
     X(CCampaignInfo, CtorCopy, "_ZN13CCampaignInfoC2ERKS_") \
@@ -7482,6 +7496,8 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(CGachaHashInfo, Dtor, "_ZN14CGachaHashInfoD2Ev") \
     X(CGachaRateContentInfo, CtorCopy, "_ZN21CGachaRateContentInfoC2ERKS_") \
     X(CGachaRateContentInfo, Dtor, "_ZN21CGachaRateContentInfoD2Ev") \
+    X(CGachaRateInfo, CtorCopy, "_ZN14CGachaRateInfoC2ERKS_") \
+    X(CGachaRateInfo, Dtor, "_ZN14CGachaRateInfoD2Ev") \
     X(CStackItemInfo, Assign, "_ZN14CStackItemInfoaSERKS_") \
     X(CStackItemInfo, MoveAssign, "_ZN14CStackItemInfoaSEOS_") \
     X(CDropContentInfo, CtorCopy, "_ZN16CDropContentInfoC2ERKS_") \
@@ -7493,10 +7509,15 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(CGachaCountInfo, Dtor, "_ZN15CGachaCountInfoD2Ev") \
     X(UpdateMissionStartPlayerInfo, Dtor, "_ZN28UpdateMissionStartPlayerInfoD2Ev") \
     X(UpdateMissionStartPlayerInfo, MoveAssign, "_ZN28UpdateMissionStartPlayerInfoaSEOS_") \
+    X(CItemDetailInfo, CtorCopy, "_ZN15CItemDetailInfoC2ERKS_") \
+    X(CItemDetailInfo, Dtor, "_ZN15CItemDetailInfoD2Ev") \
+    X(CItemDetailInfo, Move, "_ZN15CItemDetailInfoC2EOS_") \
+    X(CItemDetailInfo, MoveAssign, "_ZN15CItemDetailInfoaSEOS_") \
     X(CPresentBoxInfo, CtorCopy, "_ZN15CPresentBoxInfoC2ERKS_") \
     X(CPresentBoxInfo, Dtor, "_ZN15CPresentBoxInfoD2Ev") \
     X(CPresentBoxInfo, Move, "_ZN15CPresentBoxInfoC2EOS_") \
     X(CPresentBoxInfo, MoveAssign, "_ZN15CPresentBoxInfoaSEOS_") \
+    X(CSellResultInfo, Dtor, "_ZN15CSellResultInfoD2Ev") \
     X(CAchievementInfo, CtorCopy, "_ZN16CAchievementInfoC2ERKS_") \
     X(CAchievementInfo, Dtor, "_ZN16CAchievementInfoD2Ev") \
     X(CAchievementInfo, Assign, "_ZN16CAchievementInfoaSERKS_") \
@@ -7523,15 +7544,27 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(UniverseDeityBoostInfo, Assign, "_ZN22UniverseDeityBoostInfoaSERKS_") \
     X(UniverseDeityBoostInfo, Move, "_ZN22UniverseDeityBoostInfoC2EOS_") \
     X(UniverseDeityBoostInfo, MoveAssign, "_ZN22UniverseDeityBoostInfoaSEOS_") \
+    X(CPersonStatusInfo, CtorCopy, "_ZN17CPersonStatusInfoC2ERKS_") \
+    X(CPersonStatusInfo, Dtor, "_ZN17CPersonStatusInfoD2Ev") \
+    X(CPersonStatusInfo, Assign, "_ZN17CPersonStatusInfoaSERKS_") \
+    X(CPersonStatusInfo, Move, "_ZN17CPersonStatusInfoC2EOS_") \
+    X(CPersonStatusInfo, MoveAssign, "_ZN17CPersonStatusInfoaSEOS_") \
+    X(CComposeResultInfo, Dtor, "_ZN18CComposeResultInfoD2Ev") \
     X(CDeepSpaceMissionInfo, CtorCopy, "_ZN21CDeepSpaceMissionInfoC2ERKS_") \
     X(CDeepSpaceMissionInfo, Dtor, "_ZN21CDeepSpaceMissionInfoD2Ev") \
     X(CDeepSpaceMissionInfo, Assign, "_ZN21CDeepSpaceMissionInfoaSERKS_") \
     X(CDeepSpaceMissionInfo, Move, "_ZN21CDeepSpaceMissionInfoC2EOS_") \
+    X(CDeepSpaceAreaInfo, CtorCopy, "_ZN18CDeepSpaceAreaInfoC2ERKS_") \
+    X(CDeepSpaceAreaInfo, Dtor, "_ZN18CDeepSpaceAreaInfoD2Ev") \
+    X(CDeepSpaceAreaInfo, Assign, "_ZN18CDeepSpaceAreaInfoaSERKS_") \
+    X(CDeepSpaceAreaInfo, Move, "_ZN18CDeepSpaceAreaInfoC2EOS_") \
     X(CDeepSpaceShipInfo, CtorCopy, "_ZN18CDeepSpaceShipInfoC2ERKS_") \
     X(CDeepSpaceShipInfo, Dtor, "_ZN18CDeepSpaceShipInfoD2Ev") \
     X(CDeepSpaceShipInfo, Assign, "_ZN18CDeepSpaceShipInfoaSERKS_") \
+    X(CGradeUpResultInfo, Dtor, "_ZN18CGradeUpResultInfoD2Ev") \
     X(CDirectItemShopInfo, CtorCopy, "_ZN19CDirectItemShopInfoC2ERKS_") \
     X(CDirectItemShopInfo, Dtor, "_ZN19CDirectItemShopInfoD2Ev") \
+    X(CEvolutionResultInfo, Dtor, "_ZN20CEvolutionResultInfoD2Ev") \
     X(CGachaTestResultInfo, Dtor, "_ZN20CGachaTestResultInfoD2Ev") \
     X(CGachaTestResultInfo, Move, "_ZN20CGachaTestResultInfoC2EOS_") \
     X(CGiftGachaResultInfo, CtorCopy, "_ZN20CGiftGachaResultInfoC2ERKS_") \
@@ -7546,6 +7579,13 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(SubscriptionPlanInfo, Dtor, "_ZN20SubscriptionPlanInfoD2Ev") \
     X(CFollowPlayerListElementInfo, CtorCopy, "_ZN28CFollowPlayerListElementInfoC2ERKS_") \
     X(CFollowPlayerListElementInfo, Dtor, "_ZN28CFollowPlayerListElementInfoD2Ev") \
+    X(CPresentBoxReceiveInfo, Dtor, "_ZN22CPresentBoxReceiveInfoD2Ev") \
+    X(CPresentGetResultInfo, Dtor, "_ZN21CPresentGetResultInfoD2Ev") \
+    X(CMissionResultDropInfo, CtorCopy, "_ZN22CMissionResultDropInfoC2ERKS_") \
+    X(CMissionResultDropInfo, Dtor, "_ZN22CMissionResultDropInfoD2Ev") \
+    X(CMissionResultDropInfo, Assign, "_ZN22CMissionResultDropInfoaSERKS_") \
+    X(CMissionResultDropInfo, Move, "_ZN22CMissionResultDropInfoC2EOS_") \
+    X(CMissionResultDropInfo, MoveAssign, "_ZN22CMissionResultDropInfoaSEOS_") \
     X(CPremiumLoginBonusInfo, CtorCopy, "_ZN22CPremiumLoginBonusInfoC2ERKS_") \
     X(CPremiumLoginBonusInfo, Dtor, "_ZN22CPremiumLoginBonusInfoD2Ev") \
     X(EventRankingPlayerInfo, CtorCopy, "_ZN22EventRankingPlayerInfoC2ERKS_") \
@@ -7555,6 +7595,7 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(SubscriptionHistoryInfo, Dtor, "_ZN23SubscriptionHistoryInfoD2Ev") \
     X(CBoostCharacterResultInfo, CtorCopy, "_ZN25CBoostCharacterResultInfoC2ERKS_") \
     X(CBoostCharacterResultInfo, Move, "_ZN25CBoostCharacterResultInfoC2EOS_") \
+    X(CGearGenerationInfoResult, Dtor, "_ZN25CGearGenerationInfoResultD2Ev") \
     X(CPersonAddStatusResultInfo, Dtor, "_ZN26CPersonAddStatusResultInfoD2Ev") \
     X(SubscriptionCampaignResult, CtorCopy, "_ZN26SubscriptionCampaignResultC2ERKS_") \
     X(SubscriptionGachaCountInfo, CtorCopy, "_ZN26SubscriptionGachaCountInfoC2ERKS_") \
@@ -7563,8 +7604,11 @@ inline constexpr InfoClass kInfo_CWorldBossMissionTimeBonusDropItemInfoList{"CWo
     X(CPlayerCharacterMasteryInfo, Dtor, "_ZN27CPlayerCharacterMasteryInfoD2Ev") \
     X(CPlayerCharacterMasteryInfo, Move, "_ZN27CPlayerCharacterMasteryInfoC2EOS_") \
     X(CWorldMapMissionElementInfo, CtorCopy, "_ZN27CWorldMapMissionElementInfoC2ERKS_") \
+    X(CheckEventRankingResultInfo, CtorCopy, "_ZN27CheckEventRankingResultInfoC2ERKS_") \
     X(CDeepSpaceDebugCharacterInfo, Dtor, "_ZN28CDeepSpaceDebugCharacterInfoD2Ev") \
+    X(CFavorBonusContetsResultInfo, Dtor, "_ZN28CFavorBonusContetsResultInfoD2Ev") \
     X(CPlayerCharacterFavorInfoElement, Dtor, "_ZN32CPlayerCharacterFavorInfoElementD2Ev") \
+    X(CDebugGearGenerationInfoResult, Dtor, "_ZN30CDebugGearGenerationInfoResultD2Ev") \
     X(CDeepSpaceDebugRareMissionInfo, CtorCopy, "_ZN30CDeepSpaceDebugRareMissionInfoC2ERKS_") \
     X(DeepMissionEndResultPlayerInfo, Dtor, "_ZN30DeepMissionEndResultPlayerInfoD2Ev") \
     X(CMissionResultCharacterFavorInfo, CtorCopy, "_ZN32CMissionResultCharacterFavorInfoC2ERKS_") \

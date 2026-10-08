@@ -5,3 +5,4 @@ kCsvIsNull             str "m_pCSV is null."
 kRowHashIsNull         str "m_pRowHash is null."
 kColumnHashIsNull      str "m_pColumnHash is null."
 kInfoBaseH             str "...Source\\Game/Parameter/Info/InfoBase.h"
+kStlVectorH            str "...Library/Framework/Source\\Framework/STL_Vector.h"   # CSTLAllocator<T, CSTLVectorAllocatorInf>::allocate

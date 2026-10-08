@@ -21,6 +21,10 @@ u64 vcall(const void* obj, u32 slot, std::initializer_list<u64> rest);
 // storage) / Free.
 void* StringAllocate(u64 n);
 void StlFree(void* p);
+// CSTLAllocator<T, CSTLVectorAllocatorInf>::allocate: Allocate(bytes, "...STL_Vector.h", 0x20).
+void* VectorAllocate(u64 bytes);
+// A guest function by address, its integer result.
+u64 call(u64 fn, std::initializer_list<u64> args);
 // The out-of-line libc++ map functions InfoBase's maps use (CSTLAllocator: nodes from the STL allocator):
 // map<unsigned, IParameterProperty*>::__emplace_unique_key_args<unsigned, unsigned, IParameterProperty*&>
 // (key, key, value) and map<unsigned, InfoBase*>::__emplace_unique_impl<CHash32, InfoBase*&>(hash, value)

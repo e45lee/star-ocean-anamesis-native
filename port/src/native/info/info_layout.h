@@ -158,6 +158,12 @@ struct InfoClass {
     const InfoClass* elem = nullptr;
     u8 key_size = 0;
     InfoProp elem_prop = {};
+    // The guest functions a container's natives call (null: not in the lib): a map's
+    // __emplace_hint_unique_key_args<K, pair<K const, T> const&> (one element's copy) and __tree::destroy;
+    // the assignment: vector<E>::assign<E*>(first, last) / __tree::__assign_multi(first, last).
+    const char* fn_copy = nullptr;
+    const char* fn_destroy = nullptr;
+    const char* fn_assign = nullptr;
     // Plain data after the last property or child (sizeof as the lib's code uses it, minus where they end):
     // the copies copy it as it is; the constructor, Initialize and the destructor leave it.
     u32 tail = 0;

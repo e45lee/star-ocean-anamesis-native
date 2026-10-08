@@ -11,4 +11,5 @@ inline constexpr std::uint64_t kCsvIsNull = 0x286448a;  // "m_pCSV is null."
 inline constexpr std::uint64_t kRowHashIsNull = 0x286449a;  // "m_pRowHash is null."
 inline constexpr std::uint64_t kColumnHashIsNull = 0x28644ae;  // "m_pColumnHash is null."
 inline constexpr std::uint64_t kInfoBaseH = 0x26dc3b5;  // "...on\\Client\\Project\\Android\\BASAndroid.NativeActivity\\..\\..\\..\\Source\\Game/Parameter/Info/InfoBase.h"
+inline constexpr std::uint64_t kStlVectorH = 0x26dc536;  // "C:\\BAS_Submission\\Client\\Project\\../Library/Framework/Source\\Framework/STL_Vector.h"; CSTLAllocator<T, CSTLVectorAllocatorInf>::allocate
 }  // namespace soa::native::info::g

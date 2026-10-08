@@ -25,6 +25,9 @@ struct InfoResolved {
     u64 vtable = 0;                // ZTV + 16
     std::vector<u64> vt_final;     // per property: its class's vtable (+16)
     std::vector<u64> vt_base;      // per property: CParameterPropertyBase<N>'s (+16)
+    // a container: its element property's vtables (InfoBaseValueArray), the guest functions it calls
+    u64 elem_vt_final = 0, elem_vt_base = 0;
+    u64 fn_copy = 0, fn_destroy = 0, fn_assign = 0;
 };
 const InfoResolved& resolve(const InfoClass& C);
 
@@ -65,6 +68,9 @@ struct InfoCode {
 // The state the live check and the tests compare: every property's bytes (a string by content), both
 // maps' entries (key, the value's offset from the object), the children's, recursively.
 std::vector<u8> info_state(const InfoClass& C, const u8* obj);
+// The same with every pointer as it is (maps' values, m_next): two copies of one source compared (a
+// copy's maps keep the source's pointers, wherever they point).
+std::vector<u8> info_state_raw(const InfoClass& C, const u8* obj);
 // The same without the maps' entries (their sizes kept): a source the checks copied (the copy's maps
 // point into the original) compared with the original.
 std::vector<u8> info_state_no_maps(const InfoClass& C, const u8* obj);

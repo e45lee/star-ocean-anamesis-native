@@ -21,6 +21,8 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 | `SoundHandle`, `SoundCommand` (Aska) | 0x20, 0xa8 | the list sentinels' extents; AddSoundHandle / QuerySoundHandle; ProcessCommandList, ArrangeCommand | partial (links, the object; the command's type) |
 | `AudioPlayer`, `WaveVoiceBase`, `WaveBuffer`, `WaveStreamView` | - | the chain FlushDeletingSoundObject reads (player +0x118 -> voice +0x30 -> buffer +8 -> stream +0x3fc / +0x728); AudioPlayer::m_state (+0x18) | partial views (the stream is resource's MultiMediaStream family) |
 | `Sequencer2`, `AudioMessageNote`, `WaitingNoteNotify` (Aska) | 0x110, 0x40, 0x18 | the Sequencer2 constructor, AddMessageNote, Arrange / ProcessMessageNote | proven by `audio/sequencer` |
+| `SLVoice` (Aska) | 0x648 | the constructor, CreateVoice, the submit path | proven by `audio/voice-submit` (the fields the submit path uses; the playback parameters +0x18..0x30 opaque) |
+| `WaveBuffer` (CBR / VBRBuffer), `AskaOGG` (partial), `AaoWAVE` (partial), `WaveStreamView` | 0x78, 0x450, -, - | CreateVoice's construction, Lock / UnlockBuffer, AskaOGG::Decode, the voice's reads; the stream is resource's MultiMediaStream (slots 19 Lock, 20 Unlock, 23 IsEnd) | the buffer proven by `audio/voice-submit` |
 | `Audio3DObject`, `AudioListener` (Aska) | 0xf0, 0x120 | the AudioListener / AudioEmitter constructors, UpdateMatrix, Compute, Audio3DEngine's members | proven by `audio/3d-listener` |
 | `CElement` (Framework::CSound) | 0x70 | the constructor, Initialize, Activate, PostProgress, TObjectContainer<CElement>'s 0x70 stride | proven by `audio/framework-progress`, `audio/element-post-progress` |
 | `CSoundManager` (Framework) | >= 0x84 | the constructor, Initialize, Pre/PostProgress, the accessors | proven by `audio/framework-progress` |
@@ -31,7 +33,7 @@ lock code) and `CMutex` (CSoundManager's, through a pointer), kernel's `Task` (A
 
 ## Natives
 
-35 bound (`soa --list-native`: the 28 `audio:` ones and the seven `Aska::AskaADPCM::*`). Live checks:
+48 bound (`soa --list-native`: the 41 `audio:` ones and the seven `Aska::AskaADPCM::*`). Live checks:
 `soa --live-check audio[:every=N][:out=FILE]` (shadow checks; default every=16) and
 `--live-check audio_leaf[:every=N][:out=FILE]` (record / replay; `audio_check.h`).
 Result (2026-10-08, `port/scripts/restore_session.sh`, the battle-gacha flow, audio every=2, audio_leaf every=1): PASS;
@@ -43,7 +45,12 @@ objects and the SoundManager lists (battle-gacha, every=2): audio 117,000 checks
 0 races (UpdateMatrix 10,591, AudioListener::Compute 2,368, Pre/PostProgress 25,809, Sequencer2 29,796,
 the notify 20,584, ArrangeCommandList / ProcessCommandList 7,207 each, AddSoundCommand 192,
 UpdateAllSoundStatus 6,456, QuerySoundHandle 20, AddSoundHandle 157, AddDeletingSoundObject 157,
-FlushDeletingSoundObject 6,456); audio_leaf 798, 0 mismatches.
+FlushDeletingSoundObject 6,456); audio_leaf 798, 0 mismatches. With the SLVoice submit path (every=2,
+after merging main): battle-gacha audio 123,000 checks, 0 mismatches, 13 races (SLVoice::AudioSignal 5,837:
+13 races); story (`campaign_session.sh`) 137,120 checks, 0 mismatches, 24 races (AudioSignal 6,219: 22 races,
+the rest the walkers'). A race is a check whose only difference is in a field another thread writes without
+the voice's lock (below), or a list node another thread added / removed meanwhile. ProcAudioBuffer's check
+covers PCM voices only (a compressed voice's callback is one atomic add): none played in these flows.
 
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
@@ -55,6 +62,7 @@ FlushDeletingSoundObject 6,456); audio_leaf 798, 0 mismatches.
 | `Aska::Sequencer2::AddMessageNote` / `DeleteMessageNote` / `DeleteAllMessageNote` / `ArrangeMessageNote` / `ProcessMessageNote` / `AudioRun` / `IsWaitingNote`, `Sequencer2::WaitingNoteNotify::Handler` | `audio_sequencer.cpp` | `audio/sequencer` (random notes of every type incl. NaN times, the player's states, the pool and SendMessage stubbed) | the guest on a shadow sequencer (its notes copied, the notify moved to the shadow's), Acquire / ReleaseMessageNote and SendMessage stubbed; calls, list, notes, count, clock, notify compared; AudioRun's two passes are checked as Arrange / Process |
 | `Aska::Audio3DObject::UpdateMatrix`, `Aska::AudioListener::Compute` | `audio_3d.cpp` | `audio/3d-listener` (a fake node's random world matrix, or none) | the guest and the native again on two shadows of the object: equal bytes |
 | `Aska::SoundManager::ArrangeCommandList` / `ProcessCommandList` / `AddSoundCommand` / `InsertSoundCommand` / `RemoveSoundCommand` / `UpdateAllSoundStatus` / `QuerySoundHandle` / `AddSoundHandle` / `RemoveSoundHandle` / `AddDeletingSoundObject` / `FlushDeletingSoundObject` | `audio_sound_manager.cpp` | `audio/sound-manager-lists` (private pools of commands, handles, objects; ArrangeCommand / ProcessCommand stubbed with per-command results and follow-up commands; the releases and UpdateSoundStatus logged) | the guest on a shadow manager whose lists are copies taken before the native ran, the guest callees answered with the native run's results; calls, lists and counts compared; a node from another thread = a race; QuerySoundHandle a getter |
+| `Aska::SLVoice::AudioSignal`, `ProcAudioBuffer`, `LockAndSubmitData` / `ADPCM` / `OGG` (x8 results), `SubmitBufferDataPCM` / `ADPCM` / `OGG`, `SubmitDummyDataAdpcm` / `Ogg`, `SetDeleteCountdown`; `Aska::WaveBuffer::LockBuffer` / `UnlockBuffer` | `audio_voice.cpp`, `audio_voice_check.cpp` | `audio/voice-submit` (ADPCM / OGG / PCM voices in random queue states over a fake stream and buffer queue; the decoder, LockBufferEx and the pool stubbed from one script) | the guest on a shadow voice (the captured voice, a copy of its wave buffer over a proxy stream, a proxy buffer-queue interface, scratch decode buffers), AskaOGG::Decode / VBRBuffer::LockBufferEx / the pool replayed from the native's log; calls, voice and buffer compared |
 | `Aska::AskaADPCM::Decode`, `Decode_M08` / `M16` / `S08` / `S16`, `Init`, `GetSamplesPerBlock` | `audio_adpcm.cpp` | `audio/adpcm-decode` (random streams, all block sizes incl. degenerate ones, cut streams), `audio/adpcm-init` | record / replay (the object, the input, the output); the Decode_* only through Decode (their only caller) |
 
 ## Dependencies
@@ -107,5 +115,15 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   shipped gDoAssert returns; a branch after it skips StopSound, which Ghidra's decompile shows as else).
   The guest calls NumElements / rElement through the vtable twice per element; the dt (the manager's
   CTimeElement, or the Framework's when it has no parent) is computed and unused.
+- **The voices.** SLVoice keeps m_queueDepth OpenSL buffers enqueued. The OpenSL callback (ProcAudioBuffer, on
+  the HLE's audio thread) only counts a played buffer for a compressed voice (m_pendingBuffers, an atomic
+  add without the voice's lock); AudioSignal (AudioSignalNotify::Handler, each frame) reads the count once and
+  refills that many under the lock: the next entry of the ADPCM / OGG submit queue says whether the played
+  buffer came from the stream (then WaveBuffer::UnlockBuffer, and a played-out stream arms the delete
+  countdown, m_signalTime + 200 while SoundManager::m_signalExtra), then LockAndSubmit* locks, decodes and
+  enqueues one more (a silent dummy buffer when the stream has nothing yet). Other threads write some fields
+  without the lock: the playback parameters (+0x18..0x30), m_kicks and m_deleteCountdown (AudioKick),
+  m_pendingBuffers (the callback). Guest quirk kept as is: when MultiMediaStream::Lock returns 0 it writes
+  nothing, and LockAndSubmitData then enqueues 0 bytes at an uninitialized pointer (the native: null).
 - **Not audio's:** Aska::WaveModifier / WaveModifierCPUGL / WaveDistortionFilter are the GL screen
   distortion (render's), whatever their name.

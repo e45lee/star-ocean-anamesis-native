@@ -11,4 +11,5 @@ inline constexpr std::uint64_t kStrAskaSoundObjectNull = 0x2865cdd;  // "m_pAska
 inline constexpr std::uint64_t kStrIllegalSoundType = 0x2865d24;  // "Illegal sound type.(%08x)"
 inline constexpr std::uint64_t kInvalidHandle = 0x2c00518;  // _ZN9Framework6CSound14iInvalidHandleE (object, 8 bytes); u64: a CElement's m_handle when free
 inline constexpr std::uint64_t kPlayingElementsCallbackVtbl = 0x2aab048;  // .data.rel.ro, used by _ZN9Framework13CSoundManager12PostProgressEv; the vtable (its slots at + 0x10) of the ICallback PostProgress hands FunctorAllPlayingElements
+inline constexpr std::uint64_t kDeleteCountdownExtra = 0x26dbad0;  // f32 {200.0}, .rodata, used by _ZN4Aska7SLVoice18SetDeleteCountdownEv; added to the countdown while SoundManager::m_signalExtra is set
 }  // namespace soa::native::audio

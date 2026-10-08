@@ -50,8 +50,22 @@ struct ManagerObs {
     };
     std::vector<Call> calls;
     std::vector<u64> visited;
+    // The one-node methods: the list as they left it, under its lock (another thread may change it
+    // right after: the sound thread runs and removes the commands the game thread adds).
+    bool has_post = false;
+    std::vector<u64> post;
+    s32 post_count = 0;
 };
 thread_local ManagerObs* t_mobs = nullptr;
+
+template <typename T>
+void capture_post(TList<T>& l) {
+    if (!t_mobs) return;
+    t_mobs->has_post = true;
+    t_mobs->post.clear();
+    for (T* n = l.begin(); n && n != l.end() && t_mobs->post.size() < 4096; n = n->m_next) t_mobs->post.push_back((u64)n);
+    t_mobs->post_count = l.m_count;
+}
 
 void log_call(const char* what, u64 a, u64 b = 0, u64 result = 0, u64 inserted = 0) {
     if (t_mobs) t_mobs->calls.push_back({what, a, b, result, inserted});
@@ -64,6 +78,7 @@ void log_call(const char* what, u64 a, u64 b = 0, u64 result = 0, u64 inserted =
 void SoundManager::AddSoundCommand(SoundCommand* c) {
     m_commandCs.Enter();
     m_commands.Add(c);
+    capture_post(m_commands);
     m_commandCs.Leave();
 }
 
@@ -75,12 +90,14 @@ void SoundManager::InsertSoundCommand(SoundCommand* after, SoundCommand* c) {
     next->m_prev = c;
     after->m_next = c;
     m_commands.m_count++;
+    capture_post(m_commands);
     m_commandCs.Leave();
 }
 
 void SoundManager::RemoveSoundCommand(SoundCommand* c) {
     m_commandCs.Enter();
     if (c != m_commands.end() && c) m_commands.Delete(c);
+    capture_post(m_commands);
     m_commandCs.Leave();
 }
 
@@ -166,12 +183,14 @@ SoundHandle* SoundManager::QuerySoundHandle(SoundObject* o) const {
 void SoundManager::AddSoundHandle(SoundHandle* h) {
     m_handleCs.Enter();
     m_handles.Add(h);
+    capture_post(m_handles);
     m_handleCs.Leave();
 }
 
 void SoundManager::RemoveSoundHandle(SoundHandle* h) {
     m_handleCs.Enter();
     if (h != m_handles.end() && h) m_handles.Delete(h);
+    capture_post(m_handles);
     m_handleCs.Leave();
 }
 
@@ -197,6 +216,7 @@ void SoundManager::AddDeletingSoundObject(SoundObject* o) {
         if (WaveStreamView* s = stream_of(o)) s->m_abort = 1;
         m_deleting.Add(o);
     }
+    capture_post(m_deleting);
     m_deletingCs.Leave();
 }
 
@@ -306,7 +326,7 @@ struct ListShadow {
 
 // The lists a checked function works on (only those are snapshotted, under their own locks one at a
 // time, and compared: a caller may hold another list's lock).
-enum Lists : int { kCmds = 1, kHandles = 2, kDeleting = 4 };
+enum Lists : int { kCmds = 1, kHandles = 2, kDeleting = 4, kOneNode = 8 };  // kOneNode: compare the list the native left under its lock
 
 struct ManagerShadow {
     std::unique_ptr<SoundManager> s{new SoundManager};
@@ -357,11 +377,19 @@ struct ManagerShadow {
     }
 };
 
+// The list the native left (`post`: captured under the lock by a one-node method; else the live list,
+// where a node the guest run kept and the live list lacks was removed by another thread: a race).
 template <typename T>
 std::string compare_list(ListShadow<T>& ls, TList<T>& real_list, TList<T>& shadow_list, const ManagerShadow& sh, const char* name,
-                         bool* race) {
+                         bool* race, const ManagerObs* post) {
     std::vector<u64> left_real, left_sh;
-    for (T* n = real_list.begin(); n && n != real_list.end() && left_real.size() < kMaxNodes * 2; n = n->m_next) left_real.push_back((u64)n);
+    s32 real_count = real_list.m_count;
+    if (post) {
+        left_real = post->post;
+        real_count = post->post_count;
+    } else {
+        for (T* n = real_list.begin(); n && n != real_list.end() && left_real.size() < kMaxNodes * 2; n = n->m_next) left_real.push_back((u64)n);
+    }
     for (T* n = shadow_list.begin(); n && n != shadow_list.end() && left_sh.size() < kMaxNodes * 2; n = n->m_next)
         left_sh.push_back(sh.to_real((u64)n));
     for (u64 n : left_real)
@@ -369,10 +397,16 @@ std::string compare_list(ListShadow<T>& ls, TList<T>& real_list, TList<T>& shado
             *race = true;
             return std::string(name) + ": a node added by another thread";
         }
+    if (!post)
+        for (u64 n : left_sh)
+            if (std::find(left_real.begin(), left_real.end(), n) == left_real.end()) {
+                *race = true;
+                return std::string(name) + ": a node removed by another thread";
+            }
     if (left_real != left_sh)
         return std::string(name) + ": the list left differs (native " + std::to_string(left_real.size()) + ", guest " + std::to_string(left_sh.size()) + ")";
-    if (real_list.m_count != shadow_list.m_count)
-        return std::string(name) + ": count native " + std::to_string(real_list.m_count) + " guest " + std::to_string(shadow_list.m_count);
+    if (real_count != shadow_list.m_count)
+        return std::string(name) + ": count native " + std::to_string(real_count) + " guest " + std::to_string(shadow_list.m_count);
     return {};
 }
 
@@ -446,9 +480,10 @@ void manager_check(CheckedFn& f, SoundManager* self, int lists, Native native, G
             }
     }
     bool race = false;
-    if (why.empty() && (lists & kCmds)) why = compare_list(sh.cmds, self->m_commands, sh.s->m_commands, sh, "commands", &race);
-    if (why.empty() && (lists & kHandles)) why = compare_list(sh.handles, self->m_handles, sh.s->m_handles, sh, "handles", &race);
-    if (why.empty() && (lists & kDeleting)) why = compare_list(sh.deleting, self->m_deleting, sh.s->m_deleting, sh, "deleting", &race);
+    const ManagerObs* post = (lists & kOneNode) && obs.has_post ? &obs : nullptr;  // (a one-node method touches one list)
+    if (why.empty() && (lists & kCmds)) why = compare_list(sh.cmds, self->m_commands, sh.s->m_commands, sh, "commands", &race, post);
+    if (why.empty() && (lists & kHandles)) why = compare_list(sh.handles, self->m_handles, sh.s->m_handles, sh, "handles", &race, post);
+    if (why.empty() && (lists & kDeleting)) why = compare_list(sh.deleting, self->m_deleting, sh.s->m_deleting, sh, "deleting", &race, post);
     if (race) return live::check_result(f, live::Outcome::Race, why);
     live::check_result(f, why.empty() ? live::Outcome::Ok : live::Outcome::Mismatch, why);
 }
@@ -475,7 +510,7 @@ void node_checked(Cpu& c, CheckedFn& f) {
     alignas(16) T before{};
     if (node) std::memcpy((void*)&before, (const void*)node, sizeof(T));
     manager_check(
-        f, self, kLists, [&] { (self->*M)(reinterpret_cast<T*>(node)); },
+        f, self, kLists | kOneNode, [&] { (self->*M)(reinterpret_cast<T*>(node)); },
         [&](ManagerShadow& sh) {
             ListShadow<T>& ls = sh.*L;
             u64 arg = node;
@@ -505,7 +540,7 @@ void insert_cmd_checked(Cpu& c) {
     alignas(16) SoundCommand before{};
     std::memcpy((void*)&before, (const void*)node, sizeof before);
     manager_check(
-        g_insert_cmd, self, kCmds, [&] { self->InsertSoundCommand(reinterpret_cast<SoundCommand*>(after), reinterpret_cast<SoundCommand*>(node)); },
+        g_insert_cmd, self, kCmds | kOneNode, [&] { self->InsertSoundCommand(reinterpret_cast<SoundCommand*>(after), reinterpret_cast<SoundCommand*>(node)); },
         [&](ManagerShadow& sh) {
             SoundCommand* a = sh.cmds.to_shadow(after, self->m_commands, sh.s->m_commands);
             SoundCommand* n = sh.cmds.to_shadow(node, self->m_commands, sh.s->m_commands);

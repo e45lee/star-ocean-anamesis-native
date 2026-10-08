@@ -23,7 +23,7 @@
       "kind": "array",
       "of": {
        "kind": "ptr",
-       "to": null
+       "to": "SLVoice"
       },
       "count": 20
      },
@@ -469,7 +469,16 @@
    "fields": [
     {
      "offset": 0,
-     "name": "unk_000",
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_008",
      "type": {
       "kind": "array",
       "of": {
@@ -477,9 +486,33 @@
        "size": 1,
        "signed": false
       },
-      "count": 1020
+      "count": 132
      },
-     "size": 1020
+     "size": 132
+    },
+    {
+     "offset": 140,
+     "name": "m_loopTail",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 141,
+     "name": "unk_08d",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 879
+     },
+     "size": 879
     },
     {
      "offset": 1020,
@@ -516,8 +549,268 @@
      "size": 1
     }
    ],
-   "size": 1836,
+   "size": 1840,
+   "align": 8
+  },
+  {
+   "name": "AaoWAVE",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 20
+     },
+     "size": 20
+    },
+    {
+     "offset": 20,
+     "name": "m_codec",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 21,
+     "name": "m_channels",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 22,
+     "name": "unk_16",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 23,
+     "name": "m_bits",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 64
+     },
+     "size": 64
+    },
+    {
+     "offset": 88,
+     "name": "m_loopHeadFrames",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 92,
+     "name": "m_loopTailFrames",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 96,
    "align": 4
+  },
+  {
+   "name": "WaveBuffer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_stream",
+     "type": {
+      "kind": "ptr",
+      "to": "WaveStreamView"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_format",
+     "type": {
+      "kind": "ptr",
+      "to": "AaoWAVE"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_queueVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_write",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_read",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_sizes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 17
+     },
+     "size": 68
+    },
+    {
+     "offset": 108,
+     "name": "unk_6c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 112,
+     "name": "m_isVBR",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 116,
+     "name": "unk_74",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 118,
+     "name": "unk_76",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 119,
+     "name": "unk_77",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 120,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x233db88",
+     "symbol": "_ZN4Aska10WaveBufferD2Ev",
+     "name": "~WaveBuffer"
+    },
+    {
+     "ghidra": "0x2347750",
+     "symbol": "_ZN4Aska10WaveBuffer12CreateBufferEPNS_16MultiMediaStreamEPKNS_3AFF7AaoWAVEE",
+     "name": "CreateBuffer"
+    },
+    {
+     "ghidra": "0x234776c",
+     "symbol": "_ZN4Aska10WaveBuffer12DeleteBufferEv",
+     "name": "DeleteBuffer"
+    },
+    {
+     "ghidra": "0x2347794",
+     "symbol": "_ZN4Aska10WaveBuffer10LockBufferEPPvmb",
+     "name": "LockBuffer"
+    },
+    {
+     "ghidra": "0x234784c",
+     "symbol": "_ZN4Aska10WaveBuffer12UnlockBufferEv",
+     "name": "UnlockBuffer"
+    },
+    {
+     "ghidra": "0x2347ca4",
+     "symbol": "_ZN4Aska10WaveBufferD0Ev",
+     "name": "~WaveBuffer"
+    }
+   ]
   },
   {
    "name": "WaveVoiceBase",
@@ -594,6 +887,786 @@
      "ghidra": "0x2347d1c",
      "symbol": "_ZN4Aska13WaveVoiceBase15UpdatePitchbendEv",
      "name": "UpdatePitchbend"
+    }
+   ]
+  },
+  {
+   "name": "AskaOGG",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_000",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 944
+     },
+     "size": 944
+    },
+    {
+     "offset": 944,
+     "name": "m_pendingData",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 952,
+     "name": "m_pendingSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 956,
+     "name": "unk_3bc",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 968,
+     "name": "m_hasPending",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 969,
+     "name": "unk_3c9",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 115
+     },
+     "size": 115
+    },
+    {
+     "offset": 1084,
+     "name": "m_headerStage",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1085,
+     "name": "unk_43d",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 19
+     },
+     "size": 19
+    }
+   ],
+   "size": 1104,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x233f9a4",
+     "symbol": "_ZN4Aska7AskaOGG16InitializeMemoryEv",
+     "name": "InitializeMemory"
+    },
+    {
+     "ghidra": "0x233f9c8",
+     "symbol": "_ZN4Aska7AskaOGGC2Ev",
+     "name": "AskaOGG"
+    },
+    {
+     "ghidra": "0x233fa08",
+     "symbol": "_ZN4Aska7AskaOGG10DecodeInitEjj",
+     "name": "DecodeInit"
+    },
+    {
+     "ghidra": "0x233fbb0",
+     "symbol": "_ZN4Aska7AskaOGG6DecodeEPKajPPajjj",
+     "name": "Decode"
+    },
+    {
+     "ghidra": "0x233fc60",
+     "symbol": "_ZN4Aska7AskaOGG12DecodeHeaderEPKam",
+     "name": "DecodeHeader"
+    },
+    {
+     "ghidra": "0x233fedc",
+     "symbol": "_ZN4Aska7AskaOGG10DecodeBodyEPKajPPajjj",
+     "name": "DecodeBody"
+    },
+    {
+     "ghidra": "0x2340130",
+     "symbol": "_ZN4Aska7AskaOGG20Decode_ReadSrcBufferEPKam",
+     "name": "Decode_ReadSrcBuffer"
+    },
+    {
+     "ghidra": "0x23401ec",
+     "symbol": "_ZN4Aska7AskaOGG16Decode_LoopStartEjj",
+     "name": "Decode_LoopStart"
+    },
+    {
+     "ghidra": "0x2340594",
+     "symbol": "_ZN4Aska7AskaOGG13DecodePacketsEjj",
+     "name": "DecodePackets"
+    },
+    {
+     "ghidra": "0x2340690",
+     "symbol": "_ZN4Aska7AskaOGG15DecodePageResetEv",
+     "name": "DecodePageReset"
+    },
+    {
+     "ghidra": "0x234070c",
+     "symbol": "_ZNK4Aska7AskaOGG22Decode_CalcFrameSampleEj",
+     "name": "Decode_CalcFrameSample"
+    },
+    {
+     "ghidra": "0x2340730",
+     "symbol": "_ZN4Aska7AskaOGG13Decode_PcmoutEj",
+     "name": "Decode_Pcmout"
+    },
+    {
+     "ghidra": "0x234094c",
+     "symbol": "_ZN4Aska7AskaOGG19Decode_GetDstBufferEjj",
+     "name": "Decode_GetDstBuffer"
+    }
+   ]
+  },
+  {
+   "name": "SLVoice",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_state",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "unk_00c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_format",
+     "type": {
+      "kind": "ptr",
+      "to": "AaoWAVE"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_018",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 48,
+     "name": "m_buffer",
+     "type": {
+      "kind": "ptr",
+      "to": "WaveBuffer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_adpcm",
+     "type": {
+      "kind": "struct",
+      "name": "AskaADPCM"
+     },
+     "size": 28
+    },
+    {
+     "offset": 84,
+     "name": "unk_054",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 88,
+     "name": "m_ogg",
+     "type": {
+      "kind": "struct",
+      "name": "AskaOGG"
+     },
+     "size": 1104
+    },
+    {
+     "offset": 1192,
+     "name": "m_adpcmQueueVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1200,
+     "name": "m_adpcmWrite",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1204,
+     "name": "m_adpcmRead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1208,
+     "name": "m_adpcmLocked",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1216,
+     "name": "m_oggQueueVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1224,
+     "name": "m_oggWrite",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1228,
+     "name": "m_oggRead",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1232,
+     "name": "m_oggSubmits",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 9
+     },
+     "size": 72
+    },
+    {
+     "offset": 1304,
+     "name": "m_queuedBytes",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 1308,
+     "name": "unk_51c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1312,
+     "name": "m_bus",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1320,
+     "name": "m_playerObject",
+     "type": {
+      "kind": "bytes",
+      "ctype": "SLItf",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 1328,
+     "name": "m_play",
+     "type": {
+      "kind": "bytes",
+      "ctype": "SLItf",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 1336,
+     "name": "m_bufferQueue",
+     "type": {
+      "kind": "bytes",
+      "ctype": "SLItf",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 1344,
+     "name": "m_volume",
+     "type": {
+      "kind": "bytes",
+      "ctype": "SLItf",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 1352,
+     "name": "m_maxVolumeLevel",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 1354,
+     "name": "unk_54a",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 1360,
+     "name": "m_playbackRate",
+     "type": {
+      "kind": "bytes",
+      "ctype": "SLItf",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 1368,
+     "name": "m_minRate",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 1370,
+     "name": "m_maxRate",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": true
+     },
+     "size": 2
+    },
+    {
+     "offset": 1372,
+     "name": "unk_55c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1376,
+     "name": "m_decodeBuffers",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 3
+     },
+     "size": 24
+    },
+    {
+     "offset": 1400,
+     "name": "m_decodeBufferSizes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 24
+    },
+    {
+     "offset": 1424,
+     "name": "m_decodeIndex",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1428,
+     "name": "m_lockSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1432,
+     "name": "m_queueDepth",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1436,
+     "name": "m_submitCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1440,
+     "name": "m_kicks",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1444,
+     "name": "m_codec",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1448,
+     "name": "m_cs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 1592,
+     "name": "m_pendingBuffers",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 1596,
+     "name": "m_deleteCountdown",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 1600,
+     "name": "m_countdownArmed",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1601,
+     "name": "m_failed",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1602,
+     "name": "unk_642",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    }
+   ],
+   "size": 1608,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x233bf54",
+     "symbol": "_ZN4Aska7SLVoiceC1Ev",
+     "name": "SLVoice"
+    },
+    {
+     "ghidra": "0x233c014",
+     "symbol": "_ZN4Aska7SLVoiceD1Ev",
+     "name": "~SLVoice"
+    },
+    {
+     "ghidra": "0x233c05c",
+     "symbol": "_ZN4Aska7SLVoiceD0Ev",
+     "name": "~SLVoice"
+    },
+    {
+     "ghidra": "0x233c0a4",
+     "symbol": "_ZN4Aska7SLVoice11CreateVoiceEPNS_4IBusEPKvPNS_16MultiMediaStreamEPKNS_16PackedPlayParamsE",
+     "name": "CreateVoice"
+    },
+    {
+     "ghidra": "0x233c838",
+     "symbol": "_ZN4Aska7SLVoice16SLPlayerCallbackEPKPK30SLAndroidSimpleBufferQueueItf_Pv",
+     "name": "SLPlayerCallback"
+    },
+    {
+     "ghidra": "0x233c840",
+     "symbol": "_ZN4Aska7SLVoice17LockAndSubmitDataEv",
+     "name": "LockAndSubmitData"
+    },
+    {
+     "ghidra": "0x233c8e4",
+     "symbol": "_ZN4Aska7SLVoice18LockAndSubmitADPCMEv",
+     "name": "LockAndSubmitADPCM"
+    },
+    {
+     "ghidra": "0x233ca8c",
+     "symbol": "_ZN4Aska7SLVoice16LockAndSubmitOGGEv",
+     "name": "LockAndSubmitOGG"
+    },
+    {
+     "ghidra": "0x233cc2c",
+     "symbol": "_ZN4Aska7SLVoice11DeleteVoiceEv",
+     "name": "DeleteVoice"
+    },
+    {
+     "ghidra": "0x233ce8c",
+     "symbol": "_ZN4Aska7SLVoice4PlayEv",
+     "name": "Play"
+    },
+    {
+     "ghidra": "0x233cecc",
+     "symbol": "_ZN4Aska7SLVoice4StopEv",
+     "name": "Stop"
+    },
+    {
+     "ghidra": "0x233cf04",
+     "symbol": "_ZN4Aska7SLVoice5PauseEv",
+     "name": "Pause"
+    },
+    {
+     "ghidra": "0x233cf3c",
+     "symbol": "_ZN4Aska7SLVoice6ResumeEv",
+     "name": "Resume"
+    },
+    {
+     "ghidra": "0x233cf74",
+     "symbol": "_ZNK4Aska7SLVoice14GetElapsedTimeEv",
+     "name": "GetElapsedTime"
+    },
+    {
+     "ghidra": "0x233cf90",
+     "symbol": "_ZN4Aska7SLVoice18UpdateVolumeMatrixEv",
+     "name": "UpdateVolumeMatrix"
+    },
+    {
+     "ghidra": "0x233d084",
+     "symbol": "_ZN4Aska7SLVoice15UpdatePitchbendEv",
+     "name": "UpdatePitchbend"
+    },
+    {
+     "ghidra": "0x233d0ec",
+     "symbol": "_ZN4Aska7SLVoice9AudioKickEv",
+     "name": "AudioKick"
+    },
+    {
+     "ghidra": "0x233d128",
+     "symbol": "_ZN4Aska7SLVoice11AudioSignalEm",
+     "name": "AudioSignal"
+    },
+    {
+     "ghidra": "0x233d478",
+     "symbol": "_ZN4Aska7SLVoice18SetDeleteCountdownEv",
+     "name": "SetDeleteCountdown"
+    },
+    {
+     "ghidra": "0x233d4c8",
+     "symbol": "_ZN4Aska7SLVoice15ProcAudioBufferEv",
+     "name": "ProcAudioBuffer"
+    },
+    {
+     "ghidra": "0x233d714",
+     "symbol": "_ZN4Aska7SLVoice19SubmitBufferDataPCMEPKvj",
+     "name": "SubmitBufferDataPCM"
+    },
+    {
+     "ghidra": "0x233d76c",
+     "symbol": "_ZN4Aska7SLVoice20SubmitDummyDataAdpcmEv",
+     "name": "SubmitDummyDataAdpcm"
+    },
+    {
+     "ghidra": "0x233d814",
+     "symbol": "_ZN4Aska7SLVoice21SubmitBufferDataADPCMEPKvjb",
+     "name": "SubmitBufferDataADPCM"
+    },
+    {
+     "ghidra": "0x233d9c0",
+     "symbol": "_ZN4Aska7SLVoice18SubmitDummyDataOggEv",
+     "name": "SubmitDummyDataOgg"
+    },
+    {
+     "ghidra": "0x233da68",
+     "symbol": "_ZN4Aska7SLVoice19SubmitBufferDataOGGEPKvjjj",
+     "name": "SubmitBufferDataOGG"
     }
    ]
   },
@@ -3150,64 +4223,6 @@
      "ghidra": "0x1f9a804",
      "symbol": "_ZNK9Framework13CSoundManager17rElementContainerEv",
      "name": "rElementContainer"
-    }
-   ]
-  },
-  {
-   "name": "WaveBuffer",
-   "union": false,
-   "fields": [
-    {
-     "offset": 0,
-     "name": "vtable",
-     "type": {
-      "kind": "ptr",
-      "to": null
-     },
-     "size": 8
-    },
-    {
-     "offset": 8,
-     "name": "m_stream",
-     "type": {
-      "kind": "ptr",
-      "to": "WaveStreamView"
-     },
-     "size": 8
-    }
-   ],
-   "size": 16,
-   "align": 8,
-   "methods": [
-    {
-     "ghidra": "0x233db88",
-     "symbol": "_ZN4Aska10WaveBufferD2Ev",
-     "name": "~WaveBuffer"
-    },
-    {
-     "ghidra": "0x2347750",
-     "symbol": "_ZN4Aska10WaveBuffer12CreateBufferEPNS_16MultiMediaStreamEPKNS_3AFF7AaoWAVEE",
-     "name": "CreateBuffer"
-    },
-    {
-     "ghidra": "0x234776c",
-     "symbol": "_ZN4Aska10WaveBuffer12DeleteBufferEv",
-     "name": "DeleteBuffer"
-    },
-    {
-     "ghidra": "0x2347794",
-     "symbol": "_ZN4Aska10WaveBuffer10LockBufferEPPvmb",
-     "name": "LockBuffer"
-    },
-    {
-     "ghidra": "0x234784c",
-     "symbol": "_ZN4Aska10WaveBuffer12UnlockBufferEv",
-     "name": "UnlockBuffer"
-    },
-    {
-     "ghidra": "0x2347ca4",
-     "symbol": "_ZN4Aska10WaveBufferD0Ev",
-     "name": "~WaveBuffer"
     }
    ]
   }

@@ -1,7 +1,7 @@
 # Calls from natives: to other natives and to the guest
 
 Every guest call a native makes (`guest_call`, `guest_invoke`, `guest_call_raw`, and `live::out_call`,
-which is a `guest_call` outside a check), classified (2026-10-08; tests and `*_test*` files left out).
+which is a `guest_call` outside a check), classified (2026-10-08, main at 76aba2f with Wave A's last pieces; tests and `*_test*` files left out).
 A call to an installed native through `guest_call` already skips the JIT (`direct_thunk`: about 10 ns,
 the arguments marshalled through a `Cpu`); a native whose callee is a native of the port calls it as
 C++ instead, through `NativeCallee` (`common/native_call.h`), described below.
@@ -20,13 +20,13 @@ C++ instead, through `NativeCallee` (`common/native_call.h`), described below.
 | Subsystem | (a) | (b) | (c) | (d) | (e) | (h) |
 |---|---|---|---|---|---|---|
 | api | 1 | 11 | 1 | 0 | 38 | 0 |
-| audio | 13 | 10 | 0 | 1 | 18 | 0 |
+| audio | 13 | 10 | 0 | 1 (not converted) | 18 | 0 |
 | common | 1 | 2 | 0 | 3 | 9 | 5 |
 | containers | 0 | 1 | 0 | 0 | 4 | 0 |
 | data_formats | 0 | 0 | 0 | 1 | 3 | 0 |
-| dynamics | 0 | 1 | 0 | 0 | 0 | 1 |
+| dynamics | 0 | 6 | 9 | 0 | 17 | 1 |
 | hash | 0 | 0 | 0 | 0 | 1 | 0 |
-| info | 3 | 2 | 0 | 0 | 1 | 0 |
+| info | 13 | 2 | 0 | 3 (not converted) | 9 | 1 |
 | input | 3 | 1 | 0 | 0 | 0 | 0 |
 | kernel | 9 | 2 | 0 | 0 | 5 | 0 |
 | lib_crypto | 2 | 0 | 0 | 0 | 0 | 0 |
@@ -39,7 +39,7 @@ C++ instead, through `NativeCallee` (`common/native_call.h`), described below.
 | master | 20 | 1 | 0 | 5 (+7 through `call`) | 5 | 3 |
 | memory | 12 | 7 | 0 | 0 | 4 | 0 |
 | params | 8 | 4 | 0 | 5 | 6 | 0 |
-| particles | 1 | 6 | 0 | 0 | 6 | 1 |
+| particles | 1 | 7 | 3 | 1 | 10 | 1 |
 | render | 20 | 1 | 3 | 0 | 2 | 0 |
 | resource | 1 | 0 | 0 | 0 | 2 | 0 |
 | restore | 3 | 0 | 0 | 0 | 2 | 0 |
@@ -47,7 +47,7 @@ C++ instead, through `NativeCallee` (`common/native_call.h`), described below.
 | sync | 8 | 0 | 0 | 0 | 3 | 0 |
 | ui | 1 | 2 | 0 | 0 | 6 | 0 |
 | yayoi | 2 | 1 | 0 | 1 (+2 through `call_status`) | 10 | 1 |
-| **all** | 156 | 58 | 4 | 18 (+9) | 126 | 11 |
+| **all** | 166 | 64 | 16 | 22 (+9; 4 not converted) | 155 | 12 |
 
 ## (c) and (d): natives calling natives as C++
 
@@ -109,14 +109,16 @@ the original when direct: the same guest code, one host round trip less.
 | `master_stringdb.cpp` `GetNativeString` / `Get` | `CParameterPropertyBase<32>::CryptString`, `CSTLStringUtility_Base::Replace` | params, containers | 200 |
 | `render_draw.cpp` `UpdateRenderState` | `RenderDeviceData::UpdateShaderProgram` | render (c) | 502K |
 | `render_draw.cpp` `UpdateRenderState`, `render_program.cpp` `UpdateShaderProgram` | `LastMinuteDrawCommands_Textures`, `SetShaderProgramUniform` (hooks: their originals) | render (c) | 502K, 256K |
+| `particles_simulate.cpp` `calls::fill_matrix`, `particles_prepare.cpp` `calls::traverse` / `matrices` | `IParticleEmitter::FillMatrixContext`, `PrepareMatricesTraverse`, `PrepareMatrices` | particles (c) | 21K, (Prepare's) |
+| dynamics (its own rule, `checking()`, before this): `ADMJoint::PrepareCalc` / `Flush`, `ADMSolver::SolveLink` / `ResolveContact` / `UpdateVelocity` / `AimRotation` / `BlendRotation` | | dynamics (c) | |
 
 Not converted:
 
-- **audio** (`audio_3d.cpp` -> math's `Quaternion::Create`, 5K) and **info**: their owner's (agent
+- **audio** (`audio_3d.cpp` -> math's `Quaternion::Create`, 5K) and **info** (`info_guest.cpp`'s STL allocator calls -> memory, `memory_callees.h` ready): their owner's (agent
   waveA-rest) files while that work runs.
-- **particles**, **dynamics**: their last pieces were being merged; dynamics' `checking()` already calls
-  ADMJoint's natives as C++ by the same rule.
-- **api** `FakeApiCaller` C2 (the route's own hook, once per boot).
+- **dynamics** keeps its `checking()` (the same rule for its own family: C++ unless dynamics' check is on).
+- Once per process or per boot: **api** `FakeApiCaller` C2 (the route's own hook), **particles**
+  `particles_world.cpp` `CriticalSection` C2 (sync).
 
 ## (e): static targets that are still guest code (porting-queue input)
 
@@ -130,7 +132,9 @@ target). The large ones first; the rest are cold (once per screen or per request
 | `Aska::Vector::ApplyMatrix` / `ApplyMatrixNoTransport` | `dynamics_adm.cpp`, `dynamics_primitives.cpp`, `audio_3d.cpp` | 246K / 157K |
 | `Aska::IndexBuffer::GetData(int) const` | `render_draw.cpp` DrawIndexedPrimitive | 155K |
 | `StringToNumber<T>(char*)` (an istringstream) | `params_guest.cpp` | 31K |
-| `Aska::IParticleEmitter::FillMatrixContext`, `Prepare`, `IParticleObject::SetAnimation` | `particles_simulate.cpp` (native in the particles pieces since merged) | 21K, 20K, 5K |
+| `Aska::IParticleObject::SetAnimation`, `Aska::Random`, `ParticleManager::Malloc`, `TextureManager::QueryTextureEx`, `ParticleRenderableBase::SetRenderLayer`, `Matrix::Invert` | `particles_simulate.cpp`, `particles_prepare.cpp` | 5K, ... |
+| dynamics' guest helpers: `MatrixCalcFunc`, `Matrix::InvertLowError`, `Vector::Apply*`, the IK / collision / force steps (`fn_*` in `dynamics_adm_simulate.cpp`) | `dynamics_adm*.cpp`, `dynamics_primitives.cpp` | (MatrixCalcFunc 408K, InvertLowError 39K) |
+| info's helpers (assert, the maps' tree operations, `mktime`; its STL allocator calls are memory's natives, (d) above) | `info_guest.cpp`, `info_time.cpp` | — |
 | `Aska::NotifierThread::AddNotify` / `RemoveNotify` / `Notify` | `kernel_gpu_sync.cpp` | 14K |
 | `Aska::MemoryManagerAdapter::AlignedMalloc` / `AlignedFree` | `containers_dynamic_array.h`, `yayoi_guest.h` | 2.6K |
 | `operator new[]` / `operator delete[]` / `operator delete` | `guest_std.cpp`, `memory_pools.cpp`, `data_formats_ason.h`, `yayoi_guest.h`, `sync_mutex.cpp`, `sync_thread.cpp`, `master_*` | 2.7K |

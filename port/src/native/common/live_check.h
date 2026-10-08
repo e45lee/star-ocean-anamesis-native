@@ -211,6 +211,11 @@ struct Entry {
 };
 
 Entry& entry(int n);  // (an index Family::add returned)
+// The entry registered at `sym` by Family::add (nullptr when none; test native/direct-callees).
+const Entry* entry_for(const char* sym);
+// True when --live-check switched any family on (install_native_functions: native_call.h's direct
+// calls are off then).
+bool any_family_on();
 
 // Inside a check on this thread (no other call can be checked; every family).
 extern thread_local bool t_busy;

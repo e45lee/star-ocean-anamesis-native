@@ -13,6 +13,7 @@
 #include "core/loader.h"
 #include "native/common/guest_std.h"
 #include "native/common/native_method.h"
+#include "native/memory/memory_callees.h"
 #include "native/memory/memory_check.h"
 #include "native/memory/memory_heap.h"
 #include "native/memory/memory_pools.h"
@@ -296,5 +297,12 @@ NATIVE_FUNCTION_ORIG("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8Alloc
                      &check::Orig(check::kStlAllocate));
 NATIVE_FUNCTION_ORIG("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv", wrap<&CAssignedMemoryManagerForSTLAllocator::Free>(),
                      "memory: CAssignedMemoryManagerForSTLAllocator::Free", &check::Orig(check::kStlFree));
+
+// For other subsystems' natives (memory_callees.h).
+NativeCallee kStlAllocateCallee{"memory", "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj",
+                                wrap<&CAssignedMemoryManagerForSTLAllocator::Allocate>()};
+NativeCallee kStlFreeCallee{"memory", "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv",
+                            wrap<&CAssignedMemoryManagerForSTLAllocator::Free>()};
+NativeCallee kCalcFreeSizeCallee{"memory", "_ZN4Aska13MemoryManager12CalcFreeSizeEb"};
 
 }  // namespace soa::native::memory

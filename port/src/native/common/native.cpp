@@ -10,7 +10,10 @@
 #include <set>
 #include <vector>
 
+#include "core/gdbstub.h"
 #include "core/log.h"
+#include "native/common/live_check.h"
+#include "native/common/native_call.h"
 #include "native/common/test.h"
 
 namespace soa {
@@ -99,6 +102,8 @@ void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route, co
     std::set<u64> done;
     std::map<u64, u64> trampolines;
     std::set<u64> targets;  // every address that gets a replacement
+    std::set<u64> installed_at;
+    std::set<std::string> installed;  // the symbols installed (native_call.h)
     for (auto& f : registry()) {
         if (!in_set(f, set, with_route, skip)) continue;
         if (f.enabled && !f.enabled()) continue;
@@ -114,6 +119,7 @@ void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route, co
         u64 addr = f.symbol[0] == '@' ? lib.base + strtoull(f.symbol + 1, nullptr, 0) : lib.sym(f.symbol);
         if (addr && !done.insert(addr).second) {  // aliases (e.g. C1/C2 constructors)
             if (f.original && trampolines.count(addr)) *f.original = trampolines[addr];
+            if (installed_at.count(addr)) installed.insert(f.symbol);
             continue;
         }
         if (!addr) {
@@ -148,6 +154,8 @@ void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route, co
             }
         }
         hook_guest_function(addr, f.symbol, f.fn, f.host ? host_name(f.host) : f.note);
+        installed_at.insert(addr);
+        installed.insert(f.symbol);
         n++;
     }
     std::string skipped_note;
@@ -155,6 +163,10 @@ void install_native_functions(LoadedLib& lib, NativeSet set, bool with_route, co
     if (!skip.empty()) skipped_note += " (" + std::to_string(skipped) + " left to the guest)";
     LOGI("native", "%d guest functions replaced by native code (--natives %s%s%s)", n, native_set_name(set),
          with_route ? "" : ", without the FakeApiCaller route", skipped_note.c_str());
+    // Natives calling natives as C++ (native_call.h): only callees installed here, and none while a live
+    // check (applied before this), the GDB stub (breakpoints on natives) or SOA_DIRECT_CALLS=0 needs every
+    // call to go through the guest entry.
+    native::NativeCallee::resolve_all(installed, direct_host_calls() && !g_gdb_enabled && !live::any_family_on());
 }
 
 }  // namespace soa

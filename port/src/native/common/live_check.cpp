@@ -619,6 +619,17 @@ int Family::add(const char* sym, HostFn run, u32 obj_bytes, RetKind ret, bool (*
 }
 
 Entry& entry(int n) { return g_entries[n]; }
+const Entry* entry_for(const char* sym) {
+    for (int n = 0; n < g_n; n++)
+        if (!strcmp(g_entries[n].sym, sym)) return &g_entries[n];
+    return nullptr;
+}
+bool any_family_on() {
+    std::lock_guard lk(g_check_m);
+    for (Family* f : families())
+        if (f->on.load(std::memory_order_relaxed)) return true;
+    return false;
+}
 
 void Family::gcall(Regs& r, u64 target, int ni, int nf) {
     if (t_play) return play_call(r, target);

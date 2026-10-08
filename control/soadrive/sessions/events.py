@@ -80,16 +80,27 @@ def story(s, tag, node):
     common.settle(s, tag + "-board", hold=2)
 
 
+def mktime_local(y, mo, d, h, mi, sec):
+    """A local wall time as Unix seconds, daylight saving included: common/include/soa/local_time.h's
+    rule (soa::mktime_local), which the server and the client's mktime (platform370) follow. Of the
+    host mktime's two readings (tm_isdst 0: standard, 1: daylight) the self-consistent one; both (the
+    repeated autumn hour): the earlier; neither (the skipped spring hour): the standard one."""
+    t0 = time.mktime((y, mo, d, h, mi, sec, 0, 0, 0))
+    t1 = time.mktime((y, mo, d, h, mi, sec, 0, 0, 1))
+    v0, v1 = time.localtime(t0).tm_isdst == 0, time.localtime(t1).tm_isdst > 0
+    if v0 and v1:
+        return min(t0, t1)
+    return t1 if v1 else t0
+
+
 def _client_time(text):
-    """(b) A date-time string as the client reads it: CTimeUtility::str2time_t sets tm_isdst = 0
-    before mktime, so in a daylight-saving zone every time string (the server's data.Time, the
-    master's times) is read as standard time, an hour later than the wall clock; Python's
-    time.mktime with isdst 0 is the same host mktime. None when unparsable."""
+    """(b) A date-time string as the client reads it (CTimeUtility::str2time_t): the local time,
+    daylight saving included (platform370's mktime, docs/client-changes.md "Local time: daylight
+    saving"; the shipped client, --no-dst-fix, read it as standard time). None when unparsable."""
     m = re.match(r"(\d{4})[-/](\d{2})[-/](\d{2}) (\d{1,2}):(\d{2})(?::(\d{2}))?", text or "")
     if not m:
         return None
-    y, mo, d, h, mi, sec = (int(x or 0) for x in m.groups())
-    return time.mktime((y, mo, d, h, mi, sec, 0, 0, 0))
+    return mktime_local(*(int(x or 0) for x in m.groups()))
 
 
 def _last_event_list(packets_dir):

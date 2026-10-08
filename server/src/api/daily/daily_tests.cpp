@@ -86,14 +86,18 @@ NATIVE_TEST("daily/premium-favor-bonus") {
                     "the heal's row: the bonus day NULL (never)");
         c.st.q("delete from favor_bonus_state where day_at is null", {});
         int64_t n1 = c.st.one("select count(*) from presents", {});
-        // The bonus is granted during the load, stamped with the clock then: read it between two reads of the
-        // clock (the wall clock may tick over a second during the load; comparing with one later read flaked).
+        // The bonus is granted during the load, stamped with the clock then: the reported key is the stored
+        // stamp, and the stamp lies between two reads of the clock around the load. (A loaded host can
+        // spend seconds in the load: matching the key against either read alone, or one later read,
+        // flaked.)
         const auto before = c.now();
         d = player_load_data(c);
         const auto after = c.now();
         const std::string got = player_key(d, "favor_bonus_received_at");
-        const std::string want = got == c.fmt_time(after) ? c.fmt_time(after) : c.fmt_time(before);
-        t.expect_eq(got, want, "favor_bonus_received_at: the bonus's time (the load's clock)");
+        const int64_t stamp = c.st.one("select coalesce(day_at, -1) from favor_bonus_state where id = 1", {});
+        t.expect_eq(got, c.fmt_time(stamp), "favor_bonus_received_at: the stored bonus time");
+        if (stamp < before.v || stamp > after.v)
+            t.fail("favor_bonus_received_at %s outside the load (%s .. %s)", got.c_str(), c.fmt_time(before).c_str(), c.fmt_time(after).c_str());
         t.expect_eq(player_key(d, "stamina_update_by_favor"), std::string(""), "stamina_update_by_favor: never");
         t.expect_eq(c.st.one("select count(*) from favor_bonus_state where healed_at is null and lot_uid in (select uid from roster)", {}),
                     (int64_t)1, "the bonus's row: an owned lot character, never healed");

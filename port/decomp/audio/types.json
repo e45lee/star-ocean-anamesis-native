@@ -301,6 +301,303 @@
    ]
   },
   {
+   "name": "Audio3DObject",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "Audio3DObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "Audio3DObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_node",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_cs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 176,
+     "name": "m_matrix",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Matrix",
+      "size": 64
+     },
+     "size": 64
+    }
+   ],
+   "size": 240,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x206839c",
+     "symbol": "_ZN4Aska13Audio3DObject12UpdateMatrixEv",
+     "name": "UpdateMatrix"
+    },
+    {
+     "ghidra": "0x206a500",
+     "symbol": "_ZN4Aska13Audio3DObjectD2Ev",
+     "name": "~Audio3DObject"
+    },
+    {
+     "ghidra": "0x206a514",
+     "symbol": "_ZN4Aska13Audio3DObjectD0Ev",
+     "name": "~Audio3DObject"
+    }
+   ]
+  },
+  {
+   "name": "AudioListener",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "Audio3DObject"
+     },
+     "size": 240
+    },
+    {
+     "offset": 240,
+     "name": "m_offsetZ",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 244,
+     "name": "unk_0f4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 256,
+     "name": "m_position",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 272,
+     "name": "m_orientation",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Quaternion",
+      "size": 16
+     },
+     "size": 16
+    }
+   ],
+   "size": 288,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2069a94",
+     "symbol": "_ZN4Aska13AudioListenerC2Ev",
+     "name": "AudioListener"
+    },
+    {
+     "ghidra": "0x2069ae0",
+     "symbol": "_ZN4Aska13AudioListenerD1Ev",
+     "name": "~AudioListener"
+    },
+    {
+     "ghidra": "0x2069af4",
+     "symbol": "_ZN4Aska13AudioListenerD0Ev",
+     "name": "~AudioListener"
+    },
+    {
+     "ghidra": "0x2069b1c",
+     "symbol": "_ZN4Aska13AudioListener7ComputeEv",
+     "name": "Compute"
+    }
+   ]
+  },
+  {
+   "name": "WaveStreamView",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_000",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1020
+     },
+     "size": 1020
+    },
+    {
+     "offset": 1020,
+     "name": "m_pending",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 1024,
+     "name": "unk_400",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 808
+     },
+     "size": 808
+    },
+    {
+     "offset": 1832,
+     "name": "m_abort",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 1836,
+   "align": 4
+  },
+  {
+   "name": "WaveVoiceBase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 48,
+     "name": "m_buffer",
+     "type": {
+      "kind": "ptr",
+      "to": "WaveBuffer"
+     },
+     "size": 8
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2347b64",
+     "symbol": "_ZN4Aska13WaveVoiceBaseC2Ev",
+     "name": "WaveVoiceBase"
+    },
+    {
+     "ghidra": "0x2347b94",
+     "symbol": "_ZN4Aska13WaveVoiceBaseD2Ev",
+     "name": "~WaveVoiceBase"
+    },
+    {
+     "ghidra": "0x2347bb8",
+     "symbol": "_ZN4Aska13WaveVoiceBaseD0Ev",
+     "name": "~WaveVoiceBase"
+    },
+    {
+     "ghidra": "0x2347bbc",
+     "symbol": "_ZN4Aska13WaveVoiceBase17CreateVoiceCommonEPKvPKNS_16PackedPlayParamsE",
+     "name": "CreateVoiceCommon"
+    },
+    {
+     "ghidra": "0x2347c48",
+     "symbol": "_ZN4Aska13WaveVoiceBase11DeleteVoiceEv",
+     "name": "DeleteVoice"
+    },
+    {
+     "ghidra": "0x2347c5c",
+     "symbol": "_ZN4Aska13WaveVoiceBase9AudioKickEv",
+     "name": "AudioKick"
+    },
+    {
+     "ghidra": "0x2347d14",
+     "symbol": "_ZN4Aska13WaveVoiceBase11AudioSignalEm",
+     "name": "AudioSignal"
+    },
+    {
+     "ghidra": "0x2347d18",
+     "symbol": "_ZN4Aska13WaveVoiceBase18UpdateVolumeMatrixEv",
+     "name": "UpdateVolumeMatrix"
+    },
+    {
+     "ghidra": "0x2347d1c",
+     "symbol": "_ZN4Aska13WaveVoiceBase15UpdatePitchbendEv",
+     "name": "UpdatePitchbend"
+    }
+   ]
+  },
+  {
    "name": "SoundObject",
    "union": false,
    "fields": [
@@ -315,7 +612,25 @@
     },
     {
      "offset": 8,
-     "name": "unk_008",
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_018",
      "type": {
       "kind": "array",
       "of": {
@@ -323,9 +638,32 @@
        "size": 1,
        "signed": false
       },
-      "count": 480
+      "count": 272
      },
-     "size": 480
+     "size": 272
+    },
+    {
+     "offset": 296,
+     "name": "m_player",
+     "type": {
+      "kind": "ptr",
+      "to": "AudioPlayer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 304,
+     "name": "unk_130",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 184
+     },
+     "size": 184
     },
     {
      "offset": 488,
@@ -477,6 +815,361 @@
    ]
   },
   {
+   "name": "SoundHandle",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundHandle"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundHandle"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_object",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundObject"
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2070918",
+     "symbol": "_ZN4Aska11SoundHandleD0Ev",
+     "name": "~SoundHandle"
+    }
+   ]
+  },
+  {
+   "name": "SoundCommand",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundCommand"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundCommand"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "m_object",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundObject"
+     },
+     "size": 8
+    },
+    {
+     "offset": 40,
+     "name": "unk_28",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 128
+     },
+     "size": 128
+    }
+   ],
+   "size": 168,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2070944",
+     "symbol": "_ZN4Aska12SoundCommandD0Ev",
+     "name": "~SoundCommand"
+    },
+    {
+     "ghidra": "0x2346970",
+     "symbol": "_ZN4Aska12SoundCommand14ProcessCommandEPPS0_",
+     "name": "ProcessCommand"
+    },
+    {
+     "ghidra": "0x2346f78",
+     "symbol": "_ZN4Aska12SoundCommand15ProcessPauseAllEj",
+     "name": "ProcessPauseAll"
+    },
+    {
+     "ghidra": "0x2347028",
+     "symbol": "_ZN4Aska12SoundCommand16ProcessResumeAllEv",
+     "name": "ProcessResumeAll"
+    },
+    {
+     "ghidra": "0x23470bc",
+     "symbol": "_ZN4Aska12SoundCommand14ProcessPushBGMEPPS0_j",
+     "name": "ProcessPushBGM"
+    },
+    {
+     "ghidra": "0x23472f0",
+     "symbol": "_ZN4Aska12SoundCommand13ProcessPopBGMEPPS0_j",
+     "name": "ProcessPopBGM"
+    },
+    {
+     "ghidra": "0x2347460",
+     "symbol": "_ZN4Aska12SoundCommand24ProcessCreateAuxEffectorEjjNS_6ESound10EDspEffectEPKv",
+     "name": "ProcessCreateAuxEffector"
+    },
+    {
+     "ghidra": "0x23474fc",
+     "symbol": "_ZN4Aska12SoundCommand24ProcessDeleteAuxEffectorEj",
+     "name": "ProcessDeleteAuxEffector"
+    },
+    {
+     "ghidra": "0x2347538",
+     "symbol": "_ZN4Aska12SoundCommand23ProcessInstallDspEffectEjjNS_6ESound10EDspEffectEPKv",
+     "name": "ProcessInstallDspEffect"
+    },
+    {
+     "ghidra": "0x23475ac",
+     "symbol": "_ZN4Aska12SoundCommand25ProcessUninstallDspEffectEjj",
+     "name": "ProcessUninstallDspEffect"
+    },
+    {
+     "ghidra": "0x23475fc",
+     "symbol": "_ZN4Aska12SoundCommand25ProcessConnectAuxEffectorEjjj",
+     "name": "ProcessConnectAuxEffector"
+    },
+    {
+     "ghidra": "0x2347640",
+     "symbol": "_ZN4Aska12SoundCommand28ProcessDisconnectAuxEffectorEj",
+     "name": "ProcessDisconnectAuxEffector"
+    },
+    {
+     "ghidra": "0x2347668",
+     "symbol": "_ZN4Aska12SoundCommand12ErrorHandlerEv",
+     "name": "ErrorHandler"
+    },
+    {
+     "ghidra": "0x23476fc",
+     "symbol": "_ZN4Aska12SoundCommand14ArrangeCommandEPNS_5TListIS0_EE",
+     "name": "ArrangeCommand"
+    }
+   ]
+  },
+  {
+   "name": "TList<SoundHandle>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_sentinel",
+     "type": {
+      "kind": "struct",
+      "name": "SoundHandle"
+     },
+     "size": 32
+    },
+    {
+     "offset": 40,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 44,
+     "name": "unk_count",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 48,
+   "align": 8
+  },
+  {
+   "name": "TList<SoundCommand>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_sentinel",
+     "type": {
+      "kind": "struct",
+      "name": "SoundCommand"
+     },
+     "size": 168
+    },
+    {
+     "offset": 176,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 180,
+     "name": "unk_count",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 184,
+   "align": 8
+  },
+  {
+   "name": "TList<SoundObject>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_sentinel",
+     "type": {
+      "kind": "struct",
+      "name": "SoundObject"
+     },
+     "size": 504
+    },
+    {
+     "offset": 512,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 516,
+     "name": "unk_count",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 520,
+   "align": 8
+  },
+  {
    "name": "SoundManager",
    "union": false,
    "fields": [
@@ -542,9 +1235,145 @@
        "size": 1,
        "signed": false
       },
-      "count": 4576
+      "count": 160
      },
-     "size": 4576
+     "size": 160
+    },
+    {
+     "offset": 232,
+     "name": "m_soundServer",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 240,
+     "name": "unk_0f0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 472
+     },
+     "size": 472
+    },
+    {
+     "offset": 712,
+     "name": "m_handles",
+     "type": {
+      "kind": "struct",
+      "name": "TList<SoundHandle>"
+     },
+     "size": 48
+    },
+    {
+     "offset": 760,
+     "name": "m_handleCs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 904,
+     "name": "unk_388",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1680
+     },
+     "size": 1680
+    },
+    {
+     "offset": 2584,
+     "name": "m_commands",
+     "type": {
+      "kind": "struct",
+      "name": "TList<SoundCommand>"
+     },
+     "size": 184
+    },
+    {
+     "offset": 2768,
+     "name": "unk_ad0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 304
+     },
+     "size": 304
+    },
+    {
+     "offset": 3072,
+     "name": "m_deleting",
+     "type": {
+      "kind": "struct",
+      "name": "TList<SoundObject>"
+     },
+     "size": 520
+    },
+    {
+     "offset": 3592,
+     "name": "m_commandCs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 3736,
+     "name": "unk_e98",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 288
+     },
+     "size": 288
+    },
+    {
+     "offset": 4024,
+     "name": "m_deletingCs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 4168,
+     "name": "unk_1048",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 480
+     },
+     "size": 480
     },
     {
      "offset": 4648,
@@ -1077,6 +1906,457 @@
      "ghidra": "0x23421e0",
      "symbol": "_ZN4Aska12SoundManager20DeleteAudioInterfaceEPNS_14AudioInterfaceE",
      "name": "DeleteAudioInterface"
+    }
+   ]
+  },
+  {
+   "name": "AudioPlayer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 24,
+     "name": "m_state",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "unk_1c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 252
+     },
+     "size": 252
+    },
+    {
+     "offset": 280,
+     "name": "m_voice",
+     "type": {
+      "kind": "ptr",
+      "to": "WaveVoiceBase"
+     },
+     "size": 8
+    }
+   ],
+   "size": 288,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x23440b4",
+     "symbol": "_ZN4Aska11AudioPlayerC2Ev",
+     "name": "AudioPlayer"
+    },
+    {
+     "ghidra": "0x2344110",
+     "symbol": "_ZN4Aska11AudioPlayerD1Ev",
+     "name": "~AudioPlayer"
+    },
+    {
+     "ghidra": "0x2344164",
+     "symbol": "_ZN4Aska11AudioPlayerD0Ev",
+     "name": "~AudioPlayer"
+    },
+    {
+     "ghidra": "0x2344168",
+     "symbol": "_ZN4Aska11AudioPlayer11SetupDeviceEv",
+     "name": "SetupDevice"
+    },
+    {
+     "ghidra": "0x23441dc",
+     "symbol": "_ZN4Aska11AudioPlayer12FinishDeviceEv",
+     "name": "FinishDevice"
+    },
+    {
+     "ghidra": "0x2344214",
+     "symbol": "_ZN4Aska11AudioPlayer11SendMessageEjPvS1_",
+     "name": "SendMessage"
+    },
+    {
+     "ghidra": "0x234446c",
+     "symbol": "_ZN4Aska11AudioPlayer10GetMessageEPNS_12AudioMessageE",
+     "name": "GetMessage"
+    },
+    {
+     "ghidra": "0x23445f4",
+     "symbol": "_ZN4Aska11AudioPlayer8AudioRunEv",
+     "name": "AudioRun"
+    },
+    {
+     "ghidra": "0x2344724",
+     "symbol": "_ZN4Aska11AudioPlayer14SetDeviceParamEjff",
+     "name": "SetDeviceParam"
+    },
+    {
+     "ghidra": "0x23447b0",
+     "symbol": "_ZN4Aska11AudioPlayer14GetDeviceParamEj",
+     "name": "GetDeviceParam"
+    }
+   ]
+  },
+  {
+   "name": "WaitingNoteNotify",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_note",
+     "type": {
+      "kind": "ptr",
+      "to": "AudioMessageNote"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_waiting",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 17,
+     "name": "unk_11",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 24,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x206b318",
+     "symbol": "_ZN4Aska10Sequencer217WaitingNoteNotify7HandlerEm",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x206b320",
+     "symbol": "_ZN4Aska10Sequencer217WaitingNoteNotifyD0Ev",
+     "name": "~WaitingNoteNotify"
+    }
+   ]
+  },
+  {
+   "name": "AudioMessageNote",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_prev",
+     "type": {
+      "kind": "ptr",
+      "to": "AudioMessageNote"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "AudioMessageNote"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_waitNotify",
+     "type": {
+      "kind": "ptr",
+      "to": "WaitingNoteNotify"
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_message",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "unk_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "m_arg0",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "m_arg1",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 56,
+     "name": "m_time",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "unk_3c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 64,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x206b36c",
+     "symbol": "_ZN4Aska16AudioMessageNoteD0Ev",
+     "name": "~AudioMessageNote"
+    }
+   ]
+  },
+  {
+   "name": "Sequencer2",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_player",
+     "type": {
+      "kind": "ptr",
+      "to": "AudioPlayer"
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_listVtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_sentinel",
+     "type": {
+      "kind": "struct",
+      "name": "AudioMessageNote"
+     },
+     "size": 64
+    },
+    {
+     "offset": 88,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 92,
+     "name": "unk_05c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 96,
+     "name": "m_cs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 240,
+     "name": "m_time",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 244,
+     "name": "m_step",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 248,
+     "name": "m_notify",
+     "type": {
+      "kind": "struct",
+      "name": "WaitingNoteNotify"
+     },
+     "size": 24
+    }
+   ],
+   "size": 272,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x206a53c",
+     "symbol": "_ZN4Aska10Sequencer2C2Ev",
+     "name": "Sequencer2"
+    },
+    {
+     "ghidra": "0x206a5b8",
+     "symbol": "_ZN4Aska10Sequencer2D2Ev",
+     "name": "~Sequencer2"
+    },
+    {
+     "ghidra": "0x206a5e0",
+     "symbol": "_ZN4Aska10Sequencer220DeleteAllMessageNoteEv",
+     "name": "DeleteAllMessageNote"
+    },
+    {
+     "ghidra": "0x206a790",
+     "symbol": "_ZN4Aska10Sequencer2D0Ev",
+     "name": "~Sequencer2"
+    },
+    {
+     "ghidra": "0x206a7cc",
+     "symbol": "_ZN4Aska10Sequencer28AudioRunEv",
+     "name": "AudioRun"
+    },
+    {
+     "ghidra": "0x206a81c",
+     "symbol": "_ZN4Aska10Sequencer218ArrangeMessageNoteEv",
+     "name": "ArrangeMessageNote"
+    },
+    {
+     "ghidra": "0x206ac1c",
+     "symbol": "_ZN4Aska10Sequencer218ProcessMessageNoteEv",
+     "name": "ProcessMessageNote"
+    },
+    {
+     "ghidra": "0x206af34",
+     "symbol": "_ZNK4Aska10Sequencer213IsWaitingNoteEPNS_16AudioMessageNoteE",
+     "name": "IsWaitingNote"
+    },
+    {
+     "ghidra": "0x206af60",
+     "symbol": "_ZN4Aska10Sequencer217DeleteMessageNoteEPNS_16AudioMessageNoteE",
+     "name": "DeleteMessageNote"
+    },
+    {
+     "ghidra": "0x206b104",
+     "symbol": "_ZN4Aska10Sequencer214AddMessageNoteEjfPKvS2_",
+     "name": "AddMessageNote"
     }
    ]
   },
@@ -1870,6 +3150,64 @@
      "ghidra": "0x1f9a804",
      "symbol": "_ZNK9Framework13CSoundManager17rElementContainerEv",
      "name": "rElementContainer"
+    }
+   ]
+  },
+  {
+   "name": "WaveBuffer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_stream",
+     "type": {
+      "kind": "ptr",
+      "to": "WaveStreamView"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x233db88",
+     "symbol": "_ZN4Aska10WaveBufferD2Ev",
+     "name": "~WaveBuffer"
+    },
+    {
+     "ghidra": "0x2347750",
+     "symbol": "_ZN4Aska10WaveBuffer12CreateBufferEPNS_16MultiMediaStreamEPKNS_3AFF7AaoWAVEE",
+     "name": "CreateBuffer"
+    },
+    {
+     "ghidra": "0x234776c",
+     "symbol": "_ZN4Aska10WaveBuffer12DeleteBufferEv",
+     "name": "DeleteBuffer"
+    },
+    {
+     "ghidra": "0x2347794",
+     "symbol": "_ZN4Aska10WaveBuffer10LockBufferEPPvmb",
+     "name": "LockBuffer"
+    },
+    {
+     "ghidra": "0x234784c",
+     "symbol": "_ZN4Aska10WaveBuffer12UnlockBufferEv",
+     "name": "UnlockBuffer"
+    },
+    {
+     "ghidra": "0x2347ca4",
+     "symbol": "_ZN4Aska10WaveBufferD0Ev",
+     "name": "~WaveBuffer"
     }
    ]
   }

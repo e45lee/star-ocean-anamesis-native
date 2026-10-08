@@ -562,18 +562,18 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x223db88	0x233db88	24	_ZN4Aska10WaveBufferD2Ev	Aska::WaveBuffer::~WaveBuffer()	voice	decompiled	
 0x223dbd4	0x233dbd4	4	_ZN4Aska6TQueueINS_7SLVoice18AdpcmSubmitContextELi3EED0Ev	Aska::TQueue<Aska::SLVoice::AdpcmSubmitContext, 3>::~TQueue()	voice	decompiled	
 0x223dbd8	0x233dbd8	4	_ZN4Aska6TQueueINS_7SLVoice16OggSubmitContextELi8EED0Ev	Aska::TQueue<Aska::SLVoice::OggSubmitContext, 8>::~TQueue()	voice	decompiled	
-0x223dbdc	0x233dbdc	120	_ZN4Aska9AskaADPCM4InitEiii	Aska::AskaADPCM::Init(int, int, int)	codec	decompiled	
+0x223dbdc	0x233dbdc	120	_ZN4Aska9AskaADPCM4InitEiii	Aska::AskaADPCM::Init(int, int, int)	codec	tested	audio_adpcm.cpp; live check audio_leaf
 0x223dc54	0x233dc54	68	_ZN4Aska9AskaADPCM6EncodeEPKhjPh	Aska::AskaADPCM::Encode(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
 0x223dc98	0x233dc98	1304	_ZN4Aska9AskaADPCM10Encode_M08EPKhjPh	Aska::AskaADPCM::Encode_M08(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
 0x223e1b0	0x233e1b0	1284	_ZN4Aska9AskaADPCM10Encode_M16EPKhjPh	Aska::AskaADPCM::Encode_M16(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
 0x223e6b4	0x233e6b4	1324	_ZN4Aska9AskaADPCM10Encode_S08EPKhjPh	Aska::AskaADPCM::Encode_S08(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
 0x223ebe0	0x233ebe0	1304	_ZN4Aska9AskaADPCM10Encode_S16EPKhjPh	Aska::AskaADPCM::Encode_S16(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
-0x223f0f8	0x233f0f8	68	_ZN4Aska9AskaADPCM6DecodeEPKhjPh	Aska::AskaADPCM::Decode(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
-0x223f13c	0x233f13c	476	_ZN4Aska9AskaADPCM10Decode_M08EPKhjPh	Aska::AskaADPCM::Decode_M08(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
-0x223f318	0x233f318	460	_ZN4Aska9AskaADPCM10Decode_M16EPKhjPh	Aska::AskaADPCM::Decode_M16(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
-0x223f4e4	0x233f4e4	492	_ZN4Aska9AskaADPCM10Decode_S08EPKhjPh	Aska::AskaADPCM::Decode_S08(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
-0x223f6d0	0x233f6d0	476	_ZN4Aska9AskaADPCM10Decode_S16EPKhjPh	Aska::AskaADPCM::Decode_S16(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
-0x223f8ac	0x233f8ac	44	_ZN4Aska9AskaADPCM18GetSamplesPerBlockEii	Aska::AskaADPCM::GetSamplesPerBlock(int, int)	codec	decompiled	
+0x223f0f8	0x233f0f8	68	_ZN4Aska9AskaADPCM6DecodeEPKhjPh	Aska::AskaADPCM::Decode(unsigned char const*, unsigned int, unsigned char*)	codec	tested	audio_adpcm.cpp; live check audio_leaf
+0x223f13c	0x233f13c	476	_ZN4Aska9AskaADPCM10Decode_M08EPKhjPh	Aska::AskaADPCM::Decode_M08(unsigned char const*, unsigned int, unsigned char*)	codec	tested	audio_adpcm.cpp; live-checked inside Decode (the guest calls them only through it)
+0x223f318	0x233f318	460	_ZN4Aska9AskaADPCM10Decode_M16EPKhjPh	Aska::AskaADPCM::Decode_M16(unsigned char const*, unsigned int, unsigned char*)	codec	tested	audio_adpcm.cpp; live-checked inside Decode (the guest calls them only through it)
+0x223f4e4	0x233f4e4	492	_ZN4Aska9AskaADPCM10Decode_S08EPKhjPh	Aska::AskaADPCM::Decode_S08(unsigned char const*, unsigned int, unsigned char*)	codec	tested	audio_adpcm.cpp; live-checked inside Decode (the guest calls them only through it)
+0x223f6d0	0x233f6d0	476	_ZN4Aska9AskaADPCM10Decode_S16EPKhjPh	Aska::AskaADPCM::Decode_S16(unsigned char const*, unsigned int, unsigned char*)	codec	tested	audio_adpcm.cpp; live-checked inside Decode (the guest calls them only through it)
+0x223f8ac	0x233f8ac	44	_ZN4Aska9AskaADPCM18GetSamplesPerBlockEii	Aska::AskaADPCM::GetSamplesPerBlock(int, int)	codec	native	audio_adpcm.cpp; not called in the flows
 0x223f9a4	0x233f9a4	36	_ZN4Aska7AskaOGG16InitializeMemoryEv	Aska::AskaOGG::InitializeMemory()	codec	decompiled	
 0x223f9c8	0x233f9c8	64	_ZN4Aska7AskaOGGC2Ev	Aska::AskaOGG::AskaOGG()	codec	decompiled	
 0x223fa08	0x233fa08	424	_ZN4Aska7AskaOGG10DecodeInitEjj	Aska::AskaOGG::DecodeInit(unsigned int, unsigned int)	codec	decompiled	
@@ -681,14 +681,14 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2245824	0x2345824	8	_ZN4Aska10WavePlayer3SetEmPKv	Aska::WavePlayer::Set(unsigned long, void const*)	voice	decompiled	
 0x2245868	0x2345868	68	_ZNK4Aska10WavePlayer10GetClassIDEi	Aska::WavePlayer::GetClassID(int) const	voice	decompiled	
 0x22458ac	0x23458ac	8	_ZNK4Aska10WavePlayer11GetThisTypeEv	Aska::WavePlayer::GetThisType() const	voice	decompiled	
-0x224595c	0x234595c	580	_ZN4Aska17AudioSignalNotify18AddSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignalNotify::AddSignalVoiceList(Aska::SLVoice*)	mixer	decompiled	
-0x2245ba0	0x2345ba0	660	_ZN4Aska17AudioSignalNotify21DeleteSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignalNotify::DeleteSignalVoiceList(Aska::SLVoice*)	mixer	decompiled	
-0x2245e34	0x2345e34	536	_ZNK4Aska17AudioSignalNotify14GetSignalCountEv	Aska::AudioSignalNotify::GetSignalCount() const	mixer	decompiled	
-0x224604c	0x234604c	808	_ZN4Aska17AudioSignalNotify7HandlerEm	Aska::AudioSignalNotify::Handler(unsigned long)	mixer	decompiled	
+0x224595c	0x234595c	580	_ZN4Aska17AudioSignalNotify18AddSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignalNotify::AddSignalVoiceList(Aska::SLVoice*)	mixer	tested	audio_signal.cpp; live check audio
+0x2245ba0	0x2345ba0	660	_ZN4Aska17AudioSignalNotify21DeleteSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignalNotify::DeleteSignalVoiceList(Aska::SLVoice*)	mixer	tested	audio_signal.cpp; live check audio
+0x2245e34	0x2345e34	536	_ZNK4Aska17AudioSignalNotify14GetSignalCountEv	Aska::AudioSignalNotify::GetSignalCount() const	mixer	tested	audio_signal.cpp; live check audio
+0x224604c	0x234604c	808	_ZN4Aska17AudioSignalNotify7HandlerEm	Aska::AudioSignalNotify::Handler(unsigned long)	mixer	tested	audio_signal.cpp; live check audio
 0x2246374	0x2346374	4	_ZN4Aska11AudioSignal10DeleteThisEPNS_13DeleteManagerE	Aska::AudioSignal::DeleteThis(Aska::DeleteManager*)	mixer	decompiled	
-0x2246378	0x2346378	132	_ZN4Aska11AudioSignal18AddSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignal::AddSignalVoiceList(Aska::SLVoice*)	mixer	decompiled	
-0x22463fc	0x23463fc	60	_ZN4Aska11AudioSignal21DeleteSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignal::DeleteSignalVoiceList(Aska::SLVoice*)	mixer	decompiled	
-0x2246438	0x2346438	164	_ZN4Aska11AudioSignal3RunEi	Aska::AudioSignal::Run(int)	mixer	decompiled	
+0x2246378	0x2346378	132	_ZN4Aska11AudioSignal18AddSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignal::AddSignalVoiceList(Aska::SLVoice*)	mixer	typed	
+0x22463fc	0x23463fc	60	_ZN4Aska11AudioSignal21DeleteSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignal::DeleteSignalVoiceList(Aska::SLVoice*)	mixer	typed	
+0x2246438	0x2346438	164	_ZN4Aska11AudioSignal3RunEi	Aska::AudioSignal::Run(int)	mixer	typed	
 0x22464dc	0x23464dc	16	_ZN4Aska23AudioSafetySignalNotify10InitializeEPNS_5EventE	Aska::AudioSafetySignalNotify::Initialize(Aska::Event*)	mixer	decompiled	
 0x22464ec	0x23464ec	8	_ZN4Aska23AudioSafetySignalNotify8FinalizeEv	Aska::AudioSafetySignalNotify::Finalize()	mixer	decompiled	
 0x22464f4	0x23464f4	80	_ZN4Aska23AudioSafetySignalNotify7HandlerEm	Aska::AudioSafetySignalNotify::Handler(unsigned long)	mixer	decompiled	

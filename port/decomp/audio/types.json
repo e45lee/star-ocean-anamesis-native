@@ -2,5 +2,303 @@
  "subsystem": "audio",
  "generated_by": "tools/subsystem.py export-types audio",
  "header": "port/src/native/audio/audio_layout.h",
- "structs": []
+ "structs": [
+  {
+   "name": "AudioSignalNotify",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_voices",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 20
+     },
+     "size": 160
+    },
+    {
+     "offset": 168,
+     "name": "m_cs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    }
+   ],
+   "size": 312,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x234595c",
+     "symbol": "_ZN4Aska17AudioSignalNotify18AddSignalVoiceListEPNS_7SLVoiceE",
+     "name": "AddSignalVoiceList"
+    },
+    {
+     "ghidra": "0x2345ba0",
+     "symbol": "_ZN4Aska17AudioSignalNotify21DeleteSignalVoiceListEPNS_7SLVoiceE",
+     "name": "DeleteSignalVoiceList"
+    },
+    {
+     "ghidra": "0x2345e34",
+     "symbol": "_ZNK4Aska17AudioSignalNotify14GetSignalCountEv",
+     "name": "GetSignalCount"
+    },
+    {
+     "ghidra": "0x234604c",
+     "symbol": "_ZN4Aska17AudioSignalNotify7HandlerEm",
+     "name": "Handler"
+    },
+    {
+     "ghidra": "0x23465f8",
+     "symbol": "_ZN4Aska17AudioSignalNotifyD2Ev",
+     "name": "~AudioSignalNotify"
+    },
+    {
+     "ghidra": "0x234660c",
+     "symbol": "_ZN4Aska17AudioSignalNotifyD0Ev",
+     "name": "~AudioSignalNotify"
+    }
+   ]
+  },
+  {
+   "name": "AudioSignal",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_task",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::Task",
+      "size": 40
+     },
+     "size": 40
+    },
+    {
+     "offset": 40,
+     "name": "m_notify",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "struct",
+       "name": "AudioSignalNotify"
+      },
+      "count": 2
+     },
+     "size": 624
+    },
+    {
+     "offset": 664,
+     "name": "m_lastRunTime",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 668,
+     "name": "unk_29c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 672,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2346374",
+     "symbol": "_ZN4Aska11AudioSignal10DeleteThisEPNS_13DeleteManagerE",
+     "name": "DeleteThis"
+    },
+    {
+     "ghidra": "0x2346378",
+     "symbol": "_ZN4Aska11AudioSignal18AddSignalVoiceListEPNS_7SLVoiceE",
+     "name": "AddSignalVoiceList"
+    },
+    {
+     "ghidra": "0x23463fc",
+     "symbol": "_ZN4Aska11AudioSignal21DeleteSignalVoiceListEPNS_7SLVoiceE",
+     "name": "DeleteSignalVoiceList"
+    },
+    {
+     "ghidra": "0x2346438",
+     "symbol": "_ZN4Aska11AudioSignal3RunEi",
+     "name": "Run"
+    },
+    {
+     "ghidra": "0x2346634",
+     "symbol": "_ZN4Aska11AudioSignalD2Ev",
+     "name": "~AudioSignal"
+    },
+    {
+     "ghidra": "0x2346684",
+     "symbol": "_ZN4Aska11AudioSignalD0Ev",
+     "name": "~AudioSignal"
+    },
+    {
+     "ghidra": "0x23466dc",
+     "symbol": "_ZNK4Aska11AudioSignal10GetClassIDEi",
+     "name": "GetClassID"
+    },
+    {
+     "ghidra": "0x2346724",
+     "symbol": "_ZNK4Aska11AudioSignal15GetDefaultLevelEv",
+     "name": "GetDefaultLevel"
+    }
+   ]
+  },
+  {
+   "name": "AskaADPCM",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_channels",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_bits",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_blockSize",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_encPredictor",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 2
+     },
+     "size": 8
+    },
+    {
+     "offset": 20,
+     "name": "m_encStep",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": true
+      },
+      "count": 2
+     },
+     "size": 8
+    }
+   ],
+   "size": 28,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x233dbdc",
+     "symbol": "_ZN4Aska9AskaADPCM4InitEiii",
+     "name": "Init"
+    },
+    {
+     "ghidra": "0x233dc54",
+     "symbol": "_ZN4Aska9AskaADPCM6EncodeEPKhjPh",
+     "name": "Encode"
+    },
+    {
+     "ghidra": "0x233dc98",
+     "symbol": "_ZN4Aska9AskaADPCM10Encode_M08EPKhjPh",
+     "name": "Encode_M08"
+    },
+    {
+     "ghidra": "0x233e1b0",
+     "symbol": "_ZN4Aska9AskaADPCM10Encode_M16EPKhjPh",
+     "name": "Encode_M16"
+    },
+    {
+     "ghidra": "0x233e6b4",
+     "symbol": "_ZN4Aska9AskaADPCM10Encode_S08EPKhjPh",
+     "name": "Encode_S08"
+    },
+    {
+     "ghidra": "0x233ebe0",
+     "symbol": "_ZN4Aska9AskaADPCM10Encode_S16EPKhjPh",
+     "name": "Encode_S16"
+    },
+    {
+     "ghidra": "0x233f0f8",
+     "symbol": "_ZN4Aska9AskaADPCM6DecodeEPKhjPh",
+     "name": "Decode"
+    },
+    {
+     "ghidra": "0x233f13c",
+     "symbol": "_ZN4Aska9AskaADPCM10Decode_M08EPKhjPh",
+     "name": "Decode_M08"
+    },
+    {
+     "ghidra": "0x233f318",
+     "symbol": "_ZN4Aska9AskaADPCM10Decode_M16EPKhjPh",
+     "name": "Decode_M16"
+    },
+    {
+     "ghidra": "0x233f4e4",
+     "symbol": "_ZN4Aska9AskaADPCM10Decode_S08EPKhjPh",
+     "name": "Decode_S08"
+    },
+    {
+     "ghidra": "0x233f6d0",
+     "symbol": "_ZN4Aska9AskaADPCM10Decode_S16EPKhjPh",
+     "name": "Decode_S16"
+    },
+    {
+     "ghidra": "0x233f8ac",
+     "symbol": "_ZN4Aska9AskaADPCM18GetSamplesPerBlockEii",
+     "name": "GetSamplesPerBlock"
+    }
+   ]
+  }
+ ]
 }

@@ -98,6 +98,50 @@ def same_ja(gl_ja, ja):
     return "id-ws" if k and ws_key(gl_ja) == k else None
 
 
+def credit_form(en, ja):
+    """Global's credit rows (english.md 7.9 "official-credit"): an English text whose Japanese is a
+    name kept as written, "<ja>\\n\\n<romanization>" (cp0303_b04a_prmsg_02 "太子\\n\\nTaishi", the
+    illustrators): everything before the first line break is `ja` but for white space (ws_key, some text
+    left), and after it there is text without kana or kanji. Any other English with Japanese in it
+    (【未翻訳】…, 【N版】…, Global's "untranslated" and work markers) is not. Master encoding or real
+    newlines."""
+    u = unesc(en or "")
+    i = u.find("\n")
+    if i < 0:
+        return False
+    k = ws_key(ja)
+    return bool(k) and ws_key(u[:i]) == k and bool(ws_key(u[i:])) and not has_kana(u[i:])
+
+
+# english.md 7.9 "official-near": the Japanese texts 3.7.0 reworded only in punctuation, white space,
+# full/half width or these abbreviations of the same term (each pair: the long form -> the short one,
+# applied in this order). A changed word, number or name is not "near".
+NEAR_PUNCT = "、。,.・!?「」『』…"
+NEAR_PAIRS = (("クリティカルダメージ", "クリダメ"), ("クリティカル発生率", "クリティカル率"), ("ダメージ", "ダメ"),
+              ("秒間", "秒"), ("付与する", "付与"), ("の時に", "時"), ("時に", "時"), ("使用で", "使用時"),
+              ("ごとに", "毎"), ("毎に", "毎"))
+
+
+def near_key(s):
+    """The key of the near match: NFKC, white space (str.isspace) and NEAR_PUNCT removed, NEAR_PAIRS."""
+    t = "".join(c for c in unicodedata.normalize("NFKC", unesc(s or "")) if not (c.isspace() or c in NEAR_PUNCT))
+    for a, b in NEAR_PAIRS:
+        t = t.replace(a, b)
+    return t
+
+
+def near_ja(gl_ja, ja, en):
+    """Whether Global's English `en` (for its Japanese gl_ja) may serve 3.7.0's `ja` by the rule
+    official-near: the near keys are equal and non-empty, and the numbers of `en` are those of `ja`
+    (as sets; NFKC digits), so an English that doesn't match its own Japanese isn't carried over."""
+    if gl_ja is None:
+        return False
+    k = near_key(ja)
+    if not k or near_key(gl_ja) != k:
+        return False
+    return set(NUM.findall(en)) == set(NUM.findall(unicodedata.normalize("NFKC", unesc(ja))))
+
+
 # ---------------------------------------------------------------- sources
 
 class Sources:
@@ -137,7 +181,7 @@ class Sources:
     def gl_english(self, mid):
         """Global's `en` for mid if it is real, usable English, else None (filters 1, 2, 4, 5)."""
         en, ja = self.gl_en.get(mid), self.gl_ja.get(mid)
-        if not en or has_kana(en) or en == ja or GL_TOKEN.search(en):
+        if not en or (has_kana(en) and not credit_form(en, ja)) or en == ja or GL_TOKEN.search(en):
             return None
         if SPEC_STRICT.findall(en) != SPEC_STRICT.findall(ja or ""):
             return None
@@ -156,6 +200,12 @@ class Sources:
     def official(self, mid, ja):
         en = self.gl_english(mid)
         return en if en is not None and same_ja(self.gl_ja.get(mid), ja) else None
+
+    def official_near(self, mid, ja):
+        """Global's English by id for a Japanese text 3.7.0 changed only as near_ja allows (rule
+        official-near; asked only when id, E3, memory and template give nothing)."""
+        en = self.gl_english(mid)
+        return en if en is not None and near_ja(self.gl_ja.get(mid), ja, en) else None
 
     def official_e3(self, mid, ja):
         """(english, None) from a Global token row rewritten by E3, (None, reason) when the row has
@@ -534,10 +584,11 @@ def _tags_subset(tj, te):
     return opens == te.count("</font>")
 
 
-def check(ja, en, font, glossary=None, budget=None, tags="strict"):
+def check(ja, en, font, glossary=None, budget=None, tags="strict", credit=False):
     """Problems of an English row for a Japanese one, as a dict (empty = fine). Both texts with real
     newlines. tags: "strict" (the same tags; machine rows, story lines) or "subset" (label rows from
-    Global or a person: _tags_subset)."""
+    Global or a person: _tags_subset). credit: Global's credit form (credit_form: the Japanese name,
+    then its romanization) passes the kana check (derived master rows only)."""
     p = {}
     sj, tj = protected(ja)
     se, te = protected(en)
@@ -549,7 +600,7 @@ def check(ja, en, font, glossary=None, budget=None, tags="strict"):
         p["positional"] = True  # the port's printf has no positional arguments (docs/english.md 3.3)
     if tj != te and not (tags == "subset" and _tags_subset(tj, te)):
         p["tags"] = [tj, te]
-    if has_kana(en):
+    if has_kana(en) and not (credit and credit_form(en, ja)):
         p["kana"] = True
     miss = font.missing(en)
     if miss:

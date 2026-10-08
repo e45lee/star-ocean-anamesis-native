@@ -8,7 +8,9 @@
 // finished and checked by tools/english_text.py) are merged on top with the same precedence:
 //   human / reviewed > official (by id, then E3) > memory (exact) / template > machine > Japanese.
 // "By id" and the exact memory also take a Japanese text that differs only in white space
-// (english.md 7.9: id-ws, memory-ws).
+// (english.md 7.9: id-ws, memory-ws). A Global credit row ("<the Japanese name>\n\n<romanization>")
+// counts as English (official-credit), and a row with nothing else takes Global's English of its id
+// when 3.7.0 changed the Japanese only in punctuation or an abbreviation (official-near; 7.9, 7.18).
 // Port code, not guest behaviour; every rule is (a) Global's text or (d) the derivation's choice.
 #include <cstdint>
 #include <map>
@@ -67,7 +69,7 @@ struct Derived {
     // Global's English for the same Japanese (the memory: exact, memory-ws, template), finished as a
     // master row: (sha1 of the label, English, memory | template)
     Table labels;
-    size_t official = 0, e3 = 0, memory = 0, templ = 0, failing = 0, story_official = 0, story_failing = 0;
+    size_t official = 0, e3 = 0, memory = 0, templ = 0, near = 0, failing = 0, story_official = 0, story_failing = 0;
 };
 bool derive(const DeriveInput& in, Derived& out, std::string* err);
 

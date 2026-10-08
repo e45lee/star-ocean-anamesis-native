@@ -1,0 +1,80 @@
+{
+ "source": "UI/etc2/character_profile.csf",
+ "note": "the portrait's round buttons (the character detail's illustration tapped; english.md 7.18). No Global English for these buttons: our wording, in the terms of Global's other screens (Profile, voice).",
+ "styles": {
+  "round": {
+   "size": 17,
+   "bold": 1,
+   "fill": "#e4ffff",
+   "glow": "#00b4ffd0",
+   "glow_radius": 2,
+   "outline": "#0a4c8cc0",
+   "outline_width": 1
+  }
+ },
+ "labels": [
+  {
+   "jp": "ボイス再生",
+   "text": "Play Voice",
+   "sprites": [
+    "btn_voice_off.png",
+    "btn_voice_on.png"
+   ],
+   "box": [
+    5,
+    66,
+    90,
+    19
+   ],
+   "cover": [
+    12,
+    66,
+    78,
+    20
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "プロフィール",
+   "text": "Profile",
+   "sprites": [
+    "btn_profile_off.png",
+    "btn_profile_on.png"
+   ],
+   "box": [
+    5,
+    66,
+    90,
+    19
+   ],
+   "cover": [
+    11,
+    66,
+    80,
+    20
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "ボイス変更",
+   "text": "Change Voice",
+   "sprites": [
+    "btn_voicechange_off.png",
+    "btn_voicechange_on.png"
+   ],
+   "box": [
+    5,
+    66,
+    90,
+    19
+   ],
+   "cover": [
+    12,
+    66,
+    78,
+    20
+   ],
+   "style": "round"
+  }
+ ]
+}

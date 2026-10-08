@@ -801,11 +801,107 @@ bool wrap_fits_frame(const CCocosLabel* l, const Geometry& g, soa::text::Extent 
 
 const char* by_name(text::RoomBy by) { return by == text::RoomBy::sibling ? "sibling" : by == text::RoomBy::parent ? "parent" : "screen"; }
 
+// ---- the character profile's caption / value rows (english.md 7.18) ------------------------------
+// UI/etc2/character_profile.csf lays its rows out as a caption and a value label side by side, the
+// value where the short Japanese caption ends: pop_0/pop/cv/{title,name} (CV：), pop_0/pop/
+// illustrater/{title,name} (イラストレーター：) under the portrait, pop_profile/window/title_bar/
+// Text_N_1 / Text_N_2 (出身：, 年齢：, 生年月日：) in the profile. The English captions ("Japanese VA:",
+// "Birthplace:", "Birthday:") are wider than the room before their value (under E10's 40% floor for
+// "Japanese VA:"): with --lang en the value is moved right to just after its caption's English, as the
+// layout's own positions would put it for that caption (the guest's SetPositionXY bookkeeping: +0x8c
+// and the dirty bits), and its own place comes back for a Japanese caption. The value is then kept on
+// one line and shrunk into the room left of it (E10), not wrapped into the row below.
+const char* profile_caption_of(const CCocosLabel* l) {
+    const cocos::CCocosNode* p = l->parent();
+    const cocos::CCocosNode* g = p ? p->parent() : nullptr;
+    const cocos::CCocosNode* gg = g ? g->parent() : nullptr;
+    if (!gg) return nullptr;
+    std::string_view n = l->name(), pn = p->m_name.view(), gn = g->m_name.view(), ggn = gg->m_name.view();
+    if (n == "name" && (pn == "cv" || pn == "illustrater") && gn == "pop" && ggn == "pop_0") return "title";
+    if (pn != "title_bar" || gn != "window" || ggn != "pop_profile") return nullptr;
+    if (n == "Text_2_2") return "Text_2_1";
+    if (n == "Text_3_2") return "Text_3_1";
+    if (n == "Text_6_2") return "Text_6_1";
+    return nullptr;
+}
+// The illustrator's credit: Global's rows are "<the Japanese name>\n\n<its romanization>" (english.md
+// 7.9 official-credit), three lines in a one-line row; shown on one line, the lines joined by spaces.
+bool is_profile_credit(const CCocosLabel* l) {
+    const cocos::CCocosNode* p = l->parent();
+    return l->name() == "name" && p && p->m_name.view() == "illustrater" && profile_caption_of(l);
+}
+std::string one_line(const std::string& s) {
+    std::string out;
+    size_t i = 0;
+    while (i <= s.size()) {
+        size_t j = s.find('\n', i);
+        if (j == std::string::npos) j = s.size();
+        std::string line = s.substr(i, j - i);
+        while (!line.empty() && line.back() == ' ') line.pop_back();
+        while (!line.empty() && line.front() == ' ') line.erase(0, 1);
+        if (!line.empty()) out += (out.empty() ? "" : "  ") + line;
+        i = j + 1;
+    }
+    return out;
+}
+
+struct Placed {
+    float base, moved;  // the value's own x (+0x8c) and the x this code gave it
+};
+std::mutex g_placed_mu;
+std::unordered_map<u64, Placed> g_placed;
+
+// SetPositionXY_ToRuntimeCoordinate's bookkeeping after it writes +0x8c (ELF 0x1eb77ec): the node's
+// dirty bits, then the root's "propagate before the next query" bit unless a propagation runs.
+void set_pos_x(CCocosLabel* l, float x) {
+    if (l->m_posX == x) return;
+    l->m_posX = x;
+    l->m_flags |= 0x5121df;
+    cocos::CCocosNode* root = l;
+    while (root->m_parent) root = (cocos::CCocosNode*)(uintptr_t)root->m_parent;
+    if (!(root->m_flags & 0x40000000u) && !(root->m_flags & 0x10000000u)) root->m_flags |= 0x20000000u;
+}
+
+void place_after_caption(u64 label, CCocosLabel* l, const char* caption) {
+    const CCocosLabel* cap = nullptr;
+    for (const cocos::CCocosNode* n = l->parent()->first_child(); n; n = n->next_sibling())
+        if (n != l && is_label(n) && n->m_name.view() == caption) cap = (const CCocosLabel*)n;
+    float base = l->m_posX;
+    {
+        std::lock_guard<std::mutex> lk(g_placed_mu);
+        auto it = g_placed.find(label);
+        if (it != g_placed.end() && it->second.moved == l->m_posX) base = it->second.base;
+    }
+    float want = base;
+    std::string ct = cap ? std::string(cap->text()) : std::string();
+    float cx = 0, cy = 0, csx = 0, csy = 0, vx = 0, vy = 0, vsx = 0, vsy = 0;
+    if (cap && cap->m_renderer && cap->shown() && !ct.empty() && !has_japanese(ct) && has_letters(ct) && world_prs(cap, &cx, &cy, &csx, &csy) &&
+        world_prs(l, &vx, &vy, &vsx, &vsy) && csx > 0.2f && vsx > 0.2f) {
+        // in world units: the caption's English ends at cap_right; the value's left edge (its anchor
+        // at its own x, its text growing right: anchor 0, the layout's) goes a third of the caption's
+        // font size after it
+        double cap_right = cx + (1 - cap->m_anchorX) * natural_extent(cap, drawn_text(cap, ct)).w * csx;
+        double need = cap_right + cap->m_fontSize * csx / 3;
+        double left_at_base = vx - (l->m_posX - base) * vsx;
+        if (l->m_anchorX == 0 && need > left_at_base) want = base + (float)((need - left_at_base) / vsx);
+    }
+    if (l->m_posX != want) {
+        if (want != base && first_time("\x07" + ct))
+            LOGI("p370", "lang: moved a profile value %.0f to the right of its caption \"%.40s\"", (want - base) * vsx, ct.c_str());
+        set_pos_x(l, want);
+    }
+    std::lock_guard<std::mutex> lk(g_placed_mu);
+    if (g_placed.size() > 4096) g_placed.clear();
+    g_placed[label] = {base, want};
+}
+
 void maybe_wrap(u64 label) {
     CCocosLabel* l = as_label(label);
     if (is_talk_text(l)) return fit_talk(label);
     if (is_profile_text(l)) return fit_profile(label);
     if (l->name() == "AppendMessage") return;
+    const char* caption = profile_caption_of(l);
+    if (caption) place_after_caption(label, l, caption);
     text::LabelStates& st = text::label_states();
     if (st.is_story(label)) return story_draw(label);
     std::string_view s = l->text();
@@ -821,6 +917,14 @@ void maybe_wrap(u64 label) {
     bool own_box = own.custom;
     if (!ours) src = std::string(s);
     if (!l->m_renderer || src.empty()) return;
+    if (caption && is_profile_credit(l) && src.find('\n') != std::string::npos) {
+        // Global's credit (the Japanese name, a blank line, the romanization) on the row's one line
+        std::string joined = one_line(src);
+        if (first_time("\x08" + src)) LOGI("p370", "lang: an illustrator credit on one line: \"%.60s\"", joined.c_str());
+        st.erase_text(label);
+        set_text(label, joined);
+        return;
+    }
     std::string drawn = drawn_text(l, src);
     // The wrap (breaking lines at spaces) is for texts of a few words; the room from the layout
     // (shrinking a label into it) for any English text, tag-mode labels too.
@@ -880,6 +984,9 @@ void maybe_wrap(u64 label) {
             // short label (up to three words: a name, a caption, a checkbox's text) wider than its
             // room: kept on one line and shrunk into it (to at least 50% / 60%, else wrapped), not
             // broken into lines that hang below the bar or a column of words.
+            out = kShrinkInBox;
+        } else if (caption && one_line && w * 0.5 <= rr) {
+            // a profile row's value (moved after its caption above): kept on its row, shrunk
             out = kShrinkInBox;
         } else {
             out = wrap_ok ? std::string() : src;

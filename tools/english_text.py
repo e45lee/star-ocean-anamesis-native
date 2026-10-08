@@ -343,7 +343,7 @@ def finish(ctx, glossary, source, en, ja):
         probs = C.check(e, e, font)
     else:
         probs = C.check(jn, e, font, glossary if source not in DERIVED else None,
-                        tags="strict" if source in MACHINE else "subset")
+                        tags="strict" if source in MACHINE else "subset", credit=source in DERIVED)
     return C.esc(e), probs, rebroken
 
 
@@ -381,16 +381,25 @@ class Derived:
                     self.token_gaps.append((mid, ja, src.gl_en[mid], why))
             if klass is not None and rule == "id-ws":
                 self.matched[mid] = "id-ws"
+            if klass == "official" and C.has_kana(off):
+                self.matched[mid] = "official-credit"  # english.md 7.9: a name and its romanization
             if klass is None:
                 if not C.has_kana(ja):
                     klass = "neutral"
                 else:
                     m, kind = mem.lookup(ja)
+                    near = src.official_near(mid, ja) if m is None else None
                     if m is not None:
                         klass = kind
                         cands.append(("template" if kind == "template" else "memory", m))
                         if kind == "exact_ws":
                             self.matched[mid] = "memory-ws"
+                    elif near is not None:
+                        # english.md 7.9 official-near: Global's English for this id's Japanese, which
+                        # 3.7.0 changed only in punctuation or an abbreviation (served as official)
+                        klass = "official_near"
+                        self.matched[mid] = "official-near"
+                        cands.append(("official", near))
                     else:
                         klass = "gap"
             if cands and cands[0][0] == "official":

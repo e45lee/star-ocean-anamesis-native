@@ -251,6 +251,60 @@ NATIVE_TEST("platform370/lang-story-scale") {
     }
 }
 
+// E10's room from a label's layout (text::layout_room, english.md 7.15): world rectangles, y down,
+// anchors as the nodes hold them (ay from the top).
+NATIVE_TEST("platform370/lang-layout-room") {
+    using platform370::text::layout_room;
+    using platform370::text::NodeRect;
+    using platform370::text::RoomBy;
+    struct Case {
+        const char* what;
+        NodeRect self;
+        bool has_parent;
+        NodeRect parent;
+        std::vector<NodeRect> siblings;
+        double k;
+        RoomBy by;
+    } cases[] = {
+        // a header title (left-anchored at 47) and its description (left-anchored at 330, anchored
+        // at its top): the title ends before the description
+        {"title", {47, 152, 0, 0.5, 340, 30, true}, false, {}, {{330, 143, 0, 0, 360, 18, true}}, (330 - 47 - 6) / 340.0, RoomBy::sibling},
+        // the description is not bounded by the title (it grows away from it)
+        {"description", {330, 143, 0, 0, 360, 18, true}, false, {}, {{47, 152, 0, 0.5, 340, 30, true}}, 1, RoomBy::none},
+        // a sibling hanging below the label's row (anchored at its top, under the label)
+        {"below", {47, 152, 0, 0.5, 340, 30, true}, false, {}, {{330, 160, 0, 0, 360, 18, true}}, 1, RoomBy::none},
+        // a centred button text and the icon on its left; the button is its parent
+        {"button", {380, 100, 0.5, 0.5, 330, 30, true}, true, {360, 100, 0.5, 0.5, 500, 90, false}, {{200, 100, 0.5, 0.5, 64, 64, false}},
+         (380 - 232 - 6) / 165.0, RoomBy::sibling},
+        // two table cells that face each other (left- and right-anchored) share the gap: one scale
+        {"cell left", {184, 50, 0, 0.5, 78, 24, true}, false, {}, {{425, 50, 1, 0.5, 193, 24, true}}, (425 - 184 - 6) / 271.0, RoomBy::sibling},
+        {"cell right", {425, 50, 1, 0.5, 193, 24, true}, false, {}, {{184, 50, 0, 0.5, 78, 24, true}}, (425 - 184 - 6) / 271.0, RoomBy::sibling},
+        // a plate behind the label (it spans the label's anchor) is not in the way
+        {"plate", {22, 12, 0, 0.5, 300, 24, true}, false, {}, {{140, 12, 0.5, 0.5, 280, 24, false}}, 1, RoomBy::none},
+        // a sibling on another row is not in the way
+        {"row", {22, 12, 0, 0.5, 300, 24, true}, false, {}, {{100, 60, 0.5, 0.5, 45, 45, false}}, 1, RoomBy::none},
+        // a label wider than the icon it is centred on: its parent's box
+        {"icon", {100, 50, 0.5, 0.5, 120, 24, true}, true, {100, 50, 0.5, 0.5, 96, 96, false}, {}, (148 - 6 - 100) / 60.0, RoomBy::parent},
+        // a parent that doesn't hold the label's anchor is not its frame
+        {"outside", {300, 50, 0, 0.5, 120, 24, true}, true, {100, 50, 0.5, 0.5, 96, 96, false}, {}, 1, RoomBy::none},
+        // a sibling that would need less than kMinSiblingScale overlaps by design
+        {"by design", {22, 12, 0, 0.5, 300, 24, true}, false, {}, {{60, 12, 0, 0.5, 40, 24, false}}, 1, RoomBy::none},
+        // the nearer of two bounds wins
+        {"nearest", {22, 12, 0, 0.5, 300, 24, true}, true, {150, 12, 0.5, 0.5, 300, 24, false}, {{280, 12, 0, 0.5, 30, 24, false}},
+         (280 - 22 - 6) / 300.0, RoomBy::sibling},
+    };
+    for (const Case& c : cases) {
+        platform370::text::LayoutRoom r = layout_room(c.self, c.has_parent ? &c.parent : nullptr, c.siblings);
+        if (std::fabs(r.k - c.k) > 1e-9 || r.by != c.by) t.fail("layout_room(%s) = %g by %d, want %g by %d", c.what, r.k, (int)r.by, c.k, (int)c.by);
+    }
+    // the free band: a list row (parent, y 820..910) with its name above the description; a plate
+    // behind the description doesn't end it
+    NodeRect desc{130, 886, 0, 0.5, 700, 21, true}, row{360, 865, 0.5, 0.5, 622, 90, false};
+    platform370::text::LayoutRoom r = layout_room(desc, &row, {{130, 860, 0, 0.5, 300, 26, true}, {360, 880, 0.5, 0.5, 600, 60, false}});
+    if (r.by != RoomBy::parent || r.frame_top != 873 || r.frame_bottom != 910)
+        t.fail("layout_room(row) band %g..%g by %d, want 873..910 by parent", r.frame_top, r.frame_bottom, (int)r.by);
+}
+
 // --lang en on the booted client: the hooked CCocosLabel::SetText on a stand-in label (only its
 // text, +0x230, and its flags, +0xcc, are written) with the client's real StringDB. The selftest
 // boots on the APK's built-in master, which has no port_en_* rows, so every literal keeps its

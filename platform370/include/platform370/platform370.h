@@ -28,8 +28,8 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#include <utility>
 #include <vector>
+#include <utility>
 
 #include <soa/line_break.h>
 
@@ -210,6 +210,8 @@ public:
     void keep_box(uint64_t label, const Box& own);
     // The kept box (and forgets it): false when the hook never changed this label's box.
     bool take_box(uint64_t label, Box* own);
+    // The kept box, still kept: false when the hook never changed this label's box.
+    bool peek_box(uint64_t label, Box* own);
     // A label marked as the story message window's (E13): the label wrap leaves it alone.
     void mark_story(uint64_t label);
     bool is_story(uint64_t label);
@@ -232,6 +234,39 @@ LabelStates& label_states();
 // broke them; tags drawn as nothing) fits the window's box, and the box (in the label's units at the
 // window's own FontSize 30 and line spacing 10, CEventScenarioMessageWindow::Show).
 double story_scale(std::string_view message, const soa::text::MeasureText& measure, double box_w, double box_h);
+
+// E10, the room a label's layout gives it (english.md 7.15): a node's rectangle in world units, y
+// down; (x, y) is its anchor point, (ax, ay) the anchor as the node holds it (+0x84; ay from the top:
+// Cocos Studio's AnchorPoint 1 reads 0), w x h its size.
+// For a label, w is the natural width of its text (unshrunk) and `label` is set: a label sibling
+// grows from its anchor too, so two labels that face each other share the gap between them.
+struct NodeRect {
+    double x, y, ax, ay, w, h;
+    bool label;
+    double left() const { return x - ax * w; }
+    double right() const { return left() + w; }
+    double top() const { return y - ay * h; }
+    double centre_y() const { return top() + h / 2; }
+};
+enum class RoomBy { none, parent, sibling };
+struct LayoutRoom {
+    double k = 1;  // the largest scale of the label's natural width that keeps it in its room (1: fits)
+    RoomBy by = RoomBy::none;
+    // the free band above and below the label (world y): its frame's box and the siblings above and
+    // below it over its width (+-1e9: none)
+    double frame_top = -1e9, frame_bottom = 1e9;
+};
+constexpr double kLayoutGap = 6;           // world units kept between a label and a sibling
+constexpr double kLayoutPad = 6;           // and inside its parent's box
+constexpr double kMinSiblingScale = 0.4;   // a sibling that would need less is overlapped by design
+constexpr double kMinParentScale = 0.3;    // (the same for a parent box)
+// The scale k at which `self` (a label, its text at its natural width) runs neither into a shown
+// sibling on its row (the label's vertical centre within half a height of the sibling's; a sibling
+// that spans the label's anchor, such as a background plate, is not in the way) nor out of the box
+// of `parent` (when the parent has a size and holds the label's anchor). A label grows from its
+// anchor: only the part of it on a sibling's side counts. Siblings and the parent are given shown
+// (hidden ones left out by the caller).
+LayoutRoom layout_room(const NodeRect& self, const NodeRect* parent, const std::vector<NodeRect>& siblings);
 }  // namespace text
 
 // The patch's rule, for a host that replaces CParameterUtility::FindGlobalStringWithKey itself

@@ -7791,7 +7791,7 @@ cn0002_b01a_prmsg_06_Ap	13a36ef6418782e5e5748a76451743f109b7d060	Class 3-E, Stud
 cn0002_b01b_hmmsg_01	931e48b3881da0ef30f1327712b4c6725446bfa7	A peaceful era is about to\ndawn upon both the\nAiryglyphs and the Aquaria. I\nguess my work here is done.	machine
 cn0002_b01b_hmmsg_02	8910f83f19c7298db7000da2a61cb950c5d3e219	It's for the best if a\nprofession like\nassassination doesn't\nexist.	machine
 cn0002_b01b_message	d3ad2e12dcfd22cdf921365d07080dc0b7593b0a	Slasher Boris	machine
-cn0002_b01b_prmsg_02	bd4b754f9e284857c8414dba9d1427c4eab4776c	Ant Bundle	machine
+cn0002_b01b_prmsg_02	bd4b754f9e284857c8414dba9d1427c4eab4776c	Arizuka	agent
 cn0002_b01b_prmsg_06	47953cdc051befd35719e08756178ab7164d2ec3	It is said that those who fall to his\nhand do not even realize their own\ndeath; he is an All Business assassin.\nHe accepts requests from both the\nAiryglyph and Aquaria factions, but\nhe holds a firm belief in never\ninvolving anyone other than the\ntarget. After seeing a Menodix boy\nswinging an axe, he has begun to\nthink that a weapon as large as one's\nown body might not be so bad.	machine
 cn0002_b02a_message	28377e06079437e01c2018a02fe8f003b5917800	Thief	machine
 cn0003_b01a_hmmsg_01_Ap	017b000cac05079a27a44e2070182ee6b8dc0b53	Does standing at the\nschool gate all day\nseem tough?" "Don't\nworry, I train for this\nevery day.	machine
@@ -7836,7 +7836,7 @@ cn0008_b01a_prmsg_06_Ap	da051368030435ad2fc475c6c1a7e87a34479a2f	Class 2-B, Stud
 cn0008_b01b_hmmsg_01	96acd3562324f6dffc07f347de791ef1c21b040e	Oh, sorry, Captain. For\nsome reason, whenever I\nhold a whip, I can't help\nbut smile... hehe.	machine
 cn0008_b01b_hmmsg_02	820b15d564f20d0e50c975b92e66c6eabf75960d	Alright, time to get\nback to work as the\ntraining instructor and\nkeep everyone in line!	machine
 cn0008_b01b_message	2516029a3262d518bdffcc49d3581c2d606390e0	Magic Whip Angelica	machine
-cn0008_b01b_prmsg_02	d5df3fdb2a2239d80587d501dd712d1b7042c94d	Ichiko Milk Tea Shop	machine
+cn0008_b01b_prmsg_02	d5df3fdb2a2239d80587d501dd712d1b7042c94d	Ichiko Milktei	agent
 cn0008_b01b_prmsg_06	6795cca8c8bd88ca3d7ce79b9141d16c0f3df6e0	A soldier who serves as a\ntraining instructor for the\nAquaria army. Given her age,\nher rapid rise through the\nranks is exceptional. Normally,\nshe is a spirited and\ndependable woman with a\nbig-sisterly personality, but she\nwears an ominous smile\nwhenever she has a whip in her\nhand.	machine
 cn0009_b01a_hmmsg_01_Ap	7fd83e68ea59b190bd3539cf65deb92d35f81e0e	The students at Anamne\nAcademy are all energetic\nand well-behaved. Though\nsome are a bit too\nenergetic.	machine
 cn0009_b01a_hmmsg_02_Ap	01d3d2ac76483aa5596d162363d0a6e37827733a	I hope everyone in the\nNewspaper Club hasn't\ngotten themselves into\nany trouble...	machine
@@ -8011,7 +8011,7 @@ cp0002_b04a_prmsg_02	6c0520958fa072903f7748b94fd26d6952b38d85	Crown Prince	machi
 cp0002_b05a_hmmsg_01	7502aeb6813c798d4faff33e241fa6b0d5f60b37	When it's sunny and\nhot, or after exercising,\nyou have to make sure\nto stay hydrated.	machine
 cp0002_b05a_hmmsg_02	2fa9793e650711fb286c92fdacb21cb6bd551ae9	Next time we have a\nswimming match, let's\ndo it in a pool instead\nof the ocean.	machine
 cp0002_b05a_message	65025e53c3edb70b4fa16a48577055857709782c	Evelysse of the Shore	machine
-cp0002_b05a_prmsg_02	f94b4a23f86575ca16f552571babd69826c1fc21	Hattori Mitsuru	machine
+cp0002_b05a_prmsg_02	f94b4a23f86575ca16f552571babd69826c1fc21	Mitsuru Hattori	agent
 cp0002_b05a_prmsg_06	5f91b1cfc33693104a79bacb0c79e362cd6b28d8	A woman the protagonists\nmet on a planet in a sector\nof space where they were\ncast after being caught in a\nspacetime distortion. She\nreveals very little about\nherself, but she supports\nthe captains' voyage with all\nher might through her\nsummoning symphology and\nher resilient, positive\npersonality. Surprisingly, she\nis athletic and a skilled\nswimmer, but she doesn't\nseem very accustomed to\nthe ocean and has a\nvisceral dislike of aquatic\nmollusks.	machine
 cp0002_b06a_hmmsg_01	7c691b62f46e5795884774afad140aec3d7a9632	Happy New\nYear. I'm\nlooking forward\nto another\ngreat year with\nyou.	machine
 cp0002_b06a_hmmsg_02	a540192cf4fdd7b74b73afda3ed96a3ab58cd6d7	"A year's plan\nbegins on New\nYear's Day." Start\nthe year off right!	machine
@@ -8773,7 +8773,7 @@ cp0005_b07a_hmmsg_01	47cb6edd831c17397e0d37c08215a76f1bbae239	Wait, what? This o
 cp0005_b07a_hmmsg_02	ce2057678abfbe9a7c3a24f5433e04a6aa229a0f	Hey, Captain! Can I put a big\naquarium here? I really want\na pet ancient shark, please!	machine
 cp0005_b07a_hmmsg_03	44e2709a253c157381eb0acd06116032c9877f89	A... a cat? A Lesser\nFelpool? Either way, it's\nso fluffy and cute!	machine
 cp0005_b07a_message	b71158c9978fe255ec7d75aaf0c0942ba9a7f2de	Shiori	machine
-cp0005_b07a_prmsg_02	a6bd458235a6e3e50cf65ed772773c489af31d27	Tsukushi Akihito	machine
+cp0005_b07a_prmsg_02	a6bd458235a6e3e50cf65ed772773c489af31d27	Akihito Tsukushi	agent
 cp0005_b07a_prmsg_03	ef27b55ddf3eaf9428edb511763e1e474fe63ebf	Shiori Kleeman	machine
 cp0005_b07a_prmsg_05	bf04f9cdfa804bf9b74b74c33c81b6c4ef521c27	Kingdom of Bushu	machine
 cp0005_b07a_prmsg_06	28e9bf3fa474dda6ea6070ffa13f8cf6e68840a2	A woman encountered at the\nHoly Land of Oblivion, Wadrum.\nHaving been brought to this\nworld by a sudden incident, she\nwas shaken at first. However,\nwithin a few hours, she had\ncompletely warmed up to the\ncrew of the ship, feeling as if\nthey had been companions for a\nlong time. She loves puns and\npalindromes, and has the\npalindrome "Shiori gorioshi" noted\nin her notebook.	machine
@@ -8872,7 +8872,7 @@ cp0011_b04a_hmmsg_01	96da8a59a8abec393c8927fff7a459686d50f7ae	I vow to cherish y
 cp0011_b04a_hmmsg_02	9c631e06d684bf1a30015fbb46509afda3951ec9	Captain, do you want to\npractice for the\nwedding? Ehe, don't tell\nmy big brother.	machine
 cp0011_b04a_message	3bae4d67d670d1a86fc476ddb5ba8910453940ed	Bride Tika	machine
 cp0011_b04a_prmsg_01	5399029a91002234ced26a3c0e6dc1d21ca7ec71	Aoi Yuki	machine
-cp0011_b04a_prmsg_02	a5699d9c122331f9337662572378a71461bebf79	DS Miles	machine
+cp0011_b04a_prmsg_02	a5699d9c122331f9337662572378a71461bebf79	DSmile	agent
 cp0011_b04a_prmsg_03	00288786f4b3e0cef234085c819417b3cee2382e	Tika Blanche	machine
 cp0011_b04a_prmsg_06	0f07c7d392b63f7cf3e0b05e1abadc37da8b2146	A woman who fought alongside\nthe protagonist during the\nincidents surrounding the Holy\nSite War in the Daftine sector.\nAfter seeing a wedding in a\ncertain village, Tika looked\nsorrowful as she thought of her\nparents. In response, her\ncompanions prepared this bridal\noutfit for her. To honor her\nfriends' feelings, Tika is currently\ntrying her hand at making a\nbouquet that brings happiness.	machine
 cp0011_b04a_prmsg_08	1e49c95e84009b7a56009eef28c835ee4a392647	March 2	machine
@@ -9382,7 +9382,7 @@ cp0103_b01a_prmsg_01	b03a146c94c159a1df814e278c2e322715df45b8	Kentaro Ito	machin
 cp0103_b01a_prmsg_01_Origin_button	4017ff49c22285d48739d0aa8a1d5999e4424750	Initial Settings / Kentaro Ito	machine
 cp0103_b01a_prmsg_01_SFC	2140ac02fc599c5844f6dd97662e55e1e014b938	Nobuyuki Hiyama	machine
 cp0103_b01a_prmsg_01_SFC_button	708fd8db235e5cce554b316eb1efb898cd888cbc	STAR OCEAN / Nobuyuki Hiyama	machine
-cp0103_b01a_prmsg_02	d5df3fdb2a2239d80587d501dd712d1b7042c94d	Ichiko Milk Tea Shop	machine
+cp0103_b01a_prmsg_02	d5df3fdb2a2239d80587d501dd712d1b7042c94d	Ichiko Milktei	agent
 cp0103_b01a_prmsg_03	df85b63571f586fddeb8f4c219418bb287e22d9d	Dawn Martlow	machine
 cp0103_b01a_prmsg_06	83fa1fd8a3d21339bfe93a123c9d6b7b007beb32	A young man who fell victim to\na petrification disease caused\nby chemical weapons launched\nby Fargett's army in the 340s\nof the Space Calendar. Thanks\nto the efforts of his childhood\nfriends, Roddick and Millie, he\nhas since recovered from the\ndisease and now serves in the\nKratus Vigilante Force with\nthem. He harbors secret\nfeelings for Millie, but knowing\nher feelings for Roddick, he is\nunable to tell her how he feels.	machine
 cp0103_b01a_prmsg_08	08d389acfbb131f2f5c9ae452191b9b6c6cb6bf0	Cosmic Calendar 327, May 10	machine
@@ -9554,7 +9554,7 @@ cp0111_b01a_prmsg_01	dc805f2e268e8e7c5bf02fb3992b77bc94025ad1	Chihiro Suzuki	mac
 cp0111_b01a_prmsg_01_Origin_button	4190aa2ac9dde3f10f501d15e978b8170cf1247b	Initial Settings / Chihiro Suzuki	machine
 cp0111_b01a_prmsg_01_SFC	85fc593c6a571acd0a90baac68dd778c0a209bc0	Takuya Fujisaki	machine
 cp0111_b01a_prmsg_01_SFC_button	277baba36d334f8f205c8cbdfe97bfa6f73331ce	STAR OCEAN / Takuya Fujisaki	machine
-cp0111_b01a_prmsg_02	d5df3fdb2a2239d80587d501dd712d1b7042c94d	Ichiko Milk Tea Shop	machine
+cp0111_b01a_prmsg_02	d5df3fdb2a2239d80587d501dd712d1b7042c94d	Ichiko Milktei	agent
 cp0111_b01a_prmsg_03	915bfa07af0c403e1754a3da791b237e05a939a0	Tineek Arcana	machine
 cp0111_b01a_prmsg_06	07445e263eb5683cee7aec131d4da6a1f1576aff	A young man who played an\nactive role in the war during the\n340s of the Space Calendar\nbetween the Galactic Federation\nand Planet Fargett, as well as its\nmastermind, Jie Revorse. While\nseeking opponents at the Tatroi\narena in pursuit of strength, he\ndiscovered Roddick. Intrigued by\nhis power, he interrupted the\nmatch to challenge him. Normally\na friendly and polite young man,\nthough some say his personality\nchanges completely when he has\na fever...	machine
 cp0111_b01a_prmsg_08	2e7082d6695bbaa18cdcd4206f1812a3522c85df	Space Calendar 28, October 10	machine
@@ -9886,7 +9886,7 @@ cp0205_b05a_prmsg_06	b3c8e74647fcfc016d7a8744b416ac1b79148d93	In the 360s of the
 cp0205_b06a_hmmsg_01	c5dd831a06ac686ef651edc5138edb4886ed4c9a	Now, now, Captain. Millie did\nmy hair like this. Maybe it's\nnice to let it down once in a\nwhile?	machine
 cp0205_b06a_hmmsg_02	0f0836221955c2c1301ba9ae26979e7fd8d9f6e7	A Valentine's date,\nhuh... I wonder if it's\ntoo late to ask\nsomeone now?	machine
 cp0205_b06a_message	ebd2d90be4d4f4d82e71286eaa32112d91382bb7	Precis of the Sweet Cannon	machine
-cp0205_b06a_prmsg_02	d5df3fdb2a2239d80587d501dd712d1b7042c94d	Ichiko Milk Tea Shop	machine
+cp0205_b06a_prmsg_02	d5df3fdb2a2239d80587d501dd712d1b7042c94d	Ichiko Milktei	agent
 cp0205_b06a_prmsg_06	67ce29b106d4490283457ad7c5182357d6c301b9	In the 360s of the Space Calendar,\nshe was the girl who stopped the\nTen Sages from destroying the\nentire universe. Unable to leave\nMillie alone as she flustered herself\njust before her Valentine's date\nwith Lati, you decide to step in and\noffer some advice. Seeing Millie\nblush while thinking about the day\nof the date, you start wondering if\nyou should try asking someone on\na Valentine's date yourself.	machine
 cp0205_b99a_message	3905c128aef2a5d9af525e1e73a0108e998354df	*Dummy Mujin-kun Ride Prisys	machine
 cp0205_b99a_prmsg_01_Origin_button	348b45a838119731544ce77a858f23402db2fda4	Default Settings / Rie Kugimiya	machine
@@ -10319,7 +10319,7 @@ cp0308_b01a_hmmsg_45	180320d492b94a3dd54e3cc69fc4c3b253aa9712	I love you, <playe
 cp0308_b01a_hmmsg_91	6d52f5c692aeef313f7e3f8ac633adefccddecb8	Oh, a tip!\nThanks, Captain!	machine
 cp0308_b01a_hmmsg_95	1a319c73e3382bf5cc9093d9c94d2cb32cfc5f03	<player>! Here, I'm giving this\nto you! Take good\ncare of it!	machine
 cp0308_b01a_prmsg_01	a7d2c3c66f983e7dfdacfc176ffea4551749c133	Masayo Kurata	machine
-cp0308_b01a_prmsg_02	a5699d9c122331f9337662572378a71461bebf79	DS Miles	machine
+cp0308_b01a_prmsg_02	a5699d9c122331f9337662572378a71461bebf79	DSmile	agent
 cp0308_b01a_prmsg_03	2e74a6c1397ed39ebca7aa7cf2aaccd4ccc710ca	Souffle Rocchetti	machine
 cp0308_b01a_prmsg_06	68099fad02e17cb6d15af68e37791c44179b87ee	A Berbeiz dancer belonging to the\nRossetti Troupe, a group of\ntraveling performers who wander\nthe galaxy in the 700s of the\nSpace Calendar. With a\npersonality that embodies\nBeginner's Luck, she often acts\non a whim, frequently leaving\nthose around her bewildered. She\nfirst met Fayt and his companions\nwhen she mistook them for fans\nafter they wandered into the\nRossetti Troupe's waiting room\nand gave them her autograph.	machine
 cp0308_b01a_prmsg_08	36d947b0785e583ba3284ba75c3d50520e6680d2	Space Calendar 758, October 26	machine

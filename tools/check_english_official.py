@@ -5,8 +5,10 @@ a human or reviewed row may replace Global's English).
 
 For every JP master row and every story line it derives, independently of the merge, the English
 Global offers for it:
-  master  Global's English by id (rules id and id-ws), else a Global token row rewritten (E3), else
-          (a row with kana or kanji) the translation memory: exact, memory-ws or template;
+  master  Global's English by id (rules id and id-ws; a credit row's Japanese name and romanization
+          included, official-credit), else a Global token row rewritten (E3), else (a row with kana
+          or kanji) the translation memory: exact, memory-ws or template, else Global's English by id
+          for a Japanese text changed only in punctuation or an abbreviation (official-near);
   story   Global's English by id, else E3 (the story has no memory, english.md 7.9 step 8);
 and checks the served row against it. The comparison allows only what the derivation itself does to
 Global's text: glyph folding, %% in printf rows, a story line's strip and every re-break. Both sides
@@ -84,6 +86,9 @@ def master_expected(src, mem, mid, ja):
         en, kind = mem.lookup(ja)
         if en is not None:
             return {"exact": "memory", "exact_ws": "memory-ws"}.get(kind, kind), en
+        near = src.official_near(mid, ja)
+        if near is not None:
+            return "near", near
     return None, None
 
 

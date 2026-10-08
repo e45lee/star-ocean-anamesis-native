@@ -68,7 +68,7 @@ struct Set {
         static const u8 modes[] = {0, 0, 1, 2, 3};
         x->m_linkMode = modes[r1() % 5];
         x->m_matrixBuffer = r1() % 4 ? (void*)0x40 : nullptr;  // (only tested for null)
-        x->m_simulateLock = lock;
+        x->m_simulateLock = r1() % 16 ? lock : nullptr;  // (none: the first Simulate makes it)
         x->m_timeScale = r1() % 3 ? 1.0f : any_float(r1, 2.0f);
         x->m_emitRate = any_float(r1, 300.0f);
         static const float rnd[] = {100.0f, 100.0f, 50.0f, 0.0f, 150.0f, 99.5f};
@@ -97,7 +97,7 @@ struct Set {
 
 // Matrices FillMatrixContext answers with (shared by both runs): translations and scales, some with NaNs.
 struct Mats {
-    math::Matrix m[5];
+    soa::native::math::Matrix m[5];
     void fill(u64 seed) {
         std::mt19937_64 r(seed ^ 0x55);
         for (auto& x : m) {
@@ -117,7 +117,7 @@ struct Answers {
         std::mt19937_64 r(seed * 31 + (u64)c.kind * 1000 + i);
         switch (c.kind) {
         case CallKind::FillMatrix: {
-            const math::Matrix* p[5] = {&mats->m[0], &mats->m[1], &mats->m[2], &mats->m[3], r() % 2 ? &mats->m[4] : nullptr};
+            const soa::native::math::Matrix* p[5] = {&mats->m[0], &mats->m[1], &mats->m[2], &mats->m[3], r() % 2 ? &mats->m[4] : nullptr};
             std::memcpy(c.out, p, sizeof p);
             c.nout = sizeof p;
             break;
@@ -171,7 +171,7 @@ NATIVE_TEST("particles/simulate") {
             std::string d = first_diff(N.view().texts(rec.calls), G.view().texts(g.log));
             if (!d.empty()) return t.fail("%s: calls: %s", where().c_str(), d.c_str());
             for (size_t i = 0x198; i < kEmitterBytes; i++)
-                if (N.e[i] != G.e[i] && !(i >= 0x1b8 && i < 0x1c8))
+                if (N.e[i] != G.e[i] && !(i >= 0x1b8 && i < 0x1c8) && !(i >= 0x1e0 && i < 0x1e8))  // (the pointers to each set's own)
                     return t.fail("%s: emitter +%#zx: native %02x guest %02x", where().c_str(), i, N.e[i], G.e[i]);
             if (std::memcmp(N.o, G.o, 0x200) || N.r->m_activeCount != G.r->m_activeCount ||
                 std::memcmp(&N.r->m_emitterPosition, &G.r->m_emitterPosition, 16))

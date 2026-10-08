@@ -15,6 +15,7 @@
 #include "native/common/arm_float.h"
 #include "core/thread_record.h"
 #include "native/common/guest_std.h"
+#include "native/common/native.h"
 #include "native/particles/particles_check.h"
 
 namespace soa::native::particles {
@@ -258,8 +259,12 @@ void check_simulate(Cpu& c, Fn& f, size_t row) {
         std::vector<u8> got = snapshot(s);
         for (size_t off : {offsetof(IParticleEmitter, m_object), offsetof(IParticleEmitter, m_renderable), offsetof(IParticleEmitter, m_simulateLock)})
             std::memcpy(got.data() + off, post.data() + off, 8);
-        for (size_t i = 0; i < got.size(); i++)
+        // (from 0x198: Simulate writes none of its HierarchicalObject base, which the game thread updates
+        // meanwhile; a byte the real emitter changed again since the native left it is a race)
+        const std::vector<u8> now = snapshot(e);
+        for (size_t i = offsetof(IParticleEmitter, m_id); i < got.size(); i++)
             if (got[i] != post[i]) {
+                if (now[i] != post[i]) return live::check_result(f, Outcome::Race);
                 char m[96];
                 snprintf(m, sizeof m, "%s +%#zx: native %02x guest %02x", i < kEmitterBytes ? "emitter" : "object",
                          i < kEmitterBytes ? i : i - kEmitterBytes, post[i], got[i]);
@@ -277,7 +282,7 @@ void simulate_hook(Cpu& c) {
 
 template <size_t... I>
 bool bind_all(std::index_sequence<I...>) {
-    (register_native_function({kRows[I].simulate, &simulate_hook<I>, "particles: ParticleEmitter<...>::Simulate", nullptr, &fn<I>().orig, nullptr,
+    (::soa::register_native_function({kRows[I].simulate, &simulate_hook<I>, "particles: ParticleEmitter<...>::Simulate", nullptr, &fn<I>().orig, nullptr,
                                "simulate_hook"}),
      ...);
     return true;

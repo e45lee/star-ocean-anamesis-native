@@ -59,6 +59,7 @@ import concurrent.futures as cf
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "tools"))
+import english_core as core  # noqa: E402
 import english_mt as E  # noqa: E402
 
 LLAMA_BUILD = "b11443"
@@ -778,8 +779,12 @@ def cmd_labels(a):
     have = set()
     for line in open(pathlib.Path(a.dump) / "labels-en.tsv", encoding="utf-8").read().splitlines()[1:]:
         have.add(line.split("\t", 1)[0])
+    # labels.tsv is keyed by the SHA-1 of the Japanese (no Japanese in git): the text from the scenes
+    texts = {h: ja for ja, h in (core.scene_label_texts() or {}).items()}
+    if not texts:
+        sys.exit("labels: no download (work/SOA-3.7.0-canonical-data.zip): the labels' Japanese is read from its scenes")
     rows = [ln.split("\t") for ln in (REPO / "data/english/labels.tsv").read_text(encoding="utf-8").splitlines()[1:]]
-    gap = sorted(r[0] for r in rows if r and r[0] not in have)
+    gap = sorted(texts[r[0]] for r in rows if r and r[0] in texts and texts[r[0]] not in have)
     items = [(E.sha1(ja), ja) for ja in gap]
     print(f"[labels] {len(items)} labels without English", flush=True)
 

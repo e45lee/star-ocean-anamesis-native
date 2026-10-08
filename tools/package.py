@@ -40,9 +40,10 @@ links, IJG libjpeg 9, zstd 1.3.4), the data we made, and ONE game file (below):
                              own download, after its date-dependent master hooks (event dates), so
                              a pre-built -en master would be stale and would be game data (PLAN-english
                              P2, M-Q5)
-  data/english/labels.tsv    the layout labels to translate (docs/english.md 7.14): each label's
-                             Japanese and our English (or none: derived at run time); soa-server
-                             writes the -en scenes from the user's download at every start
+  data/english/labels.tsv    the layout labels to translate (docs/english.md 7.14): the SHA-1 of each
+                             label's Japanese (no Japanese) and our English (or none: derived at run
+                             time); soa-server finds the labels in the user's download and writes the
+                             -en scenes at every start
 
   data/basmaster-gl.sqlite3  Global's master DB, as committed (the user, 2026-10-07: the one game file
                              the packages carry): soa-server derives the official English from it at

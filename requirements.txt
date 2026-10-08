@@ -12,9 +12,9 @@ pytest
 # server/tests/ninja/tools, port/decomp/bullet/pin
 pyelftools
 # AArch64 disassembly: tools/a2c.py, verdiff.py, elfinfo.py, rebase_inventory.py, api_wire.py,
-# gen_*_tables.py, fakeapi_fields.py, info_fields_emu.py, restore370_audit.py, gen_master_elements.py
+# gen_*_tables.py, fakeapi_fields.py, info_fields_emu.py, restore370_audit.py, gen_master_elements.py, gen_infos.py
 capstone
-# AArch64 emulation: tools/emu.py, tools/info_fields_emu.py, tools/uemu.py (tools/gen_master_elements.py),
+# AArch64 emulation: tools/emu.py, tools/info_fields_emu.py, tools/uemu.py (tools/gen_master_elements.py, tools/gen_infos.py),
 # server/tests/ninja/tools/ninja_client.py
 unicorn
 # images: tools/contact_sheet.py (screenshot contact sheets), tools/make_standin_banners.py,

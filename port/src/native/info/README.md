@@ -93,8 +93,9 @@ the two results' pointers as they are (both copies of one source keep the same o
 ## Measurements
 
 Guest self time (`SOA_PROFILE` 1000 Hz, `port/scripts/rebuild_queue.py`, the login + battle flows: before = n-master's
-profile at the start of this work, after = this branch at 0e31f81, 2026-10-08): `info` **998 samples (1.1%) -> 306
-(0.7%)**; executed functions 783 -> 651, executed bytes 438K -> 248K. By kind (the generic natives' families): the
+profile at the start of this work, after = this branch at 0e31f81, 2026-10-08; the scope with the 44 generated info
+classes its patterns missed): `info` **1,040 samples (1.1%) -> 306 (0.7%)**; executed functions 844 -> 675, executed
+bytes 458K -> 248K. By kind (the generic natives' families): the
 infos' Initialize 227 -> 11 (CInfoManager's included), copies 83 -> 8, constructors 63 -> 4, destructors 50 -> 9,
 assignments 18 -> 0, moves 8 -> 0, `str2time_t` 43 -> 0. What is left: `CInfoManager`'s constructor (32),
 `CCharacterData`'s constructor (32), `InfoBaseArray` / `IInfoBaseMap` deserialization (30), `CParameterManager::Progress`

@@ -146,11 +146,8 @@ def character(s, from_home):
 
 def open_mastery(s, n_pairs, shot, from_home):
     character(s, from_home)
-    # scrolled to the end (three drags: one drag's length varies with its speed; the last ones may
-    # not move the list, so each waits only for the list to stop, not for a change)
-    for _ in range(3):
-        s.ctl("drag:364:1000:364:300")
-        common.settle(s)
+    # scrolled to the end (one drag's length varies with its speed): dragged until it stops changing
+    common.scroll_to_end(s, "drag:364:1000:364:300")
     step(s, "マスタリー -> GetMasteryInfo (%d pair(s))" % n_pairs, r"GetMasteryInfo: %d pair" % n_pairs, ["tap:" + MASTERY], shot)
 
 
@@ -169,7 +166,7 @@ def main(o):
         tap(s, "the role-changeable ★6", ROLE_CHANGER, "03a-equipment")
         tap(s, "ロール選択", ROLE_SELECT, "03b-role-select")
         step(s, "ロール選択 -> アタッカー -> ChangeRole", r"ChangeRole [0-9a-f]+: role [0-9]+ -> [0-9]+", ["tap:" + ATTACKER], "03c-role-changed")
-        tap(s, "the role changed: 閉じる", CLOSE, "03d-attacker")
+        tap(s, "the role changed: 閉じる", CLOSE, "03d-attacker", is_screen=popups.is_undimmed)
         open_mastery(s, 0, "03-mastery", False)
         # 道場1 -> 師匠 (the list's first: the LV70 master-type role) -> 決定 -> 弟子 -> 決定 -> 決定
         tap(s, "道場1", DOJO1, "04-select-master")
@@ -179,23 +176,25 @@ def main(o):
         tap(s, "弟子: 決定", DECIDE, "06-pair-confirm")
         if not step(s, "決定 -> TrainMastery (paired)", r"TrainMastery: paired master", ["tap:" + DIALOG_YES], "07-paired"):
             return
-        tap(s, "paired: 閉じる", CLOSE, "08-training")
+        tap(s, "paired: 閉じる", CLOSE, "08-training", is_screen=popups.is_undimmed)
         # trainings 1-4 with a material card (the first, then the middle), 5 with the pass medal
         for n in range(1, 5):
             card = CARDS[0] if n == 1 else CARDS[1]
-            tap(s, "training %d: the card" % n, card)
+            tap(s, "training %d: the card -> its dialog" % n, card, is_screen=popups.is_dimmed)
             if not step(s, "training %d -> TrainMastery" % n, r"TrainMastery: disciple [0-9a-f]+ training %d/5 option" % n,
                         ["tap:" + EXECUTE], "09-training-%d" % n):
                 return
-        tap(s, "training 5: the card", CARDS[2])
-        tap(s, "マスタリーパスメダルを使う", MEDAL, "10-medal-confirm")
+        # (each dialog waited for by the dimming: under load the card shows selected a while before its
+        # dialog opens, and a tap made then lands on the cards: training 5 once went to the middle card)
+        tap(s, "training 5: the card -> its dialog", CARDS[2], is_screen=popups.is_dimmed)
+        tap(s, "マスタリーパスメダルを使う -> its confirmation", MEDAL, "10-medal-confirm", is_screen=popups.is_dimmed_twice)
         if not step(s, "training 5 with the pass medal -> 皆伝", r"TrainMastery: disciple [0-9a-f]+ training 5/5 option 3 \(pass medal\), FOL -0; 皆伝",
                     ["tap:" + MEDAL_EXECUTE]):
             return
         # the Full Mastership! dialog comes a while after the answer (under load the training screen
         # holds still in between): waited for by its fingerprint
         common.settle(s, "11-full-mastership", secs=60, is_screen=popups.is_mastery_all_clear, name="Full Mastership!", fatal=True)
-        tap(s, "Full Mastership!: 閉じる", ALL_CLEAR_CLOSE)
+        tap(s, "Full Mastership!: 閉じる", ALL_CLEAR_CLOSE, is_screen=popups.is_undimmed)
         tap(s, "皆伝師弟", GRADUATED_TAB, "12-graduated")
         # ---- キャラデコ: ホーム -> 会話モード -> キャラデコ (GetDecoInfo: the planted three) -> デコ選択 -> a slot
         # -> ☆ (FavoriteDecoObject) -> the first decoration -> 決定 (SetCharacterDeco) -> デコ調整
@@ -230,7 +229,7 @@ def main(o):
             tap(s2, "the 皆伝 pair", GRADUATED_PAIR, "03-full-mastership")
             tap(s2, "師弟解消", PART, "04-part-confirm")
             step(s2, "師弟解消 -> ResetMastery", r"ResetMastery: parted master", ["tap:" + DIALOG_YES], "05-parted")
-            tap(s2, "parted: 閉じる", CLOSE)
+            tap(s2, "parted: 閉じる", CLOSE, is_screen=popups.is_undimmed)
             # the decorations kept: キャラデコ again (GetDecoInfo; the character wears its decoration,
             # from its CPersonInfo)
             common.tap_to_phase(s2, "ホーム", HOME, 4, mask=common.HOME_MASK, fatal=True)

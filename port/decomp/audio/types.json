@@ -464,6 +464,167 @@
    ]
   },
   {
+   "name": "AudioMessage",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_message",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_arg0",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_arg1",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "SoundRequest",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "TSoundDynamicQueue<AudioMessage>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_write",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_read",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_items",
+     "type": {
+      "kind": "ptr",
+      "to": "AudioMessage"
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
    "name": "WaveStreamView",
    "union": false,
    "fields": [
@@ -1671,6 +1832,76 @@
    ]
   },
   {
+   "name": "TSoundDynamicQueue<SoundRequest>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_write",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_read",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_items",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundRequest"
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
    "name": "SoundObject",
    "union": false,
    "fields": [
@@ -1726,7 +1957,26 @@
     },
     {
      "offset": 304,
-     "name": "unk_130",
+     "name": "m_requests",
+     "type": {
+      "kind": "struct",
+      "name": "TSoundDynamicQueue<SoundRequest>"
+     },
+     "size": 32
+    },
+    {
+     "offset": 336,
+     "name": "m_requestCs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 480,
+     "name": "unk_1e0",
      "type": {
       "kind": "array",
       "of": {
@@ -1734,9 +1984,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 184
+      "count": 8
      },
-     "size": 184
+     "size": 8
     },
     {
      "offset": 488,
@@ -3029,9 +3279,42 @@
        "size": 1,
        "signed": false
       },
-      "count": 252
+      "count": 52
      },
-     "size": 252
+     "size": 52
+    },
+    {
+     "offset": 80,
+     "name": "m_messages",
+     "type": {
+      "kind": "struct",
+      "name": "TSoundDynamicQueue<AudioMessage>"
+     },
+     "size": 32
+    },
+    {
+     "offset": 112,
+     "name": "m_messageCs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 256,
+     "name": "unk_100",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
     },
     {
      "offset": 280,

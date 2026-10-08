@@ -204,6 +204,54 @@ class WaveVoiceBase;
 class WaveBuffer;
 class SoundObject;
 
+// Aska::TSoundDynamicQueue<T>: a growable ring of T (the sound thread's mailboxes: AudioPlayer's messages,
+// SoundObject's requests, EffectorRequest's), guest size 0x20. Layout from SEControlObject's constructor
+// (vtable, m_write / m_read = 1 / 0 as one u64, then a 5-slot buffer from SoundMemory::Malloc) and AddEx
+// (port/decomp/audio/sound_manager.c). m_read is the last slot read, m_write the next one written: empty
+// when the slot after m_read is m_write, full when m_write == m_read. AddEx grows a full ring by one
+// slot: a new buffer (SoundMemory::Malloc) with the ring unrolled from m_write (the oldest slot, the one
+// last read, first), the old one returned with operator delete (the game's mix of allocators), m_read 0,
+// the new slot at the end. Its owners take their FastCriticalSection around it (inlined in the guest).
+template <typename T>
+class TSoundDynamicQueue {
+public:
+    T* AddEx();           // the slot to fill, null when the buffer can't grow
+    bool Get(T* out);     // the next unread slot copied out (the owners' inlined pop)
+
+    const void* vtable;   // 0x00: _ZTVN4Aska18TSoundDynamicQueueI..EE + 0x10
+    u32 m_write;          // 0x08: the next slot written
+    u32 m_read;           // 0x0c: the last slot read
+    u32 m_capacity;       // 0x10
+    u8 unk_14[4];         // 0x14
+    T* m_items;           // 0x18
+};
+
+// Aska::AudioMessage: a message for an AudioPlayer (Sequencer2's notes send them; AudioPlayer::GetMessage
+// hands them to its AudioRun), guest size 0x18 (TSoundDynamicQueue<AudioMessage>::AddEx's stride).
+class AudioMessage {
+public:
+    u32 m_message;        // 0x00: 0 play, 1 stop, 2 pause, 3 resume, 4.., 5-9 (Sequencer2's note types)
+    u8 unk_04[4];         // 0x04: never written by SendMessage
+    const void* m_arg0;   // 0x08
+    const void* m_arg1;   // 0x10
+};
+static_assert(sizeof(AudioMessage) == 0x18);
+
+// Aska::SoundObject::RequestContainer: a request for a sound object's AudioRun (SoundObject vtable slot 11
+// handles it), guest size 0x10 (RequestSet's inlined AddEx stride).
+class SoundRequest {
+public:
+    u32 m_type;           // 0x00
+    u8 unk_04[4];         // 0x04: never written by RequestSet
+    const void* m_data;   // 0x08
+};
+static_assert(sizeof(SoundRequest) == 0x10);
+
+static_assert(offsetof(TSoundDynamicQueue<AudioMessage>, m_write) == 0x08);
+static_assert(offsetof(TSoundDynamicQueue<AudioMessage>, m_capacity) == 0x10);
+static_assert(offsetof(TSoundDynamicQueue<AudioMessage>, m_items) == 0x18);
+static_assert(sizeof(TSoundDynamicQueue<AudioMessage>) == 0x20);
+
 // The stream behind a voice's wave buffer: resource's Aska::MultiMediaStream (resource_layout.h types it
 // to 0x90; the object is larger): the vtable slots and the fields the voices and the sound manager use.
 class WaveStreamView {
@@ -403,18 +451,25 @@ public:
     static constexpr u32 kTypeStreaming = 8;    // m_type bit 3: its deletion waits for the stream
     static constexpr u8 kFlagFinished = 0x01;   // m_flags1f2 bit 0: done; its CElement releases it
 
+    bool RequestGet(SoundRequest* out);                 // _ZN4Aska11SoundObject10RequestGetEPNS0_16RequestContainerE
+    bool RequestSet(u32 type, const void* data);        // _ZN4Aska11SoundObject10RequestSetEjPKv
+
     const void* vtable;        // 0x000: _ZTVN4Aska11SoundObjectE + 0x10
     SoundObject* m_prev;       // 0x008: (a TList<SoundObject> link)
     SoundObject* m_next;       // 0x010
     u8 unk_018[0x110];         // 0x018
     AudioPlayer* m_player;     // 0x128
-    u8 unk_130[0xb8];          // 0x130
+    TSoundDynamicQueue<SoundRequest> m_requests;  // 0x130: RequestSet / RequestGet, guarded by m_requestCs
+    FastCriticalSection m_requestCs;              // 0x150: lock word +0x188, semaphore +0x1c8
+    u8 unk_1e0[8];             // 0x1e0: the sound status (UpdateSoundStatus)
     u32 m_type;                // 0x1e8: kTypeSE / kTypeBGM / kTypeStreaming bits
     u8 unk_1ec[6];             // 0x1ec
     u8 m_flags1f2;             // 0x1f2: kFlagFinished
     u8 unk_1f3[5];             // 0x1f3
 };
 static_assert(offsetof(SoundObject, m_player) == 0x128);
+static_assert(offsetof(SoundObject, m_requests) == 0x130);
+static_assert(offsetof(SoundObject, m_requestCs.m_lock) == 0x188);
 static_assert(offsetof(SoundObject, m_type) == 0x1e8);
 static_assert(offsetof(SoundObject, m_flags1f2) == 0x1f2);
 static_assert(sizeof(SoundObject) == 0x1f8);
@@ -507,19 +562,27 @@ static_assert(offsetof(SoundManager, m_flags1234) == 0x1234);
 
 // ---- The sequencer (port/decomp/audio/sound_manager.c) -------------------------------------------------
 //
-// Aska::AudioPlayer: what a SoundObject plays through; only its state is read here (Sequencer2's
-// AudioRun advances time in states 2 and 4, ArrangeMessageNote starts its state machine from it).
+// Aska::AudioPlayer: what a SoundObject plays through: its state (Sequencer2's AudioRun advances time in
+// states 2 and 4, ArrangeMessageNote starts its state machine from it) and its message queue (SendMessage
+// from the sequencer, GetMessage from its own AudioRun; the queue under m_messageCs).
 class AudioPlayer {
 public:
-    void SendMessage(u32 message, const void* a0, const void* a1);  // _ZN4Aska11AudioPlayer11SendMessageEjPvS1_ (guest)
+    bool SendMessage(u32 message, const void* a0, const void* a1);  // _ZN4Aska11AudioPlayer11SendMessageEjPvS1_
+    bool GetMessage(AudioMessage* out);                             // _ZN4Aska11AudioPlayer10GetMessageEPNS_12AudioMessageE
 
     const void* vtable;  // 0x00
     u8 unk_08[0x10];     // 0x08
     u32 m_state;         // 0x18: 5 = done (SoundProcessSync deletes the object)
-    u8 unk_1c[0xfc];     // 0x1c
+    u8 unk_1c[0x34];     // 0x1c
+    TSoundDynamicQueue<AudioMessage> m_messages;  // 0x50
+    FastCriticalSection m_messageCs;              // 0x70: lock word +0xa8, semaphore +0xe8
+    u8 unk_100[0x18];    // 0x100
     WaveVoiceBase* m_voice;  // 0x118
 };
 static_assert(offsetof(AudioPlayer, m_state) == 0x18);
+static_assert(offsetof(AudioPlayer, m_messages) == 0x50);
+static_assert(offsetof(AudioPlayer, m_messageCs.m_lock) == 0xa8);
+static_assert(offsetof(AudioPlayer, m_messageCs.m_sem) == 0xe8);
 static_assert(offsetof(AudioPlayer, m_voice) == 0x118);
 
 class AudioMessageNote;

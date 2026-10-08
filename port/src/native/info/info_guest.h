@@ -17,4 +17,17 @@ void Assert(u64 file_vaddr, int line, u64 msg_vaddr);
 inline u64 slot_of(const void* obj, u32 slot) { return reinterpret_cast<const u64*>(*reinterpret_cast<const u64*>(obj))[slot]; }
 u64 vcall(const void* obj, u32 slot, std::initializer_list<u64> rest);
 
+// Framework::CAssignedMemoryManagerForSTLAllocator::Allocate(n, "...STL_String.h", 0x1c) (a string's
+// storage) / Free.
+void* StringAllocate(u64 n);
+void StlFree(void* p);
+// The out-of-line libc++ map functions InfoBase's maps use (CSTLAllocator: nodes from the STL allocator):
+// map<unsigned, IParameterProperty*>::__emplace_unique_key_args<unsigned, unsigned, IParameterProperty*&>
+// (key, key, value) and map<unsigned, InfoBase*>::__emplace_unique_impl<CHash32, InfoBase*&>(hash, value)
+// (the pair<iterator, bool> they return is unused); __tree::destroy(root) of each.
+void EmplaceProperty(PropertyMap* m, u32 key, void* property);
+void EmplaceChild(PropertyMap* m, const void* hash, void* child);
+void DestroyPropertyTree(PropertyMap* m);
+void DestroyChildTree(PropertyMap* m);
+
 }  // namespace soa::native::info::g

@@ -2,9 +2,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x115ecd0	0x125ecd0	452	_ZN8InfoBase16DeserializeChildEPKN4Aska4ASON6AValue4AMapE	InfoBase::DeserializeChild(Aska::ASON::AValue::AMap const*)	person_status	tested	live check info 0 mismatches
 0x115eea4	0x125eea4	8	_ZNK8InfoBase10pParseNameEv	InfoBase::pParseName() const	person_status	decompiled	
 0x115eeac	0x125eeac	8	_ZN8InfoBase16DeserializeArrayEPKN4Aska4ASON6AValue6AArrayE	InfoBase::DeserializeArray(Aska::ASON::AValue::AArray const*)	person_status	decompiled	
-0x12a51b8	0x13a51b8	5768	_ZN17CPersonStatusInfoC2Ev	CPersonStatusInfo::CPersonStatusInfo()	person_status	decompiled	
+0x12a51b8	0x13a51b8	5768	_ZN17CPersonStatusInfoC2Ev	CPersonStatusInfo::CPersonStatusInfo()	person_status	tested	generic (info_class.cpp); live check info 0 mismatches
 0x12a6840	0x13a6840	3356	_ZN17CPersonStatusInfoD2Ev	CPersonStatusInfo::~CPersonStatusInfo()	person_status	decompiled	
-0x12ae5e8	0x13ae5e8	10536	_ZN17CPersonStatusInfo10InitializeEv	CPersonStatusInfo::Initialize()	person_status	decompiled	
+0x12ae5e8	0x13ae5e8	10536	_ZN17CPersonStatusInfo10InitializeEv	CPersonStatusInfo::Initialize()	person_status	tested	generic (info_class.cpp); live check info 0 mismatches
 0x12b0f10	0x13b0f10	8	_ZNK17CPersonStatusInfo10pParseNameEv	CPersonStatusInfo::pParseName() const	person_status	decompiled	
 0x12b0f18	0x13b0f18	644	_ZN17CPersonStatusInfoeqERKS_	CPersonStatusInfo::operator==(CPersonStatusInfo const&)	person_status	decompiled	
 0x12b119c	0x13b119c	32	_ZN17CPersonStatusInfoneERKS_	CPersonStatusInfo::operator!=(CPersonStatusInfo const&)	person_status	decompiled	

@@ -1,0 +1,6 @@
+{
+ "subsystem": "audio",
+ "generated_by": "tools/subsystem.py export-types audio",
+ "header": "port/src/native/audio/audio_layout.h",
+ "structs": []
+}

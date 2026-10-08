@@ -1,0 +1,732 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x1358050	0x1458050	832	_ZN22CParameterSoundElementaSERKS_	CParameterSoundElement::operator=(CParameterSoundElement const&)	game	decompiled	
+0x16f8624	0x17f8624	636	_ZN22CParameterSoundElementC1Ev	CParameterSoundElement::CParameterSoundElement()	game	decompiled	
+0x16f88a0	0x17f88a0	404	_ZN22CParameterSoundElementD1Ev	CParameterSoundElement::~CParameterSoundElement()	game	decompiled	
+0x16f8a34	0x17f8a34	24	_ZN22CParameterSoundElementD0Ev	CParameterSoundElement::~CParameterSoundElement()	game	decompiled	
+0x16f8a4c	0x17f8a4c	1256	_ZN22CParameterSoundElement10InitializeEv	CParameterSoundElement::Initialize()	game	decompiled	
+0x16f8f34	0x17f8f34	68	_ZN15CParameterSoundC1Ev	CParameterSound::CParameterSound()	game	decompiled	
+0x16f8f78	0x17f8f78	132	_ZN15CParameterSoundD2Ev	CParameterSound::~CParameterSound()	game	decompiled	
+0x16f8ffc	0x17f8ffc	148	_ZN15CParameterSound7ReleaseEv	CParameterSound::Release()	game	decompiled	
+0x16f9090	0x17f9090	24	_ZN15CParameterSoundD0Ev	CParameterSound::~CParameterSound()	game	decompiled	
+0x16f90a8	0x17f90a8	12	_ZNK15CParameterSound10pParseNameEv	CParameterSound::pParseName() const	game	decompiled	
+0x16f90b4	0x17f90b4	100	_ZN15CParameterSound11DeserializeEPKN4Aska4ASON6AValue4AMapE	CParameterSound::Deserialize(Aska::ASON::AValue::AMap const*)	game	decompiled	
+0x16f9118	0x17f9118	612	_ZN15CParameterSound20DeserializeParameterERN9Framework16CSTLUnorderedMapINSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEE22CParameterSoundElementNS2_4hashIS9_EENS2_8equal_toIS9_EEEEPKN4Aska4ASON6AValue6AArrayE	CParameterSound::DeserializeParameter(Framework::CSTLUnorderedMap<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> >, CParameterSoundElement, std::__ndk1::hash<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >, std::__ndk1::equal_to<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > > >&, Aska::ASON::AValue::AArray const*)	game	decompiled	
+0x16f937c	0x17f937c	288	_ZNK15CParameterSound10pParameterEPKc	CParameterSound::pParameter(char const*) const	game	decompiled	
+0x16f949c	0x17f949c	240	_ZNK15CParameterSound10pParameterEPKcj	CParameterSound::pParameter(char const*, unsigned int) const	game	decompiled	
+0x16f958c	0x17f958c	8	_ZNK15CParameterSound10rParameterEv	CParameterSound::rParameter() const	game	decompiled	
+0x16f9594	0x17f9594	268	_ZN15CParameterSound11AddQueSheetEP22CParameterSoundElement	CParameterSound::AddQueSheet(CParameterSoundElement*)	game	decompiled	
+0x16f9fd0	0x17f9fd0	1392	_ZN22CParameterSoundElementC2ERKS_	CParameterSoundElement::CParameterSoundElement(CParameterSoundElement const&)	game	decompiled	
+0x17fc2a0	0x18fc2a0	20	_ZN13CSoundManager11tGameVolumeC2Ev	CSoundManager::tGameVolume::tGameVolume()	game	decompiled	
+0x17fc2b4	0x18fc2b4	16	_ZN13CSoundManager11tSoundImageC1Ev	CSoundManager::tSoundImage::tSoundImage()	game	decompiled	
+0x17fc2c4	0x18fc2c4	28	_ZN13CSoundManager11tSoundImageC2ERKN9Framework10FileStream6tImage14tValidateEntryEb	CSoundManager::tSoundImage::tSoundImage(Framework::FileStream::tImage::tValidateEntry const&, bool)	game	decompiled	
+0x17fc2e0	0x18fc2e0	8	_ZNK13CSoundManager11tSoundImage7IsVoiceEv	CSoundManager::tSoundImage::IsVoice() const	game	decompiled	
+0x17fc2e8	0x18fc2e8	12	_ZNK13CSoundManager11tSoundImage9VolumeBGMEfRKNS_11tGameVolumeE	CSoundManager::tSoundImage::VolumeBGM(float, CSoundManager::tGameVolume const&) const	game	decompiled	
+0x17fc2f4	0x18fc2f4	32	_ZNK13CSoundManager11tSoundImage8VolumeSEEfRKNS_11tGameVolumeE	CSoundManager::tSoundImage::VolumeSE(float, CSoundManager::tGameVolume const&) const	game	decompiled	
+0x17fc314	0x18fc314	28	_ZN13CSoundManager12tPlaySettingC1Ev	CSoundManager::tPlaySetting::tPlaySetting()	game	decompiled	
+0x17fc330	0x18fc330	208	_ZN13CSoundManagerC2Ev	CSoundManager::CSoundManager()	game	decompiled	
+0x17fc400	0x18fc400	472	_ZN13CSoundManagerD1Ev	CSoundManager::~CSoundManager()	game	decompiled	
+0x17fc5d8	0x18fc5d8	72	_ZN13CSoundManager7ReleaseEv	CSoundManager::Release()	game	decompiled	
+0x17fc620	0x18fc620	24	_ZN13CSoundManagerD0Ev	CSoundManager::~CSoundManager()	game	decompiled	
+0x17fc638	0x18fc638	52	_ZN13CSoundManager10InitializeEv	CSoundManager::Initialize()	game	decompiled	
+0x17fc66c	0x18fc66c	392	_ZN13CSoundManager16CInterruptNotify7HandlerEm	CSoundManager::CInterruptNotify::Handler(unsigned long)	game	decompiled	
+0x17fc7f4	0x18fc7f4	464	_ZN13CSoundManager7StopAllEv	CSoundManager::StopAll()	game	decompiled	
+0x17fc9c4	0x18fc9c4	204	_ZN13CSoundManager6StopSEENSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::StopSE(std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fca90	0x18fca90	168	_ZN13CSoundManager8StopSE3DENSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::StopSE3D(std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fcb38	0x18fcb38	8	_ZNK13CSoundManager10NumPlayingEv	CSoundManager::NumPlaying() const	game	decompiled	
+0x17fcb40	0x18fcb40	152	_ZN13CSoundManager14GetPlaySettingEPKc	CSoundManager::GetPlaySetting(char const*)	game	decompiled	
+0x17fcbd8	0x18fcbd8	408	_ZN13CSoundManager20GetPlaySettingDetailEPK22CParameterSoundElement	CSoundManager::GetPlaySettingDetail(CParameterSoundElement const*)	game	decompiled	
+0x17fcd70	0x18fcd70	128	_ZN13CSoundManager16IsExistSoundFileEPKc	CSoundManager::IsExistSoundFile(char const*)	game	decompiled	
+0x17fcdf0	0x18fcdf0	160	_ZN13CSoundManager18IsExistPlaySettingEPKcj	CSoundManager::IsExistPlaySetting(char const*, unsigned int)	game	decompiled	
+0x17fce90	0x18fce90	168	_ZN13CSoundManager14GetPlaySettingEPKcj	CSoundManager::GetPlaySetting(char const*, unsigned int)	game	decompiled	
+0x17fcf38	0x18fcf38	140	_ZN13CSoundManager14GetPlayElementEPKc	CSoundManager::GetPlayElement(char const*)	game	decompiled	
+0x17fcfc4	0x18fcfc4	336	_ZN13CSoundManager6PlaySeEPKc	CSoundManager::PlaySe(char const*)	game	decompiled	
+0x17fd114	0x18fd114	152	_ZN13CSoundManager13UpdateMappingEv	CSoundManager::UpdateMapping()	game	decompiled	
+0x17fd1ac	0x18fd1ac	2776	_ZN13CSoundManager6PlaySeEPKcRKNS_12tPlaySettingE	CSoundManager::PlaySe(char const*, CSoundManager::tPlaySetting const&)	game	decompiled	
+0x17fdc84	0x18fdc84	8	_ZNK13CSoundManager9IsPlayingEm	CSoundManager::IsPlaying(unsigned long) const	game	decompiled	
+0x17fdc8c	0x18fdc8c	24	_ZN13CSoundManager4StopEmNSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::Stop(unsigned long, std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fdca4	0x18fdca4	412	_ZN13CSoundManager6PlaySeEPKcj	CSoundManager::PlaySe(char const*, unsigned int)	game	decompiled	
+0x17fde40	0x18fde40	396	_ZN13CSoundManager6PlaySeEPKcjRKNS_12tPlaySettingE	CSoundManager::PlaySe(char const*, unsigned int, CSoundManager::tPlaySetting const&)	game	decompiled	
+0x17fdfcc	0x18fdfcc	1932	_ZN13CSoundManager7PlayBgmEPKcfNSt6__ndk16chrono8durationIfNS2_5ratioILl1ELl1000EEEEES7_i	CSoundManager::PlayBgm(char const*, float, std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >, std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >, int)	game	decompiled	
+0x17fe758	0x18fe758	140	_ZNK13CSoundManager12IsPlayingBGMEPKc	CSoundManager::IsPlayingBGM(char const*) const	game	decompiled	
+0x17fe7e4	0x18fe7e4	8	_ZNK13CSoundManager14GetBgmFileNameEv	CSoundManager::GetBgmFileName() const	game	decompiled	
+0x17fe7ec	0x18fe7ec	168	_ZN13CSoundManager15UpdateVolumeBGMEf	CSoundManager::UpdateVolumeBGM(float)	game	decompiled	
+0x17fe894	0x18fe894	152	_ZN13CSoundManager9BgmVolumeEfNSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::BgmVolume(float, std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fe92c	0x18fe92c	8	_ZN13CSoundManager14UpdateVolumeSEEf	CSoundManager::UpdateVolumeSE(float)	game	decompiled	
+0x17fe934	0x18fe934	8	_ZN13CSoundManager17UpdateVolumeVoiceEf	CSoundManager::UpdateVolumeVoice(float)	game	decompiled	
+0x17fe93c	0x18fe93c	304	_ZN13CSoundManager7StopBgmENSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::StopBgm(std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fea6c	0x18fea6c	8	_ZN13CSoundManager5PauseEmNSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::Pause(unsigned long, std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fea74	0x18fea74	8	_ZN13CSoundManager6ResumeEmNSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::Resume(unsigned long, std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fea7c	0x18fea7c	8	_ZN13CSoundManager8PauseAllENSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::PauseAll(std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fea84	0x18fea84	8	_ZN13CSoundManager9ResumeAllENSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::ResumeAll(std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17fea8c	0x18fea8c	8	_ZN13CSoundManager8WatchdogEm	CSoundManager::Watchdog(unsigned long)	game	decompiled	
+0x17fea94	0x18fea94	100	_ZN13CSoundManager6VolumeEmfNSt6__ndk16chrono8durationIfNS0_5ratioILl1ELl1000EEEEE	CSoundManager::Volume(unsigned long, float, std::__ndk1::chrono::duration<float, std::__ndk1::ratio<1l, 1000l> >)	game	decompiled	
+0x17feaf8	0x18feaf8	1076	_ZN13CSoundManager15IsResourceExistEPKcj	CSoundManager::IsResourceExist(char const*, unsigned int)	game	decompiled	
+0x17fef2c	0x18fef2c	148	_ZN13CSoundManager15IsResourceExistEPKc	CSoundManager::IsResourceExist(char const*)	game	decompiled	
+0x17fefc0	0x18fefc0	408	_ZN13CSoundManager21MakeSoundResourcePathEPKc	CSoundManager::MakeSoundResourcePath(char const*)	game	decompiled	
+0x17ff158	0x18ff158	148	_ZN13CSoundManager10IsBgmExistEPKc	CSoundManager::IsBgmExist(char const*)	game	decompiled	
+0x17ff1ec	0x18ff1ec	408	_ZN13CSoundManager19MakeBgmResourcePathEPKc	CSoundManager::MakeBgmResourcePath(char const*)	game	decompiled	
+0x17ff384	0x18ff384	420	_ZN13CSoundManager11AddResourceEPKcb	CSoundManager::AddResource(char const*, bool)	game	decompiled	
+0x17ff654	0x18ff654	500	_ZN13CSoundManager19GetResourceFileListEPKcPN9Framework10CSTLVectorINSt6__ndk112basic_stringIcNS4_11char_traitsIcEENS2_13CSTLAllocatorIcNS2_22CSTLStringAllocatorInfEEEEEEE	CSoundManager::GetResourceFileList(char const*, Framework::CSTLVector<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >*)	game	decompiled	
+0x17ff848	0x18ff848	580	_ZN13CSoundManager14RemoveResourceEPKc	CSoundManager::RemoveResource(char const*)	game	decompiled	
+0x17ffd1c	0x18ffd1c	804	_ZN13CSoundManager15ResourceMappingEPKc	CSoundManager::ResourceMapping(char const*)	game	decompiled	
+0x1800040	0x1900040	144	_ZN13CSoundManager7IsReadyEPKc	CSoundManager::IsReady(char const*)	game	decompiled	
+0x18000d0	0x19000d0	8	_ZN13CSoundManager21SetMaxPlaySoundObjectEj	CSoundManager::SetMaxPlaySoundObject(unsigned int)	game	decompiled	
+0x18000d8	0x19000d8	8	_ZNK13CSoundManager21GetMaxPlaySoundObjectEv	CSoundManager::GetMaxPlaySoundObject() const	game	decompiled	
+0x18000e0	0x19000e0	8	_ZNK13CSoundManager17rSoundResourceMapEv	CSoundManager::rSoundResourceMap() const	game	decompiled	
+0x18000e8	0x19000e8	352	_ZNK13CSoundManager14pSoundFileNameEPKcj	CSoundManager::pSoundFileName(char const*, unsigned int) const	game	decompiled	
+0x1800248	0x1900248	212	_ZNK13CSoundManager9IsLoadingEv	CSoundManager::IsLoading() const	game	decompiled	
+0x180031c	0x190031c	4	_ZN13CSoundManager16CInterruptNotifyD0Ev	CSoundManager::CInterruptNotify::~CInterruptNotify()	game	decompiled	
+0x1aa8f8c	0x1ba8f8c	40	_ZN17CMenuVoiceManagerC2Ev	CMenuVoiceManager::CMenuVoiceManager()	game	decompiled	
+0x1aa8fb4	0x1ba8fb4	540	_ZN17CMenuVoiceManagerD2Ev	CMenuVoiceManager::~CMenuVoiceManager()	game	decompiled	
+0x1aa91d0	0x1ba91d0	24	_ZN17CMenuVoiceManagerD0Ev	CMenuVoiceManager::~CMenuVoiceManager()	game	decompiled	
+0x1aa91e8	0x1ba91e8	156	_ZN17CMenuVoiceManager10InitializeEv	CMenuVoiceManager::Initialize()	game	decompiled	
+0x1aa9284	0x1ba9284	340	_ZN17CMenuVoiceManager8ProgressEv	CMenuVoiceManager::Progress()	game	decompiled	
+0x1aa93d8	0x1ba93d8	148	_ZN17CMenuVoiceManager21RemovePlayWaitElementEv	CMenuVoiceManager::RemovePlayWaitElement()	game	decompiled	
+0x1aa946c	0x1ba946c	152	_ZN17CMenuVoiceManager19ProgressReserveListEv	CMenuVoiceManager::ProgressReserveList()	game	decompiled	
+0x1aa9504	0x1ba9504	444	_ZN17CMenuVoiceManager19ProgressPlayingListEv	CMenuVoiceManager::ProgressPlayingList()	game	decompiled	
+0x1aa96c0	0x1ba96c0	568	_ZN17CMenuVoiceManager22ProgressRemovePackListEv	CMenuVoiceManager::ProgressRemovePackList()	game	decompiled	
+0x1aa98f8	0x1ba98f8	600	_ZN17CMenuVoiceManager23ProgressStopRequestListEv	CMenuVoiceManager::ProgressStopRequestList()	game	decompiled	
+0x1aa9b50	0x1ba9b50	716	_ZN17CMenuVoiceManager19PlayVoiceFromMenuIDEjjbi	CMenuVoiceManager::PlayVoiceFromMenuID(unsigned int, unsigned int, bool, int)	game	decompiled	
+0x1aa9e1c	0x1ba9e1c	1308	_ZN17CMenuVoiceManager13GetPlaySEListEjRN9Framework10CSTLVectorIjEEj	CMenuVoiceManager::GetPlaySEList(unsigned int, Framework::CSTLVector<unsigned int>&, unsigned int)	game	decompiled	
+0x1aaa338	0x1baa338	196	_ZN17CMenuVoiceManager16StopPlayingVoiceEji	CMenuVoiceManager::StopPlayingVoice(unsigned int, int)	game	decompiled	
+0x1aaa3fc	0x1baa3fc	80	_ZN17CMenuVoiceManager15PlayVoiceFromIDEPKcbi	CMenuVoiceManager::PlayVoiceFromID(char const*, bool, int)	game	decompiled	
+0x1aaa44c	0x1baa44c	832	_ZN17CMenuVoiceManager21PlayVoiceFromMasterIDEjbi	CMenuVoiceManager::PlayVoiceFromMasterID(unsigned int, bool, int)	game	decompiled	
+0x1aaa78c	0x1baa78c	68	_ZN17CMenuVoiceManager30IsSystemSettingMenuVoiceEnableEj	CMenuVoiceManager::IsSystemSettingMenuVoiceEnable(unsigned int)	game	decompiled	
+0x1aaa7d0	0x1baa7d0	144	_ZN17CMenuVoiceManager22IsExistResourcePackageEPKcj	CMenuVoiceManager::IsExistResourcePackage(char const*, unsigned int)	game	decompiled	
+0x1aaa860	0x1baa860	1004	_ZN17CMenuVoiceManager25AddResourcePackFromMenuIDEjj	CMenuVoiceManager::AddResourcePackFromMenuID(unsigned int, unsigned int)	game	decompiled	
+0x1aaac4c	0x1baac4c	1308	_ZN17CMenuVoiceManager16MakeResourceListEjRN9Framework10CSTLVectorINSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEEEEj	CMenuVoiceManager::MakeResourceList(unsigned int, Framework::CSTLVector<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >&, unsigned int)	game	decompiled	
+0x1aab168	0x1bab168	1640	_ZN17CMenuVoiceManager6PlaySEEjb	CMenuVoiceManager::PlaySE(unsigned int, bool)	game	decompiled	
+0x1aab7d0	0x1bab7d0	400	_ZN17CMenuVoiceManager11PlayingDataC2ERKS0_	CMenuVoiceManager::PlayingData::PlayingData(CMenuVoiceManager::PlayingData const&)	game	decompiled	
+0x1aab960	0x1bab960	776	_ZN17CMenuVoiceManager20IsChangeSoundPackageEjRKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEEj	CMenuVoiceManager::IsChangeSoundPackage(unsigned int, std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&, unsigned int)	game	decompiled	
+0x1aac20c	0x1bac20c	260	_ZN17CMenuVoiceManager7StopAllEbf	CMenuVoiceManager::StopAll(bool, float)	game	decompiled	
+0x1aac310	0x1bac310	872	_ZN17CMenuVoiceManager11RequestStopEjj	CMenuVoiceManager::RequestStop(unsigned int, unsigned int)	game	decompiled	
+0x1aac678	0x1bac678	776	_ZN17CMenuVoiceManager11RequestStopEPKc	CMenuVoiceManager::RequestStop(char const*)	game	decompiled	
+0x1aac980	0x1bac980	1128	_ZN17CMenuVoiceManager12StopPlayPackERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEEf	CMenuVoiceManager::StopPlayPack(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&, float)	game	decompiled	
+0x1aacde8	0x1bacde8	1036	_ZN17CMenuVoiceManager18RemoveResourcePackEjj	CMenuVoiceManager::RemoveResourcePack(unsigned int, unsigned int)	game	decompiled	
+0x1aad1f4	0x1bad1f4	1460	_ZN17CMenuVoiceManager18RemoveResourcePackEPKc	CMenuVoiceManager::RemoveResourcePack(char const*)	game	decompiled	
+0x1aad7a8	0x1bad7a8	440	_ZN17CMenuVoiceManager15IsReadyResourceEjj	CMenuVoiceManager::IsReadyResource(unsigned int, unsigned int)	game	decompiled	
+0x1aad960	0x1bad960	568	_ZN17CMenuVoiceManager15IsReadyResourceEPKc	CMenuVoiceManager::IsReadyResource(char const*)	game	decompiled	
+0x1aadb98	0x1badb98	16	_ZN17CMenuVoiceManager21IsExistRemoveResourceEv	CMenuVoiceManager::IsExistRemoveResource()	game	decompiled	
+0x1aadba8	0x1badba8	388	_ZN17CMenuVoiceManager27GetPlayIDListBySoundPackageERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEERNS4_10CSTLVectorIjEE	CMenuVoiceManager::GetPlayIDListBySoundPackage(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&, Framework::CSTLVector<unsigned int>&)	game	decompiled	
+0x1aadd2c	0x1badd2c	40	_ZN17CMenuVoiceManager8IsMascotEj	CMenuVoiceManager::IsMascot(unsigned int)	game	decompiled	
+0x1aadd54	0x1badd54	336	_ZNK17CMenuVoiceManager9IsPlayingEPKc	CMenuVoiceManager::IsPlaying(char const*) const	game	decompiled	
+0x1aadea4	0x1badea4	304	_ZN17CMenuVoiceManager20GetMascotToCharaTypeEv	CMenuVoiceManager::GetMascotToCharaType()	game	decompiled	
+0x1aadfd4	0x1badfd4	64	_ZN17CMenuVoiceManager15GetUseCharaTypeEj	CMenuVoiceManager::GetUseCharaType(unsigned int)	game	decompiled	
+0x1aae014	0x1bae014	508	_ZN17CMenuVoiceManager19ChangeMascotVoiceIDEjPKc	CMenuVoiceManager::ChangeMascotVoiceID(unsigned int, char const*)	game	decompiled	
+0x1aaf974	0x1baf974	288	_ZNSt6__ndk16vectorIN17CMenuVoiceManager11ReserveDataEN9Framework13CSTLAllocatorIS2_NS3_22CSTLVectorAllocatorInfEEEE24__emplace_back_slow_pathIJRS2_EEEvDpOT_	void std::__ndk1::vector<CMenuVoiceManager::ReserveData, Framework::CSTLAllocator<CMenuVoiceManager::ReserveData, Framework::CSTLVectorAllocatorInf> >::__emplace_back_slow_path<CMenuVoiceManager::ReserveData&>(CMenuVoiceManager::ReserveData&)	game	decompiled	
+0x1aafa94	0x1bafa94	532	_ZNSt6__ndk16vectorIN17CMenuVoiceManager12ResourceDataEN9Framework13CSTLAllocatorIS2_NS3_22CSTLVectorAllocatorInfEEEE24__emplace_back_slow_pathIJRS2_EEEvDpOT_	void std::__ndk1::vector<CMenuVoiceManager::ResourceData, Framework::CSTLAllocator<CMenuVoiceManager::ResourceData, Framework::CSTLVectorAllocatorInf> >::__emplace_back_slow_path<CMenuVoiceManager::ResourceData&>(CMenuVoiceManager::ResourceData&)	game	decompiled	
+0x1aafca8	0x1bafca8	368	_ZNSt6__ndk16vectorIN17CMenuVoiceManager12ResourceDataEN9Framework13CSTLAllocatorIS2_NS3_22CSTLVectorAllocatorInfEEEE26__swap_out_circular_bufferERNS_14__split_bufferIS2_RS6_EE	std::__ndk1::vector<CMenuVoiceManager::ResourceData, Framework::CSTLAllocator<CMenuVoiceManager::ResourceData, Framework::CSTLVectorAllocatorInf> >::__swap_out_circular_buffer(std::__ndk1::__split_buffer<CMenuVoiceManager::ResourceData, Framework::CSTLAllocator<CMenuVoiceManager::ResourceData, Framework::CSTLVectorAllocatorInf>&>&)	game	decompiled	
+0x1aafe18	0x1bafe18	292	_ZNSt6__ndk16vectorIN17CMenuVoiceManager11PlayingData8PlayUnitEN9Framework13CSTLAllocatorIS3_NS4_22CSTLVectorAllocatorInfEEEE24__emplace_back_slow_pathIJRS3_EEEvDpOT_	void std::__ndk1::vector<CMenuVoiceManager::PlayingData::PlayUnit, Framework::CSTLAllocator<CMenuVoiceManager::PlayingData::PlayUnit, Framework::CSTLVectorAllocatorInf> >::__emplace_back_slow_path<CMenuVoiceManager::PlayingData::PlayUnit&>(CMenuVoiceManager::PlayingData::PlayUnit&)	game	decompiled	
+0x1aaff3c	0x1baff3c	448	_ZNSt6__ndk16vectorIN17CMenuVoiceManager11PlayingDataEN9Framework13CSTLAllocatorIS2_NS3_22CSTLVectorAllocatorInfEEEE21__push_back_slow_pathIRKS2_EEvOT_	void std::__ndk1::vector<CMenuVoiceManager::PlayingData, Framework::CSTLAllocator<CMenuVoiceManager::PlayingData, Framework::CSTLVectorAllocatorInf> >::__push_back_slow_path<CMenuVoiceManager::PlayingData const&>(CMenuVoiceManager::PlayingData const&)	game	decompiled	
+0x1ab1144	0x1bb1144	528	_ZNSt6__ndk16vectorIN17CMenuVoiceManager11PlayingData8PlayUnitEN9Framework13CSTLAllocatorIS3_NS4_22CSTLVectorAllocatorInfEEEE6assignIPS3_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS3_NS_15iterator_traitsISC_E9referenceEEE5valueEvE4typeESC_SC_	std::__ndk1::enable_if<__is_forward_iterator<CMenuVoiceManager::PlayingData::PlayUnit*>::value&&is_constructible<CMenuVoiceManager::PlayingData::PlayUnit, std::__ndk1::iterator_traits<CMenuVoiceManager::PlayingData::PlayUnit*>::reference>::value, void>::type std::__ndk1::vector<CMenuVoiceManager::PlayingData::PlayUnit, Framework::CSTLAllocator<CMenuVoiceManager::PlayingData::PlayUnit, Framework::CSTLVectorAllocatorInf> >::assign<CMenuVoiceManager::PlayingData::PlayUnit*>(CMenuVoiceManager::PlayingData::PlayUnit*, CMenuVoiceManager::PlayingData::PlayUnit*)	game	decompiled	
+0x1e13224	0x1f13224	40	_ZN15CUIVoiceManagerC2Ev	CUIVoiceManager::CUIVoiceManager()	game	decompiled	
+0x1e1324c	0x1f1324c	320	_ZN15CUIVoiceManagerD2Ev	CUIVoiceManager::~CUIVoiceManager()	game	decompiled	
+0x1e1338c	0x1f1338c	24	_ZN15CUIVoiceManagerD0Ev	CUIVoiceManager::~CUIVoiceManager()	game	decompiled	
+0x1e133a4	0x1f133a4	4	_ZN15CUIVoiceManager10InitializeEv	CUIVoiceManager::Initialize()	game	decompiled	
+0x1e133a8	0x1f133a8	2080	_ZN15CUIVoiceManager8ProgressEv	CUIVoiceManager::Progress()	game	decompiled	
+0x1e13bc8	0x1f13bc8	120	_ZN15CUIVoiceManager19IsReadyResourcePackERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE	CUIVoiceManager::IsReadyResourcePack(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	game	decompiled	
+0x1e13c40	0x1f13c40	136	_ZN15CUIVoiceManager19PlayVoiceFromMenuIDENS_6MenuIDENS_22MenuVoiceCharacterTypeEbi	CUIVoiceManager::PlayVoiceFromMenuID(CUIVoiceManager::MenuID, CUIVoiceManager::MenuVoiceCharacterType, bool, int)	game	decompiled	
+0x1e13cc8	0x1f13cc8	120	_ZN15CUIVoiceManager9PlayVoiceEPKcbi	CUIVoiceManager::PlayVoice(char const*, bool, int)	game	decompiled	
+0x1e13d40	0x1f13d40	120	_ZN15CUIVoiceManager21PlayVoiceFromMasterIDEjbi	CUIVoiceManager::PlayVoiceFromMasterID(unsigned int, bool, int)	game	decompiled	
+0x1e13db8	0x1f13db8	80	_ZN15CUIVoiceManager17CreateRandomQueIDEjj	CUIVoiceManager::CreateRandomQueID(unsigned int, unsigned int)	game	decompiled	
+0x1e13e08	0x1f13e08	544	_ZN15CUIVoiceManager30IsSystemSettingMenuVoiceEnableERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE	CUIVoiceManager::IsSystemSettingMenuVoiceEnable(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	game	decompiled	
+0x1e14028	0x1f14028	76	_ZN15CUIVoiceManager9IsPlayingEPKc	CUIVoiceManager::IsPlaying(char const*)	game	decompiled	
+0x1e14074	0x1f14074	92	_ZN15CUIVoiceManager7StopAllEbf	CUIVoiceManager::StopAll(bool, float)	game	decompiled	
+0x1e140d0	0x1f140d0	1052	_ZN15CUIVoiceManager20GetMenuVoicePackNameEj	CUIVoiceManager::GetMenuVoicePackName(unsigned int)	game	decompiled	
+0x1e144ec	0x1f144ec	1052	_ZN15CUIVoiceManager22GetBattleVoicePackNameEj	CUIVoiceManager::GetBattleVoicePackName(unsigned int)	game	decompiled	
+0x1e14908	0x1f14908	1052	_ZN15CUIVoiceManager20GetHomeVoicePackNameEj	CUIVoiceManager::GetHomeVoicePackName(unsigned int)	game	decompiled	
+0x1e14d24	0x1f14d24	1052	_ZN15CUIVoiceManager23GetHomeVoicePackSubNameEj	CUIVoiceManager::GetHomeVoicePackSubName(unsigned int)	game	decompiled	
+0x1e15140	0x1f15140	16	_ZN15CUIVoiceManager23GetPackNameFromCategoryEjj	CUIVoiceManager::GetPackNameFromCategory(unsigned int, unsigned int)	game	decompiled	
+0x1e15150	0x1f15150	344	_ZN15CUIVoiceManager21GetGachaVoicePackNameEjRNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEERj	CUIVoiceManager::GetGachaVoicePackName(unsigned int, std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> >&, unsigned int&)	game	decompiled	
+0x1e152a8	0x1f152a8	876	_ZN15CUIVoiceManager20GetMenuVoiceMasterIDEj	CUIVoiceManager::GetMenuVoiceMasterID(unsigned int)	game	decompiled	
+0x1e15614	0x1f15614	1320	_ZN15CUIVoiceManager12GetMenuVoiceERKNSt6__ndk110shared_ptrI29CMasterParameterPersonElementEENS_11MenuVoiceIDEj	CUIVoiceManager::GetMenuVoice(std::__ndk1::shared_ptr<CMasterParameterPersonElement> const&, CUIVoiceManager::MenuVoiceID, unsigned int)	game	decompiled	
+0x1e15b3c	0x1f15b3c	260	_ZN15CUIVoiceManager13PlayMenuVoiceENS_11MenuVoiceIDEjj	CUIVoiceManager::PlayMenuVoice(CUIVoiceManager::MenuVoiceID, unsigned int, unsigned int)	game	decompiled	
+0x1e15c40	0x1f15c40	616	_ZN15CUIVoiceManager12AddMenuVoiceEjjj	CUIVoiceManager::AddMenuVoice(unsigned int, unsigned int, unsigned int)	game	decompiled	
+0x1e15ea8	0x1f15ea8	688	_ZN15CUIVoiceManager15PlayBattleVoiceEjj	CUIVoiceManager::PlayBattleVoice(unsigned int, unsigned int)	game	decompiled	
+0x1e16158	0x1f16158	516	_ZN15CUIVoiceManager24PlayLevelUPVoiceStrengthEjj	CUIVoiceManager::PlayLevelUPVoiceStrength(unsigned int, unsigned int)	game	decompiled	
+0x1e1635c	0x1f1635c	456	_ZN15CUIVoiceManager18PlayLimitOverVoiceEj	CUIVoiceManager::PlayLimitOverVoice(unsigned int)	game	decompiled	
+0x1e1671c	0x1f1671c	80	_ZN15CUIVoiceManager15GetLevelUpCueIDEj	CUIVoiceManager::GetLevelUpCueID(unsigned int)	game	decompiled	
+0x1e1676c	0x1f1676c	392	_ZN15CUIVoiceManager14AddPlayUpVoiceEjj	CUIVoiceManager::AddPlayUpVoice(unsigned int, unsigned int)	game	decompiled	
+0x1e168f4	0x1f168f4	64	_ZN15CUIVoiceManager18StopPlayBattlePackEj	CUIVoiceManager::StopPlayBattlePack(unsigned int)	game	decompiled	
+0x1e16934	0x1f16934	716	_ZN15CUIVoiceManager12StopPlayPackERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEEf	CUIVoiceManager::StopPlayPack(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&, float)	game	decompiled	
+0x1e16c00	0x1f16c00	60	_ZN15CUIVoiceManager19AddResourcePackMenuEj	CUIVoiceManager::AddResourcePackMenu(unsigned int)	game	decompiled	
+0x1e16c3c	0x1f16c3c	412	_ZN15CUIVoiceManager15AddResourcePackERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE	CUIVoiceManager::AddResourcePack(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	game	decompiled	
+0x1e16dd8	0x1f16dd8	60	_ZN15CUIVoiceManager21AddResourcePackBattleEj	CUIVoiceManager::AddResourcePackBattle(unsigned int)	game	decompiled	
+0x1e16e14	0x1f16e14	112	_ZN15CUIVoiceManager19AddResourcePackHomeEj	CUIVoiceManager::AddResourcePackHome(unsigned int)	game	decompiled	
+0x1e16e84	0x1f16e84	60	_ZN15CUIVoiceManager22RemoveResourcePackMenuEj	CUIVoiceManager::RemoveResourcePackMenu(unsigned int)	game	decompiled	
+0x1e16ec0	0x1f16ec0	356	_ZN15CUIVoiceManager18RemoveResourcePackERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE	CUIVoiceManager::RemoveResourcePack(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	game	decompiled	
+0x1e17024	0x1f17024	60	_ZN15CUIVoiceManager24RemoveResourcePackBattleEj	CUIVoiceManager::RemoveResourcePackBattle(unsigned int)	game	decompiled	
+0x1e17060	0x1f17060	112	_ZN15CUIVoiceManager22RemoveResourcePackHomeEj	CUIVoiceManager::RemoveResourcePackHome(unsigned int)	game	decompiled	
+0x1e170d0	0x1f170d0	164	_ZN15CUIVoiceManager23IsReadyResourcePackMenuEj	CUIVoiceManager::IsReadyResourcePackMenu(unsigned int)	game	decompiled	
+0x1e17174	0x1f17174	164	_ZN15CUIVoiceManager25IsReadyResourcePackBattleEj	CUIVoiceManager::IsReadyResourcePackBattle(unsigned int)	game	decompiled	
+0x1e17218	0x1f17218	304	_ZN15CUIVoiceManager23IsReadyResourcePackHomeEj	CUIVoiceManager::IsReadyResourcePackHome(unsigned int)	game	decompiled	
+0x1e17348	0x1f17348	108	_ZN15CUIVoiceManager11AddResourceENS_6MenuIDENS_22MenuVoiceCharacterTypeE	CUIVoiceManager::AddResource(CUIVoiceManager::MenuID, CUIVoiceManager::MenuVoiceCharacterType)	game	decompiled	
+0x1e173b4	0x1f173b4	108	_ZN15CUIVoiceManager14RemoveResourceENS_6MenuIDENS_22MenuVoiceCharacterTypeE	CUIVoiceManager::RemoveResource(CUIVoiceManager::MenuID, CUIVoiceManager::MenuVoiceCharacterType)	game	decompiled	
+0x1e17420	0x1f17420	108	_ZN15CUIVoiceManager11RequestStopENS_6MenuIDENS_22MenuVoiceCharacterTypeE	CUIVoiceManager::RequestStop(CUIVoiceManager::MenuID, CUIVoiceManager::MenuVoiceCharacterType)	game	decompiled	
+0x1e1748c	0x1f1748c	84	_ZN15CUIVoiceManager15IsReadyResourceENS_6MenuIDENS_22MenuVoiceCharacterTypeE	CUIVoiceManager::IsReadyResource(CUIVoiceManager::MenuID, CUIVoiceManager::MenuVoiceCharacterType)	game	decompiled	
+0x1e174e0	0x1f174e0	60	_ZN15CUIVoiceManager21IsExistRemoveResourceEv	CUIVoiceManager::IsExistRemoveResource()	game	decompiled	
+0x1e1751c	0x1f1751c	1236	_ZN15CUIVoiceManager23GetEventMissionPackListERN9Framework10CSTLVectorINSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEEEE	CUIVoiceManager::GetEventMissionPackList(Framework::CSTLVector<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > >&)	game	decompiled	
+0x1e179f0	0x1f179f0	120	_ZN15CUIVoiceManager23AddEventMissionPackListERKN9Framework10CSTLVectorINSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEEEE	CUIVoiceManager::AddEventMissionPackList(Framework::CSTLVector<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > > const&)	game	decompiled	
+0x1e17a68	0x1f17a68	96	_ZN15CUIVoiceManager34RemoveResourceEventMissionPackListERKN9Framework10CSTLVectorINSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEEEE	CUIVoiceManager::RemoveResourceEventMissionPackList(Framework::CSTLVector<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > > const&)	game	decompiled	
+0x1e17ac8	0x1f17ac8	176	_ZN15CUIVoiceManager35IsReadyResourceEventMissionPackListERKN9Framework10CSTLVectorINSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEEEE	CUIVoiceManager::IsReadyResourceEventMissionPackList(Framework::CSTLVector<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > > const&)	game	decompiled	
+0x1e17b78	0x1f17b78	84	_ZN15CUIVoiceManager28StopPlayPackEventMissionListERKN9Framework10CSTLVectorINSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEEEE	CUIVoiceManager::StopPlayPackEventMissionList(Framework::CSTLVector<std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > > const&)	game	decompiled	
+0x1e17bcc	0x1f17bcc	1492	_ZN15CUIVoiceManager20PlayEventMissionMenuERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEEjj	CUIVoiceManager::PlayEventMissionMenu(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&, unsigned int, unsigned int)	game	decompiled	
+0x1e181a0	0x1f181a0	472	_ZN15CUIVoiceManager10AddStampSEERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEEj	CUIVoiceManager::AddStampSE(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&, unsigned int)	game	decompiled	
+0x1e18378	0x1f18378	780	_ZN15CUIVoiceManager16IsPlayingStampSEERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE	CUIVoiceManager::IsPlayingStampSE(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf> > const&)	game	decompiled	
+0x1e18684	0x1f18684	392	_ZN15CUIVoiceManager18UpVoicePlayingDataC2ERKS0_	CUIVoiceManager::UpVoicePlayingData::UpVoicePlayingData(CUIVoiceManager::UpVoicePlayingData const&)	game	decompiled	
+0x1e18954	0x1f18954	340	_ZN17CUIVoiceDataCache4LoadEN15CUIVoiceManager6MenuIDENS0_22MenuVoiceCharacterTypeE	CUIVoiceDataCache::Load(CUIVoiceManager::MenuID, CUIVoiceManager::MenuVoiceCharacterType)	game	decompiled	
+0x1e19c24	0x1f19c24	292	_ZNSt6__ndk16vectorIN15CUIVoiceManager18UpVoicePlayingData8PlayUnitEN9Framework13CSTLAllocatorIS3_NS4_22CSTLVectorAllocatorInfEEEE21__push_back_slow_pathIRKS3_EEvOT_	void std::__ndk1::vector<CUIVoiceManager::UpVoicePlayingData::PlayUnit, Framework::CSTLAllocator<CUIVoiceManager::UpVoicePlayingData::PlayUnit, Framework::CSTLVectorAllocatorInf> >::__push_back_slow_path<CUIVoiceManager::UpVoicePlayingData::PlayUnit const&>(CUIVoiceManager::UpVoicePlayingData::PlayUnit const&)	game	decompiled	
+0x1e19d48	0x1f19d48	428	_ZNSt6__ndk16vectorIN15CUIVoiceManager18UpVoicePlayingDataEN9Framework13CSTLAllocatorIS2_NS3_22CSTLVectorAllocatorInfEEEE21__push_back_slow_pathIRKS2_EEvOT_	void std::__ndk1::vector<CUIVoiceManager::UpVoicePlayingData, Framework::CSTLAllocator<CUIVoiceManager::UpVoicePlayingData, Framework::CSTLVectorAllocatorInf> >::__push_back_slow_path<CUIVoiceManager::UpVoicePlayingData const&>(CUIVoiceManager::UpVoicePlayingData const&)	game	decompiled	
+0x1e19ef4	0x1f19ef4	528	_ZNSt6__ndk16vectorIN15CUIVoiceManager18UpVoicePlayingData8PlayUnitEN9Framework13CSTLAllocatorIS3_NS4_22CSTLVectorAllocatorInfEEEE6assignIPS3_EENS_9enable_ifIXaasr21__is_forward_iteratorIT_EE5valuesr16is_constructibleIS3_NS_15iterator_traitsISC_E9referenceEEE5valueEvE4typeESC_SC_	std::__ndk1::enable_if<__is_forward_iterator<CUIVoiceManager::UpVoicePlayingData::PlayUnit*>::value&&is_constructible<CUIVoiceManager::UpVoicePlayingData::PlayUnit, std::__ndk1::iterator_traits<CUIVoiceManager::UpVoicePlayingData::PlayUnit*>::reference>::value, void>::type std::__ndk1::vector<CUIVoiceManager::UpVoicePlayingData::PlayUnit, Framework::CSTLAllocator<CUIVoiceManager::UpVoicePlayingData::PlayUnit, Framework::CSTLVectorAllocatorInf> >::assign<CUIVoiceManager::UpVoicePlayingData::PlayUnit*>(CUIVoiceManager::UpVoicePlayingData::PlayUnit*, CUIVoiceManager::UpVoicePlayingData::PlayUnit*)	game	decompiled	
+0x1e1a2f4	0x1f1a2f4	532	_ZNSt6__ndk16vectorIN15CUIVoiceManager11UpVoiceDataEN9Framework13CSTLAllocatorIS2_NS3_22CSTLVectorAllocatorInfEEEE21__push_back_slow_pathIRKS2_EEvOT_	void std::__ndk1::vector<CUIVoiceManager::UpVoiceData, Framework::CSTLAllocator<CUIVoiceManager::UpVoiceData, Framework::CSTLVectorAllocatorInf> >::__push_back_slow_path<CUIVoiceManager::UpVoiceData const&>(CUIVoiceManager::UpVoiceData const&)	game	decompiled	
+0x1e1a508	0x1f1a508	376	_ZNSt6__ndk16vectorIN15CUIVoiceManager11UpVoiceDataEN9Framework13CSTLAllocatorIS2_NS3_22CSTLVectorAllocatorInfEEEE26__swap_out_circular_bufferERNS_14__split_bufferIS2_RS6_EE	std::__ndk1::vector<CUIVoiceManager::UpVoiceData, Framework::CSTLAllocator<CUIVoiceManager::UpVoiceData, Framework::CSTLVectorAllocatorInf> >::__swap_out_circular_buffer(std::__ndk1::__split_buffer<CUIVoiceManager::UpVoiceData, Framework::CSTLAllocator<CUIVoiceManager::UpVoiceData, Framework::CSTLVectorAllocatorInf>&>&)	game	decompiled	
+0x1e97918	0x1f97918	60	_ZN9Framework6CSound8Volume3DEv	Framework::CSound::Volume3D()	framework	decompiled	
+0x1e97954	0x1f97954	72	_ZN9Framework6CSound8Volume3DEf	Framework::CSound::Volume3D(float)	framework	decompiled	
+0x1e9799c	0x1f9799c	20	_ZN9Framework6CSound18EmitterMinDistanceEv	Framework::CSound::EmitterMinDistance()	framework	decompiled	
+0x1e979b0	0x1f979b0	20	_ZN9Framework6CSound18EmitterMinDistanceEf	Framework::CSound::EmitterMinDistance(float)	framework	decompiled	
+0x1e979c4	0x1f979c4	20	_ZN9Framework6CSound18EmitterMaxDistanceEv	Framework::CSound::EmitterMaxDistance()	framework	decompiled	
+0x1e979d8	0x1f979d8	20	_ZN9Framework6CSound18EmitterMaxDistanceEf	Framework::CSound::EmitterMaxDistance(float)	framework	decompiled	
+0x1e979ec	0x1f979ec	8	_ZN9Framework6CSound13RolloffFactorEv	Framework::CSound::RolloffFactor()	framework	decompiled	
+0x1e979f4	0x1f979f4	4	_ZN9Framework6CSound13RolloffFactorEf	Framework::CSound::RolloffFactor(float)	framework	decompiled	
+0x1e979f8	0x1f979f8	20	_ZN9Framework6CSound19ListenerMinDistanceEv	Framework::CSound::ListenerMinDistance()	framework	decompiled	
+0x1e97a0c	0x1f97a0c	20	_ZN9Framework6CSound19ListenerMinDistanceEf	Framework::CSound::ListenerMinDistance(float)	framework	decompiled	
+0x1e97a20	0x1f97a20	20	_ZN9Framework6CSound19ListenerMaxDistanceEv	Framework::CSound::ListenerMaxDistance()	framework	decompiled	
+0x1e97a34	0x1f97a34	100	_ZN9Framework6CSound19ListenerMaxDistanceEf	Framework::CSound::ListenerMaxDistance(float)	framework	decompiled	
+0x1e97a98	0x1f97a98	20	_ZN9Framework6CSound15ListenerOffsetZEv	Framework::CSound::ListenerOffsetZ()	framework	decompiled	
+0x1e97aac	0x1f97aac	20	_ZN9Framework6CSound15ListenerOffsetZEf	Framework::CSound::ListenerOffsetZ(float)	framework	decompiled	
+0x1e97ac0	0x1f97ac0	20	_ZN9Framework6CSound7MaxGainEv	Framework::CSound::MaxGain()	framework	decompiled	
+0x1e97ad4	0x1f97ad4	20	_ZN9Framework6CSound7MaxGainEf	Framework::CSound::MaxGain(float)	framework	decompiled	
+0x1e97ae8	0x1f97ae8	96	_ZN9Framework6CSound21SpeakerPositionRadianEjf	Framework::CSound::SpeakerPositionRadian(unsigned int, float)	framework	decompiled	
+0x1e97b48	0x1f97b48	76	_ZN9Framework6CSound21SpeakerPositionRadianEj	Framework::CSound::SpeakerPositionRadian(unsigned int)	framework	decompiled	
+0x1e97b94	0x1f97b94	32	_ZN9Framework6CSound16SetAudioListenerEPN4Aska18HierarchicalObjectEf	Framework::CSound::SetAudioListener(Aska::HierarchicalObject*, float)	framework	decompiled	
+0x1e97bb4	0x1f97bb4	20	_ZN9Framework6CSound19DeleteAudioListenerEv	Framework::CSound::DeleteAudioListener()	framework	decompiled	
+0x1e97bc8	0x1f97bc8	80	_ZN9Framework6CSound10tArgumentsC1Ev	Framework::CSound::tArguments::tArguments()	framework	decompiled	
+0x1e97c18	0x1f97c18	44	_ZN9Framework6CSound10tArguments5Set3DERKNS_7CVectorE	Framework::CSound::tArguments::Set3D(Framework::CVector const&)	framework	decompiled	
+0x1e97c44	0x1f97c44	28	_ZN9Framework6CSound8CElementC1Ev	Framework::CSound::CElement::CElement()	framework	decompiled	
+0x1e97c60	0x1f97c60	84	_ZN9Framework6CSound8CElementD2Ev	Framework::CSound::CElement::~CElement()	framework	decompiled	
+0x1e97cb4	0x1f97cb4	68	_ZN9Framework6CSound8CElement7ReleaseEv	Framework::CSound::CElement::Release()	framework	decompiled	
+0x1e97cf8	0x1f97cf8	84	_ZN9Framework6CSound8CElementD0Ev	Framework::CSound::CElement::~CElement()	framework	decompiled	
+0x1e97d4c	0x1f97d4c	412	_ZN9Framework6CSound8CElement10InitializeEv	Framework::CSound::CElement::Initialize()	framework	decompiled	
+0x1e97ee8	0x1f97ee8	60	_ZN9Framework6CSound8CElement19rHierarchicalObjectEv	Framework::CSound::CElement::rHierarchicalObject()	framework	decompiled	
+0x1e97f24	0x1f97f24	152	_ZN9Framework6CSound8CElement8ActivateEmRN4Aska11SoundObjectERKNS0_10tArgumentsEPKc	Framework::CSound::CElement::Activate(unsigned long, Aska::SoundObject&, Framework::CSound::tArguments const&, char const*)	framework	decompiled	
+0x1e97fbc	0x1f97fbc	28	_ZNK9Framework6CSound8CElement8IsActiveEv	Framework::CSound::CElement::IsActive() const	framework	decompiled	
+0x1e97fd8	0x1f97fd8	8	_ZNK9Framework6CSound8CElement6HandleEv	Framework::CSound::CElement::Handle() const	framework	decompiled	
+0x1e97fe0	0x1f97fe0	8	_ZNK9Framework6CSound8CElement5pNameEv	Framework::CSound::CElement::pName() const	framework	decompiled	
+0x1e97fe8	0x1f97fe8	56	_ZNK9Framework6CSound8CElement8PositionEv	Framework::CSound::CElement::Position() const	framework	decompiled	
+0x1e98020	0x1f98020	68	_ZN9Framework6CSound8CElement8PositionERKNS_7CVectorE	Framework::CSound::CElement::Position(Framework::CVector const&)	framework	decompiled	
+0x1e98064	0x1f98064	8	_ZNK9Framework6CSound8CElement4Is3DEv	Framework::CSound::CElement::Is3D() const	framework	decompiled	
+0x1e9806c	0x1f9806c	116	_ZN9Framework6CSound8CElement6VolumeEff	Framework::CSound::CElement::Volume(float, float)	framework	decompiled	
+0x1e980e0	0x1f980e0	92	_ZNK9Framework6CSound8CElement6VolumeEv	Framework::CSound::CElement::Volume() const	framework	decompiled	
+0x1e9813c	0x1f9813c	116	_ZN9Framework6CSound8CElement5PitchEff	Framework::CSound::CElement::Pitch(float, float)	framework	decompiled	
+0x1e981b0	0x1f981b0	92	_ZNK9Framework6CSound8CElement5PitchEv	Framework::CSound::CElement::Pitch() const	framework	decompiled	
+0x1e9820c	0x1f9820c	100	_ZN9Framework6CSound8CElement3PanEff	Framework::CSound::CElement::Pan(float, float)	framework	decompiled	
+0x1e98270	0x1f98270	92	_ZNK9Framework6CSound8CElement3PanEv	Framework::CSound::CElement::Pan() const	framework	decompiled	
+0x1e982cc	0x1f982cc	8	_ZNK9Framework6CSound8CElement12pSoundObjectEv	Framework::CSound::CElement::pSoundObject() const	framework	decompiled	
+0x1e982d4	0x1f982d4	164	_ZN9Framework6CSound8CElement15SendStopRequestEf	Framework::CSound::CElement::SendStopRequest(float)	framework	decompiled	
+0x1e98378	0x1f98378	184	_ZN9Framework6CSound8CElement16SendPauseRequestEfb	Framework::CSound::CElement::SendPauseRequest(float, bool)	framework	decompiled	
+0x1e98430	0x1f98430	12	_ZN9Framework6CSound8CElement20IsKeepPlayByWatchdogEb	Framework::CSound::CElement::IsKeepPlayByWatchdog(bool)	framework	decompiled	
+0x1e9843c	0x1f9843c	12	_ZN9Framework6CSound8CElement8WatchdogEv	Framework::CSound::CElement::Watchdog()	framework	decompiled	
+0x1e98448	0x1f98448	8	_ZN9Framework6CSound8CElement11PreProgressEf	Framework::CSound::CElement::PreProgress(float)	framework	decompiled	
+0x1e98450	0x1f98450	224	_ZN9Framework6CSound8CElement12PostProgressEf	Framework::CSound::CElement::PostProgress(float)	framework	decompiled	
+0x1e98530	0x1f98530	80	_ZN9Framework13CSoundManagerC2Ev	Framework::CSoundManager::CSoundManager()	framework	decompiled	
+0x1e98580	0x1f98580	40	_ZN9Framework13CSoundManagerD1Ev	Framework::CSoundManager::~CSoundManager()	framework	decompiled	
+0x1e985a8	0x1f985a8	316	_ZN9Framework13CSoundManager7ReleaseEv	Framework::CSoundManager::Release()	framework	decompiled	
+0x1e986e4	0x1f986e4	48	_ZN9Framework13CSoundManagerD0Ev	Framework::CSoundManager::~CSoundManager()	framework	decompiled	
+0x1e98714	0x1f98714	628	_ZN9Framework13CSoundManager10InitializeEj	Framework::CSoundManager::Initialize(unsigned int)	framework	decompiled	
+0x1e98988	0x1f98988	8	_ZNK9Framework13CSoundManager10NumPlayingEv	Framework::CSoundManager::NumPlaying() const	framework	decompiled	
+0x1e98990	0x1f98990	160	_ZNK9Framework13CSoundManager11SearchBlankEv	Framework::CSoundManager::SearchBlank() const	framework	decompiled	
+0x1e98a30	0x1f98a30	152	_ZNK9Framework13CSoundManager6SearchEm	Framework::CSoundManager::Search(unsigned long) const	framework	decompiled	
+0x1e98ac8	0x1f98ac8	20	_ZN9Framework13CSoundManager9NewHandleEv	Framework::CSoundManager::NewHandle()	framework	decompiled	
+0x1e98adc	0x1f98adc	376	_ZN9Framework13CSoundManager7StopAllEv	Framework::CSoundManager::StopAll()	framework	decompiled	
+0x1e98c54	0x1f98c54	304	_ZN9Framework13CSoundManager6StopSEEf	Framework::CSoundManager::StopSE(float)	framework	decompiled	
+0x1e98d84	0x1f98d84	624	_ZN9Framework13CSoundManager8PauseAllEf	Framework::CSoundManager::PauseAll(float)	framework	decompiled	
+0x1e98ff4	0x1f98ff4	624	_ZN9Framework13CSoundManager9ResumeAllEf	Framework::CSoundManager::ResumeAll(float)	framework	decompiled	
+0x1e99264	0x1f99264	284	_ZN9Framework13CSoundManager11PreProgressEv	Framework::CSoundManager::PreProgress()	framework	decompiled	
+0x1e99380	0x1f99380	324	_ZN9Framework13CSoundManager12PostProgressEv	Framework::CSoundManager::PostProgress()	framework	decompiled	
+0x1e994c4	0x1f994c4	288	_ZN9Framework13CSoundManager25FunctorAllPlayingElementsERNS_9ICallbackE	Framework::CSoundManager::FunctorAllPlayingElements(Framework::ICallback&)	framework	decompiled	
+0x1e995e4	0x1f995e4	12	_ZN9Framework13CSoundManager23EnableIgnorePlayRequestEb	Framework::CSoundManager::EnableIgnorePlayRequest(bool)	framework	decompiled	
+0x1e995f0	0x1f995f0	856	_ZN9Framework13CSoundManager12PlayMemorySEEPKvmRKNS_6CSound10tArgumentsEPKc	Framework::CSoundManager::PlayMemorySE(void const*, unsigned long, Framework::CSound::tArguments const&, char const*)	framework	decompiled	
+0x1e99948	0x1f99948	172	_ZN9Framework13CSoundManager21PlayFileStreamImageSEEPKvjRKNS_6CSound10tArgumentsE	Framework::CSoundManager::PlayFileStreamImageSE(void const*, unsigned int, Framework::CSound::tArguments const&)	framework	decompiled	
+0x1e999f4	0x1f999f4	248	_ZN9Framework13CSoundManager27PlayFileStreamImageSEByNameEPKvPKcRKNS_6CSound10tArgumentsE	Framework::CSoundManager::PlayFileStreamImageSEByName(void const*, char const*, Framework::CSound::tArguments const&)	framework	decompiled	
+0x1e99bfc	0x1f99bfc	584	_ZN9Framework13CSoundManager7PlayBGMEjRKNS_6CSound10tArgumentsE	Framework::CSoundManager::PlayBGM(unsigned int, Framework::CSound::tArguments const&)	framework	decompiled	
+0x1e99e44	0x1f99e44	656	_ZN9Framework13CSoundManager7PlayBGMEPKcRKNS_6CSound10tArgumentsE	Framework::CSoundManager::PlayBGM(char const*, Framework::CSound::tArguments const&)	framework	decompiled	
+0x1e9a0d4	0x1f9a0d4	244	_ZNK9Framework13CSoundManager9IsPlayingEm	Framework::CSoundManager::IsPlaying(unsigned long) const	framework	decompiled	
+0x1e9a1c8	0x1f9a1c8	264	_ZN9Framework13CSoundManager4StopEmf	Framework::CSoundManager::Stop(unsigned long, float)	framework	decompiled	
+0x1e9a2d0	0x1f9a2d0	388	_ZN9Framework13CSoundManager5PauseEmf	Framework::CSoundManager::Pause(unsigned long, float)	framework	decompiled	
+0x1e9a454	0x1f9a454	388	_ZN9Framework13CSoundManager6ResumeEmf	Framework::CSoundManager::Resume(unsigned long, float)	framework	decompiled	
+0x1e9a5d8	0x1f9a5d8	268	_ZN9Framework13CSoundManager8WatchdogEm	Framework::CSoundManager::Watchdog(unsigned long)	framework	decompiled	
+0x1e9a6e4	0x1f9a6e4	288	_ZN9Framework13CSoundManager7ElementEmNSt6__ndk18functionIFvRNS_6CSound8CElementEEEE	Framework::CSoundManager::Element(unsigned long, std::__ndk1::function<void (Framework::CSound::CElement&)>)	framework	decompiled	
+0x1e9a804	0x1f9a804	60	_ZNK9Framework13CSoundManager17rElementContainerEv	Framework::CSoundManager::rElementContainer() const	framework	decompiled	
+0x1e9a840	0x1f9a840	44	_ZN9Framework13CSoundManager12CManageFiberD2Ev	Framework::CSoundManager::CManageFiber::~CManageFiber()	framework	decompiled	
+0x1e9a86c	0x1f9a86c	52	_ZN9Framework13CSoundManager12CManageFiberD0Ev	Framework::CSoundManager::CManageFiber::~CManageFiber()	framework	decompiled	
+0x1e9a8a0	0x1f9a8a0	72	_ZN9Framework13CSoundManager12CManageFiber8ProgressEv	Framework::CSoundManager::CManageFiber::Progress()	framework	decompiled	
+0x1e9aacc	0x1f9aacc	176	_ZN9Framework16TObjectContainerINS_6CSound8CElementEED2Ev	Framework::TObjectContainer<Framework::CSound::CElement>::~TObjectContainer()	framework	decompiled	
+0x1e9ab7c	0x1f9ab7c	176	_ZN9Framework16TObjectContainerINS_6CSound8CElementEED0Ev	Framework::TObjectContainer<Framework::CSound::CElement>::~TObjectContainer()	framework	decompiled	
+0x1e9ac2c	0x1f9ac2c	180	_ZN9Framework16TObjectContainerINS_6CSound8CElementEE10InitializeEm	Framework::TObjectContainer<Framework::CSound::CElement>::Initialize(unsigned long)	framework	decompiled	
+0x1e9ace0	0x1f9ace0	4	_ZN9Framework16TObjectContainerINS_6CSound8CElementEE5ResetEv	Framework::TObjectContainer<Framework::CSound::CElement>::Reset()	framework	decompiled	
+0x1e9ace4	0x1f9ace4	52	_ZNK9Framework16TObjectContainerINS_6CSound8CElementEE11NumElementsEv	Framework::TObjectContainer<Framework::CSound::CElement>::NumElements() const	framework	decompiled	
+0x1e9ad18	0x1f9ad18	144	_ZN9Framework16TObjectContainerINS_6CSound8CElementEE8rElementEm	Framework::TObjectContainer<Framework::CSound::CElement>::rElement(unsigned long)	framework	decompiled	
+0x1e9ada8	0x1f9ada8	144	_ZNK9Framework16TObjectContainerINS_6CSound8CElementEE9crElementEm	Framework::TObjectContainer<Framework::CSound::CElement>::crElement(unsigned long) const	framework	decompiled	
+0x1f67e0c	0x2067e0c	88	_ZN4Aska13Audio3DEngineC1Ev	Aska::Audio3DEngine::Audio3DEngine()	mixer	decompiled	
+0x1f67e64	0x2067e64	60	_ZN4Aska13Audio3DEngineD1Ev	Aska::Audio3DEngine::~Audio3DEngine()	mixer	decompiled	
+0x1f67eb4	0x2067eb4	68	_ZN4Aska13Audio3DEngineD0Ev	Aska::Audio3DEngine::~Audio3DEngine()	mixer	decompiled	
+0x1f67ef8	0x2067ef8	356	_ZN4Aska13Audio3DEngine10InitializeEv	Aska::Audio3DEngine::Initialize()	mixer	decompiled	
+0x1f6805c	0x206805c	44	_ZN4Aska13Audio3DEngine26ResetSpeakerPositionRadianEv	Aska::Audio3DEngine::ResetSpeakerPositionRadian()	mixer	decompiled	
+0x1f68088	0x2068088	40	_ZN4Aska13Audio3DEngine8FinalizeEv	Aska::Audio3DEngine::Finalize()	mixer	decompiled	
+0x1f680b0	0x20680b0	400	_ZN4Aska13Audio3DEngine16SetAudioListenerEPNS_18HierarchicalObjectEf	Aska::Audio3DEngine::SetAudioListener(Aska::HierarchicalObject*, float)	mixer	decompiled	
+0x1f68240	0x2068240	348	_ZN4Aska13Audio3DEngine19DeleteAudioListenerEv	Aska::Audio3DEngine::DeleteAudioListener()	mixer	decompiled	
+0x1f6839c	0x206839c	424	_ZN4Aska13Audio3DObject12UpdateMatrixEv	Aska::Audio3DObject::UpdateMatrix()	mixer	decompiled	
+0x1f68544	0x2068544	32	_ZN4Aska13Audio3DEngine19Func3DObjectDeletedEPKNS_18HierarchicalObjectE	Aska::Audio3DEngine::Func3DObjectDeleted(Aska::HierarchicalObject const*)	mixer	decompiled	
+0x1f68564	0x2068564	56	_ZN4Aska13Audio3DEngine15AddAudioEmitterEPNS_12AudioEmitterE	Aska::Audio3DEngine::AddAudioEmitter(Aska::AudioEmitter*)	mixer	decompiled	
+0x1f685c0	0x20685c0	144	_ZN4Aska13Audio3DEngine18DeleteAudioEmitterEPNS_12AudioEmitterE	Aska::Audio3DEngine::DeleteAudioEmitter(Aska::AudioEmitter*)	mixer	decompiled	
+0x1f68690	0x2068690	68	_ZN4Aska13Audio3DEngine23UpdateAll3DObjectMatrixEv	Aska::Audio3DEngine::UpdateAll3DObjectMatrix()	mixer	decompiled	
+0x1f686d4	0x20686d4	1052	_ZN4Aska13Audio3DEngine22UpdateSpeakersPositionEv	Aska::Audio3DEngine::UpdateSpeakersPosition()	mixer	decompiled	
+0x1f68af0	0x2068af0	284	_ZN4Aska13Audio3DEngine21UpdateSpeakerPositionEi	Aska::Audio3DEngine::UpdateSpeakerPosition(int)	mixer	decompiled	
+0x1f68c0c	0x2068c0c	484	_ZN4Aska13Audio3DEngine24LocalFunc3DObjectDeletedEPKNS_18HierarchicalObjectE	Aska::Audio3DEngine::LocalFunc3DObjectDeleted(Aska::HierarchicalObject const*)	mixer	decompiled	
+0x1f69a94	0x2069a94	76	_ZN4Aska13AudioListenerC2Ev	Aska::AudioListener::AudioListener()	mixer	decompiled	
+0x1f69ae0	0x2069ae0	20	_ZN4Aska13AudioListenerD1Ev	Aska::AudioListener::~AudioListener()	mixer	decompiled	
+0x1f69af4	0x2069af4	40	_ZN4Aska13AudioListenerD0Ev	Aska::AudioListener::~AudioListener()	mixer	decompiled	
+0x1f69b1c	0x2069b1c	408	_ZN4Aska13AudioListener7ComputeEv	Aska::AudioListener::Compute()	mixer	decompiled	
+0x1f69cb4	0x2069cb4	112	_ZN4Aska12AudioEmitterC1Ev	Aska::AudioEmitter::AudioEmitter()	mixer	decompiled	
+0x1f69d24	0x2069d24	20	_ZN4Aska12AudioEmitterD1Ev	Aska::AudioEmitter::~AudioEmitter()	mixer	decompiled	
+0x1f69d38	0x2069d38	40	_ZN4Aska12AudioEmitterD0Ev	Aska::AudioEmitter::~AudioEmitter()	mixer	decompiled	
+0x1f69d60	0x2069d60	1952	_ZN4Aska12AudioEmitter7ComputeEv	Aska::AudioEmitter::Compute()	mixer	decompiled	
+0x1f6a500	0x206a500	20	_ZN4Aska13Audio3DObjectD2Ev	Aska::Audio3DObject::~Audio3DObject()	mixer	decompiled	
+0x1f6a514	0x206a514	40	_ZN4Aska13Audio3DObjectD0Ev	Aska::Audio3DObject::~Audio3DObject()	mixer	decompiled	
+0x1f6a53c	0x206a53c	124	_ZN4Aska10Sequencer2C2Ev	Aska::Sequencer2::Sequencer2()	sound_manager	decompiled	
+0x1f6a5b8	0x206a5b8	40	_ZN4Aska10Sequencer2D2Ev	Aska::Sequencer2::~Sequencer2()	sound_manager	decompiled	
+0x1f6a5e0	0x206a5e0	428	_ZN4Aska10Sequencer220DeleteAllMessageNoteEv	Aska::Sequencer2::DeleteAllMessageNote()	sound_manager	decompiled	
+0x1f6a790	0x206a790	60	_ZN4Aska10Sequencer2D0Ev	Aska::Sequencer2::~Sequencer2()	sound_manager	decompiled	
+0x1f6a7cc	0x206a7cc	80	_ZN4Aska10Sequencer28AudioRunEv	Aska::Sequencer2::AudioRun()	sound_manager	decompiled	
+0x1f6a81c	0x206a81c	1024	_ZN4Aska10Sequencer218ArrangeMessageNoteEv	Aska::Sequencer2::ArrangeMessageNote()	sound_manager	decompiled	
+0x1f6ac1c	0x206ac1c	728	_ZN4Aska10Sequencer218ProcessMessageNoteEv	Aska::Sequencer2::ProcessMessageNote()	sound_manager	decompiled	
+0x1f6af34	0x206af34	44	_ZNK4Aska10Sequencer213IsWaitingNoteEPNS_16AudioMessageNoteE	Aska::Sequencer2::IsWaitingNote(Aska::AudioMessageNote*) const	sound_manager	decompiled	
+0x1f6af60	0x206af60	420	_ZN4Aska10Sequencer217DeleteMessageNoteEPNS_16AudioMessageNoteE	Aska::Sequencer2::DeleteMessageNote(Aska::AudioMessageNote*)	sound_manager	decompiled	
+0x1f6b104	0x206b104	496	_ZN4Aska10Sequencer214AddMessageNoteEjfPKvS2_	Aska::Sequencer2::AddMessageNote(unsigned int, float, void const*, void const*)	sound_manager	decompiled	
+0x1f6b318	0x206b318	8	_ZN4Aska10Sequencer217WaitingNoteNotify7HandlerEm	Aska::Sequencer2::WaitingNoteNotify::Handler(unsigned long)	sound_manager	decompiled	
+0x1f6b320	0x206b320	4	_ZN4Aska10Sequencer217WaitingNoteNotifyD0Ev	Aska::Sequencer2::WaitingNoteNotify::~WaitingNoteNotify()	sound_manager	decompiled	
+0x1f6b36c	0x206b36c	4	_ZN4Aska16AudioMessageNoteD0Ev	Aska::AudioMessageNote::~AudioMessageNote()	mixer	decompiled	
+0x1f6b410	0x206b410	104	_ZN4Aska12SoundManager11InstantiateEv	Aska::SoundManager::Instantiate()	sound_manager	decompiled	
+0x1f6b478	0x206b478	1172	_ZN4Aska12SoundManager10InitializeEv	Aska::SoundManager::Initialize()	sound_manager	decompiled	
+0x1f6b944	0x206b944	16	_ZN4Aska12SoundManager11GetInstanceEv	Aska::SoundManager::GetInstance()	sound_manager	decompiled	
+0x1f6b954	0x206b954	40	_ZN4Aska12SoundManager10DeleteThisEPNS_13DeleteManagerE	Aska::SoundManager::DeleteThis(Aska::DeleteManager*)	sound_manager	decompiled	
+0x1f6b97c	0x206b97c	424	_ZN4Aska12SoundManager12DeinitializeEv	Aska::SoundManager::Deinitialize()	sound_manager	decompiled	
+0x1f6bb24	0x206bb24	112	_ZN4Aska12SoundManager18ProcessSoundObjectEv	Aska::SoundManager::ProcessSoundObject()	sound_manager	decompiled	
+0x1f6bb94	0x206bb94	92	_ZN4Aska12SoundManager15Process3DEngineEv	Aska::SoundManager::Process3DEngine()	sound_manager	decompiled	
+0x1f6bbf0	0x206bbf0	152	_ZN4Aska12SoundManager22CheckDeleteSoundObjectEv	Aska::SoundManager::CheckDeleteSoundObject()	sound_manager	decompiled	
+0x1f6bc88	0x206bc88	264	_ZN4Aska12SoundManager17DeleteSoundObjectEPNS_11SoundObjectEb	Aska::SoundManager::DeleteSoundObject(Aska::SoundObject*, bool)	sound_manager	decompiled	
+0x1f6bd90	0x206bd90	36	_ZNK4Aska12SoundManager11IsAvailableEPNS_11SoundObjectE	Aska::SoundManager::IsAvailable(Aska::SoundObject*) const	sound_manager	decompiled	
+0x1f6bdb4	0x206bdb4	376	_ZNK4Aska12SoundManager16QuerySoundHandleEPNS_11SoundObjectE	Aska::SoundManager::QuerySoundHandle(Aska::SoundObject*) const	sound_manager	decompiled	
+0x1f6bf2c	0x206bf2c	96	_ZN4Aska12SoundManager18AcquireSoundObjectEj	Aska::SoundManager::AcquireSoundObject(unsigned int)	sound_manager	decompiled	
+0x1f6bf8c	0x206bf8c	372	_ZN4Aska12SoundManager14AddSoundHandleEPNS_11SoundHandleE	Aska::SoundManager::AddSoundHandle(Aska::SoundHandle*)	sound_manager	decompiled	
+0x1f6c100	0x206c100	96	_ZN4Aska12SoundManager18ReleaseSoundObjectEPNS_11SoundObjectE	Aska::SoundManager::ReleaseSoundObject(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f6c160	0x206c160	392	_ZN4Aska12SoundManager17RemoveSoundHandleEPNS_11SoundHandleE	Aska::SoundManager::RemoveSoundHandle(Aska::SoundHandle*)	sound_manager	decompiled	
+0x1f6c2e8	0x206c2e8	104	_ZNK4Aska12SoundManager16QuerySoundObjectEPNS_11SoundObjectE	Aska::SoundManager::QuerySoundObject(Aska::SoundObject*) const	sound_manager	decompiled	
+0x1f6c350	0x206c350	80	_ZN4Aska12SoundManager14AddSoundObjectEPNS_11SoundObjectE	Aska::SoundManager::AddSoundObject(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f6c3a0	0x206c3a0	24	_ZN4Aska12SoundManager36SetDefaultDirectPlaybackSettingsBaseEPNS_26DirectPlaybackSettingsBaseE	Aska::SoundManager::SetDefaultDirectPlaybackSettingsBase(Aska::DirectPlaybackSettingsBase*)	sound_manager	decompiled	
+0x1f6c3b8	0x206c3b8	72	_ZN4Aska12SoundManager14PauseInterruptEv	Aska::SoundManager::PauseInterrupt()	sound_manager	decompiled	
+0x1f6c400	0x206c400	72	_ZN4Aska12SoundManager21RequestPauseInterruptEj	Aska::SoundManager::RequestPauseInterrupt(unsigned int)	sound_manager	decompiled	
+0x1f6c448	0x206c448	72	_ZN4Aska12SoundManager15ResumeInterruptEv	Aska::SoundManager::ResumeInterrupt()	sound_manager	decompiled	
+0x1f6c490	0x206c490	72	_ZN4Aska12SoundManager22RequestResumeInterruptEj	Aska::SoundManager::RequestResumeInterrupt(unsigned int)	sound_manager	decompiled	
+0x1f6c4d8	0x206c4d8	96	_ZN4Aska12SoundManager22InitCaptureFrameBufferEv	Aska::SoundManager::InitCaptureFrameBuffer()	sound_manager	decompiled	
+0x1f6c538	0x206c538	52	_ZN4Aska12SoundManager24DeleteCaptureFrameBufferEv	Aska::SoundManager::DeleteCaptureFrameBuffer()	sound_manager	decompiled	
+0x1f6c56c	0x206c56c	44	_ZNK4Aska12SoundManager29IsAllocatedCaptureFrameBufferEv	Aska::SoundManager::IsAllocatedCaptureFrameBuffer() const	sound_manager	decompiled	
+0x1f6c598	0x206c598	4	_ZN4Aska12SoundManager29SetFrameBufferCaptureOverrideEPNS_27IFrameBufferCaptureOverrideE	Aska::SoundManager::SetFrameBufferCaptureOverride(Aska::IFrameBufferCaptureOverride*)	sound_manager	decompiled	
+0x1f6c59c	0x206c59c	8	_ZNK4Aska12SoundManager3GetEmPv	Aska::SoundManager::Get(unsigned long, void*) const	sound_manager	decompiled	
+0x1f6c5a4	0x206c5a4	8	_ZN4Aska12SoundManager3SetEmPKv	Aska::SoundManager::Set(unsigned long, void const*)	sound_manager	decompiled	
+0x1f6c5ac	0x206c5ac	80	_ZN4Aska18SoundManagerThreadC1EPNS_12SoundManagerE	Aska::SoundManagerThread::SoundManagerThread(Aska::SoundManager*)	sound_manager	decompiled	
+0x1f6c5fc	0x206c5fc	68	_ZN4Aska18SoundManagerThread10InitializeEv	Aska::SoundManagerThread::Initialize()	sound_manager	decompiled	
+0x1f6c640	0x206c640	60	_ZN4Aska18SoundManagerThread7HandlerEv	Aska::SoundManagerThread::Handler()	sound_manager	decompiled	
+0x1f6c67c	0x206c67c	540	_ZN4Aska12SoundManager16SoundProcessSyncEv	Aska::SoundManager::SoundProcessSync()	sound_manager	decompiled	
+0x1f6c958	0x206c958	1228	_ZN4Aska12SoundManagerC1Ev	Aska::SoundManager::SoundManager()	sound_manager	decompiled	
+0x1f6ce24	0x206ce24	836	_ZN4Aska12SoundManagerD2Ev	Aska::SoundManager::~SoundManager()	sound_manager	decompiled	
+0x1f6d1f0	0x206d1f0	24	_ZN4Aska12SoundManagerD0Ev	Aska::SoundManager::~SoundManager()	sound_manager	decompiled	
+0x1f6d208	0x206d208	132	_ZN4Aska12SoundManager20DeleteAllSoundObjectEv	Aska::SoundManager::DeleteAllSoundObject()	sound_manager	decompiled	
+0x1f6d28c	0x206d28c	528	_ZN4Aska12SoundManager24FlushDeletingSoundObjectEv	Aska::SoundManager::FlushDeletingSoundObject()	sound_manager	decompiled	
+0x1f6d49c	0x206d49c	96	_ZN4Aska12SoundManager13StopAllSignalEv	Aska::SoundManager::StopAllSignal()	sound_manager	decompiled	
+0x1f6d4fc	0x206d4fc	32	_ZN4Aska12SoundManager3RunEi	Aska::SoundManager::Run(int)	sound_manager	decompiled	
+0x1f6d51c	0x206d51c	636	_ZN4Aska12SoundManager20UpdateAllSoundStatusEv	Aska::SoundManager::UpdateAllSoundStatus()	sound_manager	decompiled	
+0x1f6d798	0x206d798	920	_ZN4Aska12SoundManager21PauseInterruptProcessEv	Aska::SoundManager::PauseInterruptProcess()	sound_manager	decompiled	
+0x1f6db30	0x206db30	904	_ZN4Aska12SoundManager22ResumeInterruptProcessEv	Aska::SoundManager::ResumeInterruptProcess()	sound_manager	decompiled	
+0x1f6deb8	0x206deb8	676	_ZN4Aska12SoundManager18ArrangeCommandListEv	Aska::SoundManager::ArrangeCommandList()	sound_manager	decompiled	
+0x1f6e15c	0x206e15c	964	_ZN4Aska12SoundManager18ProcessCommandListEv	Aska::SoundManager::ProcessCommandList()	sound_manager	decompiled	
+0x1f6e520	0x206e520	256	_ZN4Aska12SoundManager16ProcessSoundPassEv	Aska::SoundManager::ProcessSoundPass()	sound_manager	decompiled	
+0x1f6e620	0x206e620	76	_ZN4Aska12SoundManager18ProcessAudioDeviceEv	Aska::SoundManager::ProcessAudioDevice()	sound_manager	decompiled	
+0x1f6e66c	0x206e66c	320	_ZN4Aska12SoundManager28UpdateReadDeviceAccessStatusEv	Aska::SoundManager::UpdateReadDeviceAccessStatus()	sound_manager	decompiled	
+0x1f6e7ac	0x206e7ac	128	_ZN4Aska12SoundManager18UpdateOutputConfigEv	Aska::SoundManager::UpdateOutputConfig()	sound_manager	decompiled	
+0x1f6e82c	0x206e82c	32	_ZN4Aska12SoundManager32SetDefaultDirectPlaybackSettingsEPNS_22DirectPlaybackSettingsE	Aska::SoundManager::SetDefaultDirectPlaybackSettings(Aska::DirectPlaybackSettings*)	sound_manager	decompiled	
+0x1f6e84c	0x206e84c	4	_ZN4Aska12SoundManager35AdxSetDefaultDirectPlaybackSettingsEPNS_25AdxDirectPlaybackSettingsE	Aska::SoundManager::AdxSetDefaultDirectPlaybackSettings(Aska::AdxDirectPlaybackSettings*)	sound_manager	decompiled	
+0x1f6e850	0x206e850	408	_ZN4Aska12SoundManager9PlaySoundEmbjjPKNS_22DirectPlaybackSettingsE	Aska::SoundManager::PlaySound(unsigned long, bool, unsigned int, unsigned int, Aska::DirectPlaybackSettings const*)	sound_manager	decompiled	
+0x1f6e9e8	0x206e9e8	372	_ZN4Aska12SoundManager15AddSoundCommandEPNS_12SoundCommandE	Aska::SoundManager::AddSoundCommand(Aska::SoundCommand*)	sound_manager	decompiled	
+0x1f6eb5c	0x206eb5c	116	_ZN4Aska12SoundManager9StopSoundEPNS_11SoundObjectEj	Aska::SoundManager::StopSound(Aska::SoundObject*, unsigned int)	sound_manager	decompiled	
+0x1f6ebd0	0x206ebd0	100	_ZN4Aska12SoundManager12StopAllSoundEj	Aska::SoundManager::StopAllSound(unsigned int)	sound_manager	decompiled	
+0x1f6ec34	0x206ec34	108	_ZN4Aska12SoundManager10PauseSoundEPNS_11SoundObjectE	Aska::SoundManager::PauseSound(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f6eca0	0x206eca0	108	_ZN4Aska12SoundManager11ResumeSoundEPNS_11SoundObjectE	Aska::SoundManager::ResumeSound(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f6ed0c	0x206ed0c	112	_ZN4Aska12SoundManager13PauseAllSoundEj	Aska::SoundManager::PauseAllSound(unsigned int)	sound_manager	decompiled	
+0x1f6ed7c	0x206ed7c	368	_ZN4Aska12SoundManager17IncrementPauseAllEv	Aska::SoundManager::IncrementPauseAll()	sound_manager	decompiled	
+0x1f6eeec	0x206eeec	96	_ZN4Aska12SoundManager9ResumeAllEb	Aska::SoundManager::ResumeAll(bool)	sound_manager	decompiled	
+0x1f6ef4c	0x206ef4c	400	_ZN4Aska12SoundManager17DecrementPauseAllEb	Aska::SoundManager::DecrementPauseAll(bool)	sound_manager	decompiled	
+0x1f6f0dc	0x206f0dc	116	_ZN4Aska12SoundManager7PushBGMEPNS_16BGMControlObjectEj	Aska::SoundManager::PushBGM(Aska::BGMControlObject*, unsigned int)	sound_manager	decompiled	
+0x1f6f150	0x206f150	260	_ZN4Aska12SoundManager6PopBGMEjbf	Aska::SoundManager::PopBGM(unsigned int, bool, float)	sound_manager	decompiled	
+0x1f6f254	0x206f254	76	_ZN4Aska12SoundManager23DeleteAllPushPopBGMListEv	Aska::SoundManager::DeleteAllPushPopBGMList()	sound_manager	decompiled	
+0x1f6f2a0	0x206f2a0	188	_ZN4Aska12SoundManager23CreateAuxiliaryEffectorEjjNS_6ESound10EDspEffectEPKv	Aska::SoundManager::CreateAuxiliaryEffector(unsigned int, unsigned int, Aska::ESound::EDspEffect, void const*)	sound_manager	decompiled	
+0x1f6f35c	0x206f35c	104	_ZN4Aska12SoundManager23DeleteAuxiliaryEffectorEj	Aska::SoundManager::DeleteAuxiliaryEffector(unsigned int)	sound_manager	decompiled	
+0x1f6f3c4	0x206f3c4	188	_ZN4Aska12SoundManager16InstallDspEffectEjjNS_6ESound10EDspEffectEPKv	Aska::SoundManager::InstallDspEffect(unsigned int, unsigned int, Aska::ESound::EDspEffect, void const*)	sound_manager	decompiled	
+0x1f6f480	0x206f480	108	_ZN4Aska12SoundManager18UninstallDspEffectEjj	Aska::SoundManager::UninstallDspEffect(unsigned int, unsigned int)	sound_manager	decompiled	
+0x1f6f4ec	0x206f4ec	112	_ZN4Aska12SoundManager24ConnectAuxiliaryEffectorEjj	Aska::SoundManager::ConnectAuxiliaryEffector(unsigned int, unsigned int)	sound_manager	decompiled	
+0x1f6f55c	0x206f55c	104	_ZN4Aska12SoundManager27DisconnectAuxiliaryEffectorEj	Aska::SoundManager::DisconnectAuxiliaryEffector(unsigned int)	sound_manager	decompiled	
+0x1f6f5c4	0x206f5c4	188	_ZNK4Aska12SoundManager20IsInstalledDspEffectEjj	Aska::SoundManager::IsInstalledDspEffect(unsigned int, unsigned int) const	sound_manager	decompiled	
+0x1f6f680	0x206f680	48	_ZNK4Aska12SoundManager20QueryAuxiliaryDeviceEj	Aska::SoundManager::QueryAuxiliaryDevice(unsigned int) const	sound_manager	decompiled	
+0x1f6f6b0	0x206f6b0	92	_ZN4Aska12SoundManager28IsConnectedAuxiliaryEffectorEjPjS1_	Aska::SoundManager::IsConnectedAuxiliaryEffector(unsigned int, unsigned int*, unsigned int*)	sound_manager	decompiled	
+0x1f6f70c	0x206f70c	60	_ZN4Aska12SoundManager20GetInsertionEffectorEj	Aska::SoundManager::GetInsertionEffector(unsigned int)	sound_manager	decompiled	
+0x1f6f748	0x206f748	68	_ZN4Aska12SoundManager20GetAuxiliaryEffectorEj	Aska::SoundManager::GetAuxiliaryEffector(unsigned int)	sound_manager	decompiled	
+0x1f6f78c	0x206f78c	392	_ZN4Aska12SoundManager18RemoveSoundCommandEPNS_12SoundCommandE	Aska::SoundManager::RemoveSoundCommand(Aska::SoundCommand*)	sound_manager	decompiled	
+0x1f6f914	0x206f914	384	_ZN4Aska12SoundManager18InsertSoundCommandEPNS_12SoundCommandES2_	Aska::SoundManager::InsertSoundCommand(Aska::SoundCommand*, Aska::SoundCommand*)	sound_manager	decompiled	
+0x1f6fad4	0x206fad4	72	_ZN4Aska12SoundManager22AcquireAuxiliaryDeviceEj	Aska::SoundManager::AcquireAuxiliaryDevice(unsigned int)	sound_manager	decompiled	
+0x1f6fb1c	0x206fb1c	72	_ZN4Aska12SoundManager22ReleaseAuxiliaryDeviceEj	Aska::SoundManager::ReleaseAuxiliaryDevice(unsigned int)	sound_manager	decompiled	
+0x1f6fb64	0x206fb64	388	_ZNK4Aska12SoundManager19QueryAudioInterfaceEPNS_14AudioConnectorE	Aska::SoundManager::QueryAudioInterface(Aska::AudioConnector*) const	sound_manager	decompiled	
+0x1f6fce8	0x206fce8	400	_ZN4Aska12SoundManager15NoneCommandListEPNS_11SoundObjectE	Aska::SoundManager::NoneCommandList(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f6fe78	0x206fe78	416	_ZN4Aska12SoundManager17DeleteCommandListEPNS_11SoundObjectE	Aska::SoundManager::DeleteCommandList(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f70018	0x2070018	364	_ZN4Aska12SoundManager18WaitForCommandListEv	Aska::SoundManager::WaitForCommandList()	sound_manager	decompiled	
+0x1f702c4	0x20702c4	8	_ZNK4Aska12SoundManager19IsOtherAudioPlayingEv	Aska::SoundManager::IsOtherAudioPlaying() const	sound_manager	decompiled	
+0x1f702cc	0x20702cc	4	_ZN4Aska12SoundManager18SoundSignalHandlerEv	Aska::SoundManager::SoundSignalHandler()	sound_manager	decompiled	
+0x1f702d0	0x20702d0	4	_ZN4Aska12SoundManager14AdxRegisterAcfEPvj	Aska::SoundManager::AdxRegisterAcf(void*, unsigned int)	sound_manager	decompiled	
+0x1f702d4	0x20702d4	4	_ZN4Aska12SoundManager16AdxUnregisterAcfEv	Aska::SoundManager::AdxUnregisterAcf()	sound_manager	decompiled	
+0x1f702d8	0x20702d8	8	_ZNK4Aska12SoundManager18AdxIsRegisteredAcfEv	Aska::SoundManager::AdxIsRegisteredAcf() const	sound_manager	decompiled	
+0x1f702e0	0x20702e0	4	_ZN4Aska12SoundManager22AdxAttachDspBusSettingEPKc	Aska::SoundManager::AdxAttachDspBusSetting(char const*)	sound_manager	decompiled	
+0x1f702e4	0x20702e4	4	_ZN4Aska12SoundManager22AdxDetachDspBusSettingEv	Aska::SoundManager::AdxDetachDspBusSetting()	sound_manager	decompiled	
+0x1f702e8	0x20702e8	4	_ZN4Aska12SoundManager15AdxSetBusVolumeEif	Aska::SoundManager::AdxSetBusVolume(int, float)	sound_manager	decompiled	
+0x1f702ec	0x20702ec	4	_ZN4Aska12SoundManager17AdxSetBusVolumeDBEif	Aska::SoundManager::AdxSetBusVolumeDB(int, float)	sound_manager	decompiled	
+0x1f702f0	0x20702f0	4	_ZN4Aska12SoundManager15AdxSetBusMatrixEiiiPKf	Aska::SoundManager::AdxSetBusMatrix(int, int, int, float const*)	sound_manager	decompiled	
+0x1f702f4	0x20702f4	4	_ZN4Aska12SoundManager18AdxSetBusSendLevelEiif	Aska::SoundManager::AdxSetBusSendLevel(int, int, float)	sound_manager	decompiled	
+0x1f702f8	0x20702f8	4	_ZN4Aska12SoundManager18AdxSetDspParameterEiiPKv	Aska::SoundManager::AdxSetDspParameter(int, int, void const*)	sound_manager	decompiled	
+0x1f702fc	0x20702fc	4	_ZN4Aska12SoundManager15AdxSetDspBypassEiib	Aska::SoundManager::AdxSetDspBypass(int, int, bool)	sound_manager	decompiled	
+0x1f70300	0x2070300	24	_ZN4Aska18SoundManagerThreadD0Ev	Aska::SoundManagerThread::~SoundManagerThread()	sound_manager	decompiled	
+0x1f70318	0x2070318	72	_ZNK4Aska12SoundManager10GetClassIDEi	Aska::SoundManager::GetClassID(int) const	sound_manager	decompiled	
+0x1f70360	0x2070360	8	_ZNK4Aska12SoundManager15GetDefaultLevelEv	Aska::SoundManager::GetDefaultLevel() const	sound_manager	decompiled	
+0x1f704fc	0x20704fc	112	_ZN4Aska13AudioEffectorD2Ev	Aska::AudioEffector::~AudioEffector()	mixer	decompiled	
+0x1f70670	0x2070670	112	_ZN4Aska13TDynamicArrayINS_14AudioSmallHeap8HeapInfoENS_14AudioAllocatorIS2_EEED2Ev	Aska::TDynamicArray<Aska::AudioSmallHeap::HeapInfo, Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo> >::~TDynamicArray()	mixer	decompiled	
+0x1f706e0	0x20706e0	108	_ZN4Aska13TDynamicArrayINS_14AudioSmallHeap8HeapInfoENS_14AudioAllocatorIS2_EEED0Ev	Aska::TDynamicArray<Aska::AudioSmallHeap::HeapInfo, Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo> >::~TDynamicArray()	mixer	decompiled	
+0x1f70804	0x2070804	8	_ZNK4Aska10AudioMixer11GetThisTypeEv	Aska::AudioMixer::GetThisType() const	mixer	decompiled	
+0x1f70918	0x2070918	4	_ZN4Aska11SoundHandleD0Ev	Aska::SoundHandle::~SoundHandle()	sound_manager	decompiled	
+0x1f70944	0x2070944	4	_ZN4Aska12SoundCommandD0Ev	Aska::SoundCommand::~SoundCommand()	sound_manager	decompiled	
+0x1f70f1c	0x2070f1c	16	_ZN4Aska11SoundMemory20SetResourceMemoryMgrEPNS_13MemoryManagerE	Aska::SoundMemory::SetResourceMemoryMgr(Aska::MemoryManager*)	sound_manager	decompiled	
+0x1f70f2c	0x2070f2c	48	_ZN4Aska11SoundMemory6MallocEm	Aska::SoundMemory::Malloc(unsigned long)	sound_manager	decompiled	
+0x1f70f5c	0x2070f5c	68	_ZN4Aska11SoundMemory13AlignedMallocEmm	Aska::SoundMemory::AlignedMalloc(unsigned long, unsigned long)	sound_manager	decompiled	
+0x1f70fa0	0x2070fa0	68	_ZN4Aska11SoundMemory13ResourceAllocEmm	Aska::SoundMemory::ResourceAlloc(unsigned long, unsigned long)	sound_manager	decompiled	
+0x1f70fe4	0x2070fe4	12	_ZN4Aska11SoundMemory12ResourceFreeEPv	Aska::SoundMemory::ResourceFree(void*)	sound_manager	decompiled	
+0x1f70ff0	0x2070ff0	656	_ZN4Aska14AudioSmallHeap10InitializeERKNS0_9InitParamE	Aska::AudioSmallHeap::Initialize(Aska::AudioSmallHeap::InitParam const&)	mixer	decompiled	
+0x1f71280	0x2071280	256	_ZN4Aska13TDynamicArrayINS_14AudioSmallHeap8HeapInfoENS_14AudioAllocatorIS2_EEE7ReserveEm	Aska::TDynamicArray<Aska::AudioSmallHeap::HeapInfo, Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo> >::Reserve(unsigned long)	mixer	decompiled	
+0x1f71380	0x2071380	440	_ZN4Aska14AudioSmallHeap8FinalizeEv	Aska::AudioSmallHeap::Finalize()	mixer	decompiled	
+0x1f71538	0x2071538	236	_ZN4Aska13TDynamicArrayINS_14AudioSmallHeap8HeapInfoENS_14AudioAllocatorIS2_EEE11ShrinkToFitEv	Aska::TDynamicArray<Aska::AudioSmallHeap::HeapInfo, Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo> >::ShrinkToFit()	mixer	decompiled	
+0x1f71624	0x2071624	460	_ZN4Aska14AudioSmallHeap8AllocateEmm	Aska::AudioSmallHeap::Allocate(unsigned long, unsigned long)	mixer	decompiled	
+0x1f717f0	0x20717f0	584	_ZN4Aska14AudioSmallHeap10ReallocateEmPvm	Aska::AudioSmallHeap::Reallocate(unsigned long, void*, unsigned long)	mixer	decompiled	
+0x1f71a38	0x2071a38	432	_ZN4Aska14AudioSmallHeap4FreeEPvm	Aska::AudioSmallHeap::Free(void*, unsigned long)	mixer	decompiled	
+0x1f71be8	0x2071be8	392	_ZNK4Aska14AudioSmallHeap11GetUsedSizeEv	Aska::AudioSmallHeap::GetUsedSize() const	mixer	decompiled	
+0x1f71d70	0x2071d70	492	_ZN4Aska13TDynamicArrayINS_14AudioSmallHeap8HeapInfoENS_14AudioAllocatorIS2_EEE7Insert_INS_6Memory11TConstruct1IS4_PvEEEENS_14TArrayIteratorIS5_EEPKS2_mRKT_	Aska::TArrayIterator<Aska::TDynamicArray<Aska::AudioSmallHeap::HeapInfo, Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo> > > Aska::TDynamicArray<Aska::AudioSmallHeap::HeapInfo, Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo> >::Insert_<Aska::Memory::TConstruct1<Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo>, void*> >(Aska::AudioSmallHeap::HeapInfo const*, unsigned long, Aska::Memory::TConstruct1<Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo>, void*> const&)	mixer	decompiled	
+0x1f71f5c	0x2071f5c	548	_ZN4Aska13TDynamicArrayINS_14AudioSmallHeap8HeapInfoENS_14AudioAllocatorIS2_EEE7Insert_INS_6Memory18TUninitializedCopyIPS2_EEEENS_14TArrayIteratorIS5_EEPKS2_mRKT_	Aska::TArrayIterator<Aska::TDynamicArray<Aska::AudioSmallHeap::HeapInfo, Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo> > > Aska::TDynamicArray<Aska::AudioSmallHeap::HeapInfo, Aska::AudioAllocator<Aska::AudioSmallHeap::HeapInfo> >::Insert_<Aska::Memory::TUninitializedCopy<Aska::AudioSmallHeap::HeapInfo*> >(Aska::AudioSmallHeap::HeapInfo const*, unsigned long, Aska::Memory::TUninitializedCopy<Aska::AudioSmallHeap::HeapInfo*> const&)	mixer	decompiled	
+0x1f72180	0x2072180	192	_ZN4Aska11SoundObject4PlayEjf	Aska::SoundObject::Play(unsigned int, float)	sound_manager	decompiled	
+0x1f72240	0x2072240	128	_ZN4Aska11SoundObject4StopEj	Aska::SoundObject::Stop(unsigned int)	sound_manager	decompiled	
+0x1f722c0	0x20722c0	32	_ZN4Aska11SoundObject5PauseEv	Aska::SoundObject::Pause()	sound_manager	decompiled	
+0x1f722e0	0x20722e0	32	_ZN4Aska11SoundObject6ResumeEv	Aska::SoundObject::Resume()	sound_manager	decompiled	
+0x1f72300	0x2072300	316	_ZNK4Aska11SoundObject3GetEmPv	Aska::SoundObject::Get(unsigned long, void*) const	sound_manager	decompiled	
+0x1f7243c	0x207243c	224	_ZN4Aska11SoundObject3SetEmPKv	Aska::SoundObject::Set(unsigned long, void const*)	sound_manager	decompiled	
+0x1f7251c	0x207251c	80	_ZN4Aska15SEControlObjectD2Ev	Aska::SEControlObject::~SEControlObject()	sound_manager	decompiled	
+0x1f7256c	0x207256c	384	_ZN4Aska15SEControlObject13DetachEmitterEv	Aska::SEControlObject::DetachEmitter()	sound_manager	decompiled	
+0x1f726ec	0x20726ec	48	_ZN4Aska15SEControlObject16FinishPlaybackExEv	Aska::SEControlObject::FinishPlaybackEx()	sound_manager	decompiled	
+0x1f7271c	0x207271c	148	_ZN4Aska11SoundObjectD2Ev	Aska::SoundObject::~SoundObject()	sound_manager	decompiled	
+0x1f727b0	0x20727b0	88	_ZN4Aska15SEControlObjectD0Ev	Aska::SEControlObject::~SEControlObject()	sound_manager	decompiled	
+0x1f72808	0x2072808	404	_ZN4Aska15SEControlObject13AttachEmitterEPNS_18HierarchicalObjectE	Aska::SEControlObject::AttachEmitter(Aska::HierarchicalObject*)	sound_manager	decompiled	
+0x1f7299c	0x207299c	136	_ZNK4Aska15SEControlObject3GetEmPv	Aska::SEControlObject::Get(unsigned long, void*) const	sound_manager	decompiled	
+0x1f72a24	0x2072a24	172	_ZN4Aska15SEControlObject3SetEmPKv	Aska::SEControlObject::Set(unsigned long, void const*)	sound_manager	decompiled	
+0x1f72ba4	0x2072ba4	180	_ZN4Aska11SoundObjectC2Ev	Aska::SoundObject::SoundObject()	sound_manager	decompiled	
+0x1f72c74	0x2072c74	44	_ZN4Aska11SoundObject14FinishPlaybackEv	Aska::SoundObject::FinishPlayback()	sound_manager	decompiled	
+0x1f72ca0	0x2072ca0	56	_ZN4Aska13TDynamicQueueINS_11SoundObject16RequestContainerELb1EED2Ev	Aska::TDynamicQueue<Aska::SoundObject::RequestContainer, true>::~TDynamicQueue()	sound_manager	decompiled	
+0x1f72cd8	0x2072cd8	24	_ZN4Aska11SoundObjectD0Ev	Aska::SoundObject::~SoundObject()	sound_manager	decompiled	
+0x1f72cf0	0x2072cf0	56	_ZN4Aska11SoundObject10DeleteThisEv	Aska::SoundObject::DeleteThis()	sound_manager	decompiled	
+0x1f72d28	0x2072d28	456	_ZN4Aska12SoundManager22AddDeletingSoundObjectEPNS_11SoundObjectE	Aska::SoundManager::AddDeletingSoundObject(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f72ef0	0x2072ef0	336	_ZN4Aska11SoundObject8PlaybackEjPNS_11AudioPlayerEPKNS_22DirectPlaybackSettingsE	Aska::SoundObject::Playback(unsigned int, Aska::AudioPlayer*, Aska::DirectPlaybackSettings const*)	sound_manager	decompiled	
+0x1f73040	0x2073040	288	_ZN4Aska11SoundObject8AudioRunEv	Aska::SoundObject::AudioRun()	sound_manager	decompiled	
+0x1f73160	0x2073160	380	_ZN4Aska11SoundObject10RequestGetEPNS0_16RequestContainerE	Aska::SoundObject::RequestGet(Aska::SoundObject::RequestContainer*)	sound_manager	decompiled	
+0x1f732dc	0x20732dc	80	_ZN4Aska11SoundObject17UpdateSoundStatusEv	Aska::SoundObject::UpdateSoundStatus()	sound_manager	decompiled	
+0x1f7332c	0x207332c	552	_ZN4Aska11SoundObject10RequestSetEjPKv	Aska::SoundObject::RequestSet(unsigned int, void const*)	sound_manager	decompiled	
+0x1f73554	0x2073554	4	_ZN4Aska11SoundObject14ProcessRequestEPKNS0_16RequestContainerE	Aska::SoundObject::ProcessRequest(Aska::SoundObject::RequestContainer const*)	sound_manager	decompiled	
+0x1f73558	0x2073558	228	_ZN4Aska15SEControlObjectC1Ev	Aska::SEControlObject::SEControlObject()	sound_manager	decompiled	
+0x1f7363c	0x207363c	452	_ZN4Aska15SEControlObject8PlaybackEjPNS_11AudioPlayerEPKNS_22DirectPlaybackSettingsE	Aska::SEControlObject::Playback(unsigned int, Aska::AudioPlayer*, Aska::DirectPlaybackSettings const*)	sound_manager	decompiled	
+0x1f73800	0x2073800	280	_ZN4Aska15SEControlObject8AudioRunEv	Aska::SEControlObject::AudioRun()	sound_manager	decompiled	
+0x1f73918	0x2073918	224	_ZN4Aska15SEControlObject23Update3DVolumeAndPanpotEv	Aska::SEControlObject::Update3DVolumeAndPanpot()	sound_manager	decompiled	
+0x1f739f8	0x20739f8	8	_ZN4Aska15SEControlObject11ResetAtLoopEv	Aska::SEControlObject::ResetAtLoop()	sound_manager	decompiled	
+0x1f73a00	0x2073a00	4	_ZN4Aska11SoundObject11ResetAtLoopEv	Aska::SoundObject::ResetAtLoop()	sound_manager	decompiled	
+0x1f73a04	0x2073a04	64	_ZN4Aska15SEControlObject14ProcessRequestEPKNS_11SoundObject16RequestContainerE	Aska::SEControlObject::ProcessRequest(Aska::SoundObject::RequestContainer const*)	sound_manager	decompiled	
+0x1f73a44	0x2073a44	184	_ZNK4Aska15SEControlObject10GetLipSyncEf	Aska::SEControlObject::GetLipSync(float) const	sound_manager	decompiled	
+0x1f73afc	0x2073afc	60	_ZNK4Aska15SEControlObject12GetVrcHeaderEv	Aska::SEControlObject::GetVrcHeader() const	sound_manager	decompiled	
+0x1f73b38	0x2073b38	72	_ZNK4Aska15SEControlObject10GetClassIDEi	Aska::SEControlObject::GetClassID(int) const	sound_manager	decompiled	
+0x1f73bc8	0x2073bc8	44	_ZNK4Aska11SoundObject10GetClassIDEi	Aska::SoundObject::GetClassID(int) const	sound_manager	decompiled	
+0x1f73bf4	0x2073bf4	56	_ZN4Aska18TSoundDynamicQueueINS_11SoundObject16RequestContainerEED0Ev	Aska::TSoundDynamicQueue<Aska::SoundObject::RequestContainer>::~TSoundDynamicQueue()	sound_manager	decompiled	
+0x1f73c2c	0x2073c2c	56	_ZN4Aska13TDynamicQueueINS_11SoundObject16RequestContainerELb1EED0Ev	Aska::TDynamicQueue<Aska::SoundObject::RequestContainer, true>::~TDynamicQueue()	sound_manager	decompiled	
+0x1f73c64	0x2073c64	100	_ZN4Aska9SoundPassC1Ev	Aska::SoundPass::SoundPass()	sound_manager	decompiled	
+0x1f73cc8	0x2073cc8	20	_ZN4Aska9SoundPassD2Ev	Aska::SoundPass::~SoundPass()	sound_manager	decompiled	
+0x1f73cdc	0x2073cdc	4	_ZN4Aska9SoundPassD0Ev	Aska::SoundPass::~SoundPass()	sound_manager	decompiled	
+0x1f73ce0	0x2073ce0	3296	_ZN4Aska9SoundPass8AudioRunEv	Aska::SoundPass::AudioRun()	sound_manager	decompiled	
+0x1f749c0	0x20749c0	120	_ZN4Aska9SoundPass9LoadAsyncEmbPvjjb	Aska::SoundPass::LoadAsync(unsigned long, bool, void*, unsigned int, unsigned int, bool)	sound_manager	decompiled	
+0x1f74a38	0x2074a38	244	_ZN4Aska9SoundPass18StopLowestPriorityEPNS_14AnimatableListEjsb	Aska::SoundPass::StopLowestPriority(Aska::AnimatableList*, unsigned int, short, bool)	sound_manager	decompiled	
+0x1f74b2c	0x2074b2c	400	_ZN4Aska9SoundPass12ErrorHandlerEv	Aska::SoundPass::ErrorHandler()	sound_manager	decompiled	
+0x1f74cbc	0x2074cbc	12	_ZN4Aska9SoundPass13LoadEndNotify7HandlerEm	Aska::SoundPass::LoadEndNotify::Handler(unsigned long)	sound_manager	decompiled	
+0x1f74cc8	0x2074cc8	4	_ZN4Aska9SoundPass13LoadEndNotifyD0Ev	Aska::SoundPass::LoadEndNotify::~LoadEndNotify()	sound_manager	decompiled	
+0x1f75280	0x2075280	48	_ZN4Aska11SoundServer18AcquireSoundObjectEj	Aska::SoundServer::AcquireSoundObject(unsigned int)	sound_manager	decompiled	
+0x1f752b0	0x20752b0	216	_ZN4Aska11SoundServer15AcquireSEObjectEv	Aska::SoundServer::AcquireSEObject()	sound_manager	decompiled	
+0x1f75388	0x2075388	216	_ZN4Aska11SoundServer16AcquireBGMObjectEv	Aska::SoundServer::AcquireBGMObject()	sound_manager	decompiled	
+0x1f75460	0x2075460	336	_ZN4Aska11SoundServer18ReleaseSoundObjectEPNS_11SoundObjectE	Aska::SoundServer::ReleaseSoundObject(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f755b0	0x20755b0	192	_ZN4Aska11SoundServer15ReleaseSEObjectEPNS_15SEControlObjectE	Aska::SoundServer::ReleaseSEObject(Aska::SEControlObject*)	sound_manager	decompiled	
+0x1f75670	0x2075670	192	_ZN4Aska11SoundServer16ReleaseBGMObjectEPNS_16BGMControlObjectE	Aska::SoundServer::ReleaseBGMObject(Aska::BGMControlObject*)	sound_manager	decompiled	
+0x1f75730	0x2075730	220	_ZN4Aska11SoundServer18AcquireSoundHandleEv	Aska::SoundServer::AcquireSoundHandle()	sound_manager	decompiled	
+0x1f7580c	0x207580c	160	_ZN4Aska11SoundServer18ReleaseSoundHandleEPNS_11SoundHandleE	Aska::SoundServer::ReleaseSoundHandle(Aska::SoundHandle*)	sound_manager	decompiled	
+0x1f758ac	0x20758ac	528	_ZN4Aska11SoundServer18AcquireMessageNoteEv	Aska::SoundServer::AcquireMessageNote()	sound_manager	decompiled	
+0x1f75abc	0x2075abc	460	_ZN4Aska11SoundServer18ReleaseMessageNoteEPNS_16AudioMessageNoteE	Aska::SoundServer::ReleaseMessageNote(Aska::AudioMessageNote*)	sound_manager	decompiled	
+0x1f75c88	0x2075c88	532	_ZN4Aska11SoundServerC1Ev	Aska::SoundServer::SoundServer()	sound_manager	decompiled	
+0x1f75e9c	0x2075e9c	884	_ZN4Aska11SoundServer10InitializeEv	Aska::SoundServer::Initialize()	sound_manager	decompiled	
+0x1f76c48	0x2076c48	320	_ZN4Aska11TPoolLegacyINS_11SoundServer21AskaAdpcmDecodeBufferELb0EE10SecurePoolEjbPKvPKj	Aska::TPoolLegacy<Aska::SoundServer::AskaAdpcmDecodeBuffer, false>::SecurePool(unsigned int, bool, void const*, unsigned int const*)	sound_manager	decompiled	
+0x1f76d88	0x2076d88	320	_ZN4Aska11TPoolLegacyINS_11SoundServer14FilePathBufferELb0EE10SecurePoolEjbPKvPKj	Aska::TPoolLegacy<Aska::SoundServer::FilePathBuffer, false>::SecurePool(unsigned int, bool, void const*, unsigned int const*)	sound_manager	decompiled	
+0x1f76ec8	0x2076ec8	8	_ZN4Aska11SoundServer17InitializeEffectsEv	Aska::SoundServer::InitializeEffects()	sound_manager	decompiled	
+0x1f76ed0	0x2076ed0	956	_ZN4Aska11SoundServer8FinalizeEv	Aska::SoundServer::Finalize()	sound_manager	decompiled	
+0x1f7728c	0x207728c	4	_ZN4Aska11SoundServer15FinalizeEffectsEv	Aska::SoundServer::FinalizeEffects()	sound_manager	decompiled	
+0x1f77290	0x2077290	556	_ZN4Aska11SoundServer19AcquireSoundCommandEv	Aska::SoundServer::AcquireSoundCommand()	sound_manager	decompiled	
+0x1f774bc	0x20774bc	492	_ZN4Aska11SoundServer19ReleaseSoundCommandEPNS_12SoundCommandE	Aska::SoundServer::ReleaseSoundCommand(Aska::SoundCommand*)	sound_manager	decompiled	
+0x1f776a8	0x20776a8	520	_ZN4Aska11SoundServer16AcquireWaveVoiceEv	Aska::SoundServer::AcquireWaveVoice()	sound_manager	decompiled	
+0x1f778b0	0x20778b0	492	_ZN4Aska11SoundServer16ReleaseWaveVoiceEPNS_13WaveVoiceBaseE	Aska::SoundServer::ReleaseWaveVoice(Aska::WaveVoiceBase*)	sound_manager	decompiled	
+0x1f77a9c	0x2077a9c	220	_ZN4Aska11SoundServer16AcquireSoundPassEv	Aska::SoundServer::AcquireSoundPass()	sound_manager	decompiled	
+0x1f77b78	0x2077b78	192	_ZN4Aska11SoundServer16ReleaseSoundPassEPNS_9SoundPassE	Aska::SoundServer::ReleaseSoundPass(Aska::SoundPass*)	sound_manager	decompiled	
+0x1f77c38	0x2077c38	512	_ZN4Aska11SoundServer21AcquireAudioInterfaceEv	Aska::SoundServer::AcquireAudioInterface()	sound_manager	decompiled	
+0x1f77e38	0x2077e38	484	_ZN4Aska11SoundServer21ReleaseAudioInterfaceEPNS_14AudioInterfaceE	Aska::SoundServer::ReleaseAudioInterface(Aska::AudioInterface*)	sound_manager	decompiled	
+0x1f7801c	0x207801c	180	_ZN4Aska11SoundServer28AcquireAskaAdpcmDecodeBufferEv	Aska::SoundServer::AcquireAskaAdpcmDecodeBuffer()	sound_manager	decompiled	
+0x1f780d0	0x20780d0	124	_ZN4Aska11SoundServer28ReleaseAskaAdpcmDecodeBufferEPv	Aska::SoundServer::ReleaseAskaAdpcmDecodeBuffer(void*)	sound_manager	decompiled	
+0x1f7814c	0x207814c	176	_ZN4Aska11SoundServer21AcquireFilePathBufferEv	Aska::SoundServer::AcquireFilePathBuffer()	sound_manager	decompiled	
+0x1f781fc	0x20781fc	132	_ZN4Aska11SoundServer21ReleaseFilePathBufferEPc	Aska::SoundServer::ReleaseFilePathBuffer(char*)	sound_manager	decompiled	
+0x1f78280	0x2078280	1804	_ZN4Aska11SoundServerD2Ev	Aska::SoundServer::~SoundServer()	sound_manager	decompiled	
+0x1f7898c	0x207898c	24	_ZN4Aska11SoundServerD0Ev	Aska::SoundServer::~SoundServer()	sound_manager	decompiled	
+0x1f79764	0x2079764	220	_ZN4Aska11TPoolLegacyINS_11SoundServer21AskaAdpcmDecodeBufferELb0EED2Ev	Aska::TPoolLegacy<Aska::SoundServer::AskaAdpcmDecodeBuffer, false>::~TPoolLegacy()	sound_manager	decompiled	
+0x1f79840	0x2079840	220	_ZN4Aska11TPoolLegacyINS_11SoundServer21AskaAdpcmDecodeBufferELb0EED0Ev	Aska::TPoolLegacy<Aska::SoundServer::AskaAdpcmDecodeBuffer, false>::~TPoolLegacy()	sound_manager	decompiled	
+0x1f7991c	0x207991c	220	_ZN4Aska11TPoolLegacyINS_11SoundServer14FilePathBufferELb0EED2Ev	Aska::TPoolLegacy<Aska::SoundServer::FilePathBuffer, false>::~TPoolLegacy()	sound_manager	decompiled	
+0x1f799f8	0x20799f8	220	_ZN4Aska11TPoolLegacyINS_11SoundServer14FilePathBufferELb0EED0Ev	Aska::TPoolLegacy<Aska::SoundServer::FilePathBuffer, false>::~TPoolLegacy()	sound_manager	decompiled	
+0x1f79ad4	0x2079ad4	8	_ZN4Aska12SoundUtility21GetDspEffectParamSizeENS_6ESound10EDspEffectE	Aska::SoundUtility::GetDspEffectParamSize(Aska::ESound::EDspEffect)	sound_manager	decompiled	
+0x1f79adc	0x2079adc	112	_ZN4Aska12SoundUtility23GetDefaultSpeakerAssignEPhi	Aska::SoundUtility::GetDefaultSpeakerAssign(unsigned char*, int)	sound_manager	decompiled	
+0x1f79b4c	0x2079b4c	32	_ZN4Aska12SoundUtility13VolumeDBBlendEff	Aska::SoundUtility::VolumeDBBlend(float, float)	sound_manager	decompiled	
+0x1f79b6c	0x2079b6c	28	_ZN4Aska12SoundUtility10PitchBlendEff	Aska::SoundUtility::PitchBlend(float, float)	sound_manager	decompiled	
+0x1f79b88	0x2079b88	828	_ZN4Aska12SoundUtility17CalcLoopAndOffsetEPjS1_S1_PKNS_3AFF7AaoWAVEEj	Aska::SoundUtility::CalcLoopAndOffset(unsigned int*, unsigned int*, unsigned int*, Aska::AFF::AaoWAVE const*, unsigned int)	sound_manager	decompiled	
+0x1f79ec4	0x2079ec4	164	_ZN4Aska12SoundUtility19CalcBlockOffsetByteEjPKNS_3AFF10AaoVBRWAVEE	Aska::SoundUtility::CalcBlockOffsetByte(unsigned int, Aska::AFF::AaoVBRWAVE const*)	sound_manager	decompiled	
+0x1f79f68	0x2079f68	128	_ZN4Aska12SoundUtility17CalcSampleInBlockEPjS1_S1_jPKNS_3AFF10AaoVBRWAVEE	Aska::SoundUtility::CalcSampleInBlock(unsigned int*, unsigned int*, unsigned int*, unsigned int, Aska::AFF::AaoVBRWAVE const*)	sound_manager	decompiled	
+0x1f79fe8	0x2079fe8	28	_ZN4Aska12SoundUtility13CalcLoopCountEii	Aska::SoundUtility::CalcLoopCount(int, int)	sound_manager	decompiled	
+0x1f7a004	0x207a004	972	_ZN4Aska12SoundUtility11DownMix_To4EPfPKfi	Aska::SoundUtility::DownMix_To4(float*, float const*, int)	sound_manager	decompiled	
+0x1f7a3d0	0x207a3d0	896	_ZN4Aska12SoundUtility11DownMix_To2EPfPKfib	Aska::SoundUtility::DownMix_To2(float*, float const*, int, bool)	sound_manager	decompiled	
+0x1f7a750	0x207a750	64	_ZN4Aska12SoundUtility12DownMix_2To1EPfPKf	Aska::SoundUtility::DownMix_2To1(float*, float const*)	sound_manager	decompiled	
+0x1f7a790	0x207a790	136	_ZN4Aska12SoundUtility12DownMix_4To1EPfPKf	Aska::SoundUtility::DownMix_4To1(float*, float const*)	sound_manager	decompiled	
+0x1f7a818	0x207a818	232	_ZN4Aska12SoundUtility13DownMix_51To1EPfPKf	Aska::SoundUtility::DownMix_51To1(float*, float const*)	sound_manager	decompiled	
+0x1f7a900	0x207a900	144	_ZN4Aska12SoundUtility10UpMix_1To2EPfPKf	Aska::SoundUtility::UpMix_1To2(float*, float const*)	sound_manager	decompiled	
+0x1f7a990	0x207a990	76	_ZN4Aska12SoundUtility10UpMix_2To4EPfPKf	Aska::SoundUtility::UpMix_2To4(float*, float const*)	sound_manager	decompiled	
+0x1f7a9dc	0x207a9dc	148	_ZN4Aska12SoundUtility10UpMix_1To4EPfPKf	Aska::SoundUtility::UpMix_1To4(float*, float const*)	sound_manager	decompiled	
+0x1f7aa70	0x207aa70	88	_ZN4Aska12SoundUtility11UpMix_4To51EPfPKf	Aska::SoundUtility::UpMix_4To51(float*, float const*)	sound_manager	decompiled	
+0x1f7aac8	0x207aac8	80	_ZN4Aska12SoundUtility11UpMix_2To51EPfPKf	Aska::SoundUtility::UpMix_2To51(float*, float const*)	sound_manager	decompiled	
+0x1f7ab18	0x207ab18	152	_ZN4Aska12SoundUtility11UpMix_1To51EPfPKf	Aska::SoundUtility::UpMix_1To51(float*, float const*)	sound_manager	decompiled	
+0x1f7abb0	0x207abb0	124	_ZN4Aska12SoundUtility21PhysicalStereoDownMixEPfPKf	Aska::SoundUtility::PhysicalStereoDownMix(float*, float const*)	sound_manager	decompiled	
+0x1f7ac2c	0x207ac2c	72	_ZN4Aska12SoundUtility27PhysicalStereoDownMix_51To1EPfPKf	Aska::SoundUtility::PhysicalStereoDownMix_51To1(float*, float const*)	sound_manager	decompiled	
+0x1f7ac74	0x207ac74	1452	_ZN4Aska12SoundUtility27PhysicalStereoDownMix_51To2EPfPKfb	Aska::SoundUtility::PhysicalStereoDownMix_51To2(float*, float const*, bool)	sound_manager	decompiled	
+0x1f7b220	0x207b220	180	_ZN4Aska12SoundUtility30PhysicalStereoUpMix_AllSamplesEPfPKfi	Aska::SoundUtility::PhysicalStereoUpMix_AllSamples(float*, float const*, int)	sound_manager	decompiled	
+0x1f7b2d4	0x207b2d4	536	_ZN4Aska12SoundUtility18DownMixArray_51To2EPfPKfb	Aska::SoundUtility::DownMixArray_51To2(float*, float const*, bool)	sound_manager	decompiled	
+0x223bf54	0x233bf54	192	_ZN4Aska7SLVoiceC1Ev	Aska::SLVoice::SLVoice()	voice	decompiled	
+0x223c014	0x233c014	64	_ZN4Aska7SLVoiceD1Ev	Aska::SLVoice::~SLVoice()	voice	decompiled	
+0x223c054	0x233c054	4	_ZN4Aska6TQueueINS_7SLVoice16OggSubmitContextELi8EED2Ev	Aska::TQueue<Aska::SLVoice::OggSubmitContext, 8>::~TQueue()	voice	decompiled	
+0x223c058	0x233c058	4	_ZN4Aska6TQueueINS_7SLVoice18AdpcmSubmitContextELi3EED2Ev	Aska::TQueue<Aska::SLVoice::AdpcmSubmitContext, 3>::~TQueue()	voice	decompiled	
+0x223c05c	0x233c05c	72	_ZN4Aska7SLVoiceD0Ev	Aska::SLVoice::~SLVoice()	voice	decompiled	
+0x223c0a4	0x233c0a4	1940	_ZN4Aska7SLVoice11CreateVoiceEPNS_4IBusEPKvPNS_16MultiMediaStreamEPKNS_16PackedPlayParamsE	Aska::SLVoice::CreateVoice(Aska::IBus*, void const*, Aska::MultiMediaStream*, Aska::PackedPlayParams const*)	voice	decompiled	
+0x223c838	0x233c838	8	_ZN4Aska7SLVoice16SLPlayerCallbackEPKPK30SLAndroidSimpleBufferQueueItf_Pv	Aska::SLVoice::SLPlayerCallback(SLAndroidSimpleBufferQueueItf_ const* const*, void*)	voice	decompiled	
+0x223c840	0x233c840	164	_ZN4Aska7SLVoice17LockAndSubmitDataEv	Aska::SLVoice::LockAndSubmitData()	voice	decompiled	
+0x223c8e4	0x233c8e4	424	_ZN4Aska7SLVoice18LockAndSubmitADPCMEv	Aska::SLVoice::LockAndSubmitADPCM()	voice	decompiled	
+0x223ca8c	0x233ca8c	416	_ZN4Aska7SLVoice16LockAndSubmitOGGEv	Aska::SLVoice::LockAndSubmitOGG()	voice	decompiled	
+0x223cc2c	0x233cc2c	608	_ZN4Aska7SLVoice11DeleteVoiceEv	Aska::SLVoice::DeleteVoice()	voice	decompiled	
+0x223ce8c	0x233ce8c	64	_ZN4Aska7SLVoice4PlayEv	Aska::SLVoice::Play()	voice	decompiled	
+0x223cecc	0x233cecc	56	_ZN4Aska7SLVoice4StopEv	Aska::SLVoice::Stop()	voice	decompiled	
+0x223cf04	0x233cf04	56	_ZN4Aska7SLVoice5PauseEv	Aska::SLVoice::Pause()	voice	decompiled	
+0x223cf3c	0x233cf3c	56	_ZN4Aska7SLVoice6ResumeEv	Aska::SLVoice::Resume()	voice	decompiled	
+0x223cf74	0x233cf74	28	_ZNK4Aska7SLVoice14GetElapsedTimeEv	Aska::SLVoice::GetElapsedTime() const	voice	decompiled	
+0x223cf90	0x233cf90	244	_ZN4Aska7SLVoice18UpdateVolumeMatrixEv	Aska::SLVoice::UpdateVolumeMatrix()	voice	decompiled	
+0x223d084	0x233d084	104	_ZN4Aska7SLVoice15UpdatePitchbendEv	Aska::SLVoice::UpdatePitchbend()	voice	decompiled	
+0x223d0ec	0x233d0ec	60	_ZN4Aska7SLVoice9AudioKickEv	Aska::SLVoice::AudioKick()	voice	decompiled	
+0x223d128	0x233d128	848	_ZN4Aska7SLVoice11AudioSignalEm	Aska::SLVoice::AudioSignal(unsigned long)	voice	decompiled	
+0x223d478	0x233d478	80	_ZN4Aska7SLVoice18SetDeleteCountdownEv	Aska::SLVoice::SetDeleteCountdown()	voice	decompiled	
+0x223d4c8	0x233d4c8	588	_ZN4Aska7SLVoice15ProcAudioBufferEv	Aska::SLVoice::ProcAudioBuffer()	voice	decompiled	
+0x223d714	0x233d714	88	_ZN4Aska7SLVoice19SubmitBufferDataPCMEPKvj	Aska::SLVoice::SubmitBufferDataPCM(void const*, unsigned int)	voice	decompiled	
+0x223d76c	0x233d76c	168	_ZN4Aska7SLVoice20SubmitDummyDataAdpcmEv	Aska::SLVoice::SubmitDummyDataAdpcm()	voice	decompiled	
+0x223d814	0x233d814	428	_ZN4Aska7SLVoice21SubmitBufferDataADPCMEPKvjb	Aska::SLVoice::SubmitBufferDataADPCM(void const*, unsigned int, bool)	voice	decompiled	
+0x223d9c0	0x233d9c0	168	_ZN4Aska7SLVoice18SubmitDummyDataOggEv	Aska::SLVoice::SubmitDummyDataOgg()	voice	decompiled	
+0x223da68	0x233da68	288	_ZN4Aska7SLVoice19SubmitBufferDataOGGEPKvjjj	Aska::SLVoice::SubmitBufferDataOGG(void const*, unsigned int, unsigned int, unsigned int)	voice	decompiled	
+0x223db88	0x233db88	24	_ZN4Aska10WaveBufferD2Ev	Aska::WaveBuffer::~WaveBuffer()	voice	decompiled	
+0x223dbd4	0x233dbd4	4	_ZN4Aska6TQueueINS_7SLVoice18AdpcmSubmitContextELi3EED0Ev	Aska::TQueue<Aska::SLVoice::AdpcmSubmitContext, 3>::~TQueue()	voice	decompiled	
+0x223dbd8	0x233dbd8	4	_ZN4Aska6TQueueINS_7SLVoice16OggSubmitContextELi8EED0Ev	Aska::TQueue<Aska::SLVoice::OggSubmitContext, 8>::~TQueue()	voice	decompiled	
+0x223dbdc	0x233dbdc	120	_ZN4Aska9AskaADPCM4InitEiii	Aska::AskaADPCM::Init(int, int, int)	codec	decompiled	
+0x223dc54	0x233dc54	68	_ZN4Aska9AskaADPCM6EncodeEPKhjPh	Aska::AskaADPCM::Encode(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223dc98	0x233dc98	1304	_ZN4Aska9AskaADPCM10Encode_M08EPKhjPh	Aska::AskaADPCM::Encode_M08(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223e1b0	0x233e1b0	1284	_ZN4Aska9AskaADPCM10Encode_M16EPKhjPh	Aska::AskaADPCM::Encode_M16(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223e6b4	0x233e6b4	1324	_ZN4Aska9AskaADPCM10Encode_S08EPKhjPh	Aska::AskaADPCM::Encode_S08(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223ebe0	0x233ebe0	1304	_ZN4Aska9AskaADPCM10Encode_S16EPKhjPh	Aska::AskaADPCM::Encode_S16(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223f0f8	0x233f0f8	68	_ZN4Aska9AskaADPCM6DecodeEPKhjPh	Aska::AskaADPCM::Decode(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223f13c	0x233f13c	476	_ZN4Aska9AskaADPCM10Decode_M08EPKhjPh	Aska::AskaADPCM::Decode_M08(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223f318	0x233f318	460	_ZN4Aska9AskaADPCM10Decode_M16EPKhjPh	Aska::AskaADPCM::Decode_M16(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223f4e4	0x233f4e4	492	_ZN4Aska9AskaADPCM10Decode_S08EPKhjPh	Aska::AskaADPCM::Decode_S08(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223f6d0	0x233f6d0	476	_ZN4Aska9AskaADPCM10Decode_S16EPKhjPh	Aska::AskaADPCM::Decode_S16(unsigned char const*, unsigned int, unsigned char*)	codec	decompiled	
+0x223f8ac	0x233f8ac	44	_ZN4Aska9AskaADPCM18GetSamplesPerBlockEii	Aska::AskaADPCM::GetSamplesPerBlock(int, int)	codec	decompiled	
+0x223f9a4	0x233f9a4	36	_ZN4Aska7AskaOGG16InitializeMemoryEv	Aska::AskaOGG::InitializeMemory()	codec	decompiled	
+0x223f9c8	0x233f9c8	64	_ZN4Aska7AskaOGGC2Ev	Aska::AskaOGG::AskaOGG()	codec	decompiled	
+0x223fa08	0x233fa08	424	_ZN4Aska7AskaOGG10DecodeInitEjj	Aska::AskaOGG::DecodeInit(unsigned int, unsigned int)	codec	decompiled	
+0x223fbb0	0x233fbb0	176	_ZN4Aska7AskaOGG6DecodeEPKajPPajjj	Aska::AskaOGG::Decode(signed char const*, unsigned int, signed char**, unsigned int, unsigned int, unsigned int)	codec	decompiled	
+0x223fc60	0x233fc60	636	_ZN4Aska7AskaOGG12DecodeHeaderEPKam	Aska::AskaOGG::DecodeHeader(signed char const*, unsigned long)	codec	decompiled	
+0x223fedc	0x233fedc	596	_ZN4Aska7AskaOGG10DecodeBodyEPKajPPajjj	Aska::AskaOGG::DecodeBody(signed char const*, unsigned int, signed char**, unsigned int, unsigned int, unsigned int)	codec	decompiled	
+0x2240130	0x2340130	100	_ZN4Aska7AskaOGG20Decode_ReadSrcBufferEPKam	Aska::AskaOGG::Decode_ReadSrcBuffer(signed char const*, unsigned long)	codec	decompiled	
+0x2240194	0x2340194	68	_ZN4Aska7AskaOGG13PacketDecoder4InitEj	Aska::AskaOGG::PacketDecoder::Init(unsigned int)	codec	decompiled	
+0x22401d8	0x23401d8	20	_ZN4Aska7AskaOGG13PacketDecoder7SetPageEP8ogg_page	Aska::AskaOGG::PacketDecoder::SetPage(ogg_page*)	codec	decompiled	
+0x22401ec	0x23401ec	936	_ZN4Aska7AskaOGG16Decode_LoopStartEjj	Aska::AskaOGG::Decode_LoopStart(unsigned int, unsigned int)	codec	decompiled	
+0x2240594	0x2340594	252	_ZN4Aska7AskaOGG13DecodePacketsEjj	Aska::AskaOGG::DecodePackets(unsigned int, unsigned int)	codec	decompiled	
+0x2240690	0x2340690	80	_ZN4Aska7AskaOGG15DecodePageResetEv	Aska::AskaOGG::DecodePageReset()	codec	decompiled	
+0x22406e0	0x23406e0	20	_ZN4Aska7AskaOGG13PacketDecoder5ResetEv	Aska::AskaOGG::PacketDecoder::Reset()	codec	decompiled	
+0x22406f4	0x23406f4	24	_ZN4Aska7AskaOGG13PacketDecoder8ProgressEjPKaj	Aska::AskaOGG::PacketDecoder::Progress(unsigned int, signed char const*, unsigned int)	codec	decompiled	
+0x224070c	0x234070c	36	_ZNK4Aska7AskaOGG22Decode_CalcFrameSampleEj	Aska::AskaOGG::Decode_CalcFrameSample(unsigned int) const	codec	decompiled	
+0x2240730	0x2340730	540	_ZN4Aska7AskaOGG13Decode_PcmoutEj	Aska::AskaOGG::Decode_Pcmout(unsigned int)	codec	decompiled	
+0x224094c	0x234094c	224	_ZN4Aska7AskaOGG19Decode_GetDstBufferEjj	Aska::AskaOGG::Decode_GetDstBuffer(unsigned int, unsigned int)	codec	decompiled	
+0x2240a2c	0x2340a2c	16	_ZN4Aska7AskaOGG13PacketDecoderC1Ev	Aska::AskaOGG::PacketDecoder::PacketDecoder()	codec	decompiled	
+0x2240a3c	0x2340a3c	48	_ZN4Aska7AskaOGG13DecodeContextC2Ev	Aska::AskaOGG::DecodeContext::DecodeContext()	codec	decompiled	
+0x2240a6c	0x2340a6c	188	_ZN4Aska7AskaOGG13DecodeContextD2Ev	Aska::AskaOGG::DecodeContext::~DecodeContext()	codec	decompiled	
+0x2240e94	0x2340e94	56	_ZN4Aska13AudioEffectorC2Ev	Aska::AudioEffector::AudioEffector()	mixer	decompiled	
+0x2240ecc	0x2340ecc	312	_ZN4Aska13AudioEffector13SetupEffectorEj	Aska::AudioEffector::SetupEffector(unsigned int)	mixer	decompiled	
+0x2241004	0x2341004	576	_ZN4Aska13AudioEffector14FinishEffectorEv	Aska::AudioEffector::FinishEffector()	mixer	decompiled	
+0x2241244	0x2341244	72	_ZN4Aska13AudioEffector18UninstallDspEffectEj	Aska::AudioEffector::UninstallDspEffect(unsigned int)	mixer	decompiled	
+0x224128c	0x234128c	112	_ZN4Aska13AudioEffector13DisconnectBusEi	Aska::AudioEffector::DisconnectBus(int)	mixer	decompiled	
+0x22412fc	0x23412fc	100	_ZN4Aska13AudioEffector10ConnectBusEiPNS_4IBusE	Aska::AudioEffector::ConnectBus(int, Aska::IBus*)	mixer	decompiled	
+0x2241360	0x2341360	72	_ZN4Aska13AudioEffector16InstallDspEffectEjNS_6ESound10EDspEffectEPKv	Aska::AudioEffector::InstallDspEffect(unsigned int, Aska::ESound::EDspEffect, void const*)	mixer	decompiled	
+0x22413a8	0x23413a8	456	_ZN4Aska13AudioEffector8AudioRunEv	Aska::AudioEffector::AudioRun()	mixer	decompiled	
+0x2241570	0x2341570	152	_ZN4Aska13AudioEffector11ProcRequestEPKNS_15EffectorRequest16RequestContainerE	Aska::AudioEffector::ProcRequest(Aska::EffectorRequest::RequestContainer const*)	mixer	decompiled	
+0x2241770	0x2341770	4	_ZN4Aska13AudioEffector32SetDspEffectParameterImmediatelyEjPKv	Aska::AudioEffector::SetDspEffectParameterImmediately(unsigned int, void const*)	mixer	decompiled	
+0x2241774	0x2341774	112	_ZNK4Aska13AudioEffector16CheckSubBusMatchEPNS_10IDspEffectE	Aska::AudioEffector::CheckSubBusMatch(Aska::IDspEffect*) const	mixer	decompiled	
+0x22417e4	0x23417e4	516	_ZNK4Aska13AudioEffector3GetEmPv	Aska::AudioEffector::Get(unsigned long, void*) const	mixer	decompiled	
+0x22419e8	0x23419e8	336	_ZN4Aska13AudioEffector3SetEmPKv	Aska::AudioEffector::Set(unsigned long, void const*)	mixer	decompiled	
+0x224206c	0x234206c	372	_ZN4Aska12SoundManager17AddAudioInterfaceEPNS_14AudioInterfaceE	Aska::SoundManager::AddAudioInterface(Aska::AudioInterface*)	sound_manager	decompiled	
+0x22421e0	0x23421e0	408	_ZN4Aska12SoundManager20DeleteAudioInterfaceEPNS_14AudioInterfaceE	Aska::SoundManager::DeleteAudioInterface(Aska::AudioInterface*)	sound_manager	decompiled	
+0x22424f0	0x23424f0	120	_ZN4Aska13AudioEffectorD0Ev	Aska::AudioEffector::~AudioEffector()	mixer	decompiled	
+0x2242568	0x2342568	24	_ZNK4Aska13AudioEffector10GetClassIDEi	Aska::AudioEffector::GetClassID(int) const	mixer	decompiled	
+0x2242840	0x2342840	124	_ZN4Aska14AudioInterface16CheckConnectableEPKNS_14AudioConnectorES3_	Aska::AudioInterface::CheckConnectable(Aska::AudioConnector const*, Aska::AudioConnector const*)	mixer	decompiled	
+0x22428bc	0x23428bc	28	_ZN4Aska14AudioInterfaceC2Ev	Aska::AudioInterface::AudioInterface()	mixer	decompiled	
+0x22428d8	0x23428d8	284	_ZN4Aska14AudioInterface7ConnectEPNS_14AudioConnectorE	Aska::AudioInterface::Connect(Aska::AudioConnector*)	mixer	decompiled	
+0x22429f4	0x23429f4	76	_ZN4Aska14AudioInterface10DisconnectEPNS_14AudioConnectorE	Aska::AudioInterface::Disconnect(Aska::AudioConnector*)	mixer	decompiled	
+0x2242a40	0x2342a40	52	_ZN4Aska14AudioInterface16GetThisConnectorEPNS_12IAudioDeviceE	Aska::AudioInterface::GetThisConnector(Aska::IAudioDevice*)	mixer	decompiled	
+0x2242a74	0x2342a74	60	_ZN4Aska14AudioInterface19GetAnotherConnectorEPNS_12IAudioDeviceE	Aska::AudioInterface::GetAnotherConnector(Aska::IAudioDevice*)	mixer	decompiled	
+0x2242ab0	0x2342ab0	24	_ZN4Aska14AudioInterface19GetAnotherConnectorEPNS_14AudioConnectorE	Aska::AudioInterface::GetAnotherConnector(Aska::AudioConnector*)	mixer	decompiled	
+0x2242ac8	0x2342ac8	4	_ZN4Aska14AudioInterfaceD0Ev	Aska::AudioInterface::~AudioInterface()	mixer	decompiled	
+0x2242b70	0x2342b70	1808	_ZN4Aska10AudioMixerC1Ev	Aska::AudioMixer::AudioMixer()	mixer	decompiled	
+0x2243280	0x2343280	468	_ZN4Aska10AudioMixerD1Ev	Aska::AudioMixer::~AudioMixer()	mixer	decompiled	
+0x22434e4	0x23434e4	24	_ZN4Aska10AudioMixerD0Ev	Aska::AudioMixer::~AudioMixer()	mixer	decompiled	
+0x22434fc	0x23434fc	328	_ZN4Aska10AudioMixer11SetupDeviceEv	Aska::AudioMixer::SetupDevice()	mixer	decompiled	
+0x2243644	0x2343644	208	_ZN4Aska10AudioMixer12FinishDeviceEv	Aska::AudioMixer::FinishDevice()	mixer	decompiled	
+0x2243714	0x2343714	44	_ZN4Aska10AudioMixer8AudioRunEv	Aska::AudioMixer::AudioRun()	mixer	decompiled	
+0x2243740	0x2343740	100	_ZN4Aska10AudioMixer6GetBusEm	Aska::AudioMixer::GetBus(unsigned long)	mixer	decompiled	
+0x22437a4	0x23437a4	60	_ZN4Aska10AudioMixer15GetMixerChannelEj	Aska::AudioMixer::GetMixerChannel(unsigned int)	mixer	decompiled	
+0x22437e0	0x23437e0	480	_ZN4Aska10AudioMixer11MakeRoutingEv	Aska::AudioMixer::MakeRouting()	mixer	decompiled	
+0x22439c0	0x23439c0	60	_ZN4Aska10AudioMixer13GetBusChannelEj	Aska::AudioMixer::GetBusChannel(unsigned int)	mixer	decompiled	
+0x22439fc	0x23439fc	304	_ZN4Aska10AudioMixer12SetInterfaceEjPNS_14AudioInterfaceE	Aska::AudioMixer::SetInterface(unsigned int, Aska::AudioInterface*)	mixer	decompiled	
+0x2243b2c	0x2343b2c	56	_ZN4Aska10AudioMixer12GetInterfaceEj	Aska::AudioMixer::GetInterface(unsigned int)	mixer	decompiled	
+0x2243b64	0x2343b64	144	_ZN4Aska10AudioMixer12GetConnectorEj	Aska::AudioMixer::GetConnector(unsigned int)	mixer	decompiled	
+0x2243bf4	0x2343bf4	40	_ZN4Aska10AudioMixer25BuildFinalVolumeAndPanpotEPfS1_ff	Aska::AudioMixer::BuildFinalVolumeAndPanpot(float*, float*, float, float)	mixer	decompiled	
+0x2243c1c	0x2343c1c	196	_ZN4Aska10AudioMixer17AutoChannelAssignEPffS1_i	Aska::AudioMixer::AutoChannelAssign(float*, float, float*, int)	mixer	decompiled	
+0x2243ce0	0x2343ce0	212	_ZN4Aska10AudioMixer24AutoChannelAssignFromMapEPffS1_ij	Aska::AudioMixer::AutoChannelAssignFromMap(float*, float, float*, int, unsigned int)	mixer	decompiled	
+0x2243db4	0x2343db4	168	_ZN4Aska10AudioMixer17FreeChannelAssignEPffS1_iPKh	Aska::AudioMixer::FreeChannelAssign(float*, float, float*, int, unsigned char const*)	mixer	decompiled	
+0x2243e5c	0x2343e5c	308	_ZN4Aska10AudioMixer15DownUpMixMatrixEPfijb	Aska::AudioMixer::DownUpMixMatrix(float*, int, unsigned int, bool)	mixer	decompiled	
+0x2243f90	0x2343f90	12	_ZN4Aska12SoundUtility12DownMix_4To2EPfPKf	Aska::SoundUtility::DownMix_4To2(float*, float const*)	sound_manager	decompiled	
+0x2243f9c	0x2343f9c	12	_ZN4Aska12SoundUtility13DownMix_51To2EPfPKf	Aska::SoundUtility::DownMix_51To2(float*, float const*)	sound_manager	decompiled	
+0x2243fa8	0x2343fa8	8	_ZN4Aska12SoundUtility13DownMix_51To4EPfPKf	Aska::SoundUtility::DownMix_51To4(float*, float const*)	sound_manager	decompiled	
+0x2243fb0	0x2343fb0	8	_ZNK4Aska10AudioMixer3GetEmPv	Aska::AudioMixer::Get(unsigned long, void*) const	mixer	decompiled	
+0x2243fb8	0x2343fb8	8	_ZN4Aska10AudioMixer3SetEmPKv	Aska::AudioMixer::Set(unsigned long, void const*)	mixer	decompiled	
+0x2244058	0x2344058	68	_ZNK4Aska10AudioMixer10GetClassIDEi	Aska::AudioMixer::GetClassID(int) const	mixer	decompiled	
+0x22440b4	0x23440b4	92	_ZN4Aska11AudioPlayerC2Ev	Aska::AudioPlayer::AudioPlayer()	mixer	decompiled	
+0x2244110	0x2344110	84	_ZN4Aska11AudioPlayerD1Ev	Aska::AudioPlayer::~AudioPlayer()	mixer	decompiled	
+0x2244164	0x2344164	4	_ZN4Aska11AudioPlayerD0Ev	Aska::AudioPlayer::~AudioPlayer()	mixer	decompiled	
+0x2244168	0x2344168	116	_ZN4Aska11AudioPlayer11SetupDeviceEv	Aska::AudioPlayer::SetupDevice()	mixer	decompiled	
+0x22441dc	0x23441dc	56	_ZN4Aska11AudioPlayer12FinishDeviceEv	Aska::AudioPlayer::FinishDevice()	mixer	decompiled	
+0x2244214	0x2344214	372	_ZN4Aska11AudioPlayer11SendMessageEjPvS1_	Aska::AudioPlayer::SendMessage(unsigned int, void*, void*)	mixer	decompiled	
+0x224446c	0x234446c	392	_ZN4Aska11AudioPlayer10GetMessageEPNS_12AudioMessageE	Aska::AudioPlayer::GetMessage(Aska::AudioMessage*)	mixer	decompiled	
+0x22445f4	0x23445f4	304	_ZN4Aska11AudioPlayer8AudioRunEv	Aska::AudioPlayer::AudioRun()	mixer	decompiled	
+0x2244724	0x2344724	140	_ZN4Aska11AudioPlayer14SetDeviceParamEjff	Aska::AudioPlayer::SetDeviceParam(unsigned int, float, float)	mixer	decompiled	
+0x22447b0	0x23447b0	52	_ZN4Aska11AudioPlayer14GetDeviceParamEj	Aska::AudioPlayer::GetDeviceParam(unsigned int)	mixer	decompiled	
+0x22447e4	0x23447e4	136	_ZN4Aska10WavePlayerC1Ev	Aska::WavePlayer::WavePlayer()	voice	decompiled	
+0x224486c	0x234486c	240	_ZN4Aska10WavePlayerD2Ev	Aska::WavePlayer::~WavePlayer()	voice	decompiled	
+0x224495c	0x234495c	312	_ZN4Aska10WavePlayer13SetAaoHandlerEPNS_10AaoHandlerEPKNS_22DirectPlaybackSettingsEPKNS_16MultiMediaStreamEj	Aska::WavePlayer::SetAaoHandler(Aska::AaoHandler*, Aska::DirectPlaybackSettings const*, Aska::MultiMediaStream const*, unsigned int)	voice	decompiled	
+0x2244a94	0x2344a94	24	_ZN4Aska10WavePlayerD0Ev	Aska::WavePlayer::~WavePlayer()	voice	decompiled	
+0x2244aac	0x2344aac	140	_ZN4Aska10WavePlayer11SetupDeviceEv	Aska::WavePlayer::SetupDevice()	voice	decompiled	
+0x2244b38	0x2344b38	84	_ZN4Aska10WavePlayer12FinishDeviceEv	Aska::WavePlayer::FinishDevice()	voice	decompiled	
+0x2244b8c	0x2344b8c	132	_ZN4Aska10WavePlayer10TermPlayerEv	Aska::WavePlayer::TermPlayer()	voice	decompiled	
+0x2244c10	0x2344c10	768	_ZN4Aska10WavePlayer10InitPlayerEPKNS_22DirectPlaybackSettingsEPKNS_16MultiMediaStreamEj	Aska::WavePlayer::InitPlayer(Aska::DirectPlaybackSettings const*, Aska::MultiMediaStream const*, unsigned int)	voice	decompiled	
+0x2244f10	0x2344f10	112	_ZN4Aska10WavePlayer18CalcMasterVolumeDBEf	Aska::WavePlayer::CalcMasterVolumeDB(float)	voice	decompiled	
+0x2244f80	0x2344f80	132	_ZN4Aska10WavePlayer19CalcMasterPitchbendEf	Aska::WavePlayer::CalcMasterPitchbend(float)	voice	decompiled	
+0x2245004	0x2345004	40	_ZN4Aska10WavePlayer16CalcMasterPanpotEf	Aska::WavePlayer::CalcMasterPanpot(float)	voice	decompiled	
+0x224502c	0x234502c	264	_ZN4Aska10WavePlayer11CreateVoiceEPKvPNS_16MultiMediaStreamEPKNS_16PackedPlayParamsE	Aska::WavePlayer::CreateVoice(void const*, Aska::MultiMediaStream*, Aska::PackedPlayParams const*)	voice	decompiled	
+0x2245134	0x2345134	64	_ZN4Aska10WavePlayer11DeleteVoiceEv	Aska::WavePlayer::DeleteVoice()	voice	decompiled	
+0x2245174	0x2345174	44	_ZN4Aska10WavePlayer8AudioRunEv	Aska::WavePlayer::AudioRun()	voice	decompiled	
+0x22451a0	0x23451a0	44	_ZN4Aska10WavePlayer4PlayEv	Aska::WavePlayer::Play()	voice	decompiled	
+0x22451cc	0x23451cc	92	_ZN4Aska10WavePlayer4StopEv	Aska::WavePlayer::Stop()	voice	decompiled	
+0x2245228	0x2345228	44	_ZN4Aska10WavePlayer5PauseEv	Aska::WavePlayer::Pause()	voice	decompiled	
+0x2245254	0x2345254	44	_ZN4Aska10WavePlayer6ResumeEv	Aska::WavePlayer::Resume()	voice	decompiled	
+0x2245280	0x2345280	108	_ZNK4Aska10WavePlayer21GetCurrentDeviceParamEj	Aska::WavePlayer::GetCurrentDeviceParam(unsigned int) const	voice	decompiled	
+0x22452ec	0x23452ec	156	_ZN4Aska10WavePlayer21SetCurrentDeviceParamEjf	Aska::WavePlayer::SetCurrentDeviceParam(unsigned int, float)	voice	decompiled	
+0x2245388	0x2345388	980	_ZN4Aska10WavePlayer11ProcMessageEv	Aska::WavePlayer::ProcMessage()	voice	decompiled	
+0x224575c	0x234575c	112	_ZN4Aska10WavePlayer12SetInterfaceEjPNS_14AudioInterfaceE	Aska::WavePlayer::SetInterface(unsigned int, Aska::AudioInterface*)	voice	decompiled	
+0x22457cc	0x23457cc	56	_ZN4Aska10WavePlayer12GetInterfaceEj	Aska::WavePlayer::GetInterface(unsigned int)	voice	decompiled	
+0x2245804	0x2345804	24	_ZN4Aska10WavePlayer12GetConnectorEj	Aska::WavePlayer::GetConnector(unsigned int)	voice	decompiled	
+0x224581c	0x234581c	8	_ZNK4Aska10WavePlayer3GetEmPv	Aska::WavePlayer::Get(unsigned long, void*) const	voice	decompiled	
+0x2245824	0x2345824	8	_ZN4Aska10WavePlayer3SetEmPKv	Aska::WavePlayer::Set(unsigned long, void const*)	voice	decompiled	
+0x2245868	0x2345868	68	_ZNK4Aska10WavePlayer10GetClassIDEi	Aska::WavePlayer::GetClassID(int) const	voice	decompiled	
+0x22458ac	0x23458ac	8	_ZNK4Aska10WavePlayer11GetThisTypeEv	Aska::WavePlayer::GetThisType() const	voice	decompiled	
+0x224595c	0x234595c	580	_ZN4Aska17AudioSignalNotify18AddSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignalNotify::AddSignalVoiceList(Aska::SLVoice*)	mixer	decompiled	
+0x2245ba0	0x2345ba0	660	_ZN4Aska17AudioSignalNotify21DeleteSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignalNotify::DeleteSignalVoiceList(Aska::SLVoice*)	mixer	decompiled	
+0x2245e34	0x2345e34	536	_ZNK4Aska17AudioSignalNotify14GetSignalCountEv	Aska::AudioSignalNotify::GetSignalCount() const	mixer	decompiled	
+0x224604c	0x234604c	808	_ZN4Aska17AudioSignalNotify7HandlerEm	Aska::AudioSignalNotify::Handler(unsigned long)	mixer	decompiled	
+0x2246374	0x2346374	4	_ZN4Aska11AudioSignal10DeleteThisEPNS_13DeleteManagerE	Aska::AudioSignal::DeleteThis(Aska::DeleteManager*)	mixer	decompiled	
+0x2246378	0x2346378	132	_ZN4Aska11AudioSignal18AddSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignal::AddSignalVoiceList(Aska::SLVoice*)	mixer	decompiled	
+0x22463fc	0x23463fc	60	_ZN4Aska11AudioSignal21DeleteSignalVoiceListEPNS_7SLVoiceE	Aska::AudioSignal::DeleteSignalVoiceList(Aska::SLVoice*)	mixer	decompiled	
+0x2246438	0x2346438	164	_ZN4Aska11AudioSignal3RunEi	Aska::AudioSignal::Run(int)	mixer	decompiled	
+0x22464dc	0x23464dc	16	_ZN4Aska23AudioSafetySignalNotify10InitializeEPNS_5EventE	Aska::AudioSafetySignalNotify::Initialize(Aska::Event*)	mixer	decompiled	
+0x22464ec	0x23464ec	8	_ZN4Aska23AudioSafetySignalNotify8FinalizeEv	Aska::AudioSafetySignalNotify::Finalize()	mixer	decompiled	
+0x22464f4	0x23464f4	80	_ZN4Aska23AudioSafetySignalNotify7HandlerEm	Aska::AudioSafetySignalNotify::Handler(unsigned long)	mixer	decompiled	
+0x2246544	0x2346544	64	_ZN4Aska23AudioSafetySignalThread10InitializeEv	Aska::AudioSafetySignalThread::Initialize()	mixer	decompiled	
+0x2246584	0x2346584	116	_ZN4Aska23AudioSafetySignalThread7HandlerEv	Aska::AudioSafetySignalThread::Handler()	mixer	decompiled	
+0x22465f8	0x23465f8	20	_ZN4Aska17AudioSignalNotifyD2Ev	Aska::AudioSignalNotify::~AudioSignalNotify()	mixer	decompiled	
+0x224660c	0x234660c	40	_ZN4Aska17AudioSignalNotifyD0Ev	Aska::AudioSignalNotify::~AudioSignalNotify()	mixer	decompiled	
+0x2246634	0x2346634	80	_ZN4Aska11AudioSignalD2Ev	Aska::AudioSignal::~AudioSignal()	mixer	decompiled	
+0x2246684	0x2346684	88	_ZN4Aska11AudioSignalD0Ev	Aska::AudioSignal::~AudioSignal()	mixer	decompiled	
+0x22466dc	0x23466dc	72	_ZNK4Aska11AudioSignal10GetClassIDEi	Aska::AudioSignal::GetClassID(int) const	mixer	decompiled	
+0x2246724	0x2346724	8	_ZNK4Aska11AudioSignal15GetDefaultLevelEv	Aska::AudioSignal::GetDefaultLevel() const	mixer	decompiled	
+0x224672c	0x234672c	4	_ZN4Aska23AudioSafetySignalNotifyD0Ev	Aska::AudioSafetySignalNotify::~AudioSafetySignalNotify()	mixer	decompiled	
+0x2246730	0x2346730	40	_ZN4Aska23AudioSafetySignalThreadD2Ev	Aska::AudioSafetySignalThread::~AudioSafetySignalThread()	mixer	decompiled	
+0x2246758	0x2346758	48	_ZN4Aska23AudioSafetySignalThreadD0Ev	Aska::AudioSafetySignalThread::~AudioSafetySignalThread()	mixer	decompiled	
+0x2246970	0x2346970	1544	_ZN4Aska12SoundCommand14ProcessCommandEPPS0_	Aska::SoundCommand::ProcessCommand(Aska::SoundCommand**)	sound_manager	decompiled	
+0x2246f78	0x2346f78	176	_ZN4Aska12SoundCommand15ProcessPauseAllEj	Aska::SoundCommand::ProcessPauseAll(unsigned int)	sound_manager	decompiled	
+0x2247028	0x2347028	148	_ZN4Aska12SoundCommand16ProcessResumeAllEv	Aska::SoundCommand::ProcessResumeAll()	sound_manager	decompiled	
+0x22470bc	0x23470bc	564	_ZN4Aska12SoundCommand14ProcessPushBGMEPPS0_j	Aska::SoundCommand::ProcessPushBGM(Aska::SoundCommand**, unsigned int)	sound_manager	decompiled	
+0x22472f0	0x23472f0	368	_ZN4Aska12SoundCommand13ProcessPopBGMEPPS0_j	Aska::SoundCommand::ProcessPopBGM(Aska::SoundCommand**, unsigned int)	sound_manager	decompiled	
+0x2247460	0x2347460	156	_ZN4Aska12SoundCommand24ProcessCreateAuxEffectorEjjNS_6ESound10EDspEffectEPKv	Aska::SoundCommand::ProcessCreateAuxEffector(unsigned int, unsigned int, Aska::ESound::EDspEffect, void const*)	sound_manager	decompiled	
+0x22474fc	0x23474fc	60	_ZN4Aska12SoundCommand24ProcessDeleteAuxEffectorEj	Aska::SoundCommand::ProcessDeleteAuxEffector(unsigned int)	sound_manager	decompiled	
+0x2247538	0x2347538	116	_ZN4Aska12SoundCommand23ProcessInstallDspEffectEjjNS_6ESound10EDspEffectEPKv	Aska::SoundCommand::ProcessInstallDspEffect(unsigned int, unsigned int, Aska::ESound::EDspEffect, void const*)	sound_manager	decompiled	
+0x22475ac	0x23475ac	80	_ZN4Aska12SoundCommand25ProcessUninstallDspEffectEjj	Aska::SoundCommand::ProcessUninstallDspEffect(unsigned int, unsigned int)	sound_manager	decompiled	
+0x22475fc	0x23475fc	68	_ZN4Aska12SoundCommand25ProcessConnectAuxEffectorEjjj	Aska::SoundCommand::ProcessConnectAuxEffector(unsigned int, unsigned int, unsigned int)	sound_manager	decompiled	
+0x2247640	0x2347640	40	_ZN4Aska12SoundCommand28ProcessDisconnectAuxEffectorEj	Aska::SoundCommand::ProcessDisconnectAuxEffector(unsigned int)	sound_manager	decompiled	
+0x2247668	0x2347668	148	_ZN4Aska12SoundCommand12ErrorHandlerEv	Aska::SoundCommand::ErrorHandler()	sound_manager	decompiled	
+0x22476fc	0x23476fc	84	_ZN4Aska12SoundCommand14ArrangeCommandEPNS_5TListIS0_EE	Aska::SoundCommand::ArrangeCommand(Aska::TList<Aska::SoundCommand>*)	sound_manager	decompiled	
+0x2247750	0x2347750	28	_ZN4Aska10WaveBuffer12CreateBufferEPNS_16MultiMediaStreamEPKNS_3AFF7AaoWAVEE	Aska::WaveBuffer::CreateBuffer(Aska::MultiMediaStream*, Aska::AFF::AaoWAVE const*)	voice	decompiled	
+0x224776c	0x234776c	40	_ZN4Aska10WaveBuffer12DeleteBufferEv	Aska::WaveBuffer::DeleteBuffer()	voice	decompiled	
+0x2247794	0x2347794	184	_ZN4Aska10WaveBuffer10LockBufferEPPvmb	Aska::WaveBuffer::LockBuffer(void**, unsigned long, bool)	voice	decompiled	
+0x224784c	0x234784c	80	_ZN4Aska10WaveBuffer12UnlockBufferEv	Aska::WaveBuffer::UnlockBuffer()	voice	decompiled	
+0x2247b64	0x2347b64	48	_ZN4Aska13WaveVoiceBaseC2Ev	Aska::WaveVoiceBase::WaveVoiceBase()	voice	decompiled	
+0x2247b94	0x2347b94	36	_ZN4Aska13WaveVoiceBaseD2Ev	Aska::WaveVoiceBase::~WaveVoiceBase()	voice	decompiled	
+0x2247bb8	0x2347bb8	4	_ZN4Aska13WaveVoiceBaseD0Ev	Aska::WaveVoiceBase::~WaveVoiceBase()	voice	decompiled	
+0x2247bbc	0x2347bbc	140	_ZN4Aska13WaveVoiceBase17CreateVoiceCommonEPKvPKNS_16PackedPlayParamsE	Aska::WaveVoiceBase::CreateVoiceCommon(void const*, Aska::PackedPlayParams const*)	voice	decompiled	
+0x2247c48	0x2347c48	20	_ZN4Aska13WaveVoiceBase11DeleteVoiceEv	Aska::WaveVoiceBase::DeleteVoice()	voice	decompiled	
+0x2247c5c	0x2347c5c	72	_ZN4Aska13WaveVoiceBase9AudioKickEv	Aska::WaveVoiceBase::AudioKick()	voice	decompiled	
+0x2247ca4	0x2347ca4	56	_ZN4Aska10WaveBufferD0Ev	Aska::WaveBuffer::~WaveBuffer()	voice	decompiled	
+0x2247d14	0x2347d14	4	_ZN4Aska13WaveVoiceBase11AudioSignalEm	Aska::WaveVoiceBase::AudioSignal(unsigned long)	voice	decompiled	
+0x2247d18	0x2347d18	4	_ZN4Aska13WaveVoiceBase18UpdateVolumeMatrixEv	Aska::WaveVoiceBase::UpdateVolumeMatrix()	voice	decompiled	
+0x2247d1c	0x2347d1c	4	_ZN4Aska13WaveVoiceBase15UpdatePitchbendEv	Aska::WaveVoiceBase::UpdatePitchbend()	voice	decompiled	

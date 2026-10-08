@@ -1,0 +1,13 @@
+# port/decomp/audio/scope.txt: the guest functions the `audio` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^~?Aska::(Sound\w*|Audio\w*|SLVoice|WavePlayer|WaveVoiceBase|WaveBuffer|AskaOGG|AskaADPCM|SEControlObject|Sequencer2)::
+^~?Framework::CSound\w*::
+^~?CSound\w*::
+^~?CParameterSound\w*::
+^~?C\w*VoiceManager::
+# Aska::Sequencer2 is the sound sequencer (Aska::SoundObject::AudioRun calls it; port/scripts/rebuild_queue.py's
+# table matched it to anim). The voice managers CUIVoiceManager / CMenuVoiceManager are audio's although the
+# proposed ui regex (^CUI\w*) would take CUIVoiceManager: scaffolded scopes win.
+# Not audio's: Aska::WaveModifier / WaveModifierCPUGL / WaveDistortionFilter (the GL screen-distortion effect:
+# render's), and the libc++ hash tables over CSoundManager::tSoundImage / CParameterSoundElement (libcxx's).

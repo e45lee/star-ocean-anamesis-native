@@ -1,0 +1,6 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/audio_addresses.h).
+kSoundCpp                 str "C:\\BAS_Submission\\Client\\Library\\Framework\\Project\\..\\Source\\Framework\\Sound.cpp"  # Framework::CSound* asserts' file
+kStrAskaSoundObjectNull   str "m_pAskaSoundObject is null."
+kStrIllegalSoundType      str "Illegal sound type.(%08x)"
+kInvalidHandle            sym _ZN9Framework6CSound14iInvalidHandleE                # u64: a CElement's m_handle when free
+kPlayingElementsCallbackVtbl at 0x2aab048 ref _ZN9Framework13CSoundManager12PostProgressEv  # the vtable (its slots at + 0x10) of the ICallback PostProgress hands FunctorAllPlayingElements

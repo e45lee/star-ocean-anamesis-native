@@ -41,7 +41,9 @@ struct SlzChunk {
 // isn't SLZ, is chained, or runs past the end: `chunks` then holds those before the failure.
 bool slz_chunks(const Bytes& d, std::vector<SlzChunk>& chunks, std::string* err = nullptr);
 // The decompressed bytes of an SLZ file (single header, no chain); a file that isn't SLZ is copied.
-bool slz_decode(const Bytes& in, Bytes& out, std::string* err = nullptr);
+// `limit`: stop after the chunk that reaches this many bytes (a prefix: e.g. a scene's first member
+// without its atlas); the default decodes everything.
+bool slz_decode(const Bytes& in, Bytes& out, std::string* err = nullptr, size_t limit = SIZE_MAX);
 // SLZ codec 5 as the shipped files have it: header {"SLZ", 5, 0, 1, 0x25, compressed size,
 // size, 0, payload at 0x20, flags 1, 64 KiB chunks, 0x10, no chain}, each chunk a u16 size + raw
 // deflate (size 0: stored), the whole padded to 4.
@@ -60,6 +62,13 @@ std::vector<IsfEntry> isf_entries(const Bytes& d);
 // bytes with 0xee (the padding the files carry). Recomputed after a payload is changed in place.
 uint32_t isf_payload_sum(const Bytes& d, const IsfEntry& e);
 void isf_update_sum(Bytes& d, const IsfEntry& e);
+// The image laid out again with some payloads replaced: `payloads[i]` (by entry index; nullptr =
+// the entry's own bytes). Everything before the first payload (header, entry table, names) is kept;
+// the payloads follow in entry order, each at a 32-byte boundary after the previous one, the gaps
+// and the end padded with 0xee, each entry's offset, size and sum rewritten. The layout of all 853
+// 3.7.0 scenes (english.md 7.14), so payloads == all nullptr gives the input back byte for byte.
+// False (and *err) when `d` isn't an ISF image laid out that way.
+bool isf_repack(const Bytes& d, const std::vector<const Bytes*>& payloads, Bytes& out, std::string* err = nullptr);
 
 // ---- ETC2 / EAC blocks ----------------------------------------------------------------------------
 enum Format : int { kJpeg = 39, kEtc2Rgb8 = 47, kEtc2Rgb8A1 = 48, kEtc2Rgba8 = 49 };

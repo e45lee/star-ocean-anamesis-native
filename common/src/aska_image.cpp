@@ -56,7 +56,7 @@ bool slz_chunks(const Bytes& d, std::vector<SlzChunk>& chunks, std::string* err)
     return true;
 }
 
-bool slz_decode(const Bytes& d, Bytes& out, std::string* err) {
+bool slz_decode(const Bytes& d, Bytes& out, std::string* err, size_t limit) {
     if (!is_slz(d)) {
         out = d;
         return true;
@@ -67,6 +67,7 @@ bool slz_decode(const Bytes& d, Bytes& out, std::string* err) {
     out.clear();
     out.reserve((size_t)rd32(&d[0xc]));
     for (const SlzChunk& c : chunks) {
+        if (out.size() >= limit) break;
         const uint8_t* src = &d[c.offset];
         size_t base = out.size();
         out.resize(base + c.size);
@@ -168,6 +169,33 @@ uint32_t isf_payload_sum(const Bytes& d, const IsfEntry& e) {
 }
 
 void isf_update_sum(Bytes& d, const IsfEntry& e) { wr32(&d[16 + e.index * 16 + 12], isf_payload_sum(d, e)); }
+
+bool isf_repack(const Bytes& d, const std::vector<const Bytes*>& payloads, Bytes& out, std::string* err) {
+    auto entries = isf_entries(d);
+    if (entries.empty()) return fail(err, "not an ISF image"), false;
+    if (payloads.size() > entries.size()) return fail(err, "ISF repack: more payloads than entries"), false;
+    // the layout this rebuilds: payloads in entry order, each at the next 32-byte boundary
+    size_t at = entries[0].offset;
+    for (auto& e : entries) {
+        if (e.offset != at || e.offset % 32) return fail(err, "ISF repack: " + e.name + " isn't where the layout puts it"), false;
+        at = (e.offset + (size_t)e.size + 31) / 32 * 32;
+    }
+    out.assign(d.begin(), d.begin() + entries[0].offset);
+    for (auto& e : entries) {
+        const Bytes* p = e.index < payloads.size() ? payloads[e.index] : nullptr;
+        size_t off = out.size();
+        if (p) out.insert(out.end(), p->begin(), p->end());
+        else out.insert(out.end(), d.begin() + e.offset, d.begin() + e.offset + e.size);
+        IsfEntry ne = e;
+        ne.offset = (uint32_t)off;
+        ne.size = (uint32_t)(out.size() - off);
+        out.resize((out.size() + 31) / 32 * 32, 0xee);
+        wr32(&out[16 + e.index * 16 + 4], ne.offset);
+        wr32(&out[16 + e.index * 16 + 8], ne.size);
+        isf_update_sum(out, ne);
+    }
+    return true;
+}
 
 // ---------------------------------------------------------------- ETC1 / ETC2 / EAC
 namespace {

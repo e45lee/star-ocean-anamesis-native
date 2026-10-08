@@ -47,6 +47,8 @@ struct DeriveInput {
     Advances font;
     std::vector<StoryFile> story;  // sorted by name; empty: no story part
     int story_budget = kStoryBudget;
+    std::vector<std::string> labels;  // the layout labels to translate (english.md 7.14): their
+                                      // Japanese in the master encoding (labels.tsv's ja column)
 };
 
 // The derived candidates that pass their checks.
@@ -59,6 +61,12 @@ struct Derived {
     Table story;
     std::map<std::string, std::string> story_sha1;  // every story line -> sha1 (the last file's, as Python)
     std::vector<StoryFile> files;
+    // the layout labels (english.md 7.14), by their Japanese (master encoding):
+    // the JP master rows with the same text (exactly, sorted; then the same but for white space, sorted)
+    std::map<std::string, std::vector<std::string>> label_mids;
+    // Global's English for the same Japanese (the memory: exact, memory-ws, template), finished as a
+    // master row: (sha1 of the label, English, memory | template)
+    Table labels;
     size_t official = 0, e3 = 0, memory = 0, templ = 0, failing = 0, story_official = 0, story_failing = 0;
 };
 bool derive(const DeriveInput& in, Derived& out, std::string* err);
@@ -69,6 +77,14 @@ bool derive(const DeriveInput& in, Derived& out, std::string* err);
 Table merge_master(const Derived& d, const Table& ours);
 // The story tables per file stem (english_text.py's story-en/TS_x.tsv): the same precedence per line.
 std::map<std::string, Table> merge_story(const Derived& d, const Table& ours);
+// The layout labels' English (english.md 7.14), by Japanese (master encoding): per row of `ours`
+// (labels.tsv: Entry.en empty for a row the derivation fills; ja_sha1 = sha1 of the Japanese) the
+// first of: our human / reviewed row; the served English of a JP master row with the same Japanese
+// (`master`: merge_master's table; human / reviewed, official, memory / template rows, the exact
+// text's rows before the white-space match's, by message_id); Global's English for the Japanese
+// (d.labels); our machine-ranked row (machine, agent); a served machine-ranked master row. `d` may be null (no
+// derivation: our rows only). Entry.source: the source of the English served.
+Table resolve_labels(const Derived* d, const Table& master, const Table& ours);
 // A table in english_text.py's form (header, rows sorted by message_id).
 std::string table_text(const Table& t);
 // The lines of a story file (its plaintext msgpack) as StoryFile lines.

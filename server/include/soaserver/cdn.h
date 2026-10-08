@@ -87,6 +87,8 @@ struct Options {
     std::string english_global;  // Global's master (data/basmaster-gl.sqlite3): the derived layer's source
     std::string english_story;   // the English story tables, <dir>/TS_xxxx.tsv ("" = none):
                                  // make_english_story writes Scenario/TS_xxxx-en.msgp into the generated root
+    std::string english_labels;  // the layout labels to translate (data/english/labels.tsv, "" = none;
+                                 // docs/english.md 7.14): english_art::build writes their scenes' -en copies
     std::string english_art;     // the English art recipes (standin-assets-en/recipes; "" = none):
                                  // english_art::build writes the -en scenes into the generated root
     std::string format = "etc2/hi";  // the manifest directory served (manifest/<format>/)
@@ -150,11 +152,13 @@ std::vector<uint8_t> make_english_master(const std::string& served_plain, const 
 struct EnglishTables {
     english::Table master;
     std::map<std::string, english::Table> story;  // by file stem
+    english::Table labels;  // the layout labels' English by Japanese (master encoding; english_derive.h resolve_labels)
     bool derived = false;
 };
 // Builds the tables (above) from `opts` and the download `download`; false and *err when there are none.
 bool english_tables(const Options& opts, const FileTree& download, EnglishTables& out, std::string* err);
-// Writes the tables in tools/english_text.py's form: DIR/master-en.tsv, DIR/story-en/TS_x.tsv.
+// Writes the tables in tools/english_text.py's form: DIR/master-en.tsv, DIR/story-en/TS_x.tsv, and
+// the layout labels as DIR/labels-en.tsv (ja, en, source; the English served).
 bool write_english_tables(const EnglishTables& t, const std::string& dir);
 
 // What make_english_story did with one story file (docs/server-rules.md#english-story).

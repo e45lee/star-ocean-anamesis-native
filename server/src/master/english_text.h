@@ -35,6 +35,18 @@ std::string table_path();
 // none exists.
 std::string story_dir();
 
+// The layout labels (docs/english.md 7.14; docs/server-rules.md#english-labels): labels.tsv beside an
+// explicit --english-text, else data/english/labels.tsv (find_repo_file); "" when none exists.
+std::string labels_path();
+// Reads labels.tsv (header "ja\ten\tsource\tengine\tdate\teditor\tnote"; ja and en in the master
+// encoding) into `out` by ja: Entry{sha1 of ja, en, source}. A row is either our English (source
+// machine, agent, human or reviewed) or "derived" with no en (the English comes from the master or
+// Global, english_derive.h resolve_labels). False (and *err) on an unreadable file or a bad row.
+bool load_labels(const std::string& path, Table& out, std::string* err);
+
+// The master encoding's "\n" (two characters) as a real newline (english.md 7.9 `unesc`).
+std::string unescape(const std::string& s);
+
 // Publishes the full table the CDN built (english_derive.h: the derived layer with our rows), which
 // table() answers without an explicit --english-text.
 void set_served_table(std::shared_ptr<const Table> t);

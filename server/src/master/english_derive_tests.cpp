@@ -89,5 +89,40 @@ NATIVE_TEST("server/english-derive-rules") {
     t.expect_eq(served("t_blank"), std::string("-"), "white space only is no text to match");
 }
 
+NATIVE_TEST("server/english-labels-resolve") {
+    // english_derive.h resolve_labels: the precedence of a layout label's English (english.md 7.14)
+    using english::Entry;
+    english::Derived d;
+    d.jp_sha1 = {{"m_off", "s1"}, {"m_mach", "s2"}, {"m_mach2", "s3"}, {"m_stale", "s4"}, {"m_off2", "s5"}};
+    d.label_mids = {{"公式", {"m_mach", "m_off"}},  // the official row wins over the earlier machine row
+                    {"機械", {"m_mach2"}},
+                    {"古い", {"m_stale"}},
+                    {"人", {"m_off2"}}};
+    d.labels = {{"記憶", Entry{"h", "Memory EN", "memory"}}, {"公式", Entry{"h", "Memory loses", "memory"}}};
+    english::Table master = {{"m_off", Entry{"s1", "Official EN", "official"}},
+                             {"m_mach", Entry{"s2", "Machine EN", "machine"}},
+                             {"m_mach2", Entry{"s3", "Master machine", "machine"}},
+                             {"m_stale", Entry{"other", "Stale EN", "official"}},
+                             {"m_off2", Entry{"s5", "Official 2", "official"}}};
+    english::Table ours = {
+        {"公式", Entry{"x1", "", "derived"}},     {"機械", Entry{"x2", "Our machine", "machine"}},  // ours before the master's machine row
+        {"記憶", Entry{"x3", "", "derived"}},     {"古い", Entry{"x4", "", "derived"}},              // the master row's Japanese changed: none
+        {"人", Entry{"x5", "Human EN", "human"}},          // human over official
+        {"無", Entry{"x6", "", "derived"}}};
+    auto r = english::resolve_labels(&d, master, ours);
+    auto en = [&](const char* ja) { return r.count(ja) ? r[ja].en + "|" + r[ja].source + "|" + r[ja].ja_sha1 : std::string("-"); };
+    t.expect_eq(en("公式"), std::string("Official EN|official|x1"), "a master row's official English");
+    t.expect_eq(en("機械"), std::string("Our machine|machine|x2"), "our machine row before a master machine row");
+    t.expect_eq(en("記憶"), std::string("Memory EN|memory|x3"), "Global's memory");
+    t.expect_eq(en("古い"), std::string("-"), "a stale master row isn't used");
+    t.expect_eq(en("人"), std::string("Human EN|human|x5"), "our human row first");
+    t.expect_eq(en("無"), std::string("-"), "nothing: the label stays Japanese");
+    d.label_mids["無"] = {"m_mach2"};
+    r = english::resolve_labels(&d, master, ours);
+    t.expect_eq(en("無"), std::string("Master machine|machine|x6"), "last: a master machine row");
+    r = english::resolve_labels(nullptr, master, ours);
+    t.expect_eq(r.size() == 2 && en("機械") == "Our machine|machine|x2", true, "no derivation: our rows only");
+}
+
 }  // namespace
 }  // namespace soa::server

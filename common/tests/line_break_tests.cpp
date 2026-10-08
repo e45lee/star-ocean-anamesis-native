@@ -123,6 +123,27 @@ void fit_box() {
     }
 }
 
+// balance (the client's label wrap): the same number of lines as the greedy break, evened out.
+void balance() {
+    auto m = [](std::string_view l) { return 10.0 * (double)l.size(); };
+    soa::text::BreakOptions o;
+    o.keep_breaks = true, o.tags_are_words = false, o.balance = true;
+    struct Case {
+        const char* in;
+        double budget;
+        const char* want;
+    } cases[] = {
+        {"You have obtained the following Battle Skills:", 400, "You have obtained the\nfollowing Battle Skills:"},  // greedy: "...Battle\nSkills:"
+        {"aaa bbb ccc", 75, "aaa bbb\nccc"},                                                                // can't be evener
+        {"aa bb cc dd ee", 140, "aa bb cc dd ee"},                                                           // fits
+        {"one two\nthree four five six seven", 120, "one two\nthree\nfour five\nsix seven"},  // widest 90, not greedy's 100
+    };
+    for (const Case& c : cases) {
+        std::string got = soa::text::break_lines(c.in, c.budget, m, o);
+        check(got == c.want, std::string("balanced(\"") + c.in + "\") = \"" + got + "\"");
+    }
+}
+
 void classes() {
     check(soa::text::has_japanese("回復") && soa::text::has_japanese("ＨＰ") && !soa::text::has_japanese("Cafe ×2 ―"), "has_japanese");
     check(soa::text::is_space(0x3000) && soa::text::is_space(0x85) && !soa::text::is_space(0x200b), "is_space");
@@ -138,6 +159,7 @@ void classes() {
 int main(int argc, char** argv) {
     vectors(argc > 1 ? argv[1] : std::string(SOA_REPO_DIR) + "/common/tests/line_break_vectors.tsv");
     fit_box();
+    balance();
     classes();
     if (g_fail) {
         fprintf(stderr, "soa_text_tests: %d failure(s)\n", g_fail);

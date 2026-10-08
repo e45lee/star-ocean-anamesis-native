@@ -34,6 +34,10 @@ struct BreakOptions {
     bool tags_are_words = true;
     // true: white space (is_space) is stripped from both ends of the text first (str.strip()).
     bool trim = false;
+    // true: a line the greedy break splits into n lines is broken at the narrowest width that still
+    // gives n lines, so the lines come out even (no last line of one word; the client's label wrap).
+    // The derivation never sets it (english_core has no such mode).
+    bool balance = false;
 };
 
 // The width of one line (no \n in it), in any unit; the budget is in the same unit.

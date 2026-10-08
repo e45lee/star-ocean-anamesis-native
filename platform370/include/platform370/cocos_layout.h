@@ -77,7 +77,8 @@ public:
     float m_fontSize;          // 0x258: CalcStringRect's size (the font's 24 px scaled by FontSize / 24)
     float m_unk25c;            // 0x25c: Show sets 0
     float m_lineSpacing;       // 0x260: CalcStringRect's spacing; lines are FontSize + this apart (Append)
-    uint8_t m_pad264[0x280 - 0x264];
+    uint32_t m_hAlign;         // 0x264: HorizontalAlignmentType (Read_TextObjectData): 0 HT_Left, 1 HT_Center, 2 HT_Right
+    uint8_t m_pad268[0x280 - 0x268];
     uint8_t m_customSize;      // 0x280: IsCustomSize (Read_TextObjectData): a fixed box at m_width x m_height
     uint8_t m_tagMode;         // 0x281: <font color=...> markup (CUIUtility::SetLabelTextTag)
     uint8_t m_shrink;          // 0x282: shrink a fixed box's text to fit (default 1)
@@ -89,6 +90,7 @@ public:
 static_assert(offsetof(CCocosLabel, m_text) == 0x230);
 static_assert(offsetof(CCocosLabel, m_fontSize) == 0x258);
 static_assert(offsetof(CCocosLabel, m_lineSpacing) == 0x260);
+static_assert(offsetof(CCocosLabel, m_hAlign) == 0x264);
 static_assert(offsetof(CCocosLabel, m_customSize) == 0x280);
 static_assert(offsetof(CCocosLabel, m_tagMode) == 0x281);
 static_assert(offsetof(CCocosLabel, m_shrink) == 0x282);

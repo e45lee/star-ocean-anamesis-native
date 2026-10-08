@@ -33721,7 +33721,7 @@ uimsg_Sellitem_Warning_2	b4bf2eb3247eb35c1d4394631cc325c8dc055b44	Items with a r
 uimsg_Voice_switch_text	642726731de6b8b3791d5e3726c13637e82a642a	Change whether voices are played during Battles.	machine
 uimsg_Voice_switch_title	bf587daf40bd4a014f1fca20aaa3d62d5e65b857	Voice Playback Settings	machine
 uimsg_Weapon_Warning	336f9166419c6b1f287bb97a751b0fcb2a91f83a	Refining the Base Item. The Base Item\nand all materials used will be lost. Are\nyou sure?	machine
-uimsg_able_use_money	fe94c6d2719ecd682f7bff36c54e4e7cc3063c2e	Under 16 1\nmonth Up to\n5,000 yen\n16-19 1\nmonth Up to\n30,000 yen\n20 and over\nNo limit No\nlimit	machine
+uimsg_able_use_money	fe94c6d2719ecd682f7bff36c54e4e7cc3063c2e	Under 16\nMonthly\nUp to ¥5,000\nAge 16-19\nMonthly\nUp to ¥30,000\n20 and over\nNo limit\nNo limit	human
 uimsg_abnormal_Burn	74d12121712ce0f7851083fc6973d13c25631f2b	Burn	machine
 uimsg_abnormal_Curse	c91391b06649da2dc422d426cbcdfb91544c85dd	Curse	machine
 uimsg_abnormal_Fog	8f177f7e781b4ed97a7813a182494d1f5155521a	Fog	machine
@@ -33731,7 +33731,7 @@ uimsg_abnormal_Poison	8aa0efae2de16a9c430ab2f4d5e4eb272c6fd25e	Poison	machine
 uimsg_abnormal_Silent	8762a616eb348d14a4aede31c49b12d403537fb3	Seal	machine
 uimsg_accessory_item_factor_msg	1a80fbc57f95799e31303a1959077bf1664cc816	Factors─────────────────────	machine
 uimsg_achievement_all_get_button	4b011b5ffc1d6c5cb47a5d2a6a57ee5d4d85b6be	Claim All	machine
-uimsg_achievement_all_get_dialog	3319e1377ac9dac825b75cf3afaa32e19ce1d68b	You have completed the\nfollowing achievements.\nAchievements that exceeded\nthe claim limit were not\ncounted.	machine
+uimsg_achievement_all_get_dialog	3319e1377ac9dac825b75cf3afaa32e19ce1d68b	Achievements completed below. Any over\nthe claim limit were not counted.	human
 uimsg_achievement_receive_faild_expire	a8ec23baef8f47dace544fb022879bc0e7ba89ef	Some achievements have\nexpired. Returning to the\ntitle screen.	machine
 uimsg_act_select_info	d1690fe0be5650987ade2b658075934cf4b540d4	Please select an episode.	machine
 uimsg_act_select_title1	67d240691edbbe03d966c5acda40bc25e770b7a7	Select Episode	machine
@@ -35046,7 +35046,7 @@ uimsg_direct_item_shop_name	822ece16f2841c5cd6685d9851c4b2a04356eb78	Premium Sho
 uimsg_direct_item_shop_return_title	6f2d81ff0c33c92de7a0c09ea498960db6ce2dab	The item you wish to\npurchase has already been\nbought or is no longer\navailable. Returning to the\ntitle screen to update\ninformation.	machine
 uimsg_direct_shop_reverify	89271afa4fe8b8bbca9c957cd10ec8d1cfac52cf	Purchase completed\nsuccessfully.	machine
 uimsg_disable_talent	f9d7e75bc08464d1d4f0dcae8d5039a6a998e38a	Only effective in %s	machine
-uimsg_drop_bonus_on_this_condition	c5ce83dc870ac67449a9d72a9bd4d83d3a20d4de	+%u drops every %u hits	machine
+uimsg_drop_bonus_on_this_condition	c5ce83dc870ac67449a9d72a9bd4d83d3a20d4de	%u-hit combo: drops +%u	human
 uimsg_effectalpha_setting2	07f3b8664608947d861360a6cdd7c1f8bee7268a	Ally\nCharacters\nEffect\nSettings	machine
 uimsg_empty_healing_item	bba977ead55804579b220caa0592bb4ee112c3a4	You do not\nhave any\nhealing items.	machine
 uimsg_episode2_allclear_message	3fbd12226feebc4a7ffb55efee920fe29c6ba821	You have cleared all of the Main Story\nfor this Episode. Stay tuned for future\nRenewed Vigor updates!	machine
@@ -35203,7 +35203,7 @@ uimsg_friendsize_cant_over	15d05082bae951607ab50cc49fe7b4d2c43a9e7a	Your Connect
 uimsg_full_stamina	2c04ee35ce1ff8c70cbaf4c531fc5b6ab652fc0b	Stamina is\nalready fully\nrecovered. It\ncannot be\nrestored further.	machine
 uimsg_gacha_chip_omake_result	fb9e4330c1fcf10ea347621e520b156601fe4551	You have obtained the following Character Chips.	machine
 uimsg_gacha_chipbonus_accrue	1f248c0feabd9f6ffd2ec952e2388ac94e224028	PU character obtained! The\nnext 10-Draw will include\nbonus Character Chips for the\nPU character obtained.	machine
-uimsg_gacha_confirm	d0a0007c6993dd97a16d7d99c48e39c3bc32357a	Do you want to perform %d Draws?	machine
+uimsg_gacha_confirm	d0a0007c6993dd97a16d7d99c48e39c3bc32357a	Draw ×%d?	human
 uimsg_gacha_daylimit_end	8011614cb98c0c218f158c3be8ec9c7c99ac7154	These Draws are no longer\navailable. Returning to the\nDraws menu.	machine
 uimsg_gacha_daylimit_today_end	c525b82865743d94ce5a59df19728d0a9880ca96	You can only perform this Draw\n%u times per day. If the Draw\nperiod is still active, you will be\nable to perform it again after\n4:00 AM. Please wait until then.	machine
 uimsg_gacha_daylimit_today_end_blackbord	6d002478ca1015a7de99900dca4b80a52b4ef925	You have already completed\ntoday's limit. You will be able to\ndo so again at 4:00 AM.	machine
@@ -36956,7 +36956,7 @@ uimsg_item_Warning_0	139132cf5740c3b9b16e5d13abbf403c1c8df845	The items selected
 uimsg_item_Warning_1	0f4e738caa3b87caa48964091a61d3cf82f080c8	Items with <fontcolor=red>Rarity ★3\nor higher</font> Items <fontcolor=red>leveled\nup via Enhance\nWeapon</font> Items with\n<fontcolor=red>Cap Inc.</font>	machine
 uimsg_item_confirmation_1	b4bf2eb3247eb35c1d4394631cc325c8dc055b44	Items with a rarity of 3\nstars or higher Items\nthat have been grown\nthrough enhancement\nsynthesis Items with\ntheir limit broken\nWeapons with Gear\nequipped	machine
 uimsg_item_confirmation_3	95afe5e5a9b1c1bc87436ca3aa852f9042713f6b	Items with a rarity of 5\nstars or higher Items\nthat have been grown\nthrough enhancement\nsynthesis Items with\ntheir limit broken\nWeapons with Gear\nequipped	machine
-uimsg_item_confirmation_sell_1	8c0dea2d0433da14c7a9640459fe197267bfdb66	Items with a rarity of 3\nstars or higher Items\ngrown through\nenhancement\nsynthesis Items with\ntheir limit broken\nWeapons with Gear\nequipped Accessories\nwith the inheritance\nfunction	machine
+uimsg_item_confirmation_sell_1	8c0dea2d0433da14c7a9640459fe197267bfdb66	Items of ★3 rarity or higher\nItems grown by enhancement\nItems with their cap increased\nWeapons with Gear equipped\nAccessories with inheritance	human
 uimsg_item_dialog_equipstorage_into	c7d4bb871c644c3674530e2d00020045e5050618	Move the selected\nequipment to storage?\nAre you sure?	machine
 uimsg_item_dialog_equipstorage_out	43988152cfa2e9a8e02423f6cca8e81eaa84e5c5	Remove the selected\nequipment from storage?\nAre you sure?	machine
 uimsg_item_dialog_gacha_equipstorage_out	049c42957d38414ce7af3ee3fad1c0c3f413e6ae	Remove the selected\nequipment from the Temporary\nStorage? Are you sure?	machine
@@ -37000,10 +37000,10 @@ uimsg_mastary_Training_name_02	9a3705692e017670333352d48df8ae529088ba08	Practica
 uimsg_mastary_Training_name_03	d8a3112e56ffe2c1ced4791b74354d6555d5ccf2	Mental Training	machine
 uimsg_mastary_Training_name_04	edd0fcee430d7821456b0cb9547ed39e37e149ca	Heraldry Science Lecture	machine
 uimsg_mastary_Training_name_05	adbc492b0fece8e6fbdeb4ef6f4421e66b721287	Tactics Lecture	machine
-uimsg_mastary_dialog0	da0d6bf100dd0c12968352f1378f982a53e9dc25	Establish a master-disciple\nrelationship with this\ncombination. Are you sure?\n(You can end the\nrelationship at any time,\nbut training progress will\nbe reset.)	machine
+uimsg_mastary_dialog0	da0d6bf100dd0c12968352f1378f982a53e9dc25	Form a master-disciple pair with\nthis combination?\n(You can end it any time, but\ntraining progress will be reset.)	human
 uimsg_mastary_dialog1	c91efa714dee4b130eaf48e0b8eb15d145a54099	A master-disciple relationship has been formed!	machine
 uimsg_mastary_dialog10	ce473a91fc4d6d3c676e1bda58e3cc0a98a51ada	Talent learned!	machine
-uimsg_mastary_dialog11	c93e92699c57fbc3719ba784d73b5045931097ca	Also, to\ncommemorate\nthe completion\nof your training,\nI'm giving you <font color=yellow>%s</font>\nas a present!	machine
+uimsg_mastary_dialog11	c93e92699c57fbc3719ba784d73b5045931097ca	To celebrate your training, here is\n<font color=yellow>%s</font>!	human
 uimsg_mastary_dialog12	6daa61686422ebdee94d5f9cc991223d849e423f	The above Talent has already been taught.	machine
 uimsg_mastary_dialog13	de82510e778e4fdb53ce431b34a5d42468cde999	If you wish to teach this Talent to another\ncharacter or teach a different Talent to\nyour apprentice, you must first dissolve the\nmaster-apprentice relationship.	machine
 uimsg_mastary_dialog2	63e0496d9e968cdcbaa17214c6483902c543f1b8	Do you want to end this\nmaster-disciple\nrelationship? Ending the\nrelationship will result in\nthe loss of training\nprogress and any Talents\nthat were taught.	machine

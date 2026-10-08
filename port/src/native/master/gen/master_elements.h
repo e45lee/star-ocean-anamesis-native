@@ -71,6 +71,16 @@ inline constexpr ElementMethod kCMasterCommonDropElementMethods[] = {
     {"Dtor", "_ZN24CMasterCommonDropElementD2Ev"},
     {"DtorDelete", "_ZN24CMasterCommonDropElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterCommonDropElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI24CMasterCommonDropElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI24CMasterCommonDropElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI24CMasterCommonDropElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI24CMasterCommonDropElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI24CMasterCommonDropElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI24CMasterCommonDropElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI24CMasterCommonDropElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI24CMasterCommonDropElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterDeepSpaceAreaElement: 0xd60 bytes, 64 properties (64 linked); layout from _ZN27CMasterDeepSpaceAreaElementC2Ev.
 class CMasterDeepSpaceAreaElement {
@@ -280,6 +290,19 @@ inline constexpr ElementMethod kCMasterDeepSpaceAreaElementMethods[] = {
     {"Dtor", "_ZN27CMasterDeepSpaceAreaElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterDeepSpaceAreaElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterDeepSpaceAreaElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceAreaElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterDeepSpaceAreaElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterDeepSpaceBonusElement: 0x4b0 bytes, 21 properties (20 linked); layout from _ZN28CMasterDeepSpaceBonusElementC2Ev.
 class CMasterDeepSpaceBonusElement {
@@ -360,6 +383,19 @@ inline constexpr ElementMethod kCMasterDeepSpaceBonusElementMethods[] = {
     {"Dtor", "_ZN28CMasterDeepSpaceBonusElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterDeepSpaceBonusElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterDeepSpaceBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterDeepSpaceBonusElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterDeepSpaceBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterDeepSpaceBonusItemElement: 0x2f0 bytes, 13 properties (13 linked); layout from _ZN32CMasterDeepSpaceBonusItemElementC2Ev.
 class CMasterDeepSpaceBonusItemElement {
@@ -415,6 +451,19 @@ inline constexpr ElementMethod kCMasterDeepSpaceBonusItemElementMethods[] = {
     {"Assign", "_ZN32CMasterDeepSpaceBonusItemElementaSERKS_"},
     {"Dtor", "_ZN32CMasterDeepSpaceBonusItemElementD2Ev"},
     {"DtorDelete", "_ZN32CMasterDeepSpaceBonusItemElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterDeepSpaceBonusItemElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterDeepSpaceBonusItemElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI32CMasterDeepSpaceBonusItemElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterDeepSpaceBonusSetElement: 0x4d0 bytes, 22 properties (22 linked); layout from _ZN31CMasterDeepSpaceBonusSetElementC2Ev.
@@ -497,6 +546,18 @@ inline constexpr ElementMethod kCMasterDeepSpaceBonusSetElementMethods[] = {
     {"CtorCopy", "_ZN31CMasterDeepSpaceBonusSetElementC2ERKS_"},
     {"Dtor", "_ZN31CMasterDeepSpaceBonusSetElementD2Ev"},
     {"DtorDelete", "_ZN31CMasterDeepSpaceBonusSetElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterDeepSpaceBonusSetElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterDeepSpaceBonusSetElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterDeepSpaceBonusSetElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterDeepSpaceMissionElement: 0x680 bytes, 31 properties (31 linked); layout from _ZN30CMasterDeepSpaceMissionElementC2Ev.
@@ -608,6 +669,19 @@ inline constexpr ElementMethod kCMasterDeepSpaceMissionElementMethods[] = {
     {"Dtor", "_ZN30CMasterDeepSpaceMissionElementD2Ev"},
     {"DtorDelete", "_ZN30CMasterDeepSpaceMissionElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterDeepSpaceMissionElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterDeepSpaceMissionElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterDeepSpaceMissionElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterDeepSpaceShipElement: 0x1c0 bytes, 8 properties (8 linked); layout from _ZN27CMasterDeepSpaceShipElementC2Ev.
 class CMasterDeepSpaceShipElement {
@@ -648,6 +722,16 @@ inline constexpr ElementMethod kCMasterDeepSpaceShipElementMethods[] = {
     {"Dtor", "_ZN27CMasterDeepSpaceShipElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterDeepSpaceShipElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterDeepSpaceShipElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceShipElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceShipElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceShipElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceShipElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceShipElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceShipElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterDeepSpaceShipElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterDeepSpaceShipElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterDeepSpaceTimeSavingElement: 0x70 bytes, 2 properties (2 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterDeepSpaceTimeSavingElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterDeepSpaceTimeSavingElement {
@@ -667,6 +751,18 @@ inline constexpr ElementMethod kCMasterDeepSpaceTimeSavingElementMethods[] = {
     {"Initialize", "_ZN33CMasterDeepSpaceTimeSavingElement10InitializeEv"},
     {"Dtor", "_ZN33CMasterDeepSpaceTimeSavingElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterDeepSpaceTimeSavingElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterDeepSpaceTimeSavingElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterDeepSpaceTimeSavingElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterDeepSpaceTimeSavingElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterEventRankingElement: 0x180 bytes, 7 properties (7 linked); layout from _ZN26CMasterEventRankingElementC2Ev.
@@ -705,6 +801,17 @@ inline constexpr ElementMethod kCMasterEventRankingElementMethods[] = {
     {"Dtor", "_ZN26CMasterEventRankingElementD2Ev"},
     {"DtorDelete", "_ZN26CMasterEventRankingElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterEventRankingElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterEventRankingElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterEventRankingElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterEventRankingElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterEventRankingElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterEventRankingElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterEventRankingElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterEventRankingElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterEventRankingElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI26CMasterEventRankingElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterEventRankingGroupElement: 0x170 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterEventRankingGroupElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterEventRankingGroupElement {
@@ -738,6 +845,17 @@ inline constexpr ElementMethod kCMasterEventRankingGroupElementMethods[] = {
     {"Assign", "_ZN31CMasterEventRankingGroupElementaSERKS_"},
     {"Dtor", "_ZN31CMasterEventRankingGroupElementD2Ev"},
     {"DtorDelete", "_ZN31CMasterEventRankingGroupElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterEventRankingGroupElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterEventRankingGroupElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterEventRankingGroupElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterEventRankingGroupElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterEventRankingGroupElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterEventRankingGroupElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterEventRankingGroupElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterEventRankingGroupElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterEventRankingGroupElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterEventRankingGroupElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterEventRankingRewardElement: 0x250 bytes, 11 properties (11 linked); layout from _ZN32CMasterEventRankingRewardElementC2Ev.
@@ -787,6 +905,16 @@ inline constexpr ElementMethod kCMasterEventRankingRewardElementMethods[] = {
     {"CtorCopy", "_ZN32CMasterEventRankingRewardElementC2ERKS_"},
     {"Dtor", "_ZN32CMasterEventRankingRewardElementD2Ev"},
     {"DtorDelete", "_ZN32CMasterEventRankingRewardElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterEventRankingRewardElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterEventRankingRewardElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterEventRankingRewardElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterEventRankingRewardElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterEventRankingRewardElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterEventRankingRewardElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterEventRankingRewardElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterEventRankingRewardElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI32CMasterEventRankingRewardElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterExpirationInformationElement: 0x300 bytes, 13 properties (13 linked); layout from _ZN35CMasterExpirationInformationElementC2Ev.
@@ -843,6 +971,16 @@ inline constexpr ElementMethod kCMasterExpirationInformationElementMethods[] = {
     {"Dtor", "_ZN35CMasterExpirationInformationElementD2Ev"},
     {"DtorDelete", "_ZN35CMasterExpirationInformationElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterExpirationInformationElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterExpirationInformationElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterExpirationInformationElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterExpirationInformationElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterExpirationInformationElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterExpirationInformationElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterExpirationInformationElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterExpirationInformationElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterExpirationInformationElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterFactorBoostElement: 0x190 bytes, 8 properties (8 linked); layout from _ZN25CMasterFactorBoostElementC2Ev.
 class CMasterFactorBoostElement {
@@ -881,6 +1019,16 @@ inline constexpr ElementMethod kCMasterFactorBoostElementMethods[] = {
     {"Ctor", "_ZN25CMasterFactorBoostElementC2Ev"},
     {"Dtor", "_ZN25CMasterFactorBoostElementD2Ev"},
     {"DtorDelete", "_ZN25CMasterFactorBoostElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterFactorBoostElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterFactorBoostElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterFactorBoostElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterFactorBoostElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterFactorBoostElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterFactorBoostElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterFactorBoostElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI25CMasterFactorBoostElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI25CMasterFactorBoostElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterGearBarneyChanceElement: 0x200 bytes, 9 properties (9 linked); layout from _ZN30CMasterGearBarneyChanceElementC2Ev.
@@ -923,6 +1071,13 @@ inline constexpr ElementMethod kCMasterGearBarneyChanceElementMethods[] = {
     {"Ctor", "_ZN30CMasterGearBarneyChanceElementC2Ev"},
     {"Dtor", "_ZN30CMasterGearBarneyChanceElementD2Ev"},
     {"DtorDelete", "_ZN30CMasterGearBarneyChanceElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterGearBarneyChanceElementTable[] = {
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterGearBarneyChanceElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterGearBarneyChanceElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterGearBarneyChanceElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterGearBarneyChanceElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterGearBarneyChanceElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
 };
 
 // CMasterGearLotteryElement: 0x310 bytes, 14 properties (14 linked); layout from _ZN25CMasterGearLotteryElementC2Ev.
@@ -982,6 +1137,15 @@ inline constexpr ElementMethod kCMasterGearLotteryElementMethods[] = {
     {"Dtor", "_ZN25CMasterGearLotteryElementD2Ev"},
     {"DtorDelete", "_ZN25CMasterGearLotteryElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterGearLotteryElementTable[] = {
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterGearLotteryElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterGearLotteryElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterGearLotteryElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterGearLotteryElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterGearLotteryElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI25CMasterGearLotteryElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI25CMasterGearLotteryElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterGearProbabilityElement: 0x1d0 bytes, 9 properties (9 linked); layout from _ZN29CMasterGearProbabilityElementC2Ev.
 class CMasterGearProbabilityElement {
@@ -1024,6 +1188,17 @@ inline constexpr ElementMethod kCMasterGearProbabilityElementMethods[] = {
     {"CtorCopy", "_ZN29CMasterGearProbabilityElementC2ERKS_"},
     {"Dtor", "_ZN29CMasterGearProbabilityElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterGearProbabilityElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterGearProbabilityElementTable[] = {
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterGearProbabilityElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterGearProbabilityElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterGearProbabilityElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterGearProbabilityElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterGearProbabilityElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterGearProbabilityElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterGearProbabilityElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterGearProbabilityElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterGearProbabilityElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterHome3DElement: 0x4e0 bytes, 23 properties (22 linked); layout from _ZN20CMasterHome3DElementC2Ev.
@@ -1111,6 +1286,9 @@ inline constexpr ElementMethod kCMasterHome3DElementMethods[] = {
     {"Dtor", "_ZN20CMasterHome3DElementD2Ev"},
     {"DtorDelete", "_ZN20CMasterHome3DElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterHome3DElementTable[] = {
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI20CMasterHome3DElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterHome3DMotionSettingElement: 0x1b0 bytes, 8 properties (8 linked); layout from _ZN33CMasterHome3DMotionSettingElementC2Ev.
 class CMasterHome3DMotionSettingElement {
@@ -1150,6 +1328,18 @@ inline constexpr ElementMethod kCMasterHome3DMotionSettingElementMethods[] = {
     {"CtorCopy", "_ZN33CMasterHome3DMotionSettingElementC2ERKS_"},
     {"Dtor", "_ZN33CMasterHome3DMotionSettingElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterHome3DMotionSettingElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterHome3DMotionSettingElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterHome3DMotionSettingElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterHome3DMotionSettingElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterItemSetElement: 0x1f0 bytes, 9 properties (9 linked); layout from _ZN21CMasterItemSetElementC2Ev.
@@ -1193,6 +1383,16 @@ inline constexpr ElementMethod kCMasterItemSetElementMethods[] = {
     {"CtorCopy", "_ZN21CMasterItemSetElementC2ERKS_"},
     {"Dtor", "_ZN21CMasterItemSetElementD2Ev"},
     {"DtorDelete", "_ZN21CMasterItemSetElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterItemSetElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI21CMasterItemSetElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI21CMasterItemSetElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI21CMasterItemSetElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI21CMasterItemSetElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI21CMasterItemSetElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI21CMasterItemSetElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI21CMasterItemSetElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI21CMasterItemSetElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterMissionBoardElement: 0x1f0 bytes, 9 properties (9 linked); layout from _ZN26CMasterMissionBoardElementC2Ev.
@@ -1238,6 +1438,19 @@ inline constexpr ElementMethod kCMasterMissionBoardElementMethods[] = {
     {"Dtor", "_ZN26CMasterMissionBoardElementD2Ev"},
     {"DtorDelete", "_ZN26CMasterMissionBoardElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterMissionBoardElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterMissionBoardElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI26CMasterMissionBoardElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterMissionEnemyInfoElement: 0x210 bytes, 9 properties (9 linked); layout from _ZN30CMasterMissionEnemyInfoElementC2Ev.
 class CMasterMissionEnemyInfoElement {
@@ -1281,6 +1494,16 @@ inline constexpr ElementMethod kCMasterMissionEnemyInfoElementMethods[] = {
     {"Assign", "_ZN30CMasterMissionEnemyInfoElementaSERKS_"},
     {"Dtor", "_ZN30CMasterMissionEnemyInfoElementD2Ev"},
     {"DtorDelete", "_ZN30CMasterMissionEnemyInfoElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterMissionEnemyInfoElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterMissionEnemyInfoElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterMissionEnemyInfoElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterMissionEnemyInfoElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterMissionEnemyInfoElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterMissionEnemyInfoElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterMissionEnemyInfoElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterMissionEnemyInfoElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterMissionEnemyInfoElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterAIAppointMoveElement: 0x620 bytes, 32 properties (32 linked); layout from _ZN36CMasterParameterAIAppointMoveElementC2Ev.
@@ -1394,6 +1617,16 @@ inline constexpr ElementMethod kCMasterParameterAIAppointMoveElementMethods[] = 
     {"Assign", "_ZN36CMasterParameterAIAppointMoveElementaSERKS_"},
     {"Dtor", "_ZN36CMasterParameterAIAppointMoveElementD2Ev"},
     {"DtorDelete", "_ZN36CMasterParameterAIAppointMoveElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterAIAppointMoveElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterAIAppointMoveElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterAIAppointMoveElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterAIAppointMoveElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterAIAppointMoveElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterAIAppointMoveElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterAIAppointMoveElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterAIAppointMoveElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI36CMasterParameterAIAppointMoveElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterAIElement: 0x820 bytes, 43 properties (43 linked); layout from _ZN25CMasterParameterAIElementC2Ev.
@@ -1541,6 +1774,9 @@ inline constexpr ElementMethod kCMasterParameterAIElementMethods[] = {
     {"Dtor", "_ZN25CMasterParameterAIElementD2Ev"},
     {"DtorDelete", "_ZN25CMasterParameterAIElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterAIElementTable[] = {
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI25CMasterParameterAIElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterAccessoryLimitBreakElement: 0x120 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI42CMasterParameterAccessoryLimitBreakElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterAccessoryLimitBreakElement {
@@ -1571,6 +1807,16 @@ inline constexpr ElementMethod kCMasterParameterAccessoryLimitBreakElementMethod
     {"Assign", "_ZN42CMasterParameterAccessoryLimitBreakElementaSERKS_"},
     {"Dtor", "_ZN42CMasterParameterAccessoryLimitBreakElementD2Ev"},
     {"DtorDelete", "_ZN42CMasterParameterAccessoryLimitBreakElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterAccessoryLimitBreakElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterAccessoryLimitBreakElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterAccessoryLimitBreakElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterAccessoryLimitBreakElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterAccessoryLimitBreakElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterAccessoryLimitBreakElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterAccessoryLimitBreakElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterAccessoryLimitBreakElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI42CMasterParameterAccessoryLimitBreakElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterAchievementElement: 0x620 bytes, 28 properties (28 linked); layout from _ZN34CMasterParameterAchievementElementC2Ev.
@@ -1673,6 +1919,17 @@ inline constexpr ElementMethod kCMasterParameterAchievementElementMethods[] = {
     {"Dtor", "_ZN34CMasterParameterAchievementElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterAchievementElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterAchievementElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAchievementElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAchievementElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAchievementElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAchievementElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAchievementElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAchievementElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAchievementElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAchievementElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterAchievementElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterAreaElement: 0x480 bytes, 21 properties (21 linked); layout from _ZN27CMasterParameterAreaElementC2Ev.
 class CMasterParameterAreaElement {
@@ -1753,6 +2010,20 @@ inline constexpr ElementMethod kCMasterParameterAreaElementMethods[] = {
     {"Dtor", "_ZN27CMasterParameterAreaElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterParameterAreaElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterAreaElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterAreaElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterParameterAreaElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterAssistCutinOffsetElement: 0x130 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterParameterAssistCutinOffsetElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterAssistCutinOffsetElement {
@@ -1784,6 +2055,16 @@ inline constexpr ElementMethod kCMasterParameterAssistCutinOffsetElementMethods[
     {"Initialize", "_ZN40CMasterParameterAssistCutinOffsetElement10InitializeEv"},
     {"Dtor", "_ZN40CMasterParameterAssistCutinOffsetElementD2Ev"},
     {"DtorDelete", "_ZN40CMasterParameterAssistCutinOffsetElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterAssistCutinOffsetElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistCutinOffsetElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistCutinOffsetElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistCutinOffsetElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistCutinOffsetElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistCutinOffsetElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistCutinOffsetElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistCutinOffsetElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterParameterAssistCutinOffsetElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterAssistSkillElement: 0x180 bytes, 7 properties (7 linked); layout from _ZN34CMasterParameterAssistSkillElementC2Ev.
@@ -1823,6 +2104,17 @@ inline constexpr ElementMethod kCMasterParameterAssistSkillElementMethods[] = {
     {"Dtor", "_ZN34CMasterParameterAssistSkillElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterAssistSkillElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterAssistSkillElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAssistSkillElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAssistSkillElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAssistSkillElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAssistSkillElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAssistSkillElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAssistSkillElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAssistSkillElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterAssistSkillElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterAssistSkillElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterAssistVoiceMarginElement: 0xd0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterParameterAssistVoiceMarginElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterAssistVoiceMarginElement {
@@ -1848,6 +2140,16 @@ inline constexpr ElementMethod kCMasterParameterAssistVoiceMarginElementMethods[
     {"Initialize", "_ZN40CMasterParameterAssistVoiceMarginElement10InitializeEv"},
     {"Dtor", "_ZN40CMasterParameterAssistVoiceMarginElementD2Ev"},
     {"DtorDelete", "_ZN40CMasterParameterAssistVoiceMarginElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterAssistVoiceMarginElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistVoiceMarginElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistVoiceMarginElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistVoiceMarginElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistVoiceMarginElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistVoiceMarginElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistVoiceMarginElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI40CMasterParameterAssistVoiceMarginElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterParameterAssistVoiceMarginElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterAttackActionElement: 0xc90 bytes, 66 properties (66 linked); layout from _ZN35CMasterParameterAttackActionElementC2Ev.
@@ -2064,6 +2366,9 @@ inline constexpr ElementMethod kCMasterParameterAttackActionElementMethods[] = {
     {"Dtor", "_ZN35CMasterParameterAttackActionElementD2Ev"},
     {"DtorDelete", "_ZN35CMasterParameterAttackActionElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterAttackActionElementTable[] = {
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterAttackActionElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterAwakenElement: 0x960 bytes, 44 properties (44 linked); layout from _ZN29CMasterParameterAwakenElementC2Ev.
 class CMasterParameterAwakenElement {
@@ -2213,6 +2518,19 @@ inline constexpr ElementMethod kCMasterParameterAwakenElementMethods[] = {
     {"Dtor", "_ZN29CMasterParameterAwakenElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterAwakenElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterAwakenElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterAwakenElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterAwakenElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterBannerElement: 0x2a0 bytes, 12 properties (12 linked); layout from _ZN29CMasterParameterBannerElementC2Ev.
 class CMasterParameterBannerElement {
@@ -2265,6 +2583,16 @@ inline constexpr ElementMethod kCMasterParameterBannerElementMethods[] = {
     {"Dtor", "_ZN29CMasterParameterBannerElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterBannerElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterBannerElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterBannerElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterBannerElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterBannerElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterBannerElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterBannerElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterBannerElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterBannerElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterBannerElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterBannerReplaceElement: 0x170 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI36CMasterParameterBannerReplaceElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterBannerReplaceElement {
@@ -2296,6 +2624,16 @@ inline constexpr ElementMethod kCMasterParameterBannerReplaceElementMethods[] = 
     {"Initialize", "_ZN36CMasterParameterBannerReplaceElement10InitializeEv"},
     {"Dtor", "_ZN36CMasterParameterBannerReplaceElementD2Ev"},
     {"DtorDelete", "_ZN36CMasterParameterBannerReplaceElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterBannerReplaceElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterBannerReplaceElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterBannerReplaceElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterBannerReplaceElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterBannerReplaceElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterBannerReplaceElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterBannerReplaceElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterBannerReplaceElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI36CMasterParameterBannerReplaceElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterBarrierElement: 0x160 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterParameterBarrierElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
@@ -2330,6 +2668,16 @@ inline constexpr ElementMethod kCMasterParameterBarrierElementMethods[] = {
     {"Assign", "_ZN30CMasterParameterBarrierElementaSERKS_"},
     {"Dtor", "_ZN30CMasterParameterBarrierElementD2Ev"},
     {"DtorDelete", "_ZN30CMasterParameterBarrierElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterBarrierElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterBarrierElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterBarrierElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterBarrierElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterBarrierElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterBarrierElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterBarrierElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterParameterBarrierElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterParameterBarrierElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterBattleEvaluationElement: 0x2e0 bytes, 15 properties (15 linked); layout from _ZN39CMasterParameterBattleEvaluationElementC2Ev.
@@ -2393,6 +2741,16 @@ inline constexpr ElementMethod kCMasterParameterBattleEvaluationElementMethods[]
     {"Dtor", "_ZN39CMasterParameterBattleEvaluationElementD2Ev"},
     {"DtorDelete", "_ZN39CMasterParameterBattleEvaluationElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterBattleEvaluationElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterBattleEvaluationElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterBattleEvaluationElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterBattleEvaluationElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterBattleEvaluationElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterBattleEvaluationElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterBattleEvaluationElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterBattleEvaluationElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterParameterBattleEvaluationElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterBattleGlobalElement: 0x80 bytes, 2 properties (2 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterBattleGlobalElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterBattleGlobalElement {
@@ -2413,6 +2771,16 @@ inline constexpr ElementMethod kCMasterParameterBattleGlobalElementMethods[] = {
     {"CtorCopy", "_ZN35CMasterParameterBattleGlobalElementC2ERKS_"},
     {"Dtor", "_ZN35CMasterParameterBattleGlobalElementD2Ev"},
     {"DtorDelete", "_ZN35CMasterParameterBattleGlobalElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterBattleGlobalElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterBattleGlobalElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterBattleGlobalElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterBattleGlobalElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterBattleGlobalElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterBattleGlobalElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterBattleGlobalElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterBattleGlobalElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterBattleGlobalElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterBunkerSetupElement: 0x210 bytes, 10 properties (10 linked); layout from _ZN34CMasterParameterBunkerSetupElementC2Ev.
@@ -2460,6 +2828,16 @@ inline constexpr ElementMethod kCMasterParameterBunkerSetupElementMethods[] = {
     {"Assign", "_ZN34CMasterParameterBunkerSetupElementaSERKS_"},
     {"Dtor", "_ZN34CMasterParameterBunkerSetupElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterBunkerSetupElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterBunkerSetupElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterBunkerSetupElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterBunkerSetupElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterBunkerSetupElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterBunkerSetupElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterBunkerSetupElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterBunkerSetupElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterBunkerSetupElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterBunkerSetupElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterCampaignElement: 0x2e0 bytes, 13 properties (13 linked); layout from _ZN31CMasterParameterCampaignElementC2Ev.
@@ -2516,6 +2894,16 @@ inline constexpr ElementMethod kCMasterParameterCampaignElementMethods[] = {
     {"Dtor", "_ZN31CMasterParameterCampaignElementD2Ev"},
     {"DtorDelete", "_ZN31CMasterParameterCampaignElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterCampaignElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterCampaignElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterCampaignElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterCampaignElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterCampaignElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterCampaignElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterCampaignElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterCampaignElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterParameterCampaignElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterChantEffectTypeElement: 0x110 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterChantEffectTypeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterChantEffectTypeElement {
@@ -2544,6 +2932,18 @@ inline constexpr ElementMethod kCMasterParameterChantEffectTypeElementMethods[] 
     {"Initialize", "_ZN38CMasterParameterChantEffectTypeElement10InitializeEv"},
     {"Dtor", "_ZN38CMasterParameterChantEffectTypeElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterChantEffectTypeElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterChantEffectTypeElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterChantEffectTypeElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterChantEffectTypeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterCharacterCommonElement: 0x1f0 bytes, 10 properties (10 linked); layout from _ZN38CMasterParameterCharacterCommonElementC2Ev.
@@ -2590,6 +2990,20 @@ inline constexpr ElementMethod kCMasterParameterCharacterCommonElementMethods[] 
     {"CtorCopy", "_ZN38CMasterParameterCharacterCommonElementC2ERKS_"},
     {"Dtor", "_ZN38CMasterParameterCharacterCommonElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterCharacterCommonElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterCharacterCommonElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterCharacterCommonElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterCharacterCommonElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterCharacterLimitBreakElement: 0x2a0 bytes, 12 properties (12 linked); layout from _ZN42CMasterParameterCharacterLimitBreakElementC2Ev.
@@ -2643,6 +3057,16 @@ inline constexpr ElementMethod kCMasterParameterCharacterLimitBreakElementMethod
     {"Assign", "_ZN42CMasterParameterCharacterLimitBreakElementaSERKS_"},
     {"Dtor", "_ZN42CMasterParameterCharacterLimitBreakElementD2Ev"},
     {"DtorDelete", "_ZN42CMasterParameterCharacterLimitBreakElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterCharacterLimitBreakElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterCharacterLimitBreakElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterCharacterLimitBreakElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterCharacterLimitBreakElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterCharacterLimitBreakElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterCharacterLimitBreakElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterCharacterLimitBreakElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterCharacterLimitBreakElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI42CMasterParameterCharacterLimitBreakElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterDecoAttachEnableElement: 0x2f0 bytes, 15 properties (15 linked); layout from _ZN39CMasterParameterDecoAttachEnableElementC2Ev.
@@ -2705,6 +3129,19 @@ inline constexpr ElementMethod kCMasterParameterDecoAttachEnableElementMethods[]
     {"Dtor", "_ZN39CMasterParameterDecoAttachEnableElementD2Ev"},
     {"DtorDelete", "_ZN39CMasterParameterDecoAttachEnableElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterDecoAttachEnableElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterDecoAttachEnableElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterParameterDecoAttachEnableElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterDecoHairElement: 0x110 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterParameterDecoHairElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterDecoHairElement {
@@ -2733,6 +3170,18 @@ inline constexpr ElementMethod kCMasterParameterDecoHairElementMethods[] = {
     {"Initialize", "_ZN31CMasterParameterDecoHairElement10InitializeEv"},
     {"Dtor", "_ZN31CMasterParameterDecoHairElementD2Ev"},
     {"DtorDelete", "_ZN31CMasterParameterDecoHairElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterDecoHairElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterDecoHairElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterParameterDecoHairElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterDecoObjectElement: 0x230 bytes, 10 properties (10 linked); layout from _ZN33CMasterParameterDecoObjectElementC2Ev.
@@ -2779,6 +3228,18 @@ inline constexpr ElementMethod kCMasterParameterDecoObjectElementMethods[] = {
     {"CtorCopy", "_ZN33CMasterParameterDecoObjectElementC2ERKS_"},
     {"Dtor", "_ZN33CMasterParameterDecoObjectElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterDecoObjectElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterDecoObjectElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterDecoObjectElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterDecoObjectElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterDecoOffsetTypeElement: 0x510 bytes, 26 properties (26 linked); layout from _ZN37CMasterParameterDecoOffsetTypeElementC2Ev.
@@ -2875,6 +3336,19 @@ inline constexpr ElementMethod kCMasterParameterDecoOffsetTypeElementMethods[] =
     {"Dtor", "_ZN37CMasterParameterDecoOffsetTypeElementD2Ev"},
     {"DtorDelete", "_ZN37CMasterParameterDecoOffsetTypeElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterDecoOffsetTypeElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDecoOffsetTypeElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI37CMasterParameterDecoOffsetTypeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterDirectItemShopElement: 0x220 bytes, 10 properties (10 linked); layout from _ZN37CMasterParameterDirectItemShopElementC2Ev.
 class CMasterParameterDirectItemShopElement {
@@ -2920,6 +3394,19 @@ inline constexpr ElementMethod kCMasterParameterDirectItemShopElementMethods[] =
     {"CtorCopy", "_ZN37CMasterParameterDirectItemShopElementC2ERKS_"},
     {"Dtor", "_ZN37CMasterParameterDirectItemShopElementD2Ev"},
     {"DtorDelete", "_ZN37CMasterParameterDirectItemShopElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterDirectItemShopElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterDirectItemShopElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI37CMasterParameterDirectItemShopElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterEffectElement: 0x220 bytes, 10 properties (10 linked); layout from _ZN29CMasterParameterEffectElementC2Ev.
@@ -2967,6 +3454,17 @@ inline constexpr ElementMethod kCMasterParameterEffectElementMethods[] = {
     {"Assign", "_ZN29CMasterParameterEffectElementaSERKS_"},
     {"Dtor", "_ZN29CMasterParameterEffectElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterEffectElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterEffectElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterEffectElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterEffectElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterEffectElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterEffectElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterEffectElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterEffectElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterEffectElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterEffectElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterEffectElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterEnemyBaseElement: 0xe00 bytes, 68 properties (68 linked); layout from _ZN32CMasterParameterEnemyBaseElementC2Ev.
@@ -3189,6 +3687,17 @@ inline constexpr ElementMethod kCMasterParameterEnemyBaseElementMethods[] = {
     {"Dtor", "_ZN32CMasterParameterEnemyBaseElementD2Ev"},
     {"DtorDelete", "_ZN32CMasterParameterEnemyBaseElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterEnemyBaseElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEnemyBaseElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEnemyBaseElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEnemyBaseElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEnemyBaseElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEnemyBaseElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEnemyBaseElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEnemyBaseElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEnemyBaseElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI32CMasterParameterEnemyBaseElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterEnemyCommonElement: 0x1c0 bytes, 9 properties (9 linked); layout from _ZN34CMasterParameterEnemyCommonElementC2Ev.
 class CMasterParameterEnemyCommonElement {
@@ -3230,6 +3739,16 @@ inline constexpr ElementMethod kCMasterParameterEnemyCommonElementMethods[] = {
     {"Ctor", "_ZN34CMasterParameterEnemyCommonElementC2Ev"},
     {"Dtor", "_ZN34CMasterParameterEnemyCommonElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterEnemyCommonElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterEnemyCommonElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEnemyCommonElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEnemyCommonElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEnemyCommonElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEnemyCommonElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEnemyCommonElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEnemyCommonElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEnemyCommonElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterEnemyCommonElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterEnemyPartyElement: 0x870 bytes, 42 properties (42 linked); layout from _ZN33CMasterParameterEnemyPartyElementC2Ev.
@@ -3374,6 +3893,19 @@ inline constexpr ElementMethod kCMasterParameterEnemyPartyElementMethods[] = {
     {"Dtor", "_ZN33CMasterParameterEnemyPartyElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterEnemyPartyElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterEnemyPartyElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyPartyElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterEnemyPartyElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterEnemyTransElement: 0x1e0 bytes, 9 properties (9 linked); layout from _ZN33CMasterParameterEnemyTransElementC2Ev.
 class CMasterParameterEnemyTransElement {
@@ -3416,6 +3948,16 @@ inline constexpr ElementMethod kCMasterParameterEnemyTransElementMethods[] = {
     {"CtorCopy", "_ZN33CMasterParameterEnemyTransElementC2ERKS_"},
     {"Dtor", "_ZN33CMasterParameterEnemyTransElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterEnemyTransElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterEnemyTransElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyTransElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyTransElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyTransElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyTransElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyTransElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyTransElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterEnemyTransElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterEnemyTransElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterEventTermElement: 0x2a0 bytes, 11 properties (11 linked); layout from _ZN32CMasterParameterEventTermElementC2Ev.
@@ -3466,6 +4008,16 @@ inline constexpr ElementMethod kCMasterParameterEventTermElementMethods[] = {
     {"Dtor", "_ZN32CMasterParameterEventTermElementD2Ev"},
     {"DtorDelete", "_ZN32CMasterParameterEventTermElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterEventTermElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEventTermElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEventTermElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEventTermElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEventTermElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEventTermElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEventTermElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterParameterEventTermElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI32CMasterParameterEventTermElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterEventWeeklyElement: 0x1d0 bytes, 8 properties (7 linked); layout from _ZN34CMasterParameterEventWeeklyElementC2Ev.
 class CMasterParameterEventWeeklyElement {
@@ -3505,6 +4057,16 @@ inline constexpr ElementMethod kCMasterParameterEventWeeklyElementMethods[] = {
     {"CtorCopy", "_ZN34CMasterParameterEventWeeklyElementC2ERKS_"},
     {"Dtor", "_ZN34CMasterParameterEventWeeklyElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterEventWeeklyElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterEventWeeklyElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEventWeeklyElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEventWeeklyElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEventWeeklyElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEventWeeklyElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEventWeeklyElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEventWeeklyElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterEventWeeklyElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterEventWeeklyElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterFactorConditionElement: 0x290 bytes, 13 properties (13 linked); layout from _ZN38CMasterParameterFactorConditionElementC2Ev.
@@ -3560,6 +4122,16 @@ inline constexpr ElementMethod kCMasterParameterFactorConditionElementMethods[] 
     {"CtorCopy", "_ZN38CMasterParameterFactorConditionElementC2ERKS_"},
     {"Dtor", "_ZN38CMasterParameterFactorConditionElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterFactorConditionElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterFactorConditionElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFactorConditionElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFactorConditionElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFactorConditionElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFactorConditionElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFactorConditionElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFactorConditionElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFactorConditionElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterFactorConditionElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterFactorElement: 0x4a0 bytes, 24 properties (23 linked); layout from _ZN29CMasterParameterFactorElementC2Ev.
@@ -3650,6 +4222,18 @@ inline constexpr ElementMethod kCMasterParameterFactorElementMethods[] = {
     {"Dtor", "_ZN29CMasterParameterFactorElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterFactorElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterFactorElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementE10ClearCacheEv"},
+    {"SetStoreAllCacheSize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementE20SetStoreAllCacheSizeEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterFactorElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterFactorElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterFactorLockElement: 0x70 bytes, 2 properties (2 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterFactorLockElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterFactorLockElement {
@@ -3669,6 +4253,16 @@ inline constexpr ElementMethod kCMasterParameterFactorLockElementMethods[] = {
     {"Initialize", "_ZN33CMasterParameterFactorLockElement10InitializeEv"},
     {"Dtor", "_ZN33CMasterParameterFactorLockElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterFactorLockElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterFactorLockElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorLockElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorLockElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorLockElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorLockElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorLockElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorLockElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorLockElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterFactorLockElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterFactorSeedElement: 0x3f0 bytes, 20 properties (20 linked); layout from _ZN33CMasterParameterFactorSeedElementC2Ev.
@@ -3747,6 +4341,17 @@ inline constexpr ElementMethod kCMasterParameterFactorSeedElementMethods[] = {
     {"Dtor", "_ZN33CMasterParameterFactorSeedElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterFactorSeedElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterFactorSeedElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorSeedElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorSeedElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorSeedElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorSeedElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorSeedElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorSeedElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorSeedElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFactorSeedElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterFactorSeedElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterFavorBonusContentsElement: 0x230 bytes, 10 properties (10 linked); layout from _ZN41CMasterParameterFavorBonusContentsElementC2Ev.
 class CMasterParameterFavorBonusContentsElement {
@@ -3793,6 +4398,16 @@ inline constexpr ElementMethod kCMasterParameterFavorBonusContentsElementMethods
     {"Dtor", "_ZN41CMasterParameterFavorBonusContentsElementD2Ev"},
     {"DtorDelete", "_ZN41CMasterParameterFavorBonusContentsElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterFavorBonusContentsElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterFavorBonusContentsElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterFavorBonusContentsElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterFavorBonusContentsElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterFavorBonusContentsElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterFavorBonusContentsElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterFavorBonusContentsElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI41CMasterParameterFavorBonusContentsElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI41CMasterParameterFavorBonusContentsElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterFavorBonusElement: 0x1c0 bytes, 8 properties (8 linked); layout from _ZN33CMasterParameterFavorBonusElementC2Ev.
 class CMasterParameterFavorBonusElement {
@@ -3833,6 +4448,16 @@ inline constexpr ElementMethod kCMasterParameterFavorBonusElementMethods[] = {
     {"Dtor", "_ZN33CMasterParameterFavorBonusElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterFavorBonusElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterFavorBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorBonusElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterFavorBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterFavorItemEffectElement: 0x1c0 bytes, 8 properties (8 linked); layout from _ZN38CMasterParameterFavorItemEffectElementC2Ev.
 class CMasterParameterFavorItemEffectElement {
@@ -3872,6 +4497,19 @@ inline constexpr ElementMethod kCMasterParameterFavorItemEffectElementMethods[] 
     {"CtorCopy", "_ZN38CMasterParameterFavorItemEffectElementC2ERKS_"},
     {"Dtor", "_ZN38CMasterParameterFavorItemEffectElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterFavorItemEffectElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterFavorItemEffectElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterFavorItemEffectElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterFavorItemEffectElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterFavorLevelElement: 0x280 bytes, 11 properties (11 linked); layout from _ZN33CMasterParameterFavorLevelElementC2Ev.
@@ -3922,6 +4560,19 @@ inline constexpr ElementMethod kCMasterParameterFavorLevelElementMethods[] = {
     {"Dtor", "_ZN33CMasterParameterFavorLevelElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterFavorLevelElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterFavorLevelElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterFavorLevelElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterFavorLevelElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterFavorScheduleElement: 0x120 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI36CMasterParameterFavorScheduleElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterFavorScheduleElement {
@@ -3951,6 +4602,19 @@ inline constexpr ElementMethod kCMasterParameterFavorScheduleElementMethods[] = 
     {"CtorCopy", "_ZN36CMasterParameterFavorScheduleElementC2ERKS_"},
     {"Dtor", "_ZN36CMasterParameterFavorScheduleElementD2Ev"},
     {"DtorDelete", "_ZN36CMasterParameterFavorScheduleElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterFavorScheduleElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterFavorScheduleElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI36CMasterParameterFavorScheduleElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterFriendGaugeContentsElement: 0x2a0 bytes, 12 properties (12 linked); layout from _ZN42CMasterParameterFriendGaugeContentsElementC2Ev.
@@ -4005,6 +4669,20 @@ inline constexpr ElementMethod kCMasterParameterFriendGaugeContentsElementMethod
     {"Dtor", "_ZN42CMasterParameterFriendGaugeContentsElementD2Ev"},
     {"DtorDelete", "_ZN42CMasterParameterFriendGaugeContentsElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterFriendGaugeContentsElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterFriendGaugeContentsElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI42CMasterParameterFriendGaugeContentsElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterFriendGaugeElement: 0x140 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterFriendGaugeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterFriendGaugeElement {
@@ -4035,6 +4713,16 @@ inline constexpr ElementMethod kCMasterParameterFriendGaugeElementMethods[] = {
     {"Assign", "_ZN34CMasterParameterFriendGaugeElementaSERKS_"},
     {"Dtor", "_ZN34CMasterParameterFriendGaugeElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterFriendGaugeElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterFriendGaugeElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterFriendGaugeElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterFriendGaugeElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterFriendGaugeElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterFriendGaugeElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterFriendGaugeElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterFriendGaugeElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterFriendGaugeElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterFriendGaugeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterGachaElement: 0xef0 bytes, 73 properties (73 linked); layout from _ZN28CMasterParameterGachaElementC2Ev.
@@ -4272,6 +4960,16 @@ inline constexpr ElementMethod kCMasterParameterGachaElementMethods[] = {
     {"Dtor", "_ZN28CMasterParameterGachaElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterParameterGachaElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterGachaElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterGachaElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterGachaElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterGachaElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterGachaElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterGachaElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterGachaElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterGachaElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterParameterGachaElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterGachaImageElement: 0x1f0 bytes, 9 properties (9 linked); layout from _ZN33CMasterParameterGachaImageElementC2Ev.
 class CMasterParameterGachaImageElement {
@@ -4315,6 +5013,16 @@ inline constexpr ElementMethod kCMasterParameterGachaImageElementMethods[] = {
     {"Assign", "_ZN33CMasterParameterGachaImageElementaSERKS_"},
     {"Dtor", "_ZN33CMasterParameterGachaImageElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterGachaImageElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterGachaImageElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterGachaImageElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterGachaImageElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterGachaImageElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterGachaImageElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterGachaImageElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterGachaImageElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterGachaImageElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterGachaImageElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterGachaItemElement: 0x2a0 bytes, 12 properties (12 linked); layout from _ZN32CMasterParameterGachaItemElementC2Ev.
@@ -4366,6 +5074,14 @@ inline constexpr ElementMethod kCMasterParameterGachaItemElementMethods[] = {
     {"Ctor", "_ZN32CMasterParameterGachaItemElementC2Ev"},
     {"Dtor", "_ZN32CMasterParameterGachaItemElementD2Ev"},
     {"DtorDelete", "_ZN32CMasterParameterGachaItemElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterGachaItemElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGachaItemElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGachaItemElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGachaItemElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGachaItemElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGachaItemElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGachaItemElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
 };
 
 // CMasterParameterGearElement: 0x2f0 bytes, 14 properties (14 linked); layout from _ZN27CMasterParameterGearElementC2Ev.
@@ -4425,6 +5141,18 @@ inline constexpr ElementMethod kCMasterParameterGearElementMethods[] = {
     {"Dtor", "_ZN27CMasterParameterGearElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterParameterGearElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterGearElementTable[] = {
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterGearElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterParameterGearElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterGiftGachaElement: 0x220 bytes, 10 properties (10 linked); layout from _ZN32CMasterParameterGiftGachaElementC2Ev.
 class CMasterParameterGiftGachaElement {
@@ -4471,6 +5199,16 @@ inline constexpr ElementMethod kCMasterParameterGiftGachaElementMethods[] = {
     {"Dtor", "_ZN32CMasterParameterGiftGachaElementD2Ev"},
     {"DtorDelete", "_ZN32CMasterParameterGiftGachaElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterGiftGachaElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGiftGachaElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGiftGachaElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGiftGachaElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGiftGachaElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGiftGachaElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGiftGachaElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterParameterGiftGachaElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI32CMasterParameterGiftGachaElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterGlobalElement: 0x130 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterGlobalElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterGlobalElement {
@@ -4500,6 +5238,19 @@ inline constexpr ElementMethod kCMasterParameterGlobalElementMethods[] = {
     {"CtorCopy", "_ZN29CMasterParameterGlobalElementC2ERKS_"},
     {"Dtor", "_ZN29CMasterParameterGlobalElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterGlobalElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterGlobalElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterGlobalElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterGlobalElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterGuestCharacterElement: 0x120 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI37CMasterParameterGuestCharacterElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
@@ -4531,6 +5282,19 @@ inline constexpr ElementMethod kCMasterParameterGuestCharacterElementMethods[] =
     {"Assign", "_ZN37CMasterParameterGuestCharacterElementaSERKS_"},
     {"Dtor", "_ZN37CMasterParameterGuestCharacterElementD2Ev"},
     {"DtorDelete", "_ZN37CMasterParameterGuestCharacterElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterGuestCharacterElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterGuestCharacterElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI37CMasterParameterGuestCharacterElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterGuideInformationElement: 0x420 bytes, 18 properties (18 linked); layout from _ZN39CMasterParameterGuideInformationElementC2Ev.
@@ -4602,6 +5366,16 @@ inline constexpr ElementMethod kCMasterParameterGuideInformationElementMethods[]
     {"Dtor", "_ZN39CMasterParameterGuideInformationElementD2Ev"},
     {"DtorDelete", "_ZN39CMasterParameterGuideInformationElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterGuideInformationElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterGuideInformationElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterGuideInformationElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterGuideInformationElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterGuideInformationElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterGuideInformationElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterGuideInformationElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterGuideInformationElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterParameterGuideInformationElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterHeatUpBonusElement: 0xe0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterHeatUpBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterHeatUpBonusElement {
@@ -4628,6 +5402,16 @@ inline constexpr ElementMethod kCMasterParameterHeatUpBonusElementMethods[] = {
     {"CtorCopy", "_ZN34CMasterParameterHeatUpBonusElementC2ERKS_"},
     {"Dtor", "_ZN34CMasterParameterHeatUpBonusElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterHeatUpBonusElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterHeatUpBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHeatUpBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHeatUpBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHeatUpBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHeatUpBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHeatUpBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHeatUpBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHeatUpBonusElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterHeatUpBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterHomeMessageElement: 0x340 bytes, 14 properties (14 linked); layout from _ZN34CMasterParameterHomeMessageElementC2Ev.
@@ -4687,6 +5471,16 @@ inline constexpr ElementMethod kCMasterParameterHomeMessageElementMethods[] = {
     {"Dtor", "_ZN34CMasterParameterHomeMessageElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterHomeMessageElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterHomeMessageElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHomeMessageElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHomeMessageElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHomeMessageElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHomeMessageElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHomeMessageElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHomeMessageElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterHomeMessageElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterHomeMessageElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterItemAccessoryComposeElement: 0x1a0 bytes, 8 properties (8 linked); layout from _ZN43CMasterParameterItemAccessoryComposeElementC2Ev.
 class CMasterParameterItemAccessoryComposeElement {
@@ -4727,6 +5521,17 @@ inline constexpr ElementMethod kCMasterParameterItemAccessoryComposeElementMetho
     {"Assign", "_ZN43CMasterParameterItemAccessoryComposeElementaSERKS_"},
     {"Dtor", "_ZN43CMasterParameterItemAccessoryComposeElementD2Ev"},
     {"DtorDelete", "_ZN43CMasterParameterItemAccessoryComposeElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterItemAccessoryComposeElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterItemAccessoryComposeElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterItemAccessoryComposeElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterItemAccessoryComposeElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterItemAccessoryComposeElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterItemAccessoryComposeElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterItemAccessoryComposeElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI43CMasterParameterItemAccessoryComposeElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI43CMasterParameterItemAccessoryComposeElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI43CMasterParameterItemAccessoryComposeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterItemAwakenElement: 0x3c0 bytes, 18 properties (18 linked); layout from _ZN33CMasterParameterItemAwakenElementC2Ev.
@@ -4799,6 +5604,16 @@ inline constexpr ElementMethod kCMasterParameterItemAwakenElementMethods[] = {
     {"Dtor", "_ZN33CMasterParameterItemAwakenElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterItemAwakenElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterItemAwakenElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterItemAwakenElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterItemAwakenElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterItemAwakenElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterItemAwakenElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterItemAwakenElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterItemAwakenElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterItemAwakenElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterItemAwakenElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterItemComposeElement: 0x1a0 bytes, 8 properties (8 linked); layout from _ZN34CMasterParameterItemComposeElementC2Ev.
 class CMasterParameterItemComposeElement {
@@ -4839,6 +5654,17 @@ inline constexpr ElementMethod kCMasterParameterItemComposeElementMethods[] = {
     {"Assign", "_ZN34CMasterParameterItemComposeElementaSERKS_"},
     {"Dtor", "_ZN34CMasterParameterItemComposeElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterItemComposeElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterItemComposeElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemComposeElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemComposeElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemComposeElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemComposeElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemComposeElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemComposeElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemComposeElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemComposeElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterItemComposeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterItemElement: 0x9d0 bytes, 49 properties (49 linked); layout from _ZN27CMasterParameterItemElementC2Ev.
@@ -5004,6 +5830,21 @@ inline constexpr ElementMethod kCMasterParameterItemElementMethods[] = {
     {"Dtor", "_ZN27CMasterParameterItemElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterParameterItemElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterItemElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE10ClearCacheEv"},
+    {"SetStoreAllCacheSize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE20SetStoreAllCacheSizeEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterItemElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterParameterItemElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterItemExchangeShopContentsElement: 0x2d0 bytes, 13 properties (13 linked); layout from _ZN47CMasterParameterItemExchangeShopContentsElementC2Ev.
 class CMasterParameterItemExchangeShopContentsElement {
@@ -5059,6 +5900,16 @@ inline constexpr ElementMethod kCMasterParameterItemExchangeShopContentsElementM
     {"Dtor", "_ZN47CMasterParameterItemExchangeShopContentsElementD2Ev"},
     {"DtorDelete", "_ZN47CMasterParameterItemExchangeShopContentsElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterItemExchangeShopContentsElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI47CMasterParameterItemExchangeShopContentsElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI47CMasterParameterItemExchangeShopContentsElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI47CMasterParameterItemExchangeShopContentsElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI47CMasterParameterItemExchangeShopContentsElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI47CMasterParameterItemExchangeShopContentsElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI47CMasterParameterItemExchangeShopContentsElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI47CMasterParameterItemExchangeShopContentsElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI47CMasterParameterItemExchangeShopContentsElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterItemExchangeShopElement: 0x1a0 bytes, 7 properties (7 linked); layout from _ZN39CMasterParameterItemExchangeShopElementC2Ev.
 class CMasterParameterItemExchangeShopElement {
@@ -5096,6 +5947,19 @@ inline constexpr ElementMethod kCMasterParameterItemExchangeShopElementMethods[]
     {"Dtor", "_ZN39CMasterParameterItemExchangeShopElementD2Ev"},
     {"DtorDelete", "_ZN39CMasterParameterItemExchangeShopElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterItemExchangeShopElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterItemExchangeShopElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterParameterItemExchangeShopElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterItemGradeUpElement: 0xd0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterItemGradeUpElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterItemGradeUpElement {
@@ -5121,6 +5985,19 @@ inline constexpr ElementMethod kCMasterParameterItemGradeUpElementMethods[] = {
     {"Initialize", "_ZN34CMasterParameterItemGradeUpElement10InitializeEv"},
     {"Dtor", "_ZN34CMasterParameterItemGradeUpElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterItemGradeUpElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterItemGradeUpElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterItemGradeUpElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterItemGradeUpElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterItemGradeUpListElement: 0x240 bytes, 10 properties (10 linked); layout from _ZN38CMasterParameterItemGradeUpListElementC2Ev.
@@ -5169,6 +6046,16 @@ inline constexpr ElementMethod kCMasterParameterItemGradeUpListElementMethods[] 
     {"Dtor", "_ZN38CMasterParameterItemGradeUpListElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterItemGradeUpListElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterItemGradeUpListElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterItemGradeUpListElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterItemGradeUpListElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterItemGradeUpListElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterItemGradeUpListElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterItemGradeUpListElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterItemGradeUpListElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterItemGradeUpListElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterItemGradeUpListElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterItemLimitBreakElement: 0x160 bytes, 7 properties (7 linked); layout from _ZN37CMasterParameterItemLimitBreakElementC2Ev.
 class CMasterParameterItemLimitBreakElement {
@@ -5205,6 +6092,19 @@ inline constexpr ElementMethod kCMasterParameterItemLimitBreakElementMethods[] =
     {"Dtor", "_ZN37CMasterParameterItemLimitBreakElementD2Ev"},
     {"DtorDelete", "_ZN37CMasterParameterItemLimitBreakElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterItemLimitBreakElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterItemLimitBreakElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI37CMasterParameterItemLimitBreakElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterItemLimitBreakLevelMaxElement: 0xd0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI45CMasterParameterItemLimitBreakLevelMaxElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterItemLimitBreakLevelMaxElement {
@@ -5231,6 +6131,17 @@ inline constexpr ElementMethod kCMasterParameterItemLimitBreakLevelMaxElementMet
     {"Dtor", "_ZN45CMasterParameterItemLimitBreakLevelMaxElementD2Ev"},
     {"DtorDelete", "_ZN45CMasterParameterItemLimitBreakLevelMaxElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterItemLimitBreakLevelMaxElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI45CMasterParameterItemLimitBreakLevelMaxElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI45CMasterParameterItemLimitBreakLevelMaxElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI45CMasterParameterItemLimitBreakLevelMaxElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI45CMasterParameterItemLimitBreakLevelMaxElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI45CMasterParameterItemLimitBreakLevelMaxElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI45CMasterParameterItemLimitBreakLevelMaxElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI45CMasterParameterItemLimitBreakLevelMaxElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI45CMasterParameterItemLimitBreakLevelMaxElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI45CMasterParameterItemLimitBreakLevelMaxElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterItemSaleRateElement: 0x70 bytes, 2 properties (2 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterItemSaleRateElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterItemSaleRateElement {
@@ -5250,6 +6161,16 @@ inline constexpr ElementMethod kCMasterParameterItemSaleRateElementMethods[] = {
     {"Initialize", "_ZN35CMasterParameterItemSaleRateElement10InitializeEv"},
     {"Dtor", "_ZN35CMasterParameterItemSaleRateElementD2Ev"},
     {"DtorDelete", "_ZN35CMasterParameterItemSaleRateElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterItemSaleRateElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterItemSaleRateElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterItemSaleRateElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterItemSaleRateElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterItemSaleRateElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterItemSaleRateElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterItemSaleRateElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterItemSaleRateElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterItemSaleRateElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterItemShopElement: 0x550 bytes, 24 properties (24 linked); layout from _ZN31CMasterParameterItemShopElementC2Ev.
@@ -5339,6 +6260,19 @@ inline constexpr ElementMethod kCMasterParameterItemShopElementMethods[] = {
     {"Dtor", "_ZN31CMasterParameterItemShopElementD2Ev"},
     {"DtorDelete", "_ZN31CMasterParameterItemShopElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterItemShopElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterItemShopElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterParameterItemShopElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterLoadingMessageElement: 0xd0 bytes, 3 properties (3 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI37CMasterParameterLoadingMessageElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterLoadingMessageElement {
@@ -5362,6 +6296,18 @@ inline constexpr ElementMethod kCMasterParameterLoadingMessageElementMethods[] =
     {"CtorCopy", "_ZN37CMasterParameterLoadingMessageElementC2ERKS_"},
     {"Dtor", "_ZN37CMasterParameterLoadingMessageElementD2Ev"},
     {"DtorDelete", "_ZN37CMasterParameterLoadingMessageElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterLoadingMessageElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI37CMasterParameterLoadingMessageElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI37CMasterParameterLoadingMessageElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterLoginBonusContentsElement: 0x1f0 bytes, 9 properties (9 linked); layout from _ZN41CMasterParameterLoginBonusContentsElementC2Ev.
@@ -5407,6 +6353,16 @@ inline constexpr ElementMethod kCMasterParameterLoginBonusContentsElementMethods
     {"Dtor", "_ZN41CMasterParameterLoginBonusContentsElementD2Ev"},
     {"DtorDelete", "_ZN41CMasterParameterLoginBonusContentsElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterLoginBonusContentsElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterLoginBonusContentsElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterLoginBonusContentsElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterLoginBonusContentsElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterLoginBonusContentsElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterLoginBonusContentsElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterParameterLoginBonusContentsElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI41CMasterParameterLoginBonusContentsElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI41CMasterParameterLoginBonusContentsElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterLoginBonusElement: 0x210 bytes, 9 properties (9 linked); layout from _ZN33CMasterParameterLoginBonusElementC2Ev.
 class CMasterParameterLoginBonusElement {
@@ -5451,6 +6407,16 @@ inline constexpr ElementMethod kCMasterParameterLoginBonusElementMethods[] = {
     {"Dtor", "_ZN33CMasterParameterLoginBonusElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterLoginBonusElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterLoginBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterLoginBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterLoginBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterLoginBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterLoginBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterLoginBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterLoginBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterLoginBonusElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterLoginBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterMapElement: 0xf0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI26CMasterParameterMapElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterMapElement {
@@ -5478,6 +6444,16 @@ inline constexpr ElementMethod kCMasterParameterMapElementMethods[] = {
     {"Assign", "_ZN26CMasterParameterMapElementaSERKS_"},
     {"Dtor", "_ZN26CMasterParameterMapElementD2Ev"},
     {"DtorDelete", "_ZN26CMasterParameterMapElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterMapElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterParameterMapElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterParameterMapElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterParameterMapElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterParameterMapElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterParameterMapElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterParameterMapElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterParameterMapElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI26CMasterParameterMapElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterMasteryStepElement: 0x2a0 bytes, 12 properties (12 linked); layout from _ZN34CMasterParameterMasteryStepElementC2Ev.
@@ -5530,6 +6506,16 @@ inline constexpr ElementMethod kCMasterParameterMasteryStepElementMethods[] = {
     {"CtorCopy", "_ZN34CMasterParameterMasteryStepElementC2ERKS_"},
     {"Dtor", "_ZN34CMasterParameterMasteryStepElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterMasteryStepElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterMasteryStepElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMasteryStepElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMasteryStepElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMasteryStepElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMasteryStepElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMasteryStepElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMasteryStepElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMasteryStepElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterMasteryStepElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterMaterialComposeElement: 0x550 bytes, 25 properties (25 linked); layout from _ZN38CMasterParameterMaterialComposeElementC2Ev.
@@ -5623,6 +6609,16 @@ inline constexpr ElementMethod kCMasterParameterMaterialComposeElementMethods[] 
     {"Dtor", "_ZN38CMasterParameterMaterialComposeElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterMaterialComposeElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterMaterialComposeElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMaterialComposeElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMaterialComposeElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMaterialComposeElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMaterialComposeElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMaterialComposeElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMaterialComposeElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMaterialComposeElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterMaterialComposeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterMenuBGMElement: 0x160 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterParameterMenuBGMElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterMenuBGMElement {
@@ -5655,6 +6651,16 @@ inline constexpr ElementMethod kCMasterParameterMenuBGMElementMethods[] = {
     {"CtorCopy", "_ZN30CMasterParameterMenuBGMElementC2ERKS_"},
     {"Dtor", "_ZN30CMasterParameterMenuBGMElementD2Ev"},
     {"DtorDelete", "_ZN30CMasterParameterMenuBGMElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterMenuBGMElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMenuBGMElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMenuBGMElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMenuBGMElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMenuBGMElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMenuBGMElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMenuBGMElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMenuBGMElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterParameterMenuBGMElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterMenuCommonVoiceElement: 0x200 bytes, 9 properties (9 linked); layout from _ZN38CMasterParameterMenuCommonVoiceElementC2Ev.
@@ -5699,6 +6705,19 @@ inline constexpr ElementMethod kCMasterParameterMenuCommonVoiceElementMethods[] 
     {"Dtor", "_ZN38CMasterParameterMenuCommonVoiceElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterMenuCommonVoiceElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterMenuCommonVoiceElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterMenuCommonVoiceElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterMenuCommonVoiceElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterMenuVoiceElement: 0x160 bytes, 7 properties (7 linked); layout from _ZN32CMasterParameterMenuVoiceElementC2Ev.
 class CMasterParameterMenuVoiceElement {
@@ -5734,6 +6753,16 @@ inline constexpr ElementMethod kCMasterParameterMenuVoiceElementMethods[] = {
     {"Ctor", "_ZN32CMasterParameterMenuVoiceElementC2Ev"},
     {"Dtor", "_ZN32CMasterParameterMenuVoiceElementD2Ev"},
     {"DtorDelete", "_ZN32CMasterParameterMenuVoiceElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterMenuVoiceElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterMenuVoiceElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterMenuVoiceElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterMenuVoiceElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterMenuVoiceElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterMenuVoiceElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterMenuVoiceElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterParameterMenuVoiceElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI32CMasterParameterMenuVoiceElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterMissionCharacterBonusElement: 0x340 bytes, 15 properties (15 linked); layout from _ZN44CMasterParameterMissionCharacterBonusElementC2Ev.
@@ -5796,6 +6825,16 @@ inline constexpr ElementMethod kCMasterParameterMissionCharacterBonusElementMeth
     {"Dtor", "_ZN44CMasterParameterMissionCharacterBonusElementD2Ev"},
     {"DtorDelete", "_ZN44CMasterParameterMissionCharacterBonusElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterMissionCharacterBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI44CMasterParameterMissionCharacterBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI44CMasterParameterMissionCharacterBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI44CMasterParameterMissionCharacterBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI44CMasterParameterMissionCharacterBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI44CMasterParameterMissionCharacterBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI44CMasterParameterMissionCharacterBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI44CMasterParameterMissionCharacterBonusElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI44CMasterParameterMissionCharacterBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterMissionClearPresentElement: 0x1f0 bytes, 9 properties (9 linked); layout from _ZN42CMasterParameterMissionClearPresentElementC2Ev.
 class CMasterParameterMissionClearPresentElement {
@@ -5839,6 +6878,17 @@ inline constexpr ElementMethod kCMasterParameterMissionClearPresentElementMethod
     {"Assign", "_ZN42CMasterParameterMissionClearPresentElementaSERKS_"},
     {"Dtor", "_ZN42CMasterParameterMissionClearPresentElementD2Ev"},
     {"DtorDelete", "_ZN42CMasterParameterMissionClearPresentElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterMissionClearPresentElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterMissionClearPresentElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterMissionClearPresentElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterMissionClearPresentElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterMissionClearPresentElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterMissionClearPresentElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterParameterMissionClearPresentElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterMissionClearPresentElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterParameterMissionClearPresentElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI42CMasterParameterMissionClearPresentElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterMissionDropElement: 0x2b0 bytes, 13 properties (13 linked); layout from _ZN34CMasterParameterMissionDropElementC2Ev.
@@ -5895,6 +6945,16 @@ inline constexpr ElementMethod kCMasterParameterMissionDropElementMethods[] = {
     {"Assign", "_ZN34CMasterParameterMissionDropElementaSERKS_"},
     {"Dtor", "_ZN34CMasterParameterMissionDropElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterMissionDropElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterMissionDropElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMissionDropElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMissionDropElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMissionDropElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMissionDropElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMissionDropElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMissionDropElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterMissionDropElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterMissionDropElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterMissionElement: 0xd80 bytes, 64 properties (64 linked); layout from _ZN30CMasterParameterMissionElementC2Ev.
@@ -6105,6 +7165,20 @@ inline constexpr ElementMethod kCMasterParameterMissionElementMethods[] = {
     {"Dtor", "_ZN30CMasterParameterMissionElementD2Ev"},
     {"DtorDelete", "_ZN30CMasterParameterMissionElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterMissionElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterParameterMissionElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterParameterMissionElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterMissionNpcElement: 0x1c0 bytes, 8 properties (8 linked); layout from _ZN33CMasterParameterMissionNpcElementC2Ev.
 class CMasterParameterMissionNpcElement {
@@ -6145,6 +7219,20 @@ inline constexpr ElementMethod kCMasterParameterMissionNpcElementMethods[] = {
     {"Assign", "_ZN33CMasterParameterMissionNpcElementaSERKS_"},
     {"Dtor", "_ZN33CMasterParameterMissionNpcElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterMissionNpcElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterMissionNpcElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterMissionNpcElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterMissionNpcElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterMissionStageElement: 0x350 bytes, 16 properties (16 linked); layout from _ZN35CMasterParameterMissionStageElementC2Ev.
@@ -6211,6 +7299,17 @@ inline constexpr ElementMethod kCMasterParameterMissionStageElementMethods[] = {
     {"Dtor", "_ZN35CMasterParameterMissionStageElementD2Ev"},
     {"DtorDelete", "_ZN35CMasterParameterMissionStageElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterMissionStageElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterMissionStageElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterMissionStageElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterMissionStageElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterMissionStageElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterMissionStageElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterMissionStageElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterMissionStageElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterMissionStageElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterMissionStageElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterNpcBaseElement: 0x160 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterParameterNpcBaseElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterNpcBaseElement {
@@ -6244,6 +7343,16 @@ inline constexpr ElementMethod kCMasterParameterNpcBaseElementMethods[] = {
     {"Assign", "_ZN30CMasterParameterNpcBaseElementaSERKS_"},
     {"Dtor", "_ZN30CMasterParameterNpcBaseElementD2Ev"},
     {"DtorDelete", "_ZN30CMasterParameterNpcBaseElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterNpcBaseElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterNpcBaseElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterNpcBaseElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterNpcBaseElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterNpcBaseElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterNpcBaseElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterParameterNpcBaseElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterParameterNpcBaseElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterParameterNpcBaseElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterPersonElement: 0xb50 bytes, 51 properties (51 linked); layout from _ZN29CMasterParameterPersonElementC2Ev.
@@ -6415,6 +7524,21 @@ inline constexpr ElementMethod kCMasterParameterPersonElementMethods[] = {
     {"Dtor", "_ZN29CMasterParameterPersonElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterPersonElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterPersonElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE10ClearCacheEv"},
+    {"SetStoreAllCacheSize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE20SetStoreAllCacheSizeEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPersonElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterPersonElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterPlanetElement: 0x120 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterPlanetElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterPlanetElement {
@@ -6446,6 +7570,20 @@ inline constexpr ElementMethod kCMasterParameterPlanetElementMethods[] = {
     {"Dtor", "_ZN29CMasterParameterPlanetElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterPlanetElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterPlanetElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterPlanetElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterPlanetElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterPlayerLevelElement: 0xd0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterPlayerLevelElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterPlayerLevelElement {
@@ -6471,6 +7609,19 @@ inline constexpr ElementMethod kCMasterParameterPlayerLevelElementMethods[] = {
     {"Initialize", "_ZN34CMasterParameterPlayerLevelElement10InitializeEv"},
     {"Dtor", "_ZN34CMasterParameterPlayerLevelElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterPlayerLevelElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterPlayerLevelElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterPlayerLevelElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterPlayerLevelElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterPremiumLoginBonusContentsElement: 0x1f0 bytes, 9 properties (9 linked); layout from _ZN48CMasterParameterPremiumLoginBonusContentsElementC2Ev.
@@ -6516,6 +7667,16 @@ inline constexpr ElementMethod kCMasterParameterPremiumLoginBonusContentsElement
     {"Dtor", "_ZN48CMasterParameterPremiumLoginBonusContentsElementD2Ev"},
     {"DtorDelete", "_ZN48CMasterParameterPremiumLoginBonusContentsElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterPremiumLoginBonusContentsElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI48CMasterParameterPremiumLoginBonusContentsElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI48CMasterParameterPremiumLoginBonusContentsElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI48CMasterParameterPremiumLoginBonusContentsElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI48CMasterParameterPremiumLoginBonusContentsElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI48CMasterParameterPremiumLoginBonusContentsElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI48CMasterParameterPremiumLoginBonusContentsElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI48CMasterParameterPremiumLoginBonusContentsElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI48CMasterParameterPremiumLoginBonusContentsElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterPremiumLoginBonusElement: 0x1b0 bytes, 7 properties (7 linked); layout from _ZN40CMasterParameterPremiumLoginBonusElementC2Ev.
 class CMasterParameterPremiumLoginBonusElement {
@@ -6552,6 +7713,16 @@ inline constexpr ElementMethod kCMasterParameterPremiumLoginBonusElementMethods[
     {"CtorCopy", "_ZN40CMasterParameterPremiumLoginBonusElementC2ERKS_"},
     {"Dtor", "_ZN40CMasterParameterPremiumLoginBonusElementD2Ev"},
     {"DtorDelete", "_ZN40CMasterParameterPremiumLoginBonusElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterPremiumLoginBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterPremiumLoginBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterPremiumLoginBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterPremiumLoginBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterPremiumLoginBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterPremiumLoginBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterParameterPremiumLoginBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI40CMasterParameterPremiumLoginBonusElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterParameterPremiumLoginBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterRankElement: 0x260 bytes, 12 properties (12 linked); layout from _ZN27CMasterParameterRankElementC2Ev.
@@ -6606,6 +7777,20 @@ inline constexpr ElementMethod kCMasterParameterRankElementMethods[] = {
     {"Dtor", "_ZN27CMasterParameterRankElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterParameterRankElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterRankElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE10ClearCacheEv"},
+    {"SetStoreAllCacheSize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE20SetStoreAllCacheSizeEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRankElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterParameterRankElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterReplaceResourceElement: 0x1e0 bytes, 8 properties (8 linked); layout from _ZN38CMasterParameterReplaceResourceElementC2Ev.
 class CMasterParameterReplaceResourceElement {
@@ -6646,6 +7831,16 @@ inline constexpr ElementMethod kCMasterParameterReplaceResourceElementMethods[] 
     {"Dtor", "_ZN38CMasterParameterReplaceResourceElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterReplaceResourceElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterReplaceResourceElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterReplaceResourceElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterReplaceResourceElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterReplaceResourceElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterReplaceResourceElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterReplaceResourceElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterReplaceResourceElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterReplaceResourceElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterReplaceResourceElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterRoleBoostedElement: 0x140 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterRoleBoostedElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterRoleBoostedElement {
@@ -6678,6 +7873,18 @@ inline constexpr ElementMethod kCMasterParameterRoleBoostedElementMethods[] = {
     {"CtorCopy", "_ZN34CMasterParameterRoleBoostedElementC2ERKS_"},
     {"Dtor", "_ZN34CMasterParameterRoleBoostedElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterRoleBoostedElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterRoleBoostedElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterRoleBoostedElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterRoleBoostedElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterRoleChangeElement: 0x210 bytes, 9 properties (9 linked); layout from _ZN33CMasterParameterRoleChangeElementC2Ev.
@@ -6721,6 +7928,16 @@ inline constexpr ElementMethod kCMasterParameterRoleChangeElementMethods[] = {
     {"CtorCopy", "_ZN33CMasterParameterRoleChangeElementC2ERKS_"},
     {"Dtor", "_ZN33CMasterParameterRoleChangeElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterRoleChangeElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterRoleChangeElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterRoleChangeElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterRoleChangeElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterRoleChangeElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterRoleChangeElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterRoleChangeElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterRoleChangeElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterRoleChangeElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterRoleChangeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterRoleDeityBufferElement: 0x260 bytes, 12 properties (12 linked); layout from _ZN38CMasterParameterRoleDeityBufferElementC2Ev.
@@ -6774,6 +7991,18 @@ inline constexpr ElementMethod kCMasterParameterRoleDeityBufferElementMethods[] 
     {"Assign", "_ZN38CMasterParameterRoleDeityBufferElementaSERKS_"},
     {"Dtor", "_ZN38CMasterParameterRoleDeityBufferElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterRoleDeityBufferElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterRoleDeityBufferElementTable[] = {
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterRoleDeityBufferElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterRoleDeityBufferElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterRoleElement: 0x12c0 bytes, 90 properties (90 linked); layout from _ZN27CMasterParameterRoleElementC2Ev.
@@ -7062,6 +8291,21 @@ inline constexpr ElementMethod kCMasterParameterRoleElementMethods[] = {
     {"Dtor", "_ZN27CMasterParameterRoleElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterParameterRoleElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterRoleElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE10ClearCacheEv"},
+    {"SetStoreAllCacheSize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE20SetStoreAllCacheSizeEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterParameterRoleElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterParameterRoleElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterRoleEvolutionElement: 0x3c0 bytes, 18 properties (18 linked); layout from _ZN36CMasterParameterRoleEvolutionElementC2Ev.
 class CMasterParameterRoleEvolutionElement {
@@ -7133,6 +8377,18 @@ inline constexpr ElementMethod kCMasterParameterRoleEvolutionElementMethods[] = 
     {"Dtor", "_ZN36CMasterParameterRoleEvolutionElementD2Ev"},
     {"DtorDelete", "_ZN36CMasterParameterRoleEvolutionElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterRoleEvolutionElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterParameterRoleEvolutionElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI36CMasterParameterRoleEvolutionElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterRoleLevelMaxElement: 0xe0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterRoleLevelMaxElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterRoleLevelMaxElement {
@@ -7160,6 +8416,18 @@ inline constexpr ElementMethod kCMasterParameterRoleLevelMaxElementMethods[] = {
     {"Dtor", "_ZN35CMasterParameterRoleLevelMaxElementD2Ev"},
     {"DtorDelete", "_ZN35CMasterParameterRoleLevelMaxElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterRoleLevelMaxElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterRoleLevelMaxElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterRoleLevelMaxElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterScenarioLibraryElement: 0xe0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterScenarioLibraryElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterScenarioLibraryElement {
@@ -7186,6 +8454,16 @@ inline constexpr ElementMethod kCMasterParameterScenarioLibraryElementMethods[] 
     {"CtorCopy", "_ZN38CMasterParameterScenarioLibraryElementC2ERKS_"},
     {"Dtor", "_ZN38CMasterParameterScenarioLibraryElementD2Ev"},
     {"DtorDelete", "_ZN38CMasterParameterScenarioLibraryElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterScenarioLibraryElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterScenarioLibraryElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterScenarioLibraryElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterScenarioLibraryElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterScenarioLibraryElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterScenarioLibraryElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI38CMasterParameterScenarioLibraryElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI38CMasterParameterScenarioLibraryElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI38CMasterParameterScenarioLibraryElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterSelectPartElement: 0x1a0 bytes, 7 properties (7 linked); layout from _ZN33CMasterParameterSelectPartElementC2Ev.
@@ -7223,6 +8501,19 @@ inline constexpr ElementMethod kCMasterParameterSelectPartElementMethods[] = {
     {"CtorCopy", "_ZN33CMasterParameterSelectPartElementC2ERKS_"},
     {"Dtor", "_ZN33CMasterParameterSelectPartElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterSelectPartElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterSelectPartElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterSelectPartElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterSelectPartElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterSignalElement: 0x7e0 bytes, 40 properties (40 linked); layout from _ZN29CMasterParameterSignalElementC2Ev.
@@ -7361,6 +8652,9 @@ inline constexpr ElementMethod kCMasterParameterSignalElementMethods[] = {
     {"Dtor", "_ZN29CMasterParameterSignalElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterSignalElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterSignalElementTable[] = {
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterSignalElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterSkillElement: 0x780 bytes, 36 properties (36 linked); layout from _ZN28CMasterParameterSkillElementC2Ev.
 class CMasterParameterSkillElement {
@@ -7486,6 +8780,9 @@ inline constexpr ElementMethod kCMasterParameterSkillElementMethods[] = {
     {"Dtor", "_ZN28CMasterParameterSkillElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterParameterSkillElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterSkillElementTable[] = {
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterParameterSkillElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterSkillParameterElement: 0x280 bytes, 12 properties (12 linked); layout from _ZN37CMasterParameterSkillParameterElementC2Ev.
 class CMasterParameterSkillParameterElement {
@@ -7538,6 +8835,9 @@ inline constexpr ElementMethod kCMasterParameterSkillParameterElementMethods[] =
     {"Assign", "_ZN37CMasterParameterSkillParameterElementaSERKS_"},
     {"Dtor", "_ZN37CMasterParameterSkillParameterElementD2Ev"},
     {"DtorDelete", "_ZN37CMasterParameterSkillParameterElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterSkillParameterElementTable[] = {
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI37CMasterParameterSkillParameterElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterSoundElement: 0x430 bytes, 21 properties (21 linked); layout from _ZN28CMasterParameterSoundElementC2Ev.
@@ -7616,6 +8916,14 @@ inline constexpr ElementMethod kCMasterParameterSoundElementMethods[] = {
     {"Ctor", "_ZN28CMasterParameterSoundElementC2Ev"},
     {"Dtor", "_ZN28CMasterParameterSoundElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterParameterSoundElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterSoundElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterSoundElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterSoundElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterSoundElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterSoundElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterSoundElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterSoundElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
 };
 
 // CMasterParameterStageLayoutElement: 0xc80 bytes, 66 properties (66 linked); layout from _ZN34CMasterParameterStageLayoutElementC2Ev.
@@ -7832,6 +9140,16 @@ inline constexpr ElementMethod kCMasterParameterStageLayoutElementMethods[] = {
     {"Dtor", "_ZN34CMasterParameterStageLayoutElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterStageLayoutElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterStageLayoutElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterStageLayoutElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterStageLayoutElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterStageLayoutElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterStageLayoutElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterStageLayoutElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterStageLayoutElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterStageLayoutElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterStageLayoutElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterStampElement: 0x190 bytes, 7 properties (7 linked); layout from _ZN28CMasterParameterStampElementC2Ev.
 class CMasterParameterStampElement {
@@ -7868,6 +9186,18 @@ inline constexpr ElementMethod kCMasterParameterStampElementMethods[] = {
     {"CtorCopy", "_ZN28CMasterParameterStampElementC2ERKS_"},
     {"Dtor", "_ZN28CMasterParameterStampElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterParameterStampElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterStampElementTable[] = {
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterStampElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterParameterStampElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterStudioBgElement: 0x250 bytes, 10 properties (10 linked); layout from _ZN31CMasterParameterStudioBgElementC2Ev.
@@ -7915,6 +9245,16 @@ inline constexpr ElementMethod kCMasterParameterStudioBgElementMethods[] = {
     {"Dtor", "_ZN31CMasterParameterStudioBgElementD2Ev"},
     {"DtorDelete", "_ZN31CMasterParameterStudioBgElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterStudioBgElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterStudioBgElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterStudioBgElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterStudioBgElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterStudioBgElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterStudioBgElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterStudioBgElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterStudioBgElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterParameterStudioBgElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterTalentElement: 0x160 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterTalentElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterTalentElement {
@@ -7948,6 +9288,18 @@ inline constexpr ElementMethod kCMasterParameterTalentElementMethods[] = {
     {"Assign", "_ZN29CMasterParameterTalentElementaSERKS_"},
     {"Dtor", "_ZN29CMasterParameterTalentElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterTalentElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterTalentElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementE10ClearCacheEv"},
+    {"SetStoreAllCacheSize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementE20SetStoreAllCacheSizeEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterTalentElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterTalentElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterTitleElement: 0x230 bytes, 10 properties (10 linked); layout from _ZN28CMasterParameterTitleElementC2Ev.
@@ -7996,6 +9348,19 @@ inline constexpr ElementMethod kCMasterParameterTitleElementMethods[] = {
     {"Dtor", "_ZN28CMasterParameterTitleElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterParameterTitleElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterTitleElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterParameterTitleElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterParameterTitleElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterVoiceElement: 0x130 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterParameterVoiceElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterVoiceElement {
@@ -8027,6 +9392,9 @@ inline constexpr ElementMethod kCMasterParameterVoiceElementMethods[] = {
     {"Initialize", "_ZN28CMasterParameterVoiceElement10InitializeEv"},
     {"Dtor", "_ZN28CMasterParameterVoiceElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterParameterVoiceElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterVoiceElementTable[] = {
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterParameterVoiceElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterVoiceSwitchElement: 0x380 bytes, 15 properties (15 linked); layout from _ZN34CMasterParameterVoiceSwitchElementC2Ev.
@@ -8090,6 +9458,19 @@ inline constexpr ElementMethod kCMasterParameterVoiceSwitchElementMethods[] = {
     {"Dtor", "_ZN34CMasterParameterVoiceSwitchElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterParameterVoiceSwitchElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterVoiceSwitchElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterParameterVoiceSwitchElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterParameterVoiceSwitchElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterWeaponElement: 0x350 bytes, 15 properties (15 linked); layout from _ZN29CMasterParameterWeaponElementC2Ev.
 class CMasterParameterWeaponElement {
@@ -8151,6 +9532,17 @@ inline constexpr ElementMethod kCMasterParameterWeaponElementMethods[] = {
     {"Assign", "_ZN29CMasterParameterWeaponElementaSERKS_"},
     {"Dtor", "_ZN29CMasterParameterWeaponElementD2Ev"},
     {"DtorDelete", "_ZN29CMasterParameterWeaponElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterWeaponElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterWeaponElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterWeaponElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterWeaponElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterWeaponElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterWeaponElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI29CMasterParameterWeaponElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterWeaponElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI29CMasterParameterWeaponElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI29CMasterParameterWeaponElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterWeaponKindElement: 0x7b0 bytes, 34 properties (34 linked); layout from _ZN33CMasterParameterWeaponKindElementC2Ev.
@@ -8271,6 +9663,17 @@ inline constexpr ElementMethod kCMasterParameterWeaponKindElementMethods[] = {
     {"Dtor", "_ZN33CMasterParameterWeaponKindElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterParameterWeaponKindElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterWeaponKindElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterWeaponKindElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterWeaponKindElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterWeaponKindElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterWeaponKindElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterWeaponKindElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterParameterWeaponKindElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterWeaponKindElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterParameterWeaponKindElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterParameterWeaponKindElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterWeaponLimitBreakElement: 0x190 bytes, 7 properties (7 linked); layout from _ZN39CMasterParameterWeaponLimitBreakElementC2Ev.
 class CMasterParameterWeaponLimitBreakElement {
@@ -8307,6 +9710,16 @@ inline constexpr ElementMethod kCMasterParameterWeaponLimitBreakElementMethods[]
     {"CtorCopy", "_ZN39CMasterParameterWeaponLimitBreakElementC2ERKS_"},
     {"Dtor", "_ZN39CMasterParameterWeaponLimitBreakElementD2Ev"},
     {"DtorDelete", "_ZN39CMasterParameterWeaponLimitBreakElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterWeaponLimitBreakElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWeaponLimitBreakElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWeaponLimitBreakElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWeaponLimitBreakElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWeaponLimitBreakElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWeaponLimitBreakElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWeaponLimitBreakElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWeaponLimitBreakElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterParameterWeaponLimitBreakElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterWinCameraElement: 0x2d0 bytes, 14 properties (14 linked); layout from _ZN32CMasterParameterWinCameraElementC2Ev.
@@ -8367,6 +9780,16 @@ inline constexpr ElementMethod kCMasterParameterWinCameraElementMethods[] = {
     {"Dtor", "_ZN32CMasterParameterWinCameraElementD2Ev"},
     {"DtorDelete", "_ZN32CMasterParameterWinCameraElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterWinCameraElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterWinCameraElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterWinCameraElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterWinCameraElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterWinCameraElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterWinCameraElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI32CMasterParameterWinCameraElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI32CMasterParameterWinCameraElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI32CMasterParameterWinCameraElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterWorldMapBaseElement: 0x190 bytes, 7 properties (7 linked); layout from _ZN35CMasterParameterWorldMapBaseElementC2Ev.
 class CMasterParameterWorldMapBaseElement {
@@ -8403,6 +9826,16 @@ inline constexpr ElementMethod kCMasterParameterWorldMapBaseElementMethods[] = {
     {"CtorCopy", "_ZN35CMasterParameterWorldMapBaseElementC2ERKS_"},
     {"Dtor", "_ZN35CMasterParameterWorldMapBaseElementD2Ev"},
     {"DtorDelete", "_ZN35CMasterParameterWorldMapBaseElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterWorldMapBaseElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapBaseElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapBaseElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapBaseElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapBaseElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapBaseElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapBaseElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapBaseElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterWorldMapBaseElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterWorldMapCellElement: 0x230 bytes, 10 properties (10 linked); layout from _ZN35CMasterParameterWorldMapCellElementC2Ev.
@@ -8450,6 +9883,16 @@ inline constexpr ElementMethod kCMasterParameterWorldMapCellElementMethods[] = {
     {"Dtor", "_ZN35CMasterParameterWorldMapCellElementD2Ev"},
     {"DtorDelete", "_ZN35CMasterParameterWorldMapCellElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterWorldMapCellElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapCellElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapCellElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapCellElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapCellElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapCellElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapCellElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI35CMasterParameterWorldMapCellElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI35CMasterParameterWorldMapCellElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterWorldMapElement: 0x150 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterParameterWorldMapElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterWorldMapElement {
@@ -8483,6 +9926,19 @@ inline constexpr ElementMethod kCMasterParameterWorldMapElementMethods[] = {
     {"Dtor", "_ZN31CMasterParameterWorldMapElementD2Ev"},
     {"DtorDelete", "_ZN31CMasterParameterWorldMapElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterParameterWorldMapElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterParameterWorldMapElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterParameterWorldMapElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterParameterWorldMapGroupMissionElement: 0x110 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI43CMasterParameterWorldMapGroupMissionElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterParameterWorldMapGroupMissionElement {
@@ -8512,6 +9968,19 @@ inline constexpr ElementMethod kCMasterParameterWorldMapGroupMissionElementMetho
     {"CtorCopy", "_ZN43CMasterParameterWorldMapGroupMissionElementC2ERKS_"},
     {"Dtor", "_ZN43CMasterParameterWorldMapGroupMissionElementD2Ev"},
     {"DtorDelete", "_ZN43CMasterParameterWorldMapGroupMissionElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterWorldMapGroupMissionElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI43CMasterParameterWorldMapGroupMissionElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI43CMasterParameterWorldMapGroupMissionElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterParameterWorldMapProgressElement: 0x130 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterParameterWorldMapProgressElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
@@ -8544,6 +10013,16 @@ inline constexpr ElementMethod kCMasterParameterWorldMapProgressElementMethods[]
     {"Initialize", "_ZN39CMasterParameterWorldMapProgressElement10InitializeEv"},
     {"Dtor", "_ZN39CMasterParameterWorldMapProgressElementD2Ev"},
     {"DtorDelete", "_ZN39CMasterParameterWorldMapProgressElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterParameterWorldMapProgressElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWorldMapProgressElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWorldMapProgressElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWorldMapProgressElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWorldMapProgressElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWorldMapProgressElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWorldMapProgressElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterParameterWorldMapProgressElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterParameterWorldMapProgressElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterPartySymbolElement: 0x1c0 bytes, 8 properties (8 linked); layout from _ZN25CMasterPartySymbolElementC2Ev.
@@ -8586,6 +10065,19 @@ inline constexpr ElementMethod kCMasterPartySymbolElementMethods[] = {
     {"Dtor", "_ZN25CMasterPartySymbolElementD2Ev"},
     {"DtorDelete", "_ZN25CMasterPartySymbolElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterPartySymbolElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI25CMasterPartySymbolElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI25CMasterPartySymbolElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterRentalBonusElement: 0x150 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI25CMasterRentalBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterRentalBonusElement {
@@ -8619,6 +10111,16 @@ inline constexpr ElementMethod kCMasterRentalBonusElementMethods[] = {
     {"Assign", "_ZN25CMasterRentalBonusElementaSERKS_"},
     {"Dtor", "_ZN25CMasterRentalBonusElementD2Ev"},
     {"DtorDelete", "_ZN25CMasterRentalBonusElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterRentalBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterRentalBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterRentalBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterRentalBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterRentalBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterRentalBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI25CMasterRentalBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI25CMasterRentalBonusElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI25CMasterRentalBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterSphere211Element: 0x300 bytes, 14 properties (14 linked); layout from _ZN23CMasterSphere211ElementC2Ev.
@@ -8678,6 +10180,20 @@ inline constexpr ElementMethod kCMasterSphere211ElementMethods[] = {
     {"Assign", "_ZN23CMasterSphere211ElementaSERKS_"},
     {"Dtor", "_ZN23CMasterSphere211ElementD2Ev"},
     {"DtorDelete", "_ZN23CMasterSphere211ElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterSphere211ElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE18pParameterFromHashEj"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterSphere211ElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI23CMasterSphere211ElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterSphere211FloorAssetElement: 0x380 bytes, 18 properties (18 linked); layout from _ZN33CMasterSphere211FloorAssetElementC2Ev.
@@ -8750,6 +10266,17 @@ inline constexpr ElementMethod kCMasterSphere211FloorAssetElementMethods[] = {
     {"Dtor", "_ZN33CMasterSphere211FloorAssetElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterSphere211FloorAssetElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterSphere211FloorAssetElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211FloorAssetElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211FloorAssetElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211FloorAssetElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211FloorAssetElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211FloorAssetElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211FloorAssetElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211FloorAssetElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211FloorAssetElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterSphere211FloorAssetElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterSphere211FloorClearPresentElement: 0x130 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterSphere211FloorClearPresentElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterSphere211FloorClearPresentElement {
@@ -8781,6 +10308,18 @@ inline constexpr ElementMethod kCMasterSphere211FloorClearPresentElementMethods[
     {"Initialize", "_ZN40CMasterSphere211FloorClearPresentElement10InitializeEv"},
     {"Dtor", "_ZN40CMasterSphere211FloorClearPresentElementD2Ev"},
     {"DtorDelete", "_ZN40CMasterSphere211FloorClearPresentElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterSphere211FloorClearPresentElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorClearPresentElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterSphere211FloorClearPresentElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterSphere211FloorElement: 0x420 bytes, 20 properties (20 linked); layout from _ZN28CMasterSphere211FloorElementC2Ev.
@@ -8858,6 +10397,19 @@ inline constexpr ElementMethod kCMasterSphere211FloorElementMethods[] = {
     {"Dtor", "_ZN28CMasterSphere211FloorElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterSphere211FloorElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterSphere211FloorElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterSphere211FloorElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterSphere211FloorElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterSphere211FloorTransferLevelElement: 0x150 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI41CMasterSphere211FloorTransferLevelElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterSphere211FloorTransferLevelElement {
@@ -8891,6 +10443,16 @@ inline constexpr ElementMethod kCMasterSphere211FloorTransferLevelElementMethods
     {"Dtor", "_ZN41CMasterSphere211FloorTransferLevelElementD2Ev"},
     {"DtorDelete", "_ZN41CMasterSphere211FloorTransferLevelElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterSphere211FloorTransferLevelElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterSphere211FloorTransferLevelElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterSphere211FloorTransferLevelElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterSphere211FloorTransferLevelElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterSphere211FloorTransferLevelElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterSphere211FloorTransferLevelElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI41CMasterSphere211FloorTransferLevelElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI41CMasterSphere211FloorTransferLevelElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI41CMasterSphere211FloorTransferLevelElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterSphere211FloorTransferRateElement: 0xd0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterSphere211FloorTransferRateElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterSphere211FloorTransferRateElement {
@@ -8916,6 +10478,16 @@ inline constexpr ElementMethod kCMasterSphere211FloorTransferRateElementMethods[
     {"Initialize", "_ZN40CMasterSphere211FloorTransferRateElement10InitializeEv"},
     {"Dtor", "_ZN40CMasterSphere211FloorTransferRateElementD2Ev"},
     {"DtorDelete", "_ZN40CMasterSphere211FloorTransferRateElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterSphere211FloorTransferRateElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorTransferRateElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorTransferRateElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorTransferRateElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorTransferRateElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorTransferRateElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorTransferRateElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI40CMasterSphere211FloorTransferRateElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI40CMasterSphere211FloorTransferRateElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterSphere211MissionBoxElement: 0x130 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterSphere211MissionBoxElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
@@ -8948,6 +10520,16 @@ inline constexpr ElementMethod kCMasterSphere211MissionBoxElementMethods[] = {
     {"Initialize", "_ZN33CMasterSphere211MissionBoxElement10InitializeEv"},
     {"Dtor", "_ZN33CMasterSphere211MissionBoxElementD2Ev"},
     {"DtorDelete", "_ZN33CMasterSphere211MissionBoxElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterSphere211MissionBoxElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211MissionBoxElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211MissionBoxElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211MissionBoxElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211MissionBoxElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211MissionBoxElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211MissionBoxElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI33CMasterSphere211MissionBoxElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI33CMasterSphere211MissionBoxElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterSphere211RankingRewardElement: 0x250 bytes, 11 properties (11 linked); layout from _ZN36CMasterSphere211RankingRewardElementC2Ev.
@@ -8998,6 +10580,16 @@ inline constexpr ElementMethod kCMasterSphere211RankingRewardElementMethods[] = 
     {"Dtor", "_ZN36CMasterSphere211RankingRewardElementD2Ev"},
     {"DtorDelete", "_ZN36CMasterSphere211RankingRewardElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterSphere211RankingRewardElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterSphere211RankingRewardElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterSphere211RankingRewardElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterSphere211RankingRewardElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterSphere211RankingRewardElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterSphere211RankingRewardElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI36CMasterSphere211RankingRewardElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI36CMasterSphere211RankingRewardElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI36CMasterSphere211RankingRewardElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterSphere211RentalBonusElement: 0x170 bytes, 7 properties (7 linked); layout from _ZN34CMasterSphere211RentalBonusElementC2Ev.
 class CMasterSphere211RentalBonusElement {
@@ -9035,6 +10627,17 @@ inline constexpr ElementMethod kCMasterSphere211RentalBonusElementMethods[] = {
     {"Dtor", "_ZN34CMasterSphere211RentalBonusElementD2Ev"},
     {"DtorDelete", "_ZN34CMasterSphere211RentalBonusElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterSphere211RentalBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterSphere211RentalBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterSphere211RentalBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterSphere211RentalBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterSphere211RentalBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterSphere211RentalBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI34CMasterSphere211RentalBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterSphere211RentalBonusElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI34CMasterSphere211RentalBonusElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI34CMasterSphere211RentalBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterSphere211TreasureContentsElement: 0x130 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterSphere211TreasureContentsElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterSphere211TreasureContentsElement {
@@ -9066,6 +10669,16 @@ inline constexpr ElementMethod kCMasterSphere211TreasureContentsElementMethods[]
     {"Initialize", "_ZN39CMasterSphere211TreasureContentsElement10InitializeEv"},
     {"Dtor", "_ZN39CMasterSphere211TreasureContentsElementD2Ev"},
     {"DtorDelete", "_ZN39CMasterSphere211TreasureContentsElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterSphere211TreasureContentsElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterSphere211TreasureContentsElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterSphere211TreasureContentsElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterSphere211TreasureContentsElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterSphere211TreasureContentsElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterSphere211TreasureContentsElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterSphere211TreasureContentsElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterSphere211TreasureContentsElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterSphere211TreasureContentsElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterSphere211TreasureElement: 0x130 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterSphere211TreasureElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
@@ -9099,6 +10712,16 @@ inline constexpr ElementMethod kCMasterSphere211TreasureElementMethods[] = {
     {"Dtor", "_ZN31CMasterSphere211TreasureElementD2Ev"},
     {"DtorDelete", "_ZN31CMasterSphere211TreasureElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterSphere211TreasureElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterSphere211TreasureElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterSphere211TreasureElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterSphere211TreasureElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterSphere211TreasureElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterSphere211TreasureElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI31CMasterSphere211TreasureElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI31CMasterSphere211TreasureElementE18pParameterFromHashEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI31CMasterSphere211TreasureElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterSphere211TreasureStreakBonusElement: 0x70 bytes, 2 properties (2 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI42CMasterSphere211TreasureStreakBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterSphere211TreasureStreakBonusElement {
@@ -9118,6 +10741,16 @@ inline constexpr ElementMethod kCMasterSphere211TreasureStreakBonusElementMethod
     {"Initialize", "_ZN42CMasterSphere211TreasureStreakBonusElement10InitializeEv"},
     {"Dtor", "_ZN42CMasterSphere211TreasureStreakBonusElementD2Ev"},
     {"DtorDelete", "_ZN42CMasterSphere211TreasureStreakBonusElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterSphere211TreasureStreakBonusElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterSphere211TreasureStreakBonusElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterSphere211TreasureStreakBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterSphere211TreasureStreakBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterSphere211TreasureStreakBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterSphere211TreasureStreakBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI42CMasterSphere211TreasureStreakBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI42CMasterSphere211TreasureStreakBonusElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI42CMasterSphere211TreasureStreakBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterSubscriptionElement: 0x240 bytes, 10 properties (10 linked); layout from _ZN26CMasterSubscriptionElementC2Ev.
@@ -9166,6 +10799,17 @@ inline constexpr ElementMethod kCMasterSubscriptionElementMethods[] = {
     {"Dtor", "_ZN26CMasterSubscriptionElementD2Ev"},
     {"DtorDelete", "_ZN26CMasterSubscriptionElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterSubscriptionElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterSubscriptionElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterSubscriptionElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterSubscriptionElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterSubscriptionElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterSubscriptionElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI26CMasterSubscriptionElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterSubscriptionElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI26CMasterSubscriptionElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI26CMasterSubscriptionElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterSubscriptionPlanElement: 0x160 bytes, 6 properties (6 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterSubscriptionPlanElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterSubscriptionPlanElement {
@@ -9199,6 +10843,17 @@ inline constexpr ElementMethod kCMasterSubscriptionPlanElementMethods[] = {
     {"Assign", "_ZN30CMasterSubscriptionPlanElementaSERKS_"},
     {"Dtor", "_ZN30CMasterSubscriptionPlanElementD2Ev"},
     {"DtorDelete", "_ZN30CMasterSubscriptionPlanElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterSubscriptionPlanElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterSubscriptionPlanElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterSubscriptionPlanElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterSubscriptionPlanElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterSubscriptionPlanElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterSubscriptionPlanElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI30CMasterSubscriptionPlanElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterSubscriptionPlanElementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI30CMasterSubscriptionPlanElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI30CMasterSubscriptionPlanElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterTimeBonusElement: 0x220 bytes, 10 properties (10 linked); layout from _ZN23CMasterTimeBonusElementC2Ev.
@@ -9245,6 +10900,15 @@ inline constexpr ElementMethod kCMasterTimeBonusElementMethods[] = {
     {"CtorCopy", "_ZN23CMasterTimeBonusElementC2ERKS_"},
     {"Dtor", "_ZN23CMasterTimeBonusElementD2Ev"},
     {"DtorDelete", "_ZN23CMasterTimeBonusElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterTimeBonusElementTable[] = {
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterTimeBonusElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterTimeBonusElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterTimeBonusElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterTimeBonusElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterTimeBonusElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterTimeBonusElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI23CMasterTimeBonusElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterUniverseBoardElement: 0x240 bytes, 11 properties (11 linked); layout from _ZN27CMasterUniverseBoardElementC2Ev.
@@ -9295,6 +10959,16 @@ inline constexpr ElementMethod kCMasterUniverseBoardElementMethods[] = {
     {"Dtor", "_ZN27CMasterUniverseBoardElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterUniverseBoardElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterUniverseBoardElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterUniverseBoardElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterUniverseBoardElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterUniverseBoardElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterUniverseBoardElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterUniverseBoardElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterUniverseBoardElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterUniverseBoardElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterUniverseBoardElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterUniverseChipGachaExchangeElement: 0xd0 bytes, 4 properties (4 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterUniverseChipGachaExchangeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class CMasterUniverseChipGachaExchangeElement {
@@ -9320,6 +10994,15 @@ inline constexpr ElementMethod kCMasterUniverseChipGachaExchangeElementMethods[]
     {"Initialize", "_ZN39CMasterUniverseChipGachaExchangeElement10InitializeEv"},
     {"Dtor", "_ZN39CMasterUniverseChipGachaExchangeElementD2Ev"},
     {"DtorDelete", "_ZN39CMasterUniverseChipGachaExchangeElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterUniverseChipGachaExchangeElementTable[] = {
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterUniverseChipGachaExchangeElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterUniverseChipGachaExchangeElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterUniverseChipGachaExchangeElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterUniverseChipGachaExchangeElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI39CMasterUniverseChipGachaExchangeElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI39CMasterUniverseChipGachaExchangeElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI39CMasterUniverseChipGachaExchangeElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterUniverseTalentElement: 0x260 bytes, 11 properties (11 linked); layout from _ZN28CMasterUniverseTalentElementC2Ev.
@@ -9369,6 +11052,19 @@ inline constexpr ElementMethod kCMasterUniverseTalentElementMethods[] = {
     {"CtorCopy", "_ZN28CMasterUniverseTalentElementC2ERKS_"},
     {"Dtor", "_ZN28CMasterUniverseTalentElementD2Ev"},
     {"DtorDelete", "_ZN28CMasterUniverseTalentElementD0Ev"},
+};
+inline constexpr ElementMethod kCMasterUniverseTalentElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI28CMasterUniverseTalentElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI28CMasterUniverseTalentElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // CMasterWorldBossElement: 0x3c0 bytes, 17 properties (17 linked); layout from _ZN23CMasterWorldBossElementC2Ev.
@@ -9438,6 +11134,18 @@ inline constexpr ElementMethod kCMasterWorldBossElementMethods[] = {
     {"Dtor", "_ZN23CMasterWorldBossElementD2Ev"},
     {"DtorDelete", "_ZN23CMasterWorldBossElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterWorldBossElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQuery", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementE16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"MakeCacheKey", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementE12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj"},
+    {"InsertCustomizeCache", "_ZNK33CMasterParameterBaseSqlite_SimpleI23CMasterWorldBossElementE20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI23CMasterWorldBossElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // CMasterWorldBossWaveElement: 0x380 bytes, 17 properties (17 linked); layout from _ZN27CMasterWorldBossWaveElementC2Ev.
 class CMasterWorldBossWaveElement {
@@ -9506,6 +11214,16 @@ inline constexpr ElementMethod kCMasterWorldBossWaveElementMethods[] = {
     {"Dtor", "_ZN27CMasterWorldBossWaveElementD2Ev"},
     {"DtorDelete", "_ZN27CMasterWorldBossWaveElementD0Ev"},
 };
+inline constexpr ElementMethod kCMasterWorldBossWaveElementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterWorldBossWaveElementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterWorldBossWaveElementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterWorldBossWaveElementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterWorldBossWaveElementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterWorldBossWaveElementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI27CMasterWorldBossWaveElementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI27CMasterWorldBossWaveElementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterWorldBossWaveElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
+};
 
 // StringDBEelement: 0x140 bytes, 5 properties (5 linked); layout from _ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI16StringDBEelementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE.
 class StringDBEelement {
@@ -9536,6 +11254,17 @@ inline constexpr ElementMethod kStringDBEelementMethods[] = {
     {"Assign", "_ZN16StringDBEelementaSERKS_"},
     {"Dtor", "_ZN16StringDBEelementD2Ev"},
     {"DtorDelete", "_ZN16StringDBEelementD0Ev"},
+};
+inline constexpr ElementMethod kStringDBEelementTable[] = {
+    {"ClearCache", "_ZN33CMasterParameterBaseSqlite_SimpleI16StringDBEelementE10ClearCacheEv"},
+    {"Initialize", "_ZN33CMasterParameterBaseSqlite_SimpleI16StringDBEelementE10InitializeEv"},
+    {"Dtor", "_ZN33CMasterParameterBaseSqlite_SimpleI16StringDBEelementED2Ev"},
+    {"Deserialize", "_ZN33CMasterParameterBaseSqlite_SimpleI16StringDBEelementE11DeserializeEPKN4Aska4ASON6AValue4AMapE"},
+    {"ReleaseParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI16StringDBEelementE16ReleaseParameterEPKc"},
+    {"DeserializeParameter", "_ZN33CMasterParameterBaseSqlite_SimpleI16StringDBEelementE20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE"},
+    {"pParameterFromHash", "_ZNK33CMasterParameterBaseSqlite_SimpleI16StringDBEelementE18pParameterFromHashEj"},
+    {"ParameterByQueryMap", "_ZNK33CMasterParameterBaseSqlite_SimpleI16StringDBEelementE16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj"},
+    {"DeserializeMsgPack", "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI16StringDBEelementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE"},
 };
 
 // X(Class, vtable symbol): every element above.

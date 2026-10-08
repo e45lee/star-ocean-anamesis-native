@@ -40,7 +40,7 @@ inline void set_server(NetConfig& n, const std::string& v) {
     if (port) n.server_port = port;
 }
 
-// --device-clock, --no-patch, --lang, --voice-lang.
+// --device-clock, --no-patch, --no-dst-fix, --lang, --voice-lang.
 inline void add_device_options(CLI::App& app, Config& cfg, const std::string& group) {
     app.add_option("--device-clock", cfg.device_clock,
                    "the phone's clock (local time) at start; it runs on from there (default host: the host's real time; the "
@@ -51,6 +51,12 @@ inline void add_device_options(CLI::App& app, Config& cfg, const std::string& gr
                           "run the client without its native patches (platform370/src/patch_370.cpp): its service-end check is "
                           "live, so on a date after 2021/06/24 14:30 the title shows the service-end notice, and a coins-short "
                           "moment shows the sale-stopped dialog instead of the coin shop")
+        ->group(group);
+    app.add_flag_callback("--no-dst-fix", [&cfg] { cfg.local_time = false; },
+                          "read times as the shipped client does: CTimeUtility::str2time_t takes every time string as "
+                          "standard time, so while daylight saving is in effect the game's clock runs an hour ahead and the "
+                          "weekly event slots miss the day's last hour (docs/client-changes.md \"Local time: daylight "
+                          "saving\"; independent of --no-patch)")
         ->group(group);
     app.add_option("--lang", cfg.lang,
                    "the client's language: ja (default) runs the client as shipped; en sets its own language switch "

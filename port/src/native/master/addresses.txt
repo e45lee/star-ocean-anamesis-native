@@ -1,0 +1,14 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/master_addresses.h).
+namespace soa::native::master::g
+kMasterSqliteH         str "...Source\\Game/Parameter/Master/MasterParameterBaseSqlite.h"
+kUnorderedMapH         str "...Library/Framework/Source\\Framework/STL_UnorderedMap.h"
+kBasMaster             str "sqlite/basmaster.sqlite3"
+kConnectorIsNull       str "m_pConnector is null."
+kSqlConnectorIsNull    str "m_pSqlConnector is null."
+kPValueIsNull          str "pValue is null."
+kApArrayIsNull         str "apArray is null."
+kMsgpackInvalid        str "msgpack format invalid."
+kUtilityH              str "...Library/Framework/Source\\Framework/Utility.h"
+kStrcatSmall           str "gStrcat() : destination buffer is small. ( ( %d + %d ) < %d )"
+kFmtLangId             str "%s_%s" ref _ZN8StringDB15GetNativeStringEPKcPb   # StringDB's key: "<lang>_<id>"
+kLangJa                str "ja" ref _ZN8StringDB15GetNativeStringEPKcPb      # the language, hard-coded

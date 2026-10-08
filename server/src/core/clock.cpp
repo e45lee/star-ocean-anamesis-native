@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 
+#include <soa/local_time.h>
+
 #include "core/server.h"  // set_clock_offset, event_clock_of
 #include "soaserver/config.h"
 #include "soaserver/server.h"
@@ -43,8 +45,7 @@ bool valid_date(int y, int m, int d) {
     tm.tm_mon = m - 1;
     tm.tm_mday = d;
     tm.tm_hour = 12;
-    tm.tm_isdst = -1;
-    mktime(&tm);  // normalises e.g. Feb 29 of a common year to Mar 1
+    soa::mktime_local(&tm);  // normalises e.g. Feb 29 of a common year to Mar 1
     return tm.tm_year == y - 1900 && tm.tm_mon == m - 1 && tm.tm_mday == d;
 }
 
@@ -120,8 +121,7 @@ EventTime event_time(sqlite3* master, ServerTime t) {
     if (!year) return clock_as_calendar(t);  // (d) no term covers this month-day in any year: the real time
     struct tm e = tm;
     e.tm_year = year - 1900;
-    e.tm_isdst = -1;
-    return EventTime((int64_t)mktime(&e));
+    return EventTime(soa::mktime_local(&e));
 }
 
 }  // namespace soa::server

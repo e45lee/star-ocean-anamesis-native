@@ -38,6 +38,8 @@ struct ElementTraits;
     struct ElementTraits<C> {                                                 \
         static constexpr const char* name = #C;                               \
         static constexpr const char* ztv = ZTV;                               \
+        static constexpr const char* mangled = ZTV + 4;                       \
+        static constexpr std::span<const ElementMethod> table{k##C##Table};   \
         static constexpr std::span<const ElementProp> props{k##C##Props};     \
         static constexpr std::span<const ElementMethod> methods{k##C##Methods}; \
     };

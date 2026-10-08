@@ -25,6 +25,11 @@ void OperatorDelete(void* p) {
     live::out_call(family(), f, {(u64)p});
 }
 
+void Assert(u64 file_vaddr, int line, u64 msg_vaddr) {
+    static const u64 f = sym("_ZN9Framework9gDoAssertEPKciS1_z");
+    live::out_call(family(), f, {at(file_vaddr), (u64)(u32)line, at(msg_vaddr)});
+}
+
 }  // namespace soa::native::master::g
 
 namespace soa::native::master {

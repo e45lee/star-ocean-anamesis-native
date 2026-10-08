@@ -275,7 +275,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f68088	0x2068088	40	_ZN4Aska13Audio3DEngine8FinalizeEv	Aska::Audio3DEngine::Finalize()	mixer	decompiled	
 0x1f680b0	0x20680b0	400	_ZN4Aska13Audio3DEngine16SetAudioListenerEPNS_18HierarchicalObjectEf	Aska::Audio3DEngine::SetAudioListener(Aska::HierarchicalObject*, float)	mixer	decompiled	
 0x1f68240	0x2068240	348	_ZN4Aska13Audio3DEngine19DeleteAudioListenerEv	Aska::Audio3DEngine::DeleteAudioListener()	mixer	decompiled	
-0x1f6839c	0x206839c	424	_ZN4Aska13Audio3DObject12UpdateMatrixEv	Aska::Audio3DObject::UpdateMatrix()	mixer	decompiled	
+0x1f6839c	0x206839c	424	_ZN4Aska13Audio3DObject12UpdateMatrixEv	Aska::Audio3DObject::UpdateMatrix()	mixer	tested	audio_3d.cpp; live check audio
 0x1f68544	0x2068544	32	_ZN4Aska13Audio3DEngine19Func3DObjectDeletedEPKNS_18HierarchicalObjectE	Aska::Audio3DEngine::Func3DObjectDeleted(Aska::HierarchicalObject const*)	mixer	decompiled	
 0x1f68564	0x2068564	56	_ZN4Aska13Audio3DEngine15AddAudioEmitterEPNS_12AudioEmitterE	Aska::Audio3DEngine::AddAudioEmitter(Aska::AudioEmitter*)	mixer	decompiled	
 0x1f685c0	0x20685c0	144	_ZN4Aska13Audio3DEngine18DeleteAudioEmitterEPNS_12AudioEmitterE	Aska::Audio3DEngine::DeleteAudioEmitter(Aska::AudioEmitter*)	mixer	decompiled	
@@ -286,7 +286,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f69a94	0x2069a94	76	_ZN4Aska13AudioListenerC2Ev	Aska::AudioListener::AudioListener()	mixer	decompiled	
 0x1f69ae0	0x2069ae0	20	_ZN4Aska13AudioListenerD1Ev	Aska::AudioListener::~AudioListener()	mixer	decompiled	
 0x1f69af4	0x2069af4	40	_ZN4Aska13AudioListenerD0Ev	Aska::AudioListener::~AudioListener()	mixer	decompiled	
-0x1f69b1c	0x2069b1c	408	_ZN4Aska13AudioListener7ComputeEv	Aska::AudioListener::Compute()	mixer	decompiled	
+0x1f69b1c	0x2069b1c	408	_ZN4Aska13AudioListener7ComputeEv	Aska::AudioListener::Compute()	mixer	tested	audio_3d.cpp; live check audio
 0x1f69cb4	0x2069cb4	112	_ZN4Aska12AudioEmitterC1Ev	Aska::AudioEmitter::AudioEmitter()	mixer	decompiled	
 0x1f69d24	0x2069d24	20	_ZN4Aska12AudioEmitterD1Ev	Aska::AudioEmitter::~AudioEmitter()	mixer	decompiled	
 0x1f69d38	0x2069d38	40	_ZN4Aska12AudioEmitterD0Ev	Aska::AudioEmitter::~AudioEmitter()	mixer	decompiled	
@@ -295,15 +295,15 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f6a514	0x206a514	40	_ZN4Aska13Audio3DObjectD0Ev	Aska::Audio3DObject::~Audio3DObject()	mixer	decompiled	
 0x1f6a53c	0x206a53c	124	_ZN4Aska10Sequencer2C2Ev	Aska::Sequencer2::Sequencer2()	sound_manager	decompiled	
 0x1f6a5b8	0x206a5b8	40	_ZN4Aska10Sequencer2D2Ev	Aska::Sequencer2::~Sequencer2()	sound_manager	decompiled	
-0x1f6a5e0	0x206a5e0	428	_ZN4Aska10Sequencer220DeleteAllMessageNoteEv	Aska::Sequencer2::DeleteAllMessageNote()	sound_manager	decompiled	
+0x1f6a5e0	0x206a5e0	428	_ZN4Aska10Sequencer220DeleteAllMessageNoteEv	Aska::Sequencer2::DeleteAllMessageNote()	sound_manager	tested	audio_sequencer.cpp; live check audio
 0x1f6a790	0x206a790	60	_ZN4Aska10Sequencer2D0Ev	Aska::Sequencer2::~Sequencer2()	sound_manager	decompiled	
-0x1f6a7cc	0x206a7cc	80	_ZN4Aska10Sequencer28AudioRunEv	Aska::Sequencer2::AudioRun()	sound_manager	decompiled	
-0x1f6a81c	0x206a81c	1024	_ZN4Aska10Sequencer218ArrangeMessageNoteEv	Aska::Sequencer2::ArrangeMessageNote()	sound_manager	decompiled	
-0x1f6ac1c	0x206ac1c	728	_ZN4Aska10Sequencer218ProcessMessageNoteEv	Aska::Sequencer2::ProcessMessageNote()	sound_manager	decompiled	
-0x1f6af34	0x206af34	44	_ZNK4Aska10Sequencer213IsWaitingNoteEPNS_16AudioMessageNoteE	Aska::Sequencer2::IsWaitingNote(Aska::AudioMessageNote*) const	sound_manager	decompiled	
-0x1f6af60	0x206af60	420	_ZN4Aska10Sequencer217DeleteMessageNoteEPNS_16AudioMessageNoteE	Aska::Sequencer2::DeleteMessageNote(Aska::AudioMessageNote*)	sound_manager	decompiled	
-0x1f6b104	0x206b104	496	_ZN4Aska10Sequencer214AddMessageNoteEjfPKvS2_	Aska::Sequencer2::AddMessageNote(unsigned int, float, void const*, void const*)	sound_manager	decompiled	
-0x1f6b318	0x206b318	8	_ZN4Aska10Sequencer217WaitingNoteNotify7HandlerEm	Aska::Sequencer2::WaitingNoteNotify::Handler(unsigned long)	sound_manager	decompiled	
+0x1f6a7cc	0x206a7cc	80	_ZN4Aska10Sequencer28AudioRunEv	Aska::Sequencer2::AudioRun()	sound_manager	tested	audio_sequencer.cpp; live-checked inside ProcessMessageNote / AudioRun (native callers)
+0x1f6a81c	0x206a81c	1024	_ZN4Aska10Sequencer218ArrangeMessageNoteEv	Aska::Sequencer2::ArrangeMessageNote()	sound_manager	tested	audio_sequencer.cpp; live check audio
+0x1f6ac1c	0x206ac1c	728	_ZN4Aska10Sequencer218ProcessMessageNoteEv	Aska::Sequencer2::ProcessMessageNote()	sound_manager	tested	audio_sequencer.cpp; live check audio
+0x1f6af34	0x206af34	44	_ZNK4Aska10Sequencer213IsWaitingNoteEPNS_16AudioMessageNoteE	Aska::Sequencer2::IsWaitingNote(Aska::AudioMessageNote*) const	sound_manager	tested	audio_sequencer.cpp; live-checked inside ProcessMessageNote / AudioRun (native callers)
+0x1f6af60	0x206af60	420	_ZN4Aska10Sequencer217DeleteMessageNoteEPNS_16AudioMessageNoteE	Aska::Sequencer2::DeleteMessageNote(Aska::AudioMessageNote*)	sound_manager	tested	audio_sequencer.cpp; live-checked inside ProcessMessageNote / AudioRun (native callers)
+0x1f6b104	0x206b104	496	_ZN4Aska10Sequencer214AddMessageNoteEjfPKvS2_	Aska::Sequencer2::AddMessageNote(unsigned int, float, void const*, void const*)	sound_manager	tested	audio_sequencer.cpp; live check audio
+0x1f6b318	0x206b318	8	_ZN4Aska10Sequencer217WaitingNoteNotify7HandlerEm	Aska::Sequencer2::WaitingNoteNotify::Handler(unsigned long)	sound_manager	tested	audio_sequencer.cpp; live-checked inside ProcessMessageNote / AudioRun (native callers)
 0x1f6b320	0x206b320	4	_ZN4Aska10Sequencer217WaitingNoteNotifyD0Ev	Aska::Sequencer2::WaitingNoteNotify::~WaitingNoteNotify()	sound_manager	decompiled	
 0x1f6b36c	0x206b36c	4	_ZN4Aska16AudioMessageNoteD0Ev	Aska::AudioMessageNote::~AudioMessageNote()	mixer	decompiled	
 0x1f6b410	0x206b410	104	_ZN4Aska12SoundManager11InstantiateEv	Aska::SoundManager::Instantiate()	sound_manager	decompiled	
@@ -316,11 +316,11 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f6bbf0	0x206bbf0	152	_ZN4Aska12SoundManager22CheckDeleteSoundObjectEv	Aska::SoundManager::CheckDeleteSoundObject()	sound_manager	decompiled	
 0x1f6bc88	0x206bc88	264	_ZN4Aska12SoundManager17DeleteSoundObjectEPNS_11SoundObjectEb	Aska::SoundManager::DeleteSoundObject(Aska::SoundObject*, bool)	sound_manager	decompiled	
 0x1f6bd90	0x206bd90	36	_ZNK4Aska12SoundManager11IsAvailableEPNS_11SoundObjectE	Aska::SoundManager::IsAvailable(Aska::SoundObject*) const	sound_manager	decompiled	
-0x1f6bdb4	0x206bdb4	376	_ZNK4Aska12SoundManager16QuerySoundHandleEPNS_11SoundObjectE	Aska::SoundManager::QuerySoundHandle(Aska::SoundObject*) const	sound_manager	decompiled	
+0x1f6bdb4	0x206bdb4	376	_ZNK4Aska12SoundManager16QuerySoundHandleEPNS_11SoundObjectE	Aska::SoundManager::QuerySoundHandle(Aska::SoundObject*) const	sound_manager	tested	audio_sound_manager.cpp; live check audio
 0x1f6bf2c	0x206bf2c	96	_ZN4Aska12SoundManager18AcquireSoundObjectEj	Aska::SoundManager::AcquireSoundObject(unsigned int)	sound_manager	decompiled	
-0x1f6bf8c	0x206bf8c	372	_ZN4Aska12SoundManager14AddSoundHandleEPNS_11SoundHandleE	Aska::SoundManager::AddSoundHandle(Aska::SoundHandle*)	sound_manager	decompiled	
+0x1f6bf8c	0x206bf8c	372	_ZN4Aska12SoundManager14AddSoundHandleEPNS_11SoundHandleE	Aska::SoundManager::AddSoundHandle(Aska::SoundHandle*)	sound_manager	tested	audio_sound_manager.cpp; live check audio
 0x1f6c100	0x206c100	96	_ZN4Aska12SoundManager18ReleaseSoundObjectEPNS_11SoundObjectE	Aska::SoundManager::ReleaseSoundObject(Aska::SoundObject*)	sound_manager	decompiled	
-0x1f6c160	0x206c160	392	_ZN4Aska12SoundManager17RemoveSoundHandleEPNS_11SoundHandleE	Aska::SoundManager::RemoveSoundHandle(Aska::SoundHandle*)	sound_manager	decompiled	
+0x1f6c160	0x206c160	392	_ZN4Aska12SoundManager17RemoveSoundHandleEPNS_11SoundHandleE	Aska::SoundManager::RemoveSoundHandle(Aska::SoundHandle*)	sound_manager	tested	audio_sound_manager.cpp; live-checked inside the walkers (native callers); its own check when the guest calls it
 0x1f6c2e8	0x206c2e8	104	_ZNK4Aska12SoundManager16QuerySoundObjectEPNS_11SoundObjectE	Aska::SoundManager::QuerySoundObject(Aska::SoundObject*) const	sound_manager	decompiled	
 0x1f6c350	0x206c350	80	_ZN4Aska12SoundManager14AddSoundObjectEPNS_11SoundObjectE	Aska::SoundManager::AddSoundObject(Aska::SoundObject*)	sound_manager	decompiled	
 0x1f6c3a0	0x206c3a0	24	_ZN4Aska12SoundManager36SetDefaultDirectPlaybackSettingsBaseEPNS_26DirectPlaybackSettingsBaseE	Aska::SoundManager::SetDefaultDirectPlaybackSettingsBase(Aska::DirectPlaybackSettingsBase*)	sound_manager	decompiled	
@@ -342,14 +342,14 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f6ce24	0x206ce24	836	_ZN4Aska12SoundManagerD2Ev	Aska::SoundManager::~SoundManager()	sound_manager	decompiled	
 0x1f6d1f0	0x206d1f0	24	_ZN4Aska12SoundManagerD0Ev	Aska::SoundManager::~SoundManager()	sound_manager	decompiled	
 0x1f6d208	0x206d208	132	_ZN4Aska12SoundManager20DeleteAllSoundObjectEv	Aska::SoundManager::DeleteAllSoundObject()	sound_manager	decompiled	
-0x1f6d28c	0x206d28c	528	_ZN4Aska12SoundManager24FlushDeletingSoundObjectEv	Aska::SoundManager::FlushDeletingSoundObject()	sound_manager	decompiled	
+0x1f6d28c	0x206d28c	528	_ZN4Aska12SoundManager24FlushDeletingSoundObjectEv	Aska::SoundManager::FlushDeletingSoundObject()	sound_manager	tested	audio_sound_manager.cpp; live check audio
 0x1f6d49c	0x206d49c	96	_ZN4Aska12SoundManager13StopAllSignalEv	Aska::SoundManager::StopAllSignal()	sound_manager	decompiled	
 0x1f6d4fc	0x206d4fc	32	_ZN4Aska12SoundManager3RunEi	Aska::SoundManager::Run(int)	sound_manager	decompiled	
-0x1f6d51c	0x206d51c	636	_ZN4Aska12SoundManager20UpdateAllSoundStatusEv	Aska::SoundManager::UpdateAllSoundStatus()	sound_manager	decompiled	
+0x1f6d51c	0x206d51c	636	_ZN4Aska12SoundManager20UpdateAllSoundStatusEv	Aska::SoundManager::UpdateAllSoundStatus()	sound_manager	tested	audio_sound_manager.cpp; live check audio
 0x1f6d798	0x206d798	920	_ZN4Aska12SoundManager21PauseInterruptProcessEv	Aska::SoundManager::PauseInterruptProcess()	sound_manager	decompiled	
 0x1f6db30	0x206db30	904	_ZN4Aska12SoundManager22ResumeInterruptProcessEv	Aska::SoundManager::ResumeInterruptProcess()	sound_manager	decompiled	
-0x1f6deb8	0x206deb8	676	_ZN4Aska12SoundManager18ArrangeCommandListEv	Aska::SoundManager::ArrangeCommandList()	sound_manager	decompiled	
-0x1f6e15c	0x206e15c	964	_ZN4Aska12SoundManager18ProcessCommandListEv	Aska::SoundManager::ProcessCommandList()	sound_manager	decompiled	
+0x1f6deb8	0x206deb8	676	_ZN4Aska12SoundManager18ArrangeCommandListEv	Aska::SoundManager::ArrangeCommandList()	sound_manager	tested	audio_sound_manager.cpp; live check audio
+0x1f6e15c	0x206e15c	964	_ZN4Aska12SoundManager18ProcessCommandListEv	Aska::SoundManager::ProcessCommandList()	sound_manager	tested	audio_sound_manager.cpp; live check audio
 0x1f6e520	0x206e520	256	_ZN4Aska12SoundManager16ProcessSoundPassEv	Aska::SoundManager::ProcessSoundPass()	sound_manager	decompiled	
 0x1f6e620	0x206e620	76	_ZN4Aska12SoundManager18ProcessAudioDeviceEv	Aska::SoundManager::ProcessAudioDevice()	sound_manager	decompiled	
 0x1f6e66c	0x206e66c	320	_ZN4Aska12SoundManager28UpdateReadDeviceAccessStatusEv	Aska::SoundManager::UpdateReadDeviceAccessStatus()	sound_manager	decompiled	
@@ -357,7 +357,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f6e82c	0x206e82c	32	_ZN4Aska12SoundManager32SetDefaultDirectPlaybackSettingsEPNS_22DirectPlaybackSettingsE	Aska::SoundManager::SetDefaultDirectPlaybackSettings(Aska::DirectPlaybackSettings*)	sound_manager	decompiled	
 0x1f6e84c	0x206e84c	4	_ZN4Aska12SoundManager35AdxSetDefaultDirectPlaybackSettingsEPNS_25AdxDirectPlaybackSettingsE	Aska::SoundManager::AdxSetDefaultDirectPlaybackSettings(Aska::AdxDirectPlaybackSettings*)	sound_manager	decompiled	
 0x1f6e850	0x206e850	408	_ZN4Aska12SoundManager9PlaySoundEmbjjPKNS_22DirectPlaybackSettingsE	Aska::SoundManager::PlaySound(unsigned long, bool, unsigned int, unsigned int, Aska::DirectPlaybackSettings const*)	sound_manager	decompiled	
-0x1f6e9e8	0x206e9e8	372	_ZN4Aska12SoundManager15AddSoundCommandEPNS_12SoundCommandE	Aska::SoundManager::AddSoundCommand(Aska::SoundCommand*)	sound_manager	decompiled	
+0x1f6e9e8	0x206e9e8	372	_ZN4Aska12SoundManager15AddSoundCommandEPNS_12SoundCommandE	Aska::SoundManager::AddSoundCommand(Aska::SoundCommand*)	sound_manager	tested	audio_sound_manager.cpp; live check audio
 0x1f6eb5c	0x206eb5c	116	_ZN4Aska12SoundManager9StopSoundEPNS_11SoundObjectEj	Aska::SoundManager::StopSound(Aska::SoundObject*, unsigned int)	sound_manager	decompiled	
 0x1f6ebd0	0x206ebd0	100	_ZN4Aska12SoundManager12StopAllSoundEj	Aska::SoundManager::StopAllSound(unsigned int)	sound_manager	decompiled	
 0x1f6ec34	0x206ec34	108	_ZN4Aska12SoundManager10PauseSoundEPNS_11SoundObjectE	Aska::SoundManager::PauseSound(Aska::SoundObject*)	sound_manager	decompiled	
@@ -380,8 +380,8 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f6f6b0	0x206f6b0	92	_ZN4Aska12SoundManager28IsConnectedAuxiliaryEffectorEjPjS1_	Aska::SoundManager::IsConnectedAuxiliaryEffector(unsigned int, unsigned int*, unsigned int*)	sound_manager	decompiled	
 0x1f6f70c	0x206f70c	60	_ZN4Aska12SoundManager20GetInsertionEffectorEj	Aska::SoundManager::GetInsertionEffector(unsigned int)	sound_manager	decompiled	
 0x1f6f748	0x206f748	68	_ZN4Aska12SoundManager20GetAuxiliaryEffectorEj	Aska::SoundManager::GetAuxiliaryEffector(unsigned int)	sound_manager	decompiled	
-0x1f6f78c	0x206f78c	392	_ZN4Aska12SoundManager18RemoveSoundCommandEPNS_12SoundCommandE	Aska::SoundManager::RemoveSoundCommand(Aska::SoundCommand*)	sound_manager	decompiled	
-0x1f6f914	0x206f914	384	_ZN4Aska12SoundManager18InsertSoundCommandEPNS_12SoundCommandES2_	Aska::SoundManager::InsertSoundCommand(Aska::SoundCommand*, Aska::SoundCommand*)	sound_manager	decompiled	
+0x1f6f78c	0x206f78c	392	_ZN4Aska12SoundManager18RemoveSoundCommandEPNS_12SoundCommandE	Aska::SoundManager::RemoveSoundCommand(Aska::SoundCommand*)	sound_manager	tested	audio_sound_manager.cpp; live-checked inside the walkers (native callers); its own check when the guest calls it
+0x1f6f914	0x206f914	384	_ZN4Aska12SoundManager18InsertSoundCommandEPNS_12SoundCommandES2_	Aska::SoundManager::InsertSoundCommand(Aska::SoundCommand*, Aska::SoundCommand*)	sound_manager	tested	audio_sound_manager.cpp; live-checked inside the walkers (native callers); its own check when the guest calls it
 0x1f6fad4	0x206fad4	72	_ZN4Aska12SoundManager22AcquireAuxiliaryDeviceEj	Aska::SoundManager::AcquireAuxiliaryDevice(unsigned int)	sound_manager	decompiled	
 0x1f6fb1c	0x206fb1c	72	_ZN4Aska12SoundManager22ReleaseAuxiliaryDeviceEj	Aska::SoundManager::ReleaseAuxiliaryDevice(unsigned int)	sound_manager	decompiled	
 0x1f6fb64	0x206fb64	388	_ZNK4Aska12SoundManager19QueryAudioInterfaceEPNS_14AudioConnectorE	Aska::SoundManager::QueryAudioInterface(Aska::AudioConnector*) const	sound_manager	decompiled	
@@ -444,7 +444,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f72ca0	0x2072ca0	56	_ZN4Aska13TDynamicQueueINS_11SoundObject16RequestContainerELb1EED2Ev	Aska::TDynamicQueue<Aska::SoundObject::RequestContainer, true>::~TDynamicQueue()	sound_manager	decompiled	
 0x1f72cd8	0x2072cd8	24	_ZN4Aska11SoundObjectD0Ev	Aska::SoundObject::~SoundObject()	sound_manager	decompiled	
 0x1f72cf0	0x2072cf0	56	_ZN4Aska11SoundObject10DeleteThisEv	Aska::SoundObject::DeleteThis()	sound_manager	decompiled	
-0x1f72d28	0x2072d28	456	_ZN4Aska12SoundManager22AddDeletingSoundObjectEPNS_11SoundObjectE	Aska::SoundManager::AddDeletingSoundObject(Aska::SoundObject*)	sound_manager	decompiled	
+0x1f72d28	0x2072d28	456	_ZN4Aska12SoundManager22AddDeletingSoundObjectEPNS_11SoundObjectE	Aska::SoundManager::AddDeletingSoundObject(Aska::SoundObject*)	sound_manager	tested	audio_sound_manager.cpp; live check audio
 0x1f72ef0	0x2072ef0	336	_ZN4Aska11SoundObject8PlaybackEjPNS_11AudioPlayerEPKNS_22DirectPlaybackSettingsE	Aska::SoundObject::Playback(unsigned int, Aska::AudioPlayer*, Aska::DirectPlaybackSettings const*)	sound_manager	decompiled	
 0x1f73040	0x2073040	288	_ZN4Aska11SoundObject8AudioRunEv	Aska::SoundObject::AudioRun()	sound_manager	decompiled	
 0x1f73160	0x2073160	380	_ZN4Aska11SoundObject10RequestGetEPNS0_16RequestContainerE	Aska::SoundObject::RequestGet(Aska::SoundObject::RequestContainer*)	sound_manager	decompiled	

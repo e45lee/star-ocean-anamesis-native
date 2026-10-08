@@ -214,8 +214,36 @@ def test_tap_to_screen_waits_for_its_fingerprint(tmp_path, images):
     # a tap that leads through another screen to the one wanted: no retap while it moves on
     s = FakeRun(tmp_path, images, "a", {("a", "1:1"): ["black", "anim0", "anim0", "b"]})
     is_b = lambda p: screens.rmse(p, images["b"]) < 0.01
-    assert common.tap_to_screen(s, "a -> b", "1:1", is_screen=is_b, secs=20, retap_after=0) is not None
+    assert common.tap_to_screen(s, "a -> b", "1:1", is_screen=is_b, secs=20, retap_after=6) is not None
     assert s.sent.count("tap:1:1") == 1
+
+
+def test_tap_to_screen_retaps_on_another_settled_screen(tmp_path, images):
+    # the tap came while the screen was changing (a list refreshing): it settles on a new screen
+    # that isn't the one wanted, and the tap is made again there
+    s = FakeRun(tmp_path, images, "a", {("a", "1:1"): "anim0", ("anim0", "1:1"): "b"})
+    is_b = lambda p: screens.rmse(p, images["b"]) < 0.01
+    assert common.tap_to_screen(s, "a -> b", "1:1", is_screen=is_b, secs=20, retap_after=0) is not None
+    assert s.sent.count("tap:1:1") == 2
+
+
+def test_scroll_to_end(tmp_path, images):
+    # each drag moves the list one screen until its end (b): the drag that changes nothing ends it
+    s = FakeRun(tmp_path, images, "a", {("a", "drag:1:2:3:4"): "pulse", ("pulse", "drag:1:2:3:4"): "b"})
+    orig = s.send
+
+    def send(cmds, timeout=None):  # drags are commands of their own here
+        for c in cmds:
+            if c.startswith("drag:"):
+                nxt = s.taps.get((s.current(), c))
+                if nxt:
+                    s.set(nxt)
+        return orig([c for c in cmds if not c.startswith("drag:")], timeout)
+
+    s.send = send
+    s.ctl = lambda *cmds: send(list(cmds))
+    assert common.scroll_to_end(s, "drag:1:2:3:4", "end")
+    assert screens.rmse(s.scratch("end.png"), images["b"]) < 0.01
 
 
 def test_tap_to_log(tmp_path, images):

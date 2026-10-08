@@ -10,6 +10,7 @@ says why next to it. Every target (soa, soa --server, soa-emu) has the screens a
 log; the phase lines are soa's only. sessions/common.py re-exports these."""
 import os
 import re
+import shutil
 import time
 
 from . import milestones, screens
@@ -100,12 +101,33 @@ def tap_settled(s, xy, shot=None, mask=(), secs=20):
     return settle(s, shot, secs, mask)
 
 
+def scroll_to_end(s, drag, shot=None, tries=6, mask=()):
+    """A list scrolled to its end: the drag (a drag:X1:Y1:X2:Y2 command) until the settled screen
+    stops changing (at the end a drag moves nothing), at most `tries` drags; a fixed number of drags
+    left the list short when one was lost or scrolled less (its momentum varies). Keeps the end as
+    SHOT. True when the end was seen."""
+    prev = s.scratch(".scroll-prev.png")
+    path = settle(s, mask=mask) or look(s)
+    for i in range(tries):
+        if path:
+            shutil.copyfile(path, prev)
+        s.ctl(drag)
+        path = settle(s, mask=mask) or look(s)
+        if path and os.path.exists(prev) and screens.rmse(prev, path, mask, screens.WATCH_SIZE) <= 0.01:
+            _keep(s, shot, path)
+            return True
+    _keep(s, shot, path)
+    s.note("the list didn't stop moving after %d drags (%s)" % (tries, drag))
+    return False
+
+
 def tap_to_screen(s, name, xy, shot=None, is_screen=None, secs=40, tries=3, retap_after=6, mask=(), changed=0.02,
                   fatal=True, cmds=None, hold=1):
     """Taps xy (or sends cmds) and waits until the screen it leads to settles (settle):
     is_screen(path) (a popups.is_* fingerprint), or without one any screen that differs from the
     one tapped (RMSE above `changed` at screens.WATCH_SIZE). A lost tap (the screen still the one
-    tapped, and settled, `retap_after` s after the tap) is made again, at most `tries` taps in all.
+    tapped, and settled, `retap_after` s after the tap; with is_screen: any other screen settled that
+    long) is made again, at most `tries` taps in all.
     PASS / FAIL name (gave_up: Abort when fatal); keeps the screen as SHOT. Returns its path or
     None. For taps whose effect is a log line (a phase, a request), tap_to_log is the better wait;
     for a tap that changes little or toggles, tap_settled. hold: as settle's (a screen that pauses
@@ -114,16 +136,30 @@ def tap_to_screen(s, name, xy, shot=None, is_screen=None, secs=40, tries=3, reta
     if look(s, ".before.png") is None:
         before = None
     w = screens.Watch(s.send, s.scratch(".screen.png"), mask, hold=hold)
-    taps, tapped, settled = 0, 0.0, False
+    taps, tapped, settled, since = 0, 0.0, False, None
     end = time.monotonic() + secs
     while True:
-        if taps == 0 or (taps < tries and before and time.monotonic() - tapped >= retap_after
-                         and settled and not w.differs(before, changed)):
+        now = time.monotonic()
+        if taps == 0:
+            retap = True
+        elif taps >= tries or not settled or now - max(tapped, since or now) < retap_after:
+            retap = False
+        elif is_screen:
+            # settled a while on a screen that isn't the one wanted: the tap went nowhere (it came
+            # while the screen was still changing, e.g. a list refreshing after a request)
+            retap = True
+        else:
+            retap = before is not None and not w.differs(before, changed)
+        if retap:
             if taps:
-                s.note("%s: the screen didn't change; tapping again (%d)" % (name, taps + 1))
+                s.note("%s: %s; tapping again (%d)" % (name, "not there yet" if is_screen else "the screen didn't change", taps + 1))
             s.ctl(*(cmds or ["tap:" + xy]))
             taps, tapped = taps + 1, time.monotonic()
         settled = w.look()
+        if not settled:
+            since = None
+        elif since is None:
+            since = time.monotonic()
         if settled and (is_screen(w.path) if is_screen else (before is None or w.differs(before, changed))):
             w.done()
             _keep(s, shot, w.path)

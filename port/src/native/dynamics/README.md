@@ -71,9 +71,8 @@ and the primitives / contact / velocity helpers under the native solver
 (`only=14DynamicsSphere|13DynamicsPlane|15DynamicsCapsule|12DynamicsCube|DYNAMICS|@0x232a|@0x232ac`:
 3.0M checks, 76 races, and 2 differences of `DynamicsCapsule::Update`'s +0x80 the race rerun didn't
 classify: several ADMs share a character's collision capsules, and their CollisionSetting passes call
-`Update` on the same primitive from different dynamics workers with different step fractions, a race
-of the game's (the same offset shows 14 classified races in that run; the random tests and the other
-runs: 0).
+`Update` on the same primitive from different dynamics workers, a race of the game's. The same run
+with `--guest-cpus 1` (one dynamics worker): 2.98M checks, 0 mismatches, 0 races).
 
 A native another native calls (ADMJoint::PrepareCalc from ArticulatedDynamicsManagerBase::PrepareCalc,
 ADMJoint::Flush from Flush) is called as C++ normally, but through its guest entry while the family's

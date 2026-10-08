@@ -235,6 +235,11 @@ LabelStates& label_states();
 // window's own FontSize 30 and line spacing 10, CEventScenarioMessageWindow::Show).
 double story_scale(std::string_view message, const soa::text::MeasureText& measure, double box_w, double box_h);
 
+// The character profile's description (english.md 7.16): a text with paragraphs (blank lines) fitted
+// into a box, each paragraph's breaks collapsed and re-broken for the largest scale (1% steps) at
+// which the whole text fits; a text without a blank line is soa::text::fit_box's.
+soa::text::BoxFit fit_paragraphs(std::string_view text, double box_w, double box_h, const soa::text::MeasureText& measure);
+
 // E10, the room a label's layout gives it (english.md 7.15): a node's rectangle in world units, y
 // down; (x, y) is its anchor point, (ax, ay) the anchor as the node holds it (+0x84; ay from the top:
 // Cocos Studio's AnchorPoint 1 reads 0), w x h its size.

@@ -504,14 +504,77 @@ double lines_height(const CCocosLabel* l, int lines) {
     return h;
 }
 
-void fit_talk(u64 label) {
+// The character profile's description (UI/etc2/character_profile.csf pop_profile/window/title_bar/
+// Text_4; english.md 7.16): FontSize 24, no IsCustomSize, so an English profile (the data's lines,
+// broken at the Japanese row's width: up to 15) ran past the window onto its Close button. Like the
+// talk box, the text is laid out for the box the Japanese was written for: (b) the layout's
+// placeholder, 12 lines of up to 23 full-width characters at FontSize 24 (552 units), the largest
+// Japanese profile 11 lines. Its paragraphs (blank lines, Global's official rows) are kept; the lines
+// inside a paragraph are re-broken at the box's width for the largest scale that fits (fit_paragraphs).
+constexpr float kProfileBoxW = 552.f;
+constexpr int kProfileLines = 12;
+
+bool is_profile_text(const CCocosLabel* l) {
+    if (l->name() != "Text_4") return false;
+    const cocos::CCocosNode* bar = l->parent();
+    if (!bar || bar->m_name.view() != "title_bar") return false;
+    const cocos::CCocosNode* win = (const cocos::CCocosNode*)(uintptr_t)bar->m_parent;
+    if (!win || win->m_name.view() != "window") return false;
+    const cocos::CCocosNode* pop = (const cocos::CCocosNode*)(uintptr_t)win->m_parent;
+    return pop && pop->m_name.view() == "pop_profile";
+}
+
+}  // namespace
+
+// A text with paragraphs (blank lines) fitted into a box: each paragraph's own line breaks collapsed,
+// the paragraphs re-broken at box_w / k for the largest k (<= 1, in steps of 1%) at which the whole
+// text is at most box_h / k high; the scale is what DrawSelf's shrink then gives. A text without a
+// blank line is fit_box's.
+soa::text::BoxFit text::fit_paragraphs(std::string_view text, double box_w, double box_h, const soa::text::MeasureText& measure) {
+    if (text.find("\n\n") == std::string_view::npos) return soa::text::fit_box(text, box_w, box_h, measure);
+    std::string flat;  // single breaks inside a paragraph -> spaces; blank lines kept
+    for (size_t i = 0; i < text.size(); i++) {
+        if (text[i] != '\n') {
+            flat += text[i];
+            continue;
+        }
+        size_t j = i;
+        while (j < text.size() && text[j] == '\n') j++;
+        flat += j - i >= 2 ? std::string(j - i, '\n') : std::string(" ");
+        i = j - 1;
+    }
+    soa::text::BreakOptions o;
+    o.keep_breaks = true, o.skip_japanese = true, o.tags_are_words = true;
+    auto width = [&](std::string_view line) { return measure(line).w; };
+    soa::text::BoxFit best{flat, 1};
+    for (int pct = 100; pct >= 30; pct--) {
+        double k = pct / 100.0;
+        std::string out = soa::text::break_lines(flat, box_w / k, width, o);
+        soa::text::Extent e = measure(out);
+        best = {out, fit_scale(e.w, e.h, box_w, box_h)};
+        if (e.h * k <= box_h + 0.01 && e.w * k <= box_w + 0.01) break;
+    }
+    return best;
+}
+
+namespace {
+
+// E12 and the profile: a label laid out for the box the Japanese was written for.
+struct FixedBox {
+    const char* what;  // for the log
+    float w;
+    int lines;
+    bool paragraphs;   // keep blank lines (fit_paragraphs), else fit_box (breaks collapsed)
+};
+
+void fit_fixed(u64 label, const FixedBox& fb) {
     CCocosLabel* l = as_label(label);
     text::LabelStates& st = text::label_states();
     std::string_view s = l->text();
     std::string src;
     bool ours = st.original_of(label, s, &src);
     if (!ours) src = std::string(s);
-    if (!ours && !src.empty()) {
+    if (!ours && !src.empty() && !fb.paragraphs) {
         std::string t = test_talk_line();
         if (!t.empty()) src = t;
     }
@@ -521,24 +584,28 @@ void fit_talk(u64 label) {
         st.erase_text(label);
         return;
     }
-    double box_h = lines_height(l, 2);
-    std::string key = src + '\x01' + std::to_string(box_h), out;
+    double box_h = lines_height(l, fb.lines);
+    std::string key = src + '\x01' + std::to_string(box_h) + '/' + std::to_string(fb.w), out;
     if (!g_fitted.get(key, &out)) {
-        soa::text::BoxFit f = soa::text::fit_box(src, kTalkBoxW, box_h, label_measure(l));
+        soa::text::BoxFit f = fb.paragraphs ? text::fit_paragraphs(src, fb.w, box_h, label_measure(l))
+                                            : soa::text::fit_box(src, fb.w, box_h, label_measure(l));
         out = f.text;
         g_fitted.put(key, out);
         if (first_time("\x02" + src)) {
             std::string shown = out;  // the lines as laid out, " | " between them
             for (size_t p = 0; (p = shown.find('\n', p)) != std::string::npos; p += 3) shown.replace(p, 1, " | ");
-            LOGI("p370", "lang: fitted a home talk line to %.0fx%.0f at %.0f%% (font %.1f): \"%s\"", kTalkBoxW, box_h, f.scale * 100,
+            LOGI("p370", "lang: fitted a %s to %.0fx%.0f at %.0f%% (font %.1f): \"%.120s\"", fb.what, fb.w, box_h, f.scale * 100,
                  l->m_fontSize * f.scale, shown.c_str());
         }
     }
     st.keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
     st.set(label, out, src);  // (kept when out == src too: SOA_TEST_TALK_IDS tells its lines from the game's)
-    set_box(l, {1, 1, kTalkBoxW, (float)box_h});
+    set_box(l, {1, 1, fb.w, (float)box_h});
     if (out != s) set_text(label, out);
 }
+
+void fit_talk(u64 label) { fit_fixed(label, {"home talk line", kTalkBoxW, 2, false}); }
+void fit_profile(u64 label) { fit_fixed(label, {"character profile", kProfileBoxW, kProfileLines, true}); }
 
 void story_draw(u64 label);  // (E13, below)
 // The wrap's verdict for a label shrunk into a box of its room, its lines kept (a value no text has).
@@ -737,6 +804,7 @@ const char* by_name(text::RoomBy by) { return by == text::RoomBy::sibling ? "sib
 void maybe_wrap(u64 label) {
     CCocosLabel* l = as_label(label);
     if (is_talk_text(l)) return fit_talk(label);
+    if (is_profile_text(l)) return fit_profile(label);
     if (l->name() == "AppendMessage") return;
     text::LabelStates& st = text::label_states();
     if (st.is_story(label)) return story_draw(label);

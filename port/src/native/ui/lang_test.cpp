@@ -251,6 +251,31 @@ NATIVE_TEST("platform370/lang-story-scale") {
     }
 }
 
+// The profile's fit (text::fit_paragraphs) on the same fixed measure: blank lines kept, the lines
+// inside a paragraph re-broken; the scale fits the box.
+NATIVE_TEST("platform370/lang-fit-paragraphs") {
+    auto m = [](std::string_view s) {
+        double w = 0, n = 1, cur = 0;
+        for (char ch : s) {
+            if (ch == '\n') n++, cur = 0;
+            else w = std::max(w, cur += 10);
+        }
+        return soa::text::Extent{w, 40 * n - 10};
+    };
+    // two paragraphs (four lines with the blank one) that fit at full size in 100 x 150
+    soa::text::BoxFit f = platform370::text::fit_paragraphs("aaaa bbbb\ncccc\n\ndddd eeee", 100, 150, m);
+    if (f.text != "aaaa bbbb\ncccc\n\ndddd eeee" || f.scale != 1) t.fail("fits: \"%s\" at %g", f.text.c_str(), f.scale);
+    // the same in 100 x 110 (three lines): shrunk, the blank line kept
+    f = platform370::text::fit_paragraphs("aaaa bbbb\ncccc\n\ndddd eeee", 100, 110, m);
+    if (f.text.find("\n\n") == std::string::npos || f.scale >= 1 || f.scale < 0.5) t.fail("shrunk: \"%s\" at %g", f.text.c_str(), f.scale);
+    soa::text::Extent e = m(f.text);
+    if (e.h * f.scale > 110 + 1e-6 || e.w * f.scale > 100 + 1e-6) t.fail("out of the box: %gx%g at %g", e.w, e.h, f.scale);
+    // no blank line: fit_box's
+    soa::text::BoxFit g = platform370::text::fit_paragraphs("aaaa bbbb cccc", 100, 150, m);
+    soa::text::BoxFit h = soa::text::fit_box("aaaa bbbb cccc", 100, 150, m);
+    if (g.text != h.text || g.scale != h.scale) t.fail("without paragraphs: \"%s\" vs fit_box \"%s\"", g.text.c_str(), h.text.c_str());
+}
+
 // E10's room from a label's layout (text::layout_room, english.md 7.15): world rectangles, y down,
 // anchors as the nodes hold them (ay from the top).
 NATIVE_TEST("platform370/lang-layout-room") {

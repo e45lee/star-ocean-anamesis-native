@@ -891,6 +891,30 @@ bool derive(const DeriveInput& in, Derived& d, std::string* err) {
         if (finish(f, cand, ja8, &e)) d.master[mid] = Entry{sha1_of(ja8), e, source};
         else d.failing++;
     }
+    // the layout labels (docs/server-rules.md#english-labels): (d) the JP rows with the same
+    // Japanese, (a) Global's English for it through the memory, finished as a master row
+    if (!in.labels.empty()) {
+        std::map<std::string, std::vector<std::string>> by_text, by_ws;
+        for (auto& [mid, ja8] : s.jp) {
+            by_text[ja8].push_back(mid);
+            std::string k = u8(ws_key_u(u32(ja8)));
+            if (!k.empty()) by_ws[k].push_back(mid);
+        }
+        for (auto& ja8 : in.labels) {
+            std::vector<std::string>& mids = d.label_mids[ja8];
+            auto e = by_text.find(ja8);
+            if (e != by_text.end()) mids = e->second;
+            auto w = by_ws.find(u8(ws_key_u(u32(ja8))));
+            if (w != by_ws.end())
+                for (auto& m : w->second)
+                    if (std::find(mids.begin(), mids.end(), m) == mids.end()) mids.push_back(m);
+            U cand;
+            bool exact = false;
+            std::string en;
+            if (has_kana(u32(ja8)) && lookup(mem, ja8, &cand, &exact) && finish(f, cand, ja8, &en))
+                d.labels[ja8] = Entry{sha1_of(ja8), en, exact ? "memory" : "template"};
+        }
+    }
     // StoryDerived
     d.files = in.story;
     for (auto& file : in.story)
@@ -961,6 +985,48 @@ std::map<std::string, Table> merge_story(const Derived& d, const Table& ours) {
             auto it = served.find(mid);
             if (it != served.end()) out[file.stem][mid] = it->second;
         }
+    return out;
+}
+
+// (d) the order of docs/server-rules.md#english-labels: the same Japanese takes the same English
+Table resolve_labels(const Derived* d, const Table& master, const Table& ours) {
+    auto rank = [](const std::string& src) {
+        if (src == "human" || src == "reviewed") return 0;
+        if (src == "official") return 1;
+        if (src == "memory" || src == "template") return 2;
+        return 3;  // machine, agent
+    };
+    Table out;
+    for (auto& [ja, our] : ours) {
+        bool our_en = !our.en.empty();
+        if (our_en && rank(our.source) == 0) {
+            out[ja] = our;
+            continue;
+        }
+        // the served master rows with this Japanese: the best source, the first in label_mids' order
+        const Entry* best = nullptr;
+        if (d) {
+            auto lm = d->label_mids.find(ja);
+            if (lm != d->label_mids.end())
+                for (auto& mid : lm->second) {
+                    auto m = master.find(mid);
+                    auto js = d->jp_sha1.find(mid);
+                    if (m == master.end() || js == d->jp_sha1.end() || m->second.ja_sha1 != js->second) continue;
+                    if (!best || rank(m->second.source) < rank(best->source)) best = &m->second;
+                }
+        }
+        const Entry* mem = nullptr;
+        if (d) {
+            auto it = d->labels.find(ja);
+            if (it != d->labels.end()) mem = &it->second;
+        }
+        const Entry* pick = nullptr;
+        if (best && rank(best->source) <= 2) pick = best;
+        else if (mem) pick = mem;
+        else if (our_en) pick = &our;
+        else if (best) pick = best;
+        if (pick) out[ja] = Entry{our.ja_sha1, pick->en, pick->source};
+    }
     return out;
 }
 

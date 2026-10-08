@@ -25,8 +25,15 @@ Usage:
   tools/english_mt_run.py story [--model 31b|26b]   # M4: the story's untranslated lines, by scene
   tools/english_mt_run.py story-fix                  # the story lines still without English, one
                                                      # per request with context (story-fix.jsonl)
+  tools/english_mt_run.py story-retry [--ids FILE]   # rejected story lines again, told what the
+                                                     # check refused (story-retry.jsonl)
+  tools/english_mt_run.py ui-retry [--ids FILE]      # the same for rejected master texts that still
+                                                     # have no English (ui-retry.jsonl)
   tools/english_mt_run.py shorten                    # E7: machine story lines over four window lines,
                                                      # rewritten shorter (story-short.jsonl)
+  tools/english_mt_run.py labels --dump DIR          # the layout labels (english.md 7.14): each row of
+                                                     # data/english/labels.tsv without English in DIR/labels-en.tsv
+                                                     # (soa-server --english-dump DIR), labels.jsonl
   tools/english_mt_run.py status                     # rows done per checkpoint
 Options: --slots N (4), --port P (18431), --limit N (stop after N new items), --out DIR,
          --redo KEYS (translate these checkpoint keys again, e.g. rows import-mt rejected after a
@@ -91,7 +98,10 @@ Answer with one JSON object and nothing else: {"en": "<English>", "proper_noun":
 
 def user_prompt(kind, mid, ja, glossary, terms):
     hits = E.glossary_hits(ja, glossary, terms)
-    k = "story dialogue line" if kind == "story" else f"UI/system text (message_id {mid})"
+    if kind == "label":  # a fixed text of a screen layout (english.md 7.14)
+        k = "UI layout label (a fixed button, heading, caption or note drawn on a screen)"
+    else:
+        k = "story dialogue line" if kind == "story" else f"UI/system text (message_id {mid})"
     gl = "".join(f"\n{t} = {glossary[t]['en']}" for t in hits)
     return f"Kind: {k}\nGlossary:{gl or ' (none)'}\nJapanese:\n{ja}"
 
@@ -625,6 +635,165 @@ def cmd_story_fix(a):
     run_batch(a, items, a.out / "story-fix.jsonl", req, row)
 
 
+RETRY_VERSION = "retry1"
+
+
+def retry_feedback(old, probs):
+    """What a check refused in an engine's answer, for a retry request (story-retry, ui-retry)."""
+    out = [f"A previous translation was rejected: {old.replace(chr(92) + 'n', ' ')}"]
+    for t, en in probs.get("glossary", []):
+        out.append(f"- It left out the glossary name {t} = {en}: the Japanese names {t}, so the English must say \"{en}\" "
+                   "(do not replace the name with \"you\" or drop it).")
+    if "tags" in probs or "story_tag" in probs:
+        out.append("- Its tags differ from the Japanese: keep exactly the Japanese text's tags, each once, around the same words; "
+                   "add no tag of your own.")
+    if "specifiers" in probs:
+        out.append("- Its printf specifiers differ from the Japanese: keep every specifier, in the Japanese order (" +
+                   " ".join(probs["specifiers"][0]) + "); rephrase the sentence so they come in that order.")
+    if "kana" in probs:
+        out.append("- It left Japanese characters in the English: translate or romanize every word.")
+    if "runaway" in probs:
+        out.append("- It stretched a sound or repeated a phrase without end: write a drawn-out sound with at most 12 repeated letters.")
+    for k in probs:
+        if k not in ("glossary", "tags", "story_tag", "runaway", "specifiers", "kana"):
+            out.append(f"- Problem: {k} {json.dumps(probs[k], ensure_ascii=False)}")
+    return "\n".join(out)
+
+
+def cmd_story_retry(a):
+    """Story lines a check rejected (work/english/mt-rejected-story.tsv), sent again one at a time as
+    story-fix sends them, with what was wrong: the rejected English and, per problem, the rule it
+    broke (a glossary name left out, tags changed, a sound stretched without end). --ids FILE limits
+    it to those message ids. The answers go to story-retry.jsonl in story.jsonl's form (import-mt
+    takes it); the prompt is recorded as ...+fix+retry1."""
+    src, g = load_glossary()
+    terms = sorted(g, key=len, reverse=True)
+    text = {mid: (stem, ja) for stem, mid, ja in src.story()}
+    rej = {}
+    for line in (REPO / "work/english/mt-rejected-story.tsv").read_text(encoding="utf-8").splitlines()[1:]:
+        c = line.split("\t")
+        rej[c[0]] = (c[4], json.loads(c[5]))
+    want = set(pathlib.Path(a.ids).read_text().split()) if a.ids else set(rej)
+    have = {}
+    for p in sorted((REPO / "data/english/story-en").glob("TS_*.tsv")):
+        for line in p.read_text(encoding="utf-8").splitlines()[1:]:
+            c = line.split("\t")
+            have[c[0]] = c[2].replace("\\n", " ")
+    where = {}
+    for scene, lines in scenes(src):
+        lines = [(m, w) for m, w in lines if m in text]
+        for i, (m, w) in enumerate(lines):
+            where.setdefault(m, (scene, lines[max(0, i - STORY_CONTEXT):i], (m, w)))
+    items = []
+    for m in sorted(want):
+        if m in text and m in rej:
+            items.append((f"retry:{m}", where.get(m, (text[m][0], [], (m, None)))))
+    print(f"[story-retry] {len(items)} lines", flush=True)
+
+    def speaker(code):
+        if not code:
+            return "Narration"
+        if code in ("<player>", "(choice)"):
+            return code
+        for c in (code, code[:-1] + "a"):
+            en = src.gl_english(c)
+            if en:
+                return en
+            ja = src.jp_rows.get(c)
+            if ja:
+                return g[ja]["en"] if ja in g else ja
+        return code
+
+    def req(p):
+        scene, ctx, (m, w) = p
+        block = []
+        for cm, cw in ctx:
+            en = have.get(cm)
+            block.append(f"(context) {speaker(cw)}: {text[cm][1].replace(chr(10), '')}" + (f"  [English: {en}]" if en else ""))
+        ja = text[m][1].replace("\n", "")
+        hits = E.glossary_hits(ja, g, terms)
+        block.append(f"[1] {speaker(w)}: {ja}")
+        gl = "".join(f"\n{t} = {g[t]['en']}" for t in hits)
+        user = f"Scene {scene}\nGlossary:{gl or ' (none)'}\nLines:\n" + "\n".join(block) + "\n\n" + retry_feedback(*rej[m])
+        return SYSTEM + STORY_EXTRA, user, 400
+
+    def row(k, p, txt, finish):
+        scene, _ctx, (m, w) = p
+        got = re.search(r"^\[1\]\s*(.*)$", txt, re.M)
+        en = (got.group(1) if got else txt).strip()
+        if en and ":" in en and en.split(":", 1)[0].strip() == speaker(w):
+            en = en.split(":", 1)[1].strip()
+        return {"key": k, "scene": scene, "kind": "story", "raw": txt, "finish": finish,
+                "lines": [{"message_id": m, "file": text[m][0], "ja_sha1": E.sha1(text[m][1]), "ja": text[m][1],
+                           "speaker": speaker(w), "mt": en or None}],
+                "prompt": f"{PROMPT_VERSION}+{STORY_VERSION}+fix+{RETRY_VERSION}"}
+    run_batch(a, items, a.out / "story-retry.jsonl", req, row)
+
+
+def cmd_ui_retry(a):
+    """Master texts a check rejected (work/english/mt-rejected.tsv) that still have no English, sent
+    again as `ui` sends them, with the refused English and the rule it broke (retry_feedback).
+    --ids FILE limits it to those message ids. The answers go to ui-retry.jsonl in ui.jsonl's form
+    (import-mt takes it); the prompt is recorded as v2+retry1."""
+    src, g = load_glossary()
+    terms = sorted(g, key=len, reverse=True)
+    rej = {}
+    for line in (REPO / "work/english/mt-rejected.tsv").read_text(encoding="utf-8").splitlines()[1:]:
+        c = line.split("\t")
+        rej[c[0]] = (c[4], json.loads(c[5]))
+    want = set(pathlib.Path(a.ids).read_text().split()) if a.ids else set(rej)
+    by_ja = collections.defaultdict(list)
+    for mid in sorted(want):
+        if mid in rej and mid in src.jp_rows:
+            by_ja[src.jp_rows[mid]].append(mid)
+    items = sorted((f"retry:{E.sha1(ja)}", (ja, ids)) for ja, ids in by_ja.items())
+    print(f"[ui-retry] {len(items)} texts", flush=True)
+
+    def req(p):
+        ja, ids = p
+        text = ja.replace("\\n", "\n")
+        user = user_prompt("master", ids[0], text, g, terms) + "\n\n" + retry_feedback(*rej[ids[0]])
+        return SYSTEM, user, max(300, 3 * len(text) + 100)
+
+    def row(k, p, txt, finish):
+        ja, ids = p
+        if len(txt) > 1 and txt[0] == txt[-1] and txt[0] in '"「':
+            txt = txt[1:-1]
+        return {"key": k, "ja_sha1": E.sha1(ja), "ja": ja, "mt": txt, "finish": finish, "kind": "master",
+                "ids": ids, "prompt": f"{PROMPT_VERSION}+{RETRY_VERSION}"}
+    run_batch(a, items, a.out / "ui-retry.jsonl", req, row)
+
+
+LABELS_VERSION = "v2-label"  # the v2 system prompt; the user prompt's kind is a layout label
+
+
+def cmd_labels(a):
+    """The layout labels (english.md 7.14): each row of data/english/labels.tsv that soa-server's
+    --english-dump (DIR/labels-en.tsv) gives no English, once; imported by english_text.py import-mt
+    into labels.tsv as machine rows."""
+    if not a.dump:
+        sys.exit("labels: --dump DIR (soa-server --english-dump DIR) is required")
+    src, g = load_glossary()
+    terms = sorted(g, key=len, reverse=True)
+    have = set()
+    for line in open(pathlib.Path(a.dump) / "labels-en.tsv", encoding="utf-8").read().splitlines()[1:]:
+        have.add(line.split("\t", 1)[0])
+    rows = [ln.split("\t") for ln in (REPO / "data/english/labels.tsv").read_text(encoding="utf-8").splitlines()[1:]]
+    gap = sorted(r[0] for r in rows if r and r[0] not in have)
+    items = [(E.sha1(ja), ja) for ja in gap]
+    print(f"[labels] {len(items)} labels without English", flush=True)
+
+    def req(ja):
+        text = ja.replace("\\n", "\n")
+        return SYSTEM, user_prompt("label", "", text, g, terms), max(200, 3 * len(text) + 100)
+
+    def row(k, ja, txt, finish):
+        if len(txt) > 1 and txt[0] == txt[-1] and txt[0] in '"「':
+            txt = txt[1:-1]
+        return {"key": k, "ja_sha1": k, "ja": ja, "mt": txt, "finish": finish, "kind": "label", "prompt": LABELS_VERSION}
+    run_batch(a, items, a.out / "labels.jsonl", req, row)
+
+
 def cmd_status(a):
     for p in sorted(a.out.glob("*.jsonl")):
         n = sum(1 for _ in open(p, encoding="utf-8"))
@@ -633,11 +802,13 @@ def cmd_status(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["names", "ui", "story", "story-fix", "shorten", "status"])
+    ap.add_argument("cmd", choices=["names", "ui", "story", "story-fix", "story-retry", "ui-retry", "shorten", "labels", "status"])
+    ap.add_argument("--dump", help="labels: soa-server --english-dump's folder (its labels-en.tsv)")
     ap.add_argument("--model", choices=sorted(MODELS), default="31b")
     ap.add_argument("--slots", type=int, default=4)
     ap.add_argument("--port", type=int, default=18431)
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--ids", help="story-retry / ui-retry: a file of message ids (default: every rejected line or text)")
     ap.add_argument("--redo", help="a file of checkpoint keys (ja_sha1 / story chunk keys) to translate again")
     ap.add_argument("--share-gpu", action="store_true",
                     help="keep running beside game clients (default: the batch waits while any client holds a slot of the pool)")
@@ -649,7 +820,8 @@ def main():
     a.out.mkdir(parents=True, exist_ok=True)
     global YIELD_TO_CLIENTS
     YIELD_TO_CLIENTS = not a.share_gpu
-    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "shorten": cmd_shorten, "story-fix": cmd_story_fix, "status": cmd_status}[a.cmd](a)
+    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "shorten": cmd_shorten, "story-fix": cmd_story_fix, "story-retry": cmd_story_retry,
+     "ui-retry": cmd_ui_retry, "labels": cmd_labels, "status": cmd_status}[a.cmd](a)
 
 
 if __name__ == "__main__":

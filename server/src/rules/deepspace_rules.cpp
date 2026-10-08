@@ -7,6 +7,8 @@
 #include <cmath>
 #include <ctime>
 
+#include <soa/local_time.h>
+
 namespace soa::server::rules::deepspace {
 
 float bonus_value(u32 count, float count_min, float count_max, float effect_min, float effect_max, bool battle_power) {
@@ -50,8 +52,7 @@ int64_t week_start(int64_t day) {
     localtime_r(&tt, &tm);
     int back = (tm.tm_wday + 6) % 7;  // days since Monday
     tm.tm_mday -= back;
-    tm.tm_isdst = -1;
-    return (int64_t)mktime(&tm);
+    return soa::mktime_local(&tm);
 }
 
 }  // namespace soa::server::rules::deepspace

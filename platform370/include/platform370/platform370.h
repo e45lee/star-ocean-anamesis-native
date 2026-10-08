@@ -77,6 +77,13 @@ struct Config {
     // hidden, so the client runs on the real date; the sale-stopped dialog (OpenBuyEndDialog) opens
     // the coin shop instead. false = --no-patch.
     bool patch = true;
+    // Local time with daylight saving (hle_370.cpp; docs/client-changes.md "Local time: daylight
+    // saving"): the guest's mktime decides daylight saving from the zone's rules, whatever tm_isdst
+    // its caller set, so the client reads its clock (the server's data.Time) and the master's times
+    // as the actual local time. false = --no-dst-fix: as shipped, CTimeUtility::str2time_t reads every
+    // time as standard time (an hour late while daylight saving is in effect). Part of the `clock`
+    // piece; independent of `patch`.
+    bool local_time = true;
     // The client's language (lang_370.cpp, install_language; docs/client-changes.md "English mode"):
     // "ja" (default) leaves the client as shipped (CLanguage is 0x100, "no language", in all three
     // fields, and nothing is hooked); "en" sets CLanguage::Current to 1 (en) after CGame::OnInitialize
@@ -101,6 +108,11 @@ struct Config {
 // jni::add_class_installer) and applies app_version and the device clock. Call once, before
 // hle_init() and jni::Vm::get().init(). fatal() on a malformed device_clock.
 void install(const Config& cfg);
+
+// Config::local_time as install() set it; set_local_time switches it at run time (the selftest
+// platform370/local-time compares both behaviours).
+bool local_time();
+void set_local_time(bool on);
 
 // The patch's outcome (install_patches).
 enum class PatchStatus {

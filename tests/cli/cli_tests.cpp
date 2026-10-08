@@ -307,12 +307,13 @@ int main() {
     const V kAddedServer = {"--english", "--english-text", "--stamina-heal-time"};
     // soa-server's own: --english-dump (2026-10-07, docs/server-rules.md#english-derive).
     const V kAddedSoaServer = {"--english", "--english-text", "--stamina-heal-time", "--english-dump"};
-    // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h).
-    const V kAddedLang = {"--lang", "--voice-lang"};
+    // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h);
+    // --no-dst-fix (2026-10-08: the shipped standard-time reading, docs/client-changes.md "Local time: daylight saving").
+    const V kAddedLang = {"--lang", "--voice-lang", "--no-dst-fix"};
     // Added to soa: --render-scale (2026-10-07; port/src/core/cli.cpp, the resolution natives); --natives-skip
     // (2026-10-07, code review P1: the natives A/B).
     const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang", "--render-scale",
-                         "--natives-skip"};
+                         "--natives-skip", "--no-dst-fix"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {

@@ -30,11 +30,11 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2195214	0x2295214	52	_ZN4Aska16IParticleEmitter12AttachObjectEPNS_15IParticleObjectE	Aska::IParticleEmitter::AttachObject(Aska::IParticleObject*)	emitter	decompiled	
 0x2195248	0x2295248	316	_ZN4Aska16IParticleEmitter16AttachRenderableEPKNS_3AFF18AsfParticleEmitterEPNS_22ParticleRenderableBaseE	Aska::IParticleEmitter::AttachRenderable(Aska::AFF::AsfParticleEmitter const*, Aska::ParticleRenderableBase*)	emitter	decompiled	
 0x2195384	0x2295384	64	_ZN4Aska16IParticleEmitter25DetachRenderableForRenderEv	Aska::IParticleEmitter::DetachRenderableForRender()	emitter	decompiled	
-0x21953c4	0x22953c4	712	_ZN4Aska16IParticleEmitter15PrepareMatricesEv	Aska::IParticleEmitter::PrepareMatrices()	emitter	decompiled	
-0x219568c	0x229568c	48	_ZN4Aska16IParticleEmitter23PrepareMatricesTraverseEv	Aska::IParticleEmitter::PrepareMatricesTraverse()	emitter	decompiled	
+0x21953c4	0x22953c4	712	_ZN4Aska16IParticleEmitter15PrepareMatricesEv	Aska::IParticleEmitter::PrepareMatrices()	emitter	tested	
+0x219568c	0x229568c	48	_ZN4Aska16IParticleEmitter23PrepareMatricesTraverseEv	Aska::IParticleEmitter::PrepareMatricesTraverse()	emitter	tested	
 0x21956bc	0x22956bc	368	_ZN4Aska16IParticleEmitter18UpdateMatrixBufferEv	Aska::IParticleEmitter::UpdateMatrixBuffer()	emitter	decompiled	
-0x219582c	0x229582c	200	_ZN4Aska16IParticleEmitter17FillMatrixContextEPNS0_13MatrixContextE	Aska::IParticleEmitter::FillMatrixContext(Aska::IParticleEmitter::MatrixContext*)	emitter	decompiled	
-0x21958f4	0x22958f4	1016	_ZN4Aska16IParticleEmitter7PrepareEv	Aska::IParticleEmitter::Prepare()	emitter	decompiled	
+0x219582c	0x229582c	200	_ZN4Aska16IParticleEmitter17FillMatrixContextEPNS0_13MatrixContextE	Aska::IParticleEmitter::FillMatrixContext(Aska::IParticleEmitter::MatrixContext*)	emitter	tested	
+0x21958f4	0x22958f4	1016	_ZN4Aska16IParticleEmitter7PrepareEv	Aska::IParticleEmitter::Prepare()	emitter	tested	
 0x2195cec	0x2295cec	28	_ZN4Aska16IParticleEmitter8OnActiveEb	Aska::IParticleEmitter::OnActive(bool)	emitter	decompiled	
 0x2195d08	0x2295d08	28	_ZN4Aska16IParticleEmitter4KickEv	Aska::IParticleEmitter::Kick()	emitter	decompiled	
 0x2195d24	0x2295d24	792	_ZN4Aska16IParticleEmitter6AttachEPKNS_3AFF18AsfParticleEmitterE	Aska::IParticleEmitter::Attach(Aska::AFF::AsfParticleEmitter const*)	emitter	decompiled	

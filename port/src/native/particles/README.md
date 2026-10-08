@@ -24,7 +24,7 @@ vtable is the first field). Bases from other subsystems: kernel's `TaskManager` 
 
 ## Natives
 
-94 bound (`soa --list-native | grep particles:`): 20 for the manager and the getters, 74 Simulates. Live check: `soa --live-check particles[:every=N][:budget=N][:only=..][:out=FILE]`
+98 bound (`soa --list-native | grep particles:`): 20 for the manager and the getters, 74 Simulates, 4 for the emitters' preparation. Live check: `soa --live-check particles[:every=N][:budget=N][:only=..][:out=FILE]`
 (default every=16; [`particles_check.h`](particles_check.h): shadow checks, the guest original on a private
 World built from what the native saw, its callees stubbed and answered from the native's record).
 
@@ -38,13 +38,15 @@ World built from what the native saw, its callees stubbed and answered from the 
 | `ParticleManager::Run` (+ the Task thunk `_ZThn40_`) | `particles_check.cpp` (through RunLow's / RunAfterRendering's hooks) | `particles/run` (the levels; RunLow / RunAfterRendering run) | the guest's Run with RunLow / RunAfterRendering stubbed: the one it calls |
 | `ParticleManager::Add` / `Delete` | `particles_manager.cpp` | `particles/list` | shadow: the links of the nodes around the element |
 | `ParticleEmitter<FeatureList<...>>::Simulate(float)`, all 74 instantiations (one body, the instantiation's callees and texture unit from [`gen/particles_instantiations.inc`](gen/particles_instantiations.inc), written and checked by `tools/gen_particles_instantiations.py`: every instantiation's code is one of two shapes, with a Texture unit or without) | `particles_simulate.cpp` | `particles/simulate` (every instantiation, 40 random emitters each: NaN / infinite / huge inputs, randomness below / at / above 100, the stop-when-still test, the scale, the texture animation, no lock yet) | shadow: the emitter / object as found under its m_simulateLock, the callees (FillMatrixContext, EmitterAffectToParticle, Random, Emit, SetAnimation, RenderProcedure) answered from the record with the bytes each changed; the calls (with the position, dt, the context) and the emitter's own fields (from 0x198) and the object's 0x200 bytes. The first Simulate of an emitter (its lock's allocation) is skipped |
+| `IParticleEmitter::Prepare` (slot 45), `PrepareMatrices`, `PrepareMatricesTraverse`, `FillMatrixContext` | `particles_prepare.cpp` | `particles/prepare` (600), `particles/prepare-matrices` (600: any 3x3, NaNs, the InvertLowError path), `particles/prepare-matrices-traverse` (chains and a child), `particles/fill-matrix-context` | shadow: copies of the emitter, its renderable, object, linked object, matrix buffer (and the chain's emitters / objects); the callees (the virtuals WorldMatrix / MakeMatrix / SetPosition / SetPosture / SetScale / SetWorldMatrix / the object's Prepare through a fake vtable; PrepareMatrices, PrepareMatricesTraverse, ParticleManager::Malloc, placement new, QueryTextureEx, SetRenderLayer) answered from the record with the bytes each changed; the calls and the bytes each function writes itself (the render thread and the workers change the rest meanwhile). Prepare's first call per emitter (the lock's or the buffer's allocation) is skipped |
 | `IParticleEmitter::SkipThisFrame` / `IsEmitting` / `GetActiveNumberOfParticles`, `ParticleRenderableBase::IsBufferReady`, `ParticleManager::GetClassID` / `GetDefaultLevel` (+ Task thunks) | `particles_manager.cpp` | `particles/getters` | getter (the original on the same object, a rerun for races) |
 
 The manager's outgoing calls go through [`particles_calls.h`](particles_calls.h) (a thread's Recorder sees
 them: recorded in a live check, scripted in the tests); the shared World / guest-run helpers are in
 [`particles_world.cpp`](particles_world.cpp).
 
-Live coverage: battle-gacha (every=4) 22,000 checks and story (every=4) 23,208 checks, 0 mismatches, 0 races.
+Live coverage: battle-gacha (every=4) 57,019 checks and story (every=4) 43,132 checks, 0 mismatches, 0 races
+(with the Prepare family; before it 22,000 and 23,208, also 0).
 Simulate is one body bound to 74 symbols: the generator proves every instantiation's code instruction for
 instruction one of the two shapes (with a Texture unit or without), and both shapes are live-checked (the
 4 instantiations the flows run, among them a no-texture one); `particles/simulate` runs all 74 against the guest.
@@ -70,7 +72,11 @@ C++ members, so their time lands on DispatchEmitters / Run where it landed on Po
 Run 284 = RunLow's body plus its post). Particle guest + native time together: 2,522 -> 1,871; the guest
 part 2,522 -> 954 (-62%).
 
-What is left of the guest self: Prepare (67), ParticleObject<...>::Procedure, RenderProcedure, Emit,
+With the Prepare family too (another run, 24,403 guest samples): guest self 937, native 972 (Prepare 18,
+PrepareMatrices 54, Traverse 9; FillMatrixContext none: the base HierarchicalObject::WorldMatrix, an 8-byte
+`add x0, x0, #0x40; ret`, is computed in place of a nested guest call when the vtable slot points at it).
+
+What is left of the guest self: ParticleObject<...>::Procedure, RenderProcedure, Emit,
 ParticleRenderableBase::End / CreateDrawContext / PrepareForRendering, the FillSprite* family.
 
 ## Dependencies
@@ -101,4 +107,7 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   below 100 % m_emitRandomness by Random(10000) (`(rate dt) * (rnd * 0.01 + (100 - rnd) * 0.01 * r * 1e-4)`);
   the whole ones are emitted (FCVTZS) and the fraction kept. Its EmitContext is mostly uninitialized stack in
   the guest: Emit reads only m_dt and m_flags (0) from it then, so the native's zeroed one is equivalent.
+- **The inverse world matrix** (m_invWorld, valid with m_hoc.m_flags bit 2) is inlined in PrepareMatrices for
+  the emitter and its renderable: the transpose of the 3x3 and -(R^T t) in column 3 (products and sums in the
+  guest's order), Matrix::InvertLowError when m_hoc.m_flags2 & 3 (scale / shear).
 - **Delete** of an element that isn't linked (null links) still decrements the count (not below 0).

@@ -13,6 +13,7 @@
 // the two runs compare call by call.
 #include <cstring>
 #include <functional>
+#include <initializer_list>
 #include <string>
 #include <vector>
 
@@ -37,6 +38,14 @@ enum class CallKind : u8 {
     Emit,          // ParticleEmitter<...>::Emit(int, EmitContext*, MatrixContext const*)
     SetAnimation,  // IParticleObject::SetAnimation(int)
     Render,        // ParticleRenderableObject<...>::RenderProcedure(float, MatrixContext*, bool)
+    // Prepare's and the matrices' (particles_prepare.cpp):
+    VCall,         // a virtual of a HierarchicalObject / IParticleObject: x[1] the slot, x[2] the argument; x0 back
+    Traverse,      // IParticleEmitter::PrepareMatricesTraverse()
+    Matrices,      // IParticleEmitter::PrepareMatrices()
+    Malloc,        // ParticleManager::Malloc(unsigned long) (static)
+    PlacementNew,  // operator new(unsigned long, void*, unsigned long)
+    QueryTexture,  // TextureManager::QueryTextureEx(unsigned long, bool)
+    SetRenderLayer,  // ParticleRenderableBase::SetRenderLayer(unsigned int, bool)
     kCount
 };
 const char* kind_name(CallKind k);
@@ -131,6 +140,37 @@ u32 random(u32 n);
 void emit(u64 fn, IParticleEmitter* e, s32 n, EmitContext* ctx, const MatrixContext* m);
 void set_animation(IParticleObject* o, s32 index);
 void render(u64 fn, ParticleRenderableBase* r, float dt, MatrixContext* m, bool b);
+u64 vcall(const void* obj, int slot, u64 a1);
+void traverse(IParticleEmitter* e);
+void matrices(IParticleEmitter* e);
+u64 malloc_(u64 n);
+u64 placement_new(u64 n, u64 p, u64 align);
+u64 query_texture(void* tm, u64 name, bool b);
+void set_render_layer(ParticleRenderableBase* r, u32 layer, bool b);
+
+// The plain-call wrappers of a simple shape: the arguments recorded as given, x0 back.
+template <typename F>
+u64 Plain(CallKind k, std::initializer_list<u64> args, F&& real) {
+    Recorder* r = t_rec;
+    if (__builtin_expect(!r, 1)) return real();
+    Call c;
+    c.kind = k;
+    for (u64 a : args) c.x[c.n++] = a;
+    return r->run(c, [&](Call& c2) { c2.ret = real(); }).ret;
+}
+inline u64 VCall(const void* obj, int slot, u64 a1 = 0) {
+    return Plain(CallKind::VCall, {(u64)obj, (u64)slot, a1}, [&] { return vcall(obj, slot, a1); });
+}
+inline void Traverse(IParticleEmitter* e) { Plain(CallKind::Traverse, {(u64)e}, [&] { return traverse(e), (u64)0; }); }
+inline void Matrices(IParticleEmitter* e) { Plain(CallKind::Matrices, {(u64)e}, [&] { return matrices(e), (u64)0; }); }
+inline u64 Malloc(u64 n) { return Plain(CallKind::Malloc, {n}, [&] { return malloc_(n); }); }
+inline u64 PlacementNew(u64 n, u64 p, u64 align) { return Plain(CallKind::PlacementNew, {n, p, align}, [&] { return placement_new(n, p, align); }); }
+inline u64 QueryTexture(void* tm, u64 name, bool b) {
+    return Plain(CallKind::QueryTexture, {(u64)tm, name, (u64)b}, [&] { return query_texture(tm, name, b); });
+}
+inline void SetRenderLayer(ParticleRenderableBase* rb, u32 layer, bool b) {
+    Plain(CallKind::SetRenderLayer, {(u64)rb, layer, (u64)b}, [&] { return set_render_layer(rb, layer, b), (u64)0; });
+}
 
 // Through the recorder when there is one.
 inline bool PostTask(SimpleMessageDispatcher* d, Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1,

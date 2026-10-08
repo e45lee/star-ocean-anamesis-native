@@ -76,5 +76,28 @@ NATIVE_TEST("server/english-text") {
     remove(bad.c_str());
 }
 
+// labels.tsv (english.md 7.14): keyed by the SHA-1 of the Japanese (master encoding), the text found
+// among the scenes' label texts (real newlines); a hash no text has is stale.
+NATIVE_TEST("server/english-labels-file") {
+    std::string dir = soa::temp_dir(), path = dir + "/soa-english-labels-test-" + std::to_string(getpid()) + ".tsv";
+    write_text(path, "ja_sha1\ten\tsource\tengine\tdate\teditor\tnote\n" + sha1_of("閉じる") + "\t\tderived\t\t\t\t\n" + sha1_of("一行\\n二行") +
+                         "\tLine\\nTwo\tmachine\te\t2026-10-08\t\t\n" + sha1_of("消えた") + "\tGone\tagent\t\t\tx\t\n");
+    english::Table rows;
+    std::string err;
+    t.expect_eq(english::load_labels(path, rows, &err), true, "load_labels");
+    t.expect_eq(rows.size(), (size_t)3, "three rows by hash");
+    std::vector<std::string> stale;
+    english::Table by = english::labels_by_text(rows, {"閉じる", "一行\n二行", "戻る"}, &stale);
+    t.expect_eq(by.size(), (size_t)2, "two texts listed");
+    t.expect_eq(by.count("一行\\n二行") ? by["一行\\n二行"].en : "", std::string("Line\\nTwo"), "by the master-encoded Japanese");
+    t.expect_eq(by.count("閉じる") && by["閉じる"].source == "derived" && by["閉じる"].ja_sha1 == sha1_of("閉じる"), true, "a derived row");
+    t.expect_eq(stale.size() == 1 && stale[0] == sha1_of("消えた"), true, "the stale hash");
+    write_text(path, "ja\ten\tsource\tengine\tdate\teditor\tnote\n閉じる\t\tderived\t\t\t\t\n");
+    t.expect_eq(english::load_labels(path, rows, &err), false, "the old header (Japanese keys) refused");
+    write_text(path, "ja_sha1\ten\tsource\tengine\tdate\teditor\tnote\n閉じる\t\tderived\t\t\t\t\n");
+    t.expect_eq(english::load_labels(path, rows, &err), false, "a key that is not a SHA-1 refused");
+    remove(path.c_str());
+}
+
 }  // namespace
 }  // namespace soa::server

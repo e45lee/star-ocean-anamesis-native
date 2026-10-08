@@ -428,6 +428,78 @@ def isf_members(d):
     return out
 
 
+LABEL_KEYS = (b"LabelText", b"ButtonText")  # the node trees' label texts (english.md 7.14)
+
+
+def _isf_tree_members(d):
+    """The (name, offset, size) of an ISF container's .msgp members (its node trees)."""
+    n = struct.unpack_from("<I", d, 8)[0]
+    out = []
+    for i in range(n):
+        name_off, data_off, size, _ = struct.unpack_from("<4I", d, 0x10 + 16 * i)
+        name = d[name_off:d.index(b"\0", name_off)].decode()
+        if name.endswith(".msgp"):
+            out.append((name, data_off, size))
+    return out
+
+
+def _walk_labels(o, out):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if k in LABEL_KEYS and isinstance(v, bytes):
+                out.append(v)
+            else:
+                _walk_labels(v, out)
+    elif isinstance(o, list):
+        for v in o:
+            _walk_labels(v, out)
+
+
+def scene_labels(plain):
+    """The LabelText / ButtonText str values (bytes, real newlines) of a scene's node trees: its .msgp
+    members, `plain` the scene file with ADLD removed (SLZ, then ISF). The server's twin is
+    english_art::label_texts (server/src/english_art/build.cpp)."""
+    import msgpack
+    from soa_save import slz
+    d = slz.decode(plain)
+    if d[:4] != b"\0ISF":
+        raise ValueError("not an ISF container")
+    out = []
+    for _, off, size in _isf_tree_members(d):
+        u = msgpack.Unpacker(raw=True, strict_map_key=False)
+        u.feed(d[off:off + size])
+        for o in u:
+            _walk_labels(o, out)
+    return out
+
+
+def scene_label_texts(download=None):
+    """{master-encoded text: sha1} of every layout label of the download's scenes (UI/ and TalkScene/
+    .csf files, not their -en copies; english.md 7.14): the Japanese the rows of labels.tsv (keyed by
+    that sha1) translate. `download`: the zip or folder (default: the checkout's download zip). None
+    when there is no download (or it has no scenes, e.g. a folder of story files)."""
+    from soa_save import adld
+    from soa_save.download_tree import DownloadTree
+    tree = DownloadTree.open_or_none(download or SCENARIO)
+    if tree is None:
+        return None
+    out = {}
+    scenes = 0
+    for top in ("UI", "TalkScene"):
+        for rel in tree.files(top):
+            base = rel.rsplit("/", 1)[-1]
+            if not rel.endswith(".csf") or "-" in base:
+                continue
+            scenes += 1
+            for v in scene_labels(adld.decode(tree.read(rel), rel)):
+                try:
+                    t = esc(v.decode("utf-8"))
+                except UnicodeDecodeError:
+                    continue
+                out[t] = sha1(t)
+    return out if scenes else None
+
+
 def read_font_glyphs(fpk=None):
     """The glyph records of fontData.bin: [(id, x, y, w, h, xoff, yoff, xadvance, page, chnl)].
     `fpk` is the font.fpk bytes (ADLD XOR keyed by CHash32 of its path, then SLZ, then ISF); by

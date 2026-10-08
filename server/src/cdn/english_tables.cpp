@@ -2,6 +2,8 @@
 // docs/server-rules.md#english-derive): an explicit table as it is, or the derived layer
 // (master/english_derive.h) with our own rows merged on top. Our code.
 #include <chrono>
+#include <set>
+#include <vector>
 
 #include <soa/file_tree.h>
 
@@ -11,6 +13,7 @@
 #include "master/english_text.h"
 #include "soa/adld.h"
 #include "soaserver/cdn.h"
+#include "soaserver/english_art.h"
 
 namespace soa::server::cdn {
 
@@ -40,6 +43,18 @@ bool english_tables(const Options& opts, const FileTree& download, EnglishTables
     if (!opts.english_labels.empty() && !english::load_labels(opts.english_labels, labels, &lwhy)) {
         LOGW("cdn", "english labels: %s: the layout labels stay Japanese", lwhy.c_str());
         labels.clear();
+    }
+    if (!labels.empty()) {
+        // (d) labels.tsv holds the SHA-1 of each label's Japanese, not the text (no game text in
+        // git): the text is the download's, found in its scenes' node trees
+        std::set<std::string> texts;
+        english_art::label_texts(download, texts);
+        std::vector<std::string> stale;
+        size_t listed = labels.size();
+        labels = english::labels_by_text(labels, texts, &stale);
+        if (!stale.empty())
+            LOGW("cdn", "english labels: %zu of %zu rows of %s match no label of the download's scenes (first %s)", stale.size(), listed,
+                 opts.english_labels.c_str(), stale[0].c_str());
     }
     if (opts.english_full) {
         // the whole tables, as they are (tests); the labels: our rows only

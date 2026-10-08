@@ -1,365 +1,365 @@
-ja	en	source	engine	date	editor	note
-16～18歳	Age 16-18	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-1ヶ月	1 Month	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-20歳以上	Age 20 or older	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-3Dモデル表示		derived				
-5000円まで	Up to 5,000 Yen	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-AUTOモード時の改ページがオートスキップされるまでの時間を調節できます。	Adjust the time before page turns are auto-skipped in AUTO mode.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-AUTOモード速度		derived				
-pt達成により		derived				
-βテスト用の16桁のシリアルコードを入力してください。\nシリアルコードはSQEX メンバーズサイトから\n発行することができます。		derived				
-※ご注意※\n一度入力したシリアルコードはゲームをアンインストールしてしまうと\n再度インストールしても使用できません。	*Caution* Serial codes that have been entered\ncannot be used again if the game is uninstalled\nand reinstalled.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-※一度登録した生年月は変更できません	*Date of birth cannot be changed once registered.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-あらすじ目次		derived				
-いいえ		derived				
-おまけゲット！		derived				
-お知らせ		derived				
-このアプリは基本無料で遊べますが、\n一部有料アイテムがございます。\n\n\n\n\nあらかじめ保護者の同意を得てから、\nこのアプリをご利用ください。\n\n有料アイテムを購入する際は、\n都度保護者に許可をもらうか\n一緒に購入するようにしてください。\n\nアプリの利用方法(利用時間等)は\n保護者とよく相談して決めてください。	This app is free to play,\nbut some paid items are available.\n\n\n\n\nPlease obtain parental consent\nbefore using this app.\n\nWhen purchasing paid items,\nplease ask for parental permission\neach time or make the purchase together.\n\nPlease discuss and decide on how to use\nthe app (such as usage time)\nwith a parent or guardian.	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept (the machine row ran them together); needs a person's review
-このキャラクターの強化を行います。		derived				
-ご注意		derived				
-ご近所検索		derived				
-その他		derived				
-なめらか		derived				
-はい		derived				
-アイテムの使用数を調整してください	Adjust the number of items to use.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-アイテムの使用数を調整してください。		derived				
-アイテムメニュー	Item Menu	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-アイテム所持		derived				
-アシストスキル		derived				
-アシストスキルなし		derived				
-アシストスキル名の表示設定です。\nオフにすると表示されません。		derived				
-アシストスキル名表示		derived				
-アニメーション設定		derived				
-イベント設定		derived				
-イラストレーター：		derived				
-エネミー	Enemy	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-エネミーをタッチしてターゲットを切り替え機能の\nオン、オフ設定です。	Toggle the ability to switch\ntargets by touching enemies.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-エネミータッチターゲット切り替え	Switch Enemy Touch Target	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-オプション	Option	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-オートマッチング		derived				
-カメラ距離		derived				
-ガチャ		derived				
-ガチャリザルト		derived				
-キャラクター		derived				
-キャラクターを召喚しました。\n限界突破に使用されたキャラクターは消失しました。\n限界突破素材に変化したキャラクターが消失しました。	Characters summoned. Characters\nused for Limit Break have been\nconsumed. Characters converted\ninto Limit Break Materials have been\nconsumed.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-キャラクター図鑑		derived				
-キャラクター設定		derived				
-キャラクター詳細		derived				
-クリア	Clear	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-クリアタイム		derived				
-クリップボードにコピー		derived				
-グラフィックの画質を設定します。\n設定を変更した場合、再起同時にゲームデータのダウンロードの確認を行います。	Set graphics quality. If settings are changed, a\ndownload confirmation for game data will occur upon\nrestart.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-グラフィック設定		derived				
-ゲームを始める前に\n利用規約に同意する必要があります		derived				
-ゲームを始める前に\n利用規約に同意する必要があります\nゲームを始める前に\n利用規約に同意する必要があります	Before starting the\ngame, you must agree\nto the User Agreement.\nBefore starting the\ngame, you must agree\nto the User Agreement.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-ゲームデータのバックアップやコミュニティの利用等、\nSQUARE ENIX BRIDGE機能をご利用頂く場合は、\n利用規約に同意の上、\nご利用いただけますよう、お願い致します。	To use SQUARE ENIX BRIDGE features,\nsuch as backing up game data or using\ncommunity functions, please agree to\nthe User Agreement.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-ゲームデータをダウンロードします。\nダウンロードサイズを選択してください。\n現在の設定と同じ画質を選択した場合\nダウンロードは行われずゲームを再開します。		derived				
-コンティニュー不可		derived				
-サウンド設定		derived				
-サーバーの接続に失敗しました。\nゲストはすべてAUTOになり\nシングルプレイでミッションを開始します。		derived				
-ショップ		derived				
-シングルプレイ開始		derived				
-スキップしますか？		derived				
-スタミナが加算されます。		derived				
-スタミナを回復しました。		derived				
-スタミナ上限がアップします。		derived				
-スタンプ		derived				
-スタンプ編成		derived				
-スターターミッションをすべてクリアしました！\nしかし、冒険はここからが本番です。\nいろいろなミッションに挑戦してみましょう！		derived				
-ステップ		derived				
-ステージ数		derived				
-ステータス強化		derived				
-ステータス詳細		derived				
-ストーリー開始		derived				
-ソート	Sort	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-タレント		derived				
-タレント詳細		derived				
-チケットが不足しています。	Not enough tickets.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-ディープスペース	Deep Space	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-データバックアップ		derived				
-バトルのアニメーションを設定します。\nアニメーションをなめらか設定にすればハイクオリティーな映像が楽しめます。\n	Configure battle animations. Setting animations to\nSmooth allows for higher quality visuals.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-バトルエフェクトの色味の濃さを設定します。\nエフェクトが派手だと感じる場合、薄くしてみてください。	Set the intensity of battle effect\ncolors. If effects feel too flashy, try\nlowering the intensity.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-バトルカメラ演出		derived				
-バトルスキル		derived				
-バトルスキル詳細		derived				
-バトル中の解像度を設定します。\n解像度を高くすると高画質な映像を楽しめます。	Set the resolution for Battles.\nHigher resolutions provide\nbetter image quality.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-バトル設定		derived				
-バトル開始		derived				
-バーチャルパッドホールド		derived				
-パーティ戦闘力		derived				
-パーティ編成		derived				
-ヒットエフェクト表示		derived				
-ファクター		derived				
-フォロー		derived				
-フォローしたいプレイヤーを選んでください。		derived				
-フォローをみる/解除する		derived				
-フォローボタンをタップすることでフォローとブロックを\n切り替えできます。ホーム画面の「フォロー」にて\nフォロー/ブロック設定を確認できます。		derived				
-フォローメニュー	Follow Menu	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-フォロー上限枠を拡張する		derived				
-フォロー数		derived				
-ブロック		derived				
-ブロックをみる/解除する		derived				
-ブロック数		derived				
-プレイヤーIDで検索する		derived				
-プレイヤーIDを入力してください	Please enter Player ID	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-プレイヤー名を入力してください。\n１２文字まで入力できます。	Please enter your\nplayer name. Maximum\n12 characters.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-プレゼントボックス		derived				
-プレゼントボックスから\n受け取ってください。		derived				
-プレミアムログインボーナス		derived				
-プレミアムログインボーナスについて		derived				
-プレミアムログインボーナスは\nショップの「紋章石購入」から購入可能です。\n冒険に役立つログインボーナスが得られる特別な紋章石です。		derived				
-プレミアムログインボーナス詳細		derived				
-ベースアイテム		derived				
-ホーム画面から再開		derived				
-ホールドをオンにすると、パッドから手を離しても\nキャラクターが移動し続けます。		derived				
-ボックスの中身をすべて入手しました！\nボックスの中身を自動的にリセットします。	All items in the box have\nbeen collected! The box\ncontents will be reset\nautomatically.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-ボックスをリセットする	Reset Box	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-ボックスガチャの中身をすべてリセットしますか？\n\nリセットすると、ボックスガチャは\n初期状態に戻ります。	Reset all contents of the Box Gacha?\n\nResetting will return the Box Gacha\nto its initial state.	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept; needs a person's review
-ボックスガチャ提供割合		derived				
-ボックスリセット		derived				
-ボーナスを一つ選択すると、そのボーナスを\n強化する特性キャラクターを優先的に自動選択します	Selecting a bonus will automatically\nprioritize characters with traits that\nenhance that bonus.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-ポイントゲージ報酬	Point Gauge Rewards	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-マルチプレイに参加できるパーティが\n見つかりませんでした。\n\n再度パーティを探したい場合は\n「オートマッチング」をタップしてください。		derived				
-マルチプレイに参加できるパーティを\n自動で探しています。\n\n少々お待ちください。\n\n残り時間		derived				
-マルチプレイの参加条件である戦闘力が足りません。\n\nキャラクター、武器を強化する、\nあるいはより強いキャラクター、武器を入手するなど、\n戦闘力を強化してマルチプレイに参加してください。	Your Combat Strength is too low to meet\nthe multiplayer requirements.\n\nPlease increase your Combat Strength by\nstrengthening your Characters and weapons,\nor by obtaining more powerful ones,\nto participate in multiplayer.	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept; needs a person's review
-マルチプレイの遊び方を選択してください		derived				
-マルチプレイをしてフォローを増やしましょう！\nレンタルキャラにフォローした\nプレイヤーのキャラクターが出現しやすくなります\n調査ランクが上がればフォロー枠の上限数が上がります	Play multiplayer to increase your\nConnections! Characters from players\nyou follow will be more likely to\nappear as Rental Characters.\nIncreasing your Rank will increase\nyour Connection limit.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-マルチプレイ開始		derived				
-ミッションに戻る		derived				
-ミッションの中断データがあります。\n中断データから再開すると\nミッションのステージ1から再開できます。\n\n消費したスタミナは戻りませんが、中断データを\n破棄してホーム画面に戻ることもできます。\n\nまた期間限定ミッションですと、再開できない\n場合があります。\n	There is saved data for an interrupted mission.\nResuming from this data will restart\nthe mission from Stage 1.\n\nSpent Stamina will not be refunded, but you may\nalso discard the data and return to the Home screen.\n\nPlease note that some limited-time missions\nmay not be resumable.\n	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept; needs a person's review
-ミッションチケットが足りません。\nマルチプレイでゲスト参加すれば\nミッションチケットがなくても参加できます。	Not enough Mission Tickets.\nJoin as a guest in multiplayer\nto participate without Mission\nTickets.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-ミッションリタイア		derived				
-ミッション選択		derived				
-ムービーを見る	Watch Movies	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-メニュー		derived				
-モンスターレベル		derived				
-ラッシュコンボ		derived				
-リセット		derived				
-リリース記念ログインボーナス		derived				
-ルームIDで検索		derived				
-ルームに参加		derived				
-ルームを\n全検索		derived				
-ルームを作成		derived				
-ルームを非公開		derived				
-ルーム一覧		derived				
-ルーム作成		derived				
-レア		derived				
-レンジ／属性	Range/Element	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-レンタル		derived				
-レンタルボーナス獲得	Rental Bonus Obtained	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-ロール		derived				
-上昇探査率		derived				
-上限解放		derived				
-不足数		derived				
-中断データから再開		derived				
-主なドロップアイテム	Main Drop Items	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-主な出現エネミー	Main Enemies	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-主な出現モンスター		derived				
-主な報酬		derived				
-交換する		derived				
-交換できない理由	Reason for Exchange Failure	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-交換可能期限		derived				
-交換数を入力してください。		derived				
-今日は表示しない		derived				
-以下のアイテムを使用して強化を行います。\nよろしいですか？	The following items will be\nused for enhancement. Are\nyou sure?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-以下のバトルスキルを習得しました	Learned the following Battle Skills	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-以下のプレゼントを取得しました		derived				
-以下の内容で探査を開始します。\nよろしいですか？		derived				
-以下の素材を使用して覚醒します。\n実行しますか？\n（習得に必要なレアリティ：★５以上）	Awaken using the following materials.\nProceed?\n(Rarity required to learn: ★5 or higher)	agent		2026-10-07	enf-labels	the Japanese lines kept (the machine row ran them together); needs a person's review
-以下の素材を消費して進化を行います。\n実行しますか？		derived				
-以下の素材を消費して限界突破します。\n実行しますか？	Consume the following\nmaterials to perform a\nLimit Break. Do you want\nto proceed?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-低い		derived				
-使用するアイテムを選択してください。		derived				
-全データダウンロード		derived				
-全員をフォロー		derived				
-出撃可能キャラ数		derived				
-出身：		derived				
-初回クリア報酬		derived				
-初期化中…	Initializing...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-利用規約		derived				
-到達LV		derived				
-到達上限解放	Unlock Level Cap	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-制限あり	Limited	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-制限なし	No Limit	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-制限時間に達しました。\nリタイアします。		derived				
-募集するロールを設定してください		derived				
-募集コメント(30文字)		derived				
-募集開始		derived				
-友情ゲージ		derived				
-友情ゲージがＭＡＸに！\n報酬を獲得しました。	Reputation\nGauge is MAX!\nReward\nobtained.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-友情ゲージ報酬		derived				
-取り消す		derived				
-只今メンテナンス中です	Under Maintenance	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-召 喚 開 始		derived				
-合計強化ポイント	Total Enhancement Points	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-同意する		derived				
-同時に探査できる船数が増えました。	Increased the number of ships that can explore simultaneously.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-味方		derived				
-味方のバトルスキル名の表示設定です。\nオフにすると敵のバトルスキル名のみ表示されます。	Battle Skill Name Display Settings.\nWhen off, only enemy Battle Skill\nnames will be displayed.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-味方のバトルスキル名表示	Show Ally Battle Skill Names	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-味方の与ダメージ数値表示		derived				
-味方の攻撃が的にヒットした時に表示される\n与ダメージ数値の表示切り替え設定です。	Toggles the damage numbers shown\nwhen an ally's attack hits an enemy.	agent		2026-10-07	enf-labels	the machine row added a heading the Japanese hasn't; needs a person's review
-味方キャラクター\nエフェクト設定		derived				
-商品内容詳細		derived				
-回復型	Healer	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-回復後のスタミナ		derived				
-在庫		derived				
-報酬はプレゼントボックスから\n受け取ってください。		derived				
-報酬を受け取る		derived				
-報酬アイテム		derived				
-報酬リスト		derived				
-売却FOL		derived				
-売却するアイテムに以下の物が含まれます。	The following items will be sold.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-変更するホームマスコットを選択してください。		derived				
-変更後のステータス		derived				
-外す		derived				
-威力		derived				
-実績		derived				
-実績達成報酬！\nプレゼントボックスから受け取ってください。		derived				
-実行		derived				
-対象キャラクター	Target Characters	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-年		derived				
-年齢による制限		derived				
-年齢：		derived				
-強化できる武器がありません。\n\n武器を入手してない場合は\nミッションをクリアして入手してみましょう！\n紋章石を使えばガチャでも入手できます。		derived				
-強化アイテム、その他アイテムがありません。\n\nイベントミッションだと強化アイテムが入手しやすい\n特別なミッションがあるようです。他に、コインなど\n貴重なアイテムも入手できますので、\nイベントミッションをチェックしてみてください！		derived				
-強化ポイント	Enhancement Points	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-強化条件		derived				
-強化開始		derived				
-必要		derived				
-必要FOL		derived				
-必要アイテム		derived				
-必要数		derived				
-必要数：		derived				
-必要紋章石	Gems Required	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-必要素材		derived				
-惑星・地域選択	Select Planet/Region	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-惑星遷移	Planetary Transition	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-戦闘力		derived				
-戻る		derived				
-所持		derived				
-所持FOL		derived				
-所持アイテム		derived				
-所持コイン	Coins Held	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-所持数		derived				
-所持数：		derived				
-所持紋章石		derived				
-拡張後の枠数		derived				
-探す		derived				
-探査率		derived				
-探査能力		derived				
-探査開始		derived				
-推奨レベル	Recommended Level	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-提供割合		derived				
-操作キャラ		derived				
-操作キャラクターとのカメラ距離を設定します。カメラ距離が遠いと\n周囲を見渡せるため敵の位置が把握しやすくなります。		derived				
-攻撃がヒットした時に表示されるヒットエフェクトの表示設定です。\nバトルが派手で醜い場合は表示オフを試してみてください。	Hit effect settings for when attacks land. If\nBattles appear too cluttered, try turning this\noff.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-敵を攻撃したときにキャラクターを側面から写す\n演出カメラに移行するかどうかの設定です。		derived				
-新たに以下の称号を獲得しました！		derived				
-新たに解放されるファクター	Newly Unlocked Factors	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-昇順		derived				
-更新		derived				
-最大		derived				
-最大まで上限解放・強化を行った際の性能です。		derived				
-最大ヒット数		derived				
-最終ログイン		derived				
-月		derived				
-有償入手分		derived				
-未成年の方へ	For Minors	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-本当にリタイアしますか？		derived				
-検索		derived				
-検索中です。しばらくお待ちください。\n残り時間		derived				
-検索結果		derived				
-標準版をダウンロード		derived				
-次へ		derived				
-残りミッション数		derived				
-残り時間		derived				
-決定		derived				
-決定ボタンを押すことで売却が完了します。	Press the confirm button to complete the sale.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-注意	Caution	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-消費AP		derived				
-消費スタミナ		derived				
-消音		derived				
-濃い		derived				
-無償入手分		derived				
-特殊条件		derived				
-獲得EXP		derived				
-獲得FOL		derived				
-獲得調査ポイント		derived				
-獲得転送LVポイント	Transfer LV Points Earned	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-現在、参加できるルームはありません	No rooms available to join.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-現在、表示できるガチャはありません	No Draws available at this time.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-現在のスタミナ		derived				
-現在の枠数		derived				
-現在の設定：標準版	Current Setting: Standard Edition	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-現在受け取れるアイテム一覧です	List of items currently available to receive.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-現在受け取れるプレゼントはありません		derived				
-現在進行中の探査はありません。\n探査宙域を選択して探査を行いましょう！		derived				
-生年月日：		derived				
-画質設定		derived				
-発生ボーナス		derived				
-登録する		derived				
-目次へ		derived				
-相互フォローの\nルームを検索		derived				
-相互フォロー限定で\n募集する		derived				
-称号変更	Change Title	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-紋章石		derived				
-紋章石%d個を使用して\n%dptスタミナを回復します。	Use %d Gems to\nrecover %d Stamina.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-紋章石%d個を使用してフォロー枠を拡張します。\n最大%d枠まで拡張できます。		derived				
-紋章石100個を使用することで\n全員が復活できます。\n紋章石を使用しますか？		derived				
-紋章石が不足しています！	Not enough Gems!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-紋章石について		derived				
-紋章石を使用する際には無償入手分から先に消費されます。\nなお、紋章石購入時に入手したおまけ分は\n無償入手分となります。	Gems obtained for free will be consumed\nfirst. Bonus Gems received upon\npurchase are also treated as Extra.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-紋章石を使用する際は無償入手分から先に消費されます。\nなお、紋章石購入時に入手したおまけ分は\n無償入手分となります。		derived				
-紋章石を購入する		derived				
-素材アイテム		derived				
-累計		derived				
-船数	Number of Ships	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-薄い		derived				
-表示順		derived				
-装備		derived				
-装備なし		derived				
-装備中		derived				
-装備確認	Check Equipment	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-規約に同意して登録	Agree to Terms and Register	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-覚醒		derived				
-覚醒内容		derived				
-解像度設定	Resolution Settings	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-設定		derived				
-誕生月		derived				
-説明		derived				
-調査ランク		derived				
-調査ランクがアップしました！		derived				
-購入		derived				
-購入履歴	Purchase History	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-購入情報		derived				
-購入確認		derived				
-転送権限LV	Transfer Auth LV	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-近い		derived				
-近くにいるプレイヤーが見つかりました！\n（最大20人まで表示されます）	Nearby players found! (Up\nto 20 players will be\ndisplayed)	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-近接型	Melee Type	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-追加効果		derived				
-退出させる		derived				
-通知設定		derived				
-速い	Fast	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-連続クリア数	Consecutive Clears	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-進化		derived				
-進化後情報		derived				
-進化用必要素材		derived				
-遅い	Slow	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-達成済み		derived				
-達成状況		derived				
-遠い		derived				
-選択したアイテムはロックされています。\n解除しますか？		derived				
-選択したアイテムを売却します\nよろしいですか？		derived				
-選択中		derived				
-錬成後アイテム		derived				
-閉じる		derived				
-限界突破		derived				
-限界突破に使用する素材を1種類選択してください	Please select one type of material to use for Limit Break.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-限界突破素材		derived				
-高い		derived				
-高画質	High Quality	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-高画質版をダウンロード		derived				
-１日１回無料	Free Once a Day	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-～10歳未満	Under 10 years old	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+ja_sha1	en	source	engine	date	editor	note
+0030108202701f7c1d1207c6c25096dccd2c6d07	Purchase History	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+013a581e27a977ff2cb50a3f333dcd8842b95d30		derived				
+015e5192985a6c3bea791af691d7eacd26b467e2		derived				
+0163e0ff102b014cc62b3806ad22ad5ab814dc07	Use %d Gems to\nrecover %d Stamina.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+04e8c95c6deaaabc242bbbd2b4694dbe54c4f588		derived				
+0550e9bba15dcbff316bf7f3732c148eb58bcb0f		derived				
+0609ff4e23aa5bd5df19670b9c5c596cb95b8ae7	To use SQUARE ENIX BRIDGE features,\nsuch as backing up game data or using\ncommunity functions, please agree to\nthe User Agreement.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+06c1bc591393cd28183f3ccdbfcf72ce15b7584d		derived				
+0773e400f908b961587c7d53ed8a021a18097c09		derived				
+07ef8a2857cb7445955dbf977936fd6ac2e0a6d1		derived				
+07f3b8664608947d861360a6cdd7c1f8bee7268a		derived				
+088bbbb3a851d4dd1d0fe2429a1ce78e4bad3b3a		derived				
+088d5b688d3e875730022f83c7095de6352005d1		derived				
+0a05c6c23aff94f34e5ae67e03767498e652c57a		derived				
+0a43d830faa046a64e589439d0a4bf3694acd555		derived				
+0ae69416a15d1db1e28215ddb8282a9af65c99f1	Reputation\nGauge is MAX!\nReward\nobtained.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+0af18ff41c6a283998bef033b47fdb3c1acb5faf		derived				
+0b557545ff6641e8fadec8bb8c9cbc7fca0dd4e8	Not enough Mission Tickets.\nJoin as a guest in multiplayer\nto participate without Mission\nTickets.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+0db9628f1dcfb0c175ba41fbbca196217e5e27cf		derived				
+0e73579d9a292c1ad50c7097777f4479d774e9e6		derived				
+0f077d005405215ebdbff64794396386cd6cc082		derived				
+0f8e5b4de960b3b2fc38c97579a61457acc4b7a9		derived				
+10eb9cb324a9fb9fec5463767121b10ca0bbd9af	Point Gauge Rewards	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+112f23a55cdc5db85602f50d3b128010a75390bf	Limited	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+12092c96c4f24297d6fd41991b19d52b0ff3c819	Main Drop Items	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+127aefbb21d3cdcc9dff0d965bc156ccc1a0b095		derived				
+128a10985a10e2b86669bcf18c9f9fe4dc1edfdf		derived				
+13c66880af33dba5bef87661c42e8ff3dd75b541	Not enough tickets.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+14216ea0b29f4f58180c712db814b1453068b16b		derived				
+1457276e3a7a3172a2a4c3cd884fb7649714274d	Adjust the time before page turns are auto-skipped in AUTO mode.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+1689e86e5dd070313e3715dee2e6af7ba2e9132d		derived				
+17e6dadcdd859705a9d359b1e25cc69f4c890dbe	Gems Required	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+189ac27be6c14a135fe8532b59cb0829cc45293c		derived				
+1902f57445fecf1ba7a11bf8e9ce06a8bfcb9b89		derived				
+193f4ba702938be01670e3ad897e49e6364d1b89		derived				
+1966c24c07da8c3868b360f29020ae2ed1a0bd4b		derived				
+199cf190cf26c6fe76ba902244d8d85627184d84		derived				
+199df04311c42286d7a4271bad5937ad2f582b00	Number of Ships	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+1b1f317fb90c5197b0f06b1634bc67dceff8ff04	Target Characters	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+1ccc9e0b638d509d23c2b41a699807d74cb6a943		derived				
+1d099647966a5224a25d1f759d9b9d760493c2e5		derived				
+1d0f37a7a1f2fcf6fccacf5d177363c4eac1478d		derived				
+1deaee282aff4b33793f6b2368caa3962f501278	Nearby players found! (Up\nto 20 players will be\ndisplayed)	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+1f6d2bce5dc03b1202b3d2eec6509a08aa1cb068		derived				
+1f78b7e368ced5d899f1f506e016084a81340580		derived				
+1fa94e0e9e7d7212d39da59ec0df9d59c8a87633		derived				
+1fc9cbba89d64c05ac86fc194c3779a17909db8e		derived				
+200de0cf73dd1224d781afb48790cf3912bcee7f		derived				
+20faf76ba10ccda00ed472c31b3a41310ffc94be		derived				
+213ae586de61c1ffe9dbf44ca1b772d4205a7659		derived				
+2154ca8fe31abb0a3f035cb74753b13817aa24d7	Enhancement Points	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+21649e4f846d9374b2f472bb7e5c3179d41b954c	Item Menu	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+21895369739144286618475e2fa27bc80fd5f099		derived				
+2248d4f3b839001e325a172e5f5a1f8267a0efbb	Under 10 years old	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+22687a5428554927ac01422fce70fab228c380e3		derived				
+22fab8dda312f4a154a3f92295316acea8ca405b	Enemy	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+234283a496b5f695b8480c8e292f65a9f1c08279		derived				
+23c19b5742ce685ae331491f77f037e8b44b0a3d		derived				
+23de2efb8082e2bb6dad1f025df027746efd51b1		derived				
+247db2d617938c83c36afb6b9e9daf6449629b6a	There is saved data for an interrupted mission.\nResuming from this data will restart\nthe mission from Stage 1.\n\nSpent Stamina will not be refunded, but you may\nalso discard the data and return to the Home screen.\n\nPlease note that some limited-time missions\nmay not be resumable.\n	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept; needs a person's review
+2486ef70e16f89b6802ffa732b49f40cd4bcd400		derived				
+267e3b3c90f8eb80365a220ae83d24d4cc6b7d03		derived				
+26d4e878e40ef957b927ecd42774704bbc7bad95	Healer	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+2708ddecdee6027c80501c8914824f2ac76ad5fc		derived				
+276c65d9e672f365391826c133079706707400eb	Set the intensity of battle effect\ncolors. If effects feel too flashy, try\nlowering the intensity.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+28a13b68964e347b7ca0eeb411b83c0e15b8be3b	Please select one type of material to use for Limit Break.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+28eeac5d2b7c55b1ca0cd60c9e5dabd08cd7a030		derived				
+29245578952a12b60bfbb3caef72b1ebb32375b9		derived				
+294bb3ffb016dab0ad9fc0f40220b50416b04fe9		derived				
+297b47646a8e0679fd2522c46ae6b23e353a0a3c		derived				
+298eafa4dcd158f666a19287d7ffb6d6c4332832		derived				
+29bfcab4945171e15ac72b0c1965ef33666dc5d4	Not enough Gems!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+29c7e39562af421ceea7c24b36fd96ca63c836f9		derived				
+2a00340841649288370354626b71fffc4fd5f0d3		derived				
+2a07d3b827566e5010597f27221b442f9dec6f20		derived				
+2a16a764f10eb29ee63c08eedb17be565801ee19		derived				
+2acbcb41e654950779039ec325bc6d18c2e1a8d1	Toggles the damage numbers shown\nwhen an ally's attack hits an enemy.	agent		2026-10-07	enf-labels	the machine row added a heading the Japanese hasn't; needs a person's review
+2ccbddd5842781e68d583d31d64256ac2a575f8a		derived				
+2d1503bbe14fc8d5055b61e62a23446949e71dd8		derived				
+2e6160f4017b2b737e7705844d7ff94b8f0158f3	Please enter your\nplayer name. Maximum\n12 characters.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+2e65648709989d7970d6b92ddfe8bef8bb3c3820		derived				
+2e6b3a8b8fe0131c6ca646e87d955456fea0159f		derived				
+2eab87736cef488a2739e76667e90027f27a5ea9		derived				
+2f7deabab534e621ef31f947573d69de30b8888a		derived				
+3043d7c510a30fe5867a00a55107ef2db76367fa		derived				
+311555f289c0fb33b6b8ccb6898dbe24e3715ac6	Please enter Player ID	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+31809ee5677b9e1439e87e282f7646bc4e4c2666		derived				
+31bf96c769175f9a81e24edb7a978abf335fc137		derived				
+31fe3624ee4b192cf0daf857c9c1052e5f57f0a6		derived				
+33d3427e6e8b2e9eaa031f042cc1019693a4f0db		derived				
+35197fbc25404061b6f85fa6e1155046894088c9		derived				
+3597849fcdf89d785730dba396e01dccd2e67f06		derived				
+366ed91f3a50ba329c91dd59908eb2b45bd0f895		derived				
+36ad7834458be0d6c962151dacdfd7db3e71cfa6		derived				
+3722dd80e2d52c1fc9861bdadf41444a4fbe0b14	Learned the following Battle Skills	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+388bae84a86cb8108735900b44fe857898e205c7	Gems obtained for free will be consumed\nfirst. Bonus Gems received upon\npurchase are also treated as Extra.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+39942c433ab675486fd2b43f951f4f4004e42214	Characters summoned. Characters\nused for Limit Break have been\nconsumed. Characters converted\ninto Limit Break Materials have been\nconsumed.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+3a5487771e62b3a0a5a4105a5a60e5aaf4955678		derived				
+3b2d3dc5c5ebfc5a3bc05f49a019daeff163b98f		derived				
+3bec95af14224f7d16eb39ee88661f9c2dd0ec87		derived				
+3c92cb6969169ac16b4866ec5fef7db9aee83e51		derived				
+3d1923125c5c20f3c2cfefd81106713ee8ab00d7		derived				
+3da5c1855151b370ca9064a6d547d92bc9b89ce5		derived				
+3e25c63c32aa2a6c2b811ed0dc612764b5144471	Main Enemies	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+3f80dcfd75f4286086163bb5acd9567b69806fdd		derived				
+408090253cc263277d186aaeaf00de8629f8c466	Sort	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+409d9f67bc175f5e5a43c0dcad228efc907ac64a		derived				
+4106befcfeb431cd5a86d3e9cd40cddc1fbc9dc1		derived				
+425abb3a170557b73333674590fd3005bbb9406b		derived				
+42f9f3c2d790392a837fb30e29b344a92e01383d	Change Title	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+430056c1218ead670d44585ad1aad57d2f8f64c0	No Draws available at this time.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+431ca306559019df7977b74631e353624e805a3c	The following items will be\nused for enhancement. Are\nyou sure?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+438db555abf97507cba2e1728a99ee60af7a7575	Current Setting: Standard Edition	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+43f89103fae6ea9a715e3b0e92c2169260b55f88	Up to 5,000 Yen	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+44696dfc247af1340406e092156908ff35026169	Set graphics quality. If settings are changed, a\ndownload confirmation for game data will occur upon\nrestart.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+449014f29784343603c047fa991ac20c8c4ea1b1	Under Maintenance	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+453a65eb027ba797f9fed41050577623dff5b36f	Resolution Settings	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+45bec89c0f506286866d4d756364c2fd885138e0		derived				
+46155c22cd18dc4037049f2dd994f3e2f3f2097e		derived				
+47578c86729fb8384dcbe4c1e2bb685cdadc5f4d		derived				
+484cf2b248132f244b301c92c780df2d8fff298f	The following items will be sold.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+488bfd4e00250d3fdc24ce1de3644d3a9b9568bb		derived				
+48919ca78301e3e49c0e39b9cc34d1496063afaa		derived				
+4891f2f9d43e7b30388ffdd4592689c63db81031	Before starting the\ngame, you must agree\nto the User Agreement.\nBefore starting the\ngame, you must agree\nto the User Agreement.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+4921c02968237b766427dd4e1b2cf156d35ad860		derived				
+49595862cd1fdeab046835b04443c8da64a56135		derived				
+4b4306d16206ea79122627a61eab44325af7124d		derived				
+4b57645dc9baae618d617324dcb5d6845ae45f27	Select Planet/Region	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+4b97e5b867e368bded1232b46521e69f785f2f8a	Slow	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+4bdc2d63322f119c8d7fdd1e5dd527c368cda76b	Battle Skill Name Display Settings.\nWhen off, only enemy Battle Skill\nnames will be displayed.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+4c297620d02e096a988cc001e15ea4316590f6f6		derived				
+4c68cbbf56914857f37bf190a47607226b16ad8f		derived				
+4c88d524c4e268c3bbb918758d041ba6ef97b907	*Caution* Serial codes that have been entered\ncannot be used again if the game is uninstalled\nand reinstalled.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+4cdcda51f44b2939742fa57e521c8771bfd52dca		derived				
+4d38c1d80ae8f39af891719d90e68f5c633e14c5		derived				
+4d4d697e702b655811688bc98f840079ddc60346		derived				
+4dbcb200d8b9525597bb771d6ae956ba5cafffa3		derived				
+4de179ecf542c478157d1d738072337c7c4d0860		derived				
+4deee57c8da9c5f163ad082040f731d99a972a30		derived				
+4e62eafb924fcd972be6c1d3f759a5f164f041e9		derived				
+4fa5d6a934b28faca4f806a7930fdd7628062d0d	Initializing...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+504fc511a515b3a000c0002f4933b65fb4b3b917		derived				
+50d1591a86268cf55c41ff92d1a78ee6917a787a		derived				
+50d5434c03307d21564096e9551eca55f7955a96		derived				
+51982a73f5d1d0d8a54d279ab423a370bc420fd2		derived				
+56a1c773856b54ca2f8df20155f8bf566be74d0a	Planetary Transition	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+56c323307835a23bfc39e02d0a310cc6169574fe		derived				
+5869452e607837b63b009274ac643324687fd5da		derived				
+5978cbf78aba7c4a1af5a11926e4b94d0c8f8bac		derived				
+59d2ad7082e0d29b5d28d72d34d78eb553b14ae7		derived				
+5b17f3afed4673086b29886c42f0d523d925f206		derived				
+5b71fd1b7a8935872cac12700cebce2dcaa91955		derived				
+5ba257c5e6420cd9d44446bb83152c185da8de2e		derived				
+5d9272dce41aca79be32e2e5675df7dc722917f0		derived				
+5ed604ec02eeedcb427c23ff1c5b03dc7e830bd0		derived				
+5f2d5b2810c63554ebac4687113eae0c64a648d4	Show Ally Battle Skill Names	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+5fafd86de1ca2029a2ccea1ef362d0cee111ce46		derived				
+5fe39121a1b6c5a0ba5e0bba8521c54db35fec39		derived				
+60a1005be6a88f26b5cd0bdfec9570a5881247eb		derived				
+60af3f6285a2161e11f5f411b132818ca37695e0	Increased the number of ships that can explore simultaneously.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+614189b3887e130bf17f88841af2704435d14d97		derived				
+616199d85b063cd8e8ff16e9b5bed6081a1cb874		derived				
+6329f21c41636e361bb9820900690cdfef309623		derived				
+63a3f1a586e551b644c204598c71d975ecb44d14		derived				
+64d19032736a195aa092b6e880637e671b286ce7		derived				
+65f1a4621d9f95871e01f5d8f35792f0b7836e2e		derived				
+6631f4d1799ccb8d9d35cefb2129c8a1de59f316		derived				
+68278b115f9669b944db5138657425c6d084bafa	Toggle the ability to switch\ntargets by touching enemies.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+6868dffcfad5a7dc37c2815b432adfe8d3ff5faa		derived				
+6d86f0f9bc6e59d7295585c5075f3844b0436f35		derived				
+6e0510a6658f5dba496be190c0af31b23488ed27	Option	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+6f030e50496ee412d13c27ae68717d9b3ee7b14c		derived				
+6f14c2641c259cd65bcfe5ba57a7a0aa34468fe7		derived				
+701f79beea914012c0a0814a2a6cf74ff3cf4771		derived				
+71a4af921a0c60da708fad8d6e9c5b17f03e4400	Hit effect settings for when attacks land. If\nBattles appear too cluttered, try turning this\noff.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+73b87d6b76c99b711dd5ad9fd37c69d5ffd2935b		derived				
+74dafde9d2ee32e6ad3b553250b05abee35dd34c		derived				
+75584761199edbea939ba657aad97d8e2bff841b	Deep Space	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+770720435454709da98f90a919149c20d45cd081		derived				
+783d90710a64eb9fcf4ed0daf3d3cdc28f5f9ea9		derived				
+78f68f88d01f081dd0f74d2425fad595686e13f9		derived				
+7918007880f1030d6958a4156b261d195474ed8b		derived				
+79a934542e7d61448cc894d614c5808437666413		derived				
+7a3df25a431d7dfcf9df1d4c32d336004572f3c3		derived				
+7aa9799e32b4636f58a2814315e6ec3688cd00da	List of items currently available to receive.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+7c2281ce7193ecc75e3a27ab3260190556f717d4		derived				
+7c9e8d5484f86906bd55e9b365a475f59d089ca7		derived				
+7cf42036e3b593b20562d014a425e5085691ff17		derived				
+7d595b0f15631c8111898d1509e10e7a4a5b935c	*Date of birth cannot be changed once registered.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+7d74b8462b5cff56723f94c763c4a82f146ee001		derived				
+7eea85e064cee9d9be500898cad364fd15629658		derived				
+7f85ad2fccf295979ce84a28376bccb5e7921a12		derived				
+7f9e7dd02d24a6aae40387b3a8cc82e89527927a		derived				
+80837be491364a0dc3fe79fe795979cbbd3e973a		derived				
+8106a785ac04b6587eb08b7a95e00f10b09159f0	Press the confirm button to complete the sale.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+8192f78ea2daabfd03f5184927191bd592765020		derived				
+82ae14940eb9de799ff6b8708c9df1748a9a4510		derived				
+8356666fcec5b22203a8b3a76eb4dabd5b392313	Rental Bonus Obtained	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+83c187dd08a62870296e870cd173e3369de96a22		derived				
+84be0095a400d125bf906977ad3d1bec73d31be3		derived				
+8586dc33c8509b67fda3f098c6a7d6c7701ba8fa	Fast	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+85aded6a7fa6af0fe41fe49bcbbe7b4fb4485363	No rooms available to join.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+85fb47a563609f2bb110f772aeb13e06a0945f73		derived				
+866c28f0951a578229304eac70de7666183a5125		derived				
+869995a7fed0e33334de2c922bffb6d5016bad8c		derived				
+886ba7d13a57cfdb2b476cf41776eff0541a0b6f	1 Month	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+88946025a2b13353adc5448a0f1d890a68923a42		derived				
+894fa360264575e59a99e5fa49da73826c2cb441		derived				
+8a963fbf6b496eb20b7d3dcc4d74207e36e903bf		derived				
+8d5e0dbce1033bbe31c4da1cea5a0f431c418fa5		derived				
+8e033bdd0a5c2718e177217eb8cc5bf653699238	Selecting a bonus will automatically\nprioritize characters with traits that\nenhance that bonus.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+8e2b3686df5f332680f5d0a55416ec5f0e358857	Your Combat Strength is too low to meet\nthe multiplayer requirements.\n\nPlease increase your Combat Strength by\nstrengthening your Characters and weapons,\nor by obtaining more powerful ones,\nto participate in multiplayer.	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept; needs a person's review
+8e4144161abd56cd26a9176453ab8250d2ee4116		derived				
+8ea5b4a238774d8a1a715b955bfc4ecf9f7ff378		derived				
+8f99b5f7c588405f7a69dc3fd693a5d90e1757dd		derived				
+8ff1fc7ce27c947155bcaffcb9f036cf57c0ca46		derived				
+9057f3cba1c62bc0a76f769b38dec9d1c29c8bbe		derived				
+9083786ffb093d8ec8c67ef528c8451677f4f1e6	Melee Type	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+909e0ee4484f4651f0db2b886d80d01308623389		derived				
+9121b1ad7b7d3ca14fd26902f4742de7ce0ee1e4		derived				
+9286491ee9961cbafb914ed01cdde25c0fd91e14	Adjust the number of items to use.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+9305d34de3970d039314c9ff1b1052750c805a16		derived				
+938fccd9a68ebded406ca1b8f716755cc6328f17		derived				
+941ed4399ced768e86a3466a7a6ebec6daf26772		derived				
+94b74303191c15756416da49fa97cb3bf6c719b7		derived				
+94bf485f5b4f955235f8290fb38c7711184c1b24		derived				
+953d06a578aeff521f4a3c3697e43ed3da841e48		derived				
+95401b7afe30351954ae1e7240cd2ae1847eb7bd	Set the resolution for Battles.\nHigher resolutions provide\nbetter image quality.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+965a15c6c798ce4bb75cea44c03152d5b9dfd8a2	No Limit	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+97b0a1c0a9299d48da9957443dfd728cc77acc98		derived				
+9820b7636a8b8fab4f78bdbcb5af46a2f4df847f		derived				
+989b895084c96f19c38d231492695beb9e094788		derived				
+9902b61cdb0b055a94c24a23e336b453a952b8b9	High Quality	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+99763a03bed2a47aa8aca53ac930379f5e39337a		derived				
+999c4c5377aa1a9216eed7c3c5031d6735a36c53		derived				
+9c688b567962a2af5ead2e89d1cf79c5a325c613	Transfer LV Points Earned	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+9d3d261dddf88d5c0ab48c3ec31cc45b9ada2a4d	Watch Movies	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+9f2a9902043c547b1c746d9a710faf101044126f		derived				
+9fa8a8408571ee86d230f8dfbd0f92aa0d19db6e		derived				
+a03d17e6f17bd4080d9030ad6f4407eb19b0f4aa		derived				
+a200415c3f103af45c0778cc85f42eab5773e2ce		derived				
+a20f60b01a08bbab8d9928812be85523248e72a0		derived				
+a225cb9a9e261c4fd1feb24ebccf7657ec2aae2d		derived				
+a386ad163ddc14b946f3ad9abd1e5ef28ab14b55		derived				
+a48d3ab272afa1f307d9c5bf8b7135eb6cd1fce1		derived				
+a5e01a12713f93694e91421364255152e33d6ac7		derived				
+a7768394630c5d1ffa3fe9f8d91981078fbb6c6f		derived				
+a7e8349a12ba2c57059c1001a892edb95f31b568	Reason for Exchange Failure	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+a8e51527055eb0af63475cfbbc0bdee9cc0f5134	Clear	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+a9be5f445d9fecf9122b9bf94a488fdd13b7a02e	Age 20 or older	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+a9ea8d642f134a9b875f4ce1c4e06715964ce75a	Consecutive Clears	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+a9f63303a49440fdee8037a02aa5ebb030d3d9c9	Switch Enemy Touch Target	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+abe045ea7bf46df15de7f9452f5c35f00094f8dd		derived				
+ac8d6015704332ea04594b6870e97d565c1a5991		derived				
+ac9c0ca599a82bad86464ab32f1b1f64e5a32269	Age 16-18	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+aecca72b6740fbde4cbe48df9d30ec400d2f6dc6		derived				
+af374c8b85f10d6a6f6fa70f6276b62f570caeb7		derived				
+af986a9d67ba4ad9005d6c4b2f2a1a36b2328844		derived				
+b0e242fa9a22617b80981eea9c8baed898ddffaa		derived				
+b1a955c4836a3824da1ddf18d5b101917725e55f		derived				
+b3ea3dee2f3b0138ca8bd665f95f0842e0da18a2		derived				
+b50297379cd6567fe39edc48af8e7398a6c18835		derived				
+b50496c3edc8d90ba81d176e3bbd49964b0760b7		derived				
+b5a572be7bf223e0d48a578c6834ade026887beb		derived				
+b5b0d454dc1201435963b285177c9ba286b8a7a4		derived				
+b6dcfdb80b6a94e56512376d8f32e36ea5e75184		derived				
+b704382947ca6274f8c0b374088cf626b8db01cd		derived				
+b75447b3f62fdf35d35ff929b273aa67d6b9bd06		derived				
+b7fa04d884bf97942f53da589af9b43a0097a47b	For Minors	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+b8201d4f1bb7c9ed95150b73a8e486732f912c6f		derived				
+b9252cc712fb8de96ebf00a93a508a7f2b5466c0		derived				
+ba14fa2db02342ac7670010dcff4bb45308be209		derived				
+bae3bb14d9484ce15f513252fd545665be36b266	Consume the following\nmaterials to perform a\nLimit Break. Do you want\nto proceed?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+bb38546c99eb75b43678d84bb0e716ed729003b3	Follow Menu	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+bb42ec1eac7f1d3a414e52fe8ffcf9aa1a37c6e7		derived				
+bc5334a2642c57298078d4d9b3eab41ce402b6d6		derived				
+bc8a72c9cc9ed645d9fee44696cacbe4ecfed125	Play multiplayer to increase your\nConnections! Characters from players\nyou follow will be more likely to\nappear as Rental Characters.\nIncreasing your Rank will increase\nyour Connection limit.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+bda91861e97668a6efcb2c052416df56f109867f		derived				
+be88a63948861945a0ba63e962dd2bebe5fd7c2e		derived				
+c022ef791faa8f89b305bc5a24f9f829c8f75c9c		derived				
+c0925ff890a4da536ffbb104c2547281dcb9c3e2		derived				
+c1464108a3bde5ce9e5c7740df0a4a94d9329b41	Recommended Level	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+c168e205f1731ac484a44eb4c5351ae112a5859c	This app is free to play,\nbut some paid items are available.\n\n\n\n\nPlease obtain parental consent\nbefore using this app.\n\nWhen purchasing paid items,\nplease ask for parental permission\neach time or make the purchase together.\n\nPlease discuss and decide on how to use\nthe app (such as usage time)\nwith a parent or guardian.	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept (the machine row ran them together); needs a person's review
+c189d070824dbef6b669a14db3b72dbe7aec0796		derived				
+c1f840e02c9d305e1ef1dd9071074a1f353fa38e		derived				
+c4e7c5205dd822092ca8f5888b8308717e75153b		derived				
+c6586ad10614f510457311781e909d6f71c1ecd6		derived				
+c69b49878cfb6649319aa8311295aca0e644aaaf		derived				
+c92b4cda8bdf50d2b2644305a8ebdf9c28cfabea		derived				
+c938ba73248441915f0e2b6f0ec1db1090da047d	Configure battle animations. Setting animations to\nSmooth allows for higher quality visuals.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+c956437fc60db6fc9e73ae2c869089a6291095ad		derived				
+c993ef4c6b59cf5bed1a8fe4ba5533f0227ccfdf		derived				
+c9cbaa14a9b81e67b37f996d8e3a54a97eda59e5	Newly Unlocked Factors	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+c9cecee19b2920bd5f015e52118b2e4e161cb83f		derived				
+ca64e22033b603eca65d06247996de53039b5f58		derived				
+cb6ce515211001fe37f09fad4366fde956726039		derived				
+cbe6d248749233619530fd07b500f7b4c178e659	Range/Element	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+cc764924ebeb0b4605f3f7c3b97d679bc260be3d		derived				
+ccbf638b33f66e4e5592ac27a977645cadb66969		derived				
+cccf5f0de7d68f5e909f1151fa9dbd75c29a789a		derived				
+cd88241f073e2c62707a104bff3fd5bb0a6c7fff		derived				
+ce959e413c2df1f246d1058be29db6ee06193699		derived				
+cfc2a4717e2e14ffe0881fbace41b503bf0aee03	Awaken using the following materials.\nProceed?\n(Rarity required to learn: ★5 or higher)	agent		2026-10-07	enf-labels	the Japanese lines kept (the machine row ran them together); needs a person's review
+cfda05574e6fffa38c8f998ad1eaf2657489ffe7		derived				
+d04a6f75bc740af56e169b95659c037848ff79e2		derived				
+d06f46dd213b710d2936b078536c9c946ab505eb		derived				
+d0af634ea7f74f1303e15a80e9cabb91ee40b268	All items in the box have\nbeen collected! The box\ncontents will be reset\nautomatically.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+d0c41a565ceffe55f7c902e6f77fb95994a8963e		derived				
+d0c9d3161379c1138f5c88599a812afed428e4a4		derived				
+d11c3184c576a99c444a8b9dada7016f4aed39ff	Coins Held	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+d2c57e3bf15d97205b3c7d263bcfb83ac9a83cb7		derived				
+d3cf9824809010ba65c4074730ed2ff45b05d3dd		derived				
+d60a862858458ad31859cfb4414ee3982588dee3		derived				
+d674cb7171af14483eca0dc9ba5b02b85a2d8c76		derived				
+d6c1473895124b921200b2117e25918331daceb4		derived				
+d6fb143b46c74f51c4fed8b8607a1c4050aadda6		derived				
+d70c5f51f26aae24acb90c11fed6938b59799342	Agree to Terms and Register	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+d73341ce320a60d7903cd79e424573ee5305c061		derived				
+d79294e2d1b887eb1ee8388ee22fd5080d04c27b		derived				
+d99ac35d5d7b9ebac3f9deac2acbe78c010b29b6		derived				
+d9b59879f3b83656682a13244a4690ff63728156		derived				
+d9d966e5a394ee0d887d91074a5d3c65392f4fc3		derived				
+d9db02d07adb1f8ac772b955da9cb883381918fd		derived				
+db359b53938e10b7b8738b4f24bd6feb9c64b2bb		derived				
+dcd6dbe6bdeed0a7ed1d69602aa1e2730b851a30		derived				
+de68d9d17f35404ae35bb1d99a9ffe37e28364bd		derived				
+defeebe88676d3a079cc119b47f2fe55ad083dd6		derived				
+df5dd4fb9fb7e811382311a8e159a6453f91a0be		derived				
+dfd66a4517040dbfa3df7a1660e31b1312fa59a8		derived				
+e0e8c84ccd010f1a0f421af4060553c2f6decb4b		derived				
+e12e0951202907e63f98d6ba2629b2357a382a76		derived				
+e4e2f6103faa0bfb893f86d0380d608fec2e551b		derived				
+e572295bb22472172f5448c293094f23b61385f6		derived				
+e5a3b5ec7ea881cde4e9676e7c286b5a2a644e0a	Reset all contents of the Box Gacha?\n\nResetting will return the Box Gacha\nto its initial state.	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept; needs a person's review
+e5dd6d985fbe6cf8a5c5816db01cbf23cc68e5a1		derived				
+e68867841a860382bfcba8506b2735620d6233ca		derived				
+e6dd91e36dbac5f6e85b827a7c054197e7298678		derived				
+e7b6a1cf0f43eac7ad1524ce914897721935453e		derived				
+e7d69ab741e7f13d851b7d979520e66143661acb		derived				
+e8eaeb3c9f9bc06f6540cdffe577daf22e553d40		derived				
+e911694742eb08f9aa6008a7eaafd71478c9a6c1		derived				
+e9d57f21b0073da70ad563dc5bec27310d8639d1		derived				
+eb1a2d429c584dc915e7effe047df0e32c57ffeb		derived				
+ebeafbe72f72d4cc247eafd883479e4dba9a9f1b		derived				
+ec39d8ad7c7e26e44b828af291faaff47a86b010		derived				
+ed690ebb15cc5b89ebafddca2a027d67881e5ec8		derived				
+ee77bfe0c6f6613f08ae661e281e2d99e29eab79	Transfer Auth LV	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+eea6fe06d6b2ef32c0db0334b42c2acf9759886c	Unlock Level Cap	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+f01b8e4aa4fd17e393bb47232eff1876cf9d26c4		derived				
+f08b55c42cfa6cb60d0b8bf41bf21ca61992bd2f	Caution	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+f248c8a6ddc2643e933b0df33601986b30aa9b53	Free Once a Day	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+f446d7442a1d7a7cf9483d9b582d7741a9d6b810		derived				
+f4f4bc20db3b7a297e5e85249352bacdc0f178bd		derived				
+f5b4922ffc8b86cb7b3a34c41a0a4c3cf2d77a83		derived				
+f5fa0c749794aa856b021709ba3b426e8404365d	Check Equipment	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+f62457575c19f158095c70330385de7f1eb14fec		derived				
+f64a3b610fab7f2f9c267786ea7f1eb2fa76d150		derived				
+f6c2c8d0f4629d905c124c8a59694eb1343a2a5a		derived				
+f8c53d970a89c09bde133ce45dc353507484b237	Reset Box	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+f901585367d6f4957f75a0341becdde060bfaa78		derived				
+f91560f947e85fb08462adfdc122f467592dea7a	Total Enhancement Points	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
+f9f417baf69cc608b7d2631e1de646a4bc2b5fef		derived				
+fc17f3f9a8bde8724ea4c37e3a1c6a54868c109b		derived				
+fc80950298a0420f94aec62c377fc80e8d1c4152		derived				

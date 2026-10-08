@@ -16,7 +16,9 @@
 // (official, memory, template, machine, human, reviewed) is informational.
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
+#include <vector>
 
 #include "soaserver/english_table.h"
 
@@ -38,14 +40,22 @@ std::string story_dir();
 // The layout labels (docs/english.md 7.14; docs/server-rules.md#english-labels): labels.tsv beside an
 // explicit --english-text, else data/english/labels.tsv (find_repo_file); "" when none exists.
 std::string labels_path();
-// Reads labels.tsv (header "ja\ten\tsource\tengine\tdate\teditor\tnote"; ja and en in the master
-// encoding) into `out` by ja: Entry{sha1 of ja, en, source}. A row is either our English (source
-// machine, agent, human or reviewed) or "derived" with no en (the English comes from the master or
-// Global, english_derive.h resolve_labels). False (and *err) on an unreadable file or a bad row.
+// Reads labels.tsv (header "ja_sha1\ten\tsource\tengine\tdate\teditor\tnote"; en in the master
+// encoding) into `out` by ja_sha1, the SHA-1 (hex) of the label's Japanese in the master encoding:
+// Entry{ja_sha1, en, source}. No Japanese is in the file (it is the game's text): labels_by_text
+// finds it in the download's scenes. A row is either our English (source machine, agent, human or
+// reviewed) or "derived" with no en (the English comes from the master or Global, english_derive.h
+// resolve_labels). False (and *err) on an unreadable file or a bad row.
 bool load_labels(const std::string& path, Table& out, std::string* err);
+// The rows of load_labels by their Japanese (master encoding): each text of `texts` (the scenes'
+// label texts with real newlines, english_art::label_texts) whose master-encoded SHA-1 is a row's.
+// *stale (when not null): the hashes no text has.
+Table labels_by_text(const Table& rows, const std::set<std::string>& texts, std::vector<std::string>* stale);
 
 // The master encoding's "\n" (two characters) as a real newline (english.md 7.9 `unesc`).
 std::string unescape(const std::string& s);
+// A real newline as the master encoding's "\n" (english.md 7.9 `esc`).
+std::string escape(const std::string& s);
 
 // Publishes the full table the CDN built (english_derive.h: the derived layer with our rows), which
 // table() answers without an explicit --english-text.

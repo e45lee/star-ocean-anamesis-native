@@ -659,18 +659,45 @@ def test_labels_committed_rows_pass():
     assert T.main(["labels", "--check"]) == 0
 
 
+def test_scene_labels():
+    """english_core.scene_labels: the LabelText / ButtonText str values of a scene's .msgp members
+    (the Japanese labels.tsv's hashes are looked up in; the server's twin is english_art::label_texts)."""
+    import struct
+    import msgpack
+    from soa_save import slz
+    tree = msgpack.packb({"Name": "root", "LabelText": "閉じる", 7: b"bin",
+                          "Children": [{"ButtonText": "一行\n二行", "Text": "名前"}]}, use_bin_type=True)
+    names = [b"s.msgp\0", b"s.csv\0"]
+    payloads = [tree, b"x"]
+    head = 0x10 + 16 * len(names)
+    name_offs, off = [], head
+    for n in names:
+        name_offs.append(off)
+        off += len(n)
+    blob, data_offs = b"".join(names), []
+    for pl in payloads:
+        data_offs.append(off)
+        off += len(pl)
+    d = b"\0ISF" + struct.pack("<3I", 1, len(names), 0)
+    d += b"".join(struct.pack("<4I", name_offs[i], data_offs[i], len(payloads[i]), 0) for i in range(len(names)))
+    d += blob + b"".join(payloads)
+    assert sorted(C.scene_labels(slz.encode(d))) == sorted(["閉じる".encode(), "一行\n二行".encode()])
+
+
 def test_labels_mt_import(data, tmp_path):
     """import-mt with "kind": "label" rows: machine rows into labels.tsv; failing ones rejected, ours kept."""
-    rows = [{"ja": "閉じる", "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
-            {"ja": "%d個", "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
-            {"ja": "戻る", "en": "Back", "source": "human", "engine": "", "date": "", "editor": "x", "note": ""}]
+    rows = [{"ja_sha1": C.sha1("閉じる"), "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
+            {"ja_sha1": C.sha1("%d個"), "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
+            {"ja_sha1": C.sha1("戻る"), "en": "Back", "source": "human", "engine": "", "date": "", "editor": "x", "note": ""}]
+    rows.sort(key=lambda r: r["ja_sha1"])
     (data / "labels.tsv").write_text(T.tsv_text(T.LABEL_COLS, rows), encoding="utf-8")
     prov = {"model": "m", "quant": "q", "prompt": "v2-label", "llama_build": "b", "temperature": 0, "date": "2026-10-07", "kind": "label"}
     ck = tmp_path / "labels.jsonl"
     ck.write_text("\n".join(json.dumps({**prov, "ja": ja, "mt": mt}, ensure_ascii=False)
                             for ja, mt in [("閉じる", "Close"), ("%d個", "Pieces"), ("戻る", "Return")]) + "\n", encoding="utf-8")
     run(data, "import-mt", str(ck))
-    got = {r["ja"]: r for r in T.read_tsv(data / "labels.tsv", T.LABEL_COLS)}
-    assert got["閉じる"]["en"] == "Close" and got["閉じる"]["source"] == "machine"
-    assert got["%d個"]["source"] == "derived"  # the specifier is missing: rejected
-    assert got["戻る"]["en"] == "Back"
+    got = {r["ja_sha1"]: r for r in T.read_tsv(data / "labels.tsv", T.LABEL_COLS)}
+    assert got[C.sha1("閉じる")]["en"] == "Close" and got[C.sha1("閉じる")]["source"] == "machine"
+    assert got[C.sha1("%d個")]["source"] == "derived"  # the specifier is missing: rejected
+    assert got[C.sha1("戻る")]["en"] == "Back"
+    assert "閉じる" not in (data / "labels.tsv").read_text(encoding="utf-8")  # no Japanese stored

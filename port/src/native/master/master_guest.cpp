@@ -5,19 +5,22 @@
 #include "native/common/guest_std.h"
 #include "native/common/live_call.h"
 #include "native/master/master_family.h"
+#include "native/memory/memory_callees.h"
 
 namespace soa::native::master::g {
 
 u64 sym(const char* mangled) { return guest::sym(mangled); }
 
 void* StringAllocate(u64 n) {
-    static const u64 f = sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj");
-    return (void*)live::out_call(family(), f, {n, at(native::kStrStlStringH), 0x1c});
+    using memory::kStlAllocateCallee;
+    if (kStlAllocateCallee.direct())
+        return memory::CAssignedMemoryManagerForSTLAllocator::Allocate(n, (const char*)at(native::kStrStlStringH), 0x1c);
+    return (void*)live::out_call(family(), kStlAllocateCallee.addr(), {n, at(native::kStrStlStringH), 0x1c});
 }
 
 void StlFree(void* p) {
-    static const u64 f = sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv");
-    live::out_call(family(), f, {(u64)p});
+    if (memory::kStlFreeCallee.direct()) return memory::CAssignedMemoryManagerForSTLAllocator::Free(p);
+    live::out_call(family(), memory::kStlFreeCallee.addr(), {(u64)p});
 }
 
 void OperatorDelete(void* p) {

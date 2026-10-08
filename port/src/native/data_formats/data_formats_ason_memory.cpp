@@ -3,6 +3,7 @@
 #include "native/containers/containers_dynamic_array.h"
 #include "native/containers/containers_layout.h"
 #include "native/data_formats/data_formats_ason.h"
+#include "native/memory/memory_callees.h"
 
 namespace soa::native::data_formats {
 
@@ -29,9 +30,9 @@ void* ASON::Malloc(u64 n) {
         m_workIndex++;
     }
     static const u64 get_mm = main_lib()->sym("_ZN4Aska6Global25GetAvailableMemoryManagerEv");
-    static const u64 calc_free = main_lib()->sym("_ZN4Aska13MemoryManager12CalcFreeSizeEb");
     u64 mm = live::out_call(family(), get_mm, {});
-    live::out_call(family(), calc_free, {mm, 0});
+    if (memory::kCalcFreeSizeCallee.direct()) reinterpret_cast<memory::MemoryManager*>(mm)->CalcFreeSize(false);
+    else live::out_call(family(), memory::kCalcFreeSizeCallee.addr(), {mm, 0});
     return nullptr;
 }
 

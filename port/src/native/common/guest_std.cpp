@@ -4,8 +4,16 @@
 
 #include "core/loader.h"
 #include "core/log.h"
+#include "native/memory/memory_callees.h"
 
 namespace soa::guest {
+
+namespace {
+// memory's natives, called as C++ when installed (native/common/native_call.h).
+using native::memory::CAssignedMemoryManagerForSTLAllocator;
+using native::memory::kStlAllocateCallee;
+using native::memory::kStlFreeCallee;
+}  // namespace
 
 u64 sym(const char* mangled) {
     u64 a = main_lib()->sym(mangled);
@@ -13,16 +21,16 @@ u64 sym(const char* mangled) {
     return a;
 }
 
-// The game's own allocators (guest code; the Aska memory manager is the guest's).
+// The game's own allocators (the STL allocator: memory's natives, else the guest's).
 void* stl_alloc(size_t n) {
-    static const u64 fn = sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj");
     static const char* file = "native";
-    return (void*)guest_call(fn, {(u64)n, (u64)file, 0});
+    if (kStlAllocateCallee.direct()) return CAssignedMemoryManagerForSTLAllocator::Allocate(n, file, 0);
+    return (void*)guest_call(kStlAllocateCallee.addr(), {(u64)n, (u64)file, 0});
 }
 
 void stl_free(void* p) {
-    static const u64 fn = sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv");
-    guest_call(fn, {(u64)p});
+    if (kStlFreeCallee.direct()) return CAssignedMemoryManagerForSTLAllocator::Free(p);
+    guest_call(kStlFreeCallee.addr(), {(u64)p});
 }
 
 void* new_array_nothrow(size_t n) {

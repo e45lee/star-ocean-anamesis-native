@@ -26,9 +26,11 @@
 #include "core/log.h"
 #include "core/options.h"
 #include "native/common/guest_std.h"
+#include "native/memory/memory_callees.h"
 
 namespace soa::native::memstats {
 namespace {
+using memory::kCalcFreeSizeCallee;
 
 std::string read_file(const char* path) {
     std::string s;
@@ -165,12 +167,12 @@ void log(const char* why) {
 
     // Guest engine heap (docs/notes.md "Engine heap"): the available manager, +0x28 heap size.
     static const u64 get_mm = guest::sym("_ZN4Aska6Global25GetAvailableMemoryManagerEv");
-    static const u64 calc_free = guest::sym("_ZN4Aska13MemoryManager12CalcFreeSizeEb");
-    if (get_mm && calc_free) {
+    if (get_mm) {
         u64 mm = guest_call(get_mm, {});
         if (mm) {
             u64 size = *(u64*)(mm + 0x28);
-            u64 free_b = guest_call(calc_free, {mm, 0});
+            u64 free_b = kCalcFreeSizeCallee.direct() ? (u64)reinterpret_cast<native::memory::MemoryManager*>(mm)->CalcFreeSize(false)
+                                                : guest_call(kCalcFreeSizeCallee.addr(), {mm, 0});
             LOGI("memstats", "guest heap: %llu MB used of %llu MB (%llu MB free)", (unsigned long long)((size - free_b) >> 20),
                  (unsigned long long)(size >> 20), (unsigned long long)(free_b >> 20));
         }

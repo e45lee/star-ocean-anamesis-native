@@ -91,7 +91,7 @@ message_id	ja_sha1	en	source
 6041_010_77	9ffcc0153159144dd4c25406a5b0dd81b54245cd	<font color=blue>Tika</font> Now that you mention it,\nthat's true.	machine
 6041_010_78	93f1405b3a08994663443501347395033f1ba8ea	<font color=blue>Heath</font> Those guys showed\nsome real guts facing off\nagainst the black McKinley\nships.	machine
 6041_010_79	c52f385922b1f3c9028979b32881a5bd7a3dae1e	<font color=blue>Valka</font> Furthermore, Phantoms are\nfundamentally hostile to all life. That\nmakes it all the more inexplicable that\nthey are currently acting only in Ober's\nfavor.	machine
-6041_010_80	b25152840f586c664c07f7828289bf3be659de61	The problem lies in the footage\nof Lady Leash that Lady Carlin\nsummoned at the Urza System.	machine
+6041_010_80	b25152840f586c664c07f7828289bf3be659de61	The problem lies in the footage\nof Lady Eve that Lady Karlyn\nsummoned at the Urza System.	agent
 6041_010_81	298d41ad2c2fe38cc6a5a0436e734c62f5eff71f	<font color=blue>Karlyn</font> You mean the one\nwhere Eve saw Givel?	machine
 6041_010_82	7cc4144934e62ee191ff4a8177bbd672254fead2	<font color=blue>Valka</font> If that was a recording from after\nwe defeated Givel... then I suspect the\nperson appearing alongside Givel holds\nthe key to this situation.	machine
 6041_010_83	5116716345d3fee660070607876ac1ea3e1427ea	<font color=blue>Karlyn</font> You mean someone is\ncontrolling Givel, just like Givel\nwas controlling the Beast\nWitches?	machine
@@ -527,7 +527,7 @@ message_id	ja_sha1	en	source
 6043_200_38	4d517764ddbb3a39e50ccfe69004bd708e37ec04	Don't worry, Mr. Euwin. I'll make\nsure to cover Welch's back.	machine
 6043_200_39	a6674ed8b327cf3f67e54dcd36615cbd9a9d7f9e	Lover... not you too...	machine
 6043_200_40	c74af91e44a933db9098cb97e2592677ac492b76	No matter where it is, we just\nhave to keep moving. Big sister\nValka, do you think big sister\nEve is on this ship?	machine
-6043_200_41	c118103d9cdeab904bb744db1990a6b12ecbd59d	I have detected a biological\nsignature near the bridge.\nThere is a high probability that\nit is Lady Leash.	machine
+6043_200_41	c118103d9cdeab904bb744db1990a6b12ecbd59d	I have detected a biological\nsignature near the bridge.\nThere is a high probability that\nit is Lady Eve.	agent
 6043_200_42	4417f61f5ff8483943220ff0878801a425ae460f	However, there are two other\nbiological signatures as well...	machine
 6043_200_43	645badba8dd254ddef9b16808baba393699852c8	It could be Asmodeus, and maybe Givel.\nEither way, we have no choice but to\ngo. Captain, let's hurry and rescue\nEve...	machine
 6043_200_44	644877cca632dc7dddc58cd7be9e11802d42121b	?! Everyone, get back!!	machine
@@ -575,7 +575,7 @@ message_id	ja_sha1	en	source
 6043_230_22	b4e5dadbbfbaf97fefe6209cc3363a18584dc4eb	...Yes, explain! What is going on\nhere?!	machine
 6043_230_24	8b936fcf2c3bab2635728b468723a0be2f5e264b	...I had a bad feeling about\nthis... but I didn't think it would\nbe like this...!	machine
 6043_230_25	6198567e243bea0582c68f4da2c4f801bbcc489c	Explain yourself, Eve!! What is\nthe meaning of this!!	machine
-6043_230_26	0f8d5dffa6adc73a03f81b6f40ebf00bfa2df55e	Lady Leash... I demand an\nexplanation. The person inside\nthat capsule behind you...	machine
+6043_230_26	0f8d5dffa6adc73a03f81b6f40ebf00bfa2df55e	Lady Eve... I demand an\nexplanation. The person inside\nthat capsule behind you...	agent
 6043_230_27	8c6ad80741178a32f627f92da496b9b11960a053	Is that Givel?	machine
 6043_230_29	b7f21d84978c4e5b125cd4e51e7daf838ae98826	We won't know if you stay\nquiet! Eve!!	machine
 6043_230_30	48d3034ccdc3c53e5a19cfec93fba3e260256a2d	Karlyn, calm down!	machine
@@ -587,7 +587,7 @@ message_id	ja_sha1	en	source
 6043_230_37	baf0f596d3948af33866a12b5c31b2dc2f95b549	Eve... why...?	machine
 6043_230_38	201d16b1c0a94f770b9f8bc1fb542f69d7b5b3ea	It is exactly as you imagined,\nwoman of Foxtail.	machine
 6043_230_39	6dfb536270c9bc34e7f0c0f3367b8d874ac29821	The Phantoms you were\nfighting so noisily on this scrap\nof a ship were summoned by\nEvelysse.	machine
-6043_230_40	1ba5cdee92138b4dc3e530634544c6a71a078b67	Summoned by Lady Leash...\nImpossible!!	machine
+6043_230_40	1ba5cdee92138b4dc3e530634544c6a71a078b67	Summoned by Lady Eve...\nImpossible!!	agent
 6043_230_41	87d6bdc5e71712cf7c35544a9637ce95478e41a2	Yes, but do not misunderstand. It would\nbe misplaced to blame her for the\nPhantom fleet currently overwhelming\nRaza's forces in the Azurite system.	machine
 6043_230_42	aaae0e405de5a803e1f759ac1a0e021a55bf3bc2	Then, does Givel, who is\nstanding behind Eve, have\nsomething to do with this?	machine
 6043_230_43	8a553f4865815ca16d837edc2baa1e46865feca1	I see. You're a Lycanthrope.\nYou aren't an Ober, but an ally\nof Evelysse.	machine

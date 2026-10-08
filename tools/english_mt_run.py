@@ -27,6 +27,8 @@ Usage:
                                                      # per request with context (story-fix.jsonl)
   tools/english_mt_run.py story-retry [--ids FILE]   # rejected story lines again, told what the
                                                      # check refused (story-retry.jsonl)
+  tools/english_mt_run.py ui-retry [--ids FILE]      # the same for rejected master texts that still
+                                                     # have no English (ui-retry.jsonl)
   tools/english_mt_run.py shorten                    # E7: machine story lines over four window lines,
                                                      # rewritten shorter (story-short.jsonl)
   tools/english_mt_run.py status                     # rows done per checkpoint
@@ -630,6 +632,28 @@ def cmd_story_fix(a):
 RETRY_VERSION = "retry1"
 
 
+def retry_feedback(old, probs):
+    """What a check refused in an engine's answer, for a retry request (story-retry, ui-retry)."""
+    out = [f"A previous translation was rejected: {old.replace(chr(92) + 'n', ' ')}"]
+    for t, en in probs.get("glossary", []):
+        out.append(f"- It left out the glossary name {t} = {en}: the Japanese names {t}, so the English must say \"{en}\" "
+                   "(do not replace the name with \"you\" or drop it).")
+    if "tags" in probs or "story_tag" in probs:
+        out.append("- Its tags differ from the Japanese: keep exactly the Japanese text's tags, each once, around the same words; "
+                   "add no tag of your own.")
+    if "specifiers" in probs:
+        out.append("- Its printf specifiers differ from the Japanese: keep every specifier, in the Japanese order (" +
+                   " ".join(probs["specifiers"][0]) + "); rephrase the sentence so they come in that order.")
+    if "kana" in probs:
+        out.append("- It left Japanese characters in the English: translate or romanize every word.")
+    if "runaway" in probs:
+        out.append("- It stretched a sound or repeated a phrase without end: write a drawn-out sound with at most 12 repeated letters.")
+    for k in probs:
+        if k not in ("glossary", "tags", "story_tag", "runaway", "specifiers", "kana"):
+            out.append(f"- Problem: {k} {json.dumps(probs[k], ensure_ascii=False)}")
+    return "\n".join(out)
+
+
 def cmd_story_retry(a):
     """Story lines a check rejected (work/english/mt-rejected-story.tsv), sent again one at a time as
     story-fix sends them, with what was wrong: the rejected English and, per problem, the rule it
@@ -674,20 +698,6 @@ def cmd_story_retry(a):
                 return g[ja]["en"] if ja in g else ja
         return code
 
-    def feedback(m):
-        old, probs = rej[m]
-        out = [f"A previous translation was rejected: {old.replace(chr(92) + 'n', ' ')}"]
-        for t, en in probs.get("glossary", []):
-            out.append(f"- It left out the glossary name {t} = {en}: the Japanese line names {t}, so the English must say \"{en}\" (do not replace the name with \"you\" or drop it).")
-        if "tags" in probs or "story_tag" in probs:
-            out.append("- Its tags differ from the Japanese: keep exactly the Japanese line's tags, each once, around the same words.")
-        if "runaway" in probs:
-            out.append("- It stretched a sound without end: write a drawn-out sound with at most 12 repeated letters.")
-        for k in probs:
-            if k not in ("glossary", "tags", "story_tag", "runaway"):
-                out.append(f"- Problem: {k} {json.dumps(probs[k], ensure_ascii=False)}")
-        return "\n".join(out)
-
     def req(p):
         scene, ctx, (m, w) = p
         block = []
@@ -698,7 +708,7 @@ def cmd_story_retry(a):
         hits = E.glossary_hits(ja, g, terms)
         block.append(f"[1] {speaker(w)}: {ja}")
         gl = "".join(f"\n{t} = {g[t]['en']}" for t in hits)
-        user = f"Scene {scene}\nGlossary:{gl or ' (none)'}\nLines:\n" + "\n".join(block) + "\n\n" + feedback(m)
+        user = f"Scene {scene}\nGlossary:{gl or ' (none)'}\nLines:\n" + "\n".join(block) + "\n\n" + retry_feedback(*rej[m])
         return SYSTEM + STORY_EXTRA, user, 400
 
     def row(k, p, txt, finish):
@@ -714,6 +724,40 @@ def cmd_story_retry(a):
     run_batch(a, items, a.out / "story-retry.jsonl", req, row)
 
 
+def cmd_ui_retry(a):
+    """Master texts a check rejected (work/english/mt-rejected.tsv) that still have no English, sent
+    again as `ui` sends them, with the refused English and the rule it broke (retry_feedback).
+    --ids FILE limits it to those message ids. The answers go to ui-retry.jsonl in ui.jsonl's form
+    (import-mt takes it); the prompt is recorded as v2+retry1."""
+    src, g = load_glossary()
+    terms = sorted(g, key=len, reverse=True)
+    rej = {}
+    for line in (REPO / "work/english/mt-rejected.tsv").read_text(encoding="utf-8").splitlines()[1:]:
+        c = line.split("\t")
+        rej[c[0]] = (c[4], json.loads(c[5]))
+    want = set(pathlib.Path(a.ids).read_text().split()) if a.ids else set(rej)
+    by_ja = collections.defaultdict(list)
+    for mid in sorted(want):
+        if mid in rej and mid in src.jp_rows:
+            by_ja[src.jp_rows[mid]].append(mid)
+    items = sorted((f"retry:{E.sha1(ja)}", (ja, ids)) for ja, ids in by_ja.items())
+    print(f"[ui-retry] {len(items)} texts", flush=True)
+
+    def req(p):
+        ja, ids = p
+        text = ja.replace("\\n", "\n")
+        user = user_prompt("master", ids[0], text, g, terms) + "\n\n" + retry_feedback(*rej[ids[0]])
+        return SYSTEM, user, max(300, 3 * len(text) + 100)
+
+    def row(k, p, txt, finish):
+        ja, ids = p
+        if len(txt) > 1 and txt[0] == txt[-1] and txt[0] in '"「':
+            txt = txt[1:-1]
+        return {"key": k, "ja_sha1": E.sha1(ja), "ja": ja, "mt": txt, "finish": finish, "kind": "master",
+                "ids": ids, "prompt": f"{PROMPT_VERSION}+{RETRY_VERSION}"}
+    run_batch(a, items, a.out / "ui-retry.jsonl", req, row)
+
+
 def cmd_status(a):
     for p in sorted(a.out.glob("*.jsonl")):
         n = sum(1 for _ in open(p, encoding="utf-8"))
@@ -722,12 +766,12 @@ def cmd_status(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["names", "ui", "story", "story-fix", "story-retry", "shorten", "status"])
+    ap.add_argument("cmd", choices=["names", "ui", "story", "story-fix", "story-retry", "ui-retry", "shorten", "status"])
     ap.add_argument("--model", choices=sorted(MODELS), default="31b")
     ap.add_argument("--slots", type=int, default=4)
     ap.add_argument("--port", type=int, default=18431)
     ap.add_argument("--limit", type=int, default=0)
-    ap.add_argument("--ids", help="story-retry: a file of message ids (default: every rejected story line)")
+    ap.add_argument("--ids", help="story-retry / ui-retry: a file of message ids (default: every rejected line or text)")
     ap.add_argument("--redo", help="a file of checkpoint keys (ja_sha1 / story chunk keys) to translate again")
     ap.add_argument("--share-gpu", action="store_true",
                     help="keep running beside game clients (default: the batch waits while any client holds a slot of the pool)")
@@ -739,7 +783,7 @@ def main():
     a.out.mkdir(parents=True, exist_ok=True)
     global YIELD_TO_CLIENTS
     YIELD_TO_CLIENTS = not a.share_gpu
-    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "shorten": cmd_shorten, "story-fix": cmd_story_fix, "story-retry": cmd_story_retry,
+    {"names": cmd_names, "ui": cmd_ui, "story": cmd_story, "shorten": cmd_shorten, "story-fix": cmd_story_fix, "story-retry": cmd_story_retry, "ui-retry": cmd_ui_retry,
      "status": cmd_status}[a.cmd](a)
 
 

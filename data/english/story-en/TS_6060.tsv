@@ -64,9 +64,9 @@ message_id	ja_sha1	en	source
 6061_015_15	38711886195ab4ef74187be47ac0a49973b3f92c	In that case, it would mean it's\npurely a coincidence that we\nhaven't developed symptoms\nyet.	machine
 6061_015_16	fcfdb1f095b4d083e398110cf8de50a1f7cdb04b	Exactly. Especially for you, Captain; I\ncan't rule out the possibility that you're\nin the incubation period, just like Henri.	machine
 6061_015_17	ec60124fc2e69d5e164ddf6d8abcd6a0f1d114cb	What's the status of the serum\ndevelopment?	machine
-6061_015_18	01a504bb6e046734b1b8942390463777f49b4c5b	The prototype we've created\nso far has not been effective\nagainst Lady Leash...	machine
+6061_015_18	01a504bb6e046734b1b8942390463777f49b4c5b	The prototype we've created\nso far has not been effective\nagainst Lady Eve...	agent
 6061_015_19	44a7270190266fd4f88fe088875d22d602400933	...Furthermore, we'll need\nseparate serums tailored for\nDaftine, Daftes, Levarance, and\nEarthlings.	machine
-6061_015_20	c7e767b5f761beb825ffb4e32c918c2ff2e23ea8	As for Lady Leash and Givel,\nwe haven't even been able to\nidentify their genetic\nstructures.	machine
+6061_015_20	c7e767b5f761beb825ffb4e32c918c2ff2e23ea8	As for Lady Eve and Givel, we\nhaven't even been able to\nidentify their genetic\nstructures.	agent
 6061_015_21	172815a34d4da93c49b9d4ed7ed1ca9335a29837	Can't we detect a serum or\nantibodies from the bodies of\nRaza like Heath and Jeanne?	machine
 6061_015_22	8d580331c521eabdcec82696ee3575a7e8a26228	It seems their bodies don't\nactually possess antigens\nagainst the virus.	machine
 6061_015_23	21af74d458ab0d990a073a5647d08baba6a2bf32	Instead, it appears their bodies\nhave adapted to the virus's\npresence, rendering it\nharmless.	machine
@@ -176,7 +176,7 @@ message_id	ja_sha1	en	source
 6062_115_06	45774df9476863a2b9a0342a377da1c4cd8fdfb4	B-but that was hundreds of\nyears ago!	machine
 6062_115_07	62320a991c140c04c309905caa4e2aa4c235d9d9	Being long-lived isn't necessarily\nstrange. Some of us, like me and\nMastima, can live many times longer\nthan a normal Human in our own flesh.	machine
 6062_115_08	cf90cd424f0492a32c3c65c88aa0bbf59ad8feb8	Henri, Kevin, and even Valka\nhave lived for a long time\nthanks to technology. But...	machine
-6062_115_09	6bb7ac4aa3634a00078438496240b8987b362c94	The fact that planet Raza was once\nEarth shouldn't be a part of this\nuniverse... To have known that from the\nstart... Lady Leash, who exactly are\nyou?	machine
+6062_115_09	6bb7ac4aa3634a00078438496240b8987b362c94	The fact that planet Raza was once\nEarth shouldn't be a part of this\nuniverse... To have known that from the\nstart... Lady Eve, who exactly are you?	agent
 6062_115_10	e3d4c904fd8509f13ac30ef5e2a643203f1b62a3	When you study Symbols for a\nlong time, you occasionally run\ninto that same question.	machine
 6062_115_11	7236f7fbb27b5cafc31f471be8c33e0bf5f699a8	No, not even Symbols, but simpler\nthings like physics and chemistry.\nThings that should have existed and\nformed naturally.	machine
 6062_115_12	80fe2731bbd85d46b31b786a38159702370eac9a	...I can feel the will of someone\nwho created them.	machine

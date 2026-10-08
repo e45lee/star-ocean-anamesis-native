@@ -57,7 +57,7 @@ message_id	ja_sha1	en	source
 2071_020_14	29e5a208e220c18c4ba944f4979f13042a0aca1e	<font color=blue>Coro</font> This is just a guess, but...	machine
 2071_020_15	13fb9d500298205dc2dc43105789720cf3df3747	It's possible that the Baschen\nEmperor was sent somewhere\nelse, just like what happened\nto Eve and the others.	machine
 2071_020_16	aea21b40d13eb6044f0f66480effbee2a5b5f346	<font color=blue>Euwin</font> What!?	machine
-2071_020_17	4fbeb7a7d4f01618a67c21f8f26863991a6af7b9	<font color=blue>Valka</font> I couldn't detect any biological\nsignatures other than Lady Leash's\ngroup within a 50km radius of my\nstarship, but...	machine
+2071_020_17	4fbeb7a7d4f01618a67c21f8f26863991a6af7b9	<font color=blue>Valka</font> I couldn't detect any biological\nsignatures other than Lady Eve's group\nwithin a 50km radius of my starship,\nbut...	agent
 2071_020_18	931537940e084de0c6aa48809dd4814fafb25d73	<font color=blue>Coro</font> Regardless, I get the\nfeeling that something went\ndown in the Imperial Capital\nwhile the Emperor was away.	machine
 2071_020_19	38064632c8520ae9bcadc8eeadbec5c794f418bc	<font color=blue>Karlyn</font> I bet the Crown Prince\nseized power.	machine
 2071_020_20	81760c8481cbced7d46b69320e30f8a5837b461e	<font color=blue>Welch</font> The Crown Prince?	machine
@@ -84,8 +84,8 @@ message_id	ja_sha1	en	source
 2071_020_43	5e019ccc14473fddf577750251ba3104a6a9c34d	D-did you just call us marbles!?	machine
 2071_020_44	a9a1d5384af17d0bdf2290bf04ac3b925d9aa547	...While we are still in the\nverification stage, we lack any\nevidence to deny it.	machine
 2071_020_45	3bdd5c7b647fe63e21b34cfd5b313425d800fec9	Optically speaking, the creatures\ninhabiting Daftes and the Thornite used\nby Karlyn Kayson show an extremely\nhigh rate of similarity.	machine
-2071_020_46	30a4e95acb9b2823e0d94a9b93e1b566e664d2f8	If the beastmen of Daftes,\nLady Carlin's "beasts,"	machine
-2071_020_47	eaf1b9c3f669ee82e58af6b597eb182e45f2a4c5	and the Thornite mentioned by\nLady Leash and the others are\nall the same thing,	machine
+2071_020_46	30a4e95acb9b2823e0d94a9b93e1b566e664d2f8	If the beastmen of Daftes,\nLady Karlyn's "beasts,"	agent
+2071_020_47	eaf1b9c3f669ee82e58af6b597eb182e45f2a4c5	and the Thornite mentioned by\nLady Eve and the others are\nall the same thing,	agent
 2071_020_48	57f59782d34668613ec823d183faa708918205ca	then it's highly probable that\nthese beastmen were\ndeveloped as high-spec\nbiological weapons...	machine
 2071_020_49	8dbee8b069211f92aead8586ecdd612683ae2486	I am a soldier! I kill the enemy!\nNo matter what means I have\nto use!	machine
 2071_020_50	bd573ca5e44cc2a7851654265d01929005a9508d	But... but that doesn't mean\nI've fallen so low that I'd\nmanipulate innocent people and\nhide in their shadows!!	machine

@@ -1467,9 +1467,40 @@ Agent `en-followup`, 2026-10-07, after the sweep (7.12).
 
 Result (`tools/english_text.py build`): story **21,663 of 21,663 lines English** (official 5,037, machine 17,031, agent 7), **64 of 64 files complete**; `soa-server --english` logs `english story: 64 tables, 64 files served, 0 incomplete` (was 51).
 
+**The sweep's data rows (`data-rows.tsv`, 181 rows).** The rule (the user): fix machine rows whose text is wrong or garbled, as `agent` rows (7.9: ranked like machine, marked for review); never shorten for space (that is the client's shrink, 7.15); official rows are not overridden (7.17). By the served source today: 57 official, 99 machine, 3 agent (en-textclean's), 3 human, 2 memory, 2 without a row, 15 row families (`CLASS:`).
+
+- **Fixed: 16 master rows as `agent` rows** (`english_text.py set --source agent --by en-followup`, each with a note saying what was wrong; the engine's wording kept wherever it was right):
+  - lists and tables run into prose (the cells shifted): `uimsg_item_confirmation_1`, `_3`, `uimsg_Sellitem_Warning_2` (one item per line, as en-textclean did `_sell_1`), `uimsg_sphere211_return_dialog` (one rate per line, the ※ note apart);
+  - a ※ note or a question run into the paragraph the Japanese sets apart with a blank line: `uimsg_please_birth_add_need3`, `uimsg_sphere211_next_floor_confirm`, `uimsg_gear_set_dialog1`, `uimsg_user_data_saving_end_dialog` (prose re-broken at the Japanese row's widest line, as `import-mt` does);
+  - garbled: `uimsg_material_compose_confirm` / `_result` ("%s Compose %d? Items…": now "%s / ×%d will be composed."), `uimsg_pshop_pass_count` ("%dnd time": 1nd, 3nd; now "Time %d");
+  - wrong name or term: `item_favor_up_21_text_message`, `cp0002_b01b_message` (リーシュ is Eve, not Leash), `uimsg_consumption_sphere_stamina` (消費Sスタミナ: "S Stamina Consumed", not Stamina);
+  - "1 Draws", "1 Mastery Pass Medals" for the commonest count: `uimsg_gacha_confirm`, `uimsg_mastary_dialog9` ("Draw(s)", "Medal(s)").
+- **Names in the story:** 33 machine story lines said "Lady Leash" and "Lady Carlin" (the M2 name pass) where the glossary has Eve (Global) and Karlyn: they are `agent` rows with the engine's text and the names mended, and the glossary rows レディ・リーシュ / レディ・カーリン now say Lady Eve / Lady Karlyn (the old names as variants).
+- **No master row is Japanese any more.** The 37 master texts the 31B's answers had failed (`mt-rejected.tsv`; specifiers reordered, tags, kana left in, names left out, a runaway) were sent again with what was wrong (`english_mt_run.py ui-retry`, `work/english/followup/mt/ui-retry.jsonl`, 35 texts in 1.5 min): 36 pass as machine rows after four machine glossary rows were mended (エサ = Feed, was "Barnie Feed"; バーニィクッキー = Bunny Cookie, was "Barny Cookie" against Global's Bunny; the plurals Half-Elves and Scoutmen as variants), and `uimsg_buy_premium_explan2` is an `agent` row (the engine kept the Japanese list dots and ran the list together). Every master row with Japanese text now has English: 65,429 rows (agent 20, human 36, machine 37,376, memory 6,348, official 19,239, template 2,410).
+- **Left as they are, and why:**
+  - space only (a header description or label longer than its room, Japanese-width breaks, 691 item descriptions of 5+ lines, 1,505 factor rows of 3+ lines, the `name_ds_bonus_*` and `stepup_botton_message_*` families): the user's rule is to shrink, not shorten; the client fits them (E10, 7.15);
+  - term splits that need a decision, not a fix: 進化 Augment (Global) vs Evolve (machine), 強化 Strengthen vs Enhance, アシスト Assistance vs Assists, 片手剣 OHS vs One-Handed (and two trait names), 転移 Teleport / Transfer / Warp, Scenery vs Scenic Photo; a glossary row each would settle them for a later MT pass;
+  - faithful to the Japanese: `uimsg_extra_top_info` "(Temp)" (the Japanese has (仮)), the talent name ending in a period (`talentName_021_005_006_201/202`);
+  - `uimsg_rentalbonus_num*` are human rows (the user's); the achievement reward line "200 gems" is not master text.
+
 ### 7.17 Global's official wording: problems for the user to decide
 
-(agent `en-followup`; to be written.)
+Official rows (Global's English, 7.9) are never overridden by us. These read wrong in the 3.7.0 client; each would need a `human` row (`english_text.py set ID TEXT --by NAME`) if the user decides to change it. Found in the sweep (7.12) and this pass; fit-only problems (too long for a box) are not listed: the client shrinks them.
+
+| message_id | Japanese | Global's English | Problem | Suggested fix |
+|---|---|---|---|---|
+| `name_event_exp_blue` | 青の経験値素材ミッション | Blue EXP Misisons | typo | Blue EXP Missions |
+| `error_message_text_10004` | スタミナが不足しています。 | Not enough SP. | the stat is "Stamina" on every other screen (SP is not a 3.7.0 term) | Not enough Stamina. |
+| `uimsg_button_back` | 修正する | Delete | wrong meaning: the birth-date dialog's button goes back to correct the date, nothing is deleted | Edit (or Correct) |
+| `uimsg_item_WarningConfirmation` | ベースアイテムを強化します。／素材にしたアイテムは失われます。／よろしいですか？ | Base item will be enhanced. All other items will be used as materials. Proceed? | the warning is missing: the Japanese says the material items will be lost | Base item will be enhanced.\n\nItems used as materials will be lost.\nProceed? |
+| `uimsg_item_stren_name` | 強化合成 | Enhance Weapon | the title of every enhancement, accessories too (the Japanese is generic) | Enhance |
+| `uimsg_deep_space_exploration_rate_up` | 上昇探査率 | Raise Exploration Rate | reads as an action; it labels the exploration rate a return gained | Exploration Rate Up |
+| `uimsg_sort_order_desc` | 降順 | Des. | unclear abbreviation (the ascending one is "Asc.") | Desc. |
+| `uimsg_miss_no_rental` | レンタルなし | No Loans | the loan list's button says "No Loan" (our English art, `mission_rental`) for the same choice | No Loan |
+| `uimsg_chara_evolution_name` | 進化 | Augment | a term split: Global says Augment (101 rows), our machine rows say Evolve / Evolution for 進化 | keep Augment and align the machine rows (a glossary row and a re-check), or Evolve everywhere |
+| `uimsg_full_stamina`, `uimsg_deep_space_quick_return_confirm` | — | "…restored. \nIt cannot…", "…shuttle now. \nIs this OK?" | a space before the line break (invisible; harmless) | drop the space |
+
+Not a problem: `message_ac_ind_05` "Campaign Draws" for ピックアップガチャ is Global's own term (39 of the 59 Global rows with ピックアップガチャ say Campaign).
 
 ## 8. English UI art
 

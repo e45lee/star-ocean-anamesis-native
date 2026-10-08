@@ -156,7 +156,7 @@ ja	en	kind	variants	source	note
 エクストラダンジョン	Extra Dungeon	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 エクスペル	Expel	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 エクス・ジーヴァ	Ex Giva	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-エサ	Barnie Feed	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+エサ	Feed	name	Barnie Feed	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: Feed (エサ is plain feed (the carrot items are "Bunny Feed": バーニィ = Bunny, Global); was Barnie Feed, kept as a variant)
 エスプリホワイトチョコワンド	Esprit White Choco Wand	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 エスペランス	Esperance	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 エスリン	Eslyn	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -520,7 +520,7 @@ ja	en	kind	variants	source	note
 スカイグレイ	Sky Grey	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 スカイスレイヤー	Sky Slayer	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 スカイハイ・エッジ	Sky-High Edge	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-スカウトマン	Scoutman	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+スカウトマン	Scoutman	name	Scoutmen	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: variant Scoutmen (the plural)
 スカーレット	Scarlet	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 スクラッパー・ジャイロ	Scrapper Gyro	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 スクラップ・スマッシャー	Scrap Smasher	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -767,7 +767,7 @@ ja	en	kind	variants	source	note
 ハートフル	Heartful	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ハード・ノッカー	Hard Knocker	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ハーピー	Harpy	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-ハーフエルフ	Half-Elf	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+ハーフエルフ	Half-Elf	name	Half-Elves	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: variant Half-Elves (the plural)
 ハーフギア	Half Gear	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ハーベストナックル	Harvest Knuckles	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 バキュームブラスター	Vacuum Blaster	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -793,7 +793,7 @@ ja	en	kind	variants	source	note
 バーニィ	Bunny	name		human	Global's spelling in its official text (Q8; glossary-weak listed the M2 machine name as contradicted)
 バーニィ	Bernie	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 バーニィカップ	Bernie Cup	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-バーニィクッキー	Barny Cookie	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+バーニィクッキー	Bunny Cookie	name	Barny Cookie	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: Bunny Cookie (バーニィ = Bunny (Global); was Barny Cookie, kept as a variant)
 バーニィサンタソックス	Bernie Santa Socks	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 バーニィシェル	Barny Shell	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 バーニィシール	Burny Seal	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -1260,9 +1260,9 @@ ja	en	kind	variants	source	note
 レッド	Red	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 レッド・サン	Red Sun	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 レディ・ウェルチ	Lady Welch	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-レディ・カーリン	Lady Carlin	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+レディ・カーリン	Lady Karlyn	name	Lady Carlin	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: made consistent with カーリン = Karlyn (was Lady Carlin, kept as a variant)
 レディ・ラヴァーニア	Lady Lavarnia	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-レディ・リーシュ	Lady Leash	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+レディ・リーシュ	Lady Eve	name	Lady Leash	machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0; en-followup 2026-10-07: made consistent with リーシュ = Eve (human row, Global) (was Lady Leash, kept as a variant)
 レプリカマスク	Replica Mask	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 レプリケーター	Replicator	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 レモングミ	Lemon Gummy	name		machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0

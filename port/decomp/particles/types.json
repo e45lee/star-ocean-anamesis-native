@@ -26,9 +26,56 @@
        "size": 1,
        "signed": false
       },
-      "count": 312
+      "count": 260
      },
-     "size": 312
+     "size": 260
+    },
+    {
+     "offset": 268,
+     "name": "m_textureId",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 272,
+     "name": "unk_110",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 288,
+     "name": "m_nextEmitter",
+     "type": {
+      "kind": "ptr",
+      "to": "IParticleEmitter"
+     },
+     "size": 8
+    },
+    {
+     "offset": 296,
+     "name": "unk_128",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
     },
     {
      "offset": 320,
@@ -97,9 +144,33 @@
        "size": 1,
        "signed": false
       },
-      "count": 120
+      "count": 48
      },
-     "size": 120
+     "size": 48
+    },
+    {
+     "offset": 428,
+     "name": "m_renderLayer",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 430,
+     "name": "unk_1ae",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 70
+     },
+     "size": 70
     },
     {
      "offset": 500,
@@ -602,9 +673,56 @@
        "size": 1,
        "signed": false
       },
-      "count": 1688
+      "count": 264
      },
-     "size": 1688
+     "size": 264
+    },
+    {
+     "offset": 2496,
+     "name": "m_textureName",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 2504,
+     "name": "unk_9c8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 2512,
+     "name": "m_texture",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 2520,
+     "name": "unk_9d8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1400
+     },
+     "size": 1400
     },
     {
      "offset": 3920,
@@ -632,7 +750,17 @@
     },
     {
      "offset": 3932,
-     "name": "unk_f5c",
+     "name": "m_lodFlags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 3933,
+     "name": "unk_f5d",
      "type": {
       "kind": "array",
       "of": {
@@ -640,9 +768,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 132
+      "count": 131
      },
-     "size": 132
+     "size": 131
     }
    ],
    "size": 4064,
@@ -1091,7 +1219,7 @@
     },
     {
      "offset": 529,
-     "name": "unk_211",
+     "name": "m_linkModeNext",
      "type": {
       "kind": "int",
       "size": 1,
@@ -1220,15 +1348,11 @@
     },
     {
      "offset": 752,
-     "name": "unk_2f0",
+     "name": "m_prevPosition",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 16
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
      "size": 16
     },

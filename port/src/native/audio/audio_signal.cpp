@@ -16,6 +16,7 @@
 #include "native/audio/audio_check.h"
 #include "native/audio/audio_layout.h"
 #include "native/common/guest_std.h"
+#include "native/common/guest_stub.h"
 #include "native/common/live_check.h"
 #include "native/common/native_method.h"
 
@@ -28,17 +29,11 @@ struct SignalObs {
     SLVoice* pre[AudioSignalNotify::kSlots];
     SLVoice* post[AudioSignalNotify::kSlots];
     std::vector<std::pair<u64, u64>> calls;  // Handler: (voice, slot) in order
-    u64 vtables[AudioSignalNotify::kSlots];  // Handler: each voice's vtable as the native saw it
 };
 thread_local SignalObs* t_obs = nullptr;
 
-// The guest's Aska::SLVoice::AudioSignal(unsigned long): what slot 10 of an SLVoice's vtable holds.
-u64 slvoice_audio_signal() {
-    static const u64 fn = guest::sym("_ZN4Aska7SLVoice11AudioSignalEm");
-    return fn;
-}
-
-// slot 10 of the voice's vtable (still guest code: a guest call).
+// Slot 10 of the voice's vtable: SLVoice::AudioSignal, native (audio_voice.cpp); called through
+// guest_call, which reaches a native's hook directly, so its live check (the hook's) still runs.
 u64 voice_slot_audio_signal(const SLVoice* voice) {
     const u64* vt = *reinterpret_cast<const u64* const*>(voice);
     return vt[AudioSignalNotify::kSlotVoiceAudioSignal];
@@ -52,10 +47,7 @@ void AudioSignalNotify::Handler(u64 /*arg*/) {
     for (int i = 0; i < kSlots; i++) {
         SLVoice* voice = m_voices[i];
         if (!voice) continue;
-        if (t_obs) {
-            t_obs->calls.emplace_back((u64)voice, (u64)i);
-            t_obs->vtables[i] = *reinterpret_cast<const u64*>(voice);
-        }
+        if (t_obs) t_obs->calls.emplace_back((u64)voice, (u64)i);
         guest_call(voice_slot_audio_signal(voice), {(u64)voice, (u64)i});
     }
     if (t_obs) std::memcpy(t_obs->post, m_voices, sizeof m_voices);
@@ -151,31 +143,25 @@ void count_checked(Cpu& c) {
     live::check_getter(c, g_count, wrap_method<&AudioSignalNotify::GetSignalCount>(), 0xffffffffu);
 }
 
-// Handler: the native for real (its voice calls logged, each voice's vtable as it was), then the guest
-// original on a shadow notify whose slots hold proxies of those voices (just their vtables: a voice
-// deleted right after the native's run doesn't matter), with SLVoice::AudioSignal answered by the
-// check's stub: the calls, in order, must match. Skipped when a voice's slot 10 isn't
-// SLVoice::AudioSignal (a class the stub doesn't cover).
+// Handler: the native for real (its voice calls logged), then the guest original on a shadow notify
+// whose slots hold proxies of those voices: objects whose vtable's slot 10 is a fake function the check's
+// session answers (a voice deleted right after the native's run doesn't matter, and SLVoice::AudioSignal,
+// itself native, isn't stubbed). The calls, in order, must match.
 void handler_checked(Cpu& c) {
     if (!live::check_due(g_handler)) return wrap_method<&AudioSignalNotify::Handler>()(c);
+    static const u64 fake_signal = native::fake_function("audio.live.voice-signal", 2);
     auto* self = reinterpret_cast<AudioSignalNotify*>(c.x(0));
-    const u64 target = slvoice_audio_signal();
-    const char* stub = live::ensure_stub(target);
-    if (!stub) {
-        wrap_method<&AudioSignalNotify::Handler>()(c);
-        return live::check_result(g_handler, live::Outcome::Skipped, "SLVoice::AudioSignal can't be stubbed");
-    }
     live::CheckScope scope;
     SignalObs obs;
     t_obs = &obs;
     self->Handler(c.x(1));
     t_obs = nullptr;
+    alignas(16) u64 fake_vtable[AudioSignalNotify::kSlotVoiceAudioSignal + 1] = {};
+    fake_vtable[AudioSignalNotify::kSlotVoiceAudioSignal] = fake_signal;
     alignas(16) u64 proxies[AudioSignalNotify::kSlots][2] = {};
     SLVoice* slots[AudioSignalNotify::kSlots] = {};
     for (auto& [voice, slot] : obs.calls) {
-        if (reinterpret_cast<const u64*>(obs.vtables[slot])[AudioSignalNotify::kSlotVoiceAudioSignal] != target)
-            return live::check_result(g_handler, live::Outcome::Skipped, "a voice of another class");
-        proxies[slot][0] = obs.vtables[slot];
+        proxies[slot][0] = (u64)fake_vtable;
         slots[slot] = reinterpret_cast<SLVoice*>(proxies[slot]);
     }
     auto real_of = [&](u64 p) -> u64 {
@@ -187,11 +173,10 @@ void handler_checked(Cpu& c) {
     std::vector<std::pair<u64, u64>> guest_calls;
     {
         live::ReplaySession s;
-        s.answer(stub, [&](Cpu& cc) {
+        s.answer("audio.live.voice-signal", [&](Cpu& cc) {
             guest_calls.emplace_back(real_of(cc.x(0)), cc.x(1));
             cc.set_x(0, 0);
         });
-        live::drop_stale_code(target);
         guest_call(g_handler.orig, {(u64)&sh.n, c.x(1)});
     }
     std::string why;

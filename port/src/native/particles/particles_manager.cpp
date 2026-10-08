@@ -63,6 +63,13 @@ const char* kind_name(CallKind k) {
     case CallKind::Emit: return "Emit";
     case CallKind::SetAnimation: return "SetAnimation";
     case CallKind::Render: return "RenderProcedure";
+    case CallKind::VCall: return "vcall";
+    case CallKind::Traverse: return "PrepareMatricesTraverse";
+    case CallKind::Matrices: return "PrepareMatrices";
+    case CallKind::Malloc: return "ParticleManager::Malloc";
+    case CallKind::PlacementNew: return "operator new(placement)";
+    case CallKind::QueryTexture: return "QueryTextureEx";
+    case CallKind::SetRenderLayer: return "SetRenderLayer";
     case CallKind::kCount: break;
     }
     return "?";

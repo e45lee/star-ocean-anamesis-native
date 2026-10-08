@@ -539,9 +539,9 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x223c05c	0x233c05c	72	_ZN4Aska7SLVoiceD0Ev	Aska::SLVoice::~SLVoice()	voice	decompiled	
 0x223c0a4	0x233c0a4	1940	_ZN4Aska7SLVoice11CreateVoiceEPNS_4IBusEPKvPNS_16MultiMediaStreamEPKNS_16PackedPlayParamsE	Aska::SLVoice::CreateVoice(Aska::IBus*, void const*, Aska::MultiMediaStream*, Aska::PackedPlayParams const*)	voice	decompiled	
 0x223c838	0x233c838	8	_ZN4Aska7SLVoice16SLPlayerCallbackEPKPK30SLAndroidSimpleBufferQueueItf_Pv	Aska::SLVoice::SLPlayerCallback(SLAndroidSimpleBufferQueueItf_ const* const*, void*)	voice	decompiled	
-0x223c840	0x233c840	164	_ZN4Aska7SLVoice17LockAndSubmitDataEv	Aska::SLVoice::LockAndSubmitData()	voice	decompiled	
-0x223c8e4	0x233c8e4	424	_ZN4Aska7SLVoice18LockAndSubmitADPCMEv	Aska::SLVoice::LockAndSubmitADPCM()	voice	decompiled	
-0x223ca8c	0x233ca8c	416	_ZN4Aska7SLVoice16LockAndSubmitOGGEv	Aska::SLVoice::LockAndSubmitOGG()	voice	decompiled	
+0x223c840	0x233c840	164	_ZN4Aska7SLVoice17LockAndSubmitDataEv	Aska::SLVoice::LockAndSubmitData()	voice	native	audio_voice.cpp; audio/voice-submit; (PCM path / dummy submits not reached in the flows' checks)
+0x223c8e4	0x233c8e4	424	_ZN4Aska7SLVoice18LockAndSubmitADPCMEv	Aska::SLVoice::LockAndSubmitADPCM()	voice	tested	audio_voice.cpp; live-checked inside SLVoice::AudioSignal
+0x223ca8c	0x233ca8c	416	_ZN4Aska7SLVoice16LockAndSubmitOGGEv	Aska::SLVoice::LockAndSubmitOGG()	voice	tested	audio_voice.cpp; live-checked inside SLVoice::AudioSignal
 0x223cc2c	0x233cc2c	608	_ZN4Aska7SLVoice11DeleteVoiceEv	Aska::SLVoice::DeleteVoice()	voice	decompiled	
 0x223ce8c	0x233ce8c	64	_ZN4Aska7SLVoice4PlayEv	Aska::SLVoice::Play()	voice	decompiled	
 0x223cecc	0x233cecc	56	_ZN4Aska7SLVoice4StopEv	Aska::SLVoice::Stop()	voice	decompiled	
@@ -551,14 +551,14 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x223cf90	0x233cf90	244	_ZN4Aska7SLVoice18UpdateVolumeMatrixEv	Aska::SLVoice::UpdateVolumeMatrix()	voice	decompiled	
 0x223d084	0x233d084	104	_ZN4Aska7SLVoice15UpdatePitchbendEv	Aska::SLVoice::UpdatePitchbend()	voice	decompiled	
 0x223d0ec	0x233d0ec	60	_ZN4Aska7SLVoice9AudioKickEv	Aska::SLVoice::AudioKick()	voice	decompiled	
-0x223d128	0x233d128	848	_ZN4Aska7SLVoice11AudioSignalEm	Aska::SLVoice::AudioSignal(unsigned long)	voice	decompiled	
-0x223d478	0x233d478	80	_ZN4Aska7SLVoice18SetDeleteCountdownEv	Aska::SLVoice::SetDeleteCountdown()	voice	decompiled	
-0x223d4c8	0x233d4c8	588	_ZN4Aska7SLVoice15ProcAudioBufferEv	Aska::SLVoice::ProcAudioBuffer()	voice	decompiled	
-0x223d714	0x233d714	88	_ZN4Aska7SLVoice19SubmitBufferDataPCMEPKvj	Aska::SLVoice::SubmitBufferDataPCM(void const*, unsigned int)	voice	decompiled	
-0x223d76c	0x233d76c	168	_ZN4Aska7SLVoice20SubmitDummyDataAdpcmEv	Aska::SLVoice::SubmitDummyDataAdpcm()	voice	decompiled	
-0x223d814	0x233d814	428	_ZN4Aska7SLVoice21SubmitBufferDataADPCMEPKvjb	Aska::SLVoice::SubmitBufferDataADPCM(void const*, unsigned int, bool)	voice	decompiled	
-0x223d9c0	0x233d9c0	168	_ZN4Aska7SLVoice18SubmitDummyDataOggEv	Aska::SLVoice::SubmitDummyDataOgg()	voice	decompiled	
-0x223da68	0x233da68	288	_ZN4Aska7SLVoice19SubmitBufferDataOGGEPKvjjj	Aska::SLVoice::SubmitBufferDataOGG(void const*, unsigned int, unsigned int, unsigned int)	voice	decompiled	
+0x223d128	0x233d128	848	_ZN4Aska7SLVoice11AudioSignalEm	Aska::SLVoice::AudioSignal(unsigned long)	voice	tested	audio_voice.cpp; live check audio (the voice's shadow check)
+0x223d478	0x233d478	80	_ZN4Aska7SLVoice18SetDeleteCountdownEv	Aska::SLVoice::SetDeleteCountdown()	voice	tested	audio_voice.cpp; live-checked inside SLVoice::AudioSignal
+0x223d4c8	0x233d4c8	588	_ZN4Aska7SLVoice15ProcAudioBufferEv	Aska::SLVoice::ProcAudioBuffer()	voice	native	audio_voice.cpp; audio/voice-submit; (PCM path / dummy submits not reached in the flows' checks)
+0x223d714	0x233d714	88	_ZN4Aska7SLVoice19SubmitBufferDataPCMEPKvj	Aska::SLVoice::SubmitBufferDataPCM(void const*, unsigned int)	voice	native	audio_voice.cpp; audio/voice-submit; (PCM path / dummy submits not reached in the flows' checks)
+0x223d76c	0x233d76c	168	_ZN4Aska7SLVoice20SubmitDummyDataAdpcmEv	Aska::SLVoice::SubmitDummyDataAdpcm()	voice	native	audio_voice.cpp; audio/voice-submit; (PCM path / dummy submits not reached in the flows' checks)
+0x223d814	0x233d814	428	_ZN4Aska7SLVoice21SubmitBufferDataADPCMEPKvjb	Aska::SLVoice::SubmitBufferDataADPCM(void const*, unsigned int, bool)	voice	tested	audio_voice.cpp; live-checked inside SLVoice::AudioSignal
+0x223d9c0	0x233d9c0	168	_ZN4Aska7SLVoice18SubmitDummyDataOggEv	Aska::SLVoice::SubmitDummyDataOgg()	voice	native	audio_voice.cpp; audio/voice-submit; (PCM path / dummy submits not reached in the flows' checks)
+0x223da68	0x233da68	288	_ZN4Aska7SLVoice19SubmitBufferDataOGGEPKvjjj	Aska::SLVoice::SubmitBufferDataOGG(void const*, unsigned int, unsigned int, unsigned int)	voice	tested	audio_voice.cpp; live-checked inside SLVoice::AudioSignal
 0x223db88	0x233db88	24	_ZN4Aska10WaveBufferD2Ev	Aska::WaveBuffer::~WaveBuffer()	voice	decompiled	
 0x223dbd4	0x233dbd4	4	_ZN4Aska6TQueueINS_7SLVoice18AdpcmSubmitContextELi3EED0Ev	Aska::TQueue<Aska::SLVoice::AdpcmSubmitContext, 3>::~TQueue()	voice	decompiled	
 0x223dbd8	0x233dbd8	4	_ZN4Aska6TQueueINS_7SLVoice16OggSubmitContextELi8EED0Ev	Aska::TQueue<Aska::SLVoice::OggSubmitContext, 8>::~TQueue()	voice	decompiled	
@@ -718,8 +718,8 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x22476fc	0x23476fc	84	_ZN4Aska12SoundCommand14ArrangeCommandEPNS_5TListIS0_EE	Aska::SoundCommand::ArrangeCommand(Aska::TList<Aska::SoundCommand>*)	sound_manager	decompiled	
 0x2247750	0x2347750	28	_ZN4Aska10WaveBuffer12CreateBufferEPNS_16MultiMediaStreamEPKNS_3AFF7AaoWAVEE	Aska::WaveBuffer::CreateBuffer(Aska::MultiMediaStream*, Aska::AFF::AaoWAVE const*)	voice	decompiled	
 0x224776c	0x234776c	40	_ZN4Aska10WaveBuffer12DeleteBufferEv	Aska::WaveBuffer::DeleteBuffer()	voice	decompiled	
-0x2247794	0x2347794	184	_ZN4Aska10WaveBuffer10LockBufferEPPvmb	Aska::WaveBuffer::LockBuffer(void**, unsigned long, bool)	voice	decompiled	
-0x224784c	0x234784c	80	_ZN4Aska10WaveBuffer12UnlockBufferEv	Aska::WaveBuffer::UnlockBuffer()	voice	decompiled	
+0x2247794	0x2347794	184	_ZN4Aska10WaveBuffer10LockBufferEPPvmb	Aska::WaveBuffer::LockBuffer(void**, unsigned long, bool)	voice	tested	audio_voice.cpp; live-checked inside SLVoice::AudioSignal
+0x224784c	0x234784c	80	_ZN4Aska10WaveBuffer12UnlockBufferEv	Aska::WaveBuffer::UnlockBuffer()	voice	tested	audio_voice.cpp; live-checked inside SLVoice::AudioSignal
 0x2247b64	0x2347b64	48	_ZN4Aska13WaveVoiceBaseC2Ev	Aska::WaveVoiceBase::WaveVoiceBase()	voice	decompiled	
 0x2247b94	0x2347b94	36	_ZN4Aska13WaveVoiceBaseD2Ev	Aska::WaveVoiceBase::~WaveVoiceBase()	voice	decompiled	
 0x2247bb8	0x2347bb8	4	_ZN4Aska13WaveVoiceBaseD0Ev	Aska::WaveVoiceBase::~WaveVoiceBase()	voice	decompiled	

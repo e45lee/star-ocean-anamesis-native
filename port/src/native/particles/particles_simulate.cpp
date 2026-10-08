@@ -56,13 +56,7 @@ void IParticleEmitter::Simulate(float dt, const Instantiation& k) {
     ParticleRenderableBase* rb = m_renderable;
     rb->m_activeCount = 0;
     const F t = F(m_timeScale) * F(dt);
-    FastCriticalSection* lock = m_simulateLock;
-    if (!lock) {
-        static const u64 newNothrow = guest::sym("_ZnwmRKSt9nothrow_t"), nothrow = guest::sym("_ZSt7nothrow");
-        lock = reinterpret_cast<FastCriticalSection*>(guest_call(newNothrow, {sizeof(FastCriticalSection), nothrow}));
-        if (lock) lock->CtorBase();
-        m_simulateLock = lock;
-    }
+    FastCriticalSection* lock = SimulateLock();
     if (lock) lock->Enter();
     note(Recorder::kLocked, this, 0);
 

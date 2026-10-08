@@ -1,7 +1,7 @@
 # port/decomp/audio/scope.txt: the guest functions the `audio` subsystem owns, as Python regexes on the
 # demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
 # tools/subsystem.py check warns about a function claimed by two subsystems.
-^~?Aska::(Sound\w*|Audio\w*|SLVoice|WavePlayer|WaveVoiceBase|WaveBuffer|AskaOGG|AskaADPCM|SEControlObject|Sequencer2)::
+^~?Aska::(Sound\w*|Audio\w*|SLVoice|WavePlayer|WaveVoiceBase|WaveBuffer|VBRBuffer|CBRBuffer|AskaOGG|AskaADPCM|SEControlObject|Sequencer2)::
 ^~?Framework::CSound\w*::
 ^~?CSound\w*::
 ^~?CParameterSound\w*::

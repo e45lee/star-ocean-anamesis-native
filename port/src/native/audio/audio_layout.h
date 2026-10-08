@@ -204,31 +204,195 @@ class WaveVoiceBase;
 class WaveBuffer;
 class SoundObject;
 
-// The stream behind a voice's wave buffer (resource's MultiMediaStream family, not typed there beyond
-// 0x90): only the two fields the sound manager reads / writes through WaveBuffer + 8.
+// The stream behind a voice's wave buffer: resource's Aska::MultiMediaStream (resource_layout.h types it
+// to 0x90; the object is larger): the vtable slots and the fields the voices and the sound manager use.
 class WaveStreamView {
 public:
-    u8 unk_000[0x3fc];
-    s32 m_pending;      // 0x3fc: nonzero while a read is in flight (FlushDeletingSoundObject waits for 0)
-    u8 unk_400[0x328];
-    u8 m_abort;         // 0x728: AddDeletingSoundObject sets it for a streaming object (m_type bit 3)
+    static constexpr int kSlotLock = 19;     // s64 Lock(void** out, u64 size)
+    static constexpr int kSlotUnlock = 20;   // s64 Unlock(u64 size)
+    static constexpr int kSlotIsEnd = 23;    // bool (bool, int): the voices ask (1, 0) "played out?", (0, 0) "nothing left to read?"
+
+    const void* vtable;  // 0x000
+    u8 unk_008[0x84];    // 0x008
+    u8 m_loopTail;       // 0x08c: (MultiMediaStream::unk_8c's low byte) the read reached the loop's end: the voices drop the tail frames
+    u8 unk_08d[0x36f];   // 0x08d
+    s32 m_pending;       // 0x3fc: nonzero while a read is in flight (FlushDeletingSoundObject waits for 0)
+    u8 unk_400[0x328];   // 0x400
+    u8 m_abort;          // 0x728: AddDeletingSoundObject sets it for a streaming object (m_type bit 3)
 };
+static_assert(offsetof(WaveStreamView, m_loopTail) == 0x8c);
 static_assert(offsetof(WaveStreamView, m_pending) == 0x3fc);
 static_assert(offsetof(WaveStreamView, m_abort) == 0x728);
 
-// Aska::WaveBuffer: only its stream (SLVoice / the sound manager read WaveBuffer + 8).
+// Aska::AFF::AaoWAVE: a wave's header in the sound data (opaque beyond what the voices read).
+class AaoWAVE {
+public:
+    u8 unk_00[0x14];
+    u8 m_codec;              // 0x14: 0x0c PCM, 0x0d ADPCM, 0x0e OGG (SLVoice::m_codec)
+    u8 m_channels;           // 0x15
+    u8 unk_16;               // 0x16
+    u8 m_bits;               // 0x17
+    u8 unk_18[0x40];         // 0x18: the rate (+0x18), ...
+    u32 m_loopHeadFrames;    // 0x58: frames the voice drops after a loop start (SubmitBufferDataADPCM)
+    u32 m_loopTailFrames;    // 0x5c: frames it drops before the stream's loop end
+};
+static_assert(offsetof(AaoWAVE, m_codec) == 0x14);
+static_assert(offsetof(AaoWAVE, m_bits) == 0x17);
+static_assert(offsetof(AaoWAVE, m_loopHeadFrames) == 0x58);
+
+// Aska::WaveBuffer (CBRBuffer / VBRBuffer, guest size 0x78: SLVoice::CreateVoice's SoundMemory::Malloc(0x78)):
+// the stream and a TQueue<unsigned int, 16> of the sizes locked and not yet unlocked. Layout from
+// CreateVoice's construction, CreateBuffer, LockBuffer, UnlockBuffer.
 class WaveBuffer {
 public:
-    const void* vtable;        // 0x00
-    WaveStreamView* m_stream;  // 0x08
+    static constexpr u32 kSlots = 17;  // TQueue<u32, 16>: 16 + 1
+
+    s64 LockBuffer(void** out, u64 size, bool append);  // _ZN4Aska10WaveBuffer10LockBufferEPPvmb
+    s64 UnlockBuffer();                                 // _ZN4Aska10WaveBuffer12UnlockBufferEv
+
+    const void* vtable;           // 0x00: _ZTVN4Aska9CBRBufferE / _ZTVN4Aska9VBRBufferE + 0x10
+    WaveStreamView* m_stream;     // 0x08
+    const AaoWAVE* m_format;      // 0x10
+    const void* m_queueVtable;    // 0x18: _ZTVN4Aska6TQueueIjLi16EEE + 0x10
+    u32 m_write;                  // 0x20: the next slot written (1 at construction)
+    u32 m_read;                   // 0x24: the last slot read
+    u32 m_sizes[kSlots];          // 0x28
+    u8 unk_6c[4];                 // 0x6c
+    u32 m_isVBR;                  // 0x70: 1 for a VBRBuffer
+    u16 unk_74;                   // 0x74
+    u8 unk_76;                    // 0x76
+    u8 unk_77;                    // 0x77
 };
-// Aska::WaveVoiceBase: only its wave buffer (+0x30, SLVoice's m_pWaveBuffer).
+static_assert(offsetof(WaveBuffer, m_stream) == 0x08);
+static_assert(offsetof(WaveBuffer, m_write) == 0x20);
+static_assert(offsetof(WaveBuffer, m_sizes) == 0x28);
+static_assert(offsetof(WaveBuffer, m_isVBR) == 0x70);
+static_assert(sizeof(WaveBuffer) == 0x78);
+
+// Aska::WaveVoiceBase: only its wave buffer (+0x30; SLVoice below has the whole layout).
 class WaveVoiceBase {
 public:
     u8 unk_00[0x30];
     WaveBuffer* m_buffer;      // 0x30
 };
 static_assert(offsetof(WaveVoiceBase, m_buffer) == 0x30);
+
+// An OpenSL ES interface as the guest holds it (SLAndroidSimpleBufferQueueItf, SLPlayItf, SLVolumeItf, ...):
+// a pointer to a table of functions; the HLE (runtime) makes them. Slot 0 of the buffer queue is Enqueue.
+using SLItf = const u64* const*;
+
+// Aska::AskaOGG: the voice's Ogg Vorbis decoder over lib_vorbis, guest size 0x450 (SLVoice + 0x58 .. 0x4a8).
+// Only the fields the voice reads: the decoded data a previous Decode couldn't hand over yet.
+class AskaOGG {
+public:
+    s64 Decode(const s8* data, u32 size, s8** out, u32 maxFrames, u32 a, u32 b);  // _ZN4Aska7AskaOGG6DecodeEPKajPPajjj (guest)
+
+    u8 unk_000[0x3b0];
+    const s8* m_pendingData;   // 0x3b0
+    u32 m_pendingSize;         // 0x3b8
+    u8 unk_3bc[0xc];           // 0x3bc
+    u8 m_hasPending;           // 0x3c8: LockAndSubmitOGG submits m_pendingData first
+    u8 unk_3c9[0x73];          // 0x3c9
+    u8 m_headerStage;          // 0x43c: Decode parses headers while < 3
+    u8 unk_43d[0x13];          // 0x43d
+};
+static_assert(offsetof(AskaOGG, m_pendingData) == 0x3b0);
+static_assert(offsetof(AskaOGG, m_hasPending) == 0x3c8);
+static_assert(offsetof(AskaOGG, m_headerStage) == 0x43c);
+static_assert(sizeof(AskaOGG) == 0x450);
+
+// Aska::SLVoice: one OpenSL ES player, guest size 0x648 (layout from the constructor, CreateVoice and the
+// submit path). The voice keeps m_queueDepth buffers enqueued: each OpenSL callback (ProcAudioBuffer, on
+// the HLE's audio thread) unlocks the played one and, for PCM, locks and enqueues the next at once; for
+// ADPCM / OGG it only counts it (m_pendingBuffers), and AudioSignal (from AudioSignalNotify::Handler)
+// refills that many under the voice's lock: decode, enqueue, remember what each enqueued buffer holds
+// (m_adpcmQueue / m_oggQueue, read back when it has played). A dummy (silent) buffer keeps the queue
+// going while the stream has nothing. Results are Aska's (negative errors: -0x3c1 "stream ended",
+// -0x3eb "nothing yet", -0x3bf "no decode buffer").
+class SLVoice {
+public:
+    static constexpr u32 kCodecPCM = 0x0c, kCodecADPCM = 0x0d, kCodecOGG = 0x0e;
+    static constexpr s64 kEnded = -0x3c1, kWouldBlock = -0x3eb, kNoBuffer = -0x3bf, kFailed = -1;
+    static constexpr u32 kDecodeBuffers = 3, kDecodeBufferSize = 0x6000;
+    static constexpr u32 kAdpcmQueue = 4, kOggQueue = 9;  // TQueue<.., 3> / <.., 8>: N + 1 slots
+
+    void AudioSignal(u64 slot);              // vtable slot 10  _ZN4Aska7SLVoice11AudioSignalEm
+    void ProcAudioBuffer();                  // _ZN4Aska7SLVoice15ProcAudioBufferEv (the OpenSL callback)
+    s64 LockAndSubmitData();                 // _ZN4Aska7SLVoice17LockAndSubmitDataEv (result through x8)
+    s64 LockAndSubmitADPCM();                // _ZN4Aska7SLVoice18LockAndSubmitADPCMEv (x8)
+    s64 LockAndSubmitOGG();                  // _ZN4Aska7SLVoice16LockAndSubmitOGGEv (x8)
+    s64 SubmitBufferDataPCM(const void* data, u32 size);  // _ZN4Aska7SLVoice19SubmitBufferDataPCMEPKvj (x8)
+    s64 SubmitBufferDataADPCM(const void* data, u32 size, bool loopHead);  // _ZN4Aska7SLVoice21SubmitBufferDataADPCMEPKvjb
+    s64 SubmitBufferDataOGG(const void* data, u32 size, u32 a, u32 b);     // _ZN4Aska7SLVoice19SubmitBufferDataOGGEPKvjjj
+    s64 SubmitDummyDataAdpcm();              // _ZN4Aska7SLVoice20SubmitDummyDataAdpcmEv
+    s64 SubmitDummyDataOgg();                // _ZN4Aska7SLVoice18SubmitDummyDataOggEv
+    void SetDeleteCountdown();               // _ZN4Aska7SLVoice18SetDeleteCountdownEv
+    void AudioKick();                        // vtable slot  _ZN4Aska7SLVoice9AudioKickEv
+
+    const void* vtable;           // 0x000: _ZTVN4Aska7SLVoiceE + 0x10
+    u32 m_state;                  // 0x008: 1 playing (Play), 3 stopped (Stop)
+    u8 unk_00c[4];                // 0x00c
+    const AaoWAVE* m_format;      // 0x010
+    u8 unk_018[0x18];             // 0x018: volume, pitch, pan (floats), the created flag (+0x2a)
+    WaveBuffer* m_buffer;         // 0x030
+    AskaADPCM m_adpcm;            // 0x038
+    u8 unk_054[4];                // 0x054
+    AskaOGG m_ogg;                // 0x058
+    const void* m_adpcmQueueVtable;  // 0x4a8: TQueue<AdpcmSubmitContext, 3>
+    u32 m_adpcmWrite;             // 0x4b0 (1 at construction)
+    u32 m_adpcmRead;              // 0x4b4
+    u8 m_adpcmLocked[kAdpcmQueue];   // 0x4b8: the enqueued buffer came from a LockBuffer (else the dummy)
+    const void* m_oggQueueVtable; // 0x4c0: TQueue<OggSubmitContext, 8>
+    u32 m_oggWrite;               // 0x4c8 (1 at construction)
+    u32 m_oggRead;                // 0x4cc
+    u64 m_oggSubmits[kOggQueue];  // 0x4d0: the bytes enqueued | (locked from the stream) << 32
+    s32 m_queuedBytes;            // 0x518: decoded bytes enqueued and not played (atomic)
+    u8 unk_51c[4];                // 0x51c
+    void* m_bus;                  // 0x520: CreateVoice's IBus
+    SLItf m_playerObject;         // 0x528
+    SLItf m_play;                 // 0x530
+    SLItf m_bufferQueue;          // 0x538: Enqueue (slot 0)
+    SLItf m_volume;               // 0x540
+    s16 m_maxVolumeLevel;         // 0x548
+    u8 unk_54a[6];                // 0x54a
+    SLItf m_playbackRate;         // 0x550
+    s16 m_minRate;                // 0x558
+    s16 m_maxRate;                // 0x55a
+    u8 unk_55c[4];                // 0x55c
+    u8* m_decodeBuffers[kDecodeBuffers];    // 0x560: SoundServer's ADPCM decode buffers, taken on first use
+    u64 m_decodeBufferSizes[kDecodeBuffers];  // 0x578
+    u32 m_decodeIndex;            // 0x590
+    u32 m_lockSize;               // 0x594: the bytes LockBuffer asks for
+    u32 m_queueDepth;             // 0x598: the buffers kept enqueued
+    u32 m_submitCount;            // 0x59c: mod m_queueDepth
+    u32 m_kicks;                  // 0x5a0: AudioKick while playing (GetElapsedTime)
+    u32 m_codec;                  // 0x5a4: kCodec*
+    FastCriticalSection m_cs;     // 0x5a8: lock word +0x5e0, semaphore +0x620
+    s32 m_pendingBuffers;         // 0x638: played buffers to refill (atomic; ProcAudioBuffer adds)
+    s32 m_deleteCountdown;        // 0x63c: (atomic)
+    u8 m_countdownArmed;          // 0x640
+    u8 m_failed;                  // 0x641
+    u8 unk_642[6];                // 0x642
+};
+static_assert(offsetof(SLVoice, m_buffer) == 0x30);
+static_assert(offsetof(SLVoice, m_adpcm) == 0x38);
+static_assert(offsetof(SLVoice, m_ogg) == 0x58);
+static_assert(offsetof(SLVoice, m_adpcmWrite) == 0x4b0);
+static_assert(offsetof(SLVoice, m_adpcmLocked) == 0x4b8);
+static_assert(offsetof(SLVoice, m_oggWrite) == 0x4c8);
+static_assert(offsetof(SLVoice, m_oggSubmits) == 0x4d0);
+static_assert(offsetof(SLVoice, m_queuedBytes) == 0x518);
+static_assert(offsetof(SLVoice, m_bufferQueue) == 0x538);
+static_assert(offsetof(SLVoice, m_volume) == 0x540);
+static_assert(offsetof(SLVoice, m_decodeBuffers) == 0x560);
+static_assert(offsetof(SLVoice, m_decodeBufferSizes) == 0x578);
+static_assert(offsetof(SLVoice, m_decodeIndex) == 0x590);
+static_assert(offsetof(SLVoice, m_codec) == 0x5a4);
+static_assert(offsetof(SLVoice, m_cs) == 0x5a8);
+static_assert(offsetof(SLVoice, m_pendingBuffers) == 0x638);
+static_assert(offsetof(SLVoice, m_deleteCountdown) == 0x63c);
+static_assert(offsetof(SLVoice, m_failed) == 0x641);
+static_assert(sizeof(SLVoice) == 0x648);
 
 // Aska::SoundObject: one playing (or loading) sound, guest size 0x1f8 (SoundManager embeds one as its
 // object list's sentinel at +0xc08, the next field at +0xe00). Only the fields the natives read so far.

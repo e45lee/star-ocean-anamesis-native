@@ -14,4 +14,13 @@ inline constexpr std::uint64_t kBlendFull = 0x28c49e4;  // f32 {0.99989998340606
 inline constexpr std::uint64_t kFunSolveLink = 0x2329994;  // .text, used by _ZN4Aska26ArticulatedDynamicsManager12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf; FUN_02429994: the link (distance) constraint (ADMSolver::SolveLink)
 inline constexpr std::uint64_t kFunResolveContact = 0x232a9f4;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_jjf; FUN_0242a9f4: the contact response (ADMSolver::ResolveContact)
 inline constexpr std::uint64_t kFunUpdateVelocity = 0x232ac84;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi; FUN_0242ac84: the velocity update (ADMSolver::UpdateVelocity)
+inline constexpr std::uint64_t kVaddrBaseDt = 0x2bc752c;  // _ZN4Aska30ArticulatedDynamicsManagerBase9m_fBaseDtE (object, 4 bytes); float: the solver's base step
+inline constexpr std::uint64_t kVaddrDtDiv = 0x2bc7528;  // _ZN4Aska30ArticulatedDynamicsManagerBase8m_bDtDivE (object, 1 bytes); bool: steps scale with dt / m_fBaseDt
+inline constexpr std::uint64_t kVaddrWorldCollisionCount = 0x2ccdaa0;  // _ZN4Aska30ArticulatedDynamicsManagerBase18m_ucWorldCollisionE (object, 1 bytes); u8
+inline constexpr std::uint64_t kVaddrWorldConstraintCount = 0x2ccdaa1;  // _ZN4Aska30ArticulatedDynamicsManagerBase19m_ucWorldConstraintE (object, 1 bytes); u8
+inline constexpr std::uint64_t kVaddrWorldCollisionList = 0x2ccdaa8;  // _ZN4Aska30ArticulatedDynamicsManagerBase21m_pWorldCollisionListE (object, 128 bytes); DynamicsPrimitive*[]
+inline constexpr std::uint64_t kVaddrWorldConstraintList = 0x2ccdb50;  // _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldConstraintListE (object, 128 bytes); DynamicsPrimitive*[]
+inline constexpr std::uint64_t kFunAimRotation = 0x232a08c;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_26ArticulatedDynamicsManagerEEEvPT_ffi; FUN_0242a08c (ADMSolver::AimRotation)
+inline constexpr std::uint64_t kFunBlendRotation = 0x2329d78;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi; FUN_02429d78 (ADMSolver::BlendRotation)
+inline constexpr std::uint64_t kVaddrWorldLandConstraint = 0x2ccdbd0;  // _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldLandConstraintE (object, 8 bytes); the world land constraint (or none)
 }  // namespace soa::native::dynamics

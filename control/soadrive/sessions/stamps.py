@@ -41,12 +41,8 @@ def defaults():
 def open_stamps(s, shot):
     common.settle(s, mask=common.HOME_MASK)
     common.tap_to_phase(s, "キャラクター", CHARA_MENU[4:], 11, mask=common.HOME_MASK, fatal=True)
-    # scrolled to the end (one drag scrolls a varying distance; at the end one moves nothing: each
-    # waits only for the list to stop)
-    for _ in range(3):
-        s.ctl("drag:364:1000:364:300")
-        common.settle(s)
-    common.settle(s, shot + "-menu")
+    # scrolled to the end (one drag scrolls a varying distance): dragged until it stops changing
+    common.scroll_to_end(s, "drag:364:1000:364:300", shot + "-menu")
     common.tap_to_screen(s, "スタンプ編成", STAMP_MENU[4:], shot)
 
 

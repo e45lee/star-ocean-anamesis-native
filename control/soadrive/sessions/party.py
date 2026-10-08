@@ -89,7 +89,7 @@ def main(o):
         screen("お気に入り変更", "180:1245", "12a-favorite-select")
         common.tap_to_log(s, "UpdateHome", "362:330", r"UpdateHome: ", "12b-favorite-changed", secs=30, tries=1, fatal=True)
         screen("閉じる", "364:800", "12c-home-new-favorite")
-        screen("ホーム", "60:1245")
+        screen("ホーム", "60:1245", mask=common.HOME_MASK)
         # Battle: MissionStart takes the player's current party (the set just saved).
         mission.port_start(s, m)
         s.wait_log(r"MissionStart mission", 60, name="MissionStart")

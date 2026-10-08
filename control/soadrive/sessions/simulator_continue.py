@@ -101,10 +101,7 @@ def main(o):
         # ---- the battle simulator
         common.settle(s, mask=common.HOME_MASK)
         common.tap_to_phase(s, "キャラクター -> the character menu", CHARACTER, 11, secs=120, mask=common.HOME_MASK, fatal=True)
-        for _ in range(2):
-            c("drag:364:900:364:300")
-            common.settle(s)
-        common.settle(s, "03-character-menu-end")
+        common.scroll_to_end(s, "drag:364:900:364:300", "03-character-menu-end")
         common.tap_to_screen(s, "バトルシミュレーター", SIMULATOR, "04-simulator-rental")
         common.tap_to_screen(s, "選択しない -> the party", RENTAL_NONE, "05-simulator-party", is_screen=popups.is_party_start)
         mission.open_mission_confirm(s)

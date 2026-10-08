@@ -16,6 +16,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
 #include "../libcxx/libcxx_layout.h"
 
@@ -100,6 +101,96 @@ public:
 static_assert(offsetof(InfoBase, m_properties) == 0x08);
 static_assert(offsetof(InfoBase, m_children) == 0x20);
 static_assert(sizeof(InfoBase) == 0x38);
+
+// ---- the info classes (gen/info_classes.h, tools/gen_infos.py) ------------------------------------------
+//
+// Every class derived from InfoBase is an InfoBase, its properties (params_layout.h) and its children,
+// embedded: other infos, or containers. The 186 info classes' layouts are generated (read from objects the
+// lib builds, under unicorn); their code differs per class only in these lists, so the natives are one
+// generic code over a class's InfoClass (info_class.cpp).
+
+// A container child: InfoBaseArray<T> / InfoBaseValueArray<T, P> (an InfoBase and a CSTLVector: begin,
+// end, capacity) or IInfoBaseMap<K, T> (an InfoBase and a CSTLMap: begin node, root, size), each a
+// derived list class (CPersonInfoList, ...) with its own vtable. Guest size 0x50 (the vmi typeinfos: the
+// container base at +0x38; the constructors in CInfoManager's).
+class InfoContainer {
+public:
+    InfoBase base;      // 0x00
+    u64 m_body[3];      // 0x38: the vector (begin, end, cap) or the map (begin node, root, size)
+};
+static_assert(offsetof(InfoContainer, m_body) == 0x38 && sizeof(InfoContainer) == 0x50);
+
+enum class InfoKind : u8 { kInfo, kArray, kMap, kValueArray };
+enum class InfoPropKind : u8 { kU32, kS32, kFloat, kBool, kU8, kU64, kString };
+
+// A property of an info: CParameterPropertyValue<T, N, Conv> (0x30) or CParameterPropertyString<N> (0x40).
+struct InfoProp {
+    u16 offset;
+    InfoPropKind kind;
+    bool radian;  // CPropertyConverterRadian (a float)
+    u32 n;        // the template's N
+};
+struct InfoClass;
+struct InfoChild {
+    u32 offset;
+    const InfoClass* cls;
+};
+// One step of a class's Initialize, in its order.
+struct InfoStep {
+    enum Kind : u8 { kProperty, kChild, kStore };  // kStore: `width` bytes of `def` at `offset` (CInfoManager's members)
+    Kind kind;
+    u32 offset;
+    const char* key;  // a property's ASON key (m_name = CHash32(key))
+    u8 width;         // the default's store (0: none, a string's)
+    u64 def;          // its bytes
+};
+struct InfoClass {
+    const char* name;
+    const char* ztv;  // its vtable symbol
+    InfoKind kind;
+    u32 size;
+    std::span<const InfoProp> props;
+    std::span<const InfoChild> children;
+    std::span<const InfoStep> init;  // empty: Initialize left to the guest (or a container's)
+    // A container's element: InfoBaseArray<T>'s / IInfoBaseMap<K, T>'s T (null when not generated),
+    // the map's key size (K: 4 or 8; the node: key at +0x20, T at +0x28), InfoBaseValueArray<T, P>'s P
+    // (a CParameterPropertyValue, 0x30: kind and N).
+    const InfoClass* elem = nullptr;
+    u8 key_size = 0;
+    InfoProp elem_prop = {};
+    // The guest functions a container's natives call (null: not in the lib): a map's
+    // __emplace_hint_unique_key_args<K, pair<K const, T> const&> (one element's copy) and __tree::destroy;
+    // the assignment: vector<E>::assign<E*>(first, last) / __tree::__assign_multi(first, last).
+    const char* fn_copy = nullptr;
+    const char* fn_destroy = nullptr;
+    const char* fn_assign = nullptr;
+    // Plain data after the last property or child (sizeof as the lib's code uses it, minus where they end):
+    // the copies copy it as it is; the constructor, Initialize and the destructor leave it.
+    u32 tail = 0;
+};
+
+// ---- CTimeUtility: the client's date strings ---------------------------------------------------------------
+
+// CTimeUtility: static helpers (no object). Layout of what str2time_t builds: bionic's struct tm (56
+// bytes), from the decompile (port/decomp/info/time.c).
+struct GuestTm {
+    s32 tm_sec, tm_min, tm_hour, tm_mday, tm_mon, tm_year, tm_wday, tm_yday, tm_isdst;  // 0x00 .. 0x20
+    u8 pad_24[4];
+    s64 tm_gmtoff;      // 0x28
+    const char* tm_zone;  // 0x30
+};
+static_assert(offsetof(GuestTm, tm_isdst) == 0x20 && offsetof(GuestTm, tm_gmtoff) == 0x28 && sizeof(GuestTm) == 0x38);
+
+class CTimeUtility {
+public:
+    // str2time_t(text, fallback, date_only, slashes): "Y-M-D h:m:s" (or "Y/M/D ..."; dashes unless the text
+    // has a slash, or has no dash and `slashes`) split in place (a 64-byte copy) at the separators; each
+    // field through CSTLStringUtility_Base::AToF (a std::string temporary) and FCVTZS; month - 1, year -
+    // 1900; time 0 when date_only; tm_yday = tm_isdst = 0; mktime (the runtime's: platform370's local
+    // time). The fallback when text is null or the first two separators are missing.
+    // _ZN12CTimeUtility10str2time_tEPKclbb
+    static s64 str2time_t(const char* text, s64 fallback, bool date_only, bool slashes);
+};
 
 }  // namespace soa::native::info
 

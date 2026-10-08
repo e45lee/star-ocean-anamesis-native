@@ -89,6 +89,11 @@ std::string View::text(const Call& c) const {
     case CallKind::Random: values = 1; break;
     case CallKind::SetAnimation: values = 1u << 1; break;
     case CallKind::Render: values = 0xfu << 2; break;
+    case CallKind::VCall: values = 1u << 1; break;
+    case CallKind::Malloc: values = 1; break;
+    case CallKind::PlacementNew: values = 5; break;
+    case CallKind::QueryTexture: values = 6; break;
+    case CallKind::SetRenderLayer: values = 6; break;
     default: break;
     }
     for (int i = 0; i < c.n; i++) {
@@ -98,7 +103,7 @@ std::string View::text(const Call& c) const {
         else o += name(c.x[i]);
     }
     if (c.kind == CallKind::Simulate || c.kind == CallKind::Affect || c.kind == CallKind::Render) o += ", dt " + hex(c.f0);
-    o += ") -> " + hex(c.ret);
+    o += ") -> " + (c.kind == CallKind::VCall ? name(c.ret) : hex(c.ret));
     if (c.kind == CallKind::GetDt) o += " " + hex(c.fret);
     return o;
 }
@@ -187,11 +192,24 @@ std::string first_diff(const std::string& native, const std::string& guest) {
 
 // ---- the World ----
 
+const char* fake_slot_name(int k) {
+    switch (k) {
+    case 3: return "particles:v3";
+    case 19: return "particles:v19";
+    case 20: return "particles:v20";
+    case 21: return "particles:v21";
+    case 26: return "particles:v26";
+    case 29: return "particles:v29";
+    default: return "particles:v32";
+    }
+}
+
 const u64* World::fake_vtable() {
     static const u64* vt = [] {
         auto* t = static_cast<u64*>(zalloc16(64 * 8));
         const u64 trap = fake_function("particles:trap", 1, 0);
         for (int k = 0; k < 64; k++) t[k] = trap;
+        for (int k : kFakeSlots) t[k] = fake_function(fake_slot_name(k), 2, 0);
         t[IParticleEmitter::kSlotPrepare] = fake_function("particles:prepare", 1, 0);
         t[IParticleEmitter::kSlotSimulate] = fake_function("particles:simulate", 1, 1);
         return t;
@@ -270,9 +288,13 @@ const Targets& targets() {
 void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
     const Targets& t = targets();
     live::ReplaySession rs;
-    auto respond = [this](CallKind k, Cpu& c) {
+    auto respond = [this](CallKind k, Cpu& c, int slot) {
         Call call;
         call.kind = k;
+        if (k == CallKind::VCall) {
+            const bool arg = slot == 20 || slot == 26 || slot == 29 || slot == 32;
+            call.x[0] = c.x(0), call.x[1] = (u64)slot, call.x[2] = arg ? c.x(1) : 0, call.n = 3;
+        }
         switch (k) {
         case CallKind::PostTask: {
             const u64* stack = reinterpret_cast<const u64*>(c.sp());
@@ -338,6 +360,16 @@ void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
             call.f0 = (u32)c.v(0).lo;
             break;
         }
+        case CallKind::VCall: break;  // (filled by the slot's answer below)
+        case CallKind::PlacementNew:
+            call.x[0] = c.x(0), call.x[1] = c.x(1), call.x[2] = c.x(2), call.n = 3;
+            break;
+        case CallKind::QueryTexture:
+            call.x[0] = c.x(0), call.x[1] = c.x(1), call.x[2] = c.x(2) & 0xff, call.n = 3;
+            break;
+        case CallKind::SetRenderLayer:
+            call.x[0] = c.x(0), call.x[1] = (u32)c.x(1), call.x[2] = c.x(2) & 0xff, call.n = 3;
+            break;
         case CallKind::Simulate: call.f0 = (u32)c.v(0).lo; [[fallthrough]];
         default:
             call.x[0] = c.x(0);
@@ -363,6 +395,7 @@ void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
         if (out >= 0 && call.x[out] && answered) *reinterpret_cast<u32*>(call.x[out]) = call.serial;
         if (answered && call.nout && (k == CallKind::FillMatrix || k == CallKind::Affect))
             std::memcpy(reinterpret_cast<void*>(call.x[1]), call.out, call.nout);
+        if (k == CallKind::VCall && relocate) call.ret = relocate(call.ret);
         c.set_x(0, call.ret);
         if (k == CallKind::GetDt) {
             float f;
@@ -387,7 +420,7 @@ void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
         }
         live::drop_stale_code(s.addr);
         const CallKind k = s.kind;
-        rs.answer(name, [respond, k](Cpu& c) { respond(k, c); });
+        rs.answer(name, [respond, k](Cpu& c) { respond(k, c, 0); });
     }
     for (const auto& [addr, k] : extra) {
         const char* name = live::ensure_stub(addr);
@@ -397,14 +430,16 @@ void GuestRun::run(u64 fn, std::initializer_list<u64> x, const float* s0) {
         }
         live::drop_stale_code(addr);
         const CallKind kk = k;
-        rs.answer(name, [respond, kk](Cpu& c) { respond(kk, c); });
+        rs.answer(name, [respond, kk](Cpu& c) { respond(kk, c, 0); });
     }
-    rs.answer("particles:prepare", [respond](Cpu& c) { respond(CallKind::Prepare, c); });
-    rs.answer("particles:simulate", [respond](Cpu& c) { respond(CallKind::Simulate, c); });
+    rs.answer("particles:prepare", [respond](Cpu& c) { respond(CallKind::Prepare, c, 0); });
+    rs.answer("particles:simulate", [respond](Cpu& c) { respond(CallKind::Simulate, c, 0); });
+    for (int k : kFakeSlots) rs.answer(fake_slot_name(k), [respond, k](Cpu& c) { respond(CallKind::VCall, c, k); });
     rs.answer("particles:trap", [this](Cpu& c) {
         if (error.empty()) error = "the guest called an emitter virtual other than Prepare / Simulate";
         c.set_x(0, 0);
     });
+    if (const u64 o = stub_original(fn)) fn = o;  // (fn itself stubbed, for its recursion: its original code)
     GuestArgs a;
     for (u64 v : x) a.i(v);
     if (s0) a.f(*s0);

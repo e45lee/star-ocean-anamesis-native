@@ -12,3 +12,20 @@ float frecps(float a, float b);
 float frsqrts(float a, float b);
 
 }  // namespace soa::native::dynamics::neon
+
+#include "native/common/arm_float.h"
+
+namespace soa::native::dynamics::neon {
+// The solver's idioms (every lane alike): 1 / sqrt(s) by FRSQRTE and two Newton steps, 1 / x by
+// FRECPE and two.
+inline armf::F rsqrt2(armf::F s) {
+    armf::F r(frsqrte(s.v));
+    r = r * armf::F(frsqrts((r * r).v, s.v));
+    return r * armf::F(frsqrts((r * r).v, s.v));
+}
+inline armf::F recip2(armf::F x) {
+    armf::F e(frecpe(x.v));
+    e = e * armf::F(frecps(e.v, x.v));
+    return e * armf::F(frecps(e.v, x.v));
+}
+}  // namespace soa::native::dynamics::neon

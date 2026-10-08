@@ -146,6 +146,7 @@ NATIVE_FUNCTION_ORIG("_ZN8InfoBase16DeserializeChildEPKN4Aska4ASON6AValue4AMapE"
 
 #include "native/common/guest_std.h"
 #include "native/common/test.h"
+#include "native/info/info_class.h"
 
 namespace soa::native::info {
 
@@ -162,6 +163,7 @@ struct Msgpack {
         b.push_back(0xdb), be(n, 4), b.insert(b.end(), s, s + n);
     }
     void uint(u64 v) { b.push_back(0xcf), be(v, 8); }
+    void array(u32 n) { b.push_back(0xdd), be(n, 4); }
     void f32(float f) {
         u32 x;
         std::memcpy(&x, &f, 4);
@@ -208,6 +210,84 @@ NATIVE_TEST("info/deserialize-child") {
     u64 id;
     std::memcpy(&id, reinterpret_cast<const u8*>(b.data()) + 0x38 + 0x28, 8);  // "id" (u64 at +0x38)
     if (id != 0x123456789abcull) t.fail("the document wasn't read (id %#llx)", (unsigned long long)id);
+    for (u64* o : {a.data(), b.data()}) t.call("_ZN17CPersonStatusInfoD2Ev", {(u64)o});
+    t.call("_ZN4Aska4ASOND1Ev", {(u64)ason});
+}
+
+
+// The children: CPersonStatusInfo's (an info, a derived info sharing its key, a list of infos, a list of
+// values, a number map) deserialized from one document by the guest's DeserializeChild and by the native
+// (each child's own DeserializeChild / DeserializeArray is the guest's from both): the whole state must
+// agree (info_state: the properties, the maps, the children, the lists' and the map's elements). The
+// live check can't run this case (the original after the native would append to the lists twice).
+NATIVE_TEST("info/deserialize-child-children") {
+    Msgpack m;
+    m.map(7);
+    m.str("id"), m.uint(77);
+    m.str("Assist"), m.map(2);
+    m.str("assist_role_id"), m.uint(7);
+    m.str("assist_favor"), m.uint(9);
+    m.str("UniverseDeityBoostInfo"), m.map(1);
+    m.str("add_hp"), m.uint(5);
+    m.str("CharacterDecoObject"), m.array(2);
+    m.map(3);
+    m.str("player_character_id"), m.uint(11);
+    m.str("attach_bone"), m.str("a bone name longer than twenty-two bytes");
+    m.str("pos_x"), m.f32(1.5f);
+    m.map(1);
+    m.str("index"), m.uint(3);
+    m.str("UniverseEffectualTalentInfoList"), m.array(3);
+    m.uint(1), m.uint(2), m.uint(3);
+    m.str("factor_list"), m.map(1);
+    m.str("5"), m.map(1);
+    m.str("factor_id"), m.uint(42);
+    m.str("no_such_key"), m.uint(1);
+    alignas(16) u8 ason[sizeof(data_formats::ASON)];
+    t.call("_ZN4Aska4ASONC1Ev", {(u64)ason});
+    t.call("_ZN4Aska4ASON4InitEjb", {(u64)ason, 0x4000, 1});
+    t.call("_ZN4Aska4ASON11DeserializeEPKvm", {(u64)ason, (u64)m.b.data(), m.b.size()});
+    const auto* root = &reinterpret_cast<const data_formats::ASON*>(ason)->m_root;
+    if (root->m_kind != AValue::kMap) {
+        t.fail("the test document isn't a map");
+        return;
+    }
+    const InfoClass& K = kInfo_CPersonStatusInfo;
+    std::vector<u64> a(K.size / 8 + 1), b(K.size / 8 + 1);
+    for (u64* o : {a.data(), b.data()}) {
+        t.call("_ZN17CPersonStatusInfoC2Ev", {(u64)o});
+        t.call("_ZN17CPersonStatusInfo10InitializeEv", {(u64)o});
+    }
+    t.call("_ZN8InfoBase16DeserializeChildEPKN4Aska4ASON6AValue4AMapE", {(u64)a.data(), (u64)&root->m_body});
+    reinterpret_cast<InfoBase*>(b.data())->DeserializeChild(&root->m_body);
+    auto* pa = reinterpret_cast<const u8*>(a.data());
+    auto* pb = reinterpret_cast<const CPersonStatusInfo*>(b.data());
+    if (info_state(K, pa) != info_state(K, reinterpret_cast<const u8*>(b.data()))) {
+        t.fail("the state differs");
+        for (const InfoChild& ch : K.children) {  // (which child, and where)
+            auto x = info_state(*ch.cls, pa + ch.offset), y = info_state(*ch.cls, reinterpret_cast<const u8*>(b.data()) + ch.offset);
+            if (x != y) {
+                size_t i = 0;
+                while (i < x.size() && i < y.size() && x[i] == y[i]) i++;
+                t.fail("child %s at +%#x differs at %llu (%llu / %llu)", ch.cls->name, ch.offset, (unsigned long long)i,
+                       (unsigned long long)x.size(), (unsigned long long)y.size());
+            }
+        }
+    }
+    // (the document reached the children)
+    if (pb->m_Assist.m_assist_role_id.m_value != 7) t.fail("Assist wasn't read");
+    auto* deco = reinterpret_cast<const InfoContainer*>(&pb->m_CharacterDecoObject);
+    if ((deco->m_body[1] - deco->m_body[0]) / kInfo_CCharacterDecoObjectInfo.size != 2) t.fail("the deco list isn't two");
+    auto* talents = reinterpret_cast<const InfoContainer*>(&pb->m_UniverseEffectualTalentInfoList);
+    if ((talents->m_body[1] - talents->m_body[0]) / 0x30 != 3) t.fail("the talent list isn't three");
+    auto* factors = reinterpret_cast<const InfoContainer*>(&pb->m_factor_list);
+    if (factors->m_body[2] != 1) {
+        t.fail("the factor map isn't one");
+    } else {  // (its element, a copy of a temporary that wasn't initialized, registered and read its own properties)
+        auto* node = reinterpret_cast<const u8*>(factors->m_body[0]);
+        u32 id;
+        std::memcpy(&id, node + 0x28 + offsetof(CFactorInfo, m_factor_id.m_value), 4);
+        if (id != 42) t.fail("the factor's id is %u", id);
+    }
     for (u64* o : {a.data(), b.data()}) t.call("_ZN17CPersonStatusInfoD2Ev", {(u64)o});
     t.call("_ZN4Aska4ASOND1Ev", {(u64)ason});
 }

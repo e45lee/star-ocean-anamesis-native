@@ -7,3 +7,12 @@ kBlendFull             at 0x28c49e4 f32 ref _ZN4Aska30ArticulatedDynamicsManager
 kFunSolveLink          at 0x2329994 ref _ZN4Aska26ArticulatedDynamicsManager12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf   # FUN_02429994: the link (distance) constraint (ADMSolver::SolveLink)
 kFunResolveContact     at 0x232a9f4 ref _ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_jjf   # FUN_0242a9f4: the contact response (ADMSolver::ResolveContact)
 kFunUpdateVelocity     at 0x232ac84 ref _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi   # FUN_0242ac84: the velocity update (ADMSolver::UpdateVelocity)
+kVaddrBaseDt           sym _ZN4Aska30ArticulatedDynamicsManagerBase9m_fBaseDtE              # float: the solver's base step
+kVaddrDtDiv            sym _ZN4Aska30ArticulatedDynamicsManagerBase8m_bDtDivE               # bool: steps scale with dt / m_fBaseDt
+kVaddrWorldCollisionCount  sym _ZN4Aska30ArticulatedDynamicsManagerBase18m_ucWorldCollisionE  # u8
+kVaddrWorldConstraintCount sym _ZN4Aska30ArticulatedDynamicsManagerBase19m_ucWorldConstraintE # u8
+kVaddrWorldCollisionList   sym _ZN4Aska30ArticulatedDynamicsManagerBase21m_pWorldCollisionListE  # DynamicsPrimitive*[]
+kVaddrWorldConstraintList  sym _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldConstraintListE # DynamicsPrimitive*[]
+kFunAimRotation        at 0x232a08c ref _ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_26ArticulatedDynamicsManagerEEEvPT_ffi   # FUN_0242a08c (ADMSolver::AimRotation)
+kFunBlendRotation      at 0x2329d78 ref _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi   # FUN_02429d78 (ADMSolver::BlendRotation)
+kVaddrWorldLandConstraint  sym _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldLandConstraintE  # the world land constraint (or none)

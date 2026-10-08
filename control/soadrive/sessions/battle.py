@@ -36,18 +36,20 @@ def main(o):
     def body(s):
         common.port_login(s, notice=None, bonus=None)
         s.state("home")
+        common.settle(s, mask=common.HOME_MASK)
         common.episode_list(s)
-        s.ctl("wait:6000", s.shot_cmd("03-episodes"))
-        s.tap_log(mission.phase(4), 60, 20, 3, "tap:100:1120", name="戻る -> home")
-        s.ctl("wait:6000", s.shot_cmd("04-home"))
+        common.settle(s, "03-episodes")
+        common.tap_to_phase(s, "戻る -> home", "100:1120", 4, "04-home", mask=common.HOME_MASK, fatal=True)
         mission.port_start(s, m)
         s.wait_log(r"MissionStart mission [0-9]* \(master_mission\)", 60, name="MissionStart")
+        # a fixed wait: a picture of the battle's loading screen, nothing to wait for
         s.ctl("wait:1500", s.shot_cmd("05-battle-loading"))
         mission.battle_shots(s, 10, 90, 4000)
         s.wait_log(r"MissionEnd mission [0-9]*: player exp", 30, name="the battle ended (MissionEnd)")
-        s.ctl("wait:4000", s.shot_cmd("90-result"))
+        common.settle(s, "90-result", hold=2)
         mission.results_until(s, mission.phase(4), 91, 105, 1000, name="the result pages -> home")
-        s.ctl("wait:8000", s.shot_cmd("99-home"), "profile-dump")
+        common.settle(s, "99-home", mask=common.HOME_MASK)
+        s.ctl("profile-dump")
         s.state("after-battle")
 
     if not common.drive(s, body):

@@ -142,6 +142,7 @@ them without a warning:
 | `SOA_SLOT_SOFTWARE_GL` | `control/soaslot.py` / `.sh` (`tools/gate.sh --software-gl` sets it) | opt-in, default off: the clients the pool starts render on Mesa's llvmpipe (`GALLIUM_DRIVER=llvmpipe LIBGL_ALWAYS_SOFTWARE=1`, and `LP_NUM_THREADS=4` unless set, in their environment) instead of the host GPU ([`testing-software-gl.md`](testing-software-gl.md)) |
 | `SOA_LIB`, `SOA_V370`, `SOA_V380`, `SOA_GHIDRA_MCP_PROJECT` | `tools/common.sh`, the decompile scripts, `scripts/ghidra-mcp.sh` | the library and Ghidra project | <!-- 380-ok: the decompile tools' switch for the viewer's lib -->
 | `SOA_TEST_DROP_TAP` | `control/soadrive/flows/mission.py` (`start_mission`) | test switch: `mission-start`, `mission-decide`, `deepspace-start`, `deepspace-decide` (comma-separated) drop the first such tap of a run, the forced lost tap that shows the retry ([control/README.md](../control/README.md)) |
+| `SOA_TEST_FRAME_DELAY` | `control/soadrive/targets.py` (`Run.start`) | test switch: MS; every client a run starts gets `frame-delay:MS` (runtime/README.md "Test hooks": each frame MS longer), a slow client on demand, the load the sessions' condition waits must survive (docs/code-review-2026-10-06.md T3) |
 | `EMU_DATA`, `SERVER_ARGS`, `KEEP_DATA`, `SMOKE_CLOCK`, `SMOKE_KEEP_DATA`, `PER_RUN_TIMEOUT`, `FLOW_*`, `RENTAL_*` | the emulator scripts, smoke, flowctl, rental | per-script knobs (their headers) |
 
 Some scripts also pass their caller's environment on (tests/diff's `proc.py`, `smoke.py`): a removed

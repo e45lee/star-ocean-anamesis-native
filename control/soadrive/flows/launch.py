@@ -34,6 +34,7 @@ def title(s, shot="01-title", retry=True):
     # comparison counts a repeated NoLoginStart once).
     probe = s.scratch("title-probe.png")
     for i in range(4):
+        # (a fixed wait: the window in which the dialog would come; nothing marks its absence)
         s.send(["wait:5000", "shot:" + probe])
         if (screens.mean(probe) or 0) > 0.45:
             break
@@ -132,9 +133,9 @@ def login_to_home(s, notice="02a-notice", bonus="02b-login-bonus", home="02-home
     s.wait_for("Login -> LoginResult", 60, lambda: s.in_packets(r"< LoginResult"))
     data_check(s, lambda: s.in_client(r"ShowWebView\(http"), "home (the notice board)", dialog_shot, done_shot)
     line = popups(s, notice, bonus, bonus_wait=bonus_wait)
-    s.ctl("wait:3000")
-    if home:
-        s.shot(home)
+    # home settled (its still parts: waits.HOME_MASK); the screenshot named HOME
+    from .. import waits  # (waits imports this module)
+    waits.settle(s, home or None, mask=waits.HOME_MASK)
     return line
 
 

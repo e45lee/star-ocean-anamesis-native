@@ -32,8 +32,8 @@ def main(o):
         st1 = s.state("1-home")
         gacha.open_gacha(s, "03-gacha")
         s.wait_for("gachas open (GetGachaInData)", 30, lambda: s.in_server(r"GetGachaInData: [1-9][0-9]* gachas open"))
-        s.ctl("tap:275:175", "wait:3000", s.shot_cmd("04-tab-chara"), "tap:450:175", "wait:3000", s.shot_cmd("05-tab-weapon"),
-              "tap:625:175", "wait:3000", s.shot_cmd("06-tab-event"))
+        for name, xy, shot in (("キャラ", "275:175", "04-tab-chara"), ("武器", "450:175", "05-tab-weapon"), ("イベント", "625:175", "06-tab-event")):
+            common.tap_to_screen(s, "the tab " + name, xy, shot, mask=common.GACHA_MASK)
         gacha.ten_draw(s, st1, opened=True)
         s.state("2-drawn")
         s.ctl("profile-dump")

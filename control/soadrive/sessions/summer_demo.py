@@ -43,7 +43,7 @@ import sys
 import tempfile
 import time
 
-from .. import popups as _popups, proc, screens, ui370
+from .. import popups as _popups, proc, screens, ui370, waits
 from ..flows import event, launch, mission
 from ..flows import gacha as gacha_flow
 from ..milestones import Failed
@@ -94,6 +94,14 @@ class Shots:
             return
         self.add(path)
 
+    def settle(self, what, **kw):
+        """The screen settled (waits.settle), kept as the next shot."""
+        self.keep(what, waits.settle(self.s, **kw) or waits.look(self.s))
+
+    def tap(self, what, xy, **kw):
+        """A tap to the next screen (waits.tap_to_screen, a note when it doesn't come), kept as the next shot."""
+        self.keep(what, waits.tap_to_screen(self.s, what, xy, fatal=None, **kw) or waits.look(self.s))
+
     def keep(self, what, src):
         path = self.s.layout.shot_path(self.name(what))
         if os.path.exists(src):
@@ -131,6 +139,7 @@ def gacha_name(gid):
 
 def body(s, sh, scratch):
     # ---- 1. launch ----
+    # a fixed wait: a picture of the boot at 4 s
     s.ctl("wait:4000")
     sh.shot("boot")
     launch.title(s, None, retry=False)
@@ -147,6 +156,7 @@ def body(s, sh, scratch):
         s.note("the game data is on the phone (SOA_PHONE / EMU_DATA); no full download")
         launch.data_check(s, home, "home (notice board)")
     else:
+        # a fixed wait: a picture of the download prompt (the download then waits for itself)
         s.ctl("wait:8000")
         sh.shot("download-prompt")
         dl = [sh.name("download-dialog"), sh.name("download-done")]
@@ -172,24 +182,23 @@ def body(s, sh, scratch):
     n = s.n_packets(r"> CheckEventRankingResult")
     s.tap_until("イベント -> the event menu (CheckEventRankingResult)", 60, ui370.HOME_EVENT, s.more_than(r"> CheckEventRankingResult", n),
                 every=5)
-    s.ctl("wait:6000")
-    sh.shot("event-list")
+    sh.settle("event-list", mask=waits.EVENT_MASK, hold=2)
     # Each row in turn until one opens the beach board whose first story (232:840) opens a story
     # popup (the list is never scrolled: a fling leaves it somewhere else).
     story, battle = event.mid("master_event_mission", "mc99_565"), event.mid("master_event_mission", "me99_1054")
     board, pop = os.path.join(scratch, "board.png"), os.path.join(scratch, "story.png")
     found = None
     for y in (525, 680, 830, 985):
-        s.send(["tap:364:%d" % y, "wait:7000", "shot:" + board])
+        shutil.copyfile(waits.tap_to_screen(s, "the row at y=%d" % y, "364:%d" % y, mask=waits.EVENT_MASK, fatal=None) or waits.look(s), board)
         if event.beach(board):
-            s.send(["tap:232:840", "wait:3000", "shot:" + pop])
+            shutil.copyfile(waits.tap_to_screen(s, "the board's first story", "232:840", mask=waits.EVENT_MASK, fatal=None) or waits.look(s), pop)
             if event.story_popup(pop):
                 found = y
                 break
             s.note("the row at y=%d opens a beach board without the story at 232:840; 戻る" % y)
         else:
             s.note("the row at y=%d is not a beach board; 戻る" % y)
-        s.ctl("tap:" + ui370.BACK, "wait:5000")
+        waits.tap_to_screen(s, "戻る", ui370.BACK, mask=waits.EVENT_MASK, fatal=None)
     if found is None:
         s.fail("no row opened the 水着イベント2020 board")
     s.ok("the summer event board (水着イベント2020, 星の海と夢の渚; row at y=%d)" % found)
@@ -197,28 +206,23 @@ def body(s, sh, scratch):
     sh.keep("story-detail", pop)
     s.tap_until("story 星海に現れし渚 (mc99_565) -> MissionTalk", 60, ui370.STORY_START, lambda: s.in_packets(r"> MissionTalk .* %d " % story),
                 every=5)
-    s.ctl("wait:10000")
-    sh.shot("story-scene")
-    s.ctl("tap:" + ui370.STORY_SKIP, "wait:2000")
-    sh.shot("story-skip")
+    sh.settle("story-scene", hold=2)
+    sh.tap("story-skip", ui370.STORY_SKIP)
     n = s.n_packets(r"> CheckEventRankingResult")
     s.tap_until("story skipped (はい) -> EndMissionTalk", 60, ui370.STORY_SKIP_YES, lambda: s.in_packets(r"> EndMissionTalk .* %d 1" % story),
                 every=5)
     s.wait_for("back on the board (CheckEventRankingResult)", 60, s.more_than(r"> CheckEventRankingResult", n))
-    s.ctl("wait:6000")
-    sh.shot("board-story-cleared")
+    sh.settle("board-story-cleared", mask=waits.EVENT_MASK, hold=2)
     # The battle it unlocked, me99_1054 (New, right of the cleared story).
-    s.ctl("tap:685:655", "wait:4000")
-    sh.shot("mission-detail")
-    s.ctl("tap:" + ui370.SINGLE_PLAY, "wait:5000")
-    sh.shot("rental")
-    s.ctl("tap:" + ui370.RENTAL_NONE, "wait:5000")
-    sh.shot("party")
+    sh.tap("mission-detail", "685:655", mask=waits.EVENT_MASK)
+    sh.tap("rental", ui370.SINGLE_PLAY)
+    sh.tap("party", ui370.RENTAL_NONE, is_screen=_popups.is_party_start)
     mission.open_mission_confirm(s)  # ミッション開始, retried until the confirmation is up (a lost tap)
     sh.shot("start-confirm")
     mission.start_mission(s, "ビーチスポーツ？【初級】 (me99_1054) -> MissionStart -> MissionStartRes",
                           lambda: s.in_packets(r"< MissionStartRes"), opened=True)
     s.check("MissionStart names me99_1054 (%d)" % battle, s.in_packets(r"> MissionStart .* %d " % battle))
+    # fixed waits: pictures of the battle's moments (its loading, the fight, the win), nothing to wait for
     s.ctl("wait:6000")
     sh.shot("battle-loading")
     for i in range(1, 5):
@@ -237,26 +241,25 @@ def body(s, sh, scratch):
     sh.shot("battle-won")
     s.ctl("wait:5000")
     sh.shot("victory")
-    for p in ("rewards", "drops", "exp"):
-        s.ctl("tap:" + ui370.RESULT_OK, "wait:4000")
-        sh.shot("result-" + p)
+    # (counted before the result pages: the last one's OK leads back to the board; how many pages
+    # a tap passes depends on when it lands, as flows/event.py says)
     n = s.n_packets(r"> CheckEventRankingResult")
+    for p in ("rewards", "drops", "exp"):
+        if s.n_packets(r"> CheckEventRankingResult") > n:
+            break
+        sh.tap("result-" + p, ui370.RESULT_OK, tries=1)
     s.tap_until("results -> back on the board (CheckEventRankingResult)", 90, ui370.RESULT_OK, s.more_than(r"> CheckEventRankingResult", n),
                 every=5)
-    s.ctl("wait:6000")
-    sh.shot("board-after-clear")
+    sh.settle("board-after-clear", mask=waits.EVENT_MASK, hold=2)
     s.state("2-after-battle")
-    s.ctl("tap:" + ui370.FOOTER_HOME, "wait:8000")
-    sh.shot("home-after-event")
+    sh.tap("home-after-event", ui370.FOOTER_HOME, mask=waits.HOME_MASK)
 
     # ---- 3. the summer gacha ----
     sh.section = "gacha"
     s.tap_until("ガチャ -> GetGachaInData", 60, ui370.FOOTER_GACHA, lambda: s.in_packets(r"< GetGachaInDataRes"), every=5)
-    s.ctl("wait:8000")
-    sh.shot("gacha-menu")
-    s.ctl("tap:" + ui370.GACHA_FIRST_BANNER, "wait:5000")  # the first banner of おすすめガチャ: 復刻水着2020①
-    sh.shot("summer-banner")
-    s.ctl("tap:" + ui370.GACHA_10, "wait:2500")  # 10連ガチャ (2,500 coins)
+    sh.settle("gacha-menu", mask=waits.GACHA_MASK, hold=2)
+    sh.tap("summer-banner", ui370.GACHA_FIRST_BANNER, mask=waits.GACHA_MASK)  # the first banner of おすすめガチャ: 復刻水着2020①
+    s.ctl("tap:" + ui370.GACHA_10)  # 10連ガチャ (2,500 coins)
     gacha_flow.open_confirm(s)  # a lost tap or a pick-up page's character detail: retried / closed
     sh.shot("draw-confirm")
     s.tap_until("10-draw: 決定 -> Gacha -> GachaRes", 60, ui370.GACHA_DECIDE, lambda: s.in_packets(r"< GachaRes"), every=5)
@@ -265,6 +268,7 @@ def body(s, sh, scratch):
     m = re.match(r"^I/server: Gacha ([0-9]*) ", gline)
     gname = gacha_name(int(m.group(1))) if m else ""
     s.check("a summer gacha: %s (%s)" % (gname or "?", re.sub(r"^I/server: ", "", gline)), re.search(r"水着|夏|サマー", gname))
+    # fixed waits: pictures of the summon's moments (the presentation is timed, nothing marks them)
     s.ctl("wait:4000")
     sh.shot("summon-start")
     s.ctl("tap:" + ui370.SUMMON_START, "wait:3000")
@@ -275,14 +279,11 @@ def body(s, sh, scratch):
     sh.shot("summon-reveal")
     s.ctl("tap:" + ui370.SUMMON_REVEAL, "wait:4000")
     sh.shot("summon-card")
-    s.ctl("tap:" + ui370.SUMMON_ALL_SKIP, "wait:5000")
-    sh.shot("gacha-results")
-    s.ctl("tap:" + ui370.GACHA_RESULT_NEXT, "wait:4000")  # 次へ
-    sh.shot("gacha-results-chips")
-    s.ctl("tap:" + ui370.GACHA_RESULT_NEXT, "wait:4000")  # 閉じる
-    sh.shot("banner-after-draw")
-    s.ctl("tap:" + ui370.FOOTER_HOME, "wait:8000")
-    sh.shot("home-end")
+    # ALL SKIP until the results (gacha.summon)
+    sh.keep("gacha-results", gacha_flow.summon(s) or waits.look(s))
+    sh.tap("gacha-results-chips", ui370.GACHA_RESULT_NEXT)  # 次へ
+    sh.tap("banner-after-draw", ui370.GACHA_RESULT_NEXT, mask=waits.GACHA_MASK)  # 閉じる
+    sh.tap("home-end", ui370.FOOTER_HOME, mask=waits.HOME_MASK)
     s.state("3-after-gacha")
 
     # ---- server-side evidence ----

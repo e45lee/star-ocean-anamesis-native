@@ -23,6 +23,7 @@ Env: SOA_PHONE (scripts/shared-phone.sh), SEED_RNG, WATCH=1. Ends with "events_s
 Targets: port-inproc (the phase lines and the in-process server's event lines)."""
 import re
 
+from .. import popups
 from ..flows import mission
 from . import common
 
@@ -37,26 +38,35 @@ def options(ap):
     ap.add_argument("clock", nargs="?", default="", help='the server clock "YYYY-MM-DD HH:MM:SS" (the story part\'s layouts)')
 
 
+def screen(s, name, xy, shot=None, **kw):
+    """A tap to the next screen (common.tap_to_screen); the session counts its FAILs and goes on."""
+    kw.setdefault("mask", common.EVENT_MASK)  # the banner carousel: a change no tap made
+    return common.tap_to_screen(s, name, xy, shot, fatal=False, **kw)
+
+
 def battle(s, tag, helper):
     """From a mission's detail: single play -> helper (x:y, or 選択しない) -> party 1 -> start ->
     the battle -> the result pages -> the menu (phase 5)."""
-    s.ctl("tap:364:905", "wait:5000", s.shot_cmd(tag + "-helper"), "tap:" + helper, "wait:5000", s.shot_cmd(tag + "-party"))
+    screen(s, tag + " シングルプレイ開始", "364:905", tag + "-helper")
+    screen(s, tag + " helper -> the party", helper, tag + "-party", is_screen=popups.is_party_start)
     started = r"MissionStart mission [0-9]* \(master_event_mission\)"
     if mission.start_mission(s, tag + " ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, started), fatal=False):
         s.wait_log(started, 60, name=tag + " MissionStart", fatal=False)
     s.wait_log(r"MissionEnd mission [0-9]*: player exp", 300, name=tag + " won", fatal=False)
-    s.ctl("wait:4000", s.shot_cmd(tag + "-result"))
+    common.settle(s, tag + "-result", hold=2)
     mission.results_until(s, P5, 0, 15, 4000, fmt=None, name=tag + " result -> menu", fatal=False)
-    s.ctl("wait:5000", s.shot_cmd(tag + "-after"))
+    common.settle(s, tag + "-after")
 
 
 def story(s, tag, node):
-    s.ctl("tap:" + node, "wait:4000", s.shot_cmd(tag + "-detail"), "tap:515:715")
-    s.wait_log(mission.phase(3), 30, name=tag + " scene", fatal=False)
-    s.ctl("wait:12000", s.shot_cmd(tag + "-scene"), "tap:115:1240", "wait:2000", s.shot_cmd(tag + "-skip"), "tap:515:742")
-    s.wait_log(r"events: story mission [0-9]* played", 60, name=tag + " cleared", fatal=False)
+    screen(s, tag + " the story's node", node, tag + "-detail")
+    common.tap_to_log(s, tag + " scene", "515:715", mission.phase(3), tries=1, secs=30, wait_still=False)
+    # the scene's first frames: its スキップ shows once the scene holds still a while
+    common.settle(s, tag + "-scene", hold=2)
+    screen(s, tag + " スキップ", "115:1240", tag + "-skip")
+    common.tap_to_log(s, tag + " cleared", "515:742", r"events: story mission [0-9]* played", secs=60, tries=1, wait_still=False)
     s.wait_log(P5, 60, name=tag + " -> board", fatal=False)
-    s.ctl("wait:8000", s.shot_cmd(tag + "-board"))
+    common.settle(s, tag + "-board", hold=2)
 
 
 def main(o):
@@ -65,33 +75,35 @@ def main(o):
 
     def body(s):
         common.port_login(s, "01-title", "02-notice", "03-login-bonus", "04-home")
+        common.settle(s, mask=common.HOME_MASK)
         line = s.last_line(r"events: [0-9]+ event areas open")
         if line:
             print("  " + line)
         # ---- the event list and a daily material mission ----
-        s.tap_log(P5, 60, 20, 3, "tap:90:1085", name="events", fatal=False)
-        s.ctl("wait:8000", s.shot_cmd("10-events"), "tap:515:370", "wait:4000", s.shot_cmd("11-materials"))
+        common.tap_to_phase(s, "events", "90:1085", 5, "10-events", mask=common.HOME_MASK)
+        screen(s, "素材 tab", "515:370", "11-materials")
         # The tab lists the materials by order_id, highest first; the day's EXP mission is the last:
         # scroll to the end, then its banner is the bottom one.
-        s.ctl("drag:364:950:364:450", "wait:3000", s.shot_cmd("12-materials-end"), "tap:364:985", "wait:6000",
-              s.shot_cmd("13-daily"))
-        s.ctl("tap:364:415", "wait:4000", s.shot_cmd("14-daily-detail"))
+        common.scroll_to_end(s, "drag:364:950:364:450", "12-materials-end", mask=common.EVENT_MASK)
+        screen(s, "the day's EXP mission", "364:985", "13-daily")
+        screen(s, "its mission", "364:415", "14-daily-detail")
         battle(s, "20-daily", "620:1120")
         s.check("daily: next mission unlocked", s.in_client(r"MissionEnd mission [0-9]*: unlocked"))
-        s.ctl("tap:100:1120", "wait:5000", "tap:210:370", "wait:4000", s.shot_cmd("30-event-tab"))
+        screen(s, "戻る", "100:1120")
+        screen(s, "イベント tab", "210:370", "30-event-tab")
         # ---- a story event ----
         if o.clock == "2020-05-29 15:00:00":
-            s.ctl("tap:364:525", "wait:8000", s.shot_cmd("31-kimono"))
+            screen(s, "the kimono event", "364:525", "31-kimono")
             story(s, "32-story", "362:650")
             # the battle the story unlocked (me99_1027), with the NPC 鬼炎のアルベル as the 4th member
-            s.ctl("tap:620:660", "wait:4000", s.shot_cmd("40-battle-detail"))
+            screen(s, "the battle the story unlocked", "620:660", "40-battle-detail")
             battle(s, "41-npc", "364:525")
             s.check("npc helper", s.in_client(r"event NPC helper [0-9]* .* as member 4"))
         elif o.clock == "2021-06-10 15:00:00":
-            s.ctl("tap:364:830", "wait:8000", s.shot_cmd("31-idol4"))
+            screen(s, "the idol event", "364:830", "31-idol4")
             story(s, "32-story", "362:330")
         else:
-            s.ctl("tap:364:525", "wait:8000", s.shot_cmd("31-first-event"))
+            screen(s, "the first event", "364:525", "31-first-event")
             print("  (no known layout for this clock: the story part is skipped)")
 
     common.drive(s, body)

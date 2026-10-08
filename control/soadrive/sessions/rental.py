@@ -13,6 +13,7 @@ Targets: port-inproc (the phase lines and the in-process server's lines)."""
 import datetime
 import os
 
+from .. import popups
 from ..flows import mission
 from . import common
 
@@ -27,9 +28,12 @@ def options(ap):
 
 def episode1_map(s, x):
     """ミッション -> the episode list -> Episode 1 (the third banner: scrolled to) -> the planet select."""
+    common.settle(s, mask=common.HOME_MASK)
     common.episode_list(s, "%s:1080" % x)
-    s.ctl("wait:5000", "drag:364:850:364:400", "wait:2000")
-    s.tap_log(mission.phase(5), 120, 20, 3, "tap:364:805", name="Episode 1 -> the planet select")
+    common.settle(s)
+    s.ctl("drag:364:850:364:400")
+    common.settle(s)
+    common.tap_to_phase(s, "Episode 1 -> the planet select", "364:805", 5, secs=120, fatal=True)
 
 
 def main(o):
@@ -38,20 +42,31 @@ def main(o):
     x = os.environ.get("HOME_MISSION_X") or "270"
     s = common.port_run(o, common.port_config(o, ["--campaign-seed", seed, "--clock", clock1], limit=2400, seed_rng=None))
 
+    def screen(s, name, xy, shot=None, **kw):
+        return common.tap_to_screen(s, name, xy, shot, **kw)
+
     def day1(s):
         common.port_login(s, notice=None, bonus=None)
         episode1_map(s, x)
-        s.ctl("wait:8000", "tap:660:520", "wait:3000", "tap:587:795", "wait:7000", "tap:363:665", "wait:4000", s.shot_cmd("03-detail"))
-        s.ctl("tap:364:905", "wait:5000", s.shot_cmd("04-rental"))  # single play -> the rental list
+        screen(s, "Mere", "660:520")
+        screen(s, "出撃 -> the mission map", "587:795")
+        screen(s, "1-05 -> its detail", "363:665", "03-detail")
+        screen(s, "シングルプレイ開始 -> the rental list", "364:905", "04-rental")
         # the first rental -> the party select (the rental is the 4th card) -> start -> confirm
-        s.ctl("tap:364:375", "wait:5000", s.shot_cmd("05-party"))
-        s.ctl("tap:364:900", "wait:3000", s.shot_cmd("06-confirm"), "tap:515:712")
-        s.wait_log(r"MissionStart: rental helper", 60, name="MissionStart with the rental helper")
+        screen(s, "the first rental -> the party", "364:375", "05-party", is_screen=popups.is_party_start)
+        mission.open_mission_confirm(s)
+        s.ctl(s.shot_cmd("06-confirm"))
+        rx = r"MissionStart: rental helper"
+        mission.start_mission(s, "ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, rx), opened=True)
+        s.wait_log(rx, 60, name="MissionStart with the rental helper")
+        # a fixed wait: a picture of the fight, nothing to wait for (battle_shots then waits for its end)
         s.ctl("wait:15000", s.shot_cmd("07-battle"))
         mission.battle_shots(s, 8, 40, 5000, fmt="%02d-battle")
         s.wait_log(r"mission_end\.msgp", 30, name="the battle ended (MissionEnd)")
-        s.ctl("wait:4000", s.shot_cmd("60-result"), "tap:510:1040", "wait:4000", "tap:510:1040", "wait:4000", s.shot_cmd("61-result"))
-        s.ctl("tap:364:1050", "wait:5000", s.shot_cmd("62-result-exp"))
+        common.settle(s, "60-result", hold=2)
+        screen(s, "the result: OK", "510:1040")
+        screen(s, "the result: OK", "510:1040", "61-result")
+        screen(s, "the result's next page", "364:1050", "62-result-exp")
 
     if not common.drive(s, day1):
         return 1
@@ -71,7 +86,8 @@ def main(o):
     def day2(s):
         common.port_login(s, "70-title", None, None, None)
         s.wait_log(r"CRentalBonus5SetupEv\(", 60, name="the rental bonus popup (CRentalBonus::Setup)")
-        s.ctl("wait:3000", s.shot_cmd("71-rental-bonus"), "tap:364:810", "wait:3000", s.shot_cmd("72-home"))
+        common.settle(s, "71-rental-bonus", hold=2)
+        common.tap_to_screen(s, "the rental bonus: 閉じる", "364:810", "72-home", mask=common.HOME_MASK)
 
     if not common.drive(s2, day2):
         return 1

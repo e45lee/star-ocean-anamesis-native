@@ -20,6 +20,7 @@ import os
 import re
 import sqlite3
 
+from .. import popups
 from ..flows import mission
 from ..proc import repo_file
 from . import common
@@ -37,36 +38,42 @@ def options(ap):
 def main(o):
     s = common.port_run(o, common.port_config(o, ["--restore-tower"], limit=2100))
 
+    def screen(name, xy, shot=None, **kw):
+        return common.tap_to_screen(s, name, xy, shot, fatal=False, **kw)
+
     def body(s):
         common.port_login(s, "01-title", "02-notice", "03-login-bonus", "04-home")
         line = s.last_line(r"server: tower: [0-9]+ areas")
         if line:
             print("  " + line)
         s.check("stand-in banners in the client master", s.in_client(r"tower: stand-in banner banner80"))
+        common.settle(s, mask=common.HOME_MASK)
         # The home's スフィア211 button: with the tower open, the extra-dungeon menu lists 試練の遺跡 and スフィア211.
-        s.tap_log(P5, 60, 20, 3, "tap:455:1085", name="extra-dungeon", fatal=False)
-        s.ctl("wait:6000", s.shot_cmd("05-extra-dungeon"))
+        common.tap_to_phase(s, "extra-dungeon", "455:1085", 5, "05-extra-dungeon", mask=common.HOME_MASK)
         # 試練の遺跡: the floor list (CTowerMissionMenu::Setup; the play_plate stand-ins are made here).
-        s.ctl("tap:364:470", "wait:8000", s.shot_cmd("06-floors"))
+        screen("試練の遺跡", "364:470", "06-floors")
         s.wait_log(r"layout node 'play_plate/3' missing", 30, name="tower menu (play_plate stand-ins)", fatal=False)
-        s.ctl("tap:364:400", "wait:6000", s.shot_cmd("07-area"))  # the top area -> its missions (1F only)
-        s.ctl("tap:364:415", "wait:4000", s.shot_cmd("08-detail"))
+        screen("the top area -> its missions (1F only)", "364:400", "07-area")
+        screen("1F -> its detail", "364:415", "08-detail")
         # single play -> 選択しない -> party 1 -> ミッション開始 -> 決定
-        s.ctl("tap:364:905", "wait:5000", s.shot_cmd("09-helper"), "tap:628:1120", "wait:5000", s.shot_cmd("10-party"))
+        screen("シングルプレイ開始", "364:905", "09-helper")
+        screen("選択しない -> the party", "628:1120", "10-party", is_screen=popups.is_party_start)
         started = r"MissionStart mission [0-9]* \(master_tower_mission\)"
         mission.open_mission_confirm(s)
         s.ctl(s.shot_cmd("11-confirm"))
         mission.start_mission(s, "ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, started), opened=True)
         s.wait_log(started, 60, name="tower MissionStart", fatal=False)
+        # a fixed wait: a picture of the fight, nothing to wait for (the next waits are for its end)
         s.ctl("wait:12000", s.shot_cmd("12-battle"))
         s.wait_log(r"MissionEnd mission [0-9]*: player exp", 400, name="tower battle won", fatal=False)
         s.wait_log(r"MissionEnd mission [0-9]*: unlocked", 10, name="next floor unlocked", fatal=False)
         s.wait_log(r"server: tower: [0-9]+ areas, [0-9]+ missions listed", 10, name="lists refreshed", fatal=False)
-        s.ctl("wait:6000", s.shot_cmd("13-result"))
+        common.settle(s, "13-result", hold=2)
         # the result pages (OK at 510:1050), each tap only while the tower menu isn't back (phase 5)
         mission.results_until(s, P5, 0, 15, 0, fmt=None, name="result pages", fatal=False, ok="510:1050")
-        s.ctl("wait:8000", s.shot_cmd("14-area-after"))
-        s.ctl("tap:100:1120", "wait:5000", s.shot_cmd("15-floors-again"), "tap:100:1120", "wait:5000", s.shot_cmd("16-back"))
+        common.settle(s, "14-area-after", hold=2)
+        screen("戻る", "100:1120", "15-floors-again")
+        screen("戻る", "100:1120", "16-back")
 
     common.drive(s, body)
     # The server's state: the cleared floor

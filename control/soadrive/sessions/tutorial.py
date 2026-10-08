@@ -61,7 +61,8 @@ def new_player(s, player, steps, on_round=None, stop_home=True):
     launch.title(s, "01-title")
     s.tap_until("TAP TO START -> Login -> error 19001 (no player)", 120, ui370.TITLE,
                 lambda: s.in_packets(r"< ProtocolError .*status=19001"), every=10)
-    s.ctl("wait:3000", s.shot_cmd("02-terms"), "tap:" + ui370.TERMS_AGREE, "wait:3000", s.shot_cmd("03-name"))
+    common.settle(s, "02-terms", hold=2)
+    common.tap_to_screen(s, "同意する -> the name dialog", ui370.TERMS_AGREE, "03-name")
     # The name: tap the field until the keyboard opens, type, 決定; checks CreatePlayer's name.
     try:
         s.ok(popups.name_entry(s.fifo, s.client_log, player, s.layout.shot_path("04-name-typed"), alive=s.alive)[3:])
@@ -72,13 +73,14 @@ def new_player(s, player, steps, on_round=None, stop_home=True):
     # Login, then the 3.7.0 client's data check (or download) before the opening scene.
     launch.data_check(s, lambda: s.in_packets(r"> MissionTalk") or s.in_client(mission.phase(3)), "the tutorial opening",
                       "00-download-dialog", "00-download-done", first_tap=None)
+    # a fixed wait: the opening scene's buttons, as flows/tutorial.py entry() says
     s.ctl("wait:15000", s.shot_cmd("05-opening"))
     tutorial.auto_mode(s)
     home = lambda: s.in_client(mission.phase(4))
     tutorial.rounds(s, 4, steps, shot_fmt="l%03d", on_round=on_round, stop=home)
     if not home():
         s.wait_for("UpdateTutorial(4) (the mission-menu step)", 60, tutorial.tut(s, 4))
-        tutorial.home_part(s, popups=False, home_wait=5000)
+        tutorial.home_part(s, popups=False)
     else:
         s.wait_for("UpdateTutorial(7) (home)", 60, tutorial.tut(s, 7))
 

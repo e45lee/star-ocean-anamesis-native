@@ -72,24 +72,28 @@ def main(o):
 
     def body(s):
         common.port_login(s, home=None, notice=None, bonus=None, bonus_wait=20)
-        s.ctl("wait:8000", s.shot_cmd("02-home-level1"))
+        common.settle(s, "02-home-level1", mask=common.HOME_MASK)
         # A character with favor can visit the home instead of the home character (its お気に入りに
         # 戻す button at 90:635 brings the home character back; on the home character's home the spot
         # is empty). Taps on a visitor send nothing.
-        s.ctl("tap:90:635", "wait:6000")
+        # (the visitor leaving is in the masked middle of home: waited for as calm, unmasked)
+        common.tap_settled(s, "90:635")
+        common.settle(s, hold=2)
         s.tap_log(r"favor: tap same_role [0-9]* \+50: 9900 -> 9950", 40, 10, 3, "tap:420:560",
                   name="the first tap on the home character (UpdateFavorByTap)")
-        s.ctl("wait:6000", s.shot_cmd("03-tap-9950"))
+        common.settle(s, "03-tap-9950", hold=2)
         s.tap_log(r"favor: tap same_role [0-9]* \+50: 9950 -> 10000 \(level 1 -> 2\)", 40, 10, 3, "tap:420:560",
                   name="the second tap reaches level 2")
-        s.ctl("wait:1500", s.shot_cmd("04-levelup"), "wait:6500", s.shot_cmd("05-level2"))
+        # a fixed wait: a picture of the level-up effect at 1.5 s, nothing marks it
+        s.ctl("wait:1500", s.shot_cmd("04-levelup"))
+        common.settle(s, "05-level2", hold=2)
         tables["1-after-taps"] = favor(s, "1-after-taps")
         mission.port_start(s, m)
         mission.battle_shots(s, 10, 70, 4000)
         s.wait_log(r"mission_end\.msgp", 30, name="the battle ended (MissionEnd)")
-        s.ctl("wait:4000", s.shot_cmd("80-result"))
+        common.settle(s, "80-result", hold=2)
         mission.results_until(s, mission.phase(4), 81, 95, 1000, name="the result pages -> home")
-        s.ctl("wait:8000", s.shot_cmd("99-home"))
+        common.settle(s, "99-home", mask=common.HOME_MASK)
         tables["2-after-battle"] = favor(s, "2-after-battle")
         for ln in open(s.client_log, errors="replace").read().splitlines():
             if "favor:" in ln:

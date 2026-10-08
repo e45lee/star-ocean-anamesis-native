@@ -53,7 +53,6 @@ def main(o):
         seeded.wire_login(s)
         s.wait_for("Login -> LoginResult (decoded)", 60, lambda: s.in_packets(r"< LoginResult .* data\{"))
         s.wait_for("Login's GetPlayerRes", 30, lambda: s.in_packets(r"< GetPlayerRes .*ends the login request"))
-        s.ctl("wait:8000")
         launch.data_check(s, lambda: s.in_client(r"ShowWebView\(http"), "home (notice board)", "00-download-dialog",
                           "00-download-done")
         try:  # the notice board and the LOGIN BONUS closed: home's character model in view
@@ -63,15 +62,18 @@ def main(o):
         except Failed as e:
             s.fail("login popups (FAIL: %s)" % e)
         if o.at == "home":
-            s.ctl("wait:5000", s.shot_cmd("03-home"))
+            common.settle(s, "03-home", mask=common.HOME_MASK)
         else:
             n = s.n_packets(r"< GetMissionListRes")
             s.tap_until("ミッション -> GetMissionList", 60, ui370.HOME_MISSION, s.more_than(r"< GetMissionListRes", n))
-            s.ctl("wait:6000")
-            s.ctl("tap:" + ui370.PLANET_MERE, "wait:3000", "tap:" + ui370.PLANET_SORTIE, "wait:7000")
-            s.ctl("tap:" + ui370.MAP_105, "wait:4000")
-            s.ctl("tap:" + ui370.SINGLE_PLAY, "wait:5000", "tap:" + ui370.RENTAL_NONE, "wait:5000")
+            common.settle(s, hold=2)
+            common.tap_to_screen(s, "Mere", ui370.PLANET_MERE)
+            common.tap_to_screen(s, "出撃 -> the mission map", ui370.PLANET_SORTIE)
+            common.tap_to_screen(s, "1-05 -> its detail", ui370.MAP_105)
+            common.tap_to_screen(s, "シングルプレイ開始", ui370.SINGLE_PLAY)
+            common.tap_to_screen(s, "選択しない -> the party", ui370.RENTAL_NONE, is_screen=_popups.is_party_start)
             mission.start_mission(s, "1-05 -> MissionStart -> MissionStartRes", lambda: s.in_packets(r"< MissionStartRes"))
+            # a fixed wait: a picture of the fight, nothing to wait for
             s.ctl("wait:15000", s.shot_cmd("08-battle"))
         open(start, "w").close()
         s.ok("tests started at %s" % o.at)

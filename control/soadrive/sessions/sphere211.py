@@ -27,7 +27,7 @@ from . import _sphere, common
 TARGETS = ("port-inproc",)
 TARGETS_WHY = "it writes the in-process server's state DB and waits on the port's phase lines"
 WRAPPER = "port/scripts/sphere211_session.sh"
-TOP = ["drag:364:300:364:900:1200", "wait:1500", "drag:364:300:364:900:1200", "wait:1500", "drag:364:300:364:900:1200", "wait:3000"]
+TOP = "drag:364:300:364:900:1200"  # the board scrolled to its top: three of these
 
 
 def options(ap):
@@ -39,45 +39,61 @@ def main(o):
     c = s.ctl
     st = {}
 
+    def screen(name, xy, shot=None, **kw):
+        return common.tap_to_screen(s, name, xy, shot, **kw)
+
+    def req(name, xy, rx, shot=None, hold=1):
+        """A request's tap, once (a second would land on the screen after it)."""
+        return common.tap_to_log(s, name, xy, rx, shot, secs=30, tries=1, fatal=True, settle_hold=hold)
+
+    def top(shot):
+        """The board scrolled to its top: three drags, each waited out (a drag at the top moves nothing)."""
+        for _ in range(3):
+            c(TOP)
+            common.settle(s)
+        common.settle(s, shot)
+
     def enter_once():
-        c("tap:100:1120")
-        s.wait_log(mission.phase(4), 30, name="戻る -> home")
-        c("wait:5000")
-        s.tap_log(r"request GetSphere211Info", 60, 20, 3, "tap:455:1085", name="スフィア211 -> the board again")
+        common.tap_to_phase(s, "戻る -> home", "100:1120", 4, mask=common.HOME_MASK, secs=45, every=15, fatal=True)
+        common.tap_to_log(s, "スフィア211 -> the board again", "455:1085", r"request GetSphere211Info", fatal=True, settle_hold=2)
 
     def reenter():
-        # the first entry after a clear plays the unlock animation (no input meanwhile): entered twice
+        # the first entry after a clear plays the unlock animation (no input meanwhile): entered twice;
+        # a 戻る the animation swallows is made again (no phase line: not taken)
         enter_once()
-        c("wait:15000")
         enter_once()
-        c("wait:8000")
+
+    def heal(tag):
+        """The stamina the battle took (9 -> 8) healed with the season's ticket."""
+        screen("stamina +", "590:992", tag + "-heal-items")
+        screen("the heal ticket", "364:515", tag + "-heal")
+        req("Sphere211StaminaHeal", "515:790", r"Sphere211StaminaHeal: sphere stamina 8 -> 9", tag + "-healed")
+        screen("healed: 閉じる", "364:790")
 
     def return_dive(tag):
-        c("tap:590:1120", "wait:3000", s.shot_cmd(tag + "-return-dialog"), "tap:515:972")
-        s.wait_log(r"ReturnSphere211: ", 30, name=tag + ": ReturnSphere211")
-        c("wait:6000", s.shot_cmd(tag + "-treasure-data"), "tap:364:1095", "wait:5000", s.shot_cmd(tag + "-treasure-items"), "tap:364:1095",
-          "wait:4000", s.shot_cmd(tag + "-returned"))
-        c("tap:364:800", "wait:3000", s.shot_cmd(tag + "-board-after"))
+        screen("帰還", "590:1120", tag + "-return-dialog")
+        req(tag + ": ReturnSphere211", "515:972", r"ReturnSphere211: ", tag + "-treasure-data", hold=2)
+        screen("the treasure data: 次へ", "364:1095", tag + "-treasure-items")
+        screen("the treasure items: 次へ", "364:1095", tag + "-returned")
+        screen("returned: 閉じる", "364:800", tag + "-board-after")
 
     def body(s):
         st[1] = _sphere.login_to_board(s)
         _sphere.sql(s, "update sphere set debug_enemy_level = 30 where id = 1")
-        c("tap:364:670")
+        screen("cell 1", "364:670")
         _sphere.battle(s, "10-cell1", rent=True)
         if not s.in_client(r"MissionStart: rental helper .* as member 4"):
             s.fail("the rental didn't join as member 4")
-        # The stamina the battle took (9 -> 8) healed with the season's ticket.
-        c("tap:590:992", "wait:3000", s.shot_cmd("15-heal-items"), "tap:364:515", "wait:3000", s.shot_cmd("15-heal"), "tap:515:790")
-        s.wait_log(r"Sphere211StaminaHeal: sphere stamina 8 -> 9", 30, name="Sphere211StaminaHeal")
-        c("wait:3000", s.shot_cmd("15-healed"), "tap:364:790", "wait:2000")
+        heal("15")
         reenter()
-        c("tap:364:480")
+        screen("cell 2", "364:480")
         _sphere.battle(s, "20-cell2")
         reenter()
-        c("tap:364:285")
+        screen("cell 3", "364:285")
         _sphere.battle(s, "30-cell3")
         reenter()
-        c(*(TOP + [s.shot_cmd("35-board"), "tap:490:965"]))
+        top("35-board")
+        screen("cell 6", "490:965")
         _sphere.battle(s, "40-cell6")
         if not s.in_client(r"Sphere211MissionEnd: .*streak 4"):
             s.fail("four battles weren't cleared in a row")
@@ -85,21 +101,23 @@ def main(o):
         return_dive("45")
         st[2] = _sphere.state(s, "2-returned")
         reenter()
-        c(*(TOP + [s.shot_cmd("49-board"), "tap:490:790"]))
+        top("49-board")
+        screen("the boss cell", "490:790")
         _sphere.battle(s, "50-boss")
         st[3] = _sphere.state(s, "3-cleared")
         # The goal (目標地点) -> 次のフロアへ -> 決定: Sphere211FloorClear.
         reenter()
-        c(*(TOP + [s.shot_cmd("60-goal"), "tap:364:625", "wait:3000", s.shot_cmd("62-next-floor"), "tap:515:713"]))
-        s.wait_log(r"Sphere211FloorClear\(", 30, name="Sphere211FloorClear")
-        c("wait:5000", s.shot_cmd("63-floor-result"), "tap:364:970", "wait:12000", s.shot_cmd("64-floor-select"))
+        top("60-goal")
+        screen("目標地点", "364:625", "62-next-floor")
+        req("Sphere211FloorClear", "515:713", r"Sphere211FloorClear\(", "63-floor-result", hold=2)
+        screen("the floor result -> the floor select", "364:970", "64-floor-select", hold=3)
         # 再設定 with the season's reroll ticket (Sphere211UseRerollItem re-lots the next-floor count)
-        c("tap:220:962", "wait:3000", s.shot_cmd("64b-reroll-confirm"), "tap:515:795")
-        s.wait_log(r"Sphere211UseRerollItem: next-floor lot", 30, name="Sphere211UseRerollItem")
-        c("wait:5000", s.shot_cmd("64c-rerolled"))
-        c("tap:364:570", "wait:1500", "tap:510:962", "wait:3000", s.shot_cmd("65-confirm"), "tap:515:713")
-        s.wait_log(r"Sphere211SelectedFloor\(1\): floor 1 -> 2", 30, name="Sphere211SelectedFloor: floor 2")
-        c("wait:8000", s.shot_cmd("66-floor2"))
+        screen("再設定", "220:962", "64b-reroll-confirm")
+        req("Sphere211UseRerollItem", "515:795", r"Sphere211UseRerollItem: next-floor lot", "64c-rerolled")
+        # the floor picked (a selection: once), 決定 -> 決定
+        common.tap_settled(s, "364:570")
+        screen("the floor: 決定", "510:962", "65-confirm")
+        req("Sphere211SelectedFloor: floor 2", "515:713", r"Sphere211SelectedFloor\(1\): floor 1 -> 2", "66-floor2", hold=2)
         _sphere.state(s, "4-floor2")
         # 帰還 on floor 2: the floor-1 boss and floor-clear boxes analysed, everyone back.
         return_dive("70")

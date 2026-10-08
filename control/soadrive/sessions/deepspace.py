@@ -60,71 +60,73 @@ def main(o):
         mission.start_mission(s, "決定 -> 探査開始 (%s)" % name, mission.log_more(s.client_log, rx), d=mission.DEEPSPACE, opened=True)
         w(rx, 30, name=name)
 
+    def screen(name, xy, shot=None, **kw):
+        return common.tap_to_screen(s, name, xy, shot, **kw)
+
+    def req(name, xy, rx, shot=None):
+        return common.tap_to_log(s, name, xy, rx, shot, secs=30, every=10, fatal=True)
+
+    def deepspace(rx, name, shot):
+        """phase:6 (CPhase_DeepSpace, which sends DeepSpaceActiveList; the command bypasses the home
+        screen's button), then the deep space screen faded in."""
+        before = common.look(s, ".before-deepspace.png")
+        c("phase:6")
+        w(rx, 60, name=name)
+        common.settle(s, shot, differs_from=before)
+
+    def results(second, after):
+        """The result pages' OK, made again while the page stays (a dropped OK shifted every later tap)."""
+        screen("the result's items page closed", "364:1050", second)
+        screen("the result's characters page closed", "364:1050", after)
+
     def body(s):
         # The login popups closed: left open, the LOGIN BONUS popup stays up over deep space (the
         # phase:6 control command bypasses it) and its 閉じる swallows the result page's OK tap.
         common.port_login(s, "01-title", "02-notice", "02-login-bonus", "03-home")
-        # Deep space: CPhase_DeepSpace sends DeepSpaceActiveList.
-        c("phase:6")
-        w(r"DeepSpaceActiveList: ", 60, name="DeepSpaceActiveList")
-        c("wait:5000", s.shot_cmd("04-deepspace"))
-        c("tap:360:680", "wait:4000", s.shot_cmd("05-missions"))  # the focused area, its mission list
-        c("tap:360:790", "wait:5000", s.shot_cmd("06-party"))  # the first mission (0.5H): party select
-        c("tap:350:790")
-        w(r"DeepSpaceAutoMemberSelect bonus", 30, name="DeepSpaceAutoMemberSelect")
-        c("wait:4000", s.shot_cmd("07-auto"))
+        common.settle(s, mask=common.HOME_MASK)
+        deepspace(r"DeepSpaceActiveList: ", "DeepSpaceActiveList", "04-deepspace")
+        screen("the focused area: its mission list", "360:680", "05-missions")
+        screen("the first mission (0.5H): party select", "360:790", "06-party")
+        req("DeepSpaceAutoMemberSelect", "350:790", r"DeepSpaceAutoMemberSelect bonus", "07-auto")
         start(r"DeepSpaceMissionStart area", "DeepSpaceMissionStart", "08-confirm")
-        c("wait:6000", s.shot_cmd("09-started"))
+        common.settle(s, "09-started")
         st[1] = ds_state(s, "1-started")
         # Fast-forward the server clock past the expedition (30 minutes), leave to home and come back.
-        c("clock:+1900", "tap:100:1120", "wait:3000", "tap:100:1120")
-        w(mission.phase(4), 60, name="home")
-        c("wait:5000", "phase:6")
-        w(r"DeepSpaceActiveList: .* 0 ships out, 1 back", 60, name="DeepSpaceActiveList: the ship back")
-        c("wait:5000", s.shot_cmd("10-returned"))
-        c("tap:360:680", "wait:4000", s.shot_cmd("11-area"), "tap:360:790")
-        w(r"DeepSpaceMissionEnd ship", 30, name="DeepSpaceMissionEnd")
-        sp = s.layout.shot_path
-        # the result pages' OK, resent until the page changes (a dropped OK shifted every later tap)
-        c("wait:6000", s.shot_cmd("12-result-items"))
-        s.tap_until_changed("the result's items page closed", "364:1050", sp("12-result-items"), wait_ms=5000)
-        c(s.shot_cmd("13-result-characters"))
-        s.tap_until_changed("the result's characters page closed", "364:1050", sp("13-result-characters"), wait_ms=5000)
-        c(s.shot_cmd("14-after"))
+        c("clock:+1900")
+        screen("戻る", "100:1120")
+        common.tap_to_phase(s, "戻る -> home", "100:1120", 4, mask=common.HOME_MASK, fatal=True)
+        deepspace(r"DeepSpaceActiveList: .* 0 ships out, 1 back", "DeepSpaceActiveList: the ship back", "10-returned")
+        screen("the area", "360:680", "11-area")
+        req("DeepSpaceMissionEnd", "360:790", r"DeepSpaceMissionEnd ship", "12-result-items")
+        results("13-result-characters", "14-after")
         st[2] = ds_state(s, "2-collected")
         # A second expedition, returned at once (今すぐ帰還: DeepSpaceMissionEndNow for coins), collected.
-        c("tap:360:790", "wait:5000", "tap:350:790")
-        w(r"DeepSpaceAutoMemberSelect bonus", 30, name="DeepSpaceAutoMemberSelect (2)")
-        c("wait:4000")
+        screen("the first mission: party select", "360:790")
+        req("DeepSpaceAutoMemberSelect (2)", "350:790", r"DeepSpaceAutoMemberSelect bonus")
         start(r"DeepSpaceMissionStart area", "DeepSpaceMissionStart (2)")
-        c("wait:6000", s.shot_cmd("15-started-2"), "tap:655:797", "wait:4000", s.shot_cmd("16-quick-return"))
-        c("tap:515:890")
-        w(r"DeepSpaceMissionEndNow ship", 30, name="DeepSpaceMissionEndNow")
-        c("wait:5000", s.shot_cmd("17-quick-returned"), "tap:364:800", "wait:5000", s.shot_cmd("18-returned-2"))
-        c("tap:360:790")
-        w(r"DeepSpaceMissionEnd ship", 30, name="DeepSpaceMissionEnd (2)")
-        c("wait:6000", s.shot_cmd("19-result-2"))
-        s.tap_until_changed("the second result's items page closed", "364:1050", sp("19-result-2"), wait_ms=5000)
-        c(s.shot_cmd("19b-result-2-characters"))
-        s.tap_until_changed("the second result's characters page closed", "364:1050", sp("19b-result-2-characters"), wait_ms=5000)
-        c(s.shot_cmd("20-after-2"))
+        common.settle(s, "15-started-2")
+        screen("今すぐ帰還", "655:797", "16-quick-return")
+        req("DeepSpaceMissionEndNow", "515:890", r"DeepSpaceMissionEndNow ship", "17-quick-returned")
+        screen("returned: 閉じる", "364:800", "18-returned-2")
+        req("DeepSpaceMissionEnd (2)", "360:790", r"DeepSpaceMissionEnd ship", "19-result-2")
+        results("19b-result-2-characters", "20-after-2")
         st[3] = ds_state(s, "3-quick")
         # Two expeditions at once: the 0.5H mission (ship 1), then the 1H mission (ship 2, a pass ship).
-        c("tap:360:790", "wait:5000", "tap:350:790")
-        w(r"DeepSpaceAutoMemberSelect bonus", 30, name="DeepSpaceAutoMemberSelect (3)")
-        c("wait:4000")
+        screen("the first mission: party select", "360:790")
+        req("DeepSpaceAutoMemberSelect (3)", "350:790", r"DeepSpaceAutoMemberSelect bonus")
         start(r"DeepSpaceMissionStart area .*: ship 1/", "DeepSpaceMissionStart: ship 1")
-        c("wait:6000", "tap:320:868", "wait:5000", s.shot_cmd("21-party-2"), "tap:350:790")
-        w(r"DeepSpaceAutoMemberSelect bonus", 30, name="DeepSpaceAutoMemberSelect (4)")
-        c("wait:4000")
+        common.settle(s)
+        screen("the 1H mission: party select", "320:868", "21-party-2")
+        req("DeepSpaceAutoMemberSelect (4)", "350:790", r"DeepSpaceAutoMemberSelect bonus")
         start(r"DeepSpaceMissionStart area .*: ship 2/", "DeepSpaceMissionStart: ship 2")
-        c("wait:6000", s.shot_cmd("22-two-ships"))
+        common.settle(s, "22-two-ships")
         st[4] = ds_state(s, "4-pass")
         # 実績: the deep space achievements (the screen opens on a tab with an achieved row: その他).
-        c("tap:655:262", "wait:5000", s.shot_cmd("23-achievements"), "tap:590:303", "wait:3000", s.shot_cmd("24-achievements-other"))
-        c("tap:515:1053")  # 一括達成: the rewards go to the present box
-        w(r"request Achievement(Receive|ListReceive|ReceiveList) ", 30, name="AchievementReceive")
-        c("wait:5000", s.shot_cmd("25-achievements-received"))
+        screen("実績", "655:262", "23-achievements")
+        # (it opens on その他 already: the tab's tap changes nothing, so it isn't checked)
+        common.tap_settled(s, "590:303", "24-achievements-other")
+        # 一括達成: the rewards go to the present box
+        req("AchievementReceive", "515:1053", r"request Achievement(Receive|ListReceive|ReceiveList) ", "25-achievements-received")
         st[5] = ds_state(s, "5-achievements")
 
     if not common.drive(s, body):

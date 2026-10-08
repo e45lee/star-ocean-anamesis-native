@@ -11,7 +11,7 @@ Env: SEED_RNG, WATCH=1.
 Targets: port-inproc (default), port-server (the port's phase lines; the state DB read directly)."""
 import sqlite3
 
-from ..flows import gacha, mission
+from ..flows import gacha
 from . import common
 
 TARGETS = ("port-inproc", "port-server")
@@ -34,8 +34,9 @@ def new_characters(s):
 
 def character_list(s, shot):
     """キャラクター -> 装備・技・アシスト変更: the character list."""
-    s.tap_log(mission.phase(11), 60, 20, 3, "tap:180:1245", name="キャラクター -> the character menu")
-    s.ctl("wait:6000", "tap:364:435", "wait:6000", s.shot_cmd(shot))
+    common.settle(s, mask=common.HOME_MASK)
+    common.tap_to_phase(s, "キャラクター -> the character menu", "180:1245", 11, mask=common.HOME_MASK, fatal=True)
+    common.tap_to_screen(s, "装備・技・アシスト変更", "364:435", shot)
 
 
 def main(o):
@@ -49,9 +50,8 @@ def main(o):
         counts["drawn"] = new_characters(s)
         s.check("new characters after the draw (%d)" % counts["drawn"], counts["drawn"] > 0)
         character_list(s, "20-list-new")
-        s.ctl("tap:100:1120")
-        s.wait_for("戻る -> ClearNewCharacter", 60, lambda: s.in_server(r"ClearNewCharacter: [1-9][0-9]* character\(s\)"))
-        s.ctl("wait:4000", "tap:364:435", "wait:6000", s.shot_cmd("21-list-cleared"))
+        common.tap_to_server(s, "戻る -> ClearNewCharacter", r"ClearNewCharacter: [1-9][0-9]* character\(s\)", ["tap:100:1120"], secs=60)
+        common.tap_to_screen(s, "装備・技・アシスト変更", "364:435", "21-list-cleared")
         counts["cleared"] = new_characters(s)
         s.check("no new character after ClearNewCharacter (%d)" % counts["cleared"], counts["cleared"] == 0)
 

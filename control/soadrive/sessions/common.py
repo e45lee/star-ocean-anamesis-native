@@ -6,6 +6,9 @@ import re
 
 from ..flows import launch
 from ..targets import Abort, Config, Layout, Run
+# the condition waits (soadrive/waits.py), for the sessions as common.NAME
+from ..waits import (GACHA_MASK, HOME_MASK, gave_up, last_phase, look, settle, tap_settled, tap_to_count,  # noqa: F401
+                     tap_to_log, tap_to_phase, tap_to_screen, tap_to_server)
 
 
 def env_on(name, default="0"):
@@ -138,8 +141,7 @@ def episode_list(s, xy="270:1085"):
     line = s.tap_log(r"port_debug: phase (5|8) ", 60, 20, 3, "tap:" + xy, name="ミッション -> the episode list or a map")
     if "phase 8 " in line:
         return
-    s.ctl("wait:5000")
+    settle(s)  # the map faded in: a tap during the fade is lost
     if s.tap_log(launch.phase(8), 12, 12, 1, "tap:655:485", name="Ep選択 (a world map) -> the episode list", fatal=None) is None:
         # the other spot: Episode 1's planet select
         s.tap_log(launch.phase(8), 60, 20, 3, "tap:655:375", name="Ep選択 (the planet select) -> the episode list")
-

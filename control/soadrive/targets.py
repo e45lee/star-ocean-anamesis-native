@@ -527,6 +527,12 @@ class Run:
                 raise Abort("the client didn't open its control FIFO (%s; see %s)" % (
                     self.gone() if not self.alive() else "not within 120s", self.client_log))
             time.sleep(0.5)
+        # the test switch SOA_TEST_FRAME_DELAY=MS (docs/environment.md): a slow client on demand (the
+        # runtime's frame-delay:MS hook, every frame MS longer), the load a session's waits must survive
+        delay = os.environ.get("SOA_TEST_FRAME_DELAY")
+        if delay:
+            self.note("test: SOA_TEST_FRAME_DELAY: frame-delay:%d" % int(delay))
+            self.send(["frame-delay:%d" % int(delay)])
 
     QUIT_SEND_SECS = 5  # stop(): how long `quit` waits for a reader of the control channel
 

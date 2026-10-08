@@ -98,6 +98,18 @@ SPHERE211_PARTY_START = bytes.fromhex(
     "254169354a692a3f5e304463273c5c596a82606f8519355e20417c354c7e334c7f395183364e804d63915d729d24467a")
 
 
+# Home's ≡ menu open: its button turned into an arrow (→), the 110x100+615+160 crop scaled to 6x6
+# RGB, from the home sessions' 20-menu (Japanese and English, 2026-10-07: identical); closed (≡)
+# 0.048, so the limit is 0.02.
+HOME_MENU_OPEN = bytes.fromhex(
+    "3c9bd032b4ea2fb1e530ade525afea1f6b951573b81770cc4e94d74289d4096eca1e699a045898729ccdfffcf9aec2db0a4d9f1d50830a"
+    "4e86335b997088b24465a2053b851b4c7616477a022c74033482073c880e417a1d3a5d1e436613487b1a508e174d861b41682f4460")
+
+
+def is_home_menu_open(shot):
+    return _signature_match(shot, "110x100+615+160", "6x6", HOME_MENU_OPEN, limit=0.02)
+
+
 def is_mission_confirm(shot):
     return _signature_match(shot, "520x60+100+682", "12x2", MISSION_CONFIRM_BUTTONS)
 

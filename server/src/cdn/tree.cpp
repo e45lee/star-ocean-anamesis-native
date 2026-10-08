@@ -195,13 +195,13 @@ struct TreeBuilder {
     // table serves none.
     void serve_english() {
         english_root = scratch + "/lang-en";
-        serve_english_art();
         // the English tables: the derived layer with our rows, or --english-text's (english_tables)
         EnglishTables tables;
         std::string why;
         bool have = english_tables(opts, *src, tables, &why);
         if (!have) LOGW("cdn", "--english: %s: the text stays Japanese", why.c_str());
         else t->english_ = std::make_shared<english::Table>(tables.master);
+        serve_english_art(have ? &tables.labels : nullptr);
         serve_english_story(have ? &tables : nullptr);
         std::string out = english_root + "/" + files::kEnglishMasterName;
         ::remove(out.c_str());
@@ -226,6 +226,9 @@ struct TreeBuilder {
     // 1c. --english: the English UI art (docs/english.md 8; d: our art, PLAN-english Q4), built from
     // the recipes and the user's own download into the generated root; cached by english_art
     // outside the root (the root is served whole). A failed recipe leaves its image Japanese.
+    // With it the layout labels (docs/server-rules.md#english-labels; english.md 7.14): every scene
+    // of the download whose node tree has a label of labels.tsv with English gets a -en copy with
+    // those labels in English (d), one file with the art when the scene has a recipe.
     // 1d. --english: the English story files (docs/server-rules.md#english-story): for each
     // Scenario/TS_xxxx.msgp of the download with a story table, Scenario/TS_xxxx-en.msgp in the
     // generated root when every Japanese line has English (d: PLAN-english Q12); the old -en story
@@ -265,20 +268,22 @@ struct TreeBuilder {
         LOGI("cdn", "english story: %zu tables, %zu files served, %zu incomplete (Japanese)", n, served, incomplete);
     }
 
-    void serve_english_art() {
+    void serve_english_art(const english::Table* labels) {
+        english_art::Options ao{mirror, opts.english_art, english_root, scratch + "/lang-en.art-cache", ""};
+        if (labels)
+            for (auto& [ja, e] : *labels) ao.labels[english::unescape(ja)] = english::unescape(e.en);
         if (opts.english_art.empty()) {
             LOGW("cdn", "--english: no English art recipes (standin-assets-en/recipes): the UI art stays Japanese");
-            return;
+            if (ao.labels.empty()) return;
         }
-        english_art::Options ao{mirror, opts.english_art, english_root, scratch + "/lang-en.art-cache", ""};
         english_art::Stats st;
         std::string why;
         if (!english_art::build(ao, &st, &why)) {
             LOGW("cdn", "--english: no English art: %s", why.c_str());
             return;
         }
-        LOGI("cdn", "english art: %zu recipes, %zu built, %zu cached, %zu failed, %zu removed", st.recipes, st.built, st.cached, st.failed,
-             st.removed);
+        LOGI("cdn", "english art: %zu recipes, %zu scenes with layout labels, %zu built (%zu labels), %zu cached, %zu failed, %zu removed",
+             st.recipes, st.label_scenes, st.built, st.labels_replaced, st.cached, st.failed, st.removed);
     }
 
     // 2. the stand-ins and the other roots (d: new members of their own bundles; a real asset of
@@ -650,6 +655,7 @@ Options options_from_config() {
         o.english_global = find_repo_file("data/basmaster-gl.sqlite3");
     }
     if (o.english) o.english_art = find_repo_file("standin-assets-en/recipes");  // (d) our English art (PLAN-english Q4)
+    if (o.english) o.english_labels = english::labels_path();                    // (d) the layout labels (english.md 7.14)
     o.scratch = !c.cdn_scratch.empty() ? c.cdn_scratch
                 : !c.data_root.empty() ? c.data_root + "/cdn"
                                        : soa::temp_dir() + "/soa-server-cdn-" + std::to_string(getuid());

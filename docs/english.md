@@ -1467,6 +1467,11 @@ Agent `en-followup`, 2026-10-07, after the sweep (7.12).
 
 Result (`tools/english_text.py build`): story **21,663 of 21,663 lines English** (official 5,037, machine 17,031, agent 7), **64 of 64 files complete**; `soa-server --english` logs `english story: 64 tables, 64 files served, 0 incomplete` (was 51).
 
+**Not yet checked in the sweep: the character profile and the story back log** (hand-driven, `--lang en --english`, shots `work/english/followup/manual/`):
+
+- **The profile** is reached by a long press on a character's face (`soactl.py drag:X:Y:X:Y+1:1800` is a long press), then the portrait, then the round プロフィール button (`p04-longpress`, `p05-portrait`, `p06-profile`). Found: the labels "Japanese VA:", "Birthplace:" and "Birthday:" (official) are overdrawn by their values (the value labels sit where they did for the short CV： / 出身： / 生年月日：); the description (`cp0010_b01a_prmsg_06`, a machine row broken at the Japanese row's width, 15 lines) runs past its box onto the Close button; the round buttons ボイス再生 / プロフィール and the detail's round buttons are Japanese art. The layout cases are the client's (7.15); the birthplace "Myiddok, Faykreed IV" for 惑星ダフティーネ is Global's error spread by memory (7.17).
+- **The back log** (`p21-log`, `p22-log-up`, the Prologue's first scene): each entry is as tall as its lines (1, 2 and 3 line entries shot, the speakers above them), at the data's breaks; nothing runs into the next entry, so a 5-line message takes five lines there (no 5-line message was shot). No change needed. The Scenario Library's tabs メインストーリー / サブストーリー are Japanese.
+
 **The sweep's data rows (`data-rows.tsv`, 181 rows).** The rule (the user): fix machine rows whose text is wrong or garbled, as `agent` rows (7.9: ranked like machine, marked for review); never shorten for space (that is the client's shrink, 7.15); official rows are not overridden (7.17). By the served source today: 57 official, 99 machine, 3 agent (en-textclean's), 3 human, 2 memory, 2 without a row, 15 row families (`CLASS:`).
 
 - **Fixed: 16 master rows as `agent` rows** (`english_text.py set --source agent --by en-followup`, each with a note saying what was wrong; the engine's wording kept wherever it was right):
@@ -1498,6 +1503,7 @@ Official rows (Global's English, 7.9) are never overridden by us. These read wro
 | `uimsg_sort_order_desc` | 降順 | Des. | unclear abbreviation (the ascending one is "Asc.") | Desc. |
 | `uimsg_miss_no_rental` | レンタルなし | No Loans | the loan list's button says "No Loan" (our English art, `mission_rental`) for the same choice | No Loan |
 | `uimsg_chara_evolution_name` | 進化 | Augment | a term split: Global says Augment (101 rows), our machine rows say Evolve / Evolution for 進化 | keep Augment and align the machine rows (a glossary row and a re-check), or Evolve everywhere |
+| `cp0014_b01a_prmsg_05` (and by text memory 24 more `cp00xx_*_prmsg_05` rows and `message_2nd_planet_01`) | 惑星ダフティーネ | Myiddok, Faykreed IV | wrong: Global's row gives Welch's birthplace for "Planet Daftine"; our text memory (7.9, exact Japanese) copies it to every profile of the Daftine characters (Tika's profile shows "Birthplace: Myiddok, Faykreed IV") and to the EP2 planet name | Planet Daftine (a `human` row for the 26 ids, or a rule that keeps this Global row out of the memory) |
 | `uimsg_full_stamina`, `uimsg_deep_space_quick_return_confirm` | — | "…restored. \nIt cannot…", "…shuttle now. \nIs this OK?" | a space before the line break (invisible; harmless) | drop the space |
 
 Not a problem: `message_ac_ind_05` "Campaign Draws" for ピックアップガチャ is Global's own term (39 of the 59 Global rows with ピックアップガチャ say Campaign).

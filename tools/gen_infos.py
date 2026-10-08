@@ -999,6 +999,27 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
     out += rows
     out.append("    /* end of INFO_COPIES */")
     out.append("")
+    # IInfoBaseMap<K, T>::DeserializeChild of the maps whose element the natives build, move, destroy and
+    # initialize (T an info with a layout, its containers handled), one per address
+    maps = []
+    for m in containers:
+        e = container_elem(X, m)
+        if e[0] != "map" or e[2] not in shapes or shapes[e[2]].kind != "plain":
+            continue
+        if not container_fns(X, m).get("destroy") or not all(can(e[2], r) for r in ("Move", "Dtor")):
+            continue
+        base = [x for x in X.chain[m] if x.startswith("12IInfoBaseMapI")][0]
+        sym = "_ZN%s16DeserializeChildEPKN4Aska4ASON6AValue4AMapE" % base
+        a = X.S.get(sym)
+        if a and a not in seen:
+            seen.add(a)
+            maps.append('    X(%s, "%s") \\' % (ident(m), sym))
+    out.append("// X(map container, symbol): IInfoBaseMap<K, T>::DeserializeChild for the maps whose T the natives")
+    out.append("// construct, move into a node, destroy and initialize (one per address; the container names K and T).")
+    out.append("#define INFO_MAP_DESERIALIZERS(X) \\")
+    out += maps
+    out.append("    /* end of INFO_MAP_DESERIALIZERS */")
+    out.append("")
     out.append("// X(Class, Initialize symbol): every info above whose Initialize the natives take (one per address).")
     out.append("#define INFO_INITIALIZERS(X) \\")
     out += table

@@ -6,6 +6,7 @@
 #include <ctime>
 
 #include <soa/clock_arg.h>
+#include <soa/local_time.h>
 
 namespace soa::server {
 
@@ -24,14 +25,12 @@ int64_t parse_time(const std::string& s) {
     if (sscanf(s.c_str(), "%d-%d-%d %d:%d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec) < 3) return 0;
     tm.tm_year -= 1900;
     tm.tm_mon -= 1;
-    tm.tm_isdst = -1;
-    return (int64_t)mktime(&tm);
+    return soa::mktime_local(&tm);
 }
 int64_t parse_time_strict(const std::string& s) {
     struct tm tm {};
     if (s.empty() || !strptime(s.c_str(), "%Y-%m-%d %H:%M:%S", &tm)) return 0;
-    tm.tm_isdst = -1;
-    return (int64_t)mktime(&tm);
+    return soa::mktime_local(&tm);
 }
 int64_t parse_time_or_epoch(const std::string& s) { return soa::parse_clock_arg(s); }
 int64_t parse_day_and_time(const std::string& day, const std::string& time) {
@@ -40,8 +39,7 @@ int64_t parse_day_and_time(const std::string& day, const std::string& time) {
     sscanf(time.c_str(), "%d:%d:%d", &tm.tm_hour, &tm.tm_min, &tm.tm_sec);
     tm.tm_year -= 1900;
     tm.tm_mon -= 1;
-    tm.tm_isdst = -1;
-    return (int64_t)mktime(&tm);
+    return soa::mktime_local(&tm);
 }
 
 int64_t day_start(int64_t t, int reset_hour) {
@@ -51,16 +49,14 @@ int64_t day_start(int64_t t, int reset_hour) {
     tm.tm_hour = reset_hour;
     tm.tm_min = 0;
     tm.tm_sec = 0;
-    tm.tm_isdst = -1;
-    return (int64_t)mktime(&tm);
+    return soa::mktime_local(&tm);
 }
 int64_t add_years(int64_t t, int years) {
     time_t tt = (time_t)t;
     struct tm tm;
     localtime_r(&tt, &tm);
     tm.tm_year += years;
-    tm.tm_isdst = -1;
-    return (int64_t)mktime(&tm);
+    return soa::mktime_local(&tm);
 }
 int year_of(int64_t t) {
     time_t tt = (time_t)t;

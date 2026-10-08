@@ -148,7 +148,8 @@ int main(int argc, char** argv) {
     LoadedLib* lib = load_library(lib_path);
     // platform370's native patch: before any guest code runs.
     if (platform370::install_patches(*lib) == platform370::PatchStatus::Disabled)
-        LOGI("emu", "--no-patch: the client runs unmodified; its service-end check is live");
+        LOGI("emu", "--no-patch: no native patches; the client's service-end check is live%s",
+             platform370::local_time() ? " (local time keeps daylight saving: --no-dst-fix for the shipped reading)" : "");
     platform370::install_language(*lib);  // --lang / --voice-lang
     install_traces(*lib);  // SOA_TRACE
     profile_init(*lib);    // SOA_COVERAGE / SOA_PROFILE

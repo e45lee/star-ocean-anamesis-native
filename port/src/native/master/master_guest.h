@@ -17,5 +17,7 @@ void* StringAllocate(u64 n);
 void StlFree(void* p);
 // operator delete(void*) (a deleting destructor's).
 void OperatorDelete(void* p);
+// Framework::gDoAssert(file, line, message) (vaddrs; logs, and the caller carries on as the guest does).
+void Assert(u64 file_vaddr, int line, u64 msg_vaddr);
 
 }  // namespace soa::native::master::g

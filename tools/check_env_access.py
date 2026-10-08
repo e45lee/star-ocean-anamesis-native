@@ -29,6 +29,7 @@ ALLOWED = {
     "common/tests/env_tests.cpp": "the env.h tests set what they read",
     "common/tests/paths_tests.cpp": "the paths.h tests set HOME and read TEMP",
     "runtime/src/hle/libc.cpp": "the guest's getenv (TZ, HOME, TMPDIR from the host)",
+    "port/src/native/ui/local_time_test.cpp": "the platform370/local-time selftest sets TZ around its zones and restores it",
 }
 EXTS = (".c", ".cc", ".cpp", ".h", ".hpp", ".inc")
 ROOTS = ("common", "runtime", "port", "server", "emulator", "emulator-viewer", "platform370", "webview", "tests",

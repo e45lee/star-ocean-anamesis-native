@@ -9,6 +9,8 @@
 #include <cmath>
 #include <ctime>
 
+#include <soa/local_time.h>
+
 namespace soa::server::growth_rules {
 
 // ---- character growth (api/growth/)
@@ -76,8 +78,7 @@ int64_t shop_period_start(int64_t t, int reset_type, int param, int time_of_day)
     s.tm_hour = time_of_day / 3600;
     s.tm_min = time_of_day / 60 % 60;
     s.tm_sec = time_of_day % 60;
-    s.tm_isdst = -1;
-    int64_t start = (int64_t)mktime(&s);
+    int64_t start = soa::mktime_local(&s);
     if (start > t) {
         s = tm;
         s.tm_mon -= 1;
@@ -85,8 +86,7 @@ int64_t shop_period_start(int64_t t, int reset_type, int param, int time_of_day)
         s.tm_hour = time_of_day / 3600;
         s.tm_min = time_of_day / 60 % 60;
         s.tm_sec = time_of_day % 60;
-        s.tm_isdst = -1;
-        start = (int64_t)mktime(&s);
+        start = soa::mktime_local(&s);
     }
     return start;
 }

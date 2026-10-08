@@ -15,6 +15,8 @@
 #include "jni/jvm.h"
 #include "platform370/platform370.h"
 
+#include <soa/local_time.h>
+
 namespace soa::platform370 {
 namespace {
 
@@ -26,8 +28,8 @@ NetConfig g_net;
 time_t parse_clock(const std::string& s) {
     struct tm tm = {};
     if (sscanf(s.c_str(), "%d-%d-%d %d:%d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 6) return -1;
-    tm.tm_year -= 1900, tm.tm_mon -= 1, tm.tm_isdst = -1;
-    return mktime(&tm);
+    tm.tm_year -= 1900, tm.tm_mon -= 1;
+    return (time_t)soa::mktime_local(&tm);
 }
 
 }  // namespace
@@ -43,6 +45,7 @@ void install(const Config& cfg) {
     g_installed = true;
     g_patch = cfg.patch;
     g_net = cfg.netcfg;
+    set_local_time(cfg.local_time);
     if (cfg.lang != "ja" && cfg.lang != "en") fatal("platform370: lang \"%s\": expected ja or en", cfg.lang.c_str());
     if (cfg.voice_lang != "ja" && cfg.voice_lang != "keep") fatal("platform370: voice_lang \"%s\": expected ja or keep", cfg.voice_lang.c_str());
     detail::set_language(cfg.lang, cfg.voice_lang);
@@ -73,9 +76,10 @@ void install(const Config& cfg) {
             if (http) detail::install_http(vm);
             if (java) detail::install_java(vm);
         });
-    LOGI("p370", "3.7.0 platform: app_version %s; java %s, imports %s, clock %s, net %s, http %s, patch %s, lang %s, voice-lang %s",
+    LOGI("p370", "3.7.0 platform: app_version %s; java %s, imports %s, clock %s, net %s, http %s, patch %s, local time %s, lang %s, voice-lang %s",
          cfg.app_version.empty() ? "(unchanged)" : cfg.app_version.c_str(), java ? "on" : "off", imports ? "on" : "off",
-         clock ? "on" : "off", net ? "on" : "off", http ? "on" : "off", cfg.patch ? "on" : "off", cfg.lang.c_str(),
+         clock ? "on" : "off", net ? "on" : "off", http ? "on" : "off", cfg.patch ? "on" : "off",
+         !clock ? "off" : cfg.local_time ? "with daylight saving" : "standard (--no-dst-fix)", cfg.lang.c_str(),
          cfg.voice_lang.c_str());
 }
 

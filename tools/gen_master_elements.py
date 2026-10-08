@@ -358,6 +358,227 @@ def methods(L, cls):
     return out
 
 
+# CMasterParameterBaseSqlite_Simple<T>'s methods the natives bind (master_simple.h), by symbol suffix
+# after "_ZN[K]33CMasterParameterBaseSqlite_SimpleI<T>E".
+SIMPLE_SUFFIXES = {
+    "18pParameterFromHashEj": "pParameterFromHash",
+    "16ParameterByQueryEPKcPN4Aska5Yayoi10QueryParamEj": "ParameterByQuery",
+    "16ParameterByQueryEPKcRN9Framework16CSTLUnorderedMapIjS0_NSt6__ndk14hashIjEENS6_8equal_toIjEEEEPN4Aska5Yayoi10QueryParamEj":
+        "ParameterByQueryMap",
+    "12MakeCacheKeyEPKcPN4Aska5Yayoi10QueryParamEj": "MakeCacheKey",
+    "20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE": "InsertCustomizeCache",
+    "10ClearCacheEv": "ClearCache",
+    "20SetStoreAllCacheSizeEv": "SetStoreAllCacheSize",
+    "10InitializeEv": "Initialize",
+    "D2Ev": "Dtor",
+    "D1Ev": "Dtor",
+    "11DeserializeEPKN4Aska4ASON6AValue4AMapE": "Deserialize",
+    "16ReleaseParameterEPKc": "ReleaseParameter",
+    "20DeserializeParameterERN9Framework16CSTLUnorderedMapIjNSt6__ndk110shared_ptrIS0_EENS4_4hashIjEENS4_8equal_toIjEEEEPKN4Aska4ASON6AValue6AArrayE":
+        "DeserializeParameter",
+}
+MSGPACK = ("_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI%sEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMap"
+           "IjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE")
+ALLOC_CALLS = {SYM_ALLOCATE: "Allocate", "_Znwm": "new", "_ZnwmRKSt9nothrow_t": "new(nothrow)"}
+
+
+def alloc_sizes(L, md, va, size):
+    """The constant sizes the function passes to the allocators: {"Allocate": {n...}, "new": ...} (a size not
+    set by a mov right before the call isn't listed)."""
+    out, last = {}, {}
+    for ins in md.disasm(L.read(va, size), va):
+        ops = ins.op_str.split(", ")
+        if ins.mnemonic == "mov" and len(ops) == 2 and ops[0] in ("w0", "x0") and ops[1].startswith("#"):
+            last = {"x0": int(ops[1][1:], 0)}
+            continue
+        if ins.mnemonic == "bl":
+            t = L.name(int(ins.op_str.lstrip("#"), 16)).replace("PLT:", "")
+            if t in ALLOC_CALLS and "x0" in last:
+                out.setdefault(ALLOC_CALLS[t], set()).add(last["x0"])
+            last = {}
+        elif ops and ops[0] in ("w0", "x0"):
+            last = {}
+    return out
+
+
+def table_methods(L, md, sizes, e):
+    """The table's (role, symbol) rows, each checked: the allocation sizes its code passes are the
+    element's (a node of 0x18 + size, a shared_ptr block of 0x18 + size, the element itself)."""
+    m = mangled(e["cls"])
+    rows, seen = [], set()
+    for k in ("_ZN33", "_ZNK33"):
+        prefix = k + "CMasterParameterBaseSqlite_SimpleI" + m + "E"
+        for suffix, role in SIMPLE_SUFFIXES.items():
+            sym = prefix + suffix
+            a = L.by_name.get(sym)
+            if a and a not in seen:
+                if role == "Dtor" and ("_ZTV33CMasterParameterBaseSqlite_SimpleI" + m + "E") not in L.by_name:
+                    continue  # (the destructor writes the vtable back: bound only when the symbol is there)
+                seen.add(a)
+                rows.append((role, sym))
+    sym = MSGPACK % m
+    if sym in L.by_name:
+        rows.append(("DeserializeMsgPack", sym))
+    n = e["size"]
+    want = {"DeserializeMsgPack": {"Allocate": {0x18 + n}}, "pParameterFromHash": {"new": {0x18 + n}, "Allocate": {0x28}},
+            "DeserializeParameter": {"new": {0x18 + n}, "Allocate": {0x28}},
+            "ParameterByQuery": {"new(nothrow)": {n}, "new": {0x20}}, "InsertCustomizeCache": {"Allocate": {0x28}}}
+    for role, sym in rows:
+        if role not in want:
+            continue
+        got = alloc_sizes(L, md, L.by_name[sym], sizes[sym])
+        for kind, ns in want[role].items():
+            if got.get(kind, ns) != ns:
+                raise Fail("%s: %s allocates %s %s, expected %s" % (e["cls"], role, kind, sorted(got[kind]), sorted(ns)))
+    return rows
+
+
+# ---- the connectors (CSimpleSqliteConnector<Table, Entity>) ----
+
+CONN_METHODS = {
+    "QueryToMsgPack(unsigned int, unsigned int, Aska::TSharedArray<signed char>&, long&)": "msgpack_id",
+    "QueryToMsgPack(char const*, Aska::TSharedArray<signed char>&, long&, Aska::Yayoi::QueryParam*, unsigned int)": "msgpack_sql",
+    "QueryToResultObject(unsigned int, Aska::Yayoi::QueryParam*, unsigned int, Aska::Yayoi::TEntityObject<Aska::Yayoi::SQLiteDriver>&)":
+        "result_id",
+    "QueryToResultObject(char const*, Aska::Yayoi::QueryParam*, unsigned int, Aska::Yayoi::TEntityObject<Aska::Yayoi::SQLiteDriver>&)":
+        "result_sql",
+}
+
+
+def split_class(dem):
+    """'CSimpleSqliteConnector<...>::rest' -> (class, rest), the template's brackets balanced."""
+    d = 0
+    for i, ch in enumerate(dem):
+        if ch == "<":
+            d += 1
+        elif ch == ">":
+            d -= 1
+            if d == 0:
+                return dem[:i + 1], dem[i + 3:]
+    return None, None
+
+
+def normalized(L, md, va, size, keep_cmp=False):
+    """The code with its addresses taken out (branch targets as names, page / GOT offsets dropped): two
+    instantiations of one template compare equal unless their code differs."""
+    out = []
+    for ins in md.disasm(L.read(va, size), va):
+        op = ins.op_str
+        if ins.mnemonic in ("bl", "b") or ins.mnemonic.startswith("b.") or ins.mnemonic in ("cbz", "cbnz", "tbz", "tbnz"):
+            t = int(op.split("#")[-1], 16)
+            op = op.rsplit("#", 1)[0] + ("+%d" % (t - va) if va <= t < va + size else "<call>")
+        elif ins.mnemonic == "adrp":
+            op = op.split(",")[0]
+        elif ins.mnemonic in ("ldr", "add") and ("#0x" in op) and not keep_cmp:
+            op = re.sub(r"#0x[0-9a-f]+\]", "#imm]", op)
+            if ins.mnemonic == "add":
+                op = re.sub(r"#0x[0-9a-f]+$", "#imm", op)
+        elif ins.mnemonic == "cmp" and not keep_cmp:
+            op = re.sub(r"#0x[0-9a-f]+|#\d+", "#n", op)
+        out.append(ins.mnemonic + " " + op)
+    return out
+
+
+# Connectors whose code isn't the common shape (a key list or query table of their own): left to the guest.
+UNFIT_CONNECTORS = {"MasterDB::CCommonDrop", "MasterDB::CEventMission", "MasterDB::CMasterDeepSpaceMission", "MasterDB::CTitle",
+                    "MasterDB::CWeaponLimitBreak"}
+
+
+def connector_table(cls):
+    return cls[len("CSimpleSqliteConnector<"):].split(",")[0]
+
+
+def connectors(L, md, sizes):
+    """Every connector class: its four query methods (each the same code as every other's, but for
+    the addresses and the query count), its vtable, its queries / keys statics, BuildQuery<CLocalEntity>,
+    the query count (QueryToResultObject's `cmp w, #count - 1`)."""
+    names = sorted(n for n in L.by_name if "22CSimpleSqliteConnector" in n)
+    dem = subprocess.run(["c++filt"], input="\n".join(names), capture_output=True, text=True).stdout.split("\n")
+    by_class = {}
+    for n, d in zip(names, dem):
+        if d.startswith("vtable for CSimpleSqliteConnector<"):
+            cls = d[len("vtable for "):]
+            if "CLocalEntity" not in cls:
+                by_class.setdefault(cls, {})["vtable"] = n
+            continue
+        if not d.startswith("CSimpleSqliteConnector<"):
+            continue
+        cls, rest = split_class(d)
+        if rest in CONN_METHODS:
+            by_class.setdefault(cls, {})[CONN_METHODS[rest]] = n
+        elif rest.endswith("::GetQuery(int) const::queries"):
+            by_class.setdefault(cls, {})["queries"] = n
+        elif rest.endswith("::GetPrimaryKeies() const::keies"):
+            by_class.setdefault(cls, {})["keies"] = n
+    rows, errors, ref = [], [], {}
+    for cls in sorted(by_class):
+        r = by_class[cls]
+        if not all(k in r for k in ("vtable", "queries", "keies", "msgpack_id", "msgpack_sql", "result_id", "result_sql")):
+            errors.append("%s: missing %s" % (cls, sorted(k for k in ("vtable", "queries", "keies", "msgpack_id", "msgpack_sql",
+                                                                         "result_id", "result_sql") if k not in r)))
+            continue
+        # the query count and BuildQuery from QueryToResultObject(unsigned)
+        va = L.by_name[r["result_id"]]
+        nq, bq = None, None
+        for ins in md.disasm(L.read(va, sizes[r["result_id"]]), va):
+            if ins.mnemonic == "cmp" and nq is None:
+                nq = int(ins.op_str.split("#")[-1], 0) + 1
+            if ins.mnemonic == "bl":
+                t = L.name(int(ins.op_str.lstrip("#"), 16)).replace("PLT:", "")
+                if "10BuildQuery" in t:
+                    bq = t
+        if nq is None or bq is None:
+            errors.append("%s: no query count / BuildQuery" % cls)
+            continue
+        r["count"], r["build_query"] = nq, bq
+        # the same code as the others' (and the statics it loads are its own)
+        for k in ("msgpack_id", "msgpack_sql", "result_id", "result_sql"):
+            code = normalized(L, md, L.by_name[r[k]], sizes[r[k]])
+            if k not in ref:
+                ref[k] = (cls, code)
+            elif code != ref[k][1]:
+                errors.append("%s: %s's code isn't %s's" % (cls, k, ref[k][0]))
+        got = set()
+        for k, want in (("result_id", "queries"), ("msgpack_id", "keies")):
+            regs = {}
+            for ins in md.disasm(L.read(L.by_name[r[k]], sizes[r[k]]), L.by_name[r[k]]):
+                ops = ins.op_str.split(", ")
+                if ins.mnemonic == "adrp":
+                    regs[ops[0]] = int(ops[1].lstrip("#"), 16)
+                elif ins.mnemonic == "ldr" and len(ops) == 3 and ops[1].lstrip("[") in regs and ops[2].startswith("#"):
+                    slot = regs[ops[1].lstrip("[")] + int(ops[2].rstrip("]").lstrip("#"), 16)
+                    got.add(L.got2name.get(slot))
+            if r[want] not in got:
+                errors.append("%s: %s doesn't load %s" % (cls, k, want))
+        rows.append((cls, r))
+    bad = {e.split(": ")[0] for e in errors}
+    unfit_now = {connector_table(c) for c in bad}
+    rows = [(c, r) for c, r in rows if c not in bad]
+    errors = [e for e in errors if connector_table(e.split(": ")[0]) not in UNFIT_CONNECTORS]
+    for t in UNFIT_CONNECTORS - unfit_now:
+        errors.append("connector %s fits now: take it out of UNFIT_CONNECTORS" % t)
+    return rows, errors
+
+
+def emit_connectors(lib_path, rows):
+    out = ["// Generated by tools/gen_master_elements.py (the master tables' connectors); do not edit.",
+           "// " + genlib.stamp(lib_path),
+           "// Every CSimpleSqliteConnector<Table, Entity> (%d): its vtable, its four query methods (checked: the same" % len(rows),
+           "// code as every other's but for the addresses and the query count), its CLocalEntity's queries / keys",
+           "// statics, SQLiteDriver::BuildQuery<CLocalEntity> (yayoi's, called) and the query count. Left to the guest",
+           "// (another shape): " + ", ".join(sorted(UNFIT_CONNECTORS)) + ".",
+           "// X(vtable, QueryToMsgPack(unsigned, unsigned, ...), QueryToMsgPack(char const*, ...),",
+           "//   QueryToResultObject(unsigned, ...), QueryToResultObject(char const*, ...), queries, keies, BuildQuery, count)",
+           "#define MASTER_CONNECTORS(X) \\"]
+    for cls, r in rows:
+        out.append('    X("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", %d) \\' % (
+            r["vtable"], r["msgpack_id"], r["msgpack_sql"], r["result_id"], r["result_sql"], r["queries"], r["keies"],
+            r["build_query"], r["count"]))
+    out.append("    /* end of MASTER_CONNECTORS */")
+    out.append("")
+    return "\n".join(out)
+
+
 def generate(lib_path, only=None):
     from elfinfo import Lib
     L = Lib(lib_path)
@@ -376,6 +597,7 @@ def generate(lib_path, only=None):
             if cls in UNFIT:
                 errors.append("%s: fits now; take it out of UNFIT" % cls)
             e["methods"] = methods(L, cls)
+            e["table"] = table_methods(L, md, sizes, e)
             out.append(e)
         except Fail as e:
             if cls in UNFIT:
@@ -384,7 +606,14 @@ def generate(lib_path, only=None):
                 errors.append(str(e))
         except Exception as e:  # unicorn errors: a call the harness doesn't model
             errors.append("%s: %r" % (cls, e))
+    if not only:
+        conns, cerr = connectors(L, md, sizes)
+        errors += cerr
+        out_conns[:] = conns
     return L, out, unfit, errors
+
+
+out_conns = []
 
 
 def cpp_default(p):
@@ -468,6 +697,12 @@ def emit(lib_path, els, unfit):
         for role, sym in e["methods"]:
             out.append('    {"%s", "%s"},' % (role, sym))
         out.append("};")
+        out.append("inline constexpr ElementMethod k%sTable[] = {" % cls)
+        for role, sym in e["table"]:
+            out.append('    {"%s", "%s"},' % (role, sym))
+        if not e["table"]:
+            out.append('    {nullptr, nullptr},  // (not a CMasterParameterBaseSqlite_Simple<> element)')
+        out.append("};")
         out.append("")
         table.append("    X(%s, \"_ZTV%s\") \\" % (cls, mangled(cls)))
     out.append("// X(Class, vtable symbol): every element above.")
@@ -495,20 +730,25 @@ def main():
             print(e["cls"], hex(e["size"]), e["src"])
             for p in e["props"]:
                 print("  +%#05x %-6s %-5s N=%-4d %-24s #%d %-32s %s" % (p["off"], p["kind"], p["t"] or "", p["n"], p["conv"] or "", p["index"], p["name"] or "(unnamed)", p["default"].hex() if p["default"] else "-"))
-            for role, sym in e["methods"]:
+            for role, sym in e["methods"] + e["table"]:
                 print("  %-10s %s" % (role, sym))
         return
     if errors:
         sys.exit("gen_master_elements: elements that don't fit:\n  " + "\n  ".join(errors[:40]))
     text = emit(a.lib, els, unfit)
+    conn_out = os.path.join(os.path.dirname(a.check or a.out), "master_connectors.inc")
+    conn_text = emit_connectors(a.lib, out_conns)
     if a.check:
-        have = open(a.check).read().split("\n")
-        if have[2:] != text.split("\n")[2:]:
-            sys.exit("%s differs from the generator's output for %s" % (a.check, a.lib))
+        for path, t in ((a.check, text), (conn_out, conn_text)):
+            have = open(path).read().split("\n")
+            if have[2:] != t.split("\n")[2:]:
+                sys.exit("%s differs from the generator's output for %s" % (path, a.lib))
         return
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     with open(a.out, "w") as f:
         f.write(text)
+    with open(conn_out, "w") as f:
+        f.write(conn_text)
     print("%s written: %d elements (%d left to the guest)" % (os.path.relpath(a.out, REPO), len(els), len(unfit)))
 
 

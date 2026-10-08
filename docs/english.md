@@ -1444,6 +1444,22 @@ Agent `en-textclean`, 2026-10-07. One breaker, `soa::text::break_lines` (`common
 - **Shots** (`work/english/textclean/story-e13/`, local; `control/run.py campaign ... --lang en --english`): `en-D026_030_18-65pct.png` and `en-D056_030_06-68pct.png` (with `SOA_TEST_STORY_TEXTS`), `en-1010_030_02-84pct.png` (the scene mc01_030 with the served data: four lines at 84%).
 - **Open:** the back log (`CEventScenarioBackLog`) shows past messages in its own layout and was not checked for 5-line messages. A message whose wider break comes out with fewer lines than n (the greedy break) is scaled by its width, a little smaller than its height would allow (`1010_030_02`: 84% for four lines).
 
+### 7.14 Layout labels: the Japanese in the scenes' node trees
+
+(agent `en-followup`, labels; to be written.)
+
+### 7.15 Client layout fixes after the sweep
+
+(agent `en-followup`, client; to be written.)
+
+### 7.16 The follow-ups: story gaps, the profile and back log, data rows
+
+(agent `en-followup`; to be written.)
+
+### 7.17 Global's official wording: problems for the user to decide
+
+(agent `en-followup`; to be written.)
+
 ## 8. English UI art
 
 Implemented 2026-10-07 (agent `en-art`, PLAN-english.md step E9, decision Q4). The images whose Japanese text is part of the picture (section 1.3) get English copies served as `-en` members; the client with `--lang en` picks them up through `FileExistLanguage` (6.3) and keeps the Japanese image for every file without one.

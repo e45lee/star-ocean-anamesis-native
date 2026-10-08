@@ -8,7 +8,9 @@ Global offers for it:
   master  Global's English by id (rules id and id-ws; a credit row's Japanese name and romanization
           included, official-credit), else a Global token row rewritten (E3), else (a row with kana
           or kanji) the translation memory: exact, memory-ws or template, else Global's English by id
-          for a Japanese text changed only in punctuation or an abbreviation (official-near);
+          for a Japanese text changed only in punctuation or an abbreviation (official-near); a
+          language-neutral row (no kana or kanji: ＡＴＫ＋２０％, ｍｏｔ) the memory too
+          (memory-neutral, template-neutral; the user's decision of 2026-10-08);
   story   Global's English by id, else E3 (the story has no memory, english.md 7.9 step 8);
 and checks the served row against it. The comparison allows only what the derivation itself does to
 Global's text: glyph folding, %% in printf rows, a story line's strip and every re-break. Both sides
@@ -82,10 +84,11 @@ def master_expected(src, mem, mid, ja):
     e3, _ = src.official_e3(mid, ja)
     if e3 is not None:
         return "e3", e3
+    en, kind = mem.lookup(ja)
+    if en is not None:
+        rule = {"exact": "memory", "exact_ws": "memory-ws"}.get(kind, kind)
+        return (rule if C.has_kana(ja) else rule + "-neutral"), en  # memory-neutral: english.md 7.9 step 4
     if C.has_kana(ja):
-        en, kind = mem.lookup(ja)
-        if en is not None:
-            return {"exact": "memory", "exact_ws": "memory-ws"}.get(kind, kind), en
         near = src.official_near(mid, ja)
         if near is not None:
             return "near", near
@@ -127,7 +130,7 @@ def check(ctx, tables=None):
             if served is not None and served[2] in DERIVED:
                 rows.append(("master", mid, "", "violation", served[2], "", served[1]))  # derived, but not Global's
             continue
-        source = "template" if rule == "template" else "memory" if rule.startswith("memory") else "official"
+        source = "template" if rule.startswith("template") else "memory" if rule.startswith("memory") else "official"
         _, probs, _ = T.finish(ctx, None, source, en, ja)
         want = C.fix_percent(font.fold(C.unesc(en)), ja)
         bucket, differs = judge(served, want, not probs)

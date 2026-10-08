@@ -38,16 +38,29 @@ def defaults():
     return [r[0] for r in m.execute("select id from master_stamp where type = 1 order by order_id, id")]
 
 
-def server_step(s, rx, name, secs=40):
-    """Waits for the next server-log line matching rx (counted from the step's start)."""
-    before = milestones.count(s.server_log, rx)
-    return lambda: s.wait_for(name, secs, lambda: milestones.count(s.server_log, rx) > before)
-
-
 def open_stamps(s, shot):
-    # scrolled to the end (one drag scrolls a varying distance)
-    s.ctl(CHARA_MENU, "wait:5000", "drag:364:1000:364:300", "wait:1500", "drag:364:1000:364:300", "wait:1500", "drag:364:1000:364:300",
-          "wait:2500", s.shot_cmd(shot + "-menu"), STAMP_MENU, "wait:5000", s.shot_cmd(shot))
+    common.settle(s, mask=common.HOME_MASK)
+    common.tap_to_phase(s, "キャラクター", CHARA_MENU[4:], 11, mask=common.HOME_MASK, fatal=True)
+    # scrolled to the end (one drag scrolls a varying distance; at the end one moves nothing: each
+    # waits only for the list to stop)
+    for _ in range(3):
+        s.ctl("drag:364:1000:364:300")
+        common.settle(s)
+    common.settle(s, shot + "-menu")
+    common.tap_to_screen(s, "スタンプ編成", STAMP_MENU[4:], shot)
+
+
+def pages(s, n, shot):
+    """NEXT_PAGE n times, each made again only while the page stays (a lost tap)."""
+    for i in range(n):
+        common.tap_to_screen(s, "the next page", NEXT_PAGE, shot if i == n - 1 else None)
+
+
+def put(s, stamp, shot):
+    """The first slot, then a stamp of the list into it: a selection and a swap, each made once on a
+    settled screen (a second tap would select or swap again); SetStampSlot's palette checks them."""
+    common.tap_settled(s, SLOT1)
+    common.tap_settled(s, stamp, shot)
 
 
 def sent_palette(s):
@@ -59,28 +72,21 @@ def sent_palette(s):
 
 
 def boot1(s):
-    c = s.ctl
     common.port_login(s, notice=None, bonus=None)
     open_stamps(s, "03-stamps")
-    c("tap:" + SLOT1, "wait:1500", "tap:" + HELP, "wait:2000", s.shot_cmd("04-help-on-page1"))
-    c("tap:" + NEXT_PAGE, "wait:1200", "tap:" + NEXT_PAGE, "wait:1200", "tap:" + NEXT_PAGE, "wait:1500", s.shot_cmd("05-page4"))
-    c("tap:" + SLOT1, "wait:1500", "tap:" + RUSH, "wait:2000", s.shot_cmd("06-rush-on-page4"))
-    done = server_step(s, r"SetStampSlot: 16 slots", "戻る: SetStampSlot sent")
-    c("tap:" + BACK)
-    done()
-    c("wait:3000", s.shot_cmd("07-back"))
+    put(s, HELP, "04-help-on-page1")
+    pages(s, 3, "05-page4")
+    put(s, RUSH, "06-rush-on-page4")
+    common.tap_to_server(s, "戻る: SetStampSlot sent", r"SetStampSlot: 16 slots", ["tap:" + BACK], "07-back")
 
 
 def boot2(s):
-    c = s.ctl
     common.port_login(s, notice=None, bonus=None)
     open_stamps(s, "r03-stamps")
-    c("tap:" + NEXT_PAGE, "wait:1200", "tap:" + NEXT_PAGE, "wait:1200", "tap:" + NEXT_PAGE, "wait:1500", s.shot_cmd("r04-page4-kept"))
-    c("tap:" + PREV_PAGE, "wait:1500", "tap:" + SLOT1, "wait:1500", "tap:" + RUSH, "wait:2000", s.shot_cmd("r05-rush-on-page3"))
-    done = server_step(s, r"SetStampSlot: 16 slots", "after a re-login: 戻る sends SetStampSlot")
-    c("tap:" + BACK)
-    done()
-    c("wait:3000", s.shot_cmd("r06-back"))
+    pages(s, 3, "r04-page4-kept")
+    common.tap_to_screen(s, "the previous page", PREV_PAGE)
+    put(s, RUSH, "r05-rush-on-page3")
+    common.tap_to_server(s, "after a re-login: 戻る sends SetStampSlot", r"SetStampSlot: 16 slots", ["tap:" + BACK], "r06-back")
 
 
 def main(o):

@@ -522,6 +522,41 @@ bool settled(CCocosLabel* l, u64 label, float x) {
     return false;
 }
 
+// A dialog's message (pop1/window/Text of the dialog layouts) that grows with its text: the room it
+// has between the window's top rule (line_1) and the buttons below it (Button_*, else line_2), in
+// its units, centred on the label; 0 when the dialog isn't laid out that way.
+float world_y(u64 node, float* sy) {
+    u64 m = guest_call(g_world, {node, 1});
+    alignas(16) float pos[4] = {}, scale[4] = {};
+    if (m) guest_call(g_prs, {m, (u64)pos, 0, (u64)scale});
+    *sy = scale[1] < 0 ? -scale[1] : scale[1];
+    return pos[1];
+}
+float dialog_room_h(CCocosLabel* l, u64 label) {
+    const cocos::CCocosNode* w = l->parent();
+    if (l->name() != "Text" || !w || w->m_name.view() != "window" || l->m_anchorY != 0.5f) return 0;
+    const cocos::CCocosNode* pop = (const cocos::CCocosNode*)(uintptr_t)w->m_parent;
+    if (!pop || pop->m_name.view() != "pop1") return 0;
+    float sy;
+    float cy = world_y(label, &sy);
+    if (sy < 0.2f) return 0;
+    float top = -1, bottom = -1, line2 = -1;
+    for (u64 c = w->m_firstChild; c; c = ((const cocos::CCocosNode*)c)->m_nextSibling) {
+        const cocos::CCocosNode* n = (const cocos::CCocosNode*)c;
+        std::string_view nm = n->m_name.view();
+        float s2;
+        float y = world_y(c, &s2);
+        float half = n->m_height * s2 / 2;
+        if (nm == "line_1" && y < cy) top = y + half;
+        else if (nm == "line_2" && y > cy) line2 = y - half;
+        else if (nm.substr(0, 6) == "Button" && n->m_height > 0 && y > cy && (bottom < 0 || y - half < bottom)) bottom = y - half;
+    }
+    if (bottom < 0) bottom = line2;
+    if (top < 0 || bottom < 0) return 0;
+    float half = std::min(cy - top, bottom - cy) - 4 * sy;  // a small margin from the rule and the buttons
+    return half > 12 ? 2 * half / sy : 0;
+}
+
 void maybe_wrap(u64 label) {
     CCocosLabel* l = as_label(label);
     if (is_talk_text(l)) return fit_talk(label);
@@ -590,6 +625,23 @@ void maybe_wrap(u64 label) {
         set_box(l, {1, 1, r, (float)label_measure(l)(src).h});
         if (std::string_view(src) != s) set_text(label, src);
         return;
+    }
+    if (!l->m_customSize && !l->m_tagMode) {
+        // A dialog's message taller than the room above its buttons (Part 4: shrink, don't shorten):
+        // its lines kept, the label made a fixed box of that room that shrinks its text (IsCustomSize,
+        // +0x282), centred where it was; its own fields come back when its text changes.
+        float bh = dialog_room_h(l, label);
+        soa::text::Extent e = bh > 0 ? label_measure(l)(out) : soa::text::Extent{0, 0};
+        if (bh > 0 && e.h > bh) {
+            text::label_states().keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
+            text::label_states().set(label, out, src);
+            set_box(l, {1, 1, std::max(r, (float)e.w), bh});
+            if (first_time("\x06" + src))
+                LOGI("p370", "lang: shrank a dialog's message to %.0f%% to fit %.0f above its buttons: \"%.*s\"", bh / e.h * 100, bh,
+                     (int)std::min<size_t>(src.size(), 60), src.data());
+            if (out != s) set_text(label, out);
+            return;
+        }
     }
     if (out == s) return;
     if (out == src) text::label_states().erase_text(label);

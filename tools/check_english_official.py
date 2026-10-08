@@ -17,7 +17,7 @@ Buckets:
   human        a human / reviewed row is served (allowed over Global; `differs` counts the overrides)
   fallthrough  Global's text fails a check of the derivation (english.md 7.9 step 6), so the next
                candidate (our machine row) is served legitimately
-  violation    anything else: a machine row (or the Japanese) served although Global's text passes,
+  violation    anything else: a machine or agent row (or the Japanese) served although Global's text passes,
                a derived source whose text is not Global's, or Global's text reworded
 Exit 1 when there is a violation.
 

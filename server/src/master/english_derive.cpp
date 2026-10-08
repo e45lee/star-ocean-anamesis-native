@@ -936,7 +936,7 @@ Table merge_master(const Derived& d, const Table& ours) {
             out[mid] = dv->second;
             continue;
         }
-        if (our && o->second.source == "machine") out[mid] = o->second;
+        if (our && (o->second.source == "machine" || o->second.source == "agent")) out[mid] = o->second;  // (agent: ranked as machine)
     }
     // new message_ids: our rows with no JP row and an empty ja_sha1 (client strings, human rows)
     for (auto& [mid, e] : ours)
@@ -953,7 +953,7 @@ std::map<std::string, Table> merge_story(const Derived& d, const Table& ours) {
         auto dv = d.story.find(mid);
         if (our && (o->second.source == "human" || o->second.source == "reviewed")) served[mid] = o->second;
         else if (dv != d.story.end()) served[mid] = dv->second;
-        else if (our && o->second.source == "machine") served[mid] = o->second;
+        else if (our && (o->second.source == "machine" || o->second.source == "agent")) served[mid] = o->second;
     }
     std::map<std::string, Table> out;
     for (auto& file : d.files)

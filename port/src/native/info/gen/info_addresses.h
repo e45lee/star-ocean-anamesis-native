@@ -12,4 +12,5 @@ inline constexpr std::uint64_t kRowHashIsNull = 0x286449a;  // "m_pRowHash is nu
 inline constexpr std::uint64_t kColumnHashIsNull = 0x28644ae;  // "m_pColumnHash is null."
 inline constexpr std::uint64_t kInfoBaseH = 0x26dc3b5;  // "...on\\Client\\Project\\Android\\BASAndroid.NativeActivity\\..\\..\\..\\Source\\Game/Parameter/Info/InfoBase.h"
 inline constexpr std::uint64_t kStlVectorH = 0x26dc536;  // "C:\\BAS_Submission\\Client\\Project\\../Library/Framework/Source\\Framework/STL_Vector.h"; CSTLAllocator<T, CSTLVectorAllocatorInf>::allocate
+inline constexpr std::uint64_t kPltMktime = 0x10aca70;  // .plt, used by _ZN12CTimeUtility10str2time_tEPKclbb; mktime@plt: the runtime's mktime (platform370's local time: docs/client-changes.md "Local time: daylight saving")
 }  // namespace soa::native::info::g

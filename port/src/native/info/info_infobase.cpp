@@ -280,7 +280,14 @@ NATIVE_TEST("info/deserialize-child-children") {
     auto* talents = reinterpret_cast<const InfoContainer*>(&pb->m_UniverseEffectualTalentInfoList);
     if ((talents->m_body[1] - talents->m_body[0]) / 0x30 != 3) t.fail("the talent list isn't three");
     auto* factors = reinterpret_cast<const InfoContainer*>(&pb->m_factor_list);
-    if (factors->m_body[2] != 1) t.fail("the factor map isn't one");
+    if (factors->m_body[2] != 1) {
+        t.fail("the factor map isn't one");
+    } else {  // (its element, a copy of a temporary that wasn't initialized, registered and read its own properties)
+        auto* node = reinterpret_cast<const u8*>(factors->m_body[0]);
+        u32 id;
+        std::memcpy(&id, node + 0x28 + offsetof(CFactorInfo, m_factor_id.m_value), 4);
+        if (id != 42) t.fail("the factor's id is %u", id);
+    }
     for (u64* o : {a.data(), b.data()}) t.call("_ZN17CPersonStatusInfoD2Ev", {(u64)o});
     t.call("_ZN4Aska4ASOND1Ev", {(u64)ason});
 }

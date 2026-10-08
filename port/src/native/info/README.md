@@ -41,8 +41,12 @@ class's `pParseName()`), its property, child and Initialize-step tables, and `IN
 `INFO_CONSTRUCTORS` (30 exported default constructors), `INFO_COPIES` (126), `INFO_INITIALIZERS` (181). T0 `generated` reruns it
 in `--check` mode.
 
+`CInfoManager` (an InfoBase whose 226 children are every info the client keeps) has no layout (its other
+members aren't read); its Initialize's steps are taken as they are (three stores to members of another kind, 43
+properties, 226 children: `InfoStep::kStore` besides the property and child steps), so its Initialize is native too.
+
 Left to the guest: `CPlayerInfo::Initialize` (its `name` gets a default text through
-`CParameterPropertyBase<53>::CryptString`), `CInfoManager::Initialize` (the manager's own), and the classes
+`CParameterPropertyBase<53>::CryptString`), and the classes
 without a layout: `CBattleLogInfo`, `CCharacterDecoSendInfo` (members of another kind after their properties),
 `CPartyInfo`, `CWorldMapCellInfo` (no object of the class is built where the generator can run it).
 
@@ -66,7 +70,7 @@ Quirks kept: `CPresentBoxReceiveInfo`'s child at +0x1d8 (`CPresentBoxReceiveDeco
 initialized nor registered by its Initialize; `AddBuffByDeityCharacter` (a child of `CPersonStatusInfo`)
 inherits `UniverseDeityBoostInfo`'s `pParseName`, so the child map keeps only the first of the two (a
 unique emplace); a copied info's maps (and m_next) point into the object it was copied from (a dead
-temporary for every element a list or map holds: `InfoBaseArray<T>::DeserializeArray` copies a stack T).
+temporary for every element a list holds: `InfoBaseArray<T>::DeserializeArray` copies an initialized stack T).
 
 ## Natives
 
@@ -74,13 +78,15 @@ temporary for every element a list or map holds: `InfoBaseArray<T>::DeserializeA
 |---|---|---|---|
 | `CInteroperateParameter::IsExist(row)`, `IsExist(row, col)`, `ConvertToRow`, `ConvertToColumn` (lower_bound in the hash maps), `IsValue` / `IsString` / `Value(row, col)` (ConvertToRow, then the CSV's slot on (row, col + 1)) | [`info_interoperate.cpp`](info_interoperate.cpp) | `info/interoperate` (a table the guest builds from CSV text) | run-both (the result registers) |
 | `InfoBase::DeserializeChild` (each key's property gets Deserialize(map); each key's child DeserializeArray / DeserializeChild) | [`info_infobase.cpp`](info_infobase.cpp) | `info/deserialize-child` (CPersonStatusInfo), `info/deserialize-child-children` (its children: an info, a list of infos, a list of values, a number map; the whole state, the elements included) | the original rerun after the native, every property compared (infos without children only: a child's array would be appended twice; the differential test covers them) |
-| `TInfo<C>`: `C::Initialize` (181 classes: [`gen/info_classes.h`](gen/info_classes.h) `INFO_INITIALIZERS`), `C::C()` (C2, 30 classes), and (`INFO_COPIES`, 169: every exported one whose containers the natives handle) the copy constructor (54), `~C` (59), `operator=` (19), the move constructor (22), `operator=(&&)` (15) | [`info_class.cpp`](info_class.cpp), bound by [`info_class_bind.cpp`](info_class_bind.cpp) | `info/initialize` (every class: the guest's and the native's Initialize on objects built alike, the state compared), `info/constructors` (every exported one, on the same buffer), `info/copies` (every copy, move, assignment and destructor on objects with random values, strings and 0-3 elements in each container) ([`info_class_test.cpp`](info_class_test.cpp)) | Initialize, the constructor: run-both on the object itself (a second Initialize inserts nothing new; `info_state` compared: properties, both maps relative to the object, the children's); the copies, moves and assignments: the original on a clone of the target / the source as they were; the destructor: the original on a clone, every byte but the maps' and strings' compared |
+| `TInfo<C>`: `C::Initialize` (182 classes, CInfoManager's included: [`gen/info_classes.h`](gen/info_classes.h) `INFO_INITIALIZERS`), `C::C()` (C2, 30 classes), and (`INFO_COPIES`, 169: every exported one whose containers the natives handle) the copy constructor (54), `~C` (59), `operator=` (19), the move constructor (22), `operator=(&&)` (15) | [`info_class.cpp`](info_class.cpp), bound by [`info_class_bind.cpp`](info_class_bind.cpp) | `info/initialize` (every class: the guest's and the native's Initialize on objects built alike, the state compared), `info/initialize-manager` (two managers from the guest's constructor: the steps' state and every known child's), `info/constructors` (every exported one, on the same buffer), `info/copies` (every copy, move, assignment and destructor on objects with random values, strings and 0-3 elements in each container) ([`info_class_test.cpp`](info_class_test.cpp)) | Initialize, the constructor: run-both on the object itself (a second Initialize inserts nothing new; `info_state` compared: properties, both maps relative to the object, the children's); the copies, moves and assignments: the original on a clone of the target / the source as they were; the destructor: the original on a clone, every byte but the maps' and strings' compared |
+| `CTimeUtility::str2time_t` (the separators, the 64-byte copy split in place, each field through the guest's `CSTLStringUtility_Base::AToF` on a std::string temporary and FCVTZS, then the runtime's `mktime` through the lib's mktime@plt: platform370's local time and `--no-dst-fix` apply as to the guest's call; a time asked for with fewer than six fields (the guest reads uninitialised slots) or a text of 64 bytes or more: the original) | [`info_time.cpp`](info_time.cpp) | `info/str2time` (26 texts x the 4 flag pairs) | the original after the native, the results compared |
 
 **Live check** (`soa --live-check info[:every=N][:only=..][:out=FILE]`, [`info_family.h`](info_family.h)): Results
 (`every=1`, `only=` the info classes' natives and DeserializeChild, PASS, all 0 mismatches): battle-gacha 15,246 checks
 (DeserializeChild 3,945, CAchievementInfo's destructor 4,500 and Initialize 2,700, ...), `session:home` 33,984
 (CAchievementInfo's destructor 10,795 and copy 2,283, UniverseAddStatusInfo's copy 2,155, CPersonInfo's destructor
-1,050 and copy 977, CPersonStatusInfo's destructor 748, ...), `session:home --lang en` 33,940. The copies compare
+1,050 and copy 977, CPersonStatusInfo's destructor 748, ...), `session:home --lang en` 33,940; with `str2time` and CInfoManager's Initialize: battle-gacha 29,381 (str2time_t 14,203),
+`session:home` 84,169 (str2time_t 50,253), `--lang en` 83,325. The copies compare
 the two results' pointers as they are (both copies of one source keep the same ones). The CInteroperateParameter lookups (battle-gacha, `every=1`): 200,000 checks, 0 mismatches (IsExist(row) 48,281, Value(row, col)
 147,768, DeserializeChild 3,951); an earlier run 201,613 / 0.
 
@@ -89,12 +95,19 @@ the two results' pointers as they are (both copies of one source keep the same o
 - The copies of the few infos whose containers lack what the natives need (a map without
   `__emplace_hint_unique_key_args` / `destroy` / `__assign_multi`, a vector without `assign`, an element
   without a layout): 3 symbols.
-- `InfoBaseArray<T>::DeserializeArray` (59), `IInfoBaseMap<K, T>::DeserializeChild` (88): T's constructor,
-  Initialize, DeserializeChild, the copy into the vector / node, ~T.
-- `CPlayerInfo::Initialize` (the `CryptString` default), `CInfoManager`'s constructor (every info inlined:
-  table-driven from the layouts) and Initialize.
-- `CTimeUtility::str2time_t` (AToF, mktime; the tm_isdst quirk), `CParameterManager::Progress`,
-  `CInfoManager`'s constructor (every info inlined), `StaminaUtility`.
+- `CPlayerInfo::Initialize` (the `CryptString` default); `CInfoManager`'s constructor (32 KB: every info
+  inlined, and members of other subsystems: the C2S lists, `CBattleLogInfo`; the infos' part is
+  `InfoCode::Ctor` of the layouts, the rest isn't read).
+- `InfoBaseArray<T>::DeserializeArray` (59): T is built, initialized and deserialized on the guest's stack and
+  copied into the vector, whose element's maps then point into that dead frame (the copy quirk). A native's
+  temporary would be host memory, and a later write through those pointers must not land in freed host
+  memory: left to the guest until the temporary can live where the guest's did.
+  `IInfoBaseMap<K, T>::DeserializeChild` (88) copies a temporary that isn't initialized (empty maps; the
+  node's own Initialize registers its own properties, test `info/deserialize-child-children`): no such hazard,
+  the next candidate (its tree insert is inline: find, `__construct_node`, `__tree_balance_after_insert`).
+- `CCharacterData` (the battle character's data: 141 properties, PropertyValueArrays, Initialize inlined into
+  its constructor), `StaminaUtility` (master_global lookups through `ParameterByQuery`, `CryptString`, atoi),
+  `CParameterManager::Progress` (its time is in its callees).
 
 ## Dependencies
 

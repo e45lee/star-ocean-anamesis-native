@@ -137,7 +137,7 @@ struct InfoChild {
 };
 // One step of a class's Initialize, in its order.
 struct InfoStep {
-    enum Kind : u8 { kProperty, kChild };
+    enum Kind : u8 { kProperty, kChild, kStore };  // kStore: `width` bytes of `def` at `offset` (CInfoManager's members)
     Kind kind;
     u32 offset;
     const char* key;  // a property's ASON key (m_name = CHash32(key))
@@ -167,6 +167,29 @@ struct InfoClass {
     // Plain data after the last property or child (sizeof as the lib's code uses it, minus where they end):
     // the copies copy it as it is; the constructor, Initialize and the destructor leave it.
     u32 tail = 0;
+};
+
+// ---- CTimeUtility: the client's date strings ---------------------------------------------------------------
+
+// CTimeUtility: static helpers (no object). Layout of what str2time_t builds: bionic's struct tm (56
+// bytes), from the decompile (port/decomp/info/time.c).
+struct GuestTm {
+    s32 tm_sec, tm_min, tm_hour, tm_mday, tm_mon, tm_year, tm_wday, tm_yday, tm_isdst;  // 0x00 .. 0x20
+    u8 pad_24[4];
+    s64 tm_gmtoff;      // 0x28
+    const char* tm_zone;  // 0x30
+};
+static_assert(offsetof(GuestTm, tm_isdst) == 0x20 && offsetof(GuestTm, tm_gmtoff) == 0x28 && sizeof(GuestTm) == 0x38);
+
+class CTimeUtility {
+public:
+    // str2time_t(text, fallback, date_only, slashes): "Y-M-D h:m:s" (or "Y/M/D ..."; dashes unless the text
+    // has a slash, or has no dash and `slashes`) split in place (a 64-byte copy) at the separators; each
+    // field through CSTLStringUtility_Base::AToF (a std::string temporary) and FCVTZS; month - 1, year -
+    // 1900; time 0 when date_only; tm_yday = tm_isdst = 0; mktime (the runtime's: platform370's local
+    // time). The fallback when text is null or the first two separators are missing.
+    // _ZN12CTimeUtility10str2time_tEPKclbb
+    static s64 str2time_t(const char* text, s64 fallback, bool date_only, bool slashes);
 };
 
 }  // namespace soa::native::info

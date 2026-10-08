@@ -68,6 +68,9 @@ struct InfoCode {
 // The state the live check and the tests compare: every property's bytes (a string by content), both
 // maps' entries (key, the value's offset from the object), the children's, recursively.
 std::vector<u8> info_state(const InfoClass& C, const u8* obj);
+// What Initialize's steps leave (each named property's flag, hash and default; each store's bytes; the
+// object's maps): for a class without a layout (CInfoManager).
+std::vector<u8> info_steps_state(const InfoClass& C, const u8* obj);
 // The same with every pointer as it is (maps' values, m_next): two copies of one source compared (a
 // copy's maps keep the source's pointers, wherever they point).
 std::vector<u8> info_state_raw(const InfoClass& C, const u8* obj);

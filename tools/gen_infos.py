@@ -77,7 +77,6 @@ UNFIT_LAYOUT = {
 # Classes whose Initialize isn't the shape the natives implement (a new entry needs a look at the code).
 UNFIT_INIT = {
     "11CPlayerInfo": "a string property gets a default text (push_back by push_back)",
-    "12CInfoManager": "the manager's own Initialize (other members first)",
 }
 
 
@@ -500,6 +499,9 @@ def probe_initialize(X, R, m):
                 return None, "child +%#x: not pParseName, CHash32, emplace, Initialize (%s)" % (c, evs[i:i + 4])
             steps.append(("child", c))
             i += 4
+        elif e[0] == "w":
+            steps.append(("store", e[1] - P, e[2], e[3]))  # (a member of another kind: CInfoManager's)
+            i += 1
         else:
             return None, "unexpected %s" % (e,)
     long_keys = [(len(s[2]) + 16) & ~15 for s in steps if s[0] == "prop" and len(s[2]) >= 23]
@@ -515,6 +517,8 @@ def check_steps(X, shape, steps):
     kids = {o: c for o, c in shape.children}
     seen = set()
     for s in steps:
+        if s[0] == "store":
+            raise Fail("Initialize stores %d bytes at +%#x, not a property's" % (s[2], s[1]))
         if s[1] in seen:
             raise Fail("+%#x twice" % s[1])
         seen.add(s[1])
@@ -681,7 +685,7 @@ def generate(lib_path):
         if m in UNFIT_INIT:
             unfit[m] = UNFIT_INIT[m]
             continue
-        if m not in shapes:
+        if m not in shapes and m != MANAGER:
             unfit[m] = "no layout (no object of the class was built)"
             continue
         try:
@@ -690,6 +694,9 @@ def generate(lib_path):
             steps, why = None, repr(ex)
         if steps is None:
             errors.append("%s: Initialize: %s" % (m, why))
+            continue
+        if m == MANAGER:  # (no layout: the manager's other members aren't generated; its steps are taken as they are)
+            inits[m] = steps
             continue
         try:
             never[m] = check_steps(X, shapes[m], steps)
@@ -801,6 +808,15 @@ def order(X, shapes, names):
     return out
 
 
+def step_line(st):
+    if st[0] == "prop":
+        w, v = st[3] if st[3] else (0, 0)
+        return '    {InfoStep::kProperty, 0x%03x, "%s", %d, 0x%x},' % (st[1], st[2], w, v)
+    if st[0] == "store":
+        return "    {InfoStep::kStore, 0x%03x, nullptr, %d, 0x%x}," % (st[1], st[2], st[3])
+    return "    {InfoStep::kChild, 0x%03x, nullptr, 0, 0}," % st[1]
+
+
 def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
     every = order(X, shapes, sorted(shapes))
     names = [m for m in every if shapes[m].kind == "plain"]
@@ -905,11 +921,7 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
         if m in inits:
             out.append("inline constexpr InfoStep k%sInit[] = {" % cls)
             for st in inits[m]:
-                if st[0] == "prop":
-                    w, v = st[3] if st[3] else (0, 0)
-                    out.append('    {InfoStep::kProperty, 0x%03x, "%s", %d, 0x%x},' % (st[1], st[2], w, v))
-                else:
-                    out.append("    {InfoStep::kChild, 0x%03x, nullptr, 0, 0}," % st[1])
+                out.append(step_line(st))
             out.append("};")
         tail = ", nullptr, 0, {}, nullptr, nullptr, nullptr, 0x%x" % sh.tail if sh.tail else ""
         out.append('inline constexpr InfoClass kInfo_%s{"%s", "_ZTV%s", InfoKind::kInfo, sizeof(%s), %s, %s, %s%s};' % (
@@ -920,9 +932,24 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
             table.append('    X(%s, "%s") \\' % (cls, init_sym[m]))
         out.append("")
     out.append("")
+    manager = MANAGER in inits
+    if manager:
+        out.append("// CInfoManager: the client's infos (an InfoBase whose children are every info it keeps). Only its base is")
+        out.append("// generated (its other members aren't read); its Initialize's steps are taken as they are: its members'")
+        out.append("// stores, its properties, its children (%d steps)." % len(inits[MANAGER]))
+        out.append("class CInfoManager {")
+        out.append("public:")
+        out.append("    InfoBase base;  // 0x000 (the rest: not generated)")
+        out.append("};")
+        out.append("inline constexpr InfoStep kCInfoManagerInit[] = {")
+        out += [step_line(st) for st in inits[MANAGER]]
+        out.append("};")
+        out.append('inline constexpr InfoClass kInfo_CInfoManager{"CInfoManager", "_ZTV12CInfoManager", InfoKind::kInfo, sizeof(CInfoManager), {}, {}, kCInfoManagerInit};')
+        out.append("")
+        table.append('    X(CInfoManager, "_ZN12CInfoManager10InitializeEv") \\')
     out.append("// X(Class): every info above.")
     out.append("#define INFO_CLASSES(X) \\")
-    out += ["    X(%s) \\" % ident(m) for m in names]
+    out += ["    X(%s) \\" % ident(m) for m in names + ([MANAGER] if manager else [])]
     out.append("    /* end of INFO_CLASSES */")
     out.append("")
     ctors, seen = [], set()

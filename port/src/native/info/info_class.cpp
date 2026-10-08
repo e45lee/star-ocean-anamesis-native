@@ -149,7 +149,9 @@ void InfoCode::Ctor(const InfoClass& C, u8* obj) {
 void InfoCode::Initialize(const InfoClass& C, u8* obj) {
     auto* self = reinterpret_cast<InfoBase*>(obj);
     for (const InfoStep& s : C.init) {
-        if (s.kind == InfoStep::kProperty) {
+        if (s.kind == InfoStep::kStore) {
+            std::memcpy(obj + s.offset, &s.def, s.width);
+        } else if (s.kind == InfoStep::kProperty) {
             auto* p = reinterpret_cast<AnyProperty*>(obj + s.offset);
             u64 len = std::strlen(s.key);
             // the key is a std::string temporary: a long one has storage of its own for the call
@@ -495,6 +497,25 @@ void prop_state(std::vector<u8>& out, const InfoProp& d, const u8* obj, Span top
 std::vector<u8> info_state(const InfoClass& C, const u8* obj) {
     std::vector<u8> out;
     state(out, C, obj, Span{reinterpret_cast<u64>(obj), reinterpret_cast<u64>(obj) + C.size});
+    return out;
+}
+
+std::vector<u8> info_steps_state(const InfoClass& C, const u8* obj) {
+    std::vector<u8> out;
+    auto* b = reinterpret_cast<const InfoBase*>(obj);
+    Span top{reinterpret_cast<u64>(obj), reinterpret_cast<u64>(obj) + 0x100000};  // (the object's own maps: relative)
+    map_state(out, b->m_properties, top);
+    map_state(out, b->m_children, top);
+    for (const InfoStep& s : C.init) {
+        if (s.kind == InfoStep::kStore) {
+            put(out, obj + s.offset, s.width);
+        } else if (s.kind == InfoStep::kProperty) {
+            auto* p = reinterpret_cast<const AnyProperty*>(obj + s.offset);
+            put(out, &p->m_named, 1);
+            put(out, &p->m_name.m_hash, 4);
+            put(out, obj + s.offset + 0x28, s.width);
+        }
+    }
     return out;
 }
 

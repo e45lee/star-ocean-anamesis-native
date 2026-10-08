@@ -143,6 +143,35 @@ NATIVE_TEST("info/constructors") {
     }
 }
 
+// CInfoManager's Initialize (no layout: two managers built by the guest's constructor): what the steps
+// leave (info_steps_state) and every child's state (the infos the generator knows, found by their offsets
+// in the steps) must agree.
+NATIVE_TEST("info/initialize-manager") {
+    const InfoClass& K = kInfo_CInfoManager;
+    constexpr size_t kSize = 0x10000;  // (the manager is 0xb120 bytes in 3.7.0)
+    std::vector<u8> a(kSize, 0xcc), b(kSize, 0xcc);
+    t.call("_ZN12CInfoManagerC1Ev", {reinterpret_cast<u64>(a.data())});
+    t.call("_ZN12CInfoManagerC1Ev", {reinterpret_cast<u64>(b.data())});
+    t.call("_ZN12CInfoManager10InitializeEv", {reinterpret_cast<u64>(a.data())});
+    InfoCode::Initialize(K, b.data());
+    if (info_steps_state(K, a.data()) != info_steps_state(K, b.data())) t.fail("the steps' state differs");
+    int children = 0;
+    for (const InfoStep& s : K.init) {
+        if (s.kind != InfoStep::kChild) continue;
+        u64 vt = *reinterpret_cast<const u64*>(a.data() + s.offset);
+        for (const Case& c : kInits)
+            if (c.cls->name && t.sym(c.cls->ztv) + 16 == vt) {
+                children++;
+                if (info_state(*c.cls, a.data() + s.offset) != info_state(*c.cls, b.data() + s.offset))
+                    t.fail("the child at +%#x (%s) differs", s.offset, c.cls->name);
+                break;
+            }
+    }
+    if (children < 50) t.fail("only %d children compared", children);
+    t.call("_ZN12CInfoManagerD1Ev", {reinterpret_cast<u64>(a.data())});
+    t.call("_ZN12CInfoManagerD1Ev", {reinterpret_cast<u64>(b.data())});
+}
+
 // Every Initialize: two objects built by the native constructor (values 0xcc), the guest's Initialize on
 // one, the native's on the other; the state (each property's bytes, a string's text, both maps by key
 // and the value's offset, the children's: their Initialize runs (the guest's) from both) must agree.
@@ -150,6 +179,7 @@ NATIVE_TEST("info/initialize") {
     int bad = 0;
     for (const Case& c : kInits) {
         const InfoClass& K = *c.cls;
+        if (&K == &kInfo_CInfoManager) continue;  // (info/initialize-manager)
         std::vector<u8> a(K.size, 0xcc), b(K.size, 0xcc);
         InfoCode::Ctor(K, a.data());
         InfoCode::Ctor(K, b.data());

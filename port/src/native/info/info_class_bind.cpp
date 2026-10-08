@@ -49,9 +49,11 @@ void TInfo<C>::Initialize() {
     if (f && fam().due(*f)) {
         live::RunBothFamily::Scope scope;
         InfoCode::Initialize(K, obj);
-        std::vector<u8> n = info_state(K, obj);
+        std::vector<u8> n = info_state(K, obj), ns = info_steps_state(K, obj);
         guest_call(f->orig, {reinterpret_cast<u64>(obj)});
-        std::vector<u8> g = info_state(K, obj);
+        std::vector<u8> g = info_state(K, obj), gs = info_steps_state(K, obj);
+        n.insert(n.end(), ns.begin(), ns.end());
+        g.insert(g.end(), gs.begin(), gs.end());
         bool ok = n == g;
         fam().result(*f, ok ? Outcome::Ok : Outcome::Mismatch,
                      ok ? "" : std::string(K.name) + ": the state differs after the original's run (" + std::to_string(n.size()) + " / " +

@@ -1060,7 +1060,17 @@
     },
     {
      "offset": 33,
-     "name": "unk_21",
+     "name": "m_mode",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 34,
+     "name": "unk_22",
      "type": {
       "kind": "array",
       "of": {
@@ -1068,9 +1078,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 7
+      "count": 6
      },
-     "size": 7
+     "size": 6
     },
     {
      "offset": 40,
@@ -1101,7 +1111,16 @@
     },
     {
      "offset": 52,
-     "name": "unk_34",
+     "name": "m_stiffness",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 56,
+     "name": "unk_38",
      "type": {
       "kind": "array",
       "of": {
@@ -1109,9 +1128,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 12
+      "count": 8
      },
-     "size": 12
+     "size": 8
     },
     {
      "offset": 64,
@@ -1184,17 +1203,23 @@
     },
     {
      "offset": 48,
-     "name": "unk_30",
+     "name": "m_rootTarget",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 32
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
-     "size": 32
+     "size": 16
+    },
+    {
+     "offset": 64,
+     "name": "m_rootLocal",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
     },
     {
      "offset": 80,
@@ -1621,6 +1646,88 @@
    ]
   },
   {
+   "name": "ADMRoot",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_first",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 8,
+   "align": 4
+  },
+  {
+   "name": "ADMExtraNode",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_00",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_next",
+     "type": {
+      "kind": "ptr",
+      "to": "ADMExtraNode"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 56,
+     "name": "m_primitive",
+     "type": {
+      "kind": "ptr",
+      "to": "DynamicsPrimitive"
+     },
+     "size": 8
+    }
+   ],
+   "size": 64,
+   "align": 8
+  },
+  {
    "name": "ArticulatedDynamicsManagerBase",
    "union": false,
    "fields": [
@@ -1749,9 +1856,128 @@
        "size": 1,
        "signed": false
       },
-      "count": 88
+      "count": 8
      },
-     "size": 88
+     "size": 8
+    },
+    {
+     "offset": 136,
+     "name": "m_emitters",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 140,
+     "name": "m_emitterSeed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 144,
+     "name": "m_hitFlags",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 152,
+     "name": "unk_98",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2
+     },
+     "size": 2
+    },
+    {
+     "offset": 154,
+     "name": "m_ik",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 155,
+     "name": "m_solverMode",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 156,
+     "name": "unk_9c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 160,
+     "name": "m_rootCalc",
+     "type": {
+      "kind": "ptr",
+      "to": "ADM_CALC_DATA"
+     },
+     "size": 8
+    },
+    {
+     "offset": 168,
+     "name": "m_roots",
+     "type": {
+      "kind": "ptr",
+      "to": "ADMRoot"
+     },
+     "size": 8
+    },
+    {
+     "offset": 176,
+     "name": "m_rootCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 180,
+     "name": "unk_b4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 36
+     },
+     "size": 36
     },
     {
      "offset": 216,
@@ -1805,17 +2031,33 @@
     },
     {
      "offset": 221,
-     "name": "unk_dd",
+     "name": "m_dtDiv",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 3
+      "kind": "int",
+      "size": 1,
+      "signed": false
      },
-     "size": 3
+     "size": 1
+    },
+    {
+     "offset": 222,
+     "name": "m_worldCollision",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 223,
+     "name": "unk_df",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
     },
     {
      "offset": 224,
@@ -1839,17 +2081,23 @@
     },
     {
      "offset": 226,
-     "name": "unk_e2",
+     "name": "m_simulating",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 2
+      "kind": "int",
+      "size": 1,
+      "signed": false
      },
-     "size": 2
+     "size": 1
+    },
+    {
+     "offset": 227,
+     "name": "unk_e3",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
     },
     {
      "offset": 228,
@@ -1871,9 +2119,19 @@
        "size": 1,
        "signed": false
       },
-      "count": 11
+      "count": 7
      },
-     "size": 11
+     "size": 7
+    },
+    {
+     "offset": 236,
+     "name": "m_steps",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
     },
     {
      "offset": 240,
@@ -1886,7 +2144,16 @@
     },
     {
      "offset": 244,
-     "name": "unk_f4",
+     "name": "m_gravityScale",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 248,
+     "name": "unk_f8",
      "type": {
       "kind": "array",
       "of": {
@@ -1894,9 +2161,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 12
+      "count": 8
      },
-     "size": 12
+     "size": 8
     },
     {
      "offset": 256,
@@ -1915,9 +2182,169 @@
       "to": null
      },
      "size": 8
+    },
+    {
+     "offset": 272,
+     "name": "unk_110",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 280,
+     "name": "m_moving",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 284,
+     "name": "unk_11c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 5
+     },
+     "size": 5
+    },
+    {
+     "offset": 289,
+     "name": "m_dependentPrimitives",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 290,
+     "name": "m_minTwoSteps",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 291,
+     "name": "unk_123",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 13
+     },
+     "size": 13
+    },
+    {
+     "offset": 304,
+     "name": "m_landConstraint",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 312,
+     "name": "unk_138",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 328,
+     "name": "m_collisions",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 336,
+     "name": "m_constraints",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 344,
+     "name": "unk_158",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 352,
+     "name": "m_extraCollisions",
+     "type": {
+      "kind": "struct",
+      "name": "ADMExtraNode"
+     },
+     "size": 64
+    },
+    {
+     "offset": 416,
+     "name": "m_extraCollisionCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 420,
+     "name": "unk_1a4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
     }
    ],
-   "size": 272,
+   "size": 424,
    "align": 8,
    "methods": [
     {

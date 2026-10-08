@@ -5,6 +5,7 @@
 // m_flags bit 0, render_layout.h's "matrix fixed", is the stale mark: UpdateHierarchically sets it
 // on the subtree, MakeMatrix clears it): a fake node has no children, MakeMatrix is a no-op.
 #include <cstring>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -327,6 +328,194 @@ NATIVE_TEST("dynamics/update-velocity") {
         ADMSolver::UpdateVelocity(j, c, rest, inv);
         std::string d = a.diff(guest, a.save());
         bad.check(k, d.empty(), d);
+    }
+}
+
+}  // namespace soa::native::dynamics
+
+namespace soa::native::dynamics {
+
+namespace {
+
+// An ADM over a joint set: roots splitting the joints into chains (with their calc data), links
+// between random joints, empty collision / constraint lists unless asked, no force emitters.
+struct AdmSet {
+    ArticulatedDynamicsManagerBase* adm;
+    JointSet js;
+};
+AdmSet make_adm(TestContext& t, Arena& a, int n, bool roots, int special) {
+    AdmSet s;
+    s.adm = a.alloc<ArticulatedDynamicsManagerBase>(t, 0x1c0, special);
+    ArticulatedDynamicsManagerBase* m = s.adm;
+    s.js = make_joints(t, a, n, special);
+    m->m_joints = s.js.array;
+    m->m_jointCount = (s16)n;
+    for (ADMJoint* j : s.js.joints) j->m_flags1 &= (u8)~0x18;  // (no constraint lists, no land constraint)
+    m->m_rootCount = 0;
+    m->m_roots = nullptr;
+    m->m_rootCalc = nullptr;
+    if (roots && n) {
+        std::vector<ADMRoot> rs;
+        for (int i = 0; i < n;) {
+            int c = t.rand_int(1, n - i);
+            rs.push_back(ADMRoot{(u32)i, (u32)c});
+            i += c;
+        }
+        m->m_roots = a.alloc<ADMRoot>(t, sizeof(ADMRoot) * rs.size());
+        std::memcpy(m->m_roots, rs.data(), sizeof(ADMRoot) * rs.size());
+        m->m_rootCount = (s32)rs.size();
+        m->m_rootCalc = a.alloc<ADM_CALC_DATA>(t, sizeof(ADM_CALC_DATA) * rs.size(), special);
+        for (size_t i = 0; i < rs.size(); i++) m->m_rootCalc[i].m_parent = nullptr;
+    }
+    int links = n ? t.rand_int(0, 4) : 0;
+    m->m_linkList = links ? a.alloc<ADMLink>(t, sizeof(ADMLink) * links, special) : nullptr;
+    m->m_linkCount = (s16)links;
+    for (int k = 0; k < links; k++) {
+        ADMLink& l = m->m_linkList[k];
+        l.m_mode = (u8)(t.rand_int(0, 7) ? t.rand_int(0, 1) : t.rand_int(0, 255));
+        l.m_joint0 = s.js.joints[t.rand_int(0, n - 1)];
+        l.m_joint1 = s.js.joints[t.rand_int(0, n - 1)];
+    }
+    m->m_collisionCount = m->m_constraintCount = 0;
+    m->m_collisions = m->m_constraints = nullptr;
+    m->m_extraCollisions.m_next = &m->m_extraCollisions;
+    m->m_extraCollisionCount = 0;
+    m->m_landConstraint = nullptr;
+    m->m_worldCollision = 0;
+    m->m_dependentPrimitives = 0;
+    m->m_emitters = 0;
+    m->m_gravityNode = nullptr;
+    m->m_model = nullptr;
+    return s;
+}
+
+template <typename Run>
+void compare_runs(TestContext& t, Arena& a, Mismatches& bad, int k, Run&& guest, Run&& native) {
+    auto before = a.save();
+    guest();
+    auto g = a.save();
+    a.restore(before);
+    native();
+    std::string d = a.diff(g, a.save());
+    bad.check(k, d.empty(), d);
+}
+
+}  // namespace
+
+// CollisionSetting<ADM>: the primitives' Update over the ADM's lists (spheres, planes; an extra
+// list node), every step of a few step counts.
+NATIVE_TEST("dynamics/collision-setting") {
+    Mismatches bad{t, "CollisionSetting<ADM>"};
+    const u64 fn = t.sym("_ZN4Aska30ArticulatedDynamicsManagerBase16CollisionSettingINS_26ArticulatedDynamicsManagerEEEvPT_jj");
+    for (int k = 0; k < 2000; k++) {
+        int special = k < 1600 ? 0 : 150;
+        Arena a;
+        AdmSet s = make_adm(t, a, 1, false, special);
+        auto prims = [&](const char* ztv, int count, size_t bytes) {
+            auto** l = a.alloc<DynamicsPrimitive*>(t, 8 * (count ? count : 1));
+            for (int i = 0; i < count; i++) {
+                l[i] = t.rand_int(0, 5) ? a.alloc<DynamicsPrimitive>(t, bytes, special) : nullptr;
+                if (l[i]) l[i]->vtable = reinterpret_cast<const void*>(t.sym(ztv) + 0x10);
+            }
+            return l;
+        };
+        int nc = t.rand_int(0, 3), nk = t.rand_int(0, 3);
+        s.adm->m_collisions = t.rand_int(0, 5) ? prims("_ZTVN4Aska14DynamicsSphereE", nc, sizeof(DynamicsSphere)) : nullptr;
+        s.adm->m_collisionCount = (s16)nc;
+        s.adm->m_constraints = prims("_ZTVN4Aska13DynamicsPlaneE", nk, sizeof(DynamicsPlane));
+        s.adm->m_constraintCount = (s16)nk;
+        if (t.rand_int(0, 1)) {
+            auto* node = a.alloc<ADMExtraNode>(t, sizeof(ADMExtraNode));
+            node->m_primitive = prims("_ZTVN4Aska15DynamicsCapsuleE", 1, sizeof(DynamicsCapsule))[0];
+            node->m_next = &s.adm->m_extraCollisions;
+            s.adm->m_extraCollisions.m_next = node;
+        }
+        u32 steps = (u32)t.rand_int(1, 4), step = (u32)t.rand_int(0, (int)steps - 1);
+        compare_runs(t, a, bad, k, std::function<void()>([&] { guest_invoke<void>(fn, s.adm, steps, step); }),
+                     std::function<void()>([&] { ArticulatedDynamicsManagerBase::CollisionSetting(s.adm, steps, step); }));
+    }
+}
+
+// InterpolateRoot<ADM>: fixed / free roots, the first, a middle and the last step.
+NATIVE_TEST("dynamics/interpolate-root") {
+    Mismatches bad{t, "InterpolateRoot<ADM>"};
+    const u64 fn = t.sym("_ZN4Aska30ArticulatedDynamicsManagerBase15InterpolateRootINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_fjj");
+    for (int k = 0; k < 3000; k++) {
+        int special = k < 2400 ? 0 : 150;
+        Arena a;
+        int n = t.rand_int(1, 6);
+        AdmSet s = make_adm(t, a, n, true, special);
+        for (ADMJoint* j : s.js.joints) j->m_flags0 = (u8)t.rand_int(0, 3);
+        if (k % 13 == 0 && s.adm->m_rootCount == 1) s.adm->m_rootCalc = nullptr;  // (the guest indexes a null base for the others)
+        u32 steps = (u32)t.rand_int(0, 5), step = steps ? (u32)t.rand_int(0, (int)steps - 1) : 0;
+        float dt = rand_float(t, 0.1f, special);
+        ADMJoint* first = s.js.array;
+        compare_runs(t, a, bad, k, std::function<void()>([&] { guest_invoke<void>(fn, s.adm, first, first + n, steps, step, dt); }),
+                     std::function<void()>([&] { ArticulatedDynamicsManagerBase::InterpolateRoot(s.adm, first, first + n, dt, steps, step); }));
+    }
+}
+
+// PreprocessBeforeInternalForce<ADM>: the reset path (blend <= 0: contact state, MatrixCalcFunc,
+// ExternalForce) and the motion-blend path (MatrixPreFixAndMotionBlend, guest code).
+NATIVE_TEST("dynamics/preprocess") {
+    Mismatches bad{t, "PreprocessBeforeInternalForce<ADM>"};
+    const u64 fn = t.sym("_ZN4Aska26ArticulatedDynamicsManager29PreprocessBeforeInternalForceIS0_EEvPT_PNS_8ADMJointES5_ffjjb");
+    for (int k = 0; k < 2000; k++) {
+        int special = k < 1600 ? 0 : 150;
+        Arena a;
+        int n = t.rand_int(1, 5);
+        AdmSet s = make_adm(t, a, n, true, special);
+        for (ADMJoint* j : s.js.joints) j->m_flags0 = (u8)(t.rand_int(0, 3) ? 0 : 1);
+        s.adm->m_blendRate = t.rand_int(0, 3) ? -std::fabs(s.adm->m_blendRate) : std::fabs(s.adm->m_blendRate);
+        u32 steps = (u32)t.rand_int(1, 4), step = (u32)t.rand_int(0, (int)steps - 1);
+        float dt = std::fabs(rand_float(t, 0.1f, special)), inv = rand_float(t, 60, special);
+        bool sim = t.rand_int(0, 1);
+        ADMJoint* first = s.js.array;
+        compare_runs(t, a, bad, k,
+                     std::function<void()>([&] { guest_invoke<void>(fn, s.adm, first, first + n, steps, step, (u32)sim, dt, inv); }),
+                     std::function<void()>([&] {
+                         ArticulatedDynamicsManagerBase::PreprocessBeforeInternalForce(s.adm, first, first + n, dt, inv, steps, step, sim);
+                     }));
+    }
+}
+
+// SimulateMain<ADM> and Simulate over an ADM without roots or collisions: the step / pass / link
+// iteration structure, the solver modes, the rest test and its repeats (the IK and collision
+// passes run their empty forms).
+NATIVE_TEST("dynamics/simulate") {
+    Mismatches bad{t, "SimulateMain<ADM>"}, bad2{t, "ArticulatedDynamicsManager::Simulate"};
+    const u64 fn = t.sym("_ZN4Aska26ArticulatedDynamicsManager12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf");
+    const u64 fn2 = t.sym("_ZN4Aska26ArticulatedDynamicsManager8SimulateEfjf");
+    for (int k = 0; k < 2000; k++) {
+        int special = k < 1600 ? 0 : 150;
+        Arena a;
+        int n = t.rand_int(1, 5);
+        AdmSet s = make_adm(t, a, n, false, special);
+        ArticulatedDynamicsManagerBase* m = s.adm;
+        m->m_solverMode = (u8)t.rand_int(0, 2);
+        m->m_ik = 1;  // (StandardIK<false> / Finalize need state a fake ADM lacks; the game runs the IK form)
+        m->m_simulating = (u8)t.rand_int(0, 1);
+        m->m_resetPending = (u8)(k % 10 != 0);
+        m->m_minTwoSteps = (u8)t.rand_int(0, 1);
+        m->m_dtDiv = (u8)t.rand_int(0, 1);
+        m->m_motionBlend = (u8)t.rand_int(0, 1);
+        m->m_steps = t.rand_int(-1, 3);
+        m->m_blendRate = -1.0f;
+        ADMJoint* first = s.js.array;
+        u32 iterations = (u32)t.rand_int(0, 2), repeat = (u32)t.rand_int(0, 3);
+        s32 steps = t.rand_int(0, 3), step0 = t.rand_int(0, 1);
+        u32 ik_steps = (u32)t.rand_int(1, 2);
+        float dt = std::fabs(rand_float(t, 0.05f, special)), inv = rand_float(t, 60, special);
+        float rest = t.rand_int(0, 2) ? std::fabs(rand_float(t, 2, special)) : rand_float(t, 1, special);
+        compare_runs(t, a, bad, k,
+                     std::function<void()>([&] { guest_invoke<void>(fn, m, first, first + n, iterations, step0, steps, ik_steps, repeat, dt, inv, rest); }),
+                     std::function<void()>([&] {
+                         ArticulatedDynamicsManagerBase::SimulateMain(m, first, first + n, iterations, step0, steps, ik_steps, repeat, dt, inv, rest);
+                     }));
+        bool gr = false, nr = false;
+        compare_runs(t, a, bad2, k, std::function<void()>([&] { gr = guest_invoke<bool>(fn2, m, repeat, dt * 2, rest); }),
+                     std::function<void()>([&] { nr = m->Simulate(dt * 2, repeat, rest); }));
+        bad2.check(k, gr == nr, "result");
     }
 }
 

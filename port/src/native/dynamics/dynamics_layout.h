@@ -277,11 +277,13 @@ class ADMLink {
 public:
     u8 unk_00[0x20];   // 0x00
     u8 m_flags;        // 0x20: bit 4 the length follows the joints (ADMJoint::PrepareCalc)
-    u8 unk_21[7];      // 0x21
+    u8 m_mode;         // 0x21: the ADM's links: SolveLink's mode (0 NEON form, 1 exact)
+    u8 unk_22[6];      // 0x22
     float m_length;    // 0x28
     float m_friction;  // 0x2c: a contact adds m_friction * response to both joints' m_contactFriction
     float m_bounce;    // 0x30: a fast contact's depth is scaled by (m_bounce * response + 1)
-    u8 unk_34[0xc];    // 0x34
+    float m_stiffness; // 0x34: the ADM's links: SolveLink's k1
+    u8 unk_38[8];      // 0x38
     ADMJoint* m_joint0;  // 0x40
     ADMJoint* m_joint1;  // 0x48: the other end (PrepareCalc sets its m_lengthDirty)
 };
@@ -289,6 +291,8 @@ static_assert(offsetof(ADMLink, m_flags) == 0x20);
 static_assert(offsetof(ADMLink, m_length) == 0x28);
 static_assert(offsetof(ADMLink, m_friction) == 0x2c);
 static_assert(offsetof(ADMLink, m_bounce) == 0x30);
+static_assert(offsetof(ADMLink, m_mode) == 0x21);
+static_assert(offsetof(ADMLink, m_stiffness) == 0x34);
 static_assert(offsetof(ADMLink, m_joint0) == 0x40);
 static_assert(offsetof(ADMLink, m_joint1) == 0x48);
 static_assert(sizeof(ADMLink) == 0x50);
@@ -314,7 +318,8 @@ public:
     u8 unk_08[8];                // 0x08
     Vector m_position;           // 0x10: the simulated position (w = 1)
     Vector m_prevPosition;       // 0x20
-    u8 unk_30[0x20];             // 0x30
+    Vector m_rootTarget;         // 0x30: a fixed root's animated position at the frame's first step (InterpolateRoot)
+    Vector m_rootLocal;          // 0x40: its local position then
     Vector m_velocity;           // 0x50
     Quaternion m_prevRotation;   // 0x60
     Quaternion m_rotation70;     // 0x70
@@ -351,6 +356,8 @@ public:
 };
 static_assert(offsetof(ADMJoint, m_position) == 0x10);
 static_assert(offsetof(ADMJoint, m_prevPosition) == 0x20);
+static_assert(offsetof(ADMJoint, m_rootTarget) == 0x30);
+static_assert(offsetof(ADMJoint, m_rootLocal) == 0x40);
 static_assert(offsetof(ADMJoint, m_velocity) == 0x50);
 static_assert(offsetof(ADMJoint, m_prevRotation) == 0x60);
 static_assert(offsetof(ADMJoint, m_rotation80) == 0x80);
@@ -390,9 +397,28 @@ struct ADMSolver {
     static void UpdateVelocity(ADMJoint* j, ADM_CALC_DATA* calc, bool rest, float inv_dt);
 };
 
+// A root of the ADM's joint chains: its first joint's index and the number of joints in the chain
+// (consecutive in the joint array). ArticulatedDynamicsManagerBase::m_roots.
+struct ADMRoot {
+    u32 m_first;  // 0x0
+    u32 m_count;  // 0x4
+};
+static_assert(sizeof(ADMRoot) == 8);
+
+// A node of the ADM's extra collision list (AddExtraCollision*): next at +0x10, the primitive at
+// +0x38; the list's head (a sentinel) is the ADM's m_extraCollisions.
+struct ADMExtraNode {
+    u8 unk_00[0x10];          // 0x00
+    ADMExtraNode* m_next;     // 0x10
+    u8 unk_18[0x20];          // 0x18
+    DynamicsPrimitive* m_primitive;  // 0x38
+};
+static_assert(offsetof(ADMExtraNode, m_next) == 0x10);
+static_assert(offsetof(ADMExtraNode, m_primitive) == 0x38);
+
 // Aska::ArticulatedDynamicsManagerBase: a joint chain set (ArticulatedDynamicsManager: 0x1c0,
 // ArticulatedDynamicsManagerMP: 0x200; their CreateClone). Layout from PrepareCalc(float), Flush,
-// the ADM templates (adm.c, adm_templates.c); the rest is padding until recovered.
+// Simulate and the ADM templates (adm.c, adm_templates.c); the rest is padding until recovered.
 class ArticulatedDynamicsManagerBase {
 public:
     // The joints from their nodes: the motion-blend write-back, ADMJoint::PrepareCalc, MatrixCalcFunc
@@ -401,6 +427,26 @@ public:
     void PrepareCalc(float dt);
     // The joints back into their nodes (ADMJoint::Flush) unless just reset; m_flushed set.
     void Flush();
+
+    // The templates (instantiated for ArticulatedDynamicsManager, the one that runs), static
+    // functions of the guest taking the ADM as their first argument:
+    // the primitives' Update(t, last step) for step `step` of `steps` (all the collision /
+    // constraint lists).
+    static void CollisionSetting(ArticulatedDynamicsManagerBase* adm, u32 steps, u32 step);
+    // The fixed roots moved towards their animated position over the remaining steps, their chains'
+    // matrices recomputed.
+    static void InterpolateRoot(ArticulatedDynamicsManagerBase* adm, ADMJoint* first, ADMJoint* end, float dt, u32 steps, u32 step);
+    // A step's start: InterpolateRoot, CollisionSetting, then per joint the motion blend
+    // (MatrixPreFixAndMotionBlend) or the reset of the step's contact state, MatrixCalcFunc and
+    // ExternalForce; the force emitters.
+    static void PreprocessBeforeInternalForce(ArticulatedDynamicsManagerBase* adm, ADMJoint* first, ADMJoint* end, float dt, float inv_dt,
+                                              u32 steps, u32 step, bool simulating);
+    // The solver loop: steps x (Preprocess, the link constraints (m_iterations), IK, collisions),
+    // repeated up to `repeat` times until every joint is slower than `rest_speed`.
+    static void SimulateMain(ArticulatedDynamicsManagerBase* adm, ADMJoint* first, ADMJoint* end, u32 iterations, s32 step0, s32 steps,
+                             u32 ik_steps, u32 repeat, float dt, float inv_dt, float rest_speed);
+    // ArticulatedDynamicsManager::Simulate: the step count and length from dt and the base dt.
+    bool Simulate(float dt, u32 repeat, float rest_speed);
 
     const void* vtable;              // 0x00
     u8 unk_08[0x38];                 // 0x08
@@ -413,35 +459,77 @@ public:
     u8 unk_68[8];                    // 0x68
     ADMJoint* m_joints;              // 0x70: m_jointCount of them
     ADMLink* m_linkList;             // 0x78: m_linkCount of them
-    u8 unk_80[0x58];                 // 0x80
+    u8 unk_80[8];                    // 0x80
+    u32 m_emitters;                  // 0x88: the force emitters apply
+    u32 m_emitterSeed;               // 0x8c: + 0x56b46fd1 after each use
+    u8* m_hitFlags;                  // 0x90: CollisionAndConstraint marks the joints' groups (ADMJoint::m_index19e)
+    u8 unk_98[2];                    // 0x98
+    u8 m_ik;                         // 0x9a: bit 0: the IK form of the step end (StandardIK<true>)
+    u8 m_solverMode;                 // 0x9b: 1 links forward and back m_iterations times; 2 the IK form, iterated per joint
+    u8 unk_9c[4];                    // 0x9c
+    ADM_CALC_DATA* m_rootCalc;       // 0xa0: one per root (stride 0xa0)
+    ADMRoot* m_roots;                // 0xa8
+    s32 m_rootCount;                 // 0xb0
+    u8 unk_b4[0x24];                 // 0xb4
     u8 m_enabled;                    // 0xd8
     u8 m_skipFlush;                  // 0xd9: set by PrepareCalc's velocity pass, cleared by the pose reset; while set Flush writes nothing and PrepareCalc skips the gravity node
     u8 m_resetVelocity;              // 0xda: velocities from the motion every PrepareCalc
     u8 unk_db;                       // 0xdb
     u8 m_motionBlend;                // 0xdc: write the blended pose back first (m_blendRate)
-    u8 unk_dd[3];                    // 0xdd
+    u8 m_dtDiv;                      // 0xdd: with m_bDtDiv: the steps scale with dt / m_fBaseDt
+    u8 m_worldCollision;             // 0xde: the world collision / constraint lists apply
+    u8 unk_df;                       // 0xdf
     u8 m_flushed;                    // 0xe0: Flush ran (cleared with 0xe1 by PrepareCalc)
-    u8 m_resetPending;               // 0xe1: the pose reset may run
-    u8 unk_e2[2];                    // 0xe2
+    u8 m_resetPending;               // 0xe1: the pose reset may run; Simulate runs only when set
+    u8 m_simulating;                 // 0xe2: passed to Preprocess (ExternalForce's full damping)
+    u8 unk_e3;                       // 0xe3
     u8 m_resetRequest;               // 0xe4
-    u8 unk_e5[0xb];                  // 0xe5
+    u8 unk_e5[7];                    // 0xe5
+    s32 m_steps;                     // 0xec
     float m_blendRate;               // 0xf0: below kBlendFull the ADM blends with the motion
-    u8 unk_f4[0xc];                  // 0xf4
+    float m_gravityScale;            // 0xf4: ExternalForce's g
+    u8 unk_f8[8];                    // 0xf8
     render::RenderableObject* m_model;  // 0x100: the model; while its m_renderFlags & 0x2101 the velocities follow the motion
     HierarchicalObject* m_gravityNode;  // 0x108: m_gravity is in its space
+    u8 unk_110[8];                   // 0x110
+    u32 m_moving;                    // 0x118: SimulateMain clears it when every joint came to rest
+    u8 unk_11c[5];                   // 0x11c
+    u8 m_dependentPrimitives;        // 0x121: UpdateDynamicsPrimitiveListWithDependencyOfADM each step
+    u8 m_minTwoSteps;                // 0x122: at least two steps
+    u8 unk_123[0xd];                 // 0x123
+    void* m_landConstraint;          // 0x130: counts as one more constraint
+    u8 unk_138[0x10];                // 0x138
+    DynamicsPrimitive** m_collisions;   // 0x148: m_collisionCount
+    DynamicsPrimitive** m_constraints;  // 0x150: m_constraintCount
+    u8 unk_158[8];                   // 0x158
+    ADMExtraNode m_extraCollisions;  // 0x160: the list's sentinel (its m_next at 0x170)
+    u32 m_extraCollisionCount;       // 0x1a0
+    u8 unk_1a4[4];                   // 0x1a4
 };
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_gravityWorld) == 0x40);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_jointCount) == 0x60);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_joints) == 0x70);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_linkList) == 0x78);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_emitters) == 0x88);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_hitFlags) == 0x90);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_ik) == 0x9a);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_rootCalc) == 0xa0);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_rootCount) == 0xb0);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_enabled) == 0xd8);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_motionBlend) == 0xdc);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_flushed) == 0xe0);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_resetRequest) == 0xe4);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_steps) == 0xec);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_blendRate) == 0xf0);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_model) == 0x100);
 static_assert(offsetof(ArticulatedDynamicsManagerBase, m_gravityNode) == 0x108);
-static_assert(sizeof(ArticulatedDynamicsManagerBase) == 0x110);  // (recovered so far; the object is larger)
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_moving) == 0x118);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_dependentPrimitives) == 0x121);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_landConstraint) == 0x130);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_collisions) == 0x148);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_extraCollisions) == 0x160);
+static_assert(offsetof(ArticulatedDynamicsManagerBase, m_extraCollisionCount) == 0x1a0);
+static_assert(sizeof(ArticulatedDynamicsManagerBase) == 0x1a8);  // (recovered so far; ArticulatedDynamicsManager is 0x1c0)
 
 }  // namespace soa::native::dynamics
 

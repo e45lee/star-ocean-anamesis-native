@@ -53,6 +53,28 @@ denormals), compared bit for bit.
 | FUN_0242a9f4 `ADMSolver::ResolveContact` (the contact response) | `dynamics_adm_solver.cpp` | `dynamics/resolve-contact` | 36K checks, 0 mismatches |
 | FUN_0242ac84 `ADMSolver::UpdateVelocity` | `dynamics_adm_solver.cpp` | `dynamics/update-velocity` | 608K checks, 0 mismatches |
 
+| `ArticulatedDynamicsManager::Simulate(float, unsigned, float)` | `dynamics_adm_simulate.cpp` | `dynamics/simulate` | 36K checks, 0 mismatches (91 races) |
+| `SimulateMain<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/simulate` | 32K checks, 0 mismatches (83 races; `only=12SimulateMain`) |
+| `PreprocessBeforeInternalForce<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/preprocess` | 37K checks, 0 mismatches (`only=PreprocessBeforeInternalForce`) |
+| `InterpolateRoot<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/interpolate-root` | 38K checks, 0 mismatches |
+| `CollisionSetting<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/collision-setting` | 38K checks, 0 mismatches |
+
+Still guest code in the solver (called from the natives): `CollisionAndConstraint<ADM>` (2.6 KB, the NEON
+inverse), `StandardIK<ADM, true>` and its rotation helpers FUN_02429d78 / FUN_0242a08c (2.4 KB of
+NEON with FRSQRTE / FRECPE), `MatrixPreFixAndMotionBlend<true>`, the force-emitter functor,
+`StandardIK<false>` / `Finalize` (not executed in the measured flows), `MatrixCalcFunc` (not dynamics').
+
+**Live-check runs:** a native checked on every call runs its nested natives unchecked, so the solver
+is verified level by level with `only=`: the full family (Simulate at the top), `only=12SimulateMain`,
+`only=PreprocessBeforeInternalForce`, `only=InterpolateRoot|CollisionSetting|@0x2329994|ExternalForce|ADMJoint11PrepareCalc`,
+and the primitives / contact / velocity helpers under the native solver
+(`only=14DynamicsSphere|13DynamicsPlane|15DynamicsCapsule|12DynamicsCube|DYNAMICS|@0x232a|@0x232ac`:
+3.0M checks, 76 races, and 2 differences of `DynamicsCapsule::Update`'s +0x80 the race rerun didn't
+classify: several ADMs share a character's collision capsules, and their CollisionSetting passes call
+`Update` on the same primitive from different dynamics workers with different step fractions, a race
+of the game's (the same offset shows 14 classified races in that run; the random tests and the other
+runs: 0).
+
 A native another native calls (ADMJoint::PrepareCalc from ArticulatedDynamicsManagerBase::PrepareCalc,
 ADMJoint::Flush from Flush) is called as C++ normally, but through its guest entry while the family's
 live check is on (`checking()`, dynamics_family.h), so a run with `only=` checks it on its own: the

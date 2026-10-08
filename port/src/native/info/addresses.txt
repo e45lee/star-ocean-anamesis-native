@@ -5,3 +5,5 @@ kCsvIsNull             str "m_pCSV is null."
 kRowHashIsNull         str "m_pRowHash is null."
 kColumnHashIsNull      str "m_pColumnHash is null."
 kInfoBaseH             str "...Source\\Game/Parameter/Info/InfoBase.h"
+kStlVectorH            str "...Library/Framework/Source\\Framework/STL_Vector.h"   # CSTLAllocator<T, CSTLVectorAllocatorInf>::allocate
+kPltMktime             at 0x10aca70 ref _ZN12CTimeUtility10str2time_tEPKclbb   # mktime@plt: the runtime's mktime (platform370's local time: docs/client-changes.md "Local time: daylight saving")

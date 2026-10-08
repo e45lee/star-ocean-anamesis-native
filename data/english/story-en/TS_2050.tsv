@@ -30,7 +30,7 @@ message_id	ja_sha1	en	source
 2051_015_10	dbe66cfada86a37f6d646d4b9d70f11433133268	<font color=blue>Euwin</font> ...That's correct.	machine
 2051_015_11	1e698b59c81545d8b9b64ba696b69b73f5722185	<font color=blue>Karlyn</font> You should be more careful\nabout the girls you associate with. For\nyour own sake, and for the sake of\nyour family name.	machine
 2051_015_12	a3d195740f3e89f8a887f4fa4485eb5af133cf91	<font color=blue>Welch</font> You... you bitch...!! Say\nthat again and I'll...!!	machine
-2051_015_13	31d2b4d1de72c697fb071eec0dc2714146107f3b	<font color=blue>Eve</font> Welch! I told you to be\nquiet!	machine
+2051_015_13	31d2b4d1de72c697fb071eec0dc2714146107f3b	<font color=blue>Evelysse</font> Welch! I told you to\nbe quiet!	machine
 2051_015_14	c59c96990c747344c1e6dacc72b62a373f636c0b	<font color=blue>Tika</font> Big sister Welch! Hold it in\nfor now!!	machine
 2051_015_15	c48df65c1f04735ce3a2ae98f1b6a3da551cfb0c	<font color=blue>Euwin</font> ...I can't even argue with\nthat.	machine
 2051_015_16	a47c6ca61074f91871f3d74c5ada5a5882b93f21	<font color=blue>Karlyn</font> Once we cross the\nborder on this road, the first\nplace we'll reach is a village\ncalled <font color=yellow>Korurine</font>.	machine
@@ -59,10 +59,10 @@ message_id	ja_sha1	en	source
 2051_020_22	fd80eb3590d554c478e9f584c7227208c9cfc552	<font color=blue>Verda</font> I be Verda Kleiman. We\nbe part of a troupe called\n"Coro's Ship."	machine
 2051_020_23	449eae8c95d351e87ad1c3584e40a2ffcf0f94df	<font color=blue>Karlyn</font> Ah, so that's why you're\nthe "Captain."	machine
 2051_020_24	5921909badcb53309f40091c9818bbaf5ab870d1	<font color=blue>Euwin</font> I'm Euwin. Euwin Laxter.	machine
-2051_020_25	9ef10450bc3e4ffa2ae01cee04fb3540d6001e29	<font color=blue>Eve</font> ...Evelysse.	machine
+2051_020_25	9ef10450bc3e4ffa2ae01cee04fb3540d6001e29	<font color=blue>Evelysse</font> ...Evelysse.	machine
 2051_020_26	92949e16392aa0be1ff2d6e078bfe9d99fb3cffc	<font color=blue>Welch</font> ...	machine
 2051_020_27	4b2ec2ec9d15bea306c2660f050aa1ab8c5a8327	<font color=blue>Karlyn</font> Hehe, it seems you're\nquite disliked.	machine
-2051_020_28	535ff79ae245d136d3d5aa7bd14d148629fb372c	<font color=blue>Euwin</font> Hey, Welch, Eve too...	machine
+2051_020_28	535ff79ae245d136d3d5aa7bd14d148629fb372c	<font color=blue>Euwin</font> Hey, Welch, Evelysse\ntoo...	machine
 2051_020_29	87095785f924730a8c19bbc6bc2843942ae1f023	<font color=blue>Karlyn</font> It's fine. The reactions\nfrom those two are more\nnatural.	machine
 2051_020_30	42efc7edd58681a963de531a0785f6bb326ae5d0	It's not as if we're in a position\nto want to be friends, so\nknowing each other's names is\nenough.	machine
 2051_020_31	cdcc2161f05f84d766f2161880f56b9bd2eb9c08	<font color=blue>Euwin</font> ...My apologies.	machine
@@ -107,9 +107,9 @@ message_id	ja_sha1	en	source
 2051_020_72	1fb4b0454a6dd9e56bfc1855bf8e3f98d11c17b5	We bring along important\nprisoners to make up for the\nmistake of being captured.	machine
 2051_020_73	b365463a4a017357d9c0f0f78348bbe9865f6cb6	<font color=blue>Welch</font> What!? Important\nprisoners!? Us!?	machine
 2051_020_74	900028cc2799e5573e3171fb3a1ba8438385b2e6	I hate to say this myself, but\nhow exactly are we important!	machine
-2051_020_75	3c4ff3725c65754aee38f5173a535c66b5427170	<font color=blue>Verda</font> You are important.\nEspecially Euwin and Eve.	machine
+2051_020_75	3c4ff3725c65754aee38f5173a535c66b5427170	<font color=blue>Verda</font> You are important.\nEspecially Euwin and Evelysse.	machine
 2051_020_76	ec9286d34b13c4f97d3640ae6bccf0c8b95e44ca	<font color=blue>Euwin</font> Well, regardless of the\ncircumstances, I am still a\nmember of the Rakstar family.	machine
-2051_020_77	370d1067111e544e8bdf6efb9a5fbe444bce56e8	As for Eve, the fact that she likely\npossesses power similar to the Beast\nWitch's summoning symbol arts could\nbe what piques their interest.	machine
+2051_020_77	370d1067111e544e8bdf6efb9a5fbe444bce56e8	As for Evelysse, the fact that she likely\npossesses power similar to the Beast\nWitch's summoning symbol arts could\nbe what piques their interest.	machine
 2051_020_78	75081093b3e7fc9bf6da24b7fedb0c16c436bde0	<font color=blue>Karlyn</font> That's more or less\ncorrect.	machine
 2051_020_79	174424512a61367490eae1724bdb725e8717ebd5	<font color=blue>Welch</font> ...!	machine
 2051_020_80	247cd45082c575cbdb4d5618887242f0fd3d15b4	<font color=blue>Verda</font> You were listening? Are\nthe villagers alright now?	machine
@@ -128,7 +128,7 @@ message_id	ja_sha1	en	source
 2052_050_01	a7075f3b75b9a43eba0535d8ab0e8f1c0cdeb73e	<font color=blue>Tika</font> This bed is so fluffy!!	machine
 2052_050_02	3b56c3ac761f15a894b1f5694675ed4097b6c310	<font color=blue>Verda</font> We are being treated far\nbetter than I expected.	machine
 2052_050_03	94c7c1d1f243f17114b42dd97c5a971b69098ae4	I suspect we've been given\nrooms that are vastly superior\nto those of the Baschen army\nsoldiers stationed here.	machine
-2052_050_05	3b16b676c8297729d1fd86b807f4a63b2c270aea	<font color=blue>Eve</font> I wonder if that's because\nthey view us as that\nimportant...	machine
+2052_050_05	3b16b676c8297729d1fd86b807f4a63b2c270aea	<font color=blue>Evelysse</font> I wonder if that's\nbecause they view us as that\nimportant...	machine
 2052_050_06	0cab752eb70d3ab0e00f7ec62b473ccc9156fe54	Still, it's worrying that Euwin\nand Welch were taken away\nseparately.	machine
 2052_050_07	cbf3577e580c0edef84bfa590999183d1be6dd70	Coro, Rekoro, what do you\nthink?	machine
 2052_050_08	a06a0c422933cecee83fa8412805dc4b4eb59702	<font color=blue>Coro</font> "...Ah, am I allowed to\nspeak now?"	machine
@@ -142,7 +142,7 @@ message_id	ja_sha1	en	source
 2052_050_105	c4cd895b8bf4bbfb4727b762b4e215ef29c16acc	I'll continue to keep watch on\nthe surroundings. Until then..."	machine
 2052_050_11	676ec7d5993be3c56e05ea86b3ff67c88383bc0d	"The moment your life signs vanished\nwhen you were thrown into the\ndungeons, I thought my heart was going\nto stop!!"	machine
 2052_050_12	ff2f7421dc9272bdcbf06166e2b2520c9157a298	<font color=blue>Rekoro</font> Does AI Coro have a\nheart... I failed to replicate that.	machine
-2052_050_13	5e0f565e212c9eeb98d2fcde53ac7798b4dc9d9e	<font color=blue>Eve</font> That was just a figure of\nspeech... Don't take everything\nCoro says literally.	machine
+2052_050_13	5e0f565e212c9eeb98d2fcde53ac7798b4dc9d9e	<font color=blue>Evelysse</font> That was just a figure\nof speech... Don't take\neverything Coro says literally.	machine
 2052_050_14	5befa4292d4a2090d997c2ebd4392b3c68505eea	<font color=blue>Coro</font> "And that's why I don't\nthink they're treating you well\njust to keep you from\nescaping.	machine
 2052_050_15	c2a8b718a60322b665176bb375025291898a9a22	Korurine seems like a small village, but\nperhaps because it's near the border,\nthere are over 2,000 soldiers stationed\naround the area,	machine
 2052_050_16	14c6d9203eba5e8d41d018571875f6d173d2a148	and there are nearly 200 people in that\nbuilding alone. Logically speaking, it's\nnot a perimeter you can just slip\nthrough. It's practically a prison."	machine
@@ -151,12 +151,12 @@ message_id	ja_sha1	en	source
 2052_050_19	7a7aa33ebb89fc5a08839a90fd0eb8700d8d42b2	Had we been disarmed, even I\nwould not have remained silent.	machine
 2052_050_20	b12b4d1e4e2429c1ed984acf8a3e9b1c543477b4	<font color=blue>Coro</font> "Rekoro, you were talking\nquite casually while making the\nCaptain do all the hard work,\nyou know...?"	machine
 2052_050_22	0a4ec8465ba2de2bf251281b962a844660042a23	<font color=blue>Tika</font> Thanks for working so\nhard, Captain. There, there.	machine
-2052_050_23	d5187a91b704b149f4a72f2364256423c17313b0	<font color=blue>Eve</font> Still, I wonder why that\nmasked man wanted us to go\nto Baschen.	machine
+2052_050_23	d5187a91b704b149f4a72f2364256423c17313b0	<font color=blue>Evelysse</font> Still, I wonder why\nthat masked man wanted us to\ngo to Baschen.	machine
 2052_050_24	e8ca53b03376c42a98d918890a12c416632f19ca	Who is he anyway? Is he from\nRubarika?	machine
 2052_050_25	daffc482bbbc99b9037bc52575d12b5752cceedb	<font color=blue>Rekoro</font> His linguistic patterns were not\ntranslated; he spoke native Daftine. I\nconclude that he is undoubtedly a local\nresident.	machine
 2052_050_26	e064d81ec597ad024642e6d4af780a908bf4f6c2	<font color=blue>Coro</font> "But I failed to tag and\ntrack him again this time."	machine
 2052_050_27	c2c5696dffb73a9d5bea8e181271f91b07c07e17	"Just like in the Rubarika\ndungeons, for some reason, he\njust vanishes from my sight."	machine
-2052_050_28	119b766cd0a02e5d64dcb537528364dcd06000fe	<font color=blue>Eve</font> That's true. I wonder how\nthe Rubarika dungeons were\nable to jam Coro's sensors.	machine
+2052_050_28	119b766cd0a02e5d64dcb537528364dcd06000fe	<font color=blue>Evelysse</font> That's true. I wonder\nhow the Rubarika dungeons\nwere able to jam Coro's\nsensors.	machine
 2052_050_29	2718fad3aee8d91006e6bc404750af7e2076cf2f	They should be able to\npenetrate even the thickest\nlayers of earth or bedrock.	machine
 2052_050_30	46cf77a3fb4200b891ce0b9c1fe93a765cc99836	<font color=blue>Coro</font> "Ugh... Based on the\nfootage recorded by the\nCaptain's scanner,	machine
 2052_050_31	5b7ceb89bfdb217b05267a970a936b38c34142a1	it looked like nothing more than\nordinary stone or brick... I just\ndon't understand it."	machine
@@ -166,7 +166,7 @@ message_id	ja_sha1	en	source
 2052_050_35	747ce27a4540094aa2909179987497bebeb1f7a1	<font color=blue>Coro</font> "Speaking of which, I've\nfinished tagging Karlyn.	machine
 2052_050_36	4741f64fc111a7c57225f7c0f9204c2c51dcdd80	Regarding that collar, it doesn't\nhave explosives built directly\ninto it, but it does contain\nsome kind of sigil reaction.	machine
 2052_050_37	6c4431b531d0890e11d7bb135d606e9e6f8e9a82	If it really is meant to explode,\nthere's a possibility it\npossesses high destructive\npower."	machine
-2052_050_38	9872c0c1e568bfe3132a5f04593f8e23d271c3ca	<font color=blue>Eve</font> Do you think that masked man is\ntrying to assassinate Karlyn and that\nguy Givel? He's the Commander-in-Chief\nof Baschen, right?	machine
+2052_050_38	9872c0c1e568bfe3132a5f04593f8e23d271c3ca	<font color=blue>Evelysse</font> Do you think that masked man\nis trying to assassinate Karlyn and that\nguy Givel? He's the Commander-in-Chief\nof Baschen, right?	machine
 2052_050_39	7e6d86a479b22d39ba3e5badbf5e1d42eceef51b	<font color=blue>Rekoro</font> It's a possibility, but it's\nhard to believe a soldier of\nKarlyn Kayson's caliber\nwouldn't have considered that.	machine
 2052_050_40	09c43aa195245ef0906b99a2d51c7b83dd75dddb	<font color=blue>Verda</font> Besides, that masked\nman said it would explode even\nif we moved away from Karlyn.	machine
 2052_050_41	3a69b16865ef87568f0f09c9e6b9d7d0599a465f	That's the strange part. Karlyn\nis our enemy, so normally we'd\ntake the chance to make a run\nfor it.	machine
@@ -185,7 +185,7 @@ message_id	ja_sha1	en	source
 2052_050_55	027baecca06432f9b38b5e380de51d21ec5659c3	For Euwin and the others.	machine
 2052_050_56	6af37c4f0616bc030489c687b5ad47ac3c378c0b	In search of new bananas.	machine
 2052_050_57	d5a47fb01243ce8505507540ce5af4dc6469d38d	I thought so... It must be\nbecause we want to learn more\nabout Karlyn's Summoning\nSymbolism.	machine
-2052_050_58	4eb9f94c9096a201c40ef1d1e417f99da66aff9f	Big sister Eve doesn't\nremember where she learned\nSummoning Symbolism, right?	machine
+2052_050_58	4eb9f94c9096a201c40ef1d1e417f99da66aff9f	Evelysse doesn't remember\nwhere she learned Summoning\nSymbolism, right?	agent
 2052_050_59	82d80609d8cbf2cff40b9929934144134af4b932	That's right. That's why I want\nto know. Karlyn said she was\ngranted the power of\nsummoning by someone.	machine
 2052_050_60	f752cf8d0961d4845bebe87e2467d4182eb0ee41	I suspect it was that person\nnamed Givel, the "Servant of\nDaftes."	machine
 2052_050_61	c3303d1d2b10ef172cf7b2cadbd01f404705622d	If that's the case, then he...	machine
@@ -250,7 +250,7 @@ message_id	ja_sha1	en	source
 2053_070_03	c219b16915de00c6e491c2f20f9bf888a5111807	<font color=blue>Verda</font>: On the contrary, are\nyou sure about this, Karlyn?	machine
 2053_070_04	3b621f7b80160d43d40b3ae98ce64a902961cda8	<font color=blue>Karlyn</font>: I don't mind.	machine
 2053_070_05	0be4399fd545dc1f9b576407446d6b9e9b126f42	From Baschen's perspective,\nknowing that skilled users like\nyou are on Rubarika's side\nmakes for excellent training.	machine
-2053_070_06	9a8fdf0f33872ba667aae964c9db4c6911a77018	<font color=blue>Eve</font>: But I can't believe we're\nusing our own weapons to train\nthe people of Baschen...	machine
+2053_070_06	9a8fdf0f33872ba667aae964c9db4c6911a77018	<font color=blue>Evelysse</font>: But I can't believe\nwe're using our own weapons\nto train the people of\nBaschen...	machine
 2053_070_07	0338d511afe8ec45afe8d07939d124d3fb7fa31e	<font color=blue>Karlyn</font>: Of course, don't forget\nthat there are arrows and\nSymbol Arts targeting you from\noutside the training grounds.	machine
 2053_070_08	2e3aaa26cff09bc278a8914cc956ea91e9e9306a	Also, a maximum of four people\ncan enter training at a time.	machine
 2053_070_09	50014adf660440922850017251519f3ac465c296	The rest will be treated as\nhostages here, so you know\nwhat happens if you try\nanything funny.	machine
@@ -265,7 +265,7 @@ message_id	ja_sha1	en	source
 2053_090_03	464b360fb569314b1498a24d593fa643a1a6f73e	You seem to be handling this\nwith ease, so let's make things\na bit more challenging...	machine
 2053_090_04	d4a72c128c4890c0f8d83603ea99be3017b4b20d	Release the spare beasts!	machine
 2053_090_05	1b0d45ccd2b9961a54d2630f072644d5f6f34fdb	<font color=blue>Verda</font> Hmph.	machine
-2053_090_06	4a76cf45f973da76f6ab913a2e3f64e35acedcde	<font color=blue>Eve</font> To treat summoned\ncreatures this way...!!	machine
+2053_090_06	4a76cf45f973da76f6ab913a2e3f64e35acedcde	<font color=blue>Evelysse</font> To treat summoned\ncreatures this way...!!	machine
 2053_100_01	42d4097fcdab32f86e7c980065fcd4094d3ea0af	...I believe I told you that I\nwould not tolerate any cutting\ncorners.	machine
 2053_100_02	f7eedb97d5e7c679b38d481e79c9f16928f29525	...What are you talking about?\nI'd appreciate it if you'd stop\nmaking baseless accusations.	machine
 2053_100_03	da75f8db641a97261f0de0ceb996e05a1bfa232c	The fact that you snap back\nso quickly suggests you're well\naware of it.	machine
@@ -371,7 +371,7 @@ message_id	ja_sha1	en	source
 2053_120_02	344afe9e4e32c18c4aba39dd3a8a49965641f1e9	<font color=blue>Rubarika Soldier</font> Get out of the\nway!!	machine
 2053_120_03	de188cb6c40383b68c8328c4233eb3161f44aa8f	<font color=blue>Villager</font> Agh... No... stop...	machine
 2053_120_04	9fe6f5080c6579355a51f134bf3b5a3693e8ae42	<font color=blue>Welch</font> Stop it! Stop it! This\ncan't be happening!!	machine
-2053_120_05	51a38e279fdbc1ec09ba345071a86afb49212523	<font color=blue>Euwin</font> Eve! Tika! Get Welch to\nsafety! Captain, Verda, please\nprovide cover!	machine
+2053_120_05	51a38e279fdbc1ec09ba345071a86afb49212523	<font color=blue>Euwin</font> Evelysse! Tika! Get Welch\nto safety! Captain, Verda,\nplease provide cover!	machine
 2053_120_06	4e9db4caa3abe0b257ee0318c3be7b5b523affcc	<font color=blue>Verda</font> Honestly! I'm just a child\nmyself, you know!	machine
 2053_120_08	dc7cd8ed5498109aeaa45c1828598a52a49b3341	<font color=blue>Coro</font> "Multiple Rubarika soldiers\narmed with light arrows\napproaching! Maximum alert!"	machine
 2053_120_09	93f789401354503d7817a01e33db4bb768a1d80e	<font color=blue>Welch</font> Stop it! Please stop it!!	machine
@@ -409,11 +409,11 @@ message_id	ja_sha1	en	source
 2054_200_03	49aeb7b8405d4d1bc65449822b2a2ffdf6991d24	<font color=blue>Euwin</font> ...	machine
 2054_200_04	bab034f4dab3ca020df43630305f688911118789	<font color=blue>Verda</font> ...	machine
 2054_200_05	a6eae739131d5f3cd7ec9a4069c5cb6fd957d033	<font color=blue>Tika</font> ...	machine
-2054_200_06	347b9f7797e7b25ae42925fd56f695803f7e531c	<font color=blue>Eve</font> This is... just terrible.	machine
+2054_200_06	347b9f7797e7b25ae42925fd56f695803f7e531c	<font color=blue>Evelysse</font> This is... just terrible.	machine
 2054_200_07	1cc17deeffb1fc4101507e68dbd39022226b29aa	<font color=blue>Verda</font> Yeah... it's the first time\nI've seen the true reality of the\nHoly War...	machine
 2054_200_09	3626a860b99266ceb8419a44272d9290f2d2eaec	<font color=blue>Karlyn</font> I'm relieved that you two\nare more mature than she is.	machine
 2054_200_10	4921a39906019dadf450bd278bf81bed34f8fe00	We had a bit of a commotion, but we'll\nhead straight for the Imperial Capital\nnow to deliver the message. It'll be a\ngrueling journey, so please hang in\nthere.	machine
-2054_200_11	c0ffcde80ae02d5ac78e258edb739a80391354e5	<font color=blue>Eve</font> Still, I can't believe Welch\nlost her composure like that...	machine
+2054_200_11	c0ffcde80ae02d5ac78e258edb739a80391354e5	<font color=blue>Evelysse</font> Still, I can't believe\nWelch lost her composure like\nthat...	machine
 2054_200_12	754a0c39c862fb493706bdf9810bc059a01e53bd	She's been acting strange\nsince last night. What on earth\ndid you say to her?	machine
 2054_200_13	45edb55d5ce9a4c3facb708ac65b027837fcb4e7	<font color=blue>Karlyn</font> It was nothing major.	machine
 2054_200_14	5492358fbae3c321f3bc15125ad9265dfbc99cab	I just realized that her wish was to stop\nany more casualties in the Holy War, so\nI simply suggested an idea to make\nthat wish come true.	machine
@@ -422,7 +422,7 @@ message_id	ja_sha1	en	source
 2054_200_17	2e225f1b73fe3ff7f4859191e54ebb14d09337e1	<font color=blue>Verda</font> ...Well, that seems to be\nthe case.	machine
 2054_200_18	d9969ae53465dc314cb8ae7f046e62eb892d8cc0	<font color=blue>Karlyn</font> Personality aside, her\ntechnical skill is top-notch.	machine
 2054_200_19	33b3913941eb62c78d64d4ab1e17df341f5a759c	So, I suggested that she join the\nWeapon Development Bureau of the\nBaschen Imperial Capital to use that\npower to bring peace to the world.	machine
-2054_200_20	b73fa94bb068ce77ddf2fd3acd11abc367b0169e	<font color=blue>Eve</font> H-how on earth does that\nlead to world peace?!	machine
+2054_200_20	b73fa94bb068ce77ddf2fd3acd11abc367b0169e	<font color=blue>Evelysse</font> H-how on earth does\nthat lead to world peace?!	machine
 2054_200_21	21555a4c082e7d9c25d9b99ed93f437e292afb94	<font color=blue>Karlyn</font> She had the exact same\nreaction. She told me she couldn't\npossibly cooperate with Baschen, and\nthat she's a citizen of Rubarika!	machine
 2054_200_22	c57695ef2ab68d9494f137e8bbf1d897502f4b44	Though... it'll be interesting to see if she\ncan still talk that big after seeing what\nthe soldiers of her homeland have done\nwith her own eyes.	machine
 2054_200_23	8549a18db384b0c26d6fccdb060ca9abafb1016b	<font color=blue>Welch</font> ...!	machine
@@ -431,7 +431,7 @@ message_id	ja_sha1	en	source
 2054_200_26	1ac2c10405b94bd4b16be18813d8599a7811385b	Meanwhile, all we have are\ntraditional crest arts and the\n"Beasts," whose numbers are\nlimited.	machine
 2054_200_27	e716292f5b27095220ed5262a65d5745a202ade4	But... I wonder what would\nhappen if weapons created by\nher were added to our arsenal.	machine
 2054_200_29	3070eeb5ca3ebd3fe1fd51de3042a86f2018cd1f	<font color=blue>Karlyn</font> That's the idea. If we overrun\nthe battlefield with innovative military\npower, everyone will fear that strength,\nand no one will ever dare to fight again.	machine
-2054_200_30	1a17411c44baf98e3847c610c7800cc09f112622	<font color=blue>Eve</font> Overrun the battlefield?\nCan you really call a world\ntrembling in fear of military\nmight "peaceful"?!	machine
+2054_200_30	1a17411c44baf98e3847c610c7800cc09f112622	<font color=blue>Evelysse</font> Overrun the\nbattlefield? Can you really call\na world trembling in fear of\nmilitary might "peaceful"?!	machine
 2054_200_31	d525ba1c352c971024eea470d3140f99e267a981	<font color=blue>Karlyn</font> Please spare me the tired\nsophistry. Humans are creatures who\nshout and throw punches when they\nhave nothing else.	machine
 2054_200_32	828e103f3b3b2caa4abc7514bf2428ffc55dceff	This war has gone on so long that we\nno longer know when it started or why\nthe Moonshadow Ladders and Daftes'\nmessengers began to appear. To end it,	machine
 2054_200_33	316a3b268d50d614ea645d3565b6bb069e4abdb2	one side must utterly crush the other\nwith overwhelming power, using the\nmemory of that terror to suppress any\nfuture conflict.	machine
@@ -566,7 +566,7 @@ message_id	ja_sha1	en	source
 2057_390_03	7f81729bfe617819f4feeb96bc1d2dea3d234156	<font color=blue>Rekoro</font> By rough estimation, the total\nfloor area of the <font color=yellow>Baschen Imperial\nCastle</font> is approximately 1.4 times that\nof Rubarika Castle.	machine
 2057_390_05	45745b7aa68d6dd7f956f6453db75b9b1dc19c2e	<font color=blue>Karlyn</font> ...You say such oddly\nprecise things in such a\nstrange voice.	machine
 2057_390_06	182d78bcbd1433778f17ef1e4336e42601de14bd	<font color=blue>Tika</font> O-oh, is that so? Wow!!	machine
-2057_390_07	ab9afaa790d086d307c7127130cbad13b1f25703	<font color=blue>Eve</font> Tika... you've really gotten\nthe hang of playing along...	machine
+2057_390_07	ab9afaa790d086d307c7127130cbad13b1f25703	<font color=blue>Evelysse</font> Tika... you've really\ngotten the hang of playing\nalong...	machine
 2057_390_08	c732e71db7f4a0f64677a47645344dbb543647ed	<font color=blue>Verda</font> This may not be my place to say,\nbut Karlyn, are you sure it's alright to\nenter the castle while wearing that\ncollar?	machine
 2057_390_09	3e9a6a21d6466ecbfd0eaa852056cacae5c7aeb9	<font color=blue>Karlyn</font> Oh, this?	machine
 2057_390_10	44623c7a03a25e3ec62c555cf0c97cca2e1e8b73	True. He did say it would\nexplode, but I'm not particularly\nworried about it.	machine
@@ -580,13 +580,13 @@ message_id	ja_sha1	en	source
 2057_390_18	988c9a4ec0558f00a952ca05c18099552f792b71	<font color=blue>Euwin</font> I've heard that the current\nEmperor of Baschen is a warrior who\ncommanded the front lines of the Holy\nWar during his time as Crown Prince,\nfighting with both weapons and arts.	machine
 2057_390_19	871ed33c6f7270637d3a771e97df50496ff3d445	He likely has absolute\nconfidence that no matter\nwhat happens, he cannot be\nassassinated.	machine
 2057_390_20	690b2a803d38dc68a0fe2f9920d0e582db0b1d32	<font color=blue>Euwin</font> ...You all said you wanted\nto meet General Givel, but what\nexactly do you plan to do once\nyou do?	machine
-2057_390_21	1f9897db2113a8bc503f47715676db8cee53d632	<font color=blue>Eve</font> First, I'm going to talk to\nhim.	machine
+2057_390_21	1f9897db2113a8bc503f47715676db8cee53d632	<font color=blue>Evelysse</font> First, I'm going to talk\nto him.	machine
 2057_390_22	da6d45620ae3bd4c20980fa3412d6dc873a42180	<font color=blue>Karlyn</font> You plan to talk him into\nstopping the war? Just so you know,\nCommander-in-Chief Givel―and of\ncourse, His Majesty the Emperor―are\nhardline hawks.	machine
-2057_390_23	5d5be3f50ae7c54fa7fae459e01a9a1871bcdee2	<font color=blue>Eve</font> That's not it. It's about\nyour power as the "Beast\nWitch."	machine
+2057_390_23	5d5be3f50ae7c54fa7fae459e01a9a1871bcdee2	<font color=blue>Evelysse</font> That's not it. It's\nabout your power as the\n"Beast Witch."	machine
 2057_390_24	0ee4e97fec4c6173a494db8f2290f1fcc5ab0a27	I want to know how you obtained a\npower that is the spitting image of my\nown symbol arts, and how you're able\nto grant it to others... if I can get an\nanswer.	machine
 2057_390_25	994909b5b88df813bbcba1a8c0680d339c6e2cc8	<font color=blue>Karlyn</font> Ah, now that you\nmention it, your symbol arts\nare very similar to mine.	machine
 2057_390_26	94cd7c0c3ae7f9e3df6f0c838ab2f280937dbc6c	Don't you even know the true\nnature of your own power?	machine
-2057_390_27	1f62da1803691f4174cd1976562f2dec9570391e	<font color=blue>Eve</font>: There's no point in hiding\nit. You're right.	machine
+2057_390_27	1f62da1803691f4174cd1976562f2dec9570391e	<font color=blue>Evelysse</font>: There's no point in\nhiding it. You're right.	machine
 2057_390_28	e84ca0ef33cde2f93fd789658707de647dd9f57a	Baschen's Commander-in-Chief\nis a vital hint for me in\nsearching for my roots.	machine
 2057_390_29	4b66fc598e1d0f2805afe9996dffe123eb9ff124	<font color=blue>Karlyn</font>: Looking at it that way,\nit seems we're both of use to\none another.	machine
 2057_390_30	396d2aa281be41b2214fe00ae577cd5fc68103c1	Just as much as her hammer and\ndouble-bladed sword, I'm interested in\nyour symbol arts. I'm sure Lord Givel\nwould be interested as well.	machine
@@ -787,10 +787,10 @@ message_id	ja_sha1	en	source
 2058_510_16	7c3146420eed5877c279d83f82ef15d6dbb59d61	Wait... ah! Over there! It's Tika!	machine
 2058_510_17	7ffc4c390ab23402dd8ad6c1afdb154869e363c6	Mmm... *yawn*...	machine
 2058_510_18	c020368af796638b1d6177fc00e99080789bfb81	Ah... Captain... and\nRishu-oneechan too...	machine
-2058_510_19	9660fdcf6e10bedc3d7f08ef7ccdeec8f3058e27	Eve! Captain!!	machine
+2058_510_19	9660fdcf6e10bedc3d7f08ef7ccdeec8f3058e27	Evelysse! Captain!!	machine
 2058_510_20	6983f7c67902a6b10ef4be8dbc06f8a278fa0837	Rekoro! Thank goodness! What\nabout Tika!?	machine
 2058_510_21	d9b2c1debe12185516429b24e48edd6bb1093d13	There is some damage to the\nArms' functions, but Tika's\nvitals are normal!	machine
-2058_510_22	c1f10ed43ad62444c774666c45cfde11e3d0cbe2	Ah! Captain, Eve! Thank\ngoodness! You're both safe!	machine
+2058_510_22	c1f10ed43ad62444c774666c45cfde11e3d0cbe2	Ah! Captain, Evelysse! Thank\ngoodness! You're both safe!	machine
 2058_510_23	74818ed4eb04fc0d055f564f379d6871944c528c	Verda!	machine
 2058_510_24	1fca11d2bab0413395bcf757de25c8d0ccad468d	Euwin! Karlyn! Over here! The\nCaptain and the others are\nhere!	machine
 2058_510_25	da42184a85937dc001d6ab69081d9f0b5641241d	Thank goodness, you're safe!	machine
@@ -798,7 +798,7 @@ message_id	ja_sha1	en	source
 2058_510_28	35f2708bec49ba8694de50f8c4e1384426c82afa	I know this is a shock. But we\ncan't afford to dwell on it right\nnow. Please, pull yourself\ntogether!	machine
 2058_510_29	d5f0d921c56e25628a4cdf8ee042b20afd438c11	Just... why... how could this...	machine
 2058_510_30	1c66055838e689230fb2bad26da4f962a117a202	Good grief! How is it that a\nbunch of grown adults are all\nfar more fragile than I am!!	machine
-2058_510_31	178e42c490b1152f86452d839422b4094101e7ce	I'm just glad the Captain, Eve,\nand Tika are all safe.	machine
+2058_510_31	178e42c490b1152f86452d839422b4094101e7ce	I'm just glad the Captain,\nEvelysse, and Tika are all safe.	machine
 2058_510_32	c2a1b5f6d95e26de0ba8fe9723d7b91287d0025e	Euwin and the others too...!	machine
 2058_510_33	5771a6a254da0587ff523c29d5f27d92abe1c982	By the way, is Welch here?!	machine
 2058_510_35	9e62fbc39334da1d2a47faaa4d8af238227e49e3	S-she's not here! What about\nyour side?	machine
@@ -828,7 +828,7 @@ message_id	ja_sha1	en	source
 2058_520_10	71d5439c2a1375ca9a3241453542ed88a199511d	Heeeeelp meeeeeeeee!!	machine
 2058_520_11	2ac134449b881c33e33203d6598a88d611a00f0c	Welch!	machine
 2058_520_12	5d677420ed4ff05ce4655650d9cb29036a9f92d0	Thank goodness! You're safe!	machine
-2058_520_13	904c8eb6eff7b7e63c21dd05c4b8a183e886e88c	Ah! Eu! Eve! Help meeeee!!! I'm\ngonna be killed!!!	machine
+2058_520_13	904c8eb6eff7b7e63c21dd05c4b8a183e886e88c	Ah! Eu! Evelysse! Help meeeee!!!\nI'm gonna be killed!!!	machine
 2058_520_14	4fe86c2aefce3f1d1747fa0505258a3410bdd5f6	Well... it seems.	machine
 2058_520_15	2fed3f0c298b9fa4bc0c2ba1e337aa0fdea15ea4	She has brought along some\ntruly terrible companions!	machine
 2058_520_16	08c45e9dea5559cda4f7e54b55885c5c9446dcf5	They are a swarm of lifeforms identical\nto the "Baschen's Beasts" summoned\nby Karlyn Kayson!! There are werewolf\ntypes mixed in as well!	machine

@@ -8,7 +8,7 @@ message_id	ja_sha1	en	source	engine	date	editor	note
 2502_020_01	9ae7b2901c95a97bf1bb233def4b54a612eadfed	Until I boarded this ship, I'd\nonly ever been to my home\nplanet and Earth.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_020_02	adbe54e83270c6d19b0dd82bf86634d739a196c9	So, there's a part of me that's\nactually quite enjoying this\njourney.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_020_03	9ca6f6841b5392c866ef5139bdc845fd05090ab2	Was that a bit insensitive? I'm\nsorry.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-2502_020_04	89eac398d72d3a18d7edbdd8e0165eb8624a662a	But... I have a feeling that\nyou're enjoying this journey\ntoo, Eve.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+2502_020_04	89eac398d72d3a18d7edbdd8e0165eb8624a662a	But... I have a feeling that\nyou're enjoying this journey\ntoo, Evelysse.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		name (en-evelysse 2026-10-08): Eve -> Evelysse, the user's decision
 2502_020_05	eb55902b336f9f15ebe82367d3041daf11d3dcaf	What makes you think that?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_020_06	24fd5c6e4cf9304c9d39923e95cc4ac1220f7bbe	You seem to have so many\nthings on your mind.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_020_07	622d5090ecc81a9c23add63d0a73770f06d6236d	It's because she's in love with\nme.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
@@ -111,12 +111,12 @@ message_id	ja_sha1	en	source	engine	date	editor	note
 2502_070_27	347af6f974277595bf888cf2eb5bed415d97699f	I'll just eat it myself. There are\n16 plates, but I'm not giving\nany to you, Captain.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_080_01	0c924728640c8d052c666ad2a6ab7807e97307da	Listen to this, Captain!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_080_02	fec5574839325628f4ff188577e13fa6297faa1f	I've become totally obsessed\nwith making pies since then.\nAnd get this!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-2502_080_03	921b39d87ae5fe56f6f6f985aeaabcc47bc733a0	It's Eve! Eve herself is helping\nme!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+2502_080_03	921b39d87ae5fe56f6f6f985aeaabcc47bc733a0	It's Evelysse! Evelysse herself is helping\nme!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		name (en-evelysse 2026-10-08): Eve -> Evelysse, the user's decision
 2502_080_04	797797ce7ef0f704fc2b80d2085679299ff027ff	Surprising, right!? Plus, she's\nactually quite a natural at it.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-2502_080_05	7fddd5006822a18f8bf407282e19e72e25268543	It really made me realize that\nEve is a girl after all!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+2502_080_05	7fddd5006822a18f8bf407282e19e72e25268543	It really made me realize that\nEvelysse is a girl after all!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		name (en-evelysse 2026-10-08): Eve -> Evelysse, the user's decision
 2502_080_06	6f34015348ba42ed399e79929e65606e09b75372	I'm thinking of trying to get\nsome romantic gossip out of\nher next time while we make\npies.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_080_07	405ed9497125a90bf1bbcfa1e3faa8607bbcacda	Even if you're curious, I won't\ntell you! It's a maiden's secret.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-2502_090_01	a92afeb5d0c7319ef160166428d87fa1325f8cd5	While I was making pies with\nEve... I felt like something like\nthis happened a long time ago.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+2502_090_01	a92afeb5d0c7319ef160166428d87fa1325f8cd5	While I was making pies with\nEvelysse... I felt like something like\nthis happened a long time ago.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		name (en-evelysse 2026-10-08): Eve -> Evelysse, the user's decision
 2502_090_02	e6c3e0c469dace6efa1a9115ddd0ac8ad028fa50	Like I was baking pies with\nsomeone...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_090_03	5aa1878c431a4a1e9c3ed8dde8bf8030c7eac08c	And then, I remembered!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2502_090_04	45b4f136bda4460c992ceb547c3e3fa315ca63f0	I love the pies my mother used\nto make, and we often baked\nthem together.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		

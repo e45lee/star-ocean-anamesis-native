@@ -53,6 +53,29 @@ denormals), compared bit for bit.
 | FUN_0242a9f4 `ADMSolver::ResolveContact` (the contact response) | `dynamics_adm_solver.cpp` | `dynamics/resolve-contact` | 36K checks, 0 mismatches |
 | FUN_0242ac84 `ADMSolver::UpdateVelocity` | `dynamics_adm_solver.cpp` | `dynamics/update-velocity` | 608K checks, 0 mismatches |
 
+| `CollisionAndConstraint<ADM>` (the links' capsules against the primitives, the joints against the constraints and the land; the NEON inverse) | `dynamics_adm_simulate.cpp` | `dynamics/collision-and-constraint` | 37K checks, 0 mismatches (12 races; `only=22CollisionAndConstraint`) |
+| `StandardIK<ADM, true>` | `dynamics_adm_simulate.cpp` | `dynamics/standard-ik` | 38K checks, 0 mismatches (`only=10StandardIK`) |
+| FUN_02429d78 `ADMSolver::BlendRotation` (aim, then slerps by the step-adjusted rates) | `dynamics_adm_solver.cpp` | `dynamics/blend-rotation` | 423K checks, 0 mismatches (`only=@0x2329d78`) |
+| FUN_0242a08c `ADMSolver::AimRotation` (NEON: the 3x3 inverse, FRSQRTE / FRECPE, a vectorized acos and sin / cos) | `dynamics_adm_solver.cpp` | `dynamics/aim-rotation` | 360K checks, 0 mismatches (`only=@0x232a08c`) |
+| `ArticulatedDynamicsManager::Simulate(float, unsigned, float)` | `dynamics_adm_simulate.cpp` | `dynamics/simulate` | 36K checks, 0 mismatches (91 races) |
+| `SimulateMain<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/simulate` | 32K checks, 0 mismatches (83 races; `only=12SimulateMain`) |
+| `PreprocessBeforeInternalForce<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/preprocess` | 37K checks, 0 mismatches (`only=PreprocessBeforeInternalForce`) |
+| `InterpolateRoot<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/interpolate-root` | 38K checks, 0 mismatches |
+| `CollisionSetting<ADM>` | `dynamics_adm_simulate.cpp` | `dynamics/collision-setting` | 38K checks, 0 mismatches |
+
+Still guest code in the solver (called from the natives): `MatrixPreFixAndMotionBlend<true>`, the force-emitter functor,
+`StandardIK<false>` / `Finalize` (not executed in the measured flows), `MatrixCalcFunc` (not dynamics').
+
+**Live-check runs:** a native checked on every call runs its nested natives unchecked, so the solver
+is verified level by level with `only=`: the full family (Simulate at the top), `only=12SimulateMain`,
+`only=PreprocessBeforeInternalForce`, `only=InterpolateRoot|CollisionSetting|@0x2329994|ExternalForce|ADMJoint11PrepareCalc`,
+and the primitives / contact / velocity helpers under the native solver
+(`only=14DynamicsSphere|13DynamicsPlane|15DynamicsCapsule|12DynamicsCube|DYNAMICS|@0x232a|@0x232ac`:
+3.0M checks, 76 races, and 2 differences of `DynamicsCapsule::Update`'s +0x80 the race rerun didn't
+classify: several ADMs share a character's collision capsules, and their CollisionSetting passes call
+`Update` on the same primitive from different dynamics workers, a race of the game's. The same run
+with `--guest-cpus 1` (one dynamics worker): 2.98M checks, 0 mismatches, 0 races).
+
 A native another native calls (ADMJoint::PrepareCalc from ArticulatedDynamicsManagerBase::PrepareCalc,
 ADMJoint::Flush from Flush) is called as C++ normally, but through its guest entry while the family's
 live check is on (`checking()`, dynamics_family.h), so a run with `only=` checks it on its own: the
@@ -90,6 +113,10 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   it on the node's subtree (and returns at once when it is set already), `MakeMatrix` clears it (the
   primitives' `Run` calls `MakeMatrix` when set). render_layout.h's comment ("matrix fixed (no
   hierarchy update)") reads it the other way round.
+- **Shared memory:** an ADM's `m_hitFlags` array is shared by the ADMs of a character, whose workers set
+  it concurrently: the live checks don't snapshot it (rewinding it for a replay raced with the other
+  workers: thousands of "races" and a few unclassified differences; with one worker: 0); the unit test
+  compares it.
 - **NaN branches:** an unordered FCMP takes `le` / `lt` / `pl` / `hi`: e.g. `ExternalForce` doesn't damp
   with a NaN mass, `ResolveContact`'s fast-contact test (`b.le`) isn't fast on a NaN velocity.
 
@@ -115,3 +142,10 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   FUN_0242a08c 109, FUN_02429994 52, FUN_0242a9f4 34, FUN_0242ac84 31), then the primitives
   (`DYNAMICS_CAPSULE::TestIntersection` 93, the `Run`s 178, `DynamicsSphere::TestIntersection` 70, the
   `Update`s 38). Only the non-MP `ArticulatedDynamicsManager` instantiations run.
+- **After** (the battle flow re-profiled with every native above, same machine, 2026-10-08): the
+  scope's guest self time 2,045 -> 339 samples (3.3% -> 0.8% of the run's busy samples), the natives
+  567 (1.4%): the scope's time 2,045 -> 906 samples. What stays guest code: the IDE collision
+  handler / dispatch pair (59 + 61: a spinlock and the dispatcher's synchronous posts around the
+  height objects' guest tests), `ADMHandler::Run` (24), `DynamicsCommandNotify::Handler` (20), the
+  managers' `Run`s and the rest of the scope's 750 functions (mostly unexecuted: set-up, cloning,
+  property Get / Set, the MP variants, rigid bodies).

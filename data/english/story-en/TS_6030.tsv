@@ -181,7 +181,7 @@ message_id	ja_sha1	en	source
 6031_050_07	091c74006cc6ae44bd314dc84156b48424396a4f	It "summons objects or people\nacross time."	machine
 6031_050_08	0a490d08ec520de1f20b2747a3618aef3eba5844	That's just like...!	machine
 6031_050_09	02a69d96aee402f15b042eb585609a3989e0dcbb	Yes. Does it remind you of\nsomething?	machine
-6031_050_10	a67e87baa9d0c3d89442376286efe45739b7d9cc	Like Eve's... summons?	machine
+6031_050_10	a67e87baa9d0c3d89442376286efe45739b7d9cc	Like Evelysse's... summons?	machine
 6031_050_11	87f69f78c3c2d1a8ee6fb2f73a25dee0d17e9f1c	I've heard that as long as the\nconditions are met, the Urza\nSystem can summon a\nconsiderable amount of mass.	machine
 6031_050_12	f29dad12208da7b7adaf73bd69e08de2321bfa90	Who knows? It might even be\npossible to summon an entire\nplanet.	machine
 6031_050_13	5290d0e12b76a125adab3ea369f868b7153f2eac	...What are you talking about?\nSuch an absurd power is surely\nimpossible.	machine
@@ -226,7 +226,7 @@ message_id	ja_sha1	en	source
 6031_050_54	886f107d067564b2ff9fba6df513b45f64dbd539	...Gems.	machine
 6031_060_01	4f64b10a8a22ffca70ed2df35dca583a7e58c64a	In that case, I am concerned\nabout the Thornite.	machine
 6031_060_02	9490a1a18841294573df7e8944f31461be7b2e8f	The fact that a Thornite is\nnear a gate with the limited\nability to interfere with\nspace-time is...	machine
-6031_060_03	65d8f611a18da1823f07bed96104ebee45031730	I heard about this from Eve\nbefore.	machine
+6031_060_03	65d8f611a18da1823f07bed96104ebee45031730	I heard about this from\nEvelysse before.	machine
 6031_060_04	4e8e3f44d869aa698b8881a96f8c499ff58b9a6c	Givel said that the Thornite's\nthorns act as antennas and\nneedles to repair dimensional\nrifts.	machine
 6031_060_05	23459eb225e27d5596a18ce2683ecfeae08cfff4	So, I think it's trying to repair\nthe space-time distortion\ncaused by the gate's power\nthis time too.	machine
 6031_060_06	80cc1df87df45c1ea0140fa05271f019bae0ba69	Hmm... so the Thornite appears\nwhenever time is crossed.	machine
@@ -359,11 +359,11 @@ message_id	ja_sha1	en	source
 6032_090_09	35d42cde3001abdb9d04e4635893f237ca1b6b3b	We can't take any risks without warp\ncapabilities. Especially with McKinley\ninvolved. Around Lazuli, mobility is\ndirectly linked to safety and survival.	machine
 6032_090_10	13d998133e252fe5a2e3f23c218c4ea3f46473bc	I have stockpiled enough food\nfor everyone in case of\nemergency, so staying here for\na while won't be an issue.	machine
 6032_090_11	77439b6e801b5ec2ff3e5f602846d7b72d788cc4	If it's only for a month, maybe\nbeing a nuisance for a bit is\nour best bet.	machine
-6032_090_12	d1ff27fc47459aba64c1685648d5570efb390074	No way! While we're doing that,\nBig Sister Eve might go\nsomewhere else!	machine
+6032_090_12	d1ff27fc47459aba64c1685648d5570efb390074	No way! While we're doing that,\nEvelysse might go somewhere\nelse!	agent
 6032_090_13	9235313c480cd1762c84d2ac3a25a5fcd7cc1d9b	I hear you, but unlike during\nthe Holy War, we aren't in a\nsituation where acting faster\nmeans the war ends sooner.	machine
-6032_090_14	c8fd09f4619f90c949f981d7812fad03c361b473	Even Eve isn't moving faster\nthan a starship, regardless of\nhow she's traveling.	machine
+6032_090_14	c8fd09f4619f90c949f981d7812fad03c361b473	Even Evelysse isn't moving\nfaster than a starship,\nregardless of how she's\ntraveling.	machine
 6032_090_15	b7282673c73748812e1ef108651d31498e49d428	True. And based on the\nfootage shown by the Urza\nSystem,	machine
-6032_090_16	12538d1e01baf49191fc46be0ef1b046031d30ae	I believe the purpose behind\nEve's actions lies somewhere\nwithin this Azurite system.	machine
+6032_090_16	12538d1e01baf49191fc46be0ef1b046031d30ae	I believe the purpose behind\nEvelysse's actions lies\nsomewhere within this Azurite\nsystem.	machine
 6032_090_17	0ef33ba45caf881aacf48d92f30b148e7da67b42	At the very least, it didn't\nseem like her goal was simply\nto watch some footage on\nLazuli.	machine
 6032_090_18	0b46e8bc1576bc2512493b4714265bf80c713f47	I guess... that's true...	machine
 6032_090_19	f676c8722bddc623b34bed767f29912d1e9bc111	I understand that Kevin's story\nwas a huge shock to Heath,\nValka, and the Captain.	machine
@@ -373,17 +373,17 @@ message_id	ja_sha1	en	source
 6032_090_23	24a842d99071875ddcafec58e8ac41d54e4fff17	...I... yeah... you're right.	machine
 6032_090_24	b78d076d47bcee8ca29d283cd5afbf919d6e44af	...Tika...	machine
 6032_090_25	bf18a717426307d11f2f5145d7a5c870f51888e2	Say, Captain. If we cannot\nhead out into space right now,\ncould we perhaps investigate\nthat Urza System ourselves?	machine
-6032_090_27	799f614c498cd135478cc7a343ff3f7a927eab19	The Eve in the recording was\nusing Lavarnia's Gems, right?\nWhy don't we try to recreate\nthat ourselves?	machine
+6032_090_27	799f614c498cd135478cc7a343ff3f7a927eab19	The Evelysse in the recording\nwas using Lavarnia's Gems,\nright? Why don't we try to\nrecreate that ourselves?	machine
 6032_090_28	c33160bf00c8ce3833e14b065805a2d642b838cc	I see. We do have the\nnecessary components.	machine
 6032_090_29	de528f8dc872a995420b8344a40bcbb3ae8ee51e	First, Karlyn's summoning\ncrest. As for the Gems, there's\none final box left that wasn't\ntransported by McKinley.	machine
 6032_090_30	1515f562af61161745a49047dedf6cf85b035265	Regardless, if we can view past\nrecordings through the Urza\nSystem,	machine
-6032_090_31	8ab137676fb902b4faeec9ae608bdd377d79f886	we might be able to trace\nEve's footsteps or find out if\nRaza and Ober are truly hiding\nthe purpose of the war.	machine
-6032_090_32	79d8fc98b5c3f8b62a2693f97a664198e88338f3	Yes. I'm not confident I can\nhandle it well, but I think I\nshould try again too. For the\nsake of learning Eve's goal.	machine
+6032_090_31	8ab137676fb902b4faeec9ae608bdd377d79f886	we might be able to trace\nEvelysse's footsteps or find\nout if Raza and Ober are truly\nhiding the purpose of the war.	machine
+6032_090_32	79d8fc98b5c3f8b62a2693f97a664198e88338f3	Yes. I'm not confident I can handle it\nwell, but I think I should try again too.\nFor the sake of learning Evelysse's\ngoal.	machine
 6032_090_33	6abc9f3c73b694d0fb70c13f07adeaa1421ea6ea	I propose this is a useful plan.\nMista Kevin, do you concur?	machine
 6032_090_34	d09f3f3c23887c0d18819b4330b72701d05fe949	...That is fine. I have spent\nmany years researching that\ngate, so I am curious to see\nwhat happens.	machine
 6032_090_35	b7a50db0f2b596d98a7da01a4ccdd3c6b8e922ea	Even if the conditions are met,\nwe don't have a manual. Stay\nvigilant.	machine
 6032_090_36	0104eb00c3a9428f78a1ac95756fa51629038c84	I know. ...Let's go, everyone.	machine
-6033_100_01	d17c756d6441100c3e29a7add5a0d743cfd3d289	All right, let's do this. Eve,\nyou're holding the Gem, right?	machine
+6033_100_01	d17c756d6441100c3e29a7add5a0d743cfd3d289	All right, let's do this. Evelysse,\nyou're holding the Gem, right?	machine
 6033_100_02	ad1e77abee7117db484fa01e9f1b0b318dc4a85a	If you sense any danger, we\nstop the experiment\nimmediately. Don't push\nyourself.	machine
 6033_100_03	b7b119f1d0508f57d2d1cef2385f082b2535bd56	...It's actually kind of creepy\nwhen you're genuinely worried\nabout me.	machine
 6033_100_04	16ee3dce71b7ceb2eb0f1e2b9f1f918e9a446b04	...Alright, here I go!	machine
@@ -416,13 +416,13 @@ message_id	ja_sha1	en	source
 6033_100_33	bb171d26ebce9726ca44b9870810818057d44c18	Tsk... That's a recording from\nmy commissioning ceremony.	machine
 6033_100_34	ca669f110b63d90b0d051166665d64761fe31b23	Karlyn: Hmm. You look quite\nproud of yourself. I guess the\nmilitary life really suited you.	machine
 6033_100_35	1a1f929b259755d2ef38d43d1cd713b303429428	Watch how you say that...	machine
-6033_100_36	7624833cdbb8ec6a88a25025d4bb2574f51ee87e	There! I found it! This is the\nrecording of Eve I saw the\nother day...! She should be\nappearing on the right!	machine
+6033_100_36	7624833cdbb8ec6a88a25025d4bb2574f51ee87e	There! I found it! This is the\nrecording of Evelysse I saw the\nother day...! She should be\nappearing on the right!	machine
 6033_100_38	533346c24fca0e2ffd2dbba8d0fe81fad9e3d1da	Oh, it is far clearer than it was\nback then!	machine
 6033_100_39	7b18d66b4117634c540fcd0306432f28fbb39f68	They've been staring at the\nrecording while holding the\nGems...	machine
 6033_100_40	8c2c7b483d9e347a934be65f6d04acee1f93d488	Kevin. Do you know anything\nabout her?	machine
 6033_100_41	0834d5666ff8d0e72242dd89942fd14f0baafa13	My apologies. I have never\nseen her before.	machine
 6033_100_42	dbf018590ea894fee3dd00b5db45fffb2b0d5fe3	I see...	machine
-6033_100_43	c6ab639f08117411ccb1b084041dd0aaebfa1874	Hm? Is Eve watching a\nrecording of some planet?\nWhere on earth is that...	machine
+6033_100_43	c6ab639f08117411ccb1b084041dd0aaebfa1874	Hm? Is Evelysse watching a\nrecording of some planet?\nWhere on earth is that...	machine
 6033_100_44	0febcfb236197edb550d1d2766cbdcc268e959f4	Earth...	machine
 6033_100_45	5590ff8011105dbc9611adfe36ab2f63edc164d3	What?	machine
 6033_100_46	add7d1d608f52db2bac690b5293436062adfa836	There is no mistake. That is...\nEarth.	machine
@@ -436,14 +436,14 @@ message_id	ja_sha1	en	source
 6033_110_08	2cf42191cfb4634d551cea87e39f02dc47f422ab	Is that...! Valka!	machine
 6033_110_09	6af168ac05bf7830e2cfcc51a911beddfe962269	This light... Mista Kevin, could\nthis be...?	machine
 6033_110_10	f0124a5993494de4f40a340ba4ac21232d2fbee8	Yes... there's no mistake...!	machine
-6033_110_11	7481844950be78156d384d374fcc916a24635dad	The Earth Lady Eve was seeing\nisn't the Captain's Earth.	agent
+6033_110_11	7481844950be78156d384d374fcc916a24635dad	The Earth Lady Evelysse was\nseeing isn't the Captain's Earth.	agent
 6033_110_12	8aa102caab1c752fdd7bd4a4b06ea396275d639d	It's Mista Kevin's Earth. In\nother words, the planet Raza.	machine
 6033_110_13	8f693cfd05ad3a23c13835c5ae391595542e9c9c	What!! This is Raza...!? You mean this is\nfootage of the exact moment it blew up\nbecause of a failure in handling\nExalithium crystals?	machine
 6033_110_14	c51c4a9b0df8e40d42b9c430e3f86dd570e30aff	Why on earth is she watching\nsomething like that?!	machine
-6033_110_15	02ac2ea48910600f5a1da7bc340b8cd4d8920ceb	I don't know, but... hm, it looks\nlike the image Lady Eve was\nseeing has cut out.	agent
-6033_110_16	242498006224f59013b0cb10dce6c47307bb7ebc	The Gems Lady Eve had were\nshattered... They were probably low\nquality, so she couldn't make them last\nas long as Karlyn did.	machine
+6033_110_15	02ac2ea48910600f5a1da7bc340b8cd4d8920ceb	I don't know, but... hm, it looks\nlike the image Lady Evelysse\nwas seeing has cut out.	agent
+6033_110_16	242498006224f59013b0cb10dce6c47307bb7ebc	The Gems Evelysse had were\nshattered... They were probably low\nquality, so she couldn't make them last\nas long as Karlyn did.	agent
 6033_110_17	7ae9871ebfbc3eec794210951252ecedfd5ad71d	But I'm reaching my limit too.\nIsn't there anything else that\nlooks like a hint?	machine
-6033_110_18	21cff367e96d5bd5dbabb6eacfdd6c988a92a152	Eve has picked up the next\nGem and started watching a\nnew image! Just hang on a\nlittle longer!	machine
+6033_110_18	21cff367e96d5bd5dbabb6eacfdd6c988a92a152	Evelysse has picked up the\nnext Gem and started watching\na new image! Just hang on a\nlittle longer!	machine
 6033_110_19	fe576dac9c93313efc34e01b3eb69e2799b2202d	This image is kind of dark. I\nwonder if it's a different Earth\nthan the last one.	machine
 6033_110_20	a16177a35d64e22d360bb753a01ab83cf44374ac	The screen is small, so it's\nhard to tell... but it looks like\nit's inside some kind of building.	machine
 6033_110_21	dc0ad4f8aa46901934586ed18da5848ad6120709	It gives the impression of a\nscience plant or a medical\nplant. Look, there's something\nlike a bed in the back... huh?	machine
@@ -456,19 +456,19 @@ message_id	ja_sha1	en	source
 6033_110_28	5ea28ce5e79cfe164e8221c7fc75cf5eec2a3004	Is he unconscious...? It looks\nlike he's being restrained.	machine
 6033_110_29	afecdfb8d7b20ed9c5a4b1865f9f692601672c29	Wait, there's someone else\nbeside him...!	machine
 6033_110_30	36d9b9ce29789f267fe9beef0644693181852dfb	Wh-who is it...!? Hey, they're\nfacing away, I can't see their\nface! Get around them and give\nus more light!	machine
-6033_110_31	30d4865b57381a5c08386d4c8c6b3bfe45140945	...Why... why is Eve seeing a\nvision like this?	machine
+6033_110_31	30d4865b57381a5c08386d4c8c6b3bfe45140945	...Why... why is Evelysse seeing\na vision like this?	machine
 6033_110_32	8acbc0a76ced00937ac77ef50ef5b7ea3aa4ffd0	Ugh... I'm reaching my limit... Is\nthere anything else...?	machine
-6033_110_33	438bac12181ed1d7b35892159a0854c03f032d42	Hm? Eve is turning around.	machine
+6033_110_33	438bac12181ed1d7b35892159a0854c03f032d42	Hm? Evelysse is turning\naround.	machine
 6033_110_34	a8270e12e68b37dfa8ff9c05ae0f6e776fd3605f	"...This feeling... could it be\nKarlyn?"	machine
 6033_110_36	a8a683c31ab2a896997df5c45d690a955d5cab61	"...I wonder if Mastima knew\nabout Urza's Gate...	machine
 6033_110_37	b82ce76257d38ae99e57451e8d90f9b6294bd94c	...Even though I told her to\nleave this star system."	machine
-6033_110_38	34677848649f4d5a97f41873c290659460adb274	Eve! Eve, what are you saying!?\nYou...!	machine
+6033_110_38	34677848649f4d5a97f41873c290659460adb274	Evelysse! Evelysse, what are\nyou saying!? You...!	machine
 6033_110_39	15ad9dca5bf5292d430f9c43cde7c9fa963386fb	"But it's... too late now."	machine
-6033_110_40	f3e71d2ee8e17a12803b3be9bf5430f24c6689a5	Eve!	machine
-6033_110_41	cdce8496f1528c14f6b32f06d00065cab696be9b	Big sister Eve!	machine
+6033_110_40	f3e71d2ee8e17a12803b3be9bf5430f24c6689a5	Evelysse!	machine
+6033_110_41	cdce8496f1528c14f6b32f06d00065cab696be9b	Evelysse!	agent
 6033_120_01	0916042f0a8eb28fdc5e4dcf625e3447d7d15f97	*Hah... hah...* I'm... I'm sorry. I've\nreached my limit...	machine
 6033_120_02	0e9954cd150247b552f3dd09f6980850b848739f	No, you did quite well. I was\nable to see something very\ninteresting.	machine
-6033_120_03	1ca82d1ee410cc593471063186fa0d5e1c77ef83	...Eve...	machine
+6033_120_03	1ca82d1ee410cc593471063186fa0d5e1c77ef83	...Evelysse...	machine
 6033_120_04	4afaea1e6ee05d35e0e89d5dafb2bda6dbf260d8	That was definitely Givel, right?	machine
 6033_120_05	56c4bfd8daec887ca82eb9cd3fb39fb31620637a	It looked as if he were being\ntreated... or perhaps\nrestrained. And the person\nnext to him...	machine
 6033_120_06	71cd78323d282836518fe2af1c72bce6b4fb7732	...I think they were likely an\nOber.	machine
@@ -477,16 +477,16 @@ message_id	ja_sha1	en	source
 6033_120_09	78cd289e60edb4f33e730a69ea20503abd603838	Many different races have\nhorns, so that might not be\nmuch of a clue...	machine
 6033_120_10	7968398de25e663c649e48c8566e20e676711088	Huh? What? So you're saying\nGivel didn't actually disappear\nback then,	machine
 6033_120_11	485121b430cdfdd0a19533d7589f71eee50836ee	but was actually captured by\nsome Ober somewhere?	machine
-6033_120_12	e4cdcf23ae4a97f28913509a350c52b6a99a5509	No, Eve should be seeing a\nrecording of the past.	machine
+6033_120_12	e4cdcf23ae4a97f28913509a350c52b6a99a5509	No, Evelysse should be seeing\na recording of the past.	machine
 6033_120_13	d770a4754d028ea5f1430d6b843a0f0a3d0d6b34	It's possible that the footage is\nfrom before Givel ever came to\nDaftine.	machine
 6033_120_14	e2617abb2461488c484ce962c4d3da2736557759	Ugh... my head is spinning!	machine
-6033_120_15	4d91cacef1e2ff5e479d6407ea2c6924647f26f2	The issue isn't so much when\nthe footage is from, but why\nEve was watching it.	machine
+6033_120_15	4d91cacef1e2ff5e479d6407ea2c6924647f26f2	The issue isn't so much when\nthe footage is from, but why\nEvelysse was watching it.	machine
 6033_120_16	9411f73efd1c9e62d20ee15442bf3f4b3779446d	After stealing the Rose family's\nGems and shaking us off,	machine
 6033_120_17	2e56aa3bc197b47104e82e2ff121318895f5a05c	She must have come here\nspecifically to see those\nimages of Planet Raza and\nGivel.	machine
 6033_120_18	a103db3e0f4459b195bcad390a6640e8cdd8bc0b	Either way, that just adds to\nthe number of suspicious\nthings about that woman.	machine
 6033_120_19	62025175569d982017f944c7d0fa7ac752b0d774	I don't doubt she's been an ally of ours,\nbut she may have been connected to\nthe Giverese in some way in the past.	machine
 6033_120_20	a6c91d000a73971b823812f17448b42c0a768b51	...No way.	machine
-6033_120_21	9986cadbe16f7e891bc3aca958359d119c4c2056	When Eve first met the Captain\nand me, she said she had lost\nher memories.	machine
+6033_120_21	9986cadbe16f7e891bc3aca958359d119c4c2056	When Evelysse first met the\nCaptain and me, she said she\nhad lost her memories.	machine
 6033_120_22	26ee48de8034f82c0de9d52956eb72919cbbe448	I don't know how much of that\nwas true.	machine
 6033_120_23	d448ea896800ce98ab87e2c866502dbdad0a8611	But... throughout our journey,\nshe's never shown any sign of\nharboring ill will toward us.	machine
 6033_120_24	75dd9f36bfafe59ffdbd1cdd000981de162d68c6	Coro...	machine
@@ -494,10 +494,10 @@ message_id	ja_sha1	en	source
 6033_120_26	0a3d25efd240d728c5e9fd1fc8b963d1eadde437	I know. I know that true villains\ndon't show their real colors\nuntil the very end...	machine
 6033_120_27	687158dfaa56b769f712faa19dac4f5cb18287a2	But if that's the case, there's\none thing I just can't wrap my\nhead around.	machine
 6033_120_28	d3799734d0f34cc481541a4dc9c461825d9be4dd	...I feel the same.	machine
-6033_120_29	814c0a69a754f2bd7bc90bcd4163ec26bc2e5ea1	If Eve were actually a villain,\nplotting to use us from the\nshadows to cause some kind of\nharm...	machine
+6033_120_29	814c0a69a754f2bd7bc90bcd4163ec26bc2e5ea1	If Evelysse were actually a\nvillain, plotting to use us from\nthe shadows to cause some\nkind of harm...	machine
 6033_120_30	252032881bd2600f3b08ea090456b464007f5d50	Then there is one thing that\nsimply cannot be explained.	machine
 6033_120_31	2cb4c8ce9fd4c28bad49d8515c6b611e9d714577	Right, Captain?	machine
-6033_120_33	6576352cf6671b025f8004eaee977396d4da40a8	If Eve were a villain... then why,\nback then...	machine
+6033_120_33	6576352cf6671b025f8004eaee977396d4da40a8	If Evelysse were a villain... then\nwhy, back then...	machine
 6033_120_34	612f6299e08c91e95b557569f3a35ed4c9d2d99e	Hmm?	machine
 6033_120_35	4470573f8cf6f9ce2de5a916a313184cc6e0e29a	Hm?	machine
 6033_120_36	5590ff8011105dbc9611adfe36ab2f63edc164d3	What?	machine
@@ -709,11 +709,11 @@ message_id	ja_sha1	en	source
 6034_170_62	7888e8d7468b2b45d1013874657039dfd3b6cf73	...Still, this is finally a step\nforward.	machine
 6034_170_63	701f5f6a3437144f733d0b2068496eb2ae140b94	Tika... You are right about that.	machine
 6034_170_64	dafca1da9d718cb51565bbd034da6e24ad64fcff	We managed to bring Heath\nand Jeanne together.	machine
-6034_170_65	6c06f5e0cc549ac51d0baf555b21cd47d521d8df	Now... I have to find Eve and\nask her why she did such a\nthing.	machine
+6034_170_65	6c06f5e0cc549ac51d0baf555b21cd47d521d8df	Now... I have to find Evelysse\nand ask her why she did such\na thing.	machine
 6034_170_66	887e9aff222a97164061f11d0a160cc1f356f17f	...Finding a way home for you\nand Ricardo is also an\nimportant goal.	machine
 6034_170_67	d678b6dae26fea7b372c0fd3e87678df18a51607	Thank you.	machine
 6034_170_68	c37eced0d82ab72f9c6ed160e167588372e27ab6	But I'm okay for now. Right\nnow, we have a place to return\nto.	machine
-6034_170_69	bae76e8055ee72231661a32c4bf8a191251f1016	That's why... I will absolutely\nprotect the place where Eve\nbelongs.	machine
+6034_170_69	bae76e8055ee72231661a32c4bf8a191251f1016	That's why... I will absolutely\nprotect the place where\nEvelysse belongs.	machine
 6034_170_70	d2aff6bcf232937abd923a7380ce0b1c6a3e69e4	Boss! Takeoff preparations are\ncomplete!	machine
 6034_170_71	47a4b9a5ee7bee9998560b3cc6c869a9a2f5d877	That was close. Ober's fleet is\nalready closing in on us.	machine
 6034_170_72	76f7dfbd380c2998ab4545050d14e48406b3adc9	We'll use the subspace Warp\nDrive to escape to the edge of\nthe star system for now.	machine
@@ -838,8 +838,8 @@ message_id	ja_sha1	en	source
 6035_210_16	684d33337f46dad4cb6d93f54051b2822aaef772	...In the end, doesn't this just\nmean there's more stuff we\ndon't understand?	machine
 6035_210_17	43e90eb6ee308d9202faab72864f3dda07f13150	Even if we did figure it out, it's\nnot like we can just side with\nHeath.	machine
 6035_210_18	7e00fe09de848ebde88479121587c17e920195a0	I suppose all we can do now is\nwait for Valka to recover and\nthen decide our next move...	machine
-6035_210_19	2d6f062507f3c38f08023d333a7e9815462c2642	In a situation like this,\nsearching for Eve is out of the\nquestion.	machine
-6035_210_20	1ca82d1ee410cc593471063186fa0d5e1c77ef83	...Big sister Eve...	machine
+6035_210_19	2d6f062507f3c38f08023d333a7e9815462c2642	In a situation like this,\nsearching for Evelysse is out\nof the question.	machine
+6035_210_20	1ca82d1ee410cc593471063186fa0d5e1c77ef83	...Evelysse...	agent
 6035_210_21	e01934cc625ead5dec426d499dd95c8cab77ccf8	Um, Jeanne?	machine
 6035_210_22	bc27e2b5781c82d6545e56c4e980ef60be4d1388	Yes?	machine
 6035_210_23	57444733e56f1a02a77ead2ef06ac8f263e57230	Is there... some kind of omen or\nsign that appears when a\nPhantom manifests?	machine

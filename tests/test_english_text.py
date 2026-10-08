@@ -164,12 +164,24 @@ def test_glossary_avoid(font):
     assert C.check("レボリューション", "Revolution", font, g) == {}  # no term in the Japanese: no check
 
 
+def test_glossary_avoid_whole_word(font):
+    """An avoided word ending in `$` counts only as a whole word: リーシュ is Evelysse (english.md 7.18),
+    and "Eve$" flags Eve and Eve's but not Evelysse, even, Everyone or event."""
+    g = {"リーシュ": {"en": "Evelysse", "variants": [], "avoid": ["Eve$", "Leash"], "kind": "name", "source": "human"}}
+    assert C.check("リーシュ", "Evelysse", font, g) == {}
+    assert C.check("リーシュさんも", "Even Evelysse and everyone at the event", font, g) == {}
+    assert C.check("リーシュ", "Eve", font, g)["glossary"] == [["リーシュ", "Evelysse", "avoid: Eve$"]]
+    assert C.check("リーシュの", "Evelysse, Eve's", font, g)["glossary"] == [["リーシュ", "Evelysse", "avoid: Eve$"]]
+    assert C.check("リーシュ", "Leash", font, g)["glossary"] == [["リーシュ", "Evelysse", "avoid: Leash"]]
+
+
 def test_glossary_term_splits():
     """The user's term splits of 2026-10-08 (english.md 7.18) are glossary rows that flag the old words."""
     g = T.glossary_dict(T.glossary_rows(T.Ctx()))
     want = {"進化": ("Augment", "Evol"), "強化": ("Enhance", "Strengthen"), "アシスト": ("Assist", "Assistance"),
             "転移": ("Warp", "Teleport"), "景色": ("Scenery", "Scenic"), "絶景写真": ("Superb Scenery Photo", "Scenic"),
-            "風景写真": ("Scenery Photo", "Landscape")}
+            "風景写真": ("Scenery Photo", "Landscape"), "リーシュ": ("Evelysse", "Eve$"),
+            "レディ・リーシュ": ("Lady Evelysse", "Eve$"), "イヴリーシュ": ("Evelysse", "Eve$")}
     for ja, (en, avoid) in want.items():
         assert g[ja]["en"] == en and avoid in g[ja]["avoid"], ja
     assert g["片手剣"]["en"] == "OHS" and "One-handed Sword" in g["片手剣"]["variants"]

@@ -70,6 +70,12 @@ struct MState {
 };
 
 // A private manager and emitters (copies), for the guest original (and, in the tests, the native too).
+// The fake vtable's virtuals besides Prepare / Simulate: HierarchicalObject's WorldMatrix (19), SetWorldMatrix
+// (20), MakeMatrix (21), SetPosition (26), SetPosture (29), SetScale (32), IParticleObject's Prepare (3); each logs
+// a CallKind::VCall.
+inline constexpr int kFakeSlots[] = {3, 19, 20, 21, 26, 29, 32};
+const char* fake_slot_name(int k);
+
 struct World {
     static constexpr int kMaxEmitters = 4096;
     ParticleManager* m = nullptr;
@@ -99,6 +105,7 @@ struct GuestRun {
     std::string error;
     std::function<void(size_t, Call&)> after;
     std::vector<std::pair<u64, CallKind>> extra;  // more callees to stub (Simulate's), by guest address
+    std::function<u64(u64)> relocate;  // a VCall's answer (a pointer the native got) for the guest's objects
     GuestResult result{};
     // Runs fn(x..., s0 when given).
     void run(u64 fn, std::initializer_list<u64> x, const float* s0 = nullptr);

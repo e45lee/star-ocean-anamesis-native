@@ -14,7 +14,7 @@ message_id	ja_sha1	en	source
 6052_010_14	acd281656002738dd6ff1d79ad01cd026346f0c6	...Boss...	machine
 6052_010_16	9aea1a2f55c213010798e920ea242ed34671572f	I don't even know where to\nstart. Once the ship is fixed,\nshould we first check if Isabel\nis safe?	machine
 6052_010_17	f792960e06a0b2156d4ad7bad492909d280406a7	I'm not sure. With Givel in this\nstate, I feel like it'll be\ndangerous wherever we go.	machine
-6052_010_18	6c9c21d378c98fe5f69d5e2cc01e4f810c2fe8ab	Whether he's awake or asleep,\nhe's nothing but a nuisance. If\nit weren't for Eve, I'd want to\nfinish him off right now.	machine
+6052_010_18	6c9c21d378c98fe5f69d5e2cc01e4f810c2fe8ab	Whether he's awake or asleep,\nhe's nothing but a nuisance. If\nit weren't for Evelysse, I'd want\nto finish him off right now.	machine
 6052_010_19	2887f8826241a81bd09a220a56dc1b8175792138	Don't be ridiculous... I went\nthrough the humiliation of such\na spectacle... just to recover\nhim.	machine
 6052_010_20	9e5907904d650292f2468f7a038a0e59defd73e7	...While he's still alive, I must\nuse every bone, every strand\nof hair... as experimental\nmaterial...	machine
 6052_010_21	48b1cccf11b1a7f3df10d35137e653f6c7aa060e	I'd really prefer it if you didn't\nsay such dangerous things...	machine
@@ -30,7 +30,7 @@ message_id	ja_sha1	en	source
 6052_010_31	6fe32049d47e335ad6b32c48e1717f8ef7d82862	...That's not important. More\nimportantly, how did it go?	machine
 6052_010_32	ea1da574e31d1fd77af45f3dee853f24b9f23711	Ah, I was able to collect plenty of\nsamples even amidst all that\ncommotion. A full flask's worth―the one\nthe Captain bought for me previously.\nThis here is the surplus.	machine
 6052_010_33	f175f933323aa26cbe59de83de4bb224af181b6e	The liquid that filled the\ncapsule Givel was in.	machine
-6052_010_34	a614fad4eef9b5877cad68677520b8682a9acf6f	Between Givel, that Phantom of\nunknown origin, and the way\nAsmodeus was manipulating\nEve...	machine
+6052_010_34	a614fad4eef9b5877cad68677520b8682a9acf6f	Between Givel, that Phantom of\nunknown origin, and the way\nAsmodeus was manipulating\nEvelysse...	machine
 6052_010_35	d3400659310549f05cbb01196c323014156cc531	There were plenty of hints.\nIdentifying the components was\nsimple.	machine
 6052_010_36	2899ceb09dd52f31512cddfc30769202957924d0	Even I can tell if you put it that\nway. It was all sparkly and\nrainbow-colored.	machine
 6052_010_37	3ed6c186da79baf9dce70ba4c7753eb3db7fe83b	It's Gems, right?	machine
@@ -43,17 +43,17 @@ message_id	ja_sha1	en	source
 6052_015_01	ad64a60a477f937e7fbe50a77af74b0e796dc4f0	Alright. Looks like we've\nreached a conclusion, so shall\nwe finish them off?	machine
 6052_015_02	a7d9ff5c4dfaa70632f34d0e3caf96f6dc225c42	Wait, wait, wait, Welch! It's too\nsoon!	machine
 6052_015_03	847ac069d051dd52b0b0dcf6bcd4fdd1218c14b3	Why?!	machine
-6052_015_04	a514be0469b76c6ea05550f08e127219627b1e1a	Because we still don't know\nwhy Eve was trying to protect\nGivel.	machine
+6052_015_04	a514be0469b76c6ea05550f08e127219627b1e1a	Because we still don't know\nwhy Evelysse was trying to\nprotect Givel.	machine
 6052_015_05	fa88c291828e8b189a55883db3f4e357a1fbc576	Can't we just pry that out of\nthem after we finish them off?	machine
-6052_015_06	04ffb65776a169ab8b79b96a7b4417027ca098bf	...Eve was so stubborn about it.\nIf we kill Givel now, Eve might\nnever come back to us.	machine
-6052_015_07	5d283ab09bdbc1cc0830587c87f50f864272b103	...Good grief, what on earth is\nEve thinking...	machine
-6052_015_08	7aaa8af715c1d65edf6e14967f7404e331d8ea82	One thing is for sure: Eve is\ndefinitely not on friendly terms\nwith Asmodeus.	machine
+6052_015_06	04ffb65776a169ab8b79b96a7b4417027ca098bf	...Evelysse was so stubborn\nabout it. If we kill Givel now,\nEvelysse might never come\nback to us.	machine
+6052_015_07	5d283ab09bdbc1cc0830587c87f50f864272b103	...Good grief, what on earth is\nEvelysse thinking...	machine
+6052_015_08	7aaa8af715c1d65edf6e14967f7404e331d8ea82	One thing is for sure: Evelysse\nis definitely not on friendly\nterms with Asmodeus.	machine
 6052_015_09	772e9b467685713748f652e8dd318726b88568c5	I'm certain she has no intention\nof siding with Ober or running\nwild using the Phantom.	machine
 6052_015_10	9957785bbb893ce2913d593066e444ae30567589	But if that's the case, wouldn't\nit have made sense for her to\nreturn to us once Mastima\nsecured Givel?	machine
 6052_015_11	fda366f2d84fc3214a7a8b10f5ca865a0607eba3	That be the most confusing part. I\nsuppose we must assume there was\nsome reason other than Givel that kept\nher bound to Asmodeus.	machine
 6052_015_12	b26068b45de88a5cc3a502a317a45691dcf46695	It seems our next move should\nwait until Givel wakes up.	machine
-6052_015_13	7b865db03fbaecd5fc35a9676aea6d702826234f	At the very least, Givel must have some\nkind of connection to Asmodeus, and\nhe was obsessed with Eve's existence\nfrom the start...	machine
-6052_015_14	2006a1d8ae7288c66b489e7fa9f97932727054b6	I think our only option is to get\nthe truth about the relationship\nbetween Asmodeus and Eve\nfrom Givel.	machine
+6052_015_13	7b865db03fbaecd5fc35a9676aea6d702826234f	At the very least, Givel must have some\nkind of connection to Asmodeus, and\nhe was obsessed with Evelysse's\nexistence from the start...	machine
+6052_015_14	2006a1d8ae7288c66b489e7fa9f97932727054b6	I think our only option is to get\nthe truth about the relationship\nbetween Asmodeus and\nEvelysse from Givel.	machine
 6052_015_15	ab7f749b25ded65102119e3170fb289f5114441d	Even if he wakes up, I doubt\nhe'll talk willingly...	machine
 6052_015_16	404ddceed9dfd9bf83c5d0f35dd4d686d3d2174d	Just when I thought we were\nmaking progress, we hit a dead\nend.	machine
 6052_015_17	0c92ce312b80531f532d8ef596aca20e3e67eae3	If this is how it's going to be, it\nwould be much easier if Givel\nwere just pulling all the strings\nfrom the shadows.	machine
@@ -118,9 +118,9 @@ message_id	ja_sha1	en	source
 6052_100_30	9fac985d9591929c88e1a17bb2e67eacb1ebe6f6	Oh, yes, there was! A lush\nplanet with 60% ocean\ncoverage!	machine
 6052_100_31	de27364c43a40c7795fd36632b5e68b8bbe3deea	But that planet was also an\nundeveloped world, so we just\ncalled it "Planet Maere."	machine
 6052_100_32	328197520f93331d10f1332b011f6fb30e98c711	...Whether it's a coincidence or\na misunderstanding, I suppose\nthings remain the same...	machine
-6052_100_33	c2796bf8a90070239c7132cc06dfbeefeb35fb42	...Now then, Givel. Ever since you first\nsaw Eve at Baschen's imperial castle,\nyou've been strangely obsessed with\ngetting your hands on her.	machine
-6052_100_35	44e9e44f6b43b9e4f272d98b73724a539b0d98b7	It seems you knew from the very start\nthat Eve possessed a Summoning\nCrest. You even mentioned that you'd\nbeen searching for her for a long time,\ndidn't you?	machine
-6052_100_36	73568b20e018d0e3a7d59832610ab80f0033f8a5	Do you know something about\nEve's past? Just what exactly\nis your relationship with her?	machine
+6052_100_33	c2796bf8a90070239c7132cc06dfbeefeb35fb42	...Now then, Givel. Ever since you first\nsaw Evelysse at Baschen's imperial\ncastle, you've been strangely obsessed\nwith getting your hands on her.	machine
+6052_100_35	44e9e44f6b43b9e4f272d98b73724a539b0d98b7	It seems you knew from the very start\nthat Evelysse possessed a Summoning\nCrest. You even mentioned that you'd\nbeen searching for her for a long time,\ndidn't you?	machine
+6052_100_36	73568b20e018d0e3a7d59832610ab80f0033f8a5	Do you know something about\nEvelysse's past? Just what\nexactly is your relationship with\nher?	machine
 6052_100_39	1c2648f332970debdfa7aa1d030398127036e88b	...That's enough. I'm going to\nsleep.	machine
 6052_100_40	ed7fc281f86be83de69bd724bb2e5964033bc5e3	Hey...! What's with that\nattitude?! You're a prisoner\nright now, do you even know\nyour place?!	machine
 6052_100_41	f1603524d7bead6a61de5d83d0a5aa6006d6998a	If you're that sleepy, maybe\nWelch-chan should give you a\ntaste of her special wake-up\nhammer?! Huh?!	machine
@@ -139,7 +139,7 @@ message_id	ja_sha1	en	source
 6052_100_54	6fcc7a425a1f9e00aaf1368e9ebbf5738952b90a	Ugh! Bad people really have it easy,\ndon't they?! They get to eat and sleep\nwhenever they want, and they can just\nplay dumb whenever things get\ninconvenient!	machine
 6052_100_55	7c76df3fa7cdd9b823b4d3139179337e7b3d1525	I wouldn't want to be like that\nmyself.	machine
 6052_110_01	4a92589d7aa6de276bd399fecbfbf4d0ea510b1c	...What do we do now?	machine
-6052_110_02	80d4759fe9bfc53c8c677eb47711e6a985866d14	Since we have no lead on Eve's\nwhereabouts, we have no choice but to\nstart with what we can reach. For now,\nwe shall investigate the data gathered\nby the Silvarant.	machine
+6052_110_02	80d4759fe9bfc53c8c677eb47711e6a985866d14	Since we have no lead on Evelysse's\nwhereabouts, we have no choice but to\nstart with what we can reach. For now,\nwe shall investigate the data gathered\nby the Silvarant.	machine
 6052_110_03	665737763d5501e978ae54e5231e6765b397c804	We cannot simply leave Givel\nbe, so Valka has been handling\nmost of the internal records on\nher own...	machine
 6052_110_04	af054c19c2b312524ada90e3b2e324208e0fecc2	What about regrouping with\nCaptain Jeanne and Kevin?\nThanks to Rekoro, we have\nlocated their evacuation point.	machine
 6052_110_05	3163218d8b1d8c2d35305963d9f2fce0eb085bd1	We can do that after we finish\nchecking the Silvarant's data.	machine
@@ -202,11 +202,11 @@ message_id	ja_sha1	en	source
 6052_110_63	9fb027b82a86edd83dbf5a02ead67311715bb92a	Then is it possible that the Asmodeus\nwho appeared before everyone isn't\nactually the Demon Lord the Captain\nmentioned,	machine
 6052_110_64	8db36389532138a28d9c603e78910c474c32bc4f	but just some Ober citizen\npretending to be Asmodeus to\ntake advantage of the people's\nfaith?	machine
 6052_110_65	323236e5185ee42a15f735f1fbd29b06012d0c66	...No, I doubt it. It seems we'll\nneed to ask Welch to wake\nGivel up.	machine
-6052_110_67	d032ebe6fe13ef9d5058196a57a0907053259b67	Indeed. If he were just an ordinary Ober\ncitizen claiming to be Asmodeus, there\nwould be no reason why he could\ncapture Givel and manipulate Eve.	machine
+6052_110_67	d032ebe6fe13ef9d5058196a57a0907053259b67	Indeed. If he were just an ordinary Ober\ncitizen claiming to be Asmodeus, there\nwould be no reason why he could\ncapture Givel and manipulate Evelysse.	machine
 6052_110_68	a043c2ac571cadbe60c02e3c25ec290d54a61d7d	Besides, isn't Asmodeus recorded in\nthe Galactic Federation as the Demon\nLord who plunged planets into terror?	machine
 6052_110_69	8b8eda501ddc7681a9a990d2eb750675f755045e	Considering his behavior on Ober and\nthe current state of Planet Raza, he is\nundoubtedly the Demon Lord the\nCaptain spoke of.	machine
 6052_110_70	2df7c0d0fbd48dcd5b90e0fa6112968cd8166dcb	He is indeed the Demon Lord\nAsmodeus―the one recorded by the\nFederation and worshipped by the Ober\nsince ancient times. And most likely...	machine
-6052_110_71	968ebcbb9d1fb6fe1575157a19ad957ebb2ccf05	He is a being who was\nsummoned by either Givel or\nEve.	machine
+6052_110_71	968ebcbb9d1fb6fe1575157a19ad957ebb2ccf05	He is a being who was\nsummoned by either Givel or\nEvelysse.	machine
 6052_110_72	7b7ca725e9684e7f134a4aa3e6cac32bfcc294d7	Eek!?	machine
 6052_110_73	a9778ee0cf2051cded05ecccf37821d9765ff14d	Huh? Lavarnia, another\ncommunication! This time it's\nfrom the Stardust Bazaar.	machine
 6052_110_74	0e9043d641aaf2c953c53fb4c10efbc057abc28d	From the Bazaar? I wonder\nwhat's going on.	machine
@@ -267,7 +267,7 @@ message_id	ja_sha1	en	source
 6052_130_40	ddd93d5e893e794ca87101ca1537788723a8fdc9	Therefore, while I can\nspeculate on Evelysse's\ncurrent objective, I do not\nknow the exact details.	machine
 6052_130_41	d7f9c0a17932954acce18ca664fdddc1b02fe44d	However... I can tell you what\nEvelysse once desired.\nEspecially to a human like you.	machine
 6052_130_43	be9e5538c1b817866bdb30ca38d450b35ec90a1b	...Tell me, are you prepared to\ndo whatever it takes to stop\nEvelysse?	machine
-6052_130_44	9dc365c2257b5084f2679cd676207ac8bce90a13	Stop Eve? What are you\ntalking about?	machine
+6052_130_44	9dc365c2257b5084f2679cd676207ac8bce90a13	Stop Evelysse? What are you\ntalking about?	machine
 6052_130_45	6e81aed44bd63eab413307b3460222fd7fcaa2dd	If Evelysse's goals haven't changed\nsince I last knew them, they should\nalign perfectly with the true objective\nof Raza's army.	machine
 6052_130_46	e4c92a82158896f3a0aabe3ccb350dcd473aa0e6	I had no such intention myself,\nbut for Ober, Asmodeus was\nsimply one means of assisting\nRaza in achieving that goal.	machine
 6052_130_47	9f9683d37ed10bae099ef69bbaf831b3d302e0fb	...Get to the point. I have no\nidea what you're talking about.	machine
@@ -275,7 +275,7 @@ message_id	ja_sha1	en	source
 6052_130_49	a6a7f2f22971970735e9135fac0422f67ad0d835	To my knowledge, the goal of\nboth Evelysse and Raza's army\nis the destruction of Planet\nRaza.	machine
 6052_130_50	887ad10f6a00955a21005433e0d39becfc68b7e3	By using the Gate of Urza... or\nwhat you call the Urza System.	machine
 6052_132_01	139dc04ee4920ff22a53a5e9e4a4aba4aeb094e4	D-don't be ridiculous!	machine
-6052_132_02	bb79a8722d304b9bb507296ed16a79be9d2aa4fe	There is no way Eve―the great\nEve―would ever consider\ndestroying a planet!	machine
+6052_132_02	bb79a8722d304b9bb507296ed16a79be9d2aa4fe	There is no way Evelysse―the\ngreat Evelysse―would ever\nconsider destroying a planet!	machine
 6052_132_03	e3b161aa6fdca2522ab15f723868c65965e9ddad	Smuggling Gems... using the\nUrza System... to destroy\nRaza...	machine
 6052_132_04	00e42a1612ac15a4bcdb87aa04f98fd4723d2b32	I see. "Destroying Raza," huh?\nA fitting choice of words.	machine
 6052_132_05	e7f5411d88d9522e5d01beb7322bde9f08dfd0c2	Mastima... what do you mean?	machine
@@ -287,7 +287,7 @@ message_id	ja_sha1	en	source
 6052_132_11	08817fd184636aab4554e3cb48c0b67b9411fa7d	Who knows. If all goes well,\nperhaps they will simply remain\natop the restored Earth.	machine
 6052_132_12	b475d3aabf8a5c84b1e9cdf3fc3bd672b997706e	Even if the people of Raza survived, it's\nobvious that doing something like that\nwould throw the whole world into\nabsolute chaos!!	machine
 6052_132_13	0df708a1bbab9e7dc1649c734997da9371865924	That's beyond catastrophic!	machine
-6052_132_14	6f51c9c3e3c8fb91e989d5a5ca4b6a89007fc9f0	Stop lying! There's no way Eve\nwould ever think of doing\nsomething like that!!	machine
+6052_132_14	6f51c9c3e3c8fb91e989d5a5ca4b6a89007fc9f0	Stop lying! There's no way\nEvelysse would ever think of\ndoing something like that!!	machine
 6052_132_15	46c5563ee7087b83cb08a7e3ee556eb90aca080e	I am merely speaking of what I\nknow. Whether that is\nEvelysse's true intention now, I\ncannot say.	machine
 6052_132_16	77c093be76bbbe58587b9d0e88046cd9415f3267	However, there have always\nbeen those in Raza who\ndesired a return to the "Earth"\nas it should have been,	machine
 6052_132_17	7953697d38fdf06fa689842e90ad367965cf9f79	And Ober, who wished to seize\ncontrol of the Azurite system,\nhad allies among them.	machine
@@ -344,7 +344,7 @@ message_id	ja_sha1	en	source
 6052_135_28	96b52c4d68ab7efa5d8161f83f5437b4d53a2327	This method only works here, but it\nalmost feels as if things were\norchestrated to happen this way from\nthe start. Is this also just a\ncoincidence?	machine
 6052_135_29	d7e35ade2896e095c8f8876a35301cbfdd308d7b	It's a coincidence. Just a very\nwonderful coincidence.	machine
 6052_135_30	ebd68f45d95f4fd21a6ed9fd229b74f35900b893	I suppose so. Though the\ntiming will be more precise\nthan threading a needle...	machine
-6052_135_31	a6fc7c5afeabd6c51bf7c4c3ef97c41d91e21e5e	With that method, we might be\nable to find Asmodeus and Eve,\nand stop the armies of Raza\nand Ober!	machine
+6052_135_31	a6fc7c5afeabd6c51bf7c4c3ef97c41d91e21e5e	With that method, we might be\nable to find Asmodeus and\nEvelysse, and stop the armies\nof Raza and Ober!	machine
 6052_135_32	152a3f9123d45d9ca36c017322515f5a27e62ae9	...Well, it's a proven method.	machine
 6052_135_33	7da5a9fdb4a10708d7fc5278e1826ce4ae74d341	Valka, you look so gloomy! I get\nhow you feel, but still!	machine
 6052_135_34	810687860c5e24e9218c743a903f32e5433849cb	I-I feel like I'm being glared at,\nbut please don't distract me,\nValka!	machine
@@ -484,7 +484,7 @@ message_id	ja_sha1	en	source
 6053_200_20	99e926c53b50d17257d24a85a5c0c99b60117034	Wait! What do you mean you\nknow the destination?	machine
 6053_200_22	0802c0f0e9a6957d290efe8356b2f4012cbd54b7	Actually, I was able to place a\ntag on Asmodeus using the\ncaptain's device.	machine
 6053_200_23	81546a9c9c8d0f0d50d4403ffc66ae6370907955	Just like with any ordinary\nperson, he can be tracked\nusing the GFSS-3214F\nsensors.	machine
-6053_200_24	8549222f3fd87e98c7f18eaa02505cf4130ffb8c	So if we can track Asmodeus,\nit naturally means Eve will be\nthere as well.	machine
+6053_200_24	8549222f3fd87e98c7f18eaa02505cf4130ffb8c	So if we can track Asmodeus,\nit naturally means Evelysse will\nbe there as well.	machine
 6053_200_25	26b01fd818ea6877b0ba07e8c870454d14d1cc07	We won't let them get away this time!\nHowever, it would be pointless if the\nOverman were shot down first, so let's\nproceed with caution.	machine
 6053_200_26	6dc9b7550bf4a35d73cf20f89b369ad55b0cb899	Evelysse might realize our\nintentions and try to interfere.	machine
 6053_200_27	44c8ffeec250baa18ed67960fd1c046cf650aafd	After all, she followed\nAsmodeus even though Givel is\nhere.	machine
@@ -493,7 +493,7 @@ message_id	ja_sha1	en	source
 6053_200_30	38f0063311c141c8e02f7056954bd0847b58b993	...Hey, enough chatting. We've\ngot a transmission from the\nfamous Jeanne. Looks like\nshe's finally ready to move.	machine
 6053_200_31	94cdafbc6f2263e6d88417dfc80e51af17446120	Considering the distance\nbetween Raza's home world\nand the Ober fleet, it's cutting\nit close. Lavarnia, Captain.	machine
 6053_200_32	ecd8ee8c1e1accb0038e3a9f717902c026a10b69	...We've come too far to turn\nback now. I'll trust everyone.\nLet's head out.	machine
-6053_200_34	c09875360089fa04c2d570aa6eec0953682a2ceb	Eve... just hold on...	machine
+6053_200_34	c09875360089fa04c2d570aa6eec0953682a2ceb	Evelysse... just hold on...	machine
 6053_210_01	09a000c4b27c38bade438c5a606ff5003cdf2ee3	Ober Flagship Controller: All fleets have\nwarped out. We have reached the outer\nedge of Raza's airspace. Intercepting\nforces are approaching.	machine
 6053_210_02	78ae6f1772f78eff440df660cd463ed877aecf06	...Just scatter them. They won't\nbe committing their full\nstrength in this area yet.	machine
 6053_210_03	de0b9e56171cd6bdd3d5bd7d669350230956aa88	Ober Flagship Controller: Yes,\nsir!	machine
@@ -626,11 +626,11 @@ message_id	ja_sha1	en	source
 6055_400_04	4383884a560c2404beda62a98998c8f2dde8cd11	Registering Lavarnia Rose as a\ncrew member. A heartfelt\nwelcome aboard!	machine
 6055_400_05	45b1f36f77989b363605f005174088aba49a503e	Thank you...! The ship is\namazing... I can't believe a\nvessel like this actually exists...	machine
 6055_400_06	f801da18d15fd205488cbc9e48e94ff227b09c72	And what about the crew\nregistration for Coro and\nGivel?	machine
-6055_400_08	5fd30e3357e3e3012253e65b22291ec5fefc34ce	"Since we will be working together on\nthe upcoming operations, and we must\nensure his safety until we solve the\nmystery of Eve's actions..."	machine
+6055_400_08	5fd30e3357e3e3012253e65b22291ec5fefc34ce	"Since we will be working together on\nthe upcoming operations, and we must\nensure his safety until we solve the\nmystery of Evelysse's actions..."	machine
 6055_400_09	92bf09bfc4a60beb0698672f80583091b911d934	"I will register the Giverese as\na crew member of this ship."	machine
 6055_400_10	003d624d9f6d045a3741d553891472f5cee6924b	I never imagined things would\nturn out like this...	machine
 6055_400_11	0a38d267f030b0aa4285635a9655e2c9311eb35c	Let's make sure we keep a\nvery close eye on him.	machine
-6055_400_12	dedddfed9f3e1fbb19da8449c1143c50ddfcfccd	"I would love to get some\nproper rest once I return home,\nbut if we dawdle, Eve and\nAsmodeus will escape again."	machine
+6055_400_12	dedddfed9f3e1fbb19da8449c1143c50ddfcfccd	"I would love to get some\nproper rest once I return home,\nbut if we dawdle, Evelysse and\nAsmodeus will escape again."	machine
 6055_400_13	6f8745c6e6bce55bae23aafe099f57af2f5c434a	"I will teleport everyone to the\nOber fleet flagship\nimmediately!"	machine
 6055_400_14	bf01c0ffcde50c96d708a76fd4fff81bb8063cca	"Oh, that reminds me, Lavarnia.\nWhere is my body?"	machine
 6055_400_15	85f002827c80576c55d1ae0eb0baefe1af5d198d	"...Hm? What? W-what are you\ntalking about?"	machine
@@ -653,7 +653,7 @@ message_id	ja_sha1	en	source
 6055_400_33	fe38d0daef7118442f58d3ec229996c3633adca7	You're the one who said we're\nout of time. Keep whining and\nI'll use you as a human shield.	machine
 6055_400_34	9d8c6e3f953c8ee8104e708f035eb3965e93e7f6	Eek! Yes! Sorry! Most of the\nsurrounding Ober and Raza\nships have already been\nneutralized.	machine
 6055_400_35	7a238dd205890c1609781f7d2cc1b785d3fc871e	Please rest assured that the\ncombat capabilities of\nAsmodeus's flagship are\nnowhere near my specs!	machine
-6055_400_36	583bcde7c27588a5997bee1f0e47794de8c05dad	Now, all that's left is to bring\nEve back...	machine
+6055_400_36	583bcde7c27588a5997bee1f0e47794de8c05dad	Now, all that's left is to bring\nEvelysse back...	machine
 6055_400_37	0aee3f4db72733f29ecc4533bca16aae87cdd090	...And defeat Asmodeus, is that\nit?	machine
 6055_400_38	ec02f9cc13d1347322fd65d5e8977a45d2db5ab7	I believe that's how it's going to\ngo?	machine
 6055_400_39	8fe110a4f1d04f69f1bfab07c663c9a1b86bb56f	Captain. My apologies, but I\nmust object to making the\nkilling of Asmodeus our primary\nobjective.	machine
@@ -663,13 +663,13 @@ message_id	ja_sha1	en	source
 6055_400_43	20a2f0025362de321f31cf2e262587043e7c21a8	If they choose to self-destruct\nrather than heed the advice,\nthat is their prerogative.	machine
 6055_400_44	b390b418a098b6246f574ae1c2de4b07c5e3e004	However, if we kill them before taking\nany such action, the fault lies with us.\nThat is not how a soldier operating\nunder the law and the state behaves.	machine
 6055_400_45	ed9820b3fd8f25ebda39a386c7e9efbc81524170	I don't think we're in a position\nto be worrying about that right\nnow.	machine
-6055_400_46	d1902267d794d580b58eebb920a8d4f1e596b889	Ricardo, you used soldier's logic to\npersuade Eve and the others the other\nday. In that case, shouldn't you abide\nby what Jeanne is saying now?	machine
+6055_400_46	d1902267d794d580b58eebb920a8d4f1e596b889	Ricardo, you used soldier's logic to\npersuade Evelysse and the others the\nother day. In that case, shouldn't you\nabide by what Jeanne is saying now?	machine
 6055_400_48	f365da2e27c40b03261834c9cd0c225944e2313d	Tsk...	machine
 6055_400_49	2ba93ea531ca752c21599418fa189ca51bb7dae0	Coro, as a commander of the Raza\narmy, I will also head to the scene to\nadvise Asmodeus to surrender. This is\nan order from the acting captain.	machine
 6055_400_50	a2b6bd695caecc0184ddead3eac0ff2f85c686ca	I understand... but if you do\nthat, someone will have to stay\nbehind on the ship...	machine
 6055_400_51	74417b74ba32aafb5a8bf59217bd692952cdcb1a	I shall remain as the acting\nvice-captain. By your logic, I am\ntechnically a human from Earth. I\nbelieve there should be no issue with\nme holding temporary command.	machine
 6055_400_52	c90afe3599551a0d8b87605cacedca27353928c6	I agree!	machine
-6055_400_53	eb3798f334f60bd6c54e4ea87bddf7112cef33a7	Then let's get going! Let's put\nan end to this war and solve\nthe mystery of Big Sister Eve!	machine
+6055_400_53	eb3798f334f60bd6c54e4ea87bddf7112cef33a7	Then let's get going! Let's put\nan end to this war and solve\nthe mystery of Evelysse!	agent
 6055_400_54	b0a0d4f6ba40012bacf0feafc948c2adea02c267	I will now teleport you all to the\ntarget combat ship! Is\neveryone ready?!	machine
 6055_400_55	e60b9a1b3b99e9f385bfafd1d21311fa965836ad	Let us go!!	machine
 6055_410_01	e9904e43cfcc4f864790af330b9d4a6a673fa1f7	I can't believe they could\nteleport right past the enemy\nfleet... Their capabilities are\ntruly bottomless.	machine
@@ -708,25 +708,25 @@ message_id	ja_sha1	en	source
 6055_420_25	f8da749a84a6ffc0900e10c7c700cc10cbf70ed1	I am quite serious... However...\nRaza shall also be destroyed.	machine
 6055_420_26	da51f0a69bdf8256dd5234843aef73ca346521d8	What is this guy talking about?!\nThis is insane!!	machine
 6055_420_27	d16ec21742b5e9abb50fd3b310a0a709e0e77697	True. It would be faster to\nshow you rather than explain it.	machine
-6055_430_01	88b734615c2e16694777673f81d809ae15facc8a	Big sister Eve!!	machine
+6055_430_01	88b734615c2e16694777673f81d809ae15facc8a	Evelysse!!	agent
 6055_430_02	117bf0bdf70596acf2b2b1fc0580ca92621f51fa	...*cough*...	machine
-6055_430_03	03368b0c862b89cdcb39285b1fedf188b1413e74	Eve!	machine
+6055_430_03	03368b0c862b89cdcb39285b1fedf188b1413e74	Evelysse!	machine
 6055_430_04	45adfd774a229014e19293673c85f6214225997f	It's okay, I'm not letting you get\naway again! Lover'll be all over\nme if I don't bring you back.	machine
 6055_430_05	632ec345ecec55b715bbf50d16f237e2d8f0a3fd	...Hm?	machine
 6055_430_06	c5938106af45bdbc101c093fd0e4f589a06ea39e	Stop... if you touch me...	machine
 6055_430_07	a40fe87d02333611ca5bfa9fda063ea86984385c	What's this? You running a\nfever? Your body temperature\nis weirdly hi―	machine
-6055_430_08	626280dabd57c9daca3581816c4d0880e027d10f	Wait! Mista Heath! Get away\nfrom Lady Eve!!	agent
+6055_430_08	626280dabd57c9daca3581816c4d0880e027d10f	Wait! Mista Heath! Get away\nfrom Lady Evelysse!!	agent
 6055_430_09	1bd04d32f2236257cf3b52e65442edc4d06c622e	Huh!?	machine
 6055_430_10	b590e56322bf9b1b60e8c2dba6390c89f87c2fdb	Too late.	machine
 6055_430_11	0da7e1b93b6bb305a6aee11af342750d60c5caa3	Ugh... W-what is this... my\nhand...	machine
 6055_430_12	93aa2816c773c774ba6bce8d5c5749ef24c42cc4	What is that...? That gray\nsubstance freezing Evelysse's\nlimbs...	machine
 6055_430_13	1a61c0bb207b10d9e79845355c5d4a3bc76b736c	What?! Heath's hand is turning\nthe same color...	machine
-6055_430_14	c01e79159b440409ae59e7d7cc816dda4c29789f	You... what the hell did you do\nto Eve?! Guh... my arm... I can't\nmove it...	machine
+6055_430_14	c01e79159b440409ae59e7d7cc816dda4c29789f	You... what the hell did you do\nto Evelysse?! Guh... my arm... I\ncan't move it...	machine
 6055_430_15	163ff58e7c45dbcd32ac94e7804957605fc153cf	Ho, paralyzed already? To think there\nwould be such a disparity; it seems\ngenetic structure does affect the rate\nof infection.	machine
 6055_430_16	70a5087f2c508647d0af0d6efc3601b1fa888173	What...?! H-Heath's hand... it's\nturning to stone...?!	machine
 6055_430_17	940b505596534d1feb00e4c9d08210e4be83b273	The <font color=yellow>Petrification Virus</font>... Impossible!\nThat virus is supposed to be an\nendemic disease unique to Planet\nRoak...!	machine
 6055_430_19	2815aed833ee37c555bebd1152c4dc4377733d9b	What?! Asmodeus's blood...?	machine
-6055_430_20	f18ea2d63a8a68349cc11ac19697e16cc0bebc3a	Petrification? Is Eve suffering\nfrom some kind of disease?!	machine
+6055_430_20	f18ea2d63a8a68349cc11ac19697e16cc0bebc3a	Petrification? Is Evelysse\nsuffering from some kind of\ndisease?!	machine
 6055_430_21	b7cacbc99bc6b7f0ca26a333e3093899ffb47a8e	It's an endemic disease my father observed on\nPlanet Roak that turns the body to stone! It\ncannot be cured without a special medicine;\nneither Symbology nor advanced medicine is\neffective!	machine
 6055_430_22	f9e3f06623a0949b896a2eab55dc1ddb030dec20	As expected of visitors from\nouter space. You are quite\nknowledgeable.	machine
 6055_430_23	dcdafda0e278500b3d72b619134795ce6acf6502	Even I had no way of knowing such\npower was hidden within my own blood\nuntil my resurrection. Isn't that right,\nGiverese?	machine
@@ -762,7 +762,7 @@ message_id	ja_sha1	en	source
 6055_435_03	e7ec5eb2bc2acc2d13015df3af9753445d808add	Heath!?	machine
 6055_435_04	8f4898b144b3d1905c574ad206c5244374a7bf14	I've been listening to you run\nyour mouth long enough... I've\nfinally had it...	machine
 6055_435_05	b138c72136363b73921cc2d2b5b2562cdbb5baef	You! A Razan!! How is this\npossible! Why... why has the\npetrification worn off!?	machine
-6055_435_06	bc02daa6df1873d24d2a4fabd47e9d075c133ba9	How should I know! Boss, I'm\nleaving Eve to you!	machine
+6055_435_06	bc02daa6df1873d24d2a4fabd47e9d075c133ba9	How should I know! Boss, I'm\nleaving Evelysse to you!	machine
 6055_435_07	8bc7ae6e3c6ee7775f310be5dd3b88c200a459d7	Leave it to me. You must be\nEvelysse. Heath has told me all\nabout you.	machine
 6055_435_08	11c92a8064cd948cda7c4e0c2e1b6eb0eeab1308	Pardon me for interrupting\nwhile you're frozen solid. Since\nyou can't move, you're not\ngetting away.	machine
 6055_435_09	9958946137899ba0fd45c01fd8c523b52c90e63d	W-wait! Stop! If you touch me\nright now, the infection will...	machine
@@ -790,7 +790,7 @@ message_id	ja_sha1	en	source
 6055_435_32	4e17a3915e0a5a1b19d00af3e9cffdf287cc7a45	Who cares! He's totally giving\noff "cornered villain" vibes!	machine
 6055_435_33	0d84edede3cb9c979c77518450309042fa055571	Don't let your guard down!\nThat's exactly when they're\nmost unpredictable!	machine
 6055_435_34	06e51f01e5ac9f5aaa2d6081a9bef7bc5c55ad60	If you refuse to surrender, we\nhave no choice. We shall now\nresort to force!	machine
-6055_435_35	a3fc0a209a8ab388e4c0087a8f1388287764ede6	Coro! Prepare the teleportation\ncontainment for Lady Eve!\nBattle start!	agent
+6055_435_35	a3fc0a209a8ab388e4c0087a8f1388287764ede6	Coro! Prepare the teleportation\ncontainment for Lady Evelysse!\nBattle start!	agent
 6055_435_36	9aae50a3ab91520325d2151d2ab431311f3b5568	"Roger that!!"	machine
 6055_435_38	14e912e9c57e52ff2c82e492542920eda669942f	...C-Captain... Givel... everyone...	machine
 6055_435_39	93e6a0d431c03862871b931ae8bccf6dad410793	...Evelysse.	machine
@@ -798,7 +798,7 @@ message_id	ja_sha1	en	source
 6055_435_41	05f8df8880689dce67079d7996d89e870864d886	Giverese! Evelysse! I shall\ncondemn you for your sins!!	machine
 6055_440_01	6ecf6efaaffe21429f09c7f94f91f25dcc3ec611	...So it truly cannot be\nchanged...	machine
 6055_440_02	48e8362a399bacf2d89adefda1d2d1abb1b06b3e	"Verda! Please collect a blood\nsample from Asmodeus!"	machine
-6055_440_03	8450b3a38a25f2d9764c7c0a1341353706dc184d	"We need a serum made from\nAsmodeus's blood to treat\nEve!"	machine
+6055_440_03	8450b3a38a25f2d9764c7c0a1341353706dc184d	"We need a serum made from\nAsmodeus's blood to treat\nEvelysse!"	machine
 6055_440_04	2671dc2b1bc9b373fb2bd1956d999a139c03d610	I-I understand! Captain, Valka,\nhelp me out!	machine
 6055_440_06	fef059295b445add2783ace8dc475397660cb1b0	Be extremely careful, Dr. Belda!\nAsmodeus isn't dead yet!	machine
 6055_440_07	a3881c76fe9a979f38d0c5828c27bd43c25c52a3	Heh... hahaha... To think it would come\nto this... a repeat of that time... Very\nwell... take my blood, or whatever else\nyou desire...	machine

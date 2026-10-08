@@ -30,6 +30,14 @@ enum class CallKind : u8 {
     Simulate,   // IParticleEmitter vtable slot 51 (float dt)
     Skip,       // IParticleEmitter::SkipThisFrame() const
     Ready,      // ParticleRenderableBase::IsBufferReady() const
+    // Simulate's (particles_simulate.cpp):
+    FillMatrix,    // IParticleEmitter::FillMatrixContext(MatrixContext*): out = the five pointers
+    Affect,        // ParticleEmitter<...>::EmitterAffectToParticle(Vector*, MatrixContext*, float): out = the vector after
+    Random,        // Aska::Random(unsigned int)
+    Emit,          // ParticleEmitter<...>::Emit(int, EmitContext*, MatrixContext const*)
+    SetAnimation,  // IParticleObject::SetAnimation(int)
+    Render,        // ParticleRenderableObject<...>::RenderProcedure(float, MatrixContext*, bool)
+    kCount
 };
 const char* kind_name(CallKind k);
 
@@ -43,6 +51,11 @@ struct Call {
     u64 ret = 0;
     u32 fret = 0;
     u32 serial = 0;
+    // What the callee wrote to its out-buffer (FillMatrix, Affect): replayed into the caller's buffer.
+    u8 out[48] = {};
+    u32 nout = 0;
+    // A check's snapshot of the objects after the call (record mode), for the shadow's replay.
+    std::vector<u8> after;
 };
 
 struct Recorder;
@@ -58,7 +71,7 @@ struct Recorder {
     // kScript, instead of `script`: fills a call's answer from its kind and its index among the calls of
     // that kind (a test's random answers, the same for both runs).
     std::function<void(Call&, size_t)> answer;
-    size_t perKind[8] = {};
+    size_t perKind[(int)CallKind::kCount] = {};
     std::string error;         // kScript: the first call the script didn't expect
     // Called before / after each recorded call (both modes), e.g. a check noting what the native saw.
     std::function<void(Recorder&, const Call&)> before;
@@ -87,6 +100,8 @@ struct Recorder {
             c.ret = s.ret;
             c.fret = s.fret;
             c.serial = s.serial;
+            std::memcpy(c.out, s.out, sizeof c.out);
+            c.nout = s.nout;
         } else if (error.empty()) {
             error = std::string("call ") + std::to_string(calls.size()) + " (" + kind_name(c.kind) + "): not in the script";
         }
@@ -110,6 +125,12 @@ void wait(const Event* e, u32 ms);
 float get_dt(const void* vsync, s32 clock);
 void prepare(IParticleEmitter* e);
 void simulate(IParticleEmitter* e, float dt);
+void fill_matrix(IParticleEmitter* e, MatrixContext* m);
+void affect(u64 fn, IParticleEmitter* e, MathVector* pos, MatrixContext* m, float dt);
+u32 random(u32 n);
+void emit(u64 fn, IParticleEmitter* e, s32 n, EmitContext* ctx, const MatrixContext* m);
+void set_animation(IParticleObject* o, s32 index);
+void render(u64 fn, ParticleRenderableBase* r, float dt, MatrixContext* m, bool b);
 
 // Through the recorder when there is one.
 inline bool PostTask(SimpleMessageDispatcher* d, Task* task, s32 barrier, u16 msg, INotify* notify, void* a0, void* a1, u64 k0, u64 k1,
@@ -205,6 +226,88 @@ inline bool Ready(const ParticleRenderableBase* rb) {
     c.x[0] = (u64)rb;
     c.n = 1;
     return r->run(c, [&](Call& c2) { c2.ret = rb->IsBufferReady(); }).ret & 1;
+}
+
+inline void FillMatrix(IParticleEmitter* e, MatrixContext* m) {
+    Recorder* r = t_rec;
+    if (__builtin_expect(!r, 1)) return fill_matrix(e, m);
+    Call c;
+    c.kind = CallKind::FillMatrix;
+    c.x[0] = (u64)e;
+    c.x[1] = (u64)m;
+    c.n = 2;
+    Call& k = r->run(c, [&](Call& c2) {
+        fill_matrix(e, m);
+        std::memcpy(c2.out, m, sizeof *m);
+        c2.nout = sizeof *m;
+    });
+    if (r->mode == Recorder::kScript) std::memcpy(m, k.out, sizeof *m);
+}
+inline void Affect(u64 fn, IParticleEmitter* e, MathVector* pos, MatrixContext* m, float dt) {
+    Recorder* r = t_rec;
+    if (__builtin_expect(!r, 1)) return affect(fn, e, pos, m, dt);
+    Call c;
+    c.kind = CallKind::Affect;
+    c.x[0] = (u64)e;
+    c.x[1] = (u64)pos;
+    c.x[2] = (u64)m;
+    std::memcpy(&c.x[3], pos, 16);  // (the vector it got: x[3], x[4])
+    c.n = 5;
+    std::memcpy(&c.f0, &dt, 4);
+    Call& k = r->run(c, [&](Call& c2) {
+        affect(fn, e, pos, m, dt);
+        std::memcpy(c2.out, pos, 16);
+        c2.nout = 16;
+    });
+    if (r->mode == Recorder::kScript && k.nout) std::memcpy(pos, k.out, 16);
+}
+inline u32 Random(u32 n) {
+    Recorder* r = t_rec;
+    if (__builtin_expect(!r, 1)) return random(n);
+    Call c;
+    c.kind = CallKind::Random;
+    c.x[0] = n;
+    c.n = 1;
+    return (u32)r->run(c, [&](Call& c2) { c2.ret = random(n); }).ret;
+}
+inline void Emit(u64 fn, IParticleEmitter* e, s32 n, EmitContext* ctx, const MatrixContext* m) {
+    Recorder* r = t_rec;
+    if (__builtin_expect(!r, 1)) return emit(fn, e, n, ctx, m);
+    Call c;
+    c.kind = CallKind::Emit;
+    c.x[0] = (u64)e;
+    c.x[1] = (u64)(u32)n;
+    c.x[2] = (u64)ctx;
+    c.x[3] = (u64)m;
+    u32 dt;
+    std::memcpy(&dt, &ctx->m_dt, 4);
+    c.x[4] = dt | (u64)ctx->m_flags << 32;  // (what Emit reads of the context with flags 0)
+    c.n = 5;
+    r->run(c, [&](Call&) { emit(fn, e, n, ctx, m); });
+}
+inline void SetAnimation(IParticleObject* o, s32 index) {
+    Recorder* r = t_rec;
+    if (__builtin_expect(!r, 1)) return set_animation(o, index);
+    Call c;
+    c.kind = CallKind::SetAnimation;
+    c.x[0] = (u64)o;
+    c.x[1] = (u64)(u32)index;
+    c.n = 2;
+    r->run(c, [&](Call&) { set_animation(o, index); });
+}
+inline void Render(u64 fn, ParticleRenderableBase* rb, float dt, MatrixContext* m, bool b) {
+    Recorder* r = t_rec;
+    if (__builtin_expect(!r, 1)) return render(fn, rb, dt, m, b);
+    Call c;
+    c.kind = CallKind::Render;
+    c.x[0] = (u64)rb;
+    c.x[1] = (u64)m;
+    c.x[2] = b;
+    std::memcpy(&c.x[3], &rb->m_emitterPosition, 16);  // (what Simulate left in the renderable: x[3], x[4], x[5])
+    c.x[5] = (u32)rb->m_activeCount;
+    c.n = 6;
+    std::memcpy(&c.f0, &dt, 4);
+    r->run(c, [&](Call&) { render(fn, rb, dt, m, b); });
 }
 
 }  // namespace calls

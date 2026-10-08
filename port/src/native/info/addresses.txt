@@ -1,0 +1,7 @@
+# The guest addresses this subsystem's natives use (tools/gen_addresses.py: the syntax; it writes gen/info_addresses.h).
+namespace soa::native::info::g
+kInteroperateCpp       str "C:\\BAS_Submission\\Client\\Library\\Framework\\Project\\..\\Source\\Framework\\InteroperateParameter.cpp"  # (the tail of a longer string)
+kCsvIsNull             str "m_pCSV is null."
+kRowHashIsNull         str "m_pRowHash is null."
+kColumnHashIsNull      str "m_pColumnHash is null."
+kInfoBaseH             str "...Source\\Game/Parameter/Info/InfoBase.h"

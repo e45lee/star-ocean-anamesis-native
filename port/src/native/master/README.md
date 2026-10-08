@@ -103,6 +103,24 @@ results compared. Results (battle-gacha flow, `every=1`, PASS): elements alone 4
 + tables 132,050 (pParameterFromHash 3,579, ParameterByQuery 11,449, ReleaseParameter 5,088, ...);
 `session:home --lang en` 202,533 (StringDB::Get 1,121); all 0 mismatches.
 
+## Measurements
+
+Guest self time (`SOA_PROFILE` 1000 Hz, `port/scripts/rebuild_queue.py`, login + battle flows side by side,
+before (main 00407a1 with this subsystem's scope) and after (this branch, 2026-10-08)): `master` **1,378 (2.1% of guest self) ->
+281 (0.3%)** (FUN_ locals included; inclusive 5.3% -> 0.8%); what is left: `CMasterManager::Initialize` (67: one 31 KB
+function constructing every table) / `Progress` (16), the seven `_Category<E>` tables (~45), `ParameterFromIdList`
+(10), `StringDB::GetList`, the unfit elements / connectors.
+
+## Not done (and why)
+
+- `CMasterParameterBaseSqlite_Category<E>` (7 battle tables: Skill, AI, AttackAction, ...): maps of
+  `shared_ptr<map<unsigned, E>>`; the next piece on this path (~45 samples).
+- `CMasterManager` (Initialize: 31 KB of inlined table constructions; Progress), `CMasterCache`,
+  `ParameterFromIdList` (SQL built with many std::string steps), `StringDB::GetList`, the concrete tables'
+  small virtuals (`pParseName`, `InstantiateSqlConnector`): little time each.
+- The six unfit elements and five unfit connectors (other code shapes; generator lists).
+- `SQLiteDriver::BuildQuery<CLocalEntity<...>>` (170): called, not ported: they are in yayoi's scope.
+
 ## Dependencies
 
 - `params`: the element base and the properties (`params_layout.h`), `CParameterElementBase::AddProperty`

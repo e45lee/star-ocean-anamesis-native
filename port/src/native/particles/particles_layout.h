@@ -46,8 +46,73 @@ using HierarchicalObject = render::HierarchicalObject;          // Aska::Hierarc
 using RenderableObject = render::RenderableObject;              // Aska::RenderableObject (0x310)
 
 class IParticleEmitter;
-class IParticleObject;        // Aska::IParticleObject (an emitter's particles; not recovered yet)
 class ParticleRenderManager;  // Aska::ParticleRenderManager (0x14570, ParticleManager::Init; not recovered yet)
+
+using MathVector = math::Vector;  // Aska::Vector {x, y, z, w}
+using MathMatrix = math::Matrix;  // Aska::Matrix
+
+// Aska::IParticleObject: an emitter's particles (the base of ParticleObject<FeatureList<...>, ...>). Its data
+// is 0xa10 bytes (IParticleObject(unsigned, unsigned, unsigned) writes up to 0xa08; CreateParticle
+// allocates the concrete objects as 0xa10..0xa40). Fields from the constructor, SetAnimation and the
+// emitters' Simulate (port/decomp/particles/object.c, emitter_hot.c); the rest not recovered yet.
+class IParticleObject {
+public:
+    const void* vtable;           // 0x000: _ZTVN4Aska15IParticleObjectE + 0x10 (a concrete object's)
+    u8 unk_008[0x140 - 0x008];    // 0x008
+    const u8* m_animData;         // 0x140: the texture animations (SetAnimation walks them)
+    u8 unk_148[0x16c - 0x148];    // 0x148: SetAnimation's current animation (0x148), frames (0x158)
+    u32 m_animation;              // 0x16c: the current animation's index (SetAnimation)
+    u8 unk_170[0x178 - 0x170];    // 0x170: (0x174: SetAnimation clears it)
+    u32 m_animParam;              // 0x178: the texture unit's parameter (Simulate copies it every frame)
+    u8 unk_17c[0x1f4 - 0x17c];    // 0x17c
+    u16 m_animFlags;              // 0x1f4: bit 11 / bit 12 (SetAnimation), 0 at construction
+    u8 m_renderFlags;             // 0x1f6: bit 0 the texture unit's flag bit 2 (Simulate), bit 1 at construction
+    u8 unk_1f7[0xa10 - 0x1f7];    // 0x1f7
+};
+static_assert(offsetof(IParticleObject, m_animData) == 0x140);
+static_assert(offsetof(IParticleObject, m_animation) == 0x16c);
+static_assert(offsetof(IParticleObject, m_animParam) == 0x178);
+static_assert(offsetof(IParticleObject, m_animFlags) == 0x1f4);
+static_assert(offsetof(IParticleObject, m_renderFlags) == 0x1f6);
+static_assert(sizeof(IParticleObject) == 0xa10);
+
+// Aska::IParticleEmitter::MatrixContext: the matrices an emitter's Simulate works with (FillMatrixContext:
+// the emitter's world matrix and its inverse, the renderable's, the linked object's or null). 0x28 bytes
+// (Simulate's stack frame).
+struct MatrixContext {
+    const MathMatrix* world;            // 0x00 (Simulate takes the emitter's position from its translation)
+    const MathMatrix* invWorld;         // 0x08
+    const MathMatrix* renderWorld;      // 0x10
+    const MathMatrix* renderInvWorld;   // 0x18
+    const MathMatrix* linkedWorld;      // 0x20
+};
+static_assert(sizeof(MatrixContext) == 0x28);
+
+// Aska::IParticleEmitter::EmitContext: Emit's input (0xe8 bytes in Simulate's frame). Simulate sets m_dt and
+// m_flags = 0 (and m_scale when the emitter takes its scale from its matrix); Emit reads the rest only with
+// flags set, and writes 0x00..0x17 and 0xd0..0xdf.
+struct EmitContext {
+    MathVector m_scale;           // 0x00
+    u8 unk_10[0xe0 - 0x10];       // 0x10
+    float m_dt;                   // 0xe0
+    u8 m_flags;                   // 0xe4: bit 0 an offset position (0x30..0x38), bit 3 a scale (0x40..0x4c)
+    u8 unk_e5[3];                 // 0xe5
+};
+static_assert(offsetof(EmitContext, m_dt) == 0xe0);
+static_assert(offsetof(EmitContext, m_flags) == 0xe4);
+static_assert(sizeof(EmitContext) == 0xe8);
+
+// Aska::ParticleEmitterUnit<ParticleFeatures::Texture> as Simulate reads it (its place in the emitter depends
+// on the feature list: the generated table's texture offset).
+struct TextureUnit {
+    u32 m_animParam;   // 0x0: -> IParticleObject::m_animParam
+    u8 unk_4[6];       // 0x4
+    u8 m_animation;    // 0xa: the animation to show (SetAnimation when it changes)
+    u8 unk_b[3];       // 0xb
+    u8 m_flags;        // 0xe: bit 2 -> IParticleObject::m_renderFlags bit 0
+};
+static_assert(offsetof(TextureUnit, m_animation) == 0xa);
+static_assert(offsetof(TextureUnit, m_flags) == 0xe);
 
 // Aska::ParticleRenderableBase: the renderable an emitter draws its particles with (a RenderableObject).
 // Every ParticleRenderableObject<...> is allocated as 0xfe0 bytes (ParticleManager::CreateParticle<...>:
@@ -61,13 +126,16 @@ public:
     bool IsBufferReady() const;  // _ZNK4Aska22ParticleRenderableBase13IsBufferReadyEv
 
     RenderableObject base;   // 0x000: m_renderFlags (0x198): SkipThisFrame tests 0x2101 (bits 0, 8, 13)
-    u8 unk_310[0x8b4 - 0x310];  // 0x310
+    u8 unk_310[0x860 - 0x310];  // 0x310
+    MathVector m_emitterPosition;  // 0x860: the emitter's position at its last Simulate
+    u8 unk_870[0x8b4 - 0x870];  // 0x870
     s32 m_activeCount;       // 0x8b4: the particles alive (Simulate clears it, IsEmitting = != 0)
     u8 unk_8b8[0xf50 - 0x8b8];  // 0x8b8
     u32 m_stamp[2];          // 0xf50: per half, the manager's m_fillFrame it was filled in (0: never)
     u32 m_buffer;            // 0xf58: the half being filled
     u8 unk_f5c[0xfe0 - 0xf5c];  // 0xf5c
 };
+static_assert(offsetof(ParticleRenderableBase, m_emitterPosition) == 0x860);
 static_assert(offsetof(ParticleRenderableBase, m_activeCount) == 0x8b4);
 static_assert(offsetof(ParticleRenderableBase, m_stamp) == 0xf50);
 static_assert(offsetof(ParticleRenderableBase, m_buffer) == 0xf58);
@@ -94,10 +162,18 @@ public:
     static constexpr u16 kFlagMatrixLink = 1 << 2;  // PrepareMatrices: the renderable follows the emitter
     static constexpr u16 kFlagSkippable = 1 << 6;   // SkipThisFrame may skip it (the renderable's flags)
     static constexpr u16 kFlagPaused = 1 << 8;      // Simulate does nothing
+    // m_emitFlags
+    static constexpr u8 kEmitStopWhenStill = 1 << 3;
+    static constexpr u8 kEmitScaleFromMatrix = 1 << 4;
 
     bool SkipThisFrame() const;             // _ZNK4Aska16IParticleEmitter13SkipThisFrameEv
     bool IsEmitting() const;                // slot 50  _ZNK4Aska16IParticleEmitter10IsEmittingEv
     s32 GetActiveNumberOfParticles() const; // slot 54  _ZNK4Aska16IParticleEmitter26GetActiveNumberOfParticlesEv
+
+    // slot 51 Simulate(float), the ParticleEmitter<FeatureList<...>> instantiations' (one body: particles_simulate.cpp;
+    // `k` the instantiation's callees and its texture unit's offset)
+    struct Instantiation;
+    void Simulate(float dt, const Instantiation& k);
 
     // Host helpers (not guest symbols): the virtual calls the manager makes.
     void CallPrepare();               // slot 45 through the guest vtable
@@ -130,7 +206,23 @@ public:
     u8 unk_212;                   // 0x212: 0 at construction
     u8 m_waitBuffer;              // 0x213: its renderable's buffer wasn't ready (RunLow); RunAfterRendering dispatches it
     u16 m_flags;                  // 0x214: kFlag* (kFlagEnabled at construction)
-    u8 unk_216[0x328 - 0x216];    // 0x216
+    u8 unk_216[0x280 - 0x216];    // 0x216
+    float m_emitRate;             // 0x280: particles per second (times the time scale)
+    float m_emitRandomness;       // 0x284: below 100: the rate varies by a random share (percent); 0 with
+                                  //        kEmitStopWhenStill: stop at once
+    float m_emitAccum;            // 0x288: the particles due (Simulate emits the whole ones; Reset clears it)
+    u8 unk_28c[0x2d9 - 0x28c];    // 0x28c
+    u8 m_emitFlags;               // 0x2d9: kEmit* (bits 0-5 cleared at construction)
+    u8 unk_2da[6];                // 0x2da
+    MathVector m_lastPosition;    // 0x2e0: kEmitStopWhenStill: where it was at the first Simulate (and since)
+    u8 unk_2f0[0x10];             // 0x2f0: the zero vector at construction
+    u8 m_stopped;                 // 0x300: kEmitStopWhenStill: it came within 0.1 of m_lastPosition
+    u8 m_resetMatrices;           // 0x301: PrepareMatrices resets 0x2ec.. then (Reset sets it)
+    u8 unk_302[0xe];              // 0x302
+    MathVector m_scale;           // 0x310: kEmitScaleFromMatrix: the world matrix's scale
+    float m_timeScale;            // 0x320: Simulate's dt factor (1 at construction)
+    u8 m_firstSimulate;           // 0x324: 1 at construction
+    u8 unk_325[3];                // 0x325
 };
 static_assert(offsetof(IParticleEmitter, m_id) == 0x198);
 static_assert(offsetof(IParticleEmitter, m_idle) == 0x19c);
@@ -149,6 +241,20 @@ static_assert(offsetof(IParticleEmitter, m_matrixMode) == 0x20f);
 static_assert(offsetof(IParticleEmitter, m_linkMode) == 0x210);
 static_assert(offsetof(IParticleEmitter, m_waitBuffer) == 0x213);
 static_assert(offsetof(IParticleEmitter, m_flags) == 0x214);
+// The instantiation-specific pieces of a ParticleEmitter<FeatureList<...>>::Simulate (gen/particles_instantiations.inc):
+// its callees' guest addresses and its texture unit's offset (0: none).
+struct IParticleEmitter::Instantiation {
+    u64 affect = 0, emit = 0, render = 0;
+    u32 textureOffset = 0;
+};
+static_assert(offsetof(IParticleEmitter, m_emitRate) == 0x280);
+static_assert(offsetof(IParticleEmitter, m_emitAccum) == 0x288);
+static_assert(offsetof(IParticleEmitter, m_emitFlags) == 0x2d9);
+static_assert(offsetof(IParticleEmitter, m_lastPosition) == 0x2e0);
+static_assert(offsetof(IParticleEmitter, m_stopped) == 0x300);
+static_assert(offsetof(IParticleEmitter, m_scale) == 0x310);
+static_assert(offsetof(IParticleEmitter, m_timeScale) == 0x320);
+static_assert(offsetof(IParticleEmitter, m_firstSimulate) == 0x324);
 static_assert(sizeof(IParticleEmitter) == 0x328);
 
 // Aska::ParticleManager: the particle task manager (Global::m_pParticleManager). Guest size 0x90e8

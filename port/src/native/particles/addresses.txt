@@ -2,3 +2,8 @@
 kVaddrGlobalParticleManager      sym _ZN4Aska6Global18m_pParticleManagerE                    # ParticleManager*
 kVaddrTaskLevelForMakeMatrix     sym _ZN4Aska15ParticleManager25m_nTaskLevelForMakeMatrixE  # s32: Kick's barrier (task level) for the make-matrix message
 kMaxSimulateDt                   at 0x26f7c94 f32 ref _ZN4Aska15ParticleManager7HandlerEm  # Handler clamps an emitter's dt to it (1/30 s)
+# ParticleEmitter<...>::Simulate's constants (every instantiation reads the same; named by the hottest one)
+kEmitFullRandomness              at 0x26e5198 f32 ref _ZN4Aska15ParticleEmitterINS_11FeatureListINS_16ParticleFeatures5SpeedENS1_INS2_6MotionENS1_INS2_14ColorAnimationENS1_INS2_7TextureENS1_INS2_9LifeLimitENS_6StNULLEEEEEEEEEEEE8SimulateEf  # 100: m_emitRandomness at or above it: no randomness
+kPercent                         at 0x26e6ae4 f32 ref _ZN4Aska15ParticleEmitterINS_11FeatureListINS_16ParticleFeatures5SpeedENS1_INS2_6MotionENS1_INS2_14ColorAnimationENS1_INS2_7TextureENS1_INS2_9LifeLimitENS_6StNULLEEEEEEEEEEEE8SimulateEf  # 0.01
+kRandomScale                     at 0x26edb40 f32 ref _ZN4Aska15ParticleEmitterINS_11FeatureListINS_16ParticleFeatures5SpeedENS1_INS2_6MotionENS1_INS2_14ColorAnimationENS1_INS2_7TextureENS1_INS2_9LifeLimitENS_6StNULLEEEEEEEEEEEE8SimulateEf  # 1e-4: Random(10000)'s scale
+kStillDistance                   at 0x26e6a14 f32 ref _ZN4Aska15ParticleEmitterINS_11FeatureListINS_16ParticleFeatures5SpeedENS1_INS2_6MotionENS1_INS2_14ColorAnimationENS1_INS2_7TextureENS1_INS2_9LifeLimitENS_6StNULLEEEEEEEEEEEE8SimulateEf  # 0.1: kEmitStopWhenStill's distance

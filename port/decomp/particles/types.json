@@ -4,6 +4,533 @@
  "header": "port/src/native/particles/particles_layout.h",
  "structs": [
   {
+   "name": "IParticleObject",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_008",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 312
+     },
+     "size": 312
+    },
+    {
+     "offset": 320,
+     "name": "m_animData",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 328,
+     "name": "unk_148",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 36
+     },
+     "size": 36
+    },
+    {
+     "offset": 364,
+     "name": "m_animation",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 368,
+     "name": "unk_170",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 376,
+     "name": "m_animParam",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 380,
+     "name": "unk_17c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 120
+     },
+     "size": 120
+    },
+    {
+     "offset": 500,
+     "name": "m_animFlags",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 502,
+     "name": "m_renderFlags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 503,
+     "name": "unk_1f7",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2073
+     },
+     "size": 2073
+    }
+   ],
+   "size": 2576,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x204ed94",
+     "symbol": "_ZN4Aska15IParticleObjectnwEm",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x204ede4",
+     "symbol": "_ZN4Aska15IParticleObjectnaEm",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x229d238",
+     "symbol": "_ZN4Aska15IParticleObject7PrepareEv",
+     "name": "Prepare"
+    },
+    {
+     "ghidra": "0x229d2d8",
+     "symbol": "_ZN4Aska15IParticleObject5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x229d2ec",
+     "symbol": "_ZN4Aska15IParticleObject14BeginParticlesEv",
+     "name": "BeginParticles"
+    },
+    {
+     "ghidra": "0x22a12e0",
+     "symbol": "_ZN4Aska15IParticleObjectC1Ejjj",
+     "name": "IParticleObject"
+    },
+    {
+     "ghidra": "0x22a1428",
+     "symbol": "_ZN4Aska15IParticleObjectD1Ev",
+     "name": "~IParticleObject"
+    },
+    {
+     "ghidra": "0x22a15bc",
+     "symbol": "_ZN4Aska15IParticleObject4FreeEv",
+     "name": "Free"
+    },
+    {
+     "ghidra": "0x22a15ec",
+     "symbol": "_ZN4Aska15IParticleObjectD0Ev",
+     "name": "~IParticleObject"
+    },
+    {
+     "ghidra": "0x22a162c",
+     "symbol": "_ZN4Aska15IParticleObjectdlEPv",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22a1658",
+     "symbol": "_ZN4Aska15IParticleObject6AttachEPKNS_3AFF18AsfParticleEmitterE",
+     "name": "Attach"
+    },
+    {
+     "ghidra": "0x22a18f4",
+     "symbol": "_ZN4Aska15IParticleObject6AddRefEv",
+     "name": "AddRef"
+    },
+    {
+     "ghidra": "0x22a1904",
+     "symbol": "_ZN4Aska15IParticleObject7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x22a1928",
+     "symbol": "_ZN4Aska15IParticleObject14SetEmitterLinkEPNS_16IParticleEmitterEihff",
+     "name": "SetEmitterLink"
+    },
+    {
+     "ghidra": "0x22a1940",
+     "symbol": "_ZN4Aska15IParticleObject12SetAnimationEi",
+     "name": "SetAnimation"
+    },
+    {
+     "ghidra": "0x22a1a30",
+     "symbol": "_ZN4Aska15IParticleObject17CalcAnimationSizeEii",
+     "name": "CalcAnimationSize"
+    },
+    {
+     "ghidra": "0x22a1ae0",
+     "symbol": "_ZNK4Aska15IParticleObject17GetAnimBlendModesEv",
+     "name": "GetAnimBlendModes"
+    },
+    {
+     "ghidra": "0x22a1b4c",
+     "symbol": "_ZNK4Aska15IParticleObject16GetAnimationSizeEv",
+     "name": "GetAnimationSize"
+    },
+    {
+     "ghidra": "0x22a1b5c",
+     "symbol": "_ZNK4Aska15IParticleObject21GetAnimationFrameTimeEj",
+     "name": "GetAnimationFrameTime"
+    },
+    {
+     "ghidra": "0x22a1ba0",
+     "symbol": "_ZN4Aska15IParticleObject23GetNextParticlePositionEPNS_6VectorE",
+     "name": "GetNextParticlePosition"
+    },
+    {
+     "ghidra": "0x22a1c2c",
+     "symbol": "_ZN4Aska15IParticleObject5AllocEii",
+     "name": "Alloc"
+    },
+    {
+     "ghidra": "0x22a1d38",
+     "symbol": "_ZNK4Aska15IParticleObject18GetMemoryFootprintEv",
+     "name": "GetMemoryFootprint"
+    },
+    {
+     "ghidra": "0x22a1d78",
+     "symbol": "_ZN4Aska15IParticleObject12GatherActiveEfiPiS1_",
+     "name": "GatherActive"
+    },
+    {
+     "ghidra": "0x22a1e94",
+     "symbol": "_ZN4Aska15IParticleObject13AttachTextureEPKNS_3AFF18AsfParticleEmitterE9StBooleanILb1EE",
+     "name": "AttachTexture"
+    },
+    {
+     "ghidra": "0x22a2068",
+     "symbol": "_ZN4Aska15IParticleObject14AttachDynamicsEPKNS_3AFF18AsfParticleEmitterE9StBooleanILb1EE",
+     "name": "AttachDynamics"
+    },
+    {
+     "ghidra": "0x22a236c",
+     "symbol": "_ZN4Aska15IParticleObject12InitDynamicsEPNS_10AsfHandlerE9StBooleanILb1EE",
+     "name": "InitDynamics"
+    },
+    {
+     "ghidra": "0x22a256c",
+     "symbol": "_ZN4Aska15IParticleObject22SetLandscapeConstraintEPNS_20ILandscapeConstraintE9StBooleanILb1EE",
+     "name": "SetLandscapeConstraint"
+    },
+    {
+     "ghidra": "0x22a257c",
+     "symbol": "_ZN4Aska15IParticleObject15DynamicsPrepareEPNS_6MatrixE9StBooleanILb1EE",
+     "name": "DynamicsPrepare"
+    },
+    {
+     "ghidra": "0x22a264c",
+     "symbol": "_ZN4Aska15IParticleObject21AddManualForceEmitterEPNS_28ParticleDynamicsForceEmitterE",
+     "name": "AddManualForceEmitter"
+    },
+    {
+     "ghidra": "0x22a2724",
+     "symbol": "_ZN4Aska15IParticleObject17AttachCurveMotionEPKNS_3AFF18AsfParticleEmitterE9StBooleanILb1EE",
+     "name": "AttachCurveMotion"
+    },
+    {
+     "ghidra": "0x22a2794",
+     "symbol": "_ZN4Aska15IParticleObject13TailProcedureEPKiiPNS_15ParticleContextE",
+     "name": "TailProcedure"
+    },
+    {
+     "ghidra": "0x22a27bc",
+     "symbol": "_ZN4Aska15IParticleObject25Tail_ConnectionMode_TrailEPKiiPNS_15ParticleContextE",
+     "name": "Tail_ConnectionMode_Trail"
+    },
+    {
+     "ghidra": "0x22a319c",
+     "symbol": "_ZN4Aska15IParticleObject26Tail_ConnectionMode_NoCopyEPKiiPNS_15ParticleContextE",
+     "name": "Tail_ConnectionMode_NoCopy"
+    },
+    {
+     "ghidra": "0x22a3afc",
+     "symbol": "_ZN4Aska15IParticleObject28Tail_ConnectionMode_RelativeEPKiiPNS_15ParticleContextE",
+     "name": "Tail_ConnectionMode_Relative"
+    },
+    {
+     "ghidra": "0x22a4424",
+     "symbol": "_ZN4Aska15IParticleObject17LightingProcedureEfPKiiPNS_15ParticleContextE",
+     "name": "LightingProcedure"
+    },
+    {
+     "ghidra": "0x22a4490",
+     "symbol": "_ZN4Aska15IParticleObject15ExtendProcedureEPNS_15ParticleContextEi",
+     "name": "ExtendProcedure"
+    },
+    {
+     "ghidra": "0x22a470c",
+     "symbol": "_ZN4Aska15IParticleObjectnwEmmb",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22a4744",
+     "symbol": "_ZN4Aska15IParticleObjectnaEmmb",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22a477c",
+     "symbol": "_ZN4Aska15IParticleObjectdlEPvRKSt9nothrow_t",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22a47a8",
+     "symbol": "_ZN4Aska15IParticleObjectdaEPvRKSt9nothrow_t",
+     "name": "operator"
+    },
+    {
+     "ghidra": "0x22a47d4",
+     "symbol": "_ZN4Aska15IParticleObjectdaEPv",
+     "name": "operator"
+    }
+   ]
+  },
+  {
+   "name": "MatrixContext",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "world",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "invWorld",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "renderWorld",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "renderInvWorld",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "linkedWorld",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "EmitContext",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_scale",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 208
+     },
+     "size": 208
+    },
+    {
+     "offset": 224,
+     "name": "m_dt",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 228,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 229,
+     "name": "unk_e5",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    }
+   ],
+   "size": 232,
+   "align": 4
+  },
+  {
+   "name": "TextureUnit",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_animParam",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_4",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 10,
+     "name": "m_animation",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 11,
+     "name": "unk_b",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
+    },
+    {
+     "offset": 14,
+     "name": "m_flags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    }
+   ],
+   "size": 16,
+   "align": 4
+  },
+  {
    "name": "ParticleRenderableBase",
    "union": false,
    "fields": [
@@ -27,9 +554,33 @@
        "size": 1,
        "signed": false
       },
-      "count": 1444
+      "count": 1360
      },
-     "size": 1444
+     "size": 1360
+    },
+    {
+     "offset": 2144,
+     "name": "m_emitterPosition",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 2160,
+     "name": "unk_870",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 68
+     },
+     "size": 68
     },
     {
      "offset": 2228,
@@ -405,7 +956,7 @@
      "name": "m_object",
      "type": {
       "kind": "ptr",
-      "to": null
+      "to": "IParticleObject"
      },
      "size": 8
     },
@@ -588,9 +1139,175 @@
        "size": 1,
        "signed": false
       },
-      "count": 274
+      "count": 106
      },
-     "size": 274
+     "size": 106
+    },
+    {
+     "offset": 640,
+     "name": "m_emitRate",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 644,
+     "name": "m_emitRandomness",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 648,
+     "name": "m_emitAccum",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 652,
+     "name": "unk_28c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 77
+     },
+     "size": 77
+    },
+    {
+     "offset": 729,
+     "name": "m_emitFlags",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 730,
+     "name": "unk_2da",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 6
+     },
+     "size": 6
+    },
+    {
+     "offset": 736,
+     "name": "m_lastPosition",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 752,
+     "name": "unk_2f0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 768,
+     "name": "m_stopped",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 769,
+     "name": "m_resetMatrices",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 770,
+     "name": "unk_302",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 14
+     },
+     "size": 14
+    },
+    {
+     "offset": 784,
+     "name": "m_scale",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 800,
+     "name": "m_timeScale",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 804,
+     "name": "m_firstSimulate",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 805,
+     "name": "unk_325",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 3
     }
    ],
    "size": 808,

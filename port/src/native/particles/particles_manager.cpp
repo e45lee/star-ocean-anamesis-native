@@ -57,6 +57,13 @@ const char* kind_name(CallKind k) {
     case CallKind::Simulate: return "Simulate";
     case CallKind::Skip: return "SkipThisFrame";
     case CallKind::Ready: return "IsBufferReady";
+    case CallKind::FillMatrix: return "FillMatrixContext";
+    case CallKind::Affect: return "EmitterAffectToParticle";
+    case CallKind::Random: return "Random";
+    case CallKind::Emit: return "Emit";
+    case CallKind::SetAnimation: return "SetAnimation";
+    case CallKind::Render: return "RenderProcedure";
+    case CallKind::kCount: break;
     }
     return "?";
 }

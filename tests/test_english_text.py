@@ -62,15 +62,20 @@ def test_two_builds_byte_identical(built):
 def test_counts_reproduce_english_md(built):
     """english.md 7.1: 19,145 official by id, 6,265 exact memory, 2,412 template; plus E3's rows;
     7.9: 57 more by id and 5 more E3 rows whose Japanese differs from Global's only in white space
-    (id-ws), 83 by memory-ws (2 of them were template rows)."""
+    (id-ws), 83 by memory-ws (2 of them were template rows); 120 credit rows by id (official-credit:
+    the illustrator's Japanese name and romanization) and 59 more by memory through them; 40 by
+    official-near (Global's English for a Japanese text changed only in punctuation or an
+    abbreviation)."""
     ws = collections.Counter((r, built.klass[m]) for m, r in built.matched.items())
-    assert ws == {("id-ws", "official"): 57, ("id-ws", "official_e3"): 5, ("memory-ws", "exact_ws"): 83}
-    assert built.candidates["official"] == 19145 + 57
-    assert built.candidates["exact"] == 6265
+    assert ws == {("id-ws", "official"): 57, ("id-ws", "official_e3"): 5, ("memory-ws", "exact_ws"): 83,
+                  ("official-credit", "official"): 120, ("official-near", "official_near"): 40}
+    assert built.candidates["official"] == 19145 + 57 + 120
+    assert built.candidates["exact"] == 6265 + 59
     assert built.candidates["exact_ws"] == 83
     assert built.candidates["template"] == 2412 - 2
+    assert built.candidates["official_near"] == 40
     assert built.candidates["official_e3"] == len(built.e3) > 0
-    assert built.served["official"] == 19145 + 57 + len(built.e3) - sum(
+    assert built.served["official"] == 19145 + 57 + 120 + 40 + len(built.e3) - sum(
         1 for f in built.failures if f["source"] == "official") - len(built.overrides)
     assert len(built.q7) == 803 - 56
     assert sum(1 for r in built.glossary_rows if r["source"] == "official" and r["variants"]) == 302
@@ -81,7 +86,8 @@ def test_served_rows_are_clean(built, font):
     for mid, (h, en, source) in built.out.items():
         assert source in T.C_SOURCES
         assert not C.GL_MARKUP.search(en), mid
-        assert not C.has_kana(en), mid
+        # kana only in Global's credit rows (english.md 7.9 official-credit), served as derived
+        assert not C.has_kana(en) or (source in T.DERIVED and C.credit_form(en, src.jp_rows.get(mid))), mid
         assert not font.missing(C.unesc(en)), mid
         if mid in src.jp_rows:
             assert h == C.sha1(src.jp_rows[mid])
@@ -726,3 +732,33 @@ def test_labels_mt_import(data, tmp_path):
     assert got[C.sha1("%d個")]["source"] == "derived"  # the specifier is missing: rejected
     assert got[C.sha1("戻る")]["en"] == "Back"
     assert "閉じる" not in (data / "labels.tsv").read_text(encoding="utf-8")  # no Japanese stored
+
+
+def test_credit_form():
+    """english.md 7.9 official-credit: Global's credit rows (the Japanese name, then its romanization)
+    are English; Global's marker rows with Japanese in them are not."""
+    assert C.credit_form("太子\\n\\nTaishi", "太子")
+    assert C.credit_form("エナミカツミ \\n\\nKatsumi Enami", "エナミカツミ")
+    assert C.credit_form("アマガイタロー\\n \\nTaro Amagai", "アマガイタロー")
+    assert not C.credit_form("【未翻訳】ハロウィンキャンペーン", "ハロウィンキャンペーン")
+    assert not C.credit_form("【N版】導きのペンダント", "導きのペンダント")
+    assert not C.credit_form("Nルーム選択", "ルーム選択")
+    assert not C.credit_form("桑島法子", "【メモ】英語版の声優名が入る項目です")
+    assert not C.credit_form("太子\\n\\n", "太子")            # no romanization
+    assert not C.credit_form("太子\\n\\nたいし", "太子")      # the second part Japanese
+    assert not C.credit_form("吉成鋼\\n\\nKou Yoshinari", "あきまん")  # another name
+    assert not C.credit_form("Taishi", "太子")
+
+
+def test_near_ja():
+    """english.md 7.9 official-near: punctuation, width and the listed abbreviations only; a changed
+    word or number, or an English whose numbers aren't the Japanese's, is not near."""
+    en = "Critical hit chance +30%, and critical\\ndamage +30% (party/20 seconds)"
+    assert C.near_ja("クリティカル率＋３０％　クリダメ＋３０％（全体／２０秒間）",
+                     "クリティカル発生率＋３０％　クリティカルダメージ＋３０％（全体／２０秒間）", en)
+    assert not C.near_ja("クリティカル率＋３０％　クリダメ＋３０％（全体／２０秒間）",
+                         "クリティカル率＋４０％　クリダメ＋４０％（全体／２０秒間）", en)          # numbers changed
+    assert not C.near_ja("紋章術の詠唱中は怯まない", "紋章術の使用中に怯まない", "No flinching during symbol invocation")  # a word
+    assert not C.near_ja("スキル３連携以上の時にクリティカル率＋５０％", "スキル３連携以上の時にクリティカル発生率＋５０％",
+                         "AP cost -30% during combos of 3 or more skills")                           # Global's English is another text
+    assert not C.near_ja(None, "地球", "Earth")

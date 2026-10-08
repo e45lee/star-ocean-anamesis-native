@@ -1,5 +1,5 @@
 {
- "note": "Labels shared with other scenes' atlases (the same sprites), copied by tools/english_art/share_labels.py.",
+ "note": "The character detail's round buttons (english.md 7.19; Global's Stat Details, Talent Details, Battle Skill Details: uimsg_ch_dialog_status_title, uimsg_talent_detail, uimsg_ch_dialog_battleskill_title; Universe Talent: the glossary). Labels shared with other scenes' atlases (the same sprites) are copied by tools/english_art/share_labels.py.",
  "source": "UI/etc2/character_status.csf",
  "styles": {
   "tap": {
@@ -8,9 +8,134 @@
    "fill": "#ffffff",
    "outline": "#0a1e3c",
    "outline_width": 2
+  },
+  "round": {
+   "size": 17,
+   "bold": 1,
+   "leading": -2,
+   "fill": "#ffffff",
+   "glow": "#00b4ffd0",
+   "glow_radius": 2,
+   "outline": "#0a4c8cc0",
+   "outline_width": 1
+  },
+  "round_dim": {
+   "size": 17,
+   "bold": 1,
+   "leading": -2,
+   "fill": "#8a98a8",
+   "glow": "#003c64c0",
+   "glow_radius": 2,
+   "outline": "#14283cc0",
+   "outline_width": 1
   }
  },
  "labels": [
+  {
+   "jp": "バトル\nスキル\n詳細",
+   "text": "Battle\nSkill\nDetails",
+   "sprites": [
+    "btn_battleskill_off.png",
+    "btn_battleskill_on.png"
+   ],
+   "box": [
+    14,
+    38,
+    100,
+    60
+   ],
+   "cover": [
+    33,
+    39,
+    66,
+    58
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "タレント\n詳細",
+   "text": "Talent\nDetails",
+   "sprites": [
+    "btn_talent_off.png",
+    "btn_talent_on.png"
+   ],
+   "box": [
+    14,
+    46,
+    100,
+    50
+   ],
+   "cover": [
+    28,
+    49,
+    74,
+    45
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "ユニバース\nタレント\n詳細",
+   "text": "Universe\nTalent\nDetails",
+   "sprites": [
+    "btn_universetalent_off.png",
+    "btn_universetalent_on.png"
+   ],
+   "box": [
+    12,
+    40,
+    104,
+    60
+   ],
+   "cover": [
+    24,
+    42,
+    84,
+    57
+   ],
+   "style": "round"
+  },
+  {
+   "jp": "ユニバース\nタレント\n詳細",
+   "text": "Universe\nTalent\nDetails",
+   "sprites": [
+    "btn_universetalent_off2.png"
+   ],
+   "box": [
+    12,
+    40,
+    104,
+    60
+   ],
+   "cover": [
+    24,
+    42,
+    84,
+    57
+   ],
+   "style": "round_dim"
+  },
+  {
+   "jp": "ステータス\n詳細",
+   "text": "Stat\nDetails",
+   "sprites": [
+    "btn_status_off.png",
+    "btn_status_on.png"
+   ],
+   "box": [
+    40,
+    144,
+    157,
+    56
+   ],
+   "cover": [
+    60,
+    145,
+    124,
+    54
+   ],
+   "style": "round",
+   "size": 22
+  },
   {
    "jp": "フォロー",
    "text": "Follow",

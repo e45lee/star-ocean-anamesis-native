@@ -24,7 +24,7 @@ vtable is the first field). Bases from other subsystems: kernel's `TaskManager` 
 
 ## Natives
 
-20 bound (`soa --list-native | grep particles:`). Live check: `soa --live-check particles[:every=N][:budget=N][:only=..][:out=FILE]`
+94 bound (`soa --list-native | grep particles:`): 20 for the manager and the getters, 74 Simulates. Live check: `soa --live-check particles[:every=N][:budget=N][:only=..][:out=FILE]`
 (default every=16; [`particles_check.h`](particles_check.h): shadow checks, the guest original on a private
 World built from what the native saw, its callees stubbed and answered from the native's record).
 
@@ -37,11 +37,30 @@ World built from what the native saw, its callees stubbed and answered from the 
 | `ParticleManager::DispatchEmitter` / `Kick` / `Tick` | `particles_manager.cpp` | `particles/one-emitter` | shadow: one emitter |
 | `ParticleManager::Run` (+ the Task thunk `_ZThn40_`) | `particles_check.cpp` (through RunLow's / RunAfterRendering's hooks) | `particles/run` (the levels; RunLow / RunAfterRendering run) | the guest's Run with RunLow / RunAfterRendering stubbed: the one it calls |
 | `ParticleManager::Add` / `Delete` | `particles_manager.cpp` | `particles/list` | shadow: the links of the nodes around the element |
+| `ParticleEmitter<FeatureList<...>>::Simulate(float)`, all 74 instantiations (one body, the instantiation's callees and texture unit from [`gen/particles_instantiations.inc`](gen/particles_instantiations.inc), written and checked by `tools/gen_particles_instantiations.py`: every instantiation's code is one of two shapes, with a Texture unit or without) | `particles_simulate.cpp` | `particles/simulate` (every instantiation, 40 random emitters each: NaN / infinite / huge inputs, randomness below / at / above 100, the stop-when-still test, the scale, the texture animation, no lock yet) | shadow: the emitter / object as found under its m_simulateLock, the callees (FillMatrixContext, EmitterAffectToParticle, Random, Emit, SetAnimation, RenderProcedure) answered from the record with the bytes each changed; the calls (with the position, dt, the context) and the emitter's own fields (from 0x198) and the object's 0x200 bytes. The first Simulate of an emitter (its lock's allocation) is skipped |
 | `IParticleEmitter::SkipThisFrame` / `IsEmitting` / `GetActiveNumberOfParticles`, `ParticleRenderableBase::IsBufferReady`, `ParticleManager::GetClassID` / `GetDefaultLevel` (+ Task thunks) | `particles_manager.cpp` | `particles/getters` | getter (the original on the same object, a rerun for races) |
 
 The manager's outgoing calls go through [`particles_calls.h`](particles_calls.h) (a thread's Recorder sees
 them: recorded in a live check, scripted in the tests); the shared World / guest-run helpers are in
 [`particles_world.cpp`](particles_world.cpp).
+
+Live coverage: battle-gacha (every=4) 22,000 checks and story, 0 mismatches. Not reached live (the four
+flows never call them, or only through the natives' own member calls): Kick, DispatchEmitter, Tick, Add,
+Delete, the non-thunk Handler / Run / GetClassID / GetDefaultLevel, SkipThisFrame / IsBufferReady (RunLow
+calls them as members), GetActiveNumberOfParticles: the differential tests cover them.
+
+## Measurements
+
+The battle flow (`port/scripts/battle_session.sh`, `SOA_PROFILE` at 1000 Hz), 2026-10-08, the same machine
+under other agents' load:
+
+| | particles guest self | particles native | guest samples |
+|---|---|---|---|
+| before (main at 00407a1) | 2,522 (Handler thunk 729, the hot Simulate 407, RunLow 246) | 0 | 26,384 |
+| after (piece 1 + Simulate) | 954 | 917 (DispatchEmitters / Run 285 each: their kernel / sync member calls, the waits included; Simulate 195; Handler 150) | 25,911 |
+
+What is left of the guest self: Prepare (67), ParticleObject<...>::Procedure, RenderProcedure, Emit,
+ParticleRenderableBase::End / CreateDrawContext / PrepareForRendering, the FillSprite* family.
 
 ## Dependencies
 
@@ -50,6 +69,7 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   PostMessage forms (called as members), Global::m_pMessageDispatcher / m_pVSync (kernel's addresses).
 - `sync`: CriticalSection (Enter / Leave as members), Event (Wait), FastCriticalSection.
 - `render`: HierarchicalObject (IParticleEmitter's base), RenderableObject (ParticleRenderableBase's base).
+- `math`: Vector, Matrix (Matrix::PutPRS as a member in Simulate).
 - Upwards (callbacks): the emitters' virtual Prepare (slot 45) and Simulate (slot 51, the 74
   ParticleEmitter<FeatureList<...>> instantiations), through the guest vtable.
 
@@ -66,4 +86,8 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   slot doubles as the index), takes slot 0 as m_drawnFrame and clears both (kept as the guest does it).
 - **DispatchEmitters** splits RunLow's list over the dispatcher's workers: W - 1 messages 0x29a + i of n / W
   emitters (none when n < W), the rest (m_dispatchCount read again) in message 0x29a + W - 1.
+- **Simulate** (every instantiation): dt times m_timeScale; the particles due add m_emitRate x dt, varied
+  below 100 % m_emitRandomness by Random(10000) (`(rate dt) * (rnd * 0.01 + (100 - rnd) * 0.01 * r * 1e-4)`);
+  the whole ones are emitted (FCVTZS) and the fraction kept. Its EmitContext is mostly uninitialized stack in
+  the guest: Emit reads only m_dt and m_flags (0) from it then, so the native's zeroed one is equivalent.
 - **Delete** of an element that isn't linked (null links) still decrements the count (not below 0).

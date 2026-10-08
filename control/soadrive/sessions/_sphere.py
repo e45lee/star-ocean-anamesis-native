@@ -65,9 +65,9 @@ def login_to_board(s):
     launch.login_to_home(s, "02-notice", "03-login-bonus", "04-home")
     if not s.in_client(r"Sphere211 rental bonus: 5 rentals"):
         s.fail("the Sphere 211 rental bonus wasn't paid")
-    s.ctl("wait:3000", s.shot_cmd("04b-rental-bonus"), "tap:364:800", "wait:3000", s.shot_cmd("04c-home"))
-    s.tap_log(r"GetSphere211Info: season", 60, 20, 3, "tap:455:1085", name="スフィア211 -> the board")
-    s.ctl("wait:6000", s.shot_cmd("05-board"))
+    common.settle(s, "04b-rental-bonus", hold=2)
+    common.tap_to_screen(s, "the rental bonus: 閉じる", "364:800", "04c-home", mask=common.HOME_MASK)
+    common.tap_to_log(s, "スフィア211 -> the board", "455:1085", r"GetSphere211Info: season", "05-board", fatal=True, settle_hold=2)
     if not s.in_client(r"Sphere211: floor 1 \(floor row [0-9]*\), map %s " % MAP):
         s.fail("floor 1 isn't the map this session's taps are for (--seed-rng 605 lots map %s): %s"
                % (MAP, s.last_line(r"Sphere211: floor 1")))
@@ -77,15 +77,17 @@ def login_to_board(s):
 def battle(s, tag, rent=False):
     """The cell's detail is open: single play -> the rental list (the first lender with rent, else
     選択しない) -> auto party -> start -> the battle -> the result pages until the board (phase 5)."""
-    s.ctl("wait:4000", s.shot_cmd(tag + "-detail"), "tap:364:905", "wait:5000", s.shot_cmd(tag + "-rental"))
-    s.ctl("tap:364:383" if rent else "tap:628:1120")
-    s.ctl("wait:4000", "tap:364:898")
-    s.wait_log(r"Sphere211AutoMemberSelect: 4 members proposed", 30, name=tag + ": auto member select")
-    s.ctl("wait:4000", s.shot_cmd(tag + "-party"))
+    common.settle(s, tag + "-detail")
+    common.tap_to_screen(s, tag + ": シングルプレイ開始", "364:905", tag + "-rental")
+    common.tap_to_screen(s, tag + (": the first lender" if rent else ": 選択しない") + " -> the party", "364:383" if rent else "628:1120")
+    # 自動編成 (sent once: a second tap would redo it)
+    common.tap_to_log(s, tag + ": auto member select", "364:898", r"Sphere211AutoMemberSelect: 4 members proposed", tag + "-party",
+                      secs=30, tries=1, fatal=True)
     # ミッション開始 -> 決定, each tap checked on a screenshot and retried (flows/mission.py start_mission)
     started = r"Sphere211MissionStart: floor"
     mission.start_mission(s, tag + ": ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, started), d=mission.SPHERE211)
     s.wait_log(started, 60, name=tag + ": Sphere211MissionStart")
+    # a fixed wait: a picture of the fight, nothing to wait for (the next wait is for its end)
     s.ctl("wait:15000", s.shot_cmd(tag + "-battle"))
     line = s.wait_log(r"Sphere211MissionEnd: |Sphere211MissionFailed", 500, name=tag + ": the battle ended", fatal=False)
     if line is None:
@@ -93,9 +95,9 @@ def battle(s, tag, rent=False):
         s.fail(tag + ": the battle didn't end")
     if "Sphere211MissionFailed" in line:
         s.fail(tag + ": the battle was lost")
-    s.ctl("wait:10000", s.shot_cmd(tag + "-result"))
+    common.settle(s, tag + "-result", hold=2)
     mission.results_until(s, mission.phase(5), 0, 12, 0, fmt=None, name=tag + ": the result pages", ok="364:1050")
-    s.ctl("wait:6000")
+    common.settle(s, hold=2)
 
 
 def port_config(o):

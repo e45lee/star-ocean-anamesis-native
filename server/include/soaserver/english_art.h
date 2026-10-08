@@ -13,8 +13,13 @@
 // stand-in overlay holds its files, and is the same bytes for the same inputs on every platform.
 #include <cstddef>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
+
+namespace soa {
+class FileTree;
+}
 
 namespace soa::server::english_art {
 
@@ -55,6 +60,12 @@ bool build(const Options& opts, Stats* stats = nullptr, std::string* err = nullp
 // nothing replaced give the input back, and every member's sum is its payload's. False (and *err
 // listing the failures) otherwise.
 bool check_roundtrip(const std::string& download, size_t* scenes, size_t* trees, std::string* err);
+
+// Every layout label text (LabelText / ButtonText, real newlines) of a download's scenes (UI/ and
+// TalkScene/ .csf, not an -en copy): the Japanese data/english/labels.tsv's hashes are looked up in
+// (it holds no Japanese; english_text.h labels_by_text). A scene that can't be read is logged and
+// skipped. False when the download has no scene.
+bool label_texts(const soa::FileTree& download, std::set<std::string>& out);
 
 // "UI/etc2/home.csf" -> "UI/etc2/home-en.csf" (the client's PostfixLanguageCodeFilepath for en).
 std::string en_name(const std::string& rel);

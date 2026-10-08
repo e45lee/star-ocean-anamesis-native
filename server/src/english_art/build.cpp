@@ -7,6 +7,7 @@
 // labels their -en copy (docs/server-rules.md#english-labels; english.md 7.14).
 #include <algorithm>
 #include <atomic>
+#include <functional>
 #include <mutex>
 #include <thread>
 #include <cstdio>
@@ -180,8 +181,10 @@ bool apply_recipe(const Recipe& recipe, const Bytes& source_plain, const Font& f
     return apply_scene(&recipe, nullptr, source_plain, font, en_rel, out, png_out, nullptr, err);
 }
 
-bool scene_labels(const Bytes& source_plain, const LabelTable& labels, LabelTable& found, std::string* err) {
-    found.clear();
+namespace {
+// Calls fn with every label text of a scene's node trees (the scene's decrypted bytes; only the
+// members up to its last .msgp are decoded).
+bool scene_walk(const Bytes& source_plain, const LabelFn& fn, std::string* err) {
     // the node trees come first in a scene: decode the first chunks, then up to the last .msgp
     Bytes d;
     if (!aska::slz_decode(source_plain, d, err, 65536)) return false;
@@ -198,14 +201,67 @@ bool scene_labels(const Bytes& source_plain, const LabelTable& labels, LabelTabl
     for (auto& e : entries) {
         if (e.name.size() < 5 || e.name.compare(e.name.size() - 5, 5, ".msgp") != 0 || (size_t)e.offset + e.size > d.size()) continue;
         Bytes tree(d.begin() + e.offset, d.begin() + e.offset + e.size);
-        auto fn = [&](const std::string& text) -> const std::string* {
-            auto it = labels.find(text);
-            if (it != labels.end()) found[it->first] = it->second;
-            return nullptr;
-        };
         if (!rewrite_labels(tree, fn, nullptr, nullptr, err)) return false;
     }
     return true;
+}
+
+// The scenes of a download that may carry layout labels: UI/ and TalkScene/ .csf, not an -en copy.
+std::vector<std::string> scene_files(const FileTree& tree) {
+    std::vector<std::string> scenes;
+    for (const char* dir : {"UI", "TalkScene"})
+        for (auto& rel : tree.files(dir))
+            if (rel.size() > 4 && rel.compare(rel.size() - 4, 4, ".csf") == 0 && rel.find('-', rel.rfind('/') + 1) == std::string::npos)
+                scenes.push_back(rel);
+    return scenes;
+}
+
+// Runs fn(i, decrypted bytes) for every scene on up to 8 threads; a scene the tree can't read is
+// skipped.
+void for_scenes(const FileTree& tree, const std::vector<std::string>& scenes, const std::function<void(size_t, Bytes&)>& fn) {
+    std::atomic<size_t> next{0};
+    auto scan = [&] {
+        for (size_t i; (i = next++) < scenes.size();) {
+            Bytes src;
+            if (tree.read(scenes[i], src)) fn(i, src);
+        }
+    };
+    size_t nt = std::max(1u, std::min(8u, std::thread::hardware_concurrency()));
+    std::vector<std::thread> pool;
+    for (size_t k = 1; k < nt; k++) pool.emplace_back(scan);
+    scan();
+    for (auto& t : pool) t.join();
+}
+}  // namespace
+
+bool scene_labels(const Bytes& source_plain, const LabelTable& labels, LabelTable& found, std::string* err) {
+    found.clear();
+    auto fn = [&](const std::string& text) -> const std::string* {
+        auto it = labels.find(text);
+        if (it != labels.end()) found[it->first] = it->second;
+        return nullptr;
+    };
+    return scene_walk(source_plain, fn, err);
+}
+
+bool label_texts(const FileTree& tree, std::set<std::string>& out) {
+    out.clear();
+    std::vector<std::string> scenes = scene_files(tree);
+    std::vector<std::set<std::string>> found(scenes.size());
+    std::mutex mu;
+    for_scenes(tree, scenes, [&](size_t i, Bytes& src) {
+        std::string why;
+        auto fn = [&](const std::string& text) -> const std::string* {
+            found[i].insert(text);
+            return nullptr;
+        };
+        if (!scene_walk(adld::decrypt(scenes[i], src), fn, &why)) {
+            std::lock_guard<std::mutex> lock(mu);
+            LOGW("english", "labels: %s: %s", scenes[i].c_str(), why.c_str());
+        }
+    });
+    for (auto& f : found) out.insert(f.begin(), f.end());
+    return !scenes.empty();
 }
 
 bool build(const Options& opts, Stats* stats, std::string* err) {
@@ -281,33 +337,19 @@ bool build(const Options& opts, Stats* stats, std::string* err) {
     // TalkScene/ .csf) whose node tree has a label the table translates, found at run time; (b) the
     // client loads the scene's -en copy and draws its trees' LabelText; (d) one file per scene
     if (!opts.labels.empty()) {
-        std::vector<std::string> scenes;
-        for (const char* dir : {"UI", "TalkScene"})
-            for (auto& rel : tree->files(dir))
-                if (rel.size() > 4 && rel.compare(rel.size() - 4, 4, ".csf") == 0 && rel.find('-', rel.rfind('/') + 1) == std::string::npos)
-                    scenes.push_back(rel);
+        std::vector<std::string> scenes = scene_files(*tree);
         std::vector<LabelTable> found(scenes.size());
         std::vector<Bytes> srcs(scenes.size());
-        std::atomic<size_t> next{0};
         std::mutex mu;
-        auto scan = [&] {
-            for (size_t i; (i = next++) < scenes.size();) {
-                Bytes src;
-                std::string swhy;
-                if (!tree->read(scenes[i], src)) continue;
-                if (!scene_labels(adld::decrypt(scenes[i], src), opts.labels, found[i], &swhy)) {
-                    std::lock_guard<std::mutex> lock(mu);
-                    LOGW("english", "labels: %s: %s", scenes[i].c_str(), swhy.c_str());
-                    continue;
-                }
-                if (!found[i].empty()) srcs[i] = std::move(src);
+        for_scenes(*tree, scenes, [&](size_t i, Bytes& src) {
+            std::string swhy;
+            if (!scene_labels(adld::decrypt(scenes[i], src), opts.labels, found[i], &swhy)) {
+                std::lock_guard<std::mutex> lock(mu);
+                LOGW("english", "labels: %s: %s", scenes[i].c_str(), swhy.c_str());
+                return;
             }
-        };
-        size_t nt = std::max(1u, std::min(8u, std::thread::hardware_concurrency()));
-        std::vector<std::thread> pool;
-        for (size_t k = 1; k < nt; k++) pool.emplace_back(scan);
-        scan();
-        for (auto& t : pool) t.join();
+            if (!found[i].empty()) srcs[i] = std::move(src);
+        });
         for (size_t i = 0; i < scenes.size(); i++) {
             if (found[i].empty()) continue;
             std::string en_rel = en_name(scenes[i]);

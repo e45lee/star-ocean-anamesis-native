@@ -168,7 +168,7 @@ message_id	ja_sha1	en	source
 6062_110_22	9658ef3149c44cf77ce17b47283af77300059618	Givel said your goal was to\ndestroy Raza. I bet that's not\nexactly what you meant, either.	machine
 6062_110_23	355e6f94e5d452d44f878cc87b8c4fde2bf7593d	That might not be entirely\nwrong. More than anyone, I\nwanted Raza to return to\nwhere it belongs.	machine
 6062_110_24	16c9745b7fa0ff983223b0c98eea331b1a3aebdc	Because Raza... Earth... has\nvanished from the universe.	machine
-6062_115_01	ccf1ac5d56ffd573428de57781c4d577d461b477	Gone...? Are you saying that\nAnother Earth has teleported\naway from the Solar System?	machine
+6062_115_01	ccf1ac5d56ffd573428de57781c4d577d461b477	Gone...? Are you saying that\nAnother Earth has warped\naway from the Solar System?	machine
 6062_115_02	78ff49a6c1cb233ba5f6854392561dbcd041ba25	How does Eve know about\nthis? Did she see it in the Urza\nSystem?	machine
 6062_115_03	7b57114f801bcf54610e61bbf125a5e0d590a661	No. I... I've known about it from\nthe very beginning.	machine
 6062_115_04	e3bdae667b1b649dfd8f6095b8037f1b8cb5d1dd	...From the beginning? What do\nyou mean by "the beginning"?\nWhat is this all about?	machine
@@ -252,7 +252,7 @@ message_id	ja_sha1	en	source
 6062_120_27	b942d2a2e9da20f21da1560251e128d8df4bb8ca	...Precisely. Ever since the current\ncivilization was established, there have\nalways been factions within Raza that\nsought to return Earth to where it truly\nbelonged.	machine
 6062_120_28	6083a67023bced765e6eb8dfde69b491ca77df84	Asmodeus already had a strong desire\nto oppose humanity, so he conspired\nwith those who wanted to return Raza\nto the original form and location of\nEarth.	machine
 6062_120_29	1774cae355db0088871fa1d772eed9361514754e	...By using both the Phantom fleet and\nthe petrification virus to corner Raza,\nhe intended to create a justification for\nreturning to the original Earth.	machine
-6062_120_30	b878ed8acc1e984a171032b0dfd11ae69d5ee1f0	...I don't necessarily deny the ideology\nof longing for the original Earth. My\nfoster parents are certainly responsible\nfor the disasters that struck the world\nafter the transfer.	machine
+6062_120_30	b878ed8acc1e984a171032b0dfd11ae69d5ee1f0	...I don't necessarily deny the ideology\nof longing for the original Earth. My\nfoster parents are certainly responsible\nfor the disasters that struck the world\nafter the warp.	machine
 6062_120_31	fdc5d2ea047473d5f564b514b7ffdb8a08cffeea	But what exactly do they plan\nto do by actually going back to\nthe Earth of that era?	machine
 6062_120_32	7d1c7dbf3ae530f3043b6ac5fca24db2e35f3674	If we return to a time when people\nacross the planet were at each other's\nthroats and energy was depleted, the\nhumanity that managed to survive will\nonly face extinction again...!	machine
 6062_120_33	11b58d98746bb284a6752c0804340bd73ef13d9e	...Maybe they didn't think that far\nahead. I think the desire to return to\ntheir original form just took precedence\nover everything else.	machine
@@ -672,7 +672,7 @@ message_id	ja_sha1	en	source
 6064_250_39	fae049f65d0d46b62f1d86f3cce54f29d902701c	The "Gate of Urza" is a mere fake, a\ncrude imitation of a Time Gate created\nby the people of this universe. Your\nprayers should bring no meaning.	machine
 6064_250_40	27ea625d635b594db98ba20424fd590623d24fb4	I don't think so.	machine
 6064_250_41	b8c21cf206e0cb18a1e14e580d0e3b1e0a5d9c93	I think it's wonderful that a\nGate of Urza was created in\nthis universe that resonates\nwith our symbol magic.	machine
-6064_250_43	4ef6dec7586d7012d25ab88c07db4324ff56da27	The symbols carved by the\npeople of Planet Raza to\nsurvive the Great Catastrophe\nof dimensional transfer...	machine
+6064_250_43	4ef6dec7586d7012d25ab88c07db4324ff56da27	The symbols carved by the\npeople of Planet Raza to\nsurvive the Great Catastrophe\nof dimensional warp...	machine
 6064_250_44	5c6317ee333be8e80d1174b35f2b223d808d9bfb	...brought them close to the secrets of\nthe Gate of Urza, which gave Grigori\nthe opportunity to exploit their desires.	machine
 6064_250_45	1c646bee034f0c5f20cd6367937396c374a5d9b6	This universe is already\nbeginning to intertwine.	machine
 6064_250_46	f664de00348f2888f28d47d846d1ebaede404e31	Nonsense. That is impossible.	machine

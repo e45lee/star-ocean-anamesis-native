@@ -5,7 +5,7 @@ Files (data/english/, committed):
   master.tsv          the rows a person or an engine wrote: message_id, ja_sha1, en, source
                       (machine | agent | human | reviewed; agent: an AI agent wrote it, ranked as machine), engine, date, editor, note. Official, memory and
                       template English is NOT stored: the build derives it from the two master DBs.
-  glossary.tsv        ja, en, kind, variants, source (human | machine), note. Global's terms
+  glossary.tsv        ja, en, kind, variants, avoid, source (human | machine), note. Global's terms
                       (official, Q8) are derived at load time (english_core.build_glossary), not stored.
   client-strings.tsv  message_id, en, note: the client's new strings (port_en_*), merged as human
                       rows with an empty ja_sha1.
@@ -16,9 +16,11 @@ Files (data/english/, committed):
                       committed (the user's decision of 2026-10-07; docs/english.md 7.9 is the spec).
   story/TS_xxxx.tsv   machine/human/reviewed rows of one Scenario file (columns as master.tsv; no
                       Japanese: ja_sha1 is the SHA-1 of the line's text_value with REAL newlines)
-  labels.tsv          the layout labels to translate (english.md 7.14): ja (master encoding), en, source,
-                      engine, date, editor, note, sorted by ja. Only the Japanese listed here is replaced
-                      in the scenes' node trees (placeholders such as ああああ are left out). A row is
+  labels.tsv          the layout labels to translate (english.md 7.14): ja_sha1, en, source, engine, date,
+                      editor, note, sorted by ja_sha1 (the SHA-1 of the label's Japanese in the master
+                      encoding; no Japanese stored: it is read from the download's scenes, UI/ and
+                      TalkScene/ .csf, english_core.scene_label_texts). Only the Japanese listed here is
+                      replaced in the scenes' node trees (placeholders such as ああああ are left out). A row is
                       "derived" with no en (the server takes the English of the master row with the same
                       Japanese, or Global's memory, at build time; english_derive.h resolve_labels) or our
                       own English (machine | agent | human | reviewed), checked as a master row.
@@ -55,8 +57,10 @@ Usage:
                                                  text doesn't follow (>= half of >= 3 rows): --apply
                                                  removes them with human rows; also lists machine names
                                                  Global's text contradicts
-  tools/english_text.py labels [--check]        check labels.tsv (format, order, every row with English passes
-                                                 the machine checks); exit 1 on a problem
+  tools/english_text.py labels [--check]        check labels.tsv (format, order, every row's hash is a label of
+                                                 the download's scenes, every row with English passes the
+                                                 machine checks; without the download only the form);
+                                                 exit 1 on a problem
   tools/english_text.py label-set JA TEXT --by NAME [--source agent|human] [--note N]
                                                  our English for a layout label (JA in the master encoding)
   tools/english_text.py import-mt CHECKPOINT.jsonl [--replace]
@@ -84,11 +88,11 @@ import english_core as C  # noqa: E402
 DATA = REPO / "data/english"
 WORK = REPO / "work/english"
 TABLE_COLS = ["message_id", "ja_sha1", "en", "source", "engine", "date", "editor", "note"]
-GLOSSARY_COLS = ["ja", "en", "kind", "variants", "source", "note"]
+GLOSSARY_COLS = ["ja", "en", "kind", "variants", "avoid", "source", "note"]
 CLIENT_COLS = ["message_id", "en", "note"]
 OUT_COLS = ["message_id", "ja_sha1", "en", "source"]
 REJECT_COLS = ["message_id", "ja_sha1", "engine", "date", "en", "problems"]
-LABEL_COLS = ["ja", "en", "source", "engine", "date", "editor", "note"]
+LABEL_COLS = ["ja_sha1", "en", "source", "engine", "date", "editor", "note"]
 HUMAN = ("human", "reviewed")
 # Rows an engine or an agent wrote, which a person has not checked: served only where no official,
 # memory or template row passes (english.md 7.9 step 7). `agent` is a row an AI agent wrote by hand
@@ -145,6 +149,7 @@ def write_if_changed(path, text):
 
 
 _SOURCES = {}  # read-only sources, shared by the commands of one process (the tests)
+_LABEL_TEXTS = {}  # the download's layout labels by sha1, per download (Ctx.label_texts)
 
 
 class Ctx:
@@ -172,6 +177,15 @@ class Ctx:
 
     def path(self, name):
         return self.data / name
+
+    def label_texts(self):
+        """{sha1: Japanese (master encoding)} of every layout label of the download's scenes (the key of
+        labels.tsv; english_core.scene_label_texts), None without the download (--scenario)."""
+        key = str(self.scenario)
+        if key not in _LABEL_TEXTS:
+            found = C.scene_label_texts(self.scenario)
+            _LABEL_TEXTS[key] = None if found is None else {h: ja for ja, h in found.items()}
+        return _LABEL_TEXTS[key]
 
     def table(self):
         rows = read_tsv(self.path("master.tsv"), TABLE_COLS)
@@ -293,14 +307,16 @@ def cmd_glossary_weak(ctx, a):
 
 
 def glossary_dict(rows):
-    """{ja: {"en", "variants", "kind", "source"}}: per term the human row, else the official, else the
-    machine one (M2's new names). A row with an empty en removes the term."""
+    """{ja: {"en", "variants", "avoid", "kind", "source"}}: per term the human row, else the official,
+    else the machine one (M2's new names). A row with an empty en removes the term. `avoid`: English
+    words a row with the term must not use (the term splits of english.md 7.18; glossary_misses)."""
     best = {}
     for r in rows:
         cur = best.get(r["ja"])
         if cur is None or GLOSSARY_RANK[r["source"]] < GLOSSARY_RANK[cur["source"]]:
             best[r["ja"]] = r
     return {ja: {"en": r["en"], "variants": [v for v in r["variants"].split(" | ") if v],
+                 "avoid": [v for v in (r.get("avoid") or "").split(" | ") if v],
                  "kind": r["kind"], "source": r["source"]}
             for ja, r in sorted(best.items()) if r["en"]}
 
@@ -343,7 +359,7 @@ def finish(ctx, glossary, source, en, ja):
         probs = C.check(e, e, font)
     else:
         probs = C.check(jn, e, font, glossary if source not in DERIVED else None,
-                        tags="strict" if source in MACHINE else "subset")
+                        tags="strict" if source in MACHINE else "subset", credit=source in DERIVED)
     return C.esc(e), probs, rebroken
 
 
@@ -381,16 +397,25 @@ class Derived:
                     self.token_gaps.append((mid, ja, src.gl_en[mid], why))
             if klass is not None and rule == "id-ws":
                 self.matched[mid] = "id-ws"
+            if klass == "official" and C.has_kana(off):
+                self.matched[mid] = "official-credit"  # english.md 7.9: a name and its romanization
             if klass is None:
                 if not C.has_kana(ja):
                     klass = "neutral"
                 else:
                     m, kind = mem.lookup(ja)
+                    near = src.official_near(mid, ja) if m is None else None
                     if m is not None:
                         klass = kind
                         cands.append(("template" if kind == "template" else "memory", m))
                         if kind == "exact_ws":
                             self.matched[mid] = "memory-ws"
+                    elif near is not None:
+                        # english.md 7.9 official-near: Global's English for this id's Japanese, which
+                        # 3.7.0 changed only in punctuation or an abbreviation (served as official)
+                        klass = "official_near"
+                        self.matched[mid] = "official-near"
+                        cands.append(("official", near))
                     else:
                         klass = "gap"
             if cands and cands[0][0] == "official":
@@ -1296,15 +1321,20 @@ def cmd_import_csv(ctx, a):
 # ---------------------------------------------------------------- import-mt
 
 def read_labels(ctx):
+    """{ja_sha1: row} of labels.tsv (keyed by the SHA-1 of the label's Japanese in the master encoding;
+    the Japanese itself is not in git: ctx.label_texts() reads it from the download's scenes)."""
     rows = read_tsv(ctx.path("labels.tsv"), LABEL_COLS)
     t = {}
     for r in rows:
-        if r["ja"] in t:
-            raise ValueError(f"labels.tsv: {r['ja']} twice")
+        h = r["ja_sha1"]
+        if len(h) != 40 or any(c not in "0123456789abcdef" for c in h):
+            raise ValueError(f"labels.tsv: {h!r}: not a SHA-1")
+        if h in t:
+            raise ValueError(f"labels.tsv: {h} twice")
         ok = (r["source"] == "derived" and not r["en"]) or (r["en"] and r["source"] in MACHINE + HUMAN)
         if not ok:
-            raise ValueError(f"labels.tsv: {r['ja']}: source {r['source']!r} with en {r['en']!r}")
-        t[r["ja"]] = r
+            raise ValueError(f"labels.tsv: {h}: source {r['source']!r} with en {r['en']!r}")
+        t[h] = r
     return t
 
 
@@ -1312,28 +1342,39 @@ def write_labels(ctx, t):
     write_if_changed(ctx.path("labels.tsv"), tsv_text(LABEL_COLS, [t[k] for k in sorted(t)]))
 
 
-def label_problems(ctx, glossary, r):
-    """The checks of a master row (english.md 7.9 step 6; tags strict for machine/agent) for a label's English."""
-    _, probs, _ = finish(ctx, glossary, r["source"], r["en"], r["ja"])
+def label_problems(ctx, glossary, r, ja):
+    """The checks of a master row (english.md 7.9 step 6; tags strict for machine/agent) for a label's
+    English; `ja` is the label's Japanese (master encoding)."""
+    _, probs, _ = finish(ctx, glossary, r["source"], r["en"], ja)
     return probs
 
 
 def cmd_labels(ctx, a):
     t = read_labels(ctx)
     g = glossary_dict(glossary_rows(ctx))
+    texts = ctx.label_texts()
     bad = 0
-    for ja in sorted(t):
-        r = t[ja]
-        if r["source"] == "derived":
-            continue
-        probs = label_problems(ctx, g, r)
-        if probs:
-            bad += 1
-            print(f"{ja}: {json.dumps(probs, ensure_ascii=False)}", file=sys.stderr)
+    if texts is None:
+        print(f"labels: no download ({ctx.scenario}): the rows' Japanese is read from its scenes; only the form is checked",
+              file=sys.stderr)
+    else:
+        for h in sorted(t):
+            r = t[h]
+            ja = texts.get(h)
+            if ja is None:
+                bad += 1
+                print(f"{h}: no label of the download's scenes has this Japanese (stale)", file=sys.stderr)
+                continue
+            if r["source"] == "derived":
+                continue
+            probs = label_problems(ctx, row_glossary(g, r["note"]), r, ja)
+            if probs:
+                bad += 1
+                print(f"{h} {ja}: {json.dumps(probs, ensure_ascii=False)}", file=sys.stderr)
     text = tsv_text(LABEL_COLS, [t[k] for k in sorted(t)])
     stale = ctx.path("labels.tsv").read_text(encoding="utf-8") != text
     if stale:
-        print("labels.tsv: not in the canonical form (sorted by ja); run without --check to rewrite", file=sys.stderr)
+        print("labels.tsv: not in the canonical form (sorted by ja_sha1); run without --check to rewrite", file=sys.stderr)
         if not a.check:
             write_labels(ctx, t)
     n = collections.Counter(r["source"] for r in t.values())
@@ -1344,16 +1385,17 @@ def cmd_labels(ctx, a):
 def cmd_label_set(ctx, a):
     t = read_labels(ctx)
     ja = a.ja.replace("\r\n", "\n").replace("\n", "\\n")
-    if ja not in t:
+    h = C.sha1(ja)
+    if h not in t:
         print(f"{ja}: not a row of labels.tsv (add the label first)", file=sys.stderr)
         return 1
     text = a.text.replace("\r\n", "\n").replace("\n", "\\n")
-    r = {"ja": ja, "en": text, "source": a.source, "engine": "", "date": a.date or today(), "editor": a.by, "note": a.note or ""}
-    probs = label_problems(ctx, glossary_dict(glossary_rows(ctx)), r)
+    r = {"ja_sha1": h, "en": text, "source": a.source, "engine": "", "date": a.date or today(), "editor": a.by, "note": a.note or ""}
+    probs = label_problems(ctx, row_glossary(glossary_dict(glossary_rows(ctx)), r["note"]), r, ja)
     if probs and not a.force:
         print(f"{ja}: {json.dumps(probs, ensure_ascii=False)} (fix the text or pass --force)", file=sys.stderr)
         return 1
-    t[ja] = r
+    t[h] = r
     write_labels(ctx, t)
     print(f"{ja}: {a.source} label row by {a.by}")
     return 0
@@ -1367,7 +1409,8 @@ def import_mt_labels(ctx, a, rows, n):
     rejected = {}
     for r in rows:
         ja = r["ja"]
-        cur = t.get(ja)
+        h = C.sha1(ja)
+        cur = t.get(h)
         if cur is None:
             n["label: not in labels.tsv"] += 1
             continue
@@ -1377,16 +1420,16 @@ def import_mt_labels(ctx, a, rows, n):
         jn = C.unesc(ja)
         en, probs = C.post_one({"ja": ja, "budget": font.widest(jn), "multiline": "\n" in jn}, r["mt"], font, g)
         probs.pop("width", None)
-        row = {"ja": ja, "en": C.esc(en), "source": "machine", "engine": engine_name(r), "date": r.get("date", ""),
+        row = {"ja_sha1": h, "en": C.esc(en), "source": "machine", "engine": engine_name(r), "date": r.get("date", ""),
                "editor": "", "note": ""}
         if not probs:
-            probs = label_problems(ctx, g, row)
+            probs = label_problems(ctx, g, row, ja)
         if probs:
-            rejected[ja] = {"message_id": ja, "ja_sha1": C.sha1(ja), "engine": row["engine"], "date": row["date"],
-                            "en": row["en"], "problems": json.dumps(probs, ensure_ascii=False)}
+            rejected[h] = {"message_id": ja, "ja_sha1": h, "engine": row["engine"], "date": row["date"],
+                           "en": row["en"], "problems": json.dumps(probs, ensure_ascii=False)}
             n["label: rejected"] += 1
             continue
-        t[ja] = row
+        t[h] = row
         n["label: imported"] += 1
     write_labels(ctx, t)
     if rejected:

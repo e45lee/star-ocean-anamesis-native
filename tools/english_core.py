@@ -98,6 +98,50 @@ def same_ja(gl_ja, ja):
     return "id-ws" if k and ws_key(gl_ja) == k else None
 
 
+def credit_form(en, ja):
+    """Global's credit rows (english.md 7.9 "official-credit"): an English text whose Japanese is a
+    name kept as written, "<ja>\\n\\n<romanization>" (cp0303_b04a_prmsg_02 "太子\\n\\nTaishi", the
+    illustrators): everything before the first line break is `ja` but for white space (ws_key, some text
+    left), and after it there is text without kana or kanji. Any other English with Japanese in it
+    (【未翻訳】…, 【N版】…, Global's "untranslated" and work markers) is not. Master encoding or real
+    newlines."""
+    u = unesc(en or "")
+    i = u.find("\n")
+    if i < 0:
+        return False
+    k = ws_key(ja)
+    return bool(k) and ws_key(u[:i]) == k and bool(ws_key(u[i:])) and not has_kana(u[i:])
+
+
+# english.md 7.9 "official-near": the Japanese texts 3.7.0 reworded only in punctuation, white space,
+# full/half width or these abbreviations of the same term (each pair: the long form -> the short one,
+# applied in this order). A changed word, number or name is not "near".
+NEAR_PUNCT = "、。,.・!?「」『』…"
+NEAR_PAIRS = (("クリティカルダメージ", "クリダメ"), ("クリティカル発生率", "クリティカル率"), ("ダメージ", "ダメ"),
+              ("秒間", "秒"), ("付与する", "付与"), ("の時に", "時"), ("時に", "時"), ("使用で", "使用時"),
+              ("ごとに", "毎"), ("毎に", "毎"))
+
+
+def near_key(s):
+    """The key of the near match: NFKC, white space (str.isspace) and NEAR_PUNCT removed, NEAR_PAIRS."""
+    t = "".join(c for c in unicodedata.normalize("NFKC", unesc(s or "")) if not (c.isspace() or c in NEAR_PUNCT))
+    for a, b in NEAR_PAIRS:
+        t = t.replace(a, b)
+    return t
+
+
+def near_ja(gl_ja, ja, en):
+    """Whether Global's English `en` (for its Japanese gl_ja) may serve 3.7.0's `ja` by the rule
+    official-near: the near keys are equal and non-empty, and the numbers of `en` are those of `ja`
+    (as sets; NFKC digits), so an English that doesn't match its own Japanese isn't carried over."""
+    if gl_ja is None:
+        return False
+    k = near_key(ja)
+    if not k or near_key(gl_ja) != k:
+        return False
+    return set(NUM.findall(en)) == set(NUM.findall(unicodedata.normalize("NFKC", unesc(ja))))
+
+
 # ---------------------------------------------------------------- sources
 
 class Sources:
@@ -137,7 +181,7 @@ class Sources:
     def gl_english(self, mid):
         """Global's `en` for mid if it is real, usable English, else None (filters 1, 2, 4, 5)."""
         en, ja = self.gl_en.get(mid), self.gl_ja.get(mid)
-        if not en or has_kana(en) or en == ja or GL_TOKEN.search(en):
+        if not en or (has_kana(en) and not credit_form(en, ja)) or en == ja or GL_TOKEN.search(en):
             return None
         if SPEC_STRICT.findall(en) != SPEC_STRICT.findall(ja or ""):
             return None
@@ -156,6 +200,12 @@ class Sources:
     def official(self, mid, ja):
         en = self.gl_english(mid)
         return en if en is not None and same_ja(self.gl_ja.get(mid), ja) else None
+
+    def official_near(self, mid, ja):
+        """Global's English by id for a Japanese text 3.7.0 changed only as near_ja allows (rule
+        official-near; asked only when id, E3, memory and template give nothing)."""
+        en = self.gl_english(mid)
+        return en if en is not None and near_ja(self.gl_ja.get(mid), ja, en) else None
 
     def official_e3(self, mid, ja):
         """(english, None) from a Global token row rewritten by E3, (None, reason) when the row has
@@ -428,6 +478,78 @@ def isf_members(d):
     return out
 
 
+LABEL_KEYS = (b"LabelText", b"ButtonText")  # the node trees' label texts (english.md 7.14)
+
+
+def _isf_tree_members(d):
+    """The (name, offset, size) of an ISF container's .msgp members (its node trees)."""
+    n = struct.unpack_from("<I", d, 8)[0]
+    out = []
+    for i in range(n):
+        name_off, data_off, size, _ = struct.unpack_from("<4I", d, 0x10 + 16 * i)
+        name = d[name_off:d.index(b"\0", name_off)].decode()
+        if name.endswith(".msgp"):
+            out.append((name, data_off, size))
+    return out
+
+
+def _walk_labels(o, out):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if k in LABEL_KEYS and isinstance(v, bytes):
+                out.append(v)
+            else:
+                _walk_labels(v, out)
+    elif isinstance(o, list):
+        for v in o:
+            _walk_labels(v, out)
+
+
+def scene_labels(plain):
+    """The LabelText / ButtonText str values (bytes, real newlines) of a scene's node trees: its .msgp
+    members, `plain` the scene file with ADLD removed (SLZ, then ISF). The server's twin is
+    english_art::label_texts (server/src/english_art/build.cpp)."""
+    import msgpack
+    from soa_save import slz
+    d = slz.decode(plain)
+    if d[:4] != b"\0ISF":
+        raise ValueError("not an ISF container")
+    out = []
+    for _, off, size in _isf_tree_members(d):
+        u = msgpack.Unpacker(raw=True, strict_map_key=False)
+        u.feed(d[off:off + size])
+        for o in u:
+            _walk_labels(o, out)
+    return out
+
+
+def scene_label_texts(download=None):
+    """{master-encoded text: sha1} of every layout label of the download's scenes (UI/ and TalkScene/
+    .csf files, not their -en copies; english.md 7.14): the Japanese the rows of labels.tsv (keyed by
+    that sha1) translate. `download`: the zip or folder (default: the checkout's download zip). None
+    when there is no download (or it has no scenes, e.g. a folder of story files)."""
+    from soa_save import adld
+    from soa_save.download_tree import DownloadTree
+    tree = DownloadTree.open_or_none(download or SCENARIO)
+    if tree is None:
+        return None
+    out = {}
+    scenes = 0
+    for top in ("UI", "TalkScene"):
+        for rel in tree.files(top):
+            base = rel.rsplit("/", 1)[-1]
+            if not rel.endswith(".csf") or "-" in base:
+                continue
+            scenes += 1
+            for v in scene_labels(adld.decode(tree.read(rel), rel)):
+                try:
+                    t = esc(v.decode("utf-8"))
+                except UnicodeDecodeError:
+                    continue
+                out[t] = sha1(t)
+    return out if scenes else None
+
+
 def read_font_glyphs(fpk=None):
     """The glyph records of fontData.bin: [(id, x, y, w, h, xoff, yoff, xadvance, page, chnl)].
     `fpk` is the font.fpk bytes (ADLD XOR keyed by CHash32 of its path, then SLZ, then ISF); by
@@ -534,10 +656,11 @@ def _tags_subset(tj, te):
     return opens == te.count("</font>")
 
 
-def check(ja, en, font, glossary=None, budget=None, tags="strict"):
+def check(ja, en, font, glossary=None, budget=None, tags="strict", credit=False):
     """Problems of an English row for a Japanese one, as a dict (empty = fine). Both texts with real
     newlines. tags: "strict" (the same tags; machine rows, story lines) or "subset" (label rows from
-    Global or a person: _tags_subset)."""
+    Global or a person: _tags_subset). credit: Global's credit form (credit_form: the Japanese name,
+    then its romanization) passes the kana check (derived master rows only)."""
     p = {}
     sj, tj = protected(ja)
     se, te = protected(en)
@@ -549,7 +672,7 @@ def check(ja, en, font, glossary=None, budget=None, tags="strict"):
         p["positional"] = True  # the port's printf has no positional arguments (docs/english.md 3.3)
     if tj != te and not (tags == "subset" and _tags_subset(tj, te)):
         p["tags"] = [tj, te]
-    if has_kana(en):
+    if has_kana(en) and not (credit and credit_form(en, ja)):
         p["kana"] = True
     miss = font.missing(en)
     if miss:
@@ -591,15 +714,34 @@ def _gloss_forms(term):
     return {f for f in forms if f}
 
 
+def glossary_avoided(flat, avoid):
+    """The first of a term's avoided English words (glossary.tsv `avoid`) that `flat` (_gloss_norm'd)
+    uses: a word starting with it ("Evol" is Evolve, Evolution, evolved), case and accents ignored;
+    else None."""
+    for a in avoid:
+        if re.search(r"(?<![a-z0-9])" + re.escape(_gloss_norm(a)), flat):
+            return a
+    return None
+
+
 def glossary_misses(ja, en, glossary):
     """[[term, english]] of the glossary terms in `ja` whose English (or an accepted variant) isn't in
-    `en`; case, line breaks, accents, a label's trailing colon and a plural/singular don't count."""
+    `en`; case, line breaks, accents, a label's trailing colon and a plural/singular don't count.
+    [term, english, "avoid: WORD"] when `en` uses one of the term's avoided words (a term split the
+    user decided, english.md 7.18: 進化 is Augment, never Evolve), even beside the term's English."""
     flat = _gloss_norm(en)
 
     def used(term):
         return any(f in flat for f in _gloss_forms(term))
-    return [[t, glossary[t]["en"]] for t in glossary_hits(ja, glossary)
-            if not used(glossary[t]["en"]) and not any(used(v) for v in glossary[t]["variants"])]
+    out = []
+    for t in glossary_hits(ja, glossary):
+        g = glossary[t]
+        bad = glossary_avoided(flat, g.get("avoid") or ())
+        if bad:
+            out.append([t, g["en"], "avoid: " + bad])
+        elif not used(g["en"]) and not any(used(v) for v in g["variants"]):
+            out.append([t, g["en"]])
+    return out
 
 
 def runaway(ja, en):

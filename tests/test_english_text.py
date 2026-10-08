@@ -62,15 +62,20 @@ def test_two_builds_byte_identical(built):
 def test_counts_reproduce_english_md(built):
     """english.md 7.1: 19,145 official by id, 6,265 exact memory, 2,412 template; plus E3's rows;
     7.9: 57 more by id and 5 more E3 rows whose Japanese differs from Global's only in white space
-    (id-ws), 83 by memory-ws (2 of them were template rows)."""
+    (id-ws), 83 by memory-ws (2 of them were template rows); 120 credit rows by id (official-credit:
+    the illustrator's Japanese name and romanization) and 59 more by memory through them; 40 by
+    official-near (Global's English for a Japanese text changed only in punctuation or an
+    abbreviation)."""
     ws = collections.Counter((r, built.klass[m]) for m, r in built.matched.items())
-    assert ws == {("id-ws", "official"): 57, ("id-ws", "official_e3"): 5, ("memory-ws", "exact_ws"): 83}
-    assert built.candidates["official"] == 19145 + 57
-    assert built.candidates["exact"] == 6265
+    assert ws == {("id-ws", "official"): 57, ("id-ws", "official_e3"): 5, ("memory-ws", "exact_ws"): 83,
+                  ("official-credit", "official"): 120, ("official-near", "official_near"): 40}
+    assert built.candidates["official"] == 19145 + 57 + 120
+    assert built.candidates["exact"] == 6265 + 59
     assert built.candidates["exact_ws"] == 83
     assert built.candidates["template"] == 2412 - 2
+    assert built.candidates["official_near"] == 40
     assert built.candidates["official_e3"] == len(built.e3) > 0
-    assert built.served["official"] == 19145 + 57 + len(built.e3) - sum(
+    assert built.served["official"] == 19145 + 57 + 120 + 40 + len(built.e3) - sum(
         1 for f in built.failures if f["source"] == "official") - len(built.overrides)
     assert len(built.q7) == 803 - 56
     assert sum(1 for r in built.glossary_rows if r["source"] == "official" and r["variants"]) == 302
@@ -81,7 +86,8 @@ def test_served_rows_are_clean(built, font):
     for mid, (h, en, source) in built.out.items():
         assert source in T.C_SOURCES
         assert not C.GL_MARKUP.search(en), mid
-        assert not C.has_kana(en), mid
+        # kana only in Global's credit rows (english.md 7.9 official-credit), served as derived
+        assert not C.has_kana(en) or (source in T.DERIVED and C.credit_form(en, src.jp_rows.get(mid))), mid
         assert not font.missing(C.unesc(en)), mid
         if mid in src.jp_rows:
             assert h == C.sha1(src.jp_rows[mid])
@@ -140,6 +146,31 @@ def test_glossary_check(font):
     assert C.check("紋章石が不足", "Not enough Gems.", font, g) == {}
     assert C.check("紋章石が不足", "Not enough gem.", font, g) == {}
     assert C.check("紋章石が不足", "Not enough crests.", font, g)["glossary"] == [["紋章石", "Gems"]]
+
+
+def test_glossary_avoid(font):
+    """A term's avoided words (glossary.tsv `avoid`, the term splits of english.md 7.18) fail a row even
+    beside the term's English; a word starting with one counts (Evol: Evolve, evolution)."""
+    g = {"進化": {"en": "Augment", "variants": [], "avoid": ["Evol"], "kind": "ui", "source": "human"},
+         "アシスト": {"en": "Assist", "variants": [], "avoid": ["Assistance"], "kind": "ui", "source": "human"}}
+    assert C.check("進化する", "Augment", font, g) == {}
+    assert C.check("進化素材", "Augmentation Material", font, g) == {}
+    assert C.check("進化する", "Evolve", font, g)["glossary"] == [["進化", "Augment", "avoid: Evol"]]
+    assert C.check("進化する", "Augment (evolution)", font, g)["glossary"] == [["進化", "Augment", "avoid: Evol"]]
+    assert C.check("アシスト起動", "Assistance Activated", font, g)["glossary"] == [["アシスト", "Assist", "avoid: Assistance"]]
+    assert C.check("アシスト起動", "Assist Activated", font, g) == {}
+    assert C.check("レボリューション", "Revolution", font, g) == {}  # no term in the Japanese: no check
+
+
+def test_glossary_term_splits():
+    """The user's term splits of 2026-10-08 (english.md 7.18) are glossary rows that flag the old words."""
+    g = T.glossary_dict(T.glossary_rows(T.Ctx()))
+    want = {"進化": ("Augment", "Evol"), "強化": ("Enhance", "Strengthen"), "アシスト": ("Assist", "Assistance"),
+            "転移": ("Warp", "Teleport"), "景色": ("Scenery", "Scenic"), "絶景写真": ("Superb Scenery Photo", "Scenic"),
+            "風景写真": ("Scenery Photo", "Landscape")}
+    for ja, (en, avoid) in want.items():
+        assert g[ja]["en"] == en and avoid in g[ja]["avoid"], ja
+    assert g["片手剣"]["en"] == "OHS" and "One-handed Sword" in g["片手剣"]["variants"]
 
 
 def test_glossary_waiver(font):
@@ -659,18 +690,75 @@ def test_labels_committed_rows_pass():
     assert T.main(["labels", "--check"]) == 0
 
 
+def test_scene_labels():
+    """english_core.scene_labels: the LabelText / ButtonText str values of a scene's .msgp members
+    (the Japanese labels.tsv's hashes are looked up in; the server's twin is english_art::label_texts)."""
+    import struct
+    import msgpack
+    from soa_save import slz
+    tree = msgpack.packb({"Name": "root", "LabelText": "閉じる", 7: b"bin",
+                          "Children": [{"ButtonText": "一行\n二行", "Text": "名前"}]}, use_bin_type=True)
+    names = [b"s.msgp\0", b"s.csv\0"]
+    payloads = [tree, b"x"]
+    head = 0x10 + 16 * len(names)
+    name_offs, off = [], head
+    for n in names:
+        name_offs.append(off)
+        off += len(n)
+    blob, data_offs = b"".join(names), []
+    for pl in payloads:
+        data_offs.append(off)
+        off += len(pl)
+    d = b"\0ISF" + struct.pack("<3I", 1, len(names), 0)
+    d += b"".join(struct.pack("<4I", name_offs[i], data_offs[i], len(payloads[i]), 0) for i in range(len(names)))
+    d += blob + b"".join(payloads)
+    assert sorted(C.scene_labels(slz.encode(d))) == sorted(["閉じる".encode(), "一行\n二行".encode()])
+
+
 def test_labels_mt_import(data, tmp_path):
     """import-mt with "kind": "label" rows: machine rows into labels.tsv; failing ones rejected, ours kept."""
-    rows = [{"ja": "閉じる", "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
-            {"ja": "%d個", "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
-            {"ja": "戻る", "en": "Back", "source": "human", "engine": "", "date": "", "editor": "x", "note": ""}]
+    rows = [{"ja_sha1": C.sha1("閉じる"), "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
+            {"ja_sha1": C.sha1("%d個"), "en": "", "source": "derived", "engine": "", "date": "", "editor": "", "note": ""},
+            {"ja_sha1": C.sha1("戻る"), "en": "Back", "source": "human", "engine": "", "date": "", "editor": "x", "note": ""}]
+    rows.sort(key=lambda r: r["ja_sha1"])
     (data / "labels.tsv").write_text(T.tsv_text(T.LABEL_COLS, rows), encoding="utf-8")
     prov = {"model": "m", "quant": "q", "prompt": "v2-label", "llama_build": "b", "temperature": 0, "date": "2026-10-07", "kind": "label"}
     ck = tmp_path / "labels.jsonl"
     ck.write_text("\n".join(json.dumps({**prov, "ja": ja, "mt": mt}, ensure_ascii=False)
                             for ja, mt in [("閉じる", "Close"), ("%d個", "Pieces"), ("戻る", "Return")]) + "\n", encoding="utf-8")
     run(data, "import-mt", str(ck))
-    got = {r["ja"]: r for r in T.read_tsv(data / "labels.tsv", T.LABEL_COLS)}
-    assert got["閉じる"]["en"] == "Close" and got["閉じる"]["source"] == "machine"
-    assert got["%d個"]["source"] == "derived"  # the specifier is missing: rejected
-    assert got["戻る"]["en"] == "Back"
+    got = {r["ja_sha1"]: r for r in T.read_tsv(data / "labels.tsv", T.LABEL_COLS)}
+    assert got[C.sha1("閉じる")]["en"] == "Close" and got[C.sha1("閉じる")]["source"] == "machine"
+    assert got[C.sha1("%d個")]["source"] == "derived"  # the specifier is missing: rejected
+    assert got[C.sha1("戻る")]["en"] == "Back"
+    assert "閉じる" not in (data / "labels.tsv").read_text(encoding="utf-8")  # no Japanese stored
+
+
+def test_credit_form():
+    """english.md 7.9 official-credit: Global's credit rows (the Japanese name, then its romanization)
+    are English; Global's marker rows with Japanese in them are not."""
+    assert C.credit_form("太子\\n\\nTaishi", "太子")
+    assert C.credit_form("エナミカツミ \\n\\nKatsumi Enami", "エナミカツミ")
+    assert C.credit_form("アマガイタロー\\n \\nTaro Amagai", "アマガイタロー")
+    assert not C.credit_form("【未翻訳】ハロウィンキャンペーン", "ハロウィンキャンペーン")
+    assert not C.credit_form("【N版】導きのペンダント", "導きのペンダント")
+    assert not C.credit_form("Nルーム選択", "ルーム選択")
+    assert not C.credit_form("桑島法子", "【メモ】英語版の声優名が入る項目です")
+    assert not C.credit_form("太子\\n\\n", "太子")            # no romanization
+    assert not C.credit_form("太子\\n\\nたいし", "太子")      # the second part Japanese
+    assert not C.credit_form("吉成鋼\\n\\nKou Yoshinari", "あきまん")  # another name
+    assert not C.credit_form("Taishi", "太子")
+
+
+def test_near_ja():
+    """english.md 7.9 official-near: punctuation, width and the listed abbreviations only; a changed
+    word or number, or an English whose numbers aren't the Japanese's, is not near."""
+    en = "Critical hit chance +30%, and critical\\ndamage +30% (party/20 seconds)"
+    assert C.near_ja("クリティカル率＋３０％　クリダメ＋３０％（全体／２０秒間）",
+                     "クリティカル発生率＋３０％　クリティカルダメージ＋３０％（全体／２０秒間）", en)
+    assert not C.near_ja("クリティカル率＋３０％　クリダメ＋３０％（全体／２０秒間）",
+                         "クリティカル率＋４０％　クリダメ＋４０％（全体／２０秒間）", en)          # numbers changed
+    assert not C.near_ja("紋章術の詠唱中は怯まない", "紋章術の使用中に怯まない", "No flinching during symbol invocation")  # a word
+    assert not C.near_ja("スキル３連携以上の時にクリティカル率＋５０％", "スキル３連携以上の時にクリティカル発生率＋５０％",
+                         "AP cost -30% during combos of 3 or more skills")                           # Global's English is another text
+    assert not C.near_ja(None, "地球", "Earth")

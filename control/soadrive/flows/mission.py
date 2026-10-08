@@ -9,7 +9,7 @@ import os
 import re
 import time
 
-from .. import milestones, popups, screens, ui370
+from .. import milestones, popups, screens, ui370, waits
 from ..targets import Abort
 
 # The screens this part takes (RMSE limits against the emulator's; None: shown, not gated).
@@ -32,33 +32,31 @@ def campaign_105(s):
     -> 1-05 -> the battle -> the results -> the map -> home. Returns the state text after the battle."""
     n = s.n_packets(r"< GetMissionListRes")
     s.tap_until("ミッション -> GetMissionList", 60, ui370.HOME_MISSION, s.more_than(r"< GetMissionListRes", n))
-    s.ctl("wait:6000")
-    planets = s.shot("03-planets")
+    waits.settle(s, "03-planets", hold=2)
+    planets = s.layout.shot_path("03-planets")
     if (screens.mean(planets, "120x60+527+750") or 0) > 0.45:
-        s.ctl("tap:" + ui370.PLANET_MERE, "wait:3000", "tap:" + ui370.PLANET_SORTIE, "wait:7000")
+        waits.tap_to_screen(s, "Mere", ui370.PLANET_MERE)
+        waits.tap_to_screen(s, "出撃 -> the mission map", ui370.PLANET_SORTIE, "04-mission-map")
     else:
         s.note("the mission map of the planet last played (no planet select)")
-    s.shot("04-mission-map")
-    s.ctl("tap:" + ui370.MAP_105, "wait:4000")
-    s.shot("05-mission-detail")
-    s.ctl("tap:" + ui370.SINGLE_PLAY, "wait:5000", "tap:" + ui370.RENTAL_NONE, "wait:5000")
-    s.shot("06-party")
+        waits.settle(s, "04-mission-map")
+    waits.tap_to_screen(s, "1-05 -> its detail", ui370.MAP_105, "05-mission-detail")
+    waits.tap_to_screen(s, "シングルプレイ開始", ui370.SINGLE_PLAY)
+    waits.tap_to_screen(s, "選択しない -> the party", ui370.RENTAL_NONE, "06-party", is_screen=popups.is_party_start)
     open_mission_confirm(s)
     s.shot("07-start-confirm")
     start_mission(s, "1-05 -> MissionStart -> MissionStartRes", lambda: s.in_packets(r"< MissionStartRes"), opened=True)
+    # a fixed wait: a picture of the fight, nothing to wait for (the next wait is for its end)
     s.ctl("wait:15000")
     s.shot("08-battle", settle=False)
     s.wait_for("the battle: MissionEnd (battle log) -> MissionEndRes", 600, lambda: s.in_packets(r"< MissionEndRes"))
     st = s.state("2-after-battle")
     s.check("server state: mf01_001 cleared", re.search(r"mission mf01_001: cleared 1", st) is not None)
     n = s.n_packets(r"< GetMissionListRes")
-    s.ctl("wait:3000")
-    s.shot("09-result", settle=False)
+    waits.settle(s, "09-result", hold=2)
     s.tap_until("the result pages -> the mission map (GetMissionList)", 90, ui370.RESULT_OK, s.more_than(r"< GetMissionListRes", n))
-    s.ctl("wait:4000")
-    s.shot("10-map-after-clear")
-    s.ctl("tap:" + ui370.FOOTER_HOME, "wait:8000")
-    s.shot("11-home-after-battle")
+    waits.settle(s, "10-map-after-clear", hold=2)
+    waits.tap_to_screen(s, "ホーム", ui370.FOOTER_HOME, "11-home-after-battle", mask=waits.HOME_MASK)
     return st
 
 

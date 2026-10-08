@@ -98,6 +98,75 @@ SPHERE211_PARTY_START = bytes.fromhex(
     "254169354a692a3f5e304463273c5c596a82606f8519355e20417c354c7e334c7f395183364e804d63915d729d24467a")
 
 
+# Home's ≡ menu open: its button turned into an arrow (→), the 110x100+615+160 crop scaled to 6x6
+# RGB, from the home sessions' 20-menu (Japanese and English, 2026-10-07: identical); closed (≡)
+# 0.048, so the limit is 0.02.
+HOME_MENU_OPEN = bytes.fromhex(
+    "3c9bd032b4ea2fb1e530ade525afea1f6b951573b81770cc4e94d74289d4096eca1e699a045898729ccdfffcf9aec2db0a4d9f1d50830a"
+    "4e86335b997088b24465a2053b851b4c7616477a022c74033482073c880e417a1d3a5d1e436613487b1a508e174d861b41682f4460")
+
+
+def is_home_menu_open(shot):
+    return _signature_match(shot, "110x100+615+160", "6x6", HOME_MENU_OPEN, limit=0.02)
+
+
+# The summon presentation's ALL SKIP button (bottom right, ui370.SUMMON_ALL_SKIP): the 96x22+529+1188
+# crop scaled to 8x2 RGB, from session:add-item's 1-draw (2026-10-07): the presentation's frames
+# within 0.065 of it (the backgrounds behind the button change), the loading screen before it
+# (召喚中) and the result after it 0.17+.
+SUMMON_SKIP = bytes.fromhex(
+    "8194ac5c6f855b6d804051557b8ea68d9eb56d81988496ac55677b596c80586b7f43565e576b7a5569774f637150636c")
+
+
+def is_summon_skip(shot):
+    return _signature_match(shot, "96x22+529+1188", "8x2", SUMMON_SKIP, limit=0.09)
+
+
+# マスタリー's Full Mastership! dialog (after the fifth training): its 閉じる, the 300x60+214+860 crop
+# scaled to 8x2 RGB, from session:mastery (2026-10-07): byte-identical in 18 runs, every other screen
+# of the session 0.077+. Under load it comes a while after the training's answer (the training
+# screen holds still in between).
+MASTERY_ALL_CLEAR_CLOSE = bytes.fromhex(
+    "0c244b0a224a10274e4057742c44650d254d0b234a0c234b0e2a680d2867122d6b465f90385386102c6a0e2a690f2b6a")
+
+
+def is_mastery_all_clear(shot):
+    return _signature_match(shot, "300x60+214+860", "8x2", MASTERY_ALL_CLEAR_CLOSE, limit=0.03)
+
+
+def footer_mean(shot):
+    """The footer's mean grey (its 729x110+0+1186 band): 0.38 on a screen with the footer (home's
+    other screens: the character menu, the item menu), 0.19 under one dialog's dimming, 0.10 under
+    two (session:mastery, 2026-10-08). None when it can't be read."""
+    r = subprocess.run(["convert", shot, "-resize", "729x1296!", "-crop", "729x110+0+1186", "-colorspace", "gray", "-format",
+                        "%[fx:mean]", "info:"], capture_output=True, text=True)
+    try:
+        return float(r.stdout.strip())
+    except ValueError:
+        return None
+
+
+def is_dimmed(shot):
+    """A dialog is up over a screen with the footer (its dimming): a predicate for the taps that open
+    one, where the screen under it can change first (a card highlighted before its dialog opens)."""
+    m = footer_mean(shot)
+    return m is not None and m < 0.25
+
+
+def is_undimmed(shot):
+    """No dialog over a screen with the footer: a predicate for a dialog's 閉じる (its button lit
+    while pressed changes the screen too: 0.056 against 0.23 for the dialog gone, at a slow client's
+    3 frames a second that lasts a second)."""
+    m = footer_mean(shot)
+    return m is not None and m > 0.3
+
+
+def is_dimmed_twice(shot):
+    """A second dialog over the first (the footer dimmed twice)."""
+    m = footer_mean(shot)
+    return m is not None and m < 0.14
+
+
 def is_mission_confirm(shot):
     return _signature_match(shot, "520x60+100+682", "12x2", MISSION_CONFIRM_BUTTONS)
 

@@ -102,6 +102,7 @@ def entry(s):
 
 def scene(s):
     resume(s, r"> MissionTalk", "the second scene (MissionTalk mc00_015)")
+    # a fixed wait: the scene's buttons, as flows/tutorial.py entry() says
     s.ctl("wait:15000")
     s.shot("04-scene", settle=False)
     tutorial.auto_mode(s)
@@ -117,6 +118,7 @@ def scene(s):
 def battle(s):
     resume(s, r"> MissionStart", "the battle tutorial (MissionStart ms00_001)")
     s.wait_for("MissionStart -> MissionStartRes", 60, lambda: s.in_packets(r"< MissionStartRes"))
+    # a fixed wait: a picture of the fight, nothing to wait for (the rounds tap it through)
     s.ctl("wait:15000")
     s.shot("04-battle", settle=False)
     tutorial.rounds(s, 3)
@@ -132,6 +134,7 @@ def home(s):
     # select with its 出撃 hint but 出撃 does nothing (the planet's name is missing: "ess.png"; seen
     # on all three targets, 2026-10-03), while coming from the scene it works as in the full flow.
     resume(s, r"> MissionTalk", "the third scene (MissionTalk mc00_025)")
+    # a fixed wait: the scene's buttons, as flows/tutorial.py entry() says
     s.ctl("wait:15000")
     s.shot("04-scene", settle=False)
     tutorial.auto_mode(s)
@@ -141,6 +144,7 @@ def home(s):
     # same rounds until Mere's map (bright land, where the planet select is space).
     probe = s.scratch("sortie.png")
     for i in range(4):
+        # (the rounds' pace, flows/tutorial.py rounds(): a look every 6 s until the map)
         s.send(["wait:6000", "shot:" + probe])
         if (screens.mean(probe, "729x300+0+200") or 0) > 0.2:
             break

@@ -15,7 +15,6 @@ Env: SEED_RNG, WATCH=1.
 Targets: port-inproc (default), port-server (the server-log milestones; the state DB read directly)."""
 import sqlite3
 
-from ..flows import mission
 from . import common
 
 TARGETS = ("port-inproc", "port-server")
@@ -96,35 +95,35 @@ def main(o):
         # wallet, so the client shows 50 there
         plant_coins(s)
         s.tap_until("ガチャ -> GetGachaInData", 60, "425:1250", lambda: s.in_server(r"request GetGachaInData"), every=20)
-        s.ctl("wait:8000", "tap:360:320", "wait:5000", s.shot_cmd("10-gacha-banner"))
+        common.settle(s, mask=common.GACHA_MASK)
+        common.tap_to_screen(s, "the first banner", "360:320", "10-gacha-banner", mask=common.GACHA_MASK)
         # 1回ガチャ (500 stones): the client's own check finds the coins short; OpenBuyEndDialog, patched
         # (platform370, the user's decision), opens the coin shop instead of the sale-stopped dialog
-        s.ctl("tap:190:950")
-        s.wait_for("1回ガチャ, coins short -> the coin shop (OpenBuyEndDialog patched)", 60,
-                   lambda: s.in_client(r"patch: OpenBuyEndDialog .* -> OpenCoinShopDialog"))
+        common.tap_to_count(s, "1回ガチャ, coins short -> the coin shop (OpenBuyEndDialog patched)", s.client_log,
+                            r"patch: OpenBuyEndDialog .* -> OpenCoinShopDialog", ["tap:190:950"], secs=30, changes=False)
         # the coin shop asks for the birth month first (GetBirthYearMonth refused with 10009: the
         # client's birth dialog, b: CCoinShop::ToShop's result lambda @0197c2f8) -> 登録する with its
         # default (2000-01) -> the confirmation's 登録する -> UpdateBirthYearMonth -> the coin shop
         s.wait_for("the coin shop's age check: GetBirthYearMonth refused with 10009", 60,
                    lambda: s.in_server(r"GetBirthYearMonth refused: no birth month entered \(error 10009\)"))
-        s.ctl("wait:4000", s.shot_cmd("11-birth-dialog"))
-        s.ctl("tap:364:648", "wait:3000", s.shot_cmd("11-birth-confirm"))  # 登録する -> 2000年1月生まれ, よろしいですか？
-        s.tap_until("登録する (confirmed) -> UpdateBirthYearMonth", 60, "515:790", lambda: s.in_server(r"UpdateBirthYearMonth: 2000-01"), every=15)
-        s.ctl("wait:6000", s.shot_cmd("12-coin-shop"))
-        # the L set (the fifth row from the top: the list runs テラ .. S)
+        common.settle(s, "11-birth-dialog", hold=2)
+        common.tap_to_screen(s, "登録する -> 2000年1月生まれ, よろしいですか？", "364:648", "11-birth-confirm")
+        common.tap_to_server(s, "登録する (confirmed) -> UpdateBirthYearMonth", r"UpdateBirthYearMonth: 2000-01", ["tap:515:790"], "12-coin-shop",
+                             secs=30, hold=2)
+        # the L set (the fifth row from the top: the list runs テラ .. S): a purchase, tapped once
         s.ctl("tap:364:870")
         s.wait_for("the L set -> CoinDepositCreate, the store, CoinDepositAndroidUpdate", 90,
                    lambda: s.in_server(r"CoinDepositAndroidUpdate: deposit [0-9]+ completed"))
         # the store's purchase consumed (FinishPurchaseProduct), then the result dialog
         s.wait_for("the purchase consumed (ConsumeProduct)", 60, lambda: s.in_client(r"I/java: ConsumeProduct\("))
-        s.ctl("wait:5000", s.shot_cmd("13-purchased"))
+        common.settle(s, "13-purchased", hold=2)
         got["after"] = wallet(s)
         s.check("980 paid + 80 free stones credited, the purchase recorded (%s)" % (got["after"],),
                 got["after"] == (START + FREE, PAID, 1))
         # the result's 閉じる, the coin shop's 閉じる, then home (the footer)
-        s.ctl("tap:364:800", "wait:2500", s.shot_cmd("14-result-closed"), "tap:364:1000", "wait:2500", s.shot_cmd("15-shop-closed"))
-        s.tap_log(mission.phase(4), 60, 15, 4, "tap:60:1250", name="ホーム -> home")
-        s.ctl("wait:5000", s.shot_cmd("16-home-stones"))
+        common.tap_to_screen(s, "the result: 閉じる", "364:800", "14-result-closed")
+        common.tap_to_screen(s, "the coin shop: 閉じる", "364:1000", "15-shop-closed")
+        common.tap_to_phase(s, "ホーム -> home", "60:1250", 4, "16-home-stones", every=15, tries=4, mask=common.HOME_MASK, fatal=True)
         got["home"] = wallet(s)
         s.check("nothing else bought on the way (%s)" % (got["home"],), got["home"] == got["after"])
 
@@ -134,7 +133,7 @@ def main(o):
 
     def body2(s2):
         common.port_login(s2, title="30-title", notice=None, bonus=None, home="31-home")
-        s2.ctl("wait:3000", s2.shot_cmd("32-home-stones-relogin"))
+        common.settle(s2, "32-home-stones-relogin", mask=common.HOME_MASK)
         got["relogin"] = wallet(s2)
         s2.check("the purchase still there after a re-login (%s)" % (got["relogin"],), got["relogin"] == (START + FREE, PAID, 1))
         # the birth month kept: a coins-short draw goes straight to the coin shop (GetBirthYearMonth
@@ -143,9 +142,10 @@ def main(o):
         asked, refused = n_server(s2, r"request GetBirthYearMonth"), n_server(s2, r"GetBirthYearMonth refused")
         gacha = n_server(s2, r"request GetGachaInData")
         s2.tap_until("ガチャ -> GetGachaInData", 60, "425:1250", lambda: n_server(s2, r"request GetGachaInData") > gacha, every=20)
-        s2.ctl("wait:8000", "tap:360:320", "wait:5000", "tap:190:950")
-        s2.wait_for("1回ガチャ, coins short -> the coin shop", 60, lambda: s2.in_client(r"patch: OpenBuyEndDialog .* -> OpenCoinShopDialog"))
-        s2.ctl("wait:6000", s2.shot_cmd("33-coin-shop-relogin"))
+        common.settle(s2, mask=common.GACHA_MASK)
+        common.tap_to_screen(s2, "the first banner", "360:320", mask=common.GACHA_MASK)
+        common.tap_to_count(s2, "1回ガチャ, coins short -> the coin shop", s2.client_log, r"patch: OpenBuyEndDialog .* -> OpenCoinShopDialog",
+                            ["tap:190:950"], "33-coin-shop-relogin", secs=30, hold=2)
         s2.check("the birth month kept: GetBirthYearMonth answered, not refused, after the re-login",
                  n_server(s2, r"request GetBirthYearMonth") > asked and n_server(s2, r"GetBirthYearMonth refused") == refused
                  and birth(s2) == (2000, 1))

@@ -29,21 +29,27 @@ def main(o):
     s = common.port_run(o, _sphere.port_config(o))
     c = s.ctl
 
+    def screen(name, xy, shot=None, **kw):
+        return common.tap_to_screen(s, name, xy, shot, **kw)
+
+    def auto(name, shot):
+        """自動編成 (sent once: a second tap would redo it)."""
+        common.tap_to_log(s, name, "364:898", r"Sphere211AutoMemberSelect: 4 members proposed", shot, secs=30, tries=1, fatal=True)
+
     def body(s):
         _sphere.login_to_board(s)
         _sphere.sql(s, "update sphere set debug_enemy_level = 250 where id = 1")
-        c("tap:364:670")
-        c("wait:4000", s.shot_cmd("06-lose-detail"), "tap:364:905", "wait:5000", s.shot_cmd("06-rental-list"), "tap:364:383", "wait:4000",
-          s.shot_cmd("06-rental-party"))
-        c("tap:364:898")
-        s.wait_log(r"Sphere211AutoMemberSelect: 4 members proposed", 30, name="lost battle: auto member select")
-        c("wait:4000", s.shot_cmd("06-party"))
+        screen("the cell", "364:670", "06-lose-detail")
+        screen("シングルプレイ開始", "364:905", "06-rental-list")
+        screen("the first lender -> the party", "364:383", "06-rental-party")
+        auto("lost battle: auto member select", "06-party")
         started = r"Sphere211MissionStart: floor .* enemy level 250"
         mission.start_mission(s, "lost battle: ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, started), d=mission.SPHERE211)
         s.wait_log(started, 60, name="lost battle: Sphere211MissionStart")
         if not s.in_client(r"MissionStart: rental helper .* as member 4"):
             s.fail("the rental didn't join as member 4")
         _sphere.sql(s, "update sphere set debug_enemy_level = null where id = 1")
+        # (in the battle the screen never settles: these taps are resent until their log lines)
         if s.tap_log(r"Sphere211MissionContinue: ", 400, 10, 40, "tap:489:786", name="continue after the defeat", fatal=None) is None:
             c(s.shot_cmd("07-stuck"))
             s.fail("no continue after the defeat")
@@ -53,27 +59,33 @@ def main(o):
             c(s.shot_cmd("08-stuck"))
             s.fail("no retire")
         s.wait_log(mission.phase(5), 120, name="back on the board after the retire")
-        c("wait:6000", s.shot_cmd("08-board"), "tap:590:992", "wait:3000", s.shot_cmd("09-heal-items"), "tap:364:515", "wait:3000",
-          s.shot_cmd("09-heal"), "tap:515:790")
-        s.wait_log(r"Sphere211StaminaHeal: sphere stamina 8 -> 9", 30, name="Sphere211StaminaHeal")
-        c("wait:3000", s.shot_cmd("09-healed"), "tap:364:790", "wait:2000")
-        # The board's 実績 button: the achievement dialog, its four tabs, then 閉じる.
-        c("tap:655:340", "wait:5000", s.shot_cmd("10-achievements-event"), "tap:290:303", "wait:2500", s.shot_cmd("10-achievements-daily"),
-          "tap:440:303", "wait:2500", s.shot_cmd("10-achievements-weekly"), "tap:590:303", "wait:2500", s.shot_cmd("10-achievements-other"),
-          "tap:213:1053", "wait:2000")
+        common.settle(s, "08-board", hold=2)
+        screen("stamina +", "590:992", "09-heal-items")
+        screen("the heal ticket", "364:515", "09-heal")
+        common.tap_to_log(s, "Sphere211StaminaHeal", "515:790", r"Sphere211StaminaHeal: sphere stamina 8 -> 9", "09-healed", secs=30,
+                          tries=1, fatal=True)
+        screen("healed: 閉じる", "364:790")
+        # The board's 実績 button: the achievement dialog, its four tabs, then 閉じる (a tab isn't
+        # checked: one with the same rows as the last would change nothing).
+        screen("実績", "655:340", "10-achievements-event")
+        for xy, tab in (("290:303", "daily"), ("440:303", "weekly"), ("590:303", "other")):
+            screen("実績: " + tab, xy, "10-achievements-" + tab, tries=2, fatal=False)
+        screen("実績: 閉じる", "213:1053")
         # A second lost battle with no coins: CPauseMenu::OpenContinue declines by itself
         # (Sphere211MissionContinue(..., 0)); the server ends the run as failed. Whether the client
         # also sends Sphere211MissionFailed afterwards is noted (got["failed_after_decline"]).
         _sphere.sql(s, "update sphere set debug_enemy_level = 250 where id = 1", "update player set free_coin = 0, pay_coin = 0")
-        c("wait:3000", "tap:364:670", "wait:4000", s.shot_cmd("11-decline-detail"), "tap:364:905", "wait:5000", "tap:628:1120", "wait:4000",
-          "tap:364:898")
-        s.wait_log(r"Sphere211AutoMemberSelect: 4 members proposed", 30, name="declined battle: auto member select")
-        c("wait:4000", s.shot_cmd("11-decline-party"))
-        s.tap_log(r"Sphere211MissionStart: floor .* enemy level 250", 60, 15, 3, "tap:140:898", "wait:3000", "tap:515:713",
-                  name="declined battle: Sphere211MissionStart")
+        screen("the cell", "364:670", "11-decline-detail")
+        screen("シングルプレイ開始", "364:905")
+        screen("選択しない -> the party", "628:1120")
+        auto("declined battle: auto member select", "11-decline-party")
+        started = r"Sphere211MissionStart: floor .* enemy level 250"
+        mission.start_mission(s, "declined battle: ミッション開始 -> 決定 (the start)", mission.log_more(s.client_log, started),
+                              d=mission.SPHERE211)
+        s.wait_log(started, 60, name="declined battle: Sphere211MissionStart")
         _sphere.sql(s, "update sphere set debug_enemy_level = null where id = 1")
         s.wait_log(r"Sphere211MissionContinue: declined", 400, name="the automatic decline (no coins): the battle ends as failed")
-        c("wait:15000", s.shot_cmd("12-declined"))
+        common.settle(s, "12-declined", hold=2)
         i = 0
         while s.cursor.wait(mission.phase(5), 4, alive=s.alive) is None:
             c("tap:364:1050")
@@ -81,7 +93,7 @@ def main(o):
             if i >= 15:
                 c(s.shot_cmd("12-stuck"))
                 s.fail("not back on the board after the declined battle")
-        c("wait:4000", s.shot_cmd("12-board"))
+        common.settle(s, "12-board", hold=2)
 
     if not common.drive(s, body):
         return 1

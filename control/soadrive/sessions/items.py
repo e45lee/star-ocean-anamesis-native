@@ -50,51 +50,64 @@ def plant(db):
     st.commit()
 
 
-def server_step(s, rx, name, secs=40):
-    """Waits for the next server-log line matching rx (counted from the step's start)."""
-    before = milestones.count(s.server_log, rx)
-    return lambda: s.wait_for(name, secs, lambda: milestones.count(s.server_log, rx) > before)
+def screen(s, name, xy, shot=None, **kw):
+    return common.tap_to_screen(s, name, xy, shot, **kw)
+
+
+def step(s, name, rx, xy, shot=None, **kw):
+    """A request's tap, its server line, the screen after it (common.tap_to_server)."""
+    return common.tap_to_server(s, name, rx, ["tap:" + xy], shot, **kw)
+
+
+def lock_mode(s):
+    """ロックモード / ロック解除: a toggle (a second tap would undo it), made once on a settled screen."""
+    common.tap_settled(s, LOCK_MODE)
 
 
 def item_menu(s):
-    s.ctl("tap:60:1245", "wait:5000", ITEM_MENU, "wait:5000")
+    common.settle(s, mask=common.HOME_MASK)
+    common.tap_to_phase(s, "アイテム", ITEM_MENU[4:], 9, mask=common.HOME_MASK, fatal=True)
 
 
 def boot1(s):
-    c = s.ctl
     common.port_login(s, notice=None, bonus=None)
     item_menu(s)
-    # 所持アイテム一覧 -> ロックモード -> the first row
-    c("tap:" + LIST, "wait:5000", "tap:" + LOCK_MODE, "wait:2500")
-    done = server_step(s, r"LockItem: 1 items locked", "LockItem: the first weapon locked (one uid)")
-    c("tap:" + ROW1)
-    done()
-    c("wait:2000", s.shot_cmd("03-locked"), "tap:" + LOCK_MODE, "wait:1500", "tap:" + BACK, "wait:3000")
+    # 所持アイテム一覧 -> ロックモード -> the first row (its lock icon: a small change)
+    screen(s, "所持アイテム一覧", LIST)
+    lock_mode(s)
+    step(s, "LockItem: the first weapon locked (one uid)", r"LockItem: 1 items locked", ROW1, "03-locked", changes=False)
+    lock_mode(s)
+    screen(s, "戻る", BACK)
     # アイテム売却: the second row -> 決定 -> 決定 -> the ★3 warning's 決定
-    c("tap:" + SELL, "wait:5000", "tap:" + ROW2, "wait:1000", "tap:" + DECIDE, "wait:3000", "tap:" + CONFIRM, "wait:3000",
-      s.shot_cmd("04-sell-warning"))
-    done = server_step(s, r"SellItem(Array)?: \+[0-9]+ FOL \(1 items\)", "SellItem: one weapon sold")
-    c("tap:" + WARN_OK)
-    done()
-    c("wait:4000", s.shot_cmd("05-sold"), "tap:" + CLOSE, "wait:2000", "tap:" + BACK, "wait:3000")
+    screen(s, "アイテム売却", SELL)
+    common.tap_settled(s, ROW2)
+    screen(s, "売却: 決定", DECIDE)
+    screen(s, "売却: 決定 -> the ★3 warning", CONFIRM, "04-sell-warning")
+    step(s, "SellItem: one weapon sold", r"SellItem(Array)?: \+[0-9]+ FOL \(1 items\)", WARN_OK, "05-sold")
+    screen(s, "sold: 閉じる", CLOSE)
+    screen(s, "戻る", BACK, "05b-item-menu")
     # 武器・アクセサリー強化: the locked weapon (first row) as the base, the sixth row as the material
-    c("tap:" + ENHANCE, "wait:5000", "tap:" + ROW1, "wait:5000", "tap:" + MATERIAL_SLOT, "wait:4000", "tap:" + ROW6, "wait:1000",
-      "tap:" + DECIDE, "wait:4000", s.shot_cmd("06-compose"), "tap:" + DECIDE, "wait:3000", "tap:" + WARN_OK, "wait:3000")
-    done = server_step(s, r"ItemCompose [0-9a-f]+: \+[0-9]+ points", "ItemCompose: the base enhanced with one material")
-    c("tap:" + WARN_OK)
-    done()
-    c("wait:10000", s.shot_cmd("07-composed"), "tap:" + RESULT_CLOSE, "wait:2500")
+    screen(s, "武器・アクセサリー強化", ENHANCE)
+    screen(s, "the base: the first row", ROW1)
+    screen(s, "the material slot", MATERIAL_SLOT)
+    common.tap_settled(s, ROW6)
+    screen(s, "the material: 決定", DECIDE, "06-compose")
+    screen(s, "強化: 決定", DECIDE)
+    screen(s, "the dialog's 決定", WARN_OK)
+    # the enhancement's animation waited out (settled three times in a row)
+    step(s, "ItemCompose: the base enhanced with one material", r"ItemCompose [0-9a-f]+: \+[0-9]+ points", WARN_OK, "07-composed",
+         hold=3)
+    screen(s, "the result: 閉じる", RESULT_CLOSE)
 
 
 def boot2(s):
-    c = s.ctl
     common.port_login(s, notice=None, bonus=None)
     item_menu(s)
-    c("tap:" + LIST, "wait:5000", s.shot_cmd("r03-list"), "tap:" + LOCK_MODE, "wait:2500")
-    done = server_step(s, r"UnlockItem: 1 items unlocked", "UnlockItem: the locked weapon unlocked after a re-login")
-    c("tap:" + ROW1)
-    done()
-    c("wait:2000", s.shot_cmd("r04-unlocked"), "tap:" + LOCK_MODE, "wait:1500")
+    screen(s, "所持アイテム一覧", LIST, "r03-list")
+    lock_mode(s)
+    step(s, "UnlockItem: the locked weapon unlocked after a re-login", r"UnlockItem: 1 items unlocked", ROW1, "r04-unlocked",
+         changes=False)
+    lock_mode(s)
 
 
 def state(db):

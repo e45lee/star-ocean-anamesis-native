@@ -82,11 +82,6 @@ ProgramLookup lookup(const RenderDeviceData* d) {
     return r;
 }
 
-u64 set_uniform_fn() {
-    static const u64 a = guest::sym("_ZN4Aska16RenderDeviceData23SetShaderProgramUniformEPNS_18ShaderProgramValueE");
-    return a;
-}
-
 }  // namespace
 
 bool RenderDeviceData::ProgramReady() const { return lookup(this).program != nullptr; }
@@ -103,7 +98,7 @@ void RenderDeviceData::UpdateShaderProgram() {
     m_programHash = r.hash;
     m_program = r.program;
     UseProgram(r.program->m_glProgram);
-    guest_call(set_uniform_fn(), {(u64)this, (u64)m_program});
+    call_set_shader_program_uniform(this, m_program);
 }
 
 namespace {
@@ -130,6 +125,14 @@ void HostUpdateShaderProgram(Cpu& c) {
 }
 
 }  // namespace
+
+void update_shader_program_unchecked(RenderDeviceData* d) {
+    if (!d->ProgramReady()) {
+        guest_call(fUpdateShaderProgram.orig, {(u64)d});
+        return;
+    }
+    d->UpdateShaderProgram();
+}
 
 NATIVE_FUNCTION_ORIG(fUpdateShaderProgram.sym, HostUpdateShaderProgram, "render: RenderDeviceData::UpdateShaderProgram", &fUpdateShaderProgram.orig);
 

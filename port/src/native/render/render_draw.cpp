@@ -23,6 +23,7 @@
 #include "hle/gl_host.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
+#include "native/common/native_call.h"
 #include "native/common/test.h"
 #include "native/render/render_check.h"
 #include "native/render/render_layout.h"
@@ -117,6 +118,12 @@ NATIVE_TEST_HOOK(g_textures.sym, callee_hook<&g_textures>, &g_textures.test_orig
 NATIVE_FUNCTION_ORIG(g_setUniform.sym, callee_hook<&g_setUniform>, "render: (hook) RenderDeviceData::SetShaderProgramUniform", &g_setUniform.orig);
 NATIVE_TEST_HOOK(g_setUniform.sym, callee_hook<&g_setUniform>, &g_setUniform.test_orig);
 
+// The same callees as C++ (native_call.h): UpdateShaderProgram is a native; the two others are the hooks
+// above, which, unmarked, forward to the original (so the direct call runs the original's trampoline).
+NativeCallee kUpdateShaderProgram{"render", g_updateShaderProgram.sym};
+NativeCallee kTextures{"render", g_textures.sym, &callee_hook<&g_textures>};
+NativeCallee kSetUniform{"render", g_setUniform.sym, &callee_hook<&g_setUniform>};
+
 // (UpdateShaderProgram is a native, render_program.cpp: it records its marker itself; its test hook
 // here serves the --selftest chains.)
 bool mark_callee(const char* name, std::initializer_list<u64> args) {
@@ -140,6 +147,17 @@ bool mark_callee(const char* name, std::initializer_list<u64> args) {
 // program current (no GL call: the thread's state set 1 has it in use), so the GL calls are the unchecked
 // flow's.
 void establish_program(RenderDeviceData* d) { guest_call(gsym(g_updateShaderProgram.sym), {(u64)d}); }
+
+void call_update_shader_program(RenderDeviceData* d) {
+    if (kUpdateShaderProgram.direct()) return update_shader_program_unchecked(d);
+    guest_call(kUpdateShaderProgram.addr(), {(u64)d});
+}
+void call_textures(RenderDeviceData* d, OglStateSet0* ss, RenderDeviceGL* device) {
+    guest_call(kTextures.direct() ? g_textures.orig : kTextures.addr(), {(u64)d, (u64)ss, (u64)device});
+}
+void call_set_shader_program_uniform(RenderDeviceData* d, void* value) {
+    guest_call(kSetUniform.direct() ? g_setUniform.orig : kSetUniform.addr(), {(u64)d, (u64)value});
+}
 
 // The arrays the current program uses (its attribute locations, the first m_attribCount of the vertex
 // shader) are wanted, the rest up to the device's attribute count (at most 32) not; GL is synced with a
@@ -214,7 +232,7 @@ void RenderDeviceData::LastMinuteDrawCommands_Depth(OglStateSet0* ss) {
 }
 
 bool RenderDeviceData::UpdateRenderState(RenderDeviceGL* device) {
-    guest_call(gsym(g_updateShaderProgram.sym), {(u64)this});
+    call_update_shader_program(this);
     OglStateSet0* ss = m_stateCache->StateSet0();  // (the HostFn checked it exists)
     if (UsesInstancing()) guest_call(fUpdateVertexAttribute.orig, {(u64)this, (u64)ss});
     else UpdateVertexAttribute(ss);
@@ -243,7 +261,7 @@ bool RenderDeviceData::UpdateRenderState(RenderDeviceGL* device) {
         GLH(glColorMask, (GLboolean)(cm & 1), (GLboolean)((cm >> 1) & 1), (GLboolean)((cm >> 2) & 1), (GLboolean)((cm >> 3) & 1));
         ss->m_colorMaskGL = ss->m_colorMask;
     }
-    guest_call(gsym(g_textures.sym), {(u64)this, (u64)ss, (u64)device});
+    call_textures(this, ss, device);
     return true;
 }
 

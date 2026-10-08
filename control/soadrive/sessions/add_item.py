@@ -17,6 +17,7 @@ import re
 import sqlite3
 
 from .. import milestones, ui370
+from ..flows import gacha
 from . import common
 
 TARGETS = ("port-inproc", "port-server")
@@ -30,33 +31,36 @@ def options(ap):
     common.port_options(ap, extra=False)
 
 
-def server_step(s, rx, name, secs=40):
-    """Waits for the next server-log line matching rx (counted from the step's start)."""
-    before = milestones.count(s.server_log, rx)
-    return lambda: s.wait_for(name, secs, lambda: milestones.count(s.server_log, rx) > before)
-
-
 def body(s):
-    c = s.ctl
+    screen = lambda name, xy, shot=None, **kw: common.tap_to_screen(s, name, xy, shot, **kw)
     common.port_login(s, notice=None, bonus=None)
-    s.tap_until("ガチャ -> GetGachaInData", 60, ui370.FOOTER_GACHA, lambda: s.in_packets(r"< GetGachaInDataRes"))
-    c("wait:10000", "tap:" + WEAPON_TAB, "wait:3000", s.shot_cmd("03-weapon-gachas"), "tap:" + FIRST_BANNER, "wait:4000",
-      "tap:" + DRAW_1, "wait:3000", s.shot_cmd("04-confirm"))
-    done = server_step(s, r"I/server: \S*Gacha \d+ \(.*1 draws for", "1回ガチャ: one weapon drawn")
-    c("tap:" + DECIDE)
-    done()
-    c("wait:8000", "tap:" + ui370.SUMMON_START, "wait:12000", "tap:" + ui370.SUMMON_REVEAL, "wait:4000", "tap:" + ui370.SUMMON_REVEAL,
-      "wait:4000", "tap:" + ui370.SUMMON_ALL_SKIP, "wait:5000", s.shot_cmd("05-result"), "tap:" + ui370.GACHA_RESULT_NEXT, "wait:3000")
+    common.settle(s, mask=common.HOME_MASK)
+    common.tap_to_count(s, "ガチャ -> GetGachaInData", s.packets, r"< GetGachaInDataRes", ["tap:" + ui370.FOOTER_GACHA],
+                        mask=common.GACHA_MASK)
+    screen("武器 tab", WEAPON_TAB, "03-weapon-gachas", mask=common.GACHA_MASK)
+    screen("the first banner", FIRST_BANNER)
+    screen("1回ガチャ -> the confirmation", DRAW_1, "04-confirm")
+    common.tap_to_server(s, "1回ガチャ: one weapon drawn", r"I/server: \S*Gacha \d+ \(.*1 draws for", ["tap:" + DECIDE], changes=False)
+    gacha.summon(s, shot="05-result")
+    screen("the result: 閉じる", ui370.GACHA_RESULT_NEXT, mask=common.GACHA_MASK)
     # the item list, without a re-login: the new weapon is there
-    c("tap:" + ITEM_MENU, "wait:5000", "tap:" + ITEM_LIST, "wait:5000", s.shot_cmd("06-item-list"), "tap:" + BACK, "wait:4000")
+    common.tap_to_phase(s, "アイテム", ITEM_MENU, 9, fatal=True)
+    screen("所持アイテム一覧", ITEM_LIST, "06-item-list")
+    screen("戻る", BACK)
     # アイテム売却: the weapon -> 決定 -> 決定 (-> the ★3 warning's 決定)
-    c("tap:" + SELL_MENU, "wait:5000", s.shot_cmd("07-sell"), "tap:" + ROW1, "wait:1000", "tap:" + OK, "wait:3000", s.shot_cmd("08-sell-confirm"))
-    done = server_step(s, r"SellItem(Array)?: \+[0-9]+ FOL \(1 items\)", "the drawn weapon sold", 30)
-    c("tap:515:1000", "wait:3000")
-    if not milestones.count(s.server_log, r"SellItem(Array)?: \+[0-9]+ FOL \(1 items\)"):
-        c(s.shot_cmd("09-sell-warning"), "tap:" + DECIDE, "wait:3000")
-    done()
-    c("wait:2000", s.shot_cmd("10-sold"))
+    screen("アイテム売却", SELL_MENU, "07-sell")
+    common.tap_settled(s, ROW1)
+    screen("売却: 決定", OK, "08-sell-confirm")
+    sold = r"SellItem(Array)?: \+[0-9]+ FOL \(1 items\)"
+    n = milestones.count(s.server_log, sold)
+    s.ctl("tap:515:1000")
+    if not s.poll(8, lambda: milestones.count(s.server_log, sold) > n):
+        # a ★3 or better: its warning first
+        common.settle(s, "09-sell-warning")
+        common.tap_to_server(s, "the drawn weapon sold", sold, ["tap:" + DECIDE], "10-sold", secs=30)
+    else:
+        s.ok("the drawn weapon sold")
+        common.settle(s, "10-sold")
 
 
 def main(o):

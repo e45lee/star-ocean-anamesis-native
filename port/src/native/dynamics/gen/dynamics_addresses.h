@@ -22,4 +22,5 @@ inline constexpr std::uint64_t kVaddrWorldCollisionList = 0x2ccdaa8;  // _ZN4Ask
 inline constexpr std::uint64_t kVaddrWorldConstraintList = 0x2ccdb50;  // _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldConstraintListE (object, 128 bytes); DynamicsPrimitive*[]
 inline constexpr std::uint64_t kFunAimRotation = 0x232a08c;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_26ArticulatedDynamicsManagerEEEvPT_ffi; FUN_0242a08c (ADMSolver::AimRotation)
 inline constexpr std::uint64_t kFunBlendRotation = 0x2329d78;  // .text, used by _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi; FUN_02429d78 (ADMSolver::BlendRotation)
+inline constexpr std::uint64_t kVaddrWorldLandConstraint = 0x2ccdbd0;  // _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldLandConstraintE (object, 8 bytes); the world land constraint (or none)
 }  // namespace soa::native::dynamics

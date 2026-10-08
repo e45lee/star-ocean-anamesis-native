@@ -275,19 +275,25 @@ static_assert(sizeof(ADM_CALC_DATA) == 0xa0);
 // +0x28, the two joints at +0x40 / +0x48 (PrepareCalc measures to +0x48).
 class ADMLink {
 public:
-    u8 unk_00[0x20];   // 0x00
+    Vector m_offset;   // 0x00: flags bit 2: the link's segment starts there (in the joint's frame)
+    Vector m_localPoint;  // 0x10: TestIntersectionLocal's point argument
     u8 m_flags;        // 0x20: bit 4 the length follows the joints (ADMJoint::PrepareCalc)
     u8 m_mode;         // 0x21: the ADM's links: SolveLink's mode (0 NEON form, 1 exact)
-    u8 unk_22[6];      // 0x22
+    u8 unk_22[2];      // 0x22
+    float m_capsuleRadius;  // 0x24: the link's capsule against the collision primitives
     float m_length;    // 0x28
     float m_friction;  // 0x2c: a contact adds m_friction * response to both joints' m_contactFriction
     float m_bounce;    // 0x30: a fast contact's depth is scaled by (m_bounce * response + 1)
     float m_stiffness; // 0x34: the ADM's links: SolveLink's k1
-    u8 unk_38[8];      // 0x38
+    float m_sweepStart;  // 0x38: flags bit 1: only [start, end] of the segment collides
+    float m_sweepEnd;    // 0x3c
     ADMJoint* m_joint0;  // 0x40
     ADMJoint* m_joint1;  // 0x48: the other end (PrepareCalc sets its m_lengthDirty)
 };
+static_assert(offsetof(ADMLink, m_localPoint) == 0x10);
 static_assert(offsetof(ADMLink, m_flags) == 0x20);
+static_assert(offsetof(ADMLink, m_capsuleRadius) == 0x24);
+static_assert(offsetof(ADMLink, m_sweepStart) == 0x38);
 static_assert(offsetof(ADMLink, m_length) == 0x28);
 static_assert(offsetof(ADMLink, m_friction) == 0x2c);
 static_assert(offsetof(ADMLink, m_bounce) == 0x30);
@@ -327,7 +333,9 @@ public:
     Vector m_contactNormal;      // 0x90: the step's contact normals summed ((0, 0, 0, 1) each step: PreprocessBeforeInternalForce)
     Vector m_pivot;              // 0xa0: the pivot offset (m_hasPivot)
     ADM_CALC_DATA m_calc;        // 0xb0 (its m_parent at 0x130)
-    u8 unk_150[0x10];            // 0x150
+    u8* m_constraints;           // 0x150: indices into the ADM's constraint list
+    u32 m_constraintCount;       // 0x158
+    u8 unk_15c[4];               // 0x15c
     ADMLink* m_links;            // 0x160
     u32 m_linkCount;             // 0x168
     u8 unk_16c[4];               // 0x16c
@@ -337,7 +345,7 @@ public:
     float m_dampingDown;         // 0x17c: the rate while falling (m_dampDownwards and velocity.y < 0)
     float m_mass;                // 0x180: 1 by default; damping only when > 0; the link solver's weight
     float m_stiffness;           // 0x184: the link solver's (fast mode) stiffness
-    float m_param188;            // 0x188: scaled by Scale
+    float m_collisionRadius;     // 0x188: against the constraints and the land (scaled by Scale)
     float m_contactFriction;     // 0x18c: the step's contact friction summed (0 each step)
     ADMJoint* m_parentJoint;     // 0x190: the joint the IK turns for this one (StandardIK)
     u8 m_lengthDirty;            // 0x198: set when a link's length was measured to it
@@ -363,6 +371,8 @@ static_assert(offsetof(ADMJoint, m_prevRotation) == 0x60);
 static_assert(offsetof(ADMJoint, m_rotation80) == 0x80);
 static_assert(offsetof(ADMJoint, m_pivot) == 0xa0);
 static_assert(offsetof(ADMJoint, m_calc) == 0xb0);
+static_assert(offsetof(ADMJoint, m_constraints) == 0x150);
+static_assert(offsetof(ADMJoint, m_constraintCount) == 0x158);
 static_assert(offsetof(ADMJoint, m_links) == 0x160);
 static_assert(offsetof(ADMJoint, m_linkCount) == 0x168);
 static_assert(offsetof(ADMJoint, m_blendWeight) == 0x174);
@@ -456,6 +466,11 @@ public:
     // repeated up to `repeat` times until every joint is slower than `rest_speed`.
     static void SimulateMain(ArticulatedDynamicsManagerBase* adm, ADMJoint* first, ADMJoint* end, u32 iterations, s32 step0, s32 steps,
                              u32 ik_steps, u32 repeat, float dt, float inv_dt, float rest_speed);
+    // CollisionAndConstraint<ADM>: per joint, each colliding link's capsule (world or joint space,
+    // swept) against the collision primitives (ResolveContact on a contact, SolveLink after one),
+    // then the joint against the ADM's / the world's constraints and the land.
+    static void CollisionAndConstraint(ArticulatedDynamicsManagerBase* adm, ADMJoint* first, ADMJoint* end, u32 collisions, u32 constraints,
+                                       float dt);
     // StandardIK<ADM, true>: per root chain, the joints' calc data from their simulated positions,
     // each IK joint's parent turned towards it (BlendRotation), the velocities (UpdateVelocity).
     static void StandardIK(ArticulatedDynamicsManagerBase* adm, u32 steps, float dt, float inv_dt);

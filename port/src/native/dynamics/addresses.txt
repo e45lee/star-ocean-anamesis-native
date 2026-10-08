@@ -15,3 +15,4 @@ kVaddrWorldCollisionList   sym _ZN4Aska30ArticulatedDynamicsManagerBase21m_pWorl
 kVaddrWorldConstraintList  sym _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldConstraintListE # DynamicsPrimitive*[]
 kFunAimRotation        at 0x232a08c ref _ZN4Aska30ArticulatedDynamicsManagerBase8FinalizeINS_26ArticulatedDynamicsManagerEEEvPT_ffi   # FUN_0242a08c (ADMSolver::AimRotation)
 kFunBlendRotation      at 0x2329d78 ref _ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi   # FUN_02429d78 (ADMSolver::BlendRotation)
+kVaddrWorldLandConstraint  sym _ZN4Aska30ArticulatedDynamicsManagerBase22m_pWorldLandConstraintE  # the world land constraint (or none)

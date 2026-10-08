@@ -3,8 +3,12 @@
 // ArticulatedDynamicsManager instantiation (dynamics_layout.h; port/decomp/dynamics/adm.c,
 // adm_templates.c). Written from the disassembly. The parts still guest code (CollisionAndConstraint,
 // StandardIK, Finalize, MatrixPreFixAndMotionBlend, the force-emitter functor, ...) are guest calls.
+#include <cstring>
+#include <vector>
+
 #include "core/cpu.h"
 #include "native/dynamics/dynamics_family.h"
+#include "native/dynamics/dynamics_neon.h"
 #include "native/dynamics/gen/dynamics_addresses.h"
 
 namespace soa::native::dynamics {
@@ -12,6 +16,7 @@ namespace soa::native::dynamics {
 namespace {
 
 const F kZero(0.0f), kOne(1.0f), kHalf(0.5f), kEps(math::kEpsilon);
+using neon::recip2;
 
 template <typename T>
 T& guest_var(u64 vaddr) {
@@ -227,7 +232,8 @@ void ArticulatedDynamicsManagerBase::SimulateMain(ArticulatedDynamicsManagerBase
                     }
                 }
                 if (!ik) guest_invoke<void>(fn_ik_false(), adm, ik_steps, dt, inv_dt);
-                guest_invoke<void>(fn_collision_and_constraint(), adm, first, end, collision_count, constraints, dt);
+                if (checking()) guest_invoke<void>(fn_collision_and_constraint(), adm, first, end, collision_count, constraints, dt);
+                else CollisionAndConstraint(adm, first, end, collision_count, constraints, dt);
             }
             if (ik) {
                 if (checking()) guest_invoke<void>(fn_ik_true(), adm, ik_steps, dt, inv_dt);
@@ -254,6 +260,195 @@ void ArticulatedDynamicsManagerBase::SimulateMain(ArticulatedDynamicsManagerBase
         }
         if (++pass >= repeat) return;
     }
+}
+
+namespace {
+
+// A primitive's virtual by vtable slot (TestIntersection(DYNAMICS_CAPSULE*, ...) 16,
+// TestIntersectionLocal 17, TestIntersection(Vector const*, float, Vector*) 19).
+inline u64 slot(const void* obj, int n) { return (*static_cast<const u64* const*>(obj))[n]; }
+
+// The 3x3 part of a matrix applied to v: (m_i0 v0 + m_i2 v2) + (m_i1 v1 + 0) per row, w = 1 (the
+// NEON form the collision code uses).
+Vector Rotate3(const Matrix& m, const Vector& v) {
+    const F v0(v.x), v1(v.y), v2(v.z);
+    auto row = [&](int i) { return (F(m.m[i][0]) * v0 + F(m.m[i][2]) * v2) + (F(m.m[i][1]) * v1 + kZero * kZero); };
+    return Vector{f(row(0)), f(row(1)), f(row(2)), f(kHalf + kHalf)};
+}
+// A 4-lane row dot product as the code sums it: (r2 v2 + r0 v0) + (r3 v3 + r1 v1).
+F Dot4(const float* r, const Vector& v) {
+    return (F(r[2]) * F(v.z) + F(r[0]) * F(v.x)) + (F(r[3]) * F(v.w) + F(r[1]) * F(v.y));
+}
+
+void resolve(ADMLink* l, ADMJoint* a, ADMJoint* b, Vector* n, float t, float depth, const DYNAMICS_PRIMITIVE* d, float speed, float dt) {
+    if (checking())
+        guest_invoke<void>(main_lib()->base + kFunResolveContact, l, a, b, n, t, depth, d->m_response0, d->m_response1, speed, dt);
+    else
+        ADMSolver::ResolveContact(l, a, b, n, t, depth, d->m_response0, d->m_response1, speed, dt);
+}
+void mark(u8* flags, const ADMJoint* j) {
+    if (j->m_index19e != 0xff) flags[j->m_index19e] = 1;
+}
+}  // namespace
+
+void ArticulatedDynamicsManagerBase::CollisionAndConstraint(ArticulatedDynamicsManagerBase* adm, ADMJoint* first, ADMJoint* end, u32 collisions,
+                                                            u32 constraints, float dt) {
+    void* land = adm->m_landConstraint;
+    bool no_land = false;
+    if (!land) {
+        land = guest_var<void*>(kVaddrWorldLandConstraint);
+        no_land = land == nullptr;
+        if ((u32)(0u - constraints) == collisions && !land) return;
+    }
+    // The primitives to test: the ADM's collisions, then the world's, then the extra list.
+    std::vector<DynamicsPrimitive*> list;
+    if ((s32)collisions >= 1) {
+        const s64 own = adm->m_collisionCount;
+        DynamicsPrimitive** world = &guest_var<DynamicsPrimitive*>(kVaddrWorldCollisionList);
+        for (s64 i = 0; i < (s64)collisions; i++) list.push_back(i < own ? adm->m_collisions[i] : world[i - own]);
+    }
+    for (ADMExtraNode* node = adm->m_extraCollisions.m_next; node != &adm->m_extraCollisions; node = node->m_next) list.push_back(node->m_primitive);
+    const u32 count = (u32)list.size();
+    u8* const hit_flags = adm->m_hitFlags;
+    DynamicsPrimitive** const own_constraints = adm->m_constraints;
+    const float speed = adm->m_gravityScale;
+    const u16 constraint_count = (u16)adm->m_constraintCount;
+    const u32 world_constraints = adm->m_worldCollision ? guest_var<u8>(kVaddrWorldConstraintCount) : 0;
+    u32 joints = (u32)(((u64)((u8*)end - (u8*)first) >> 6) * 0xb6db6db7u);  // (end - first) / 0x1c0
+    ADMJoint* j = first;
+    do {
+        u32 links = count ? j->m_linkCount : 0;
+        if (links * count != 0) {
+            // The joint's frame: its matrix and the inverse (cofactors, FRECPE with two steps).
+            const Matrix& m = j->m_calc.m_matrix;
+            const F m00(m.m[0][0]), m01(m.m[0][1]), m02(m.m[0][2]), m03(m.m[0][3]);
+            const F m10(m.m[1][0]), m11(m.m[1][1]), m12(m.m[1][2]), m13(m.m[1][3]);
+            const F m20(m.m[2][0]), m21(m.m[2][1]), m22(m.m[2][2]), m23(m.m[2][3]);
+            const F c01 = m00 * m11 - m01 * m10, c02 = m00 * m12 - m02 * m10, c03 = m00 * m13 - m03 * m10;
+            const F c12 = m01 * m12 - m02 * m11, c13 = m01 * m13 - m03 * m11, c23 = m02 * m13 - m03 * m12;
+            const F det = c12 * m20 + (c01 * m22 - c02 * m21);
+            const F inv = recip2(det);
+            const F A = m11 * m22 - m12 * m21, B = m02 * m21 - m01 * m22, C = m12 * m20 - m10 * m22;
+            const F D = m00 * m22 - m02 * m20, E = m10 * m21 - m11 * m20, Fv = m01 * m20 - m00 * m21;
+            const F G = c13 * m22 - c23 * m21, H = c23 * m20 - c03 * m22;
+            alignas(16) float R[3][4] = {
+                {f(inv * A), f(inv * B), f(inv * c12), f(inv * (G - c12 * m23))},
+                {f(inv * C), f(inv * D), f(inv * (-c02)), f(inv * (c02 * m23 + H))},
+                {f(inv * E), f(inv * Fv), f(inv * c01), f(inv * ((c03 * m21 - c13 * m20) - c01 * m23))},
+            };
+            ADMLink* l = j->m_links;
+            for (; links; links--, l++) {
+                const u8 flags = l->m_flags;
+                ADMJoint* o = l->m_joint1;
+                if (flags & 1) {
+                    alignas(16) DYNAMICS_CAPSULE cap;
+                    cap.m_radius = l->m_capsuleRadius;
+                    const bool local = flags & 8;
+                    for (u32 k = 0; k < count; k++) {
+                        DynamicsPrimitive* p = list[k];
+                        if (p->m_data->m_owner == adm && ((j->m_flags0 & 1) || (o->m_flags0 & 1))) continue;
+                        alignas(16) Vector n;
+                        float t, depth;
+                        bool hit;
+                        if (!local) {
+                            Vector a = j->m_position, b = o->m_position;
+                            if (flags & 4) {
+                                Vector w = Rotate3(m, l->m_offset);
+                                a = Vector{f(F(a.x) + F(w.x)), f(F(a.y) + F(w.y)), f(F(a.z) + F(w.z)), f(F(a.w) + F(w.w))};
+                                b = Vector{f(F(b.x) + F(w.x)), f(F(b.y) + F(w.y)), f(F(b.z) + F(w.z)), f(F(b.w) + F(w.w))};
+                            }
+                            const F dx = F(b.x) - F(a.x), dy = F(b.y) - F(a.y), dz = F(b.z) - F(a.z);
+                            F s0(0.0f), k1(0.0f);
+                            if (flags & 2) {  // the swept part [m_sweepStart, m_sweepEnd] of the segment
+                                s0 = F(l->m_sweepStart);
+                                k1 = (F(l->m_sweepEnd) - s0) + kOne;
+                                cap.m_otherSegment.m_origin = Vector{f(F(a.x) + dx * s0), f(F(a.y) + dy * s0), f(F(a.z) + dz * s0), 1.0f};
+                                cap.m_otherSegment.m_direction = Vector{f(dx * k1), f(dy * k1), f(dz * k1), 1.0f};
+                            } else {
+                                cap.m_otherSegment.m_origin = Vector{a.x, a.y, a.z, 1.0f};
+                                cap.m_otherSegment.m_direction = Vector{f(dx), f(dy), f(dz), 1.0f};
+                            }
+                            hit = guest_invoke<bool>(slot(p, 16), p, &cap, (u32)((flags >> 4) & 1), &n, &t, &depth);
+                            if (hit && (flags & 2)) t = f(s0 + (kOne - k1) * F(t));
+                        } else {
+                            // In the joint's frame: the other joint through the inverse, the link from
+                            // the offset (or the origin) to it.
+                            alignas(16) float M[3][4];  // (the rows as the callee reads them: R0, R1, R2)
+                            std::memcpy(M, R, sizeof M);
+                            const Vector& op = o->m_position;
+                            Vector q{f(Dot4(R[0], op)), f(Dot4(R[1], op)), f(Dot4(R[2], op)), f(kHalf + kHalf)};
+                            Vector org = *reinterpret_cast<const Vector*>(main_lib()->base + kRigidInverseLastRow);
+                            if (flags & 4) {
+                                org = l->m_offset;
+                                q = Vector{f(F(q.x) + F(org.x)), f(F(q.y) + F(org.y)), f(F(q.z) + F(org.z)), f(F(q.w) + F(org.w))};
+                            }
+                            if (flags & 2) {
+                                const F s0(l->m_sweepStart);
+                                const F k1 = (F(l->m_sweepEnd) - s0) + kOne;
+                                cap.m_otherSegment.m_origin = Vector{f(F(org.x) + F(q.x) * s0), f(F(org.y) + F(q.y) * s0), f(F(org.z) + F(q.z) * s0), 1.0f};
+                                cap.m_otherSegment.m_direction = Vector{f(F(q.x) * k1), f(F(q.y) * k1), f(F(q.z) * k1), 1.0f};
+                            } else {
+                                cap.m_otherSegment.m_origin = Vector{org.x, org.y, org.z, 1.0f};
+                                cap.m_otherSegment.m_direction = Vector{q.x, q.y, q.z, 1.0f};
+                            }
+                            hit = guest_invoke<bool>(slot(p, 17), p, &M[0], &M[1], &M[2], &cap, (u32)((flags >> 4) & 1), &l->m_localPoint, &n, &t, &depth);
+                            if (hit) n = Rotate3(m, n);
+                        }
+                        if (!hit) continue;
+                        resolve(l, j, o, &n, t, depth, p->m_data, speed, dt);
+                        mark(hit_flags, j);
+                        mark(hit_flags, o);
+                        if (p->m_data->m_owner == adm) {
+                            j->m_contact |= 1;
+                            o->m_contact |= 1;
+                        }
+                    }
+                }
+                if (j->m_contact || o->m_contact) {
+                    if (o->m_parentJoint == l->m_joint0) o->m_contact |= 2;
+                    if (j->m_parentJoint == l->m_joint1) j->m_contact |= 2;
+                    if (checking())
+                        guest_invoke<void>(main_lib()->base + kFunSolveLink, l->m_mode, j, o, l->m_length, l->m_stiffness, dt);
+                    else
+                        ADMSolver::SolveLink(l->m_mode, j, o, l->m_length, l->m_stiffness, dt);
+                }
+            }
+        }
+        if (!(j->m_flags0 & 1)) {
+            // The constraints: the ADM's (by the joint's index list), the world's, the land.
+            if (constraint_count && (j->m_flags1 & 8)) {
+                for (u32 k = 0; k < j->m_constraintCount; k++) {
+                    DynamicsPrimitive* p = own_constraints[j->m_constraints[k]];
+                    if (!p) continue;
+                    alignas(16) Vector out;
+                    if (!guest_invoke<bool>(slot(p, 19), p, &j->m_position, &out, j->m_collisionRadius)) continue;
+                    j->m_position = out;
+                    j->m_contactFriction = f(F(j->m_contactFriction) + F(p->m_data->m_response0));
+                    mark(hit_flags, j);
+                    if (p->m_data->m_owner == adm) j->m_contact |= 1;
+                }
+            }
+            DynamicsPrimitive** world = &guest_var<DynamicsPrimitive*>(kVaddrWorldConstraintList);
+            for (u32 k = 0; k < world_constraints; k++) {
+                DynamicsPrimitive* p = world[k];
+                alignas(16) Vector out;
+                if (!guest_invoke<bool>(slot(p, 19), p, &j->m_position, &out, j->m_collisionRadius)) continue;
+                j->m_position = out;
+                j->m_contactFriction = f(F(j->m_contactFriction) + F(p->m_data->m_response0));
+                mark(hit_flags, j);
+            }
+            if (!no_land && (j->m_flags1 & 0x10)) {
+                alignas(16) Vector v{j->m_position.x, f(F(j->m_position.y) - F(j->m_collisionRadius)), j->m_position.z, 1.0f};
+                alignas(16) float height[4], friction[4];
+                if (guest_invoke<bool>(slot(land, 3), land, &v, height, friction, 0ull)) {
+                    j->m_position.y = f(F(height[0]) + F(j->m_collisionRadius));
+                    j->m_contactFriction = f(F(j->m_contactFriction) + F(friction[0]));
+                    mark(hit_flags, j);
+                }
+            }
+        }
+        j++;
+    } while (--joints != 0);
 }
 
 namespace {
@@ -385,6 +580,8 @@ void SolverRegions(const u64 x[9], live::Regions& r) {
     }
     if (a->m_rootCalc && a->m_rootCount > 0) r.add((u64)a->m_rootCalc, (u32)a->m_rootCount * sizeof(ADM_CALC_DATA));
     if (a->m_linkList && a->m_linkCount > 0) r.add((u64)a->m_linkList, (u32)a->m_linkCount * sizeof(ADMLink));
+    // (Not m_hitFlags: the ADMs of one character share it, and their workers set it concurrently;
+    // the unit test compares it.)
 }
 
 #define DYN_SIM(sym, hostfn, label)                                                                               \
@@ -398,6 +595,8 @@ DYN_SIM("_ZN4Aska30ArticulatedDynamicsManagerBase15InterpolateRootINS_26Articula
         &live::leaf_function<&Adm::InterpolateRoot>, "Aska::ArticulatedDynamicsManagerBase::InterpolateRoot<ADM>");
 DYN_SIM("_ZN4Aska26ArticulatedDynamicsManager29PreprocessBeforeInternalForceIS0_EEvPT_PNS_8ADMJointES5_ffjjb",
         &live::leaf_function<&Adm::PreprocessBeforeInternalForce>, "Aska::ArticulatedDynamicsManager::PreprocessBeforeInternalForce<ADM>");
+DYN_SIM("_ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_jjf",
+        &live::leaf_function<&Adm::CollisionAndConstraint>, "Aska::ArticulatedDynamicsManagerBase::CollisionAndConstraint<ADM>");
 DYN_SIM("_ZN4Aska30ArticulatedDynamicsManagerBase10StandardIKINS_26ArticulatedDynamicsManagerELb1EEEvPT_ffi",
         &live::leaf_function<&Adm::StandardIK>, "Aska::ArticulatedDynamicsManagerBase::StandardIK<ADM, true>");
 DYN_SIM("_ZN4Aska26ArticulatedDynamicsManager12SimulateMainIS0_EEvPT_PNS_8ADMJointES5_jiijffjf", &live::leaf_function<&Adm::SimulateMain>,

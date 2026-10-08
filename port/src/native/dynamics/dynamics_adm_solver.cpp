@@ -210,16 +210,8 @@ namespace {
 
 // The NEON idioms of the ADM solver (each lane alike): 1 / sqrt(s) by FRSQRTE and two Newton
 // steps, 1 / x by FRECPE and two, the 3-lane sum (x0 + x1) + (x2 + 0).
-F rsqrt2(F s) {
-    F r = frsqrte(s);
-    r = r * frsqrts(r * r, s);
-    return r * frsqrts(r * r, s);
-}
-F recip2(F x) {
-    F e = frecpe(x);
-    e = e * frecps(e, x);
-    return e * frecps(e, x);
-}
+using neon::recip2;
+using neon::rsqrt2;
 F sum3(F a, F b, F c) { return (a + b) + (c + kZero); }
 F bitsf(u32 b) { return F(armf::from_bits(b)); }
 

@@ -1036,17 +1036,23 @@
    "fields": [
     {
      "offset": 0,
-     "name": "unk_00",
+     "name": "m_offset",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 32
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
      },
-     "size": 32
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "m_localPoint",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::math::Vector",
+      "size": 16
+     },
+     "size": 16
     },
     {
      "offset": 32,
@@ -1078,9 +1084,18 @@
        "size": 1,
        "signed": false
       },
-      "count": 6
+      "count": 2
      },
-     "size": 6
+     "size": 2
+    },
+    {
+     "offset": 36,
+     "name": "m_capsuleRadius",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
     },
     {
      "offset": 40,
@@ -1120,17 +1135,21 @@
     },
     {
      "offset": 56,
-     "name": "unk_38",
+     "name": "m_sweepStart",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 8
+      "kind": "float",
+      "size": 4
      },
-     "size": 8
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_sweepEnd",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
     },
     {
      "offset": 64,
@@ -1292,7 +1311,26 @@
     },
     {
      "offset": 336,
-     "name": "unk_150",
+     "name": "m_constraints",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 344,
+     "name": "m_constraintCount",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 348,
+     "name": "unk_15c",
      "type": {
       "kind": "array",
       "of": {
@@ -1300,9 +1338,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 16
+      "count": 4
      },
-     "size": 16
+     "size": 4
     },
     {
      "offset": 352,
@@ -1393,7 +1431,7 @@
     },
     {
      "offset": 392,
-     "name": "m_param188",
+     "name": "m_collisionRadius",
      "type": {
       "kind": "float",
       "size": 4

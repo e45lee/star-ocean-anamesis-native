@@ -644,3 +644,78 @@ NATIVE_TEST("dynamics/standard-ik") {
 }
 
 }  // namespace soa::native::dynamics
+
+namespace soa::native::dynamics {
+
+// CollisionAndConstraint<ADM>: joints with links against the ADM's own collision primitives
+// (spheres, capsules, planes; owned by the ADM or not), world-space and joint-space (local) links,
+// swept links, offsets; the constraint lists (planes by index); the land left out.
+NATIVE_TEST("dynamics/collision-and-constraint") {
+    Mismatches bad{t, "CollisionAndConstraint<ADM>"};
+    const u64 fn = t.sym("_ZN4Aska30ArticulatedDynamicsManagerBase22CollisionAndConstraintINS_26ArticulatedDynamicsManagerEEEvPT_PNS_8ADMJointES6_jjf");
+    for (int k = 0; k < 2000; k++) {
+        int special = k < 1600 ? 0 : 150;
+        Arena a;
+        int n = t.rand_int(1, 5);
+        AdmSet s = make_adm(t, a, n, false, special);
+        ArticulatedDynamicsManagerBase* m = s.adm;
+        auto make_prim = [&](int kind) -> DynamicsPrimitive* {
+            static const char* const ztv[] = {"_ZTVN4Aska14DynamicsSphereE", "_ZTVN4Aska15DynamicsCapsuleE", "_ZTVN4Aska13DynamicsPlaneE"};
+            static const size_t bytes[] = {sizeof(DynamicsSphere), sizeof(DynamicsCapsule), sizeof(DynamicsPlane)};
+            auto* p = a.alloc<DynamicsPrimitive>(t, bytes[kind], special);
+            p->vtable = reinterpret_cast<const void*>(t.sym(ztv[kind]) + 0x10);
+            p->m_data = reinterpret_cast<DYNAMICS_PRIMITIVE*>(reinterpret_cast<u8*>(p) + 0x60);
+            p->m_data->m_owner = t.rand_int(0, 2) ? nullptr : m;
+            if (kind == 0) {
+                auto* sp = reinterpret_cast<DynamicsSphere*>(p);
+                sp->m_shape.m_radius = std::fabs(sp->m_shape.m_radius);
+            } else if (kind == 1) {
+                auto* cp = reinterpret_cast<DynamicsCapsule*>(p);
+                cp->m_shape.m_radius = std::fabs(cp->m_shape.m_radius);
+            } else {
+                auto* pl = reinterpret_cast<DynamicsPlane*>(p);
+                pl->m_shape.m_normal = Vector{0, 1, 0, 0};
+            }
+            return p;
+        };
+        int nc = t.rand_int(0, 4);
+        m->m_collisions = a.alloc<DynamicsPrimitive*>(t, 8 * (nc ? nc : 1));
+        for (int i = 0; i < nc; i++) m->m_collisions[i] = make_prim(t.rand_int(0, 2));
+        m->m_collisionCount = (s16)nc;
+        int nk = t.rand_int(0, 3);
+        m->m_constraints = a.alloc<DynamicsPrimitive*>(t, 8 * (nk ? nk : 1));
+        for (int i = 0; i < nk; i++) m->m_constraints[i] = t.rand_int(0, 5) ? make_prim(2) : nullptr;
+        m->m_constraintCount = (s16)nk;
+        m->m_hitFlags = a.alloc<u8>(t, 256);
+        for (ADMJoint* j : s.js.joints) {
+            j->m_flags0 = (u8)(t.rand_int(0, 4) ? 0 : 1);
+            j->m_flags1 = (u8)(t.rand_int(0, 255) & ~0x10);  // (no land)
+            j->m_contact = (u8)(t.rand_int(0, 2) ? 0 : t.rand_int(0, 3));
+            j->m_index19e = (u8)(t.rand_int(0, 3) ? t.rand_int(0, 255) : 0xff);
+            j->m_parentJoint = t.rand_int(0, 1) ? s.js.joints[t.rand_int(0, n - 1)] : nullptr;
+            j->m_collisionRadius = std::fabs(j->m_collisionRadius);
+            u32 nci = nk ? (u32)t.rand_int(0, 3) : 0;
+            j->m_constraints = a.alloc<u8>(t, 4);
+            for (u32 i = 0; i < 4; i++) j->m_constraints[i] = (u8)(nk ? t.rand_int(0, nk - 1) : 0);
+            j->m_constraintCount = nci;
+            int links = t.rand_int(0, 3);
+            j->m_links = links ? a.alloc<ADMLink>(t, sizeof(ADMLink) * links, special) : nullptr;
+            j->m_linkCount = (u32)links;
+            for (int i = 0; i < links; i++) {
+                ADMLink& l = j->m_links[i];
+                l.m_flags = (u8)t.rand_int(0, 31);
+                l.m_mode = (u8)t.rand_int(0, 1);
+                l.m_joint0 = j;
+                l.m_joint1 = s.js.joints[t.rand_int(0, n - 1)];
+                l.m_capsuleRadius = std::fabs(l.m_capsuleRadius);
+            }
+        }
+        float dt = std::fabs(rand_float(t, 0.05f, special));
+        u32 coll = (u32)nc, cons = (u32)t.rand_int(0, 2);
+        ADMJoint* first = s.js.array;
+        compare_runs(t, a, bad, k, std::function<void()>([&] { guest_invoke<void>(fn, m, first, first + n, coll, cons, dt); }),
+                     std::function<void()>([&] { ArticulatedDynamicsManagerBase::CollisionAndConstraint(m, first, first + n, coll, cons, dt); }));
+    }
+}
+
+}  // namespace soa::native::dynamics

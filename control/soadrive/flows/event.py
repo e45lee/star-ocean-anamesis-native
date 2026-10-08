@@ -26,7 +26,9 @@ SCREENS = {
     "01-title": 0.08,
     "02b-login-bonus": 0.08,
     "02-home": HOME,
-    "03-event-list": 0.08,
+    # (the banner carousel at the top masked: which banner a shot catches is timing, and the shots
+    # are taken once the rest holds still)
+    "03-event-list": (0.08, (screens.EVENT_CAROUSEL,)),
     "04-event-board": 0.10,
     "05-story-detail": 0.10,
     "06-story-skip": None,

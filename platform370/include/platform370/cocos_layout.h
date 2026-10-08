@@ -2,7 +2,8 @@
 // Framework::Cocos::CCocosNode and CCocosLabel of the 3.7.0 client, the fields platform370's
 // --lang en text code (src/text_370.cpp) reads and writes. Recovered from the decompiles (work/decomp
 // enc_label: CCocosLabel's constructor, Read_TextObjectData, DrawSelf; tc_msgwin:
-// CEventScenarioMessageWindow::Show / Append; docs/notes.md "Tree" and "CCocosNode fields"). Plain
+// CEventScenarioMessageWindow::Show / Append; CCocosNode::VisibleHierarchy / OpacityHierarchy;
+// docs/notes.md "Tree" and "CCocosNode fields"). Plain
 // guest memory: a pointer to one of these always points at a guest object, and the guest's vtable
 // stays guest data (no C++ virtual here; port/src/native/VIRTUALS.md).
 //
@@ -51,13 +52,22 @@ public:
     float m_posY;              // 0x90: Append writes the line's y here
     float m_width;             // 0x94: the size (a label's box when IsCustomSize)
     float m_height;            // 0x98
-    uint8_t m_pad9c[0xc0 - 0x9c];
+    uint8_t m_pad9c[0xbc - 0x9c];
+    float m_opacity;           // 0xbc: the node's own opacity (OpacityHierarchy multiplies the parents')
     uint32_t m_color;          // 0xc0: Append's text colour
     uint8_t m_padC4[0xcc - 0xc4];
     uint32_t m_flags;          // 0xcc: dirty bits (kRelayoutFlags)
-    uint8_t m_padD0[0xe8 - 0xd0];
+    uint8_t m_padD0[0xd8 - 0xd0];
+    uint32_t m_state;          // 0xd8: bit 0 the node's own visibility (VisibleHierarchy: own bit AND the parent's)
+    uint8_t m_padDC[0xe8 - 0xdc];
     uint64_t m_renderer;       // 0xe8: a label's CDirectAofTextRenderer (CalcStringRect)
     uint8_t m_padF0[0x230 - 0xf0];
+
+    std::string_view name() const { return m_name.view(); }
+    const CCocosNode* parent() const { return (const CCocosNode*)(uintptr_t)m_parent; }
+    const CCocosNode* first_child() const { return (const CCocosNode*)(uintptr_t)m_firstChild; }
+    const CCocosNode* next_sibling() const { return (const CCocosNode*)(uintptr_t)m_nextSibling; }
+    bool shown() const { return (m_state & 1) && m_opacity > 0.05f; }  // own visibility and opacity
 };
 static_assert(sizeof(CCocosNode) == 0x230);
 static_assert(offsetof(CCocosNode, m_parent) == 0x08);
@@ -66,7 +76,9 @@ static_assert(offsetof(CCocosNode, m_anchorX) == 0x84);
 static_assert(offsetof(CCocosNode, m_posX) == 0x8c);
 static_assert(offsetof(CCocosNode, m_width) == 0x94);
 static_assert(offsetof(CCocosNode, m_height) == 0x98);
+static_assert(offsetof(CCocosNode, m_opacity) == 0xbc);
 static_assert(offsetof(CCocosNode, m_color) == 0xc0);
+static_assert(offsetof(CCocosNode, m_state) == 0xd8);
 static_assert(offsetof(CCocosNode, m_flags) == 0xcc);
 static_assert(offsetof(CCocosNode, m_renderer) == 0xe8);
 
@@ -83,9 +95,7 @@ public:
     uint8_t m_tagMode;         // 0x281: <font color=...> markup (CUIUtility::SetLabelTextTag)
     uint8_t m_shrink;          // 0x282: shrink a fixed box's text to fit (default 1)
 
-    std::string_view name() const { return m_name.view(); }
     std::string_view text() const { return m_text.view(); }
-    const CCocosNode* parent() const { return (const CCocosNode*)(uintptr_t)m_parent; }
 };
 static_assert(offsetof(CCocosLabel, m_text) == 0x230);
 static_assert(offsetof(CCocosLabel, m_fontSize) == 0x258);

@@ -57,6 +57,7 @@
 // so a reused address never inherits it; the results caches are bounded (text::LruCache).
 #include <algorithm>
 #include <atomic>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <fstream>
@@ -187,6 +188,13 @@ bool LabelStates::take_box(uint64_t label, Box* own) {
     if (!it->second.has_text && !it->second.story) map_.erase(it);
     return true;
 }
+bool LabelStates::peek_box(uint64_t label, Box* own) {
+    std::lock_guard<std::mutex> l(mu_);
+    auto it = map_.find(label);
+    if (it == map_.end() || !it->second.has_box) return false;
+    *own = it->second.box;
+    return true;
+}
 void LabelStates::mark_story(uint64_t label) {
     std::lock_guard<std::mutex> l(mu_);
     map_[label].story = true;
@@ -214,6 +222,46 @@ double story_scale(std::string_view message, const soa::text::MeasureText& measu
     return fit_scale(e.w, e.h, box_w, box_h);
 }
 
+LayoutRoom layout_room(const NodeRect& a, const NodeRect* parent, const std::vector<NodeRect>& siblings) {
+    LayoutRoom best;
+    auto take = [&](double k, RoomBy by, double floor) {
+        if (k < best.k && k >= floor) best.k = k, best.by = by;
+    };
+    double grow_right = (1 - a.ax) * a.w, grow_left = a.ax * a.w;  // the label's parts on each side of its anchor
+    if (a.w <= 0) return best;
+    double top = -1e9, bottom = 1e9;  // the free band above and below the label (its siblings', its frame's)
+    for (const NodeRect& b : siblings) {
+        if (b.w <= 0 || b.h <= 0) continue;
+        // on the label's row: its centre within half the label's height of the label's, or a sibling
+        // as tall as the rows it spans (a list beside its captions)
+        bool row = std::fabs(a.centre_y() - b.centre_y()) <= a.h / 2 || (b.top() <= a.centre_y() && a.centre_y() <= b.top() + b.h);
+        if (!row) {
+            // not on the label's row: one above or below it, over the label's width, ends its free band
+            if (b.right() > a.left() && b.left() < a.right()) {
+                if (b.top() + b.h <= a.centre_y()) top = std::max(top, b.top() + b.h);
+                else if (b.top() >= a.centre_y()) bottom = std::min(bottom, b.top());
+            }
+            continue;
+        }
+        if (b.label ? b.x > a.x : b.left() > a.x) {
+            // on the right: a label grows towards the label from its anchor, anything else is fixed
+            double toward = b.label ? b.ax * b.w : 0, edge = b.label ? b.x : b.left();
+            if (grow_right > 0) take((edge - a.x - kLayoutGap) / (grow_right + toward), RoomBy::sibling, kMinSiblingScale);
+        } else if (b.label ? b.x < a.x : b.right() < a.x) {
+            double toward = b.label ? (1 - b.ax) * b.w : 0, edge = b.label ? b.x : b.right();
+            if (grow_left > 0) take((a.x - edge - kLayoutGap) / (grow_left + toward), RoomBy::sibling, kMinSiblingScale);
+        }
+    }
+    if (parent && parent->w > 0 && parent->h > 0 && a.x >= parent->left() && a.x <= parent->right() && a.y >= parent->top() &&
+        a.y <= parent->top() + parent->h) {
+        top = std::max(top, parent->top()), bottom = std::min(bottom, parent->top() + parent->h);
+        if (grow_right > 0) take((parent->right() - kLayoutPad - a.x) / grow_right, RoomBy::parent, kMinParentScale);
+        if (grow_left > 0) take((a.x - parent->left() - kLayoutPad) / grow_left, RoomBy::parent, kMinParentScale);
+    }
+    best.frame_top = top, best.frame_bottom = bottom;
+    return best;
+}
+
 }  // namespace text
 
 namespace {
@@ -237,6 +285,7 @@ constexpr const char* kPutPRS = "_ZNK9Framework7CMatrix6PutPRSEPNS_7CVectorEPNS_
 constexpr const char* kParamManager = "_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE";
 constexpr const char* kPStringDB = "_ZNK17CParameterManager9pStringDBEv";
 constexpr const char* kStringDBGet = "_ZN8StringDB3GetEPKcPb";
+constexpr const char* kLabelVtable = "_ZTVN9Framework5Cocos11CCocosLabelE";
 constexpr const char* kFree = "_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv";
 constexpr const char* kCryptName =
     "_ZN22CParameterPropertyBaseILj53EE11CryptStringINSt6__ndk112basic_stringIcNS2_11char_traitsIcEEN9Framework13CSTLAllocator"
@@ -253,6 +302,7 @@ constexpr u32 kChangeEntry[2] = {0xd101c3ff, 0xf90013fa};
 constexpr float kScreenW = 720.f, kMargin = 12.f;
 
 u64 g_set_text = 0, g_draw_self = 0, g_d1 = 0, g_d0 = 0, g_parse = 0, g_change = 0;
+u64 g_label_vtable = 0;  // CCocosLabel's vtable as its objects point at it (the symbol + 16)
 u64 g_calc = 0, g_world = 0, g_prs = 0, g_pm = 0, g_pstringdb = 0, g_get = 0, g_free = 0, g_crypt_name = 0;
 
 CCocosLabel* as_label(u64 a) { return (CCocosLabel*)(uintptr_t)a; }
@@ -370,13 +420,14 @@ soa::text::MeasureText label_measure(const CCocosLabel* l) {
 }
 
 struct Geometry {
-    float x, y, scale, anchor;
+    float x, y, scale, anchor, sy;
 };
 
-// The room a label's lines may take, in its units (0: unknown, don't wrap).
-float room(u64 label, Geometry* g) {
+// The room a label's lines may take, in its units (0: unknown, don't wrap). `own_box`: the label's
+// own IsCustomSize (not a box this code gave it).
+float room(u64 label, Geometry* g, bool own_box) {
     const CCocosLabel* l = as_label(label);
-    if (l->m_customSize && l->m_width > 0) return l->m_width;
+    if (own_box && l->m_width > 0) return l->m_width;
     u64 m = guest_call(g_world, {label, 1});
     if (!m) return 0;
     alignas(16) float pos[4] = {}, scale[4] = {};
@@ -389,7 +440,7 @@ float room(u64 label, Geometry* g) {
     if (ax < 1) r = right / (1 - ax);
     if (ax > 0 && left / ax < r) r = left / ax;
     if (r < 48) return 0;  // off the screen, or scrolled away: leave it
-    *g = {x, pos[1], sx, ax};
+    *g = {x, pos[1], sx, ax, scale[1] < 0 ? -scale[1] : scale[1]};
     return r / sx;
 }
 
@@ -490,8 +541,8 @@ void fit_talk(u64 label) {
 }
 
 void story_draw(u64 label);  // (E13, below)
-// The wrap's verdict for a short label shrunk on one line (a value no text has).
-const std::string kShrinkOneLine = std::string("\x01shrink", 7);
+// The wrap's verdict for a label shrunk into a box of its room, its lines kept (a value no text has).
+const std::string kShrinkInBox = std::string("\x01shrink", 7);
 void story_forget(u64 label);
 
 // ---- E10 (b): the label wrap ---------------------------------------------------------------------
@@ -507,49 +558,70 @@ bool is_header_description(const CCocosLabel* l) {
     std::string_view pn = p ? p->m_name.view() : std::string_view();
     return pn == "Node_1" || pn == "Node_maintitle" || pn == "subtitle";
 }
+// A dialog's message: pop1/window/Text of the dialog layouts.
+bool is_dialog_message(const CCocosLabel* l) {
+    const cocos::CCocosNode* w = l->parent();
+    if (l->name() != "Text" || !w || w->m_name.view() != "window") return false;
+    const cocos::CCocosNode* pop = w->parent();
+    return pop && pop->m_name.view() == "pop1";
+}
 
-// Labels that slide in are first drawn away from their place: a screen label is wrapped only once it
-// is drawn twice at the same world x (until then it is laid out again each frame).
+// Labels that slide in are first drawn away from their place, and so are the siblings that bound
+// them (a header's description slides in beside its title): a screen label is wrapped only once it
+// is drawn twice at the same world x with the same room from its layout (until then it is laid out
+// again each frame).
+struct Settle {
+    float x, layout;
+};
 std::mutex g_x_mu;
-std::unordered_map<u64, float> g_last_x;
-bool settled(CCocosLabel* l, u64 label, float x) {
+std::unordered_map<u64, Settle> g_last_x;
+bool settled(CCocosLabel* l, u64 label, float x, float layout) {
     std::lock_guard<std::mutex> lk(g_x_mu);
     auto it = g_last_x.find(label);
-    if (it != g_last_x.end() && it->second == x) return true;
+    if (it != g_last_x.end() && it->second.x == x && it->second.layout == layout) return true;
     if (g_last_x.size() > 65536) g_last_x.clear();  // (destroyed labels are dropped by forget_label)
-    g_last_x[label] = x;
+    g_last_x[label] = {x, layout};
     l->m_flags |= cocos::kRelayoutFlags;
     return false;
 }
 
-// A dialog's message (pop1/window/Text of the dialog layouts) that grows with its text: the room it
-// has between the window's top rule (line_1) and the buttons below it (Button_*, else line_2), in
-// its units, centred on the label; 0 when the dialog isn't laid out that way.
-float world_y(u64 node, float* sy) {
-    u64 m = guest_call(g_world, {node, 1});
+// A node's world position (its anchor point; y down) and scale.
+bool world_prs(const cocos::CCocosNode* n, float* x, float* y, float* sx, float* sy) {
+    u64 m = guest_call(g_world, {(u64)n, 1});
+    if (!m) return false;
     alignas(16) float pos[4] = {}, scale[4] = {};
-    if (m) guest_call(g_prs, {m, (u64)pos, 0, (u64)scale});
-    *sy = scale[1] < 0 ? -scale[1] : scale[1];
-    return pos[1];
+    guest_call(g_prs, {m, (u64)pos, 0, (u64)scale});
+    *x = pos[0], *y = pos[1];
+    *sx = std::fabs(scale[0]), *sy = std::fabs(scale[1]);
+    return true;
 }
+float world_y(u64 node, float* sy) {
+    float x, y, sx;
+    if (!world_prs((const cocos::CCocosNode*)(uintptr_t)node, &x, &y, &sx, sy)) return *sy = 0, 0;
+    return y;
+}
+
+// A dialog's message (pop1/window/Text of the dialog layouts) that grows with its text: the room it
+// has between the window's top rule (line_1, or the first menu_pop_line above it) and the buttons
+// below it (Button_*, else line_2 / a menu_pop_line below it), in its units, centred on the label; 0
+// when the dialog isn't laid out that way.
 float dialog_room_h(CCocosLabel* l, u64 label) {
+    if (!is_dialog_message(l) || l->m_anchorY != 0.5f) return 0;
     const cocos::CCocosNode* w = l->parent();
-    if (l->name() != "Text" || !w || w->m_name.view() != "window" || l->m_anchorY != 0.5f) return 0;
-    const cocos::CCocosNode* pop = (const cocos::CCocosNode*)(uintptr_t)w->m_parent;
-    if (!pop || pop->m_name.view() != "pop1") return 0;
     float sy;
     float cy = world_y(label, &sy);
     if (sy < 0.2f) return 0;
     float top = -1, bottom = -1, line2 = -1;
-    for (u64 c = w->m_firstChild; c; c = ((const cocos::CCocosNode*)c)->m_nextSibling) {
-        const cocos::CCocosNode* n = (const cocos::CCocosNode*)c;
+    for (const cocos::CCocosNode* n = w->first_child(); n; n = n->next_sibling()) {
         std::string_view nm = n->m_name.view();
+        bool rule = nm == "line_1" || nm == "line_2" || nm == "menu_pop_line";
+        if (!rule && nm.substr(0, 6) != "Button") continue;
         float s2;
-        float y = world_y(c, &s2);
+        float y = world_y((u64)n, &s2);
         float half = n->m_height * s2 / 2;
-        if (nm == "line_1" && y < cy) top = y + half;
-        else if (nm == "line_2" && y > cy) line2 = y - half;
-        else if (nm.substr(0, 6) == "Button" && n->m_height > 0 && y > cy && (bottom < 0 || y - half < bottom)) bottom = y - half;
+        if (rule && nm != "line_2" && y < cy) top = std::max(top, y + half);
+        else if (rule && nm != "line_1" && y > cy) line2 = line2 < 0 ? y - half : std::min(line2, y - half);
+        else if (!rule && n->m_height > 0 && y > cy && (bottom < 0 || y - half < bottom)) bottom = y - half;
     }
     if (bottom < 0) bottom = line2;
     if (top < 0 || bottom < 0) return 0;
@@ -557,54 +629,195 @@ float dialog_room_h(CCocosLabel* l, u64 label) {
     return half > 12 ? 2 * half / sy : 0;
 }
 
+// The text a label draws: a tag-mode label's <font ...> markup is not drawn (DrawSelf measures and
+// draws the text without it).
+std::string drawn_text(const CCocosLabel* l, std::string_view s) {
+    if (!l->m_tagMode) return std::string(s);
+    std::string out;
+    for (size_t i = 0; i < s.size();) {
+        size_t t = soa::text::tag_at(s, i);
+        if (t) i += t;
+        else out += s[i++];
+    }
+    return out;
+}
+// Two ASCII letters in a row: a word of English (not a number, a symbol or a placeholder).
+bool has_letters(std::string_view s) {
+    auto letter = [](char c) { return (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; };
+    for (size_t i = 0; i + 1 < s.size(); i++)
+        if (letter(s[i]) && letter(s[i + 1])) return true;
+    return false;
+}
+
+// A label's text at its natural size (its own font, unshrunk), cached by text and font.
+text::LruCache<std::string> g_extents(4096);
+soa::text::Extent natural_extent(const CCocosLabel* l, const std::string& drawn) {
+    std::string key = drawn + '\x01' + std::to_string(l->m_fontSize) + '/' + std::to_string(l->m_lineSpacing), v;
+    soa::text::Extent e{};
+    if (g_extents.get(key, &v) && v.size() == sizeof e) return std::memcpy(&e, v.data(), sizeof e), e;
+    e = label_measure(l)(drawn);
+    g_extents.put(key, std::string((const char*)&e, sizeof e));
+    return e;
+}
+
+// The label's rectangle and its siblings' and parent's (shown ones), for text::layout_room.
+bool is_label(const cocos::CCocosNode* n) { return g_label_vtable && n->m_vptr == g_label_vtable; }
+text::LayoutRoom scan_layout(const CCocosLabel* l, const Geometry& g, soa::text::Extent nat) {
+    const cocos::CCocosNode* p = l->parent();
+    if (!p) return {};
+    text::NodeRect self{g.x, g.y, l->m_anchorX, l->m_anchorY, nat.w * g.scale, nat.h * g.sy, true};
+    std::vector<text::NodeRect> sib;
+    for (const cocos::CCocosNode* n = p->first_child(); n; n = n->next_sibling()) {
+        if (n == l || !n->shown()) continue;
+        bool lab = is_label(n);
+        if (!lab && (n->m_width <= 0 || n->m_height <= 0)) continue;
+        float x, y, sx, sy;
+        if (!world_prs(n, &x, &y, &sx, &sy)) continue;
+        double w = n->m_width, h = n->m_height;
+        bool grows = false;  // a label whose size follows its text (its own box, not one this code gave it)
+        if (lab) {
+            const CCocosLabel* b = (const CCocosLabel*)n;
+            if (b->text().empty()) continue;
+            text::LabelStates::Box own{b->m_customSize, b->m_shrink, b->m_width, b->m_height};
+            text::label_states().peek_box((u64)n, &own);
+            if (b->m_renderer && !own.custom) {
+                soa::text::Extent e = natural_extent(b, drawn_text(b, b->text()));
+                w = e.w, h = e.h, grows = true;
+            }
+        }
+        sib.push_back({x, y, n->m_anchorX, n->m_anchorY, w * sx, h * sy, grows});
+    }
+    text::NodeRect par{}, *pp = nullptr;
+    float x, y, sx, sy;
+    if (p->m_width > 0 && p->m_height > 0 && world_prs(p, &x, &y, &sx, &sy))
+        par = {x, y, p->m_anchorX, p->m_anchorY, p->m_width * sx, p->m_height * sy, false}, pp = &par;
+    return text::layout_room(self, pp, sib);
+}
+
+// The layout's room is scanned each frame while the label settles, then every 32nd frame (a
+// sibling that moves later is seen within half a second).
+struct LayoutSeen {
+    std::string text;
+    float x;
+    text::LayoutRoom room;
+    unsigned frames;
+};
+std::mutex g_layout_mu;
+std::unordered_map<u64, LayoutSeen> g_layout;
+text::LayoutRoom layout_of(u64 label, const CCocosLabel* l, const Geometry& g, const std::string& drawn, soa::text::Extent nat) {
+    {
+        std::lock_guard<std::mutex> lk(g_layout_mu);
+        auto it = g_layout.find(label);
+        if (it != g_layout.end() && it->second.text == drawn && it->second.x == g.x && ++it->second.frames > 8 && it->second.frames % 32)
+            return it->second.room;
+    }
+    text::LayoutRoom r = scan_layout(l, g, nat);
+    std::lock_guard<std::mutex> lk(g_layout_mu);
+    if (g_layout.size() > 65536) g_layout.clear();
+    LayoutSeen& e = g_layout[label];
+    if (e.text != drawn || e.x != g.x || e.room.k != r.k) e = {drawn, g.x, r, 0};
+    return r;
+}
+
+// The label wrap's break: the label's own breaks kept, Japanese lines left alone, balanced lines.
+std::string wrap_at(const std::string& src, float room_w, const soa::text::MeasureText& m) {
+    soa::text::BreakOptions o;
+    o.keep_breaks = true, o.skip_japanese = true, o.tags_are_words = false, o.balance = true;
+    return soa::text::break_lines(src, room_w, [&](std::string_view line) { return m(line).w; }, o);
+}
+// Whether a block of the label's text of height e.h (its units), placed at the label's anchor, stays
+// inside its free band (its frame's height, below the sibling above it and above the one below).
+bool wrap_fits_frame(const CCocosLabel* l, const Geometry& g, soa::text::Extent e, const text::LayoutRoom& lr) {
+    double h = e.h * g.sy, top = g.y - l->m_anchorY * h;
+    return top >= lr.frame_top && top + h <= lr.frame_bottom;
+}
+
+const char* by_name(text::RoomBy by) { return by == text::RoomBy::sibling ? "sibling" : by == text::RoomBy::parent ? "parent" : "screen"; }
+
 void maybe_wrap(u64 label) {
     CCocosLabel* l = as_label(label);
     if (is_talk_text(l)) return fit_talk(label);
     if (l->name() == "AppendMessage") return;
-    if (text::label_states().is_story(label)) return story_draw(label);
+    text::LabelStates& st = text::label_states();
+    if (st.is_story(label)) return story_draw(label);
     std::string_view s = l->text();
-    {
-        // a label this hook boxed (a short label shrunk to one line) whose text changed: its own box back
-        std::string boxed;
-        text::LabelStates::Box own;
-        if (!l->m_customSize || text::label_states().original_of(label, s, &boxed)) {
-        } else if (text::label_states().take_box(label, &own)) {
-            set_box(l, own);
-            text::label_states().erase_text(label);
-        }
-    }
-    if (s.size() < 12 || l->m_tagMode || !l->m_renderer) return;
-    bool space = s.find(' ') != std::string_view::npos;
-    if (!space && s.find('\n') == std::string_view::npos) return;
     std::string src;
-    if (!text::label_states().original_of(label, s, &src)) {
-        if (!space) return;
-        src = std::string(s);
+    bool ours = st.original_of(label, s, &src);
+    text::LabelStates::Box own{l->m_customSize, l->m_shrink, l->m_width, l->m_height};
+    if (st.peek_box(label, &own) && !ours) {
+        // a label this hook boxed whose text changed: its own box back
+        st.take_box(label, &own);
+        set_box(l, own);
+        st.erase_text(label);
     }
+    bool own_box = own.custom;
+    if (!ours) src = std::string(s);
+    if (!l->m_renderer || src.empty()) return;
+    std::string drawn = drawn_text(l, src);
+    // The wrap (breaking lines at spaces) is for texts of a few words; the room from the layout
+    // (shrinking a label into it) for any English text, tag-mode labels too.
+    bool space = drawn.find(' ') != std::string::npos;
+    bool wrap_ok = !l->m_tagMode && src.size() >= 12 && (space || (ours && src.find('\n') != std::string::npos));
+    bool layout_ok = !own_box && !has_japanese(drawn) && has_letters(drawn);
+    if (!wrap_ok && !layout_ok) return;
     Geometry g{};
-    float r = room(label, &g);
+    float r = room(label, &g, own_box);
     if (r <= 0) return;
-    if (!l->m_customSize && !settled(l, label, g.x)) return;
-    std::string key = src + '\x01' + std::to_string((int)r), out;
+    soa::text::Extent nat{};
+    text::LayoutRoom lr;
+    if (layout_ok) {
+        nat = natural_extent(l, drawn);
+        lr = layout_of(label, l, g, drawn, nat);
+    }
+    float r_lay = lr.k < 1 ? (float)(nat.w * lr.k) : 1e9f;
+    if (!own_box && !settled(l, label, g.x, r_lay)) return;
+    float rr = std::min(r, r_lay);
+    text::RoomBy by = r_lay < r ? lr.by : text::RoomBy::none;
+    std::string key = (own_box ? "F" : "S") + src + '\x01' + std::to_string((int)r) + '\x01' + std::to_string((int)rr) + by_name(by), out;
     if (!g_wrapped.get(key, &out)) {
         auto m = label_measure(l);
-        bool fixed = l->m_customSize && l->m_shrink && l->m_height > 0;
-        if (fixed && src.find('\n') == std::string::npos) {
+        bool fixed = own_box && l->m_shrink && l->m_height > 0;
+        bool one_line = drawn.find('\n') == std::string::npos;
+        double w = layout_ok ? nat.w : 0;
+        int words = (int)std::count(drawn.begin(), drawn.end(), ' ') + 1;
+        if (fixed && wrap_ok && one_line) {
             // A fixed box that shrinks its text (Part 4): re-broken at the box for the fewest lines at
             // the largest scale, then DrawSelf's own shrink (fit_box, as the home's talk box).
             out = soa::text::fit_box(src, r, l->m_height, m).text;
-        } else if (!l->m_customSize && src.find('\n') == std::string::npos &&
-                   (is_header_description(l) ? m(src).w * 0.5 <= r : std::count(src.begin(), src.end(), ' ') < 3 && m(src).w * 0.6 <= r) &&
-                   m(src).w > r) {
+        } else if (!layout_ok || w <= rr) {
+            out = src;
+            if (wrap_ok && !own_box) w = m(src).w;
+            if (wrap_ok && (own_box || w > rr)) out.clear();  // the wrap below
+        } else if (l->m_tagMode) {
+            // A tag-mode label (its colour segments) is never broken: shrunk on one box (to at least 50%).
+            out = w * 0.5 <= rr ? kShrinkInBox : src;
+        } else if (by == text::RoomBy::sibling) {
+            // Its room ends at a sibling on its row (the next label, a value, an icon): shrunk into it,
+            // its lines kept (layout_room gives at least kMinSiblingScale).
+            out = kShrinkInBox;
+        } else if (by == text::RoomBy::parent && one_line && (w * 0.75 <= rr || (words <= 3 && w * 0.6 <= rr))) {
+            // Its room ends at its frame (a button, a list row, an icon): one line shrunk into it.
+            out = kShrinkInBox;
+        } else if (by == text::RoomBy::parent && one_line && wrap_ok && w * 0.5 <= rr &&
+                   !wrap_fits_frame(l, g, soa::text::Extent{0, m(wrap_at(src, rr, m)).h}, lr)) {
+            // ... or, when its lines broken at the frame would run out of its free band (a list row's
+            // description under the row's name), one line shrunk into it (to at least 50%).
+            out = kShrinkInBox;
+        } else if (is_dialog_message(l) && !one_line && w * 0.6 <= rr) {
+            // A dialog's message with the data's own line breaks: its lines kept, shrunk into the room
+            // (not broken again into more lines than the data has).
+            out = kShrinkInBox;
+        } else if (one_line && (is_header_description(l) ? w * 0.5 <= rr : words <= 3 && w * 0.6 <= rr)) {
             // A menu's header description (one line in the header bar: the Japanese is one line) or a
             // short label (up to three words: a name, a caption, a checkbox's text) wider than its
-            // room: kept on one line and shrunk into it (below; to at least 50% / 60%, else wrapped),
-            // not broken into lines that hang below the bar or a column of words.
-            out = kShrinkOneLine;
+            // room: kept on one line and shrunk into it (to at least 50% / 60%, else wrapped), not
+            // broken into lines that hang below the bar or a column of words.
+            out = kShrinkInBox;
         } else {
-            soa::text::BreakOptions o;
-            o.keep_breaks = true, o.skip_japanese = true, o.tags_are_words = false, o.balance = true;
-            out = soa::text::break_lines(src, r, [&](std::string_view line) { return m(line).w; }, o);
+            out = wrap_ok ? std::string() : src;
+        }
+        if (out.empty()) {
+            out = wrap_at(src, rr, m);
             // A fixed-size label with its own breaks: keep the wrap only when the text then shrinks
             // less (one-line boxes such as buttons read better shrunk than broken).
             if (out != src && fixed) {
@@ -613,29 +826,32 @@ void maybe_wrap(u64 label) {
             }
         }
         g_wrapped.put(key, out);
-        if (out != src && first_time(src))  // once per text (a sliding label is wrapped at each step)
-            LOGI("p370", "lang: %s a %s label's line to %.0f (world x %.0f y %.0f, scale %.2f, anchor %.2f, align %u): \"%.*s\"",
-                 out == kShrinkOneLine ? "shrank" : "wrapped", l->m_customSize ? "fixed-size" : "screen", r, g.x, g.y, g.scale, g.anchor,
-                 l->m_hAlign, (int)std::min<size_t>(src.size(), 80), src.data());
+        if (out != src && first_time(std::string(by_name(by)) + src))  // once per text and room (a sliding label is wrapped at each step)
+            LOGI("p370", "lang: %s a %s label's line to %.0f (world x %.0f y %.0f, scale %.2f, anchor %.2f, align %u, room %s): \"%.*s\"",
+                 out == kShrinkInBox ? "shrank" : "wrapped", own_box ? "fixed-size" : "screen", rr, g.x, g.y, g.scale, g.anchor,
+                 l->m_hAlign, by_name(by), (int)std::min<size_t>(src.size(), 80), src.data());
     }
-    if (out == kShrinkOneLine) {
-        // the label made a fixed box of the room's width and its one line's height, shrinking
-        text::label_states().keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
-        text::label_states().set(label, src, src);
-        set_box(l, {1, 1, r, (float)label_measure(l)(src).h});
+    if (out == kShrinkInBox) {
+        // the label made a fixed box of the room's width and its text's height, shrinking (a dialog's
+        // message: no taller than the room above its buttons)
+        float h = (float)natural_extent(l, drawn).h, bh = dialog_room_h(l, label);
+        if (bh > 0 && bh < h) h = bh;
+        st.keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
+        st.set(label, src, src);
+        set_box(l, {1, 1, rr, h});
         if (std::string_view(src) != s) set_text(label, src);
         return;
     }
-    if (!l->m_customSize && !l->m_tagMode) {
+    if (!own_box && !l->m_tagMode) {
         // A dialog's message taller than the room above its buttons (Part 4: shrink, don't shorten):
         // its lines kept, the label made a fixed box of that room that shrinks its text (IsCustomSize,
         // +0x282), centred where it was; its own fields come back when its text changes.
         float bh = dialog_room_h(l, label);
         soa::text::Extent e = bh > 0 ? label_measure(l)(out) : soa::text::Extent{0, 0};
         if (bh > 0 && e.h > bh) {
-            text::label_states().keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
-            text::label_states().set(label, out, src);
-            set_box(l, {1, 1, std::max(r, (float)e.w), bh});
+            st.keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
+            st.set(label, out, src);
+            set_box(l, {1, 1, std::max(rr, (float)e.w), bh});
             if (first_time("\x06" + src))
                 LOGI("p370", "lang: shrank a dialog's message to %.0f%% to fit %.0f above its buttons: \"%.*s\"", bh / e.h * 100, bh,
                      (int)std::min<size_t>(src.size(), 60), src.data());
@@ -644,16 +860,20 @@ void maybe_wrap(u64 label) {
         }
     }
     if (out == s) return;
-    if (out == src) text::label_states().erase_text(label);
-    else text::label_states().set(label, out, src);
+    if (out == src) st.erase_text(label);
+    else st.set(label, out, src);
     set_text(label, out);
 }
 
 void forget_label(u64 label) {
     text::label_states().forget(label);
     story_forget(label);
-    std::lock_guard<std::mutex> lk(g_x_mu);
-    g_last_x.erase(label);
+    {
+        std::lock_guard<std::mutex> lk(g_x_mu);
+        g_last_x.erase(label);
+    }
+    std::lock_guard<std::mutex> lk(g_layout_mu);
+    g_layout.erase(label);
 }
 
 // bool CCocosLabel::DrawSelf(): x0 label.
@@ -885,6 +1105,7 @@ void detail::install_text(LoadedLib& lib, std::vector<std::string>& hooks) {
     g_calc = lib.sym(kCalcStringRect), g_world = lib.sym(kGetWorldMatrix), g_prs = lib.sym(kPutPRS);
     g_pm = lib.sym(kParamManager), g_pstringdb = lib.sym(kPStringDB), g_get = lib.sym(kStringDBGet), g_free = lib.sym(kFree);
     g_crypt_name = lib.sym(kCryptName);
+    if (u64 vt = lib.sym(kLabelVtable)) g_label_vtable = vt + 16;
     if (!entry_is(set_text, kSetTextEntry) || !entry_is(draw, kDrawSelfEntry) || !entry_is(d1, kLabelDtorEntry) ||
         !entry_is(d0, kLabelDtorEntry) || !g_calc || !g_world || !g_prs || !g_pm || !g_pstringdb || !g_get || !g_free) {
         LOGW("p370", "lang: CCocosLabel::SetText / DrawSelf / ~CCocosLabel aren't 3.7.0's; no English strings or word wrap");

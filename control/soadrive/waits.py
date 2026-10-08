@@ -18,6 +18,7 @@ from .targets import Abort
 
 HOME_MASK = screens.HOME_MOVING  # home: only its header and side buttons hold still
 GACHA_MASK = (screens.GACHA_CAROUSEL,)  # the gacha screen: its banner carousel turns
+EVENT_MASK = (screens.EVENT_CAROUSEL,)  # the event list and boards: their banner carousel turns
 
 
 def last_phase(s):
@@ -163,7 +164,7 @@ def tap_to_phase(s, name, xy, n, shot=None, secs=60, every=20, tries=3, mask=(),
     return tap_to_log(s, name, xy, launch.phase(n), shot, secs, every, tries, mask, fatal, settle_secs, cmds)
 
 
-def tap_to_count(s, name, path, rx, cmds, shot=None, secs=40, changes=True, fatal=True, hold=1):
+def tap_to_count(s, name, path, rx, cmds, shot=None, secs=40, changes=True, fatal=True, hold=1, mask=()):
     """cmds (a tap that sends a request), then one more line matching rx in the log at path (counted:
     the server's log, the packet log, which every target writes); sent once more when none came (a
     tap dropped while a screen fades in; only after `secs`, so a slow answer isn't asked twice);
@@ -175,7 +176,7 @@ def tap_to_count(s, name, path, rx, cmds, shot=None, secs=40, changes=True, fata
         s.ctl(*cmds)
         if s.poll(secs, lambda: milestones.count(path, rx) > n):
             s.ok(name)
-            settle(s, shot, differs_from=screen if changes else None, hold=hold)
+            settle(s, shot, mask=mask, differs_from=screen if changes else None, hold=hold)
             return True
         if not s.alive():
             break

@@ -7,7 +7,7 @@ import re
 from ..flows import launch
 from ..targets import Abort, Config, Layout, Run
 # the condition waits (soadrive/waits.py), for the sessions as common.NAME
-from ..waits import (GACHA_MASK, HOME_MASK, gave_up, last_phase, look, settle, tap_settled, tap_to_count,  # noqa: F401
+from ..waits import (EVENT_MASK, GACHA_MASK, HOME_MASK, gave_up, last_phase, look, settle, tap_settled, tap_to_count,  # noqa: F401
                      tap_to_log, tap_to_phase, tap_to_screen, tap_to_server)
 
 

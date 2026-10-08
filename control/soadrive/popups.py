@@ -110,6 +110,30 @@ def is_home_menu_open(shot):
     return _signature_match(shot, "110x100+615+160", "6x6", HOME_MENU_OPEN, limit=0.02)
 
 
+# The summon presentation's ALL SKIP button (bottom right, ui370.SUMMON_ALL_SKIP): the 96x22+529+1188
+# crop scaled to 8x2 RGB, from session:add-item's 1-draw (2026-10-07): the presentation's frames
+# within 0.065 of it (the backgrounds behind the button change), the loading screen before it
+# (召喚中) and the result after it 0.17+.
+SUMMON_SKIP = bytes.fromhex(
+    "8194ac5c6f855b6d804051557b8ea68d9eb56d81988496ac55677b596c80586b7f43565e576b7a5569774f637150636c")
+
+
+def is_summon_skip(shot):
+    return _signature_match(shot, "96x22+529+1188", "8x2", SUMMON_SKIP, limit=0.09)
+
+
+# マスタリー's Full Mastership! dialog (after the fifth training): its 閉じる, the 300x60+214+860 crop
+# scaled to 8x2 RGB, from session:mastery (2026-10-07): byte-identical in 18 runs, every other screen
+# of the session 0.077+. Under load it comes a while after the training's answer (the training
+# screen holds still in between).
+MASTERY_ALL_CLEAR_CLOSE = bytes.fromhex(
+    "0c244b0a224a10274e4057742c44650d254d0b234a0c234b0e2a680d2867122d6b465f90385386102c6a0e2a690f2b6a")
+
+
+def is_mastery_all_clear(shot):
+    return _signature_match(shot, "300x60+214+860", "8x2", MASTERY_ALL_CLEAR_CLOSE, limit=0.03)
+
+
 def is_mission_confirm(shot):
     return _signature_match(shot, "520x60+100+682", "12x2", MISSION_CONFIRM_BUTTONS)
 

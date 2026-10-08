@@ -13,6 +13,8 @@ HOME_CHARACTER = (130, 240, 610, 1000)
 # The gacha screen's banner carousel (and its page number): it turns every few seconds, so which
 # banner a screenshot catches is timing; the banner drawn is in the packets (SaleGacha's arguments).
 GACHA_CAROUSEL = (0, 320, 729, 875)
+# The event screens' banner carousel at the top (the event list, a board): it turns every few seconds.
+EVENT_CAROUSEL = (0, 190, 729, 320)
 
 
 def _masked(path, regions, tmp):

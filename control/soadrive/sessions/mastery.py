@@ -24,6 +24,7 @@ import sqlite3
 import subprocess
 import tempfile
 
+from .. import popups
 from ..proc import REPO, repo_file
 from . import common
 
@@ -189,8 +190,11 @@ def main(o):
         tap(s, "training 5: the card", CARDS[2])
         tap(s, "マスタリーパスメダルを使う", MEDAL, "10-medal-confirm")
         if not step(s, "training 5 with the pass medal -> 皆伝", r"TrainMastery: disciple [0-9a-f]+ training 5/5 option 3 \(pass medal\), FOL -0; 皆伝",
-                    ["tap:" + MEDAL_EXECUTE], "11-full-mastership"):
+                    ["tap:" + MEDAL_EXECUTE]):
             return
+        # the Full Mastership! dialog comes a while after the answer (under load the training screen
+        # holds still in between): waited for by its fingerprint
+        common.settle(s, "11-full-mastership", secs=60, is_screen=popups.is_mastery_all_clear, name="Full Mastership!", fatal=True)
         tap(s, "Full Mastership!: 閉じる", ALL_CLEAR_CLOSE)
         tap(s, "皆伝師弟", GRADUATED_TAB, "12-graduated")
         # ---- キャラデコ: ホーム -> 会話モード -> キャラデコ (GetDecoInfo: the planted three) -> デコ選択 -> a slot

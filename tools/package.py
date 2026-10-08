@@ -40,6 +40,9 @@ links, IJG libjpeg 9, zstd 1.3.4), the data we made, and ONE game file (below):
                              own download, after its date-dependent master hooks (event dates), so
                              a pre-built -en master would be stale and would be game data (PLAN-english
                              P2, M-Q5)
+  data/english/labels.tsv    the layout labels to translate (docs/english.md 7.14): each label's
+                             Japanese and our English (or none: derived at run time); soa-server
+                             writes the -en scenes from the user's download at every start
 
   data/basmaster-gl.sqlite3  Global's master DB, as committed (the user, 2026-10-07: the one game file
                              the packages carry): soa-server derives the official English from it at
@@ -113,6 +116,9 @@ ALLOW_DATA = [
     # text only, never a built -en master or story file (those fail the scan anyway)
     "data/english/master-en.tsv",
     "data/english/story-en/TS_*.tsv",
+    # the layout labels to translate (english::labels_path(); docs/english.md 7.14): short UI texts
+    # and our English, as the art recipes' "jp" fields; the -en scenes are built at run time
+    "data/english/labels.tsv",
     # Global's master DB (the user, 2026-10-07; GAME_FILE_EXCEPTIONS below)
     "data/basmaster-gl.sqlite3",
 ]
@@ -123,7 +129,8 @@ ALLOW_DATA = [
 # another file at this path fails the scan as before.
 GAME_FILE_EXCEPTIONS = ["data/basmaster-gl.sqlite3"]
 # The data files copied from git into a package with a server (the paths as in the checkout).
-DATA_FILES = [*GAME_FILE_EXCEPTIONS, "standin-assets", "standin-assets-en/recipes", "data/english/master-en.tsv", "data/english/story-en/TS_*.tsv"]
+DATA_FILES = [*GAME_FILE_EXCEPTIONS, "standin-assets", "standin-assets-en/recipes", "data/english/master-en.tsv", "data/english/story-en/TS_*.tsv",
+              "data/english/labels.tsv"]
 ALLOW_DEBUG = ["*.debug", "*.exe.debug", "README.txt"]
 
 # Game-file patterns (GAME_FILE): any file matching one fails the check unless it is an approved stand-in.

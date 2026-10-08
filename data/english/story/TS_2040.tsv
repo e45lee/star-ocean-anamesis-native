@@ -212,6 +212,7 @@ message_id	ja_sha1	en	source	engine	date	editor	note
 2042_070_45	a2935e08505375f742dbb8f96884d9a30cf7abbe	...Affirmative.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2042_070_46	3acc8723a65538fa965416042d938bfdd5fa5d6b	Tika... you're something else.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2042_070_47	4b69f11a897805110e7fd3f97198be9d7f8d54ea	Hey, Rekoro, you have all sorts\nof things hidden inside you,\ndon't you? What else is in\nthere?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+2042_070_48	caccc464ce3bbc500958aa8da719a28384bb3abb	...I have a board game installed, a copy from the ship's database; it is said to have originated in the Galactic Federation cultural sphere.	agent		2026-10-07	en-followup	the engine's retry wrote the glossary word as "a Copy" mid-sentence; its wording kept
 2042_070_49	f39f1b1ef6089a9529f86aefc24eb73ab6a9e020	I want to try that! Big sister\nVerda, let's play together!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2042_070_50	8b3fab2b4cb835a2b5bbf55adcdcd65b3f65781a	However, as I could not find\nany manuals, I am currently in\nthe process of analyzing the\nrules.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2042_070_51	e8e6cd9cac3a8e8d50c011bb77476851419f073e	In that case, let's call the\nCaptain and all play together.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
@@ -380,6 +381,7 @@ message_id	ja_sha1	en	source	engine	date	editor	note
 2043_130_28	a03b2132b23412a8a4d1217f23c36931fd94d802	No matter what happens, she'll\nknow that young Eu didn't do\nanything wrong!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2043_130_29	bb350bb5da972b7329af4d0db01537eef8ae6511	<font color=blue>Euwin</font> ...Sister did?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2043_130_30	e1a81600d5e6894fe527808cb8b8fbd51cebb39f	If she said that, then I can't\nback down just because of a\nlittle harassment like this!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+2043_130_31	94b00b29f8f9f5d1b68cf13cf5e4334326b4a848	Excuse me. You are Euwin\nLaxter, correct?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1+fix/llama.cpp-b11443/t0	2026-10-07		
 2043_140_01	94b00b29f8f9f5d1b68cf13cf5e4334326b4a848	Excuse me. Are you Lord Ewin\nLaxter?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2043_140_03	988b9686061443110bad273b44b418b7a297ec27	O-oh...!?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 2043_140_04	b299f7e708a874a16a2f423df1c8e0fabb70d6ac	Wait, both of you. You aren't a\nroyal guard; you're with the\nFrontline Knights, aren't you?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		

@@ -520,6 +520,7 @@ message_id	ja_sha1	en	source
 6053_220_09	5c45bb77d95c9f3839832b7178362fff3d1a1dd6	Dammit! A direct hit from the\nPhantom ship on the starboard\nthrusters! Propulsion balance\nerror is over 20%!	machine
 6053_220_10	fbd75552a8bd23fa94892422a1f60b3cb0708a46	I'll adjust the ones that are still\nworking! Maintain full speed,\nhurry!	machine
 6053_220_12	4cef335a71e6d80c4d74f4c462db34735836d8d4	I can see it... Verda! Keep your\nmouth shut! It's about to get\neven bumpier!!	machine
+6053_220_13	b62a8bec1f8c25aba23ee021221b99e93b51b3f2	Unyaaaaaaaaaaaa!!	machine
 6053_220_14	e110a96805110e6c8dc8658e0a9303468b9fc359	"Sending... Sending..."	machine
 6053_220_15	b8938584e67800bc1c451b61503052e73db471ec	"Transmission... complete."	machine
 6053_220_16	71941d054c1bf3021330b72782c6f8d1b38daabf	...Coro... Coro!?	machine
@@ -714,7 +715,7 @@ message_id	ja_sha1	en	source
 6055_430_05	632ec345ecec55b715bbf50d16f237e2d8f0a3fd	...Hm?	machine
 6055_430_06	c5938106af45bdbc101c093fd0e4f589a06ea39e	Stop... if you touch me...	machine
 6055_430_07	a40fe87d02333611ca5bfa9fda063ea86984385c	What's this? You running a\nfever? Your body temperature\nis weirdly hi―	machine
-6055_430_08	626280dabd57c9daca3581816c4d0880e027d10f	Wait! Mista Heath! Get away\nfrom Lady Leash!!	machine
+6055_430_08	626280dabd57c9daca3581816c4d0880e027d10f	Wait! Mista Heath! Get away\nfrom Lady Eve!!	agent
 6055_430_09	1bd04d32f2236257cf3b52e65442edc4d06c622e	Huh!?	machine
 6055_430_10	b590e56322bf9b1b60e8c2dba6390c89f87c2fdb	Too late.	machine
 6055_430_11	0da7e1b93b6bb305a6aee11af342750d60c5caa3	Ugh... W-what is this... my\nhand...	machine
@@ -789,7 +790,7 @@ message_id	ja_sha1	en	source
 6055_435_32	4e17a3915e0a5a1b19d00af3e9cffdf287cc7a45	Who cares! He's totally giving\noff "cornered villain" vibes!	machine
 6055_435_33	0d84edede3cb9c979c77518450309042fa055571	Don't let your guard down!\nThat's exactly when they're\nmost unpredictable!	machine
 6055_435_34	06e51f01e5ac9f5aaa2d6081a9bef7bc5c55ad60	If you refuse to surrender, we\nhave no choice. We shall now\nresort to force!	machine
-6055_435_35	a3fc0a209a8ab388e4c0087a8f1388287764ede6	Coro! Prepare the teleportation\ncontainment for Lady Leash!\nBattle start!	machine
+6055_435_35	a3fc0a209a8ab388e4c0087a8f1388287764ede6	Coro! Prepare the teleportation\ncontainment for Lady Eve!\nBattle start!	agent
 6055_435_36	9aae50a3ab91520325d2151d2ab431311f3b5568	"Roger that!!"	machine
 6055_435_38	14e912e9c57e52ff2c82e492542920eda669942f	...C-Captain... Givel... everyone...	machine
 6055_435_39	93e6a0d431c03862871b931ae8bccf6dad410793	...Evelysse.	machine

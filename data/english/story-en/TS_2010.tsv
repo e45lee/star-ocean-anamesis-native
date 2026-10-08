@@ -82,6 +82,7 @@ message_id	ja_sha1	en	source
 2012_040_09	2804a010ec721f8bda01a53d7fad19dde94daf8e	Please wait! I have to enter a\nsafety confirmation code into\nthe pod first.	machine
 2012_040_10	7478e0a9af8ae04d5adb0c72824278d5a0785d5e	Also, I need to verify if the\noccupant is a human\ncompatible with the ship's\natmosphere...	machine
 2012_040_11	dde497e2e29c2a1eb5f41902c5e36c9c5dd92426	"Atmospheric compatibility\nconfirmed. Awaiting safety\nconfirmation code\nauthentication."	machine
+2012_040_12	7eeac4b00dcb9c0d40b5409c67052d7124b78e7b	I am a rescue pod aboard the\nimmigrant transport ship Kugo,\nregistered to <font color=yellow>Daftine</font>. I am a rescue\npod aboard the immigrant transport\nship Kugo, registered to Daftine."	agent
 2012_040_13	f488f299a4f4663c92b090abc82d4cf7a9ce6af9	...So it seems.	machine
 2012_040_14	7247e3a2b45094898fe9c026c0b202c076d6d895	U-um... I see.	machine
 2012_040_15	b4755f81099e3320069948a190b152b7c5cda3d8	Now then, the safety confirmation\ncode... I think I can apply Levarance's\nlanguage algorithm. Let's see... here we\ngo.	machine
@@ -678,6 +679,7 @@ message_id	ja_sha1	en	source
 2018_290_38	2a6cf6e728ddb15592569599b8b42daaf85f79e5	We are but children, after all. It\nwould be terrible if we were\nkidnapped by a strange man.	machine
 2018_290_39	2b07704877ab474bcf63d4309fc2a887af2e2f7a	Young Man: Hahaha! What an\ninteresting kid! Alright, I give\nup.	machine
 2018_290_40	f00822634acf1d5e6c4f520b9f498485eeda7ff8	Young Man: You protected\nDagris from the beasts of\nBaschen. Out of respect for\nthat, I shall lower my sword.	machine
+2018_290_41	e6e00a6895f0fe05861d1a6615302b08d48b4bc1	My name is Euwin. Euwin\nLaxter.	machine
 2018_300_01	29e13744806aed180861cfd4f8a9249c8ac86303	Hmm...	machine
 2018_300_02	44a9a259f3c4a7591865f604c54c62427c39831e	Hmm? You've been staring at\nthis for a while now. Are you\ninterested?	machine
 2018_300_03	b14f897b2796cb5822703afff61e2852ac48cd82	I'd say your little "Light Arrow\nof the Messenger" or that\nstrange contraption the other\none has are far more unusual.	machine
@@ -685,6 +687,7 @@ message_id	ja_sha1	en	source
 2018_300_05	2d9ddcb0b358ec1a14620d77955b0593eca8b6a7	The civilization levels are all\nover the place. What on earth\nis going on here...?	machine
 2018_300_07	723c85ebc28511bb939dc13115a75863fe8dd194	Right, I guess worrying about it\nnow won't give me any\nanswers...	machine
 2018_300_08	a4bf4a127a347bdd09ce23b0b2f706ee0797411a	Come to think of it, you're Ewin\nLaxter, right?	machine
+2018_300_09	680d73a6f2b69260ad45c8d972cc34ea56562b80	Laxter? Laxter... that's the\nname of the lord in Carlone\nCity, isn't it?	machine
 2018_300_10	d2b7d8dbef7f116820954c0c631e63cf6828ed13	Ah, you know of them. A provincial lord\nwhose only claim to fame is the size of\ntheir territory. I'm the youngest child of\nthe current head.	machine
 2018_300_11	73033b4dbebcf171d513087eacec4618e5d9bfb4	...Sorry, but you don't really\nlook the part.	machine
 2018_300_12	66ac1404cea7d4e38b1f2ad37333db3e362718b0	Hahaha, it can't be helped. I've\nalways been the odd one out.	machine

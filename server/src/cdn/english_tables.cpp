@@ -34,9 +34,17 @@ double since(std::chrono::steady_clock::time_point t0) { return std::chrono::dur
 bool english_tables(const Options& opts, const FileTree& download, EnglishTables& out, std::string* err) {
     out = EnglishTables{};
     auto t0 = std::chrono::steady_clock::now();
+    // the layout labels to translate (english.md 7.14): a bad file is logged, the rest goes on
+    english::Table labels;
+    std::string lwhy;
+    if (!opts.english_labels.empty() && !english::load_labels(opts.english_labels, labels, &lwhy)) {
+        LOGW("cdn", "english labels: %s: the layout labels stay Japanese", lwhy.c_str());
+        labels.clear();
+    }
     if (opts.english_full) {
-        // the whole tables, as they are (tests)
+        // the whole tables, as they are (tests); the labels: our rows only
         if (!opts.english_text.empty() && !english::load(opts.english_text, out.master, err)) return false;
+        out.labels = english::resolve_labels(nullptr, out.master, labels);
         return load_story_tables(opts.english_story, out.story, err);
     }
     // (a) Global's English and (d) the derivation rules (english_derive.h), with our rows on top
@@ -65,6 +73,7 @@ bool english_tables(const Options& opts, const FileTree& download, EnglishTables
         sf.stem = base.substr(0, base.size() - 5);
         if (english::story_lines(adld::decrypt(rel, f), sf)) in.story.push_back(std::move(sf));
     }
+    for (auto& [ja, e] : labels) in.labels.push_back(ja);
     english::Table ours;
     if (!opts.english_text.empty() && !english::load(opts.english_text, ours, err)) return false;
     std::map<std::string, english::Table> ours_story;
@@ -76,12 +85,18 @@ bool english_tables(const Options& opts, const FileTree& download, EnglishTables
     if (!english::derive(in, d, err)) return false;
     out.master = english::merge_master(d, ours);
     out.story = english::merge_story(d, ours_lines);
+    out.labels = english::resolve_labels(&d, out.master, labels);
     out.derived = true;
     LOGI("cdn",
          "english derive: %zu official (%zu by E3), %zu memory, %zu template, %zu failing; story %zu official lines, %zu failing; with our "
          "%zu + %zu rows: %zu master rows, %zu story files (%.2f s)",
          d.official + d.e3, d.e3, d.memory, d.templ, d.failing, d.story_official, d.story_failing, ours.size(), ours_lines.size(), out.master.size(),
          out.story.size(), since(t0));
+    std::map<std::string, size_t> by_source;
+    for (auto& [ja, e] : out.labels) by_source[e.source]++;
+    std::string sources;
+    for (auto& [src, n] : by_source) sources += (sources.empty() ? "" : ", ") + std::to_string(n) + " " + src;
+    LOGI("cdn", "english labels: %zu of %zu layout labels with English (%s)", out.labels.size(), labels.size(), sources.c_str());
     return true;
 }
 
@@ -93,6 +108,9 @@ bool write_english_tables(const EnglishTables& t, const std::string& dir) {
         std::string s = english::table_text(table);
         ok &= files::write_file(dir + "/story-en/" + stem + ".tsv", (const uint8_t*)s.data(), s.size());
     }
+    std::string l = "ja\ten\tsource\n";
+    for (auto& [ja, e] : t.labels) l += ja + "\t" + e.en + "\t" + e.source + "\n";
+    ok &= files::write_file(dir + "/labels-en.tsv", (const uint8_t*)l.data(), l.size());
     LOGI("cdn", "english tables: %zu master rows, %zu story files -> %s", t.master.size(), t.story.size(), dir.c_str());
     return ok;
 }

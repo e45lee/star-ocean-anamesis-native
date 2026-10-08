@@ -18,7 +18,6 @@ Targets: port-inproc (default), port-server (the server's lines are read from it
 import os
 import sqlite3
 
-from ..flows import mission
 from ..proc import repo_file
 from . import common
 
@@ -58,9 +57,15 @@ def plant_library(db):
     return len(ids)
 
 
+def screen(s, name, xy, shot=None, **kw):
+    return common.tap_to_screen(s, name, xy, shot, **kw)
+
+
 def open_other_settings(s, shot):
-    s.ctl("tap:" + OTHER, "wait:5000", "tap:" + SETTINGS, "wait:4000")
-    s.ctl("tap:" + OTHER_SETTINGS, "wait:4000", s.shot_cmd(shot))
+    common.settle(s, mask=common.HOME_MASK)
+    common.tap_to_phase(s, "その他", OTHER, 12, mask=common.HOME_MASK, fatal=True)
+    screen(s, "設定", SETTINGS)
+    screen(s, "その他設定", OTHER_SETTINGS, shot)
 
 
 def main(o):
@@ -72,10 +77,12 @@ def main(o):
         n = s.n_packets(r"GetConfig")
         open_other_settings(s, "10-other-settings")
         s.wait_for("GetConfig (その他設定)", 30, s.more_than(r"GetConfig", n))
-        s.ctl("tap:" + BOX1, "wait:3000")
-        s.wait_for("UpdateConfig %d \"true\" (一時保管庫設定 on)" % STORAGE, 30,
-                   lambda: s.in_server(r"UpdateConfig %d: \"true\"" % STORAGE))
-        s.ctl("tap:" + CLOSE, "wait:3000", "tap:" + OTHER_SETTINGS, "wait:4000", s.shot_cmd("11-reopened"), "tap:" + CLOSE, "wait:2000")
+        # the box: a toggle (made again only when no UpdateConfig came)
+        common.tap_to_server(s, "UpdateConfig %d \"true\" (一時保管庫設定 on)" % STORAGE, r"UpdateConfig %d: \"true\"" % STORAGE,
+                             ["tap:" + BOX1], secs=30, changes=False)
+        screen(s, "閉じる", CLOSE)
+        screen(s, "その他設定 again", OTHER_SETTINGS, "11-reopened")
+        screen(s, "閉じる", CLOSE)
         seen["boot1"] = stored(s)
 
     if not common.drive(s1, boot1):
@@ -87,19 +94,22 @@ def main(o):
         common.port_login(s, notice=None, bonus=None)
         seen["restart"] = stored(s)
         open_other_settings(s, "21-after-restart")
-        s.ctl("tap:" + CLOSE, "wait:3000", "tap:" + RESET, "wait:3000", s.shot_cmd("22-reset-dialog"), "tap:" + RESET_OK, "wait:4000")
-        s.wait_for("ResetConfig (初期設定に戻す)", 30, lambda: s.in_server(r"ResetConfig: every option back"))
-        s.ctl("tap:" + RESET_CLOSE, "wait:2000", "tap:" + OTHER_SETTINGS, "wait:4000", s.shot_cmd("23-after-reset"), "tap:" + CLOSE,
-              "wait:2000")
+        screen(s, "閉じる", CLOSE)
+        screen(s, "初期設定に戻す", RESET, "22-reset-dialog")
+        common.tap_to_server(s, "ResetConfig (初期設定に戻す)", r"ResetConfig: every option back", ["tap:" + RESET_OK], secs=30)
+        screen(s, "reset: 閉じる", RESET_CLOSE)
+        screen(s, "その他設定 again", OTHER_SETTINGS, "23-after-reset")
+        screen(s, "閉じる", CLOSE)
         seen["reset"] = stored(s)
         # ミッション -> the episode list -> Episode 1 (the third banner) -> the planet select -> シナリオライブラリ
-        s.ctl("tap:" + HOME, "wait:8000")
+        common.tap_to_phase(s, "ホーム", HOME, 4, mask=common.HOME_MASK, fatal=True)
         common.episode_list(s, "270:1085")
-        s.ctl("wait:5000", "drag:364:850:364:400", "wait:2000")
-        s.tap_log(mission.phase(5), 120, 20, 3, "tap:364:805", name="Episode 1 -> the planet select")
-        s.ctl("wait:8000", s.shot_cmd("29-planets"), "tap:" + LIBRARY)
-        s.wait_for("GetScenarioLibraryInfoList (シナリオライブラリ)", 40, lambda: s.in_server(r"GetScenarioLibraryInfoList [0-9]+: "))
-        s.ctl("wait:6000", s.shot_cmd("30-library"))
+        common.settle(s)
+        s.ctl("drag:364:850:364:400")
+        common.settle(s)
+        common.tap_to_phase(s, "Episode 1 -> the planet select", "364:805", 5, "29-planets", secs=120, fatal=True)
+        common.tap_to_server(s, "GetScenarioLibraryInfoList (シナリオライブラリ)", r"GetScenarioLibraryInfoList [0-9]+: ", ["tap:" + LIBRARY],
+                             "30-library", hold=2)
         line = s.last_line(r"GetScenarioLibraryInfoList [0-9]+: ", s.server_log) or ""
         seen["listed"] = common.state_value(line, r"GetScenarioLibraryInfoList [0-9]+: ([0-9]+) cleared")
 

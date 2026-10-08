@@ -40,12 +40,14 @@ def main(o):
         show(s.state("1-boot"))
         # Battle: MissionStart (stamina, the party set's own characters) ... MissionEnd (EXP, FOL, drops).
         mission.port_start(s, m)
+        # a fixed wait: a picture of the battle's loading screen, nothing to wait for
         s.ctl("wait:1500", s.shot_cmd("03-battle-loading"))
         mission.battle_shots(s, 10, 70, 4000)
         s.wait_log(r"mission_end\.msgp", 30, name="the battle ended (MissionEnd)")
-        s.ctl("wait:4000", s.shot_cmd("80-result"), "wait:4000", s.shot_cmd("81-result"))
+        common.settle(s, "80-result", hold=2)
+        common.settle(s, "81-result", hold=3)
         mission.results_until(s, mission.phase(4), 82, 95, 4000, name="the result pages -> home")
-        s.ctl("wait:8000", s.shot_cmd("99-home"))
+        common.settle(s, "99-home", mask=common.HOME_MASK)
         st2 = s.state("2-after-battle")
         show(st2)
         # Gacha: GetGachaInData (the banners open now, the wallet), then a 10-draw of the first

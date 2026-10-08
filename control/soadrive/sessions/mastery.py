@@ -94,9 +94,6 @@ def plant(db, soa_server):
         shutil.rmtree(work, ignore_errors=True)
 
 
-def server_count(s, rx):
-    return s.count(s.server_log, rx)
-
 
 # The screens' taps at 729x1296 (seen on 3.7.0, 2026-10-04).
 CHARACTER = "180:1245"     # footer キャラクター
@@ -128,27 +125,32 @@ DECO_STAR = "640:588"      # its favourite star
 DECO_ADJUST = "300:1245"   # the footer's デコ調整 (the decoration's position)
 
 
-def step(s, name, rx, cmds, secs=40):
-    """cmds, then waits for one more server-log line matching rx; resent once when none came (a
-    tap dropped while a screen fades in). Records PASS / FAIL."""
-    before = server_count(s, rx)
-    for attempt in range(2):
-        s.ctl(*cmds)
-        if s.poll(secs, lambda: server_count(s, rx) > before):
-            s.ok(name)
-            return True
-        if not s.alive():
-            break
-        s.note("%s: no server line yet; sending the taps again" % name)
-    s.miss(name)
-    return False
+def step(s, name, rx, cmds, shot=None, secs=40, changes=True):
+    """A request's tap, its server line, the screen after it (common.tap_to_server); FAIL goes on."""
+    return common.tap_to_server(s, name, rx, cmds, shot, secs, changes, fatal=False)
 
 
-def open_mastery(s, n_pairs, shot):
-    # scrolled to the end (three drags: one drag's length varies with its speed)
-    s.ctl("tap:" + CHARACTER, "wait:6000", *(["drag:364:1000:364:300", "wait:1500"] * 3), "wait:1500")
-    step(s, "マスタリー -> GetMasteryInfo (%d pair(s))" % n_pairs, r"GetMasteryInfo: %d pair" % n_pairs, ["tap:" + MASTERY, "wait:3000"])
-    s.ctl("wait:3000", s.shot_cmd(shot))
+def tap(s, name, xy, shot=None, **kw):
+    """A tap to the next screen, made again when lost (common.tap_to_screen); FAIL stops the boot."""
+    return common.tap_to_screen(s, name, xy, shot, **kw)
+
+
+def character(s, from_home):
+    """footer キャラクター: from home a phase (11); from the character menu's own screens none."""
+    if from_home:
+        common.tap_to_phase(s, "キャラクター", CHARACTER, 11, mask=common.HOME_MASK, fatal=True)
+    else:
+        tap(s, "キャラクター", CHARACTER)
+
+
+def open_mastery(s, n_pairs, shot, from_home):
+    character(s, from_home)
+    # scrolled to the end (three drags: one drag's length varies with its speed; the last ones may
+    # not move the list, so each waits only for the list to stop, not for a change)
+    for _ in range(3):
+        s.ctl("drag:364:1000:364:300")
+        common.settle(s)
+    step(s, "マスタリー -> GetMasteryInfo (%d pair(s))" % n_pairs, r"GetMasteryInfo: %d pair" % n_pairs, ["tap:" + MASTERY], shot)
 
 
 def main(o):
@@ -156,45 +158,53 @@ def main(o):
     s = common.port_run(o, common.port_config(o, limit=2400))
     planted = {}
     s.before_client = lambda: planted.update(zip(("master", "disciple"), plant(s.state_db, soa_server)))
-    c = s.ctl
 
     def body(s):
         common.port_login(s, notice=None, bonus=None)
+        common.settle(s, mask=common.HOME_MASK)
         # ---- ChangeRole: 装備・技・アシスト変更 -> the role-changeable ★6 -> ロール選択 -> アタッカー
-        c("tap:" + CHARACTER, "wait:6000", "tap:" + EQUIPMENT, "wait:5000", "tap:" + ROLE_CHANGER, "wait:5000", s.shot_cmd("03a-equipment"),
-          "tap:" + ROLE_SELECT, "wait:4000", s.shot_cmd("03b-role-select"))
-        step(s, "ロール選択 -> アタッカー -> ChangeRole", r"ChangeRole [0-9a-f]+: role [0-9]+ -> [0-9]+", ["tap:" + ATTACKER, "wait:3000"])
-        c("wait:2000", s.shot_cmd("03c-role-changed"), "tap:" + CLOSE, "wait:4000", s.shot_cmd("03d-attacker"))
-        open_mastery(s, 0, "03-mastery")
+        character(s, True)
+        tap(s, "装備・技・アシスト変更", EQUIPMENT)
+        tap(s, "the role-changeable ★6", ROLE_CHANGER, "03a-equipment")
+        tap(s, "ロール選択", ROLE_SELECT, "03b-role-select")
+        step(s, "ロール選択 -> アタッカー -> ChangeRole", r"ChangeRole [0-9a-f]+: role [0-9]+ -> [0-9]+", ["tap:" + ATTACKER], "03c-role-changed")
+        tap(s, "the role changed: 閉じる", CLOSE, "03d-attacker")
+        open_mastery(s, 0, "03-mastery", False)
         # 道場1 -> 師匠 (the list's first: the LV70 master-type role) -> 決定 -> 弟子 -> 決定 -> 決定
-        c("tap:" + DOJO1, "wait:5000", s.shot_cmd("04-select-master"), "tap:" + FIRST_CELL, "wait:2500", "tap:" + DECIDE, "wait:3500",
-          "tap:" + FIRST_CELL, "wait:2500", s.shot_cmd("05-select-disciple"), "tap:" + DECIDE, "wait:3000", s.shot_cmd("06-pair-confirm"))
-        if not step(s, "決定 -> TrainMastery (paired)", r"TrainMastery: paired master", ["tap:" + DIALOG_YES, "wait:3000"]):
+        tap(s, "道場1", DOJO1, "04-select-master")
+        tap(s, "師匠: the first", FIRST_CELL)
+        tap(s, "師匠: 決定", DECIDE)
+        tap(s, "弟子: the first", FIRST_CELL, "05-select-disciple")
+        tap(s, "弟子: 決定", DECIDE, "06-pair-confirm")
+        if not step(s, "決定 -> TrainMastery (paired)", r"TrainMastery: paired master", ["tap:" + DIALOG_YES], "07-paired"):
             return
-        c("wait:2000", s.shot_cmd("07-paired"), "tap:" + CLOSE, "wait:5000", s.shot_cmd("08-training"))
+        tap(s, "paired: 閉じる", CLOSE, "08-training")
         # trainings 1-4 with a material card (the first, then the middle), 5 with the pass medal
         for n in range(1, 5):
             card = CARDS[0] if n == 1 else CARDS[1]
+            tap(s, "training %d: the card" % n, card)
             if not step(s, "training %d -> TrainMastery" % n, r"TrainMastery: disciple [0-9a-f]+ training %d/5 option" % n,
-                        ["tap:" + card, "wait:3000", "tap:" + EXECUTE, "wait:3000"]):
+                        ["tap:" + EXECUTE], "09-training-%d" % n):
                 return
-            c("wait:5000", s.shot_cmd("09-training-%d" % n))
+        tap(s, "training 5: the card", CARDS[2])
+        tap(s, "マスタリーパスメダルを使う", MEDAL, "10-medal-confirm")
         if not step(s, "training 5 with the pass medal -> 皆伝", r"TrainMastery: disciple [0-9a-f]+ training 5/5 option 3 \(pass medal\), FOL -0; 皆伝",
-                    ["tap:" + CARDS[2], "wait:3000", "tap:" + MEDAL, "wait:3000", s.shot_cmd("10-medal-confirm"), "tap:" + MEDAL_EXECUTE,
-                     "wait:3000"]):
+                    ["tap:" + MEDAL_EXECUTE], "11-full-mastership"):
             return
-        c("wait:6000", s.shot_cmd("11-full-mastership"), "tap:" + ALL_CLEAR_CLOSE, "wait:5000", "tap:" + GRADUATED_TAB, "wait:3000",
-          s.shot_cmd("12-graduated"))
+        tap(s, "Full Mastership!: 閉じる", ALL_CLEAR_CLOSE)
+        tap(s, "皆伝師弟", GRADUATED_TAB, "12-graduated")
         # ---- キャラデコ: ホーム -> 会話モード -> キャラデコ (GetDecoInfo: the planted three) -> デコ選択 -> a slot
         # -> ☆ (FavoriteDecoObject) -> the first decoration -> 決定 (SetCharacterDeco) -> デコ調整
-        c("tap:" + HOME, "wait:7000", "tap:" + INTERACTIVE, "wait:5000")
-        step(s, "キャラデコ -> GetDecoInfo (3)", r"GetDecoInfo: 3 decoration", ["tap:" + DECO, "wait:4000"])
-        c("wait:3000", s.shot_cmd("13-deco"), "tap:" + DECO_SELECT, "wait:4000", "tap:" + DECO_SLOT, "wait:4000", s.shot_cmd("14-deco-list"))
-        step(s, "☆ -> FavoriteDecoObject", r"FavoriteDecoObject: 1 decoration", ["tap:" + DECO_STAR, "wait:2000"])
-        c("tap:" + DECO_FIRST, "wait:3000")
+        common.tap_to_phase(s, "ホーム", HOME, 4, mask=common.HOME_MASK, fatal=True)
+        tap(s, "会話モード", INTERACTIVE, mask=common.HOME_MASK)
+        step(s, "キャラデコ -> GetDecoInfo (3)", r"GetDecoInfo: 3 decoration", ["tap:" + DECO], "13-deco")
+        tap(s, "デコ選択", DECO_SELECT)
+        tap(s, "デコ選択: the first slot", DECO_SLOT, "14-deco-list")
+        step(s, "☆ -> FavoriteDecoObject", r"FavoriteDecoObject: 1 decoration", ["tap:" + DECO_STAR], changes=False)  # only the star lights
+        tap(s, "the first decoration", DECO_FIRST)
         step(s, "the first decoration -> 決定 -> SetCharacterDeco (one object)", r"SetCharacterDeco [0-9a-f]+: hair [0-9]+, pose [0-9]+, 1 object",
-             ["tap:" + DECIDE, "wait:3000"])
-        c("wait:2000", s.shot_cmd("15-deco-set"), "tap:" + DECO_ADJUST, "wait:4000", s.shot_cmd("16-deco-adjust"))
+             ["tap:" + DECIDE], "15-deco-set")
+        tap(s, "デコ調整", DECO_ADJUST, "16-deco-adjust")
 
     ok = common.drive(s, body)
     fails = []
@@ -210,16 +220,18 @@ def main(o):
 
         def again(s2):
             common.port_login(s2, notice=None, bonus=None)
-            open_mastery(s2, 1, "01-mastery")
-            s2.ctl("tap:" + GRADUATED_TAB, "wait:3000", s2.shot_cmd("02-graduated"), "tap:" + GRADUATED_PAIR, "wait:3000",
-                   s2.shot_cmd("03-full-mastership"), "tap:" + PART, "wait:3000", s2.shot_cmd("04-part-confirm"))
-            step(s2, "師弟解消 -> ResetMastery", r"ResetMastery: parted master", ["tap:" + DIALOG_YES, "wait:3000"])
-            s2.ctl("wait:3000", s2.shot_cmd("05-parted"), "tap:" + CLOSE, "wait:3000")
+            common.settle(s2, mask=common.HOME_MASK)
+            open_mastery(s2, 1, "01-mastery", True)
+            tap(s2, "皆伝師弟", GRADUATED_TAB, "02-graduated")
+            tap(s2, "the 皆伝 pair", GRADUATED_PAIR, "03-full-mastership")
+            tap(s2, "師弟解消", PART, "04-part-confirm")
+            step(s2, "師弟解消 -> ResetMastery", r"ResetMastery: parted master", ["tap:" + DIALOG_YES], "05-parted")
+            tap(s2, "parted: 閉じる", CLOSE)
             # the decorations kept: キャラデコ again (GetDecoInfo; the character wears its decoration,
             # from its CPersonInfo)
-            s2.ctl("tap:" + HOME, "wait:7000", "tap:" + INTERACTIVE, "wait:5000")
-            step(s2, "キャラデコ again -> GetDecoInfo (3)", r"GetDecoInfo: 3 decoration", ["tap:" + DECO, "wait:4000"])
-            s2.ctl("wait:3000", s2.shot_cmd("06-deco-kept"))
+            common.tap_to_phase(s2, "ホーム", HOME, 4, mask=common.HOME_MASK, fatal=True)
+            tap(s2, "会話モード", INTERACTIVE, mask=common.HOME_MASK)
+            step(s2, "キャラデコ again -> GetDecoInfo (3)", r"GetDecoInfo: 3 decoration", ["tap:" + DECO], "06-deco-kept")
 
         ok = common.drive(s2, again) and ok
         st = sqlite3.connect("file:%s?mode=ro" % s2.state_db, uri=True)

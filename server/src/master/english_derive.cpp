@@ -276,6 +276,48 @@ U replace_all(const U& s, const U& from, const U& to) {
     }
     return o;
 }
+// english_core.credit_form: (a) Global's credit rows, "<the Japanese name>\n\n<its romanization>"
+// (cp0303_b04a_prmsg_02 "太子\n\nTaishi"): before the first line break `ja` but for white space (some
+// text left), after it text without kana or kanji. Global's 【未翻訳】 / 【N版】 marker rows are not.
+bool credit_form(const U& en, const U& ja) {
+    U u = unesc(en);
+    size_t i = u.find(U'\n');
+    if (i == U::npos) return false;
+    U k = ws_key_u(ja), tail = u.substr(i);
+    return !k.empty() && ws_key_u(u.substr(0, i)) == k && !ws_key_u(tail).empty() && !has_kana(tail);
+}
+// english_core.near_key / near_ja (rule official-near, english.md 7.9): (d) 3.7.0's Japanese differs
+// from Global's only in white space, punctuation, full/half width (NFKC) and these abbreviations of
+// the same term (long -> short, in this order); and Global's English has the numbers of 3.7.0's text.
+const char* const kNearPunct = "、。,.・!?「」『』…";
+const char* const kNearPairs[][2] = {{"クリティカルダメージ", "クリダメ"},
+                                     {"クリティカル発生率", "クリティカル率"},
+                                     {"ダメージ", "ダメ"},
+                                     {"秒間", "秒"},
+                                     {"付与する", "付与"},
+                                     {"の時に", "時"},
+                                     {"時に", "時"},
+                                     {"使用で", "使用時"},
+                                     {"ごとに", "毎"},
+                                     {"毎に", "毎"}};
+U near_key(const U& s) {
+    static const U punct = u32(kNearPunct);
+    U t;
+    for (char32_t c : nfkc_u(unesc(s)))
+        if (!is_space(c) && punct.find(c) == U::npos) t += c;
+    for (auto& p : kNearPairs) t = replace_all(t, u32(p[0]), u32(p[1]));
+    return t;
+}
+bool near_ja(const U& gl_ja, const U& ja, const U& en) {
+    U k = near_key(ja);
+    if (k.empty() || near_key(gl_ja) != k) return false;
+    std::vector<U> a = nums(en), b = nums(nfkc_u(unesc(ja)));
+    std::sort(a.begin(), a.end());
+    a.erase(std::unique(a.begin(), a.end()), a.end());
+    std::sort(b.begin(), b.end());
+    b.erase(std::unique(b.begin(), b.end()), b.end());
+    return a == b;
+}
 // int() of a \d+ run (ASCII digits in the data)
 int to_int(const U& d) {
     int v = 0;
@@ -512,7 +554,8 @@ bool tags_subset(const std::vector<U>& tj, const std::vector<U>& te) {
     }
     return opens == closes;
 }
-Problems check(const Advances& f, const U& ja, const U& en, bool subset) {
+// credit: Global's credit form passes the kana check (derived master rows: english_text.finish)
+Problems check(const Advances& f, const U& ja, const U& en, bool subset, bool credit = false) {
     Problems p;
     auto sj = specs(ja, true), se = specs(en, true);
     auto tj = sorted_tags(ja), te = sorted_tags(en);
@@ -535,7 +578,7 @@ Problems check(const Advances& f, const U& ja, const U& en, bool subset) {
             if (j > i + 1 && j < en.size() && en[j] == '$') p.positional = true;
         }
     if (tj != te && !(subset && tags_subset(tj, te))) p.tags = true;
-    if (has_kana(en)) p.kana = true;
+    if (has_kana(en) && !(credit && credit_form(en, ja))) p.kana = true;
     for (char32_t c : en)
         if (c != '\n' && c != '\t' && !f.has((uint32_t)c)) p.glyphs = true;
     if (gl_markup(en)) p.token = true;
@@ -583,7 +626,7 @@ bool gl_english(const Src& s, const std::string& mid, U* out) {
     std::string ja = j == s.gl_ja.end() ? "" : j->second;
     U en = u32(e->second);
     bool ja_null = j == s.gl_ja.end() || s.gl_ja_null.at(mid);
-    if (has_kana(en) || (!ja_null && e->second == j->second) || gl_token(en)) return false;
+    if ((has_kana(en) && !credit_form(en, u32(ja))) || (!ja_null && e->second == j->second) || gl_token(en)) return false;
     if (specs(en, false) != specs(u32(ja), false)) return false;
     *out = en;
     return true;
@@ -764,7 +807,7 @@ bool finish(const Advances& f, const U& en, const std::string& ja8, std::string*
     e = fix_percent_u(e, ja);
     bool jn_nl = jn.find('\n') != U::npos, e_nl = e.find('\n') != U::npos;
     if (jn_nl && !e_nl) e = rebreak_u(f, e, std::max(widest(f, jn), 200), false);
-    Problems p = ja8.empty() ? check(f, e, e, false) : check(f, jn, e, true);
+    Problems p = ja8.empty() ? check(f, e, e, false) : check(f, jn, e, true, true);
     *out = u8(esc(e));
     return !p.any();
 }
@@ -884,6 +927,11 @@ bool derive(const DeriveInput& in, Derived& d, std::string* err) {
             if (lookup(mem, ja8, &cand, &exact)) {
                 source = exact ? "memory" : "template";
                 (exact ? d.memory : d.templ)++;
+            } else if (gj != s.gl_ja.end() && !s.gl_ja_null.at(mid) && gl_english(s, mid, &off) && near_ja(u32(gj->second), ja, off)) {
+                // (a)+(d) official-near: Global's English for this id, its Japanese changed only in
+                // punctuation or an abbreviation (english.md 7.9)
+                cand = off, source = "official";
+                d.near++;
             }
         }
         if (!source) continue;

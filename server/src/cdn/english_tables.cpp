@@ -103,10 +103,10 @@ bool english_tables(const Options& opts, const FileTree& download, EnglishTables
     out.labels = english::resolve_labels(&d, out.master, labels);
     out.derived = true;
     LOGI("cdn",
-         "english derive: %zu official (%zu by E3), %zu memory, %zu template, %zu failing; story %zu official lines, %zu failing; with our "
+         "english derive: %zu official (%zu by E3, %zu near), %zu memory, %zu template, %zu failing; story %zu official lines, %zu failing; with our "
          "%zu + %zu rows: %zu master rows, %zu story files (%.2f s)",
-         d.official + d.e3, d.e3, d.memory, d.templ, d.failing, d.story_official, d.story_failing, ours.size(), ours_lines.size(), out.master.size(),
-         out.story.size(), since(t0));
+         d.official + d.e3 + d.near, d.e3, d.near, d.memory, d.templ, d.failing, d.story_official, d.story_failing, ours.size(), ours_lines.size(),
+         out.master.size(), out.story.size(), since(t0));
     std::map<std::string, size_t> by_source;
     for (auto& [ja, e] : out.labels) by_source[e.source]++;
     std::string sources;

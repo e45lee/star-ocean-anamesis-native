@@ -59,21 +59,49 @@ source's properties.
 
 | Class::Method (guest symbol) | File | Differential tests | Live check |
 |---|---|---|---|
-| `TElement<E>`: `E::Initialize` (160), `E::E()` (C2 / C1, where exported), `E::E(E const&)`, `E::operator=`, `~E` (D2 / D1), `~E` (D0): 800 symbols | [`master_element.cpp`](master_element.cpp), bound by [`master_element_bind.cpp`](master_element_bind.cpp) | `master/elements-ctor-init`, `master/elements-copy-assign-dtor` ([`master_element_test.cpp`](master_element_test.cpp): every class) | below |
+| `TElement<E>`: `E::Initialize` (160), `E::E()` (C2 / C1, where exported), `E::E(E const&)`, `E::operator=`, `~E` (D2 / D1), `~E` (D0): 800 symbols | [`master_element.cpp`](master_element.cpp), bound by [`master_element_bind.cpp`](master_element_bind.cpp) | `master/elements-ctor-init`, `master/elements-copy-assign-dtor` ([`master_element_test.cpp`](master_element_test.cpp): every class) | run-both, [`master_element_check.cpp`](master_element_check.cpp) |
+| `TSimple<E>` = `CMasterParameterBaseSqlite_Simple<E>`: `pParameterFromHash`, `ParameterByQuery` (both), `MakeCacheKey`, `InsertCustomizeCache`, `ClearCache`, `SetStoreAllCacheSize`, `Initialize`, `~` (D2), `Deserialize`, `ReleaseParameter`, `DeserializeParameter`; `CMasterParameterBaseSqlite::DeserializeMsgPack<E>` (the generator's `kETable` rows, each instantiation's allocation sizes checked against its element) | [`master_simple.cpp`](master_simple.cpp), [`master_hash.cpp`](master_hash.cpp) (the maps), bound by [`master_simple_bind.cpp`](master_simple_bind.cpp) | `master/simple-lookups`, `master/simple-deserialize` ([`master_simple_test.cpp`](master_simple_test.cpp): every table, twin tables over a fake connector) | run-both on a copy of the table, [`master_simple_check.cpp`](master_simple_check.cpp) |
+| `StringDB::GetNativeString`, `StringDB::Get` | [`master_stringdb.cpp`](master_stringdb.cpp) | `master/stringdb` | run-both (the strings) |
+| `CSimpleSqliteConnector<T, E>`: `QueryToMsgPack` (both), `QueryToResultObject` (both), 165 connectors ([`gen/master_connectors.inc`](gen/master_connectors.inc): each one's code checked the same as the others' but for its addresses and query count) | [`master_connector.cpp`](master_connector.cpp) | `master/connectors` (the loaded master: every connector, every query) | run-both (the MessagePack bytes) |
 
-`Initialize`: per named property in AddProperty order, `m_name = CHash32(key)` (a key of 23 bytes or more
-is a long `std::string` temporary: allocated and freed around the call, as the guest does), `m_named = 1`,
-the default, `AddProperty` (params' native). The constructor, the copy constructor (strings through
-libcxx's `string_copy_construct`), `operator=` (libc++'s inlined assign: in place, else
+**Elements.** `Initialize`: per named property in AddProperty order, `m_name = CHash32(key)` (a key of 23
+bytes or more is a long `std::string` temporary: allocated and freed around the call, as the guest does),
+`m_named = 1`, the default, `AddProperty` (params' native). The constructor, the copy constructor
+(strings through libcxx's `string_copy_construct`), `operator=` (libc++'s inlined assign: in place, else
 `__grow_by_and_replace`) and the destructor (each string's vtable, its storage freed, the base vtable;
 `~CHash32` is a RET) as described in `master_layout.h`.
 
-**Live check** (`soa --live-check master[:every=N][:only=..][:out=FILE]`, [`master_family.h`](master_family.h),
-[`master_element_check.cpp`](master_element_check.cpp)): a run-both family. Ctor / Initialize / the copy
-constructor run the native, put the element's bytes back and run the original on the element itself
-(the copy's strings compared by representation, the original's freed); `operator=` and the destructor
-run the original on a private copy (long strings in storage of their own, same capacity). The deleting
-destructor isn't checked (the original would delete its copy).
+**Tables.** The caches are libc++ unordered_maps (`U32Map`, master_layout.h): find, rehash (the
+FCVTPU-rounded sizes, `__next_prime` called), `__rehash`, the inlined insert / erase / clear, as the
+instantiations compile them. `pParameterFromHash`: `m_cache`, then `m_all`; a miss queries the
+connector (`QueryToMsgPack(1, id)`), clears `m_cache` when it has grown past `m_cacheLimit`, and every
+row deserialized becomes a `shared_ptr` (`__shared_ptr_emplace<E, ParameterAllocator<E>>`: constructed,
+then `operator=` from the row) in `m_cache`. `ParameterByQuery` keys `m_queryCache` by `MakeCacheKey`
+(the SQL and the parameters' texts concatenated in a 256-byte buffer, hashed); its element is a
+`new (nothrow) E` under a `__shared_ptr_pointer`. `DeserializeMsgPack<E>` reads the MessagePack into a
+guest ASON (`Init(max(4 * size, 0x2000), true)`): an array of rows or one map row, each into a temporary
+element (constructed, `Initialize`, deserialized by params) copied into the map unless its key (the
+primary key's string hash, or its unsigned value) is there; or into the single element through its
+vtable.
+
+**Deviations** (none observable by the game): `MakeCacheKey`'s buffer is larger than the guest's 256
+bytes, so a key that would overflow the guest's frame (asserted first) doesn't here; the temporary
+elements of `DeserializeMsgPack` live in host memory, so the dangling `m_first` / `m_next` the copies
+keep (the copy quirk) point there instead of into a dead guest stack frame (never dereferenced: elements
+are only deserialized right after `Initialize`); `StringDB::GetNativeString` formats its key through the
+guest's `Format` and hashes it natively.
+
+**Live checks** (`soa --live-check master[:every=N][:only=..][:out=FILE]`, [`master_family.h`](master_family.h)):
+a run-both family. Elements: Ctor / Initialize / the copy constructor run the native, put the element's
+bytes back and run the original on the element itself (the copy's strings compared by representation,
+the original's freed); `operator=` and the destructor run the original on a private copy (long strings
+in storage of their own, same capacity); the deleting destructor isn't checked. Tables: a copy of the
+table (its three maps node for node, the elements shared) for the original; results and caches compared
+([`master_compare.cpp`](master_compare.cpp): fields, not the padding; pointers into each run's own
+elements only by whether they are set). StringDB and the connectors: the original after the native, the
+results compared. Results (battle-gacha flow, `every=1`, PASS): elements alone 478,311 checks; elements
++ tables 132,050 (pParameterFromHash 3,579, ParameterByQuery 11,449, ReleaseParameter 5,088, ...);
+`session:home --lang en` 202,533 (StringDB::Get 1,121); all 0 mismatches.
 
 ## Dependencies
 

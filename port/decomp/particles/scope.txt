@@ -1,0 +1,6 @@
+# port/decomp/particles/scope.txt: the guest functions the `particles` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?((non-)?virtual thunk to )?Aska::(\w*Particle\w*)(<.*>)?::
+# ParticleManager::CreateParticle<...> returns a ParticleEmitter<...>* (a return type with spaces):
+^Aska::ParticleEmitter<.*>\* Aska::ParticleManager::CreateParticle<

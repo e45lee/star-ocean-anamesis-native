@@ -26189,6 +26189,399 @@
      "name": "StringDBEelement"
     }
    ]
+  },
+  {
+   "name": "TSharedArray",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_counter",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "SharedPtr",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "ptr",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "ctrl",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "CSimpleSqliteConnector",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_entity0",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_entity",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_idText",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": true
+      },
+      "count": 256
+     },
+     "size": 256
+    }
+   ],
+   "size": 280,
+   "align": 8
+  },
+  {
+   "name": "CMasterParameterBaseSqlite",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_pConnector",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x12728cc",
+     "symbol": "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI27CMasterParameterItemElementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE",
+     "name": "DeserializeMsgPack<CMasterParameterItemElement>"
+    },
+    {
+     "ghidra": "0x17fc448",
+     "symbol": "_ZNK26CMasterParameterBaseSqlite18DeserializeMsgPackI16StringDBEelementEEvRKN4Aska12TSharedArrayIaEERKlPT_PN9Framework16CSTLUnorderedMapIjS9_NSt6__ndk14hashIjEENSD_8equal_toIjEEEE",
+     "name": "DeserializeMsgPack<StringDBEelement>"
+    }
+   ]
+  },
+  {
+   "name": "U32Node",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "next",
+     "type": {
+      "kind": "ptr",
+      "to": "U32Node"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "hash",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "key",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "pad_14",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "U32Map",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "buckets",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "bucket_count",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "first",
+     "type": {
+      "kind": "ptr",
+      "to": "U32Node"
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "max_load_factor",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "pad_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8
+  },
+  {
+   "name": "CMasterParameterSimple",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CMasterParameterBaseSqlite"
+     },
+     "size": 16
+    },
+    {
+     "offset": 16,
+     "name": "parameter",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::params::CParameterBase",
+      "size": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_all",
+     "type": {
+      "kind": "struct",
+      "name": "U32Map"
+     },
+     "size": 40
+    },
+    {
+     "offset": 64,
+     "name": "m_cache",
+     "type": {
+      "kind": "struct",
+      "name": "U32Map"
+     },
+     "size": 40
+    },
+    {
+     "offset": 104,
+     "name": "m_cacheLimit",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "m_queryCache",
+     "type": {
+      "kind": "struct",
+      "name": "U32Map"
+     },
+     "size": 40
+    },
+    {
+     "offset": 152,
+     "name": "m_queryLimit",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 160,
+   "align": 8
+  },
+  {
+   "name": "StringDB",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "table",
+     "type": {
+      "kind": "struct",
+      "name": "CMasterParameterSimple"
+     },
+     "size": 160
+    }
+   ],
+   "size": 160,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x17faa14",
+     "symbol": "_ZNK8StringDB10pParseNameEv",
+     "name": "pParseName"
+    },
+    {
+     "ghidra": "0x17faa2c",
+     "symbol": "_ZN8StringDB3GetEPKcPb",
+     "name": "Get"
+    },
+    {
+     "ghidra": "0x17faaec",
+     "symbol": "_ZN8StringDB15GetNativeStringEPKcPb",
+     "name": "GetNativeString"
+    },
+    {
+     "ghidra": "0x17fac78",
+     "symbol": "_ZN8StringDB7GetListERN9Framework16CSTLUnorderedMapIj16StringDBEelementNSt6__ndk14hashIjEENS3_8equal_toIjEEEERKNS0_10CSTLVectorINS3_12basic_stringIcNS3_11char_traitsIcEENS0_13CSTLAllocatorIcNS0_22CSTLStringAllocatorInfEEEEEEE",
+     "name": "GetList"
+    },
+    {
+     "ghidra": "0x17fb284",
+     "symbol": "_ZN8StringDB18SetAddLoadFileNameENSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE",
+     "name": "SetAddLoadFileName"
+    },
+    {
+     "ghidra": "0x17fb368",
+     "symbol": "_ZN8StringDB16ReleaseParameterEPKc",
+     "name": "ReleaseParameter"
+    },
+    {
+     "ghidra": "0x17fb49c",
+     "symbol": "_ZN8StringDBD2Ev",
+     "name": "~StringDB"
+    },
+    {
+     "ghidra": "0x17fb4d8",
+     "symbol": "_ZN8StringDBD0Ev",
+     "name": "~StringDB"
+    },
+    {
+     "ghidra": "0x17fb55c",
+     "symbol": "_ZN8StringDB23InstantiateSqlConnectorEv",
+     "name": "InstantiateSqlConnector"
+    }
+   ]
   }
  ]
 }

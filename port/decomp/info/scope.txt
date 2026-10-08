@@ -1,0 +1,6 @@
+# port/decomp/info/scope.txt: the guest functions the `info` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?(CParameterManager|CParameterUtility|CInfoManager|CCharacterData|CTimeUtility|StaminaUtility|CServerTime|BAS|MissionUtility|Framework::CInteroperateParameter)(<|::)
+^(\S+ )?C\w*Info(Base\w*)?(<|::)
+^(\S+ )?I?InfoBase\w*(<|::)

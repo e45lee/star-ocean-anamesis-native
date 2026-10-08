@@ -1,0 +1,396 @@
+{
+ "subsystem": "info",
+ "generated_by": "tools/subsystem.py export-types info",
+ "header": "port/src/native/info/info_layout.h",
+ "structs": [
+  {
+   "name": "CInteroperateParameter",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_pCSV",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_pRowHash",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 24,
+     "name": "m_pColumnHash",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "unk_20",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_count",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x1f86104",
+     "symbol": "_ZN9Framework22CInteroperateParameter20InitializeDefaultKeyEPKcm",
+     "name": "InitializeDefaultKey"
+    },
+    {
+     "ghidra": "0x1f86218",
+     "symbol": "_ZN9Framework22CInteroperateParameter17ReleaseDefaultKeyEv",
+     "name": "ReleaseDefaultKey"
+    },
+    {
+     "ghidra": "0x1f86290",
+     "symbol": "_ZN9Framework22CInteroperateParameter10DefaultKeyEm",
+     "name": "DefaultKey"
+    },
+    {
+     "ghidra": "0x1f863dc",
+     "symbol": "_ZN9Framework22CInteroperateParameterC2Ev",
+     "name": "CInteroperateParameter"
+    },
+    {
+     "ghidra": "0x1f863f8",
+     "symbol": "_ZN9Framework22CInteroperateParameterD1Ev",
+     "name": "~CInteroperateParameter"
+    },
+    {
+     "ghidra": "0x1f86478",
+     "symbol": "_ZN9Framework22CInteroperateParameter7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x1f864e8",
+     "symbol": "_ZN9Framework22CInteroperateParameterD0Ev",
+     "name": "~CInteroperateParameter"
+    },
+    {
+     "ghidra": "0x1f86568",
+     "symbol": "_ZN9Framework22CInteroperateParameter10InitializeEPKcjPNS0_12ICSVAccessorE",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x1f8663c",
+     "symbol": "_ZN9Framework22CInteroperateParameter16InitializeCommonEv",
+     "name": "InitializeCommon"
+    },
+    {
+     "ghidra": "0x1f86a0c",
+     "symbol": "_ZN9Framework22CInteroperateParameter16InitializeBinaryEPKvmjPNS0_12ICSVAccessorE",
+     "name": "InitializeBinary"
+    },
+    {
+     "ghidra": "0x1f86ae8",
+     "symbol": "_ZNK9Framework22CInteroperateParameter13IsInitializedEv",
+     "name": "IsInitialized"
+    },
+    {
+     "ghidra": "0x1f86af8",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7NumRowsEv",
+     "name": "NumRows"
+    },
+    {
+     "ghidra": "0x1f86b34",
+     "symbol": "_ZNK9Framework22CInteroperateParameter10NumColumnsEv",
+     "name": "NumColumns"
+    },
+    {
+     "ghidra": "0x1f86b80",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsExistEPKc",
+     "name": "IsExist"
+    },
+    {
+     "ghidra": "0x1f86c70",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsExistEPKcm",
+     "name": "IsExist"
+    },
+    {
+     "ghidra": "0x1f86dbc",
+     "symbol": "_ZNK9Framework22CInteroperateParameter11NumElementsEm",
+     "name": "NumElements"
+    },
+    {
+     "ghidra": "0x1f86e18",
+     "symbol": "_ZNK9Framework22CInteroperateParameter11NumElementsEPKc",
+     "name": "NumElements"
+    },
+    {
+     "ghidra": "0x1f86f58",
+     "symbol": "_ZNK9Framework22CInteroperateParameter8ToCsvRowEm",
+     "name": "ToCsvRow"
+    },
+    {
+     "ghidra": "0x1f86f60",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsBlankEPKcm",
+     "name": "IsBlank"
+    },
+    {
+     "ghidra": "0x1f86f8c",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsBlankEmm",
+     "name": "IsBlank"
+    },
+    {
+     "ghidra": "0x1f87090",
+     "symbol": "_ZNK9Framework22CInteroperateParameter12ConvertToRowEPKc",
+     "name": "ConvertToRow"
+    },
+    {
+     "ghidra": "0x1f87190",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsBlankEPKcS2_",
+     "name": "IsBlank"
+    },
+    {
+     "ghidra": "0x1f871cc",
+     "symbol": "_ZNK9Framework22CInteroperateParameter15ConvertToColumnEPKc",
+     "name": "ConvertToColumn"
+    },
+    {
+     "ghidra": "0x1f872cc",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsValueEPKcm",
+     "name": "IsValue"
+    },
+    {
+     "ghidra": "0x1f87328",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsValueEmm",
+     "name": "IsValue"
+    },
+    {
+     "ghidra": "0x1f8737c",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsValueEPKcS2_",
+     "name": "IsValue"
+    },
+    {
+     "ghidra": "0x1f873e8",
+     "symbol": "_ZNK9Framework22CInteroperateParameter8IsStringEPKcm",
+     "name": "IsString"
+    },
+    {
+     "ghidra": "0x1f87444",
+     "symbol": "_ZNK9Framework22CInteroperateParameter8IsStringEmm",
+     "name": "IsString"
+    },
+    {
+     "ghidra": "0x1f87498",
+     "symbol": "_ZNK9Framework22CInteroperateParameter8IsStringEPKcS2_",
+     "name": "IsString"
+    },
+    {
+     "ghidra": "0x1f87504",
+     "symbol": "_ZNK9Framework22CInteroperateParameter5ValueEPKcm",
+     "name": "Value"
+    },
+    {
+     "ghidra": "0x1f87560",
+     "symbol": "_ZNK9Framework22CInteroperateParameter5ValueEmm",
+     "name": "Value"
+    },
+    {
+     "ghidra": "0x1f875b4",
+     "symbol": "_ZNK9Framework22CInteroperateParameter5ValueEPKcS2_",
+     "name": "Value"
+    },
+    {
+     "ghidra": "0x1f87620",
+     "symbol": "_ZNK9Framework22CInteroperateParameter6StringEPKcm",
+     "name": "String"
+    },
+    {
+     "ghidra": "0x1f8768c",
+     "symbol": "_ZNK9Framework22CInteroperateParameter6StringEmm",
+     "name": "String"
+    },
+    {
+     "ghidra": "0x1f876f0",
+     "symbol": "_ZNK9Framework22CInteroperateParameter6StringEPKcS2_",
+     "name": "String"
+    },
+    {
+     "ghidra": "0x1f8776c",
+     "symbol": "_ZNK9Framework22CInteroperateParameter9ValueSafeEmmf",
+     "name": "ValueSafe"
+    },
+    {
+     "ghidra": "0x1f87820",
+     "symbol": "_ZNK9Framework22CInteroperateParameter9ValueSafeEPKcmf",
+     "name": "ValueSafe"
+    },
+    {
+     "ghidra": "0x1f878dc",
+     "symbol": "_ZNK9Framework22CInteroperateParameter9ValueSafeEPKcS2_f",
+     "name": "ValueSafe"
+    },
+    {
+     "ghidra": "0x1f879a8",
+     "symbol": "_ZNK9Framework22CInteroperateParameter10StringSafeEmmPKc",
+     "name": "StringSafe"
+    },
+    {
+     "ghidra": "0x1f87b0c",
+     "symbol": "_ZNK9Framework22CInteroperateParameter11ToCsvColumnEm",
+     "name": "ToCsvColumn"
+    },
+    {
+     "ghidra": "0x1f87b14",
+     "symbol": "_ZNK9Framework22CInteroperateParameter10StringSafeEPKcmS2_",
+     "name": "StringSafe"
+    },
+    {
+     "ghidra": "0x1f87b58",
+     "symbol": "_ZNK9Framework22CInteroperateParameter10StringSafeEPKcS2_S2_",
+     "name": "StringSafe"
+    },
+    {
+     "ghidra": "0x1f87bac",
+     "symbol": "_ZNK9Framework22CInteroperateParameter7IsExistEmm",
+     "name": "IsExist"
+    },
+    {
+     "ghidra": "0x1f87c74",
+     "symbol": "_ZNK9Framework22CInteroperateParameter10IsNotBlankEmm",
+     "name": "IsNotBlank"
+    },
+    {
+     "ghidra": "0x1f87c8c",
+     "symbol": "_ZNK9Framework22CInteroperateParameter10IsNotBlankEPKcm",
+     "name": "IsNotBlank"
+    },
+    {
+     "ghidra": "0x1f87cc4",
+     "symbol": "_ZNK9Framework22CInteroperateParameter10IsNotBlankEPKcS2_",
+     "name": "IsNotBlank"
+    },
+    {
+     "ghidra": "0x1f87d0c",
+     "symbol": "_ZN9Framework22CInteroperateParameter5ValueEmmf",
+     "name": "Value"
+    },
+    {
+     "ghidra": "0x1f87d70",
+     "symbol": "_ZN9Framework22CInteroperateParameter5ValueEPKcmf",
+     "name": "Value"
+    },
+    {
+     "ghidra": "0x1f87ddc",
+     "symbol": "_ZN9Framework22CInteroperateParameter5ValueEPKcS2_f",
+     "name": "Value"
+    },
+    {
+     "ghidra": "0x1f87e58",
+     "symbol": "_ZN9Framework22CInteroperateParameter6StringEmmPKc",
+     "name": "String"
+    },
+    {
+     "ghidra": "0x1f87f9c",
+     "symbol": "_ZN9Framework22CInteroperateParameter6StringEPKcmS2_",
+     "name": "String"
+    },
+    {
+     "ghidra": "0x1f87fd0",
+     "symbol": "_ZN9Framework22CInteroperateParameter6StringEPKcS2_S2_",
+     "name": "String"
+    },
+    {
+     "ghidra": "0x1f882d0",
+     "symbol": "_ZN9Framework22CInteroperateParameter15gRegressionTestEv",
+     "name": "gRegressionTest"
+    }
+   ]
+  },
+  {
+   "name": "InfoBase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_properties",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::tree<soa::native::libcxx::pair<unsigned int, void *> >",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 32,
+     "name": "m_children",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::tree<soa::native::libcxx::pair<unsigned int, void *> >",
+      "size": 24
+     },
+     "size": 24
+    }
+   ],
+   "size": 56,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x125ecd0",
+     "symbol": "_ZN8InfoBase16DeserializeChildEPKN4Aska4ASON6AValue4AMapE",
+     "name": "DeserializeChild"
+    },
+    {
+     "ghidra": "0x125eea4",
+     "symbol": "_ZNK8InfoBase10pParseNameEv",
+     "name": "pParseName"
+    },
+    {
+     "ghidra": "0x125eeac",
+     "symbol": "_ZN8InfoBase16DeserializeArrayEPKN4Aska4ASON6AValue6AArrayE",
+     "name": "DeserializeArray"
+    }
+   ]
+  }
+ ]
+}

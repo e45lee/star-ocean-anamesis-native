@@ -1,0 +1,8 @@
+# port/decomp/dynamics/scope.txt: the guest functions the `dynamics` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?Aska::(Dynamics\w*|DYNAMICS_\w*|ArticulatedDynamics\w*|ADM\w*|IDE\w*|IntegratedDynamics\w*|CollisionHandler|RigidBody\w*)(<.*>)?::
+# The ADM's force-emitter functor and the local helpers after it (FUN_02429994.. FUN_0242ac84: the
+# link constraint, the collision response; port/decomp/dynamics/adm_local.c): kernel's scope.txt
+# leaves Functor_ExternalForceEmitterCalculation<> to dynamics.
+^(\S+ )?Functor_ExternalForceEmitterCalculation<

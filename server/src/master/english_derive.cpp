@@ -921,13 +921,17 @@ bool derive(const DeriveInput& in, Derived& d, std::string* err) {
                 d.e3++;
             }
         }
-        if (!source && has_kana(ja)) {
-            // (d) exact, then template memory
+        if (!source) {
+            // (d) exact, then template memory; (a)+(d) also for a language-neutral row (no kana or
+            // kanji: ＡＴＫ＋２０％ takes Global's "ATK +20%", memory-neutral, the user's decision of
+            // 2026-10-08, docs/english.md 7.9 step 4)
             bool exact = false;
             if (lookup(mem, ja8, &cand, &exact)) {
                 source = exact ? "memory" : "template";
                 (exact ? d.memory : d.templ)++;
-            } else if (gj != s.gl_ja.end() && !s.gl_ja_null.at(mid) && gl_english(s, mid, &off) && near_ja(u32(gj->second), ja, off)) {
+                if (!has_kana(ja)) d.neutral++;
+            } else if (has_kana(ja) && gj != s.gl_ja.end() && !s.gl_ja_null.at(mid) && gl_english(s, mid, &off) &&
+                       near_ja(u32(gj->second), ja, off)) {
                 // (a)+(d) official-near: Global's English for this id, its Japanese changed only in
                 // punctuation or an abbreviation (english.md 7.9)
                 cand = off, source = "official";

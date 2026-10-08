@@ -232,7 +232,10 @@ LayoutRoom layout_room(const NodeRect& a, const NodeRect* parent, const std::vec
     double top = -1e9, bottom = 1e9;  // the free band above and below the label (its siblings', its frame's)
     for (const NodeRect& b : siblings) {
         if (b.w <= 0 || b.h <= 0) continue;
-        if (std::fabs(a.centre_y() - b.centre_y()) > a.h / 2) {
+        // on the label's row: its centre within half the label's height of the label's, or a sibling
+        // as tall as the rows it spans (a list beside its captions)
+        bool row = std::fabs(a.centre_y() - b.centre_y()) <= a.h / 2 || (b.top() <= a.centre_y() && a.centre_y() <= b.top() + b.h);
+        if (!row) {
             // not on the label's row: one above or below it, over the label's width, ends its free band
             if (b.right() > a.left() && b.left() < a.right()) {
                 if (b.top() + b.h <= a.centre_y()) top = std::max(top, b.top() + b.h);
@@ -770,7 +773,7 @@ void maybe_wrap(u64 label) {
     if (!own_box && !settled(l, label, g.x, r_lay)) return;
     float rr = std::min(r, r_lay);
     text::RoomBy by = r_lay < r ? lr.by : text::RoomBy::none;
-    std::string key = src + '\x01' + std::to_string((int)r) + '\x01' + std::to_string((int)rr) + by_name(by), out;
+    std::string key = (own_box ? "F" : "S") + src + '\x01' + std::to_string((int)r) + '\x01' + std::to_string((int)rr) + by_name(by), out;
     if (!g_wrapped.get(key, &out)) {
         auto m = label_measure(l);
         bool fixed = own_box && l->m_shrink && l->m_height > 0;
@@ -831,7 +834,7 @@ void maybe_wrap(u64 label) {
     if (out == kShrinkInBox) {
         // the label made a fixed box of the room's width and its text's height, shrinking (a dialog's
         // message: no taller than the room above its buttons)
-        float h = (float)nat.h, bh = dialog_room_h(l, label);
+        float h = (float)natural_extent(l, drawn).h, bh = dialog_room_h(l, label);
         if (bh > 0 && bh < h) h = bh;
         st.keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
         st.set(label, src, src);

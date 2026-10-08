@@ -289,6 +289,8 @@ NATIVE_TEST("platform370/lang-layout-room") {
         {"outside", {300, 50, 0, 0.5, 120, 24, true}, true, {100, 50, 0.5, 0.5, 96, 96, false}, {}, 1, RoomBy::none},
         // a sibling that would need less than kMinSiblingScale overlaps by design
         {"by design", {22, 12, 0, 0.5, 300, 24, true}, false, {}, {{60, 12, 0, 0.5, 40, 24, false}}, 1, RoomBy::none},
+        // a list beside its captions (taller than the caption's row, spanning it) bounds them
+        {"list", {95, 130, 0, 0.5, 120, 24, true}, false, {}, {{180, 70, 0, 0, 450, 130, false}}, (180 - 95 - 6) / 120.0, RoomBy::sibling},
         // the nearer of two bounds wins
         {"nearest", {22, 12, 0, 0.5, 300, 24, true}, true, {150, 12, 0.5, 0.5, 300, 24, false}, {{280, 12, 0, 0.5, 30, 24, false}},
          (280 - 22 - 6) / 300.0, RoomBy::sibling},

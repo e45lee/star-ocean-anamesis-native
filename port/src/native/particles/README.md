@@ -44,7 +44,11 @@ The manager's outgoing calls go through [`particles_calls.h`](particles_calls.h)
 them: recorded in a live check, scripted in the tests); the shared World / guest-run helpers are in
 [`particles_world.cpp`](particles_world.cpp).
 
-Live coverage: battle-gacha (every=4) 22,000 checks and story, 0 mismatches. Not reached live (the four
+Live coverage: battle-gacha (every=4) 22,000 checks and story (every=4) 23,208 checks, 0 mismatches, 0 races.
+Simulate is one body bound to 74 symbols: the generator proves every instantiation's code instruction for
+instruction one of the two shapes (with a Texture unit or without), and both shapes are live-checked (the
+4 instantiations the flows run, among them a no-texture one); `particles/simulate` runs all 74 against the guest.
+`--natives-skip particles` gives the guest back (smoke PASS). Not reached live (the four
 flows never call them, or only through the natives' own member calls): Kick, DispatchEmitter, Tick, Add,
 Delete, the non-thunk Handler / Run / GetClassID / GetDefaultLevel, SkipThisFrame / IsBufferReady (RunLow
 calls them as members), GetActiveNumberOfParticles: the differential tests cover them.
@@ -58,6 +62,13 @@ under other agents' load:
 |---|---|---|---|
 | before (main at 00407a1) | 2,522 (Handler thunk 729, the hot Simulate 407, RunLow 246) | 0 | 26,384 |
 | after (piece 1 + Simulate) | 954 | 917 (DispatchEmitters / Run 285 each: their kernel / sync member calls, the waits included; Simulate 195; Handler 150) | 25,911 |
+
+The native column is mostly time that moved leaves, not new work: the profiler names a native's host work
+after the hook it runs under, and the natives call kernel's PostMessage and sync's Enter / Leave / Wait as
+C++ members, so their time lands on DispatchEmitters / Run where it landed on PostMessage's hook before
+(before: 239 PostMessage samples under DispatchEmitters, 50 under RunLow; after: DispatchEmitters 285,
+Run 284 = RunLow's body plus its post). Particle guest + native time together: 2,522 -> 1,871; the guest
+part 2,522 -> 954 (-62%).
 
 What is left of the guest self: Prepare (67), ParticleObject<...>::Procedure, RenderProcedure, Emit,
 ParticleRenderableBase::End / CreateDrawContext / PrepareForRendering, the FillSprite* family.

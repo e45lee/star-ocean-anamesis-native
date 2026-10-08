@@ -14,10 +14,13 @@
 
 #include "core/loader.h"
 #include "native/common/native.h"
+#include "native/common/native_call.h"
 #include "native/master/master_family.h"
 #include "native/master/master_guest.h"
 #include "native/master/master_layout.h"
 #include "native/master/master_simple.h"
+#include "native/sync/sync_layout.h"
+#include "native/yayoi/yayoi_layout.h"
 
 namespace soa::native::master {
 
@@ -74,6 +77,26 @@ u64 call_x8(u64 fn, std::initializer_list<u64> args, void* x8) {
 }
 u64 vslot(const void* obj, u32 slot) { return reinterpret_cast<const u64*>(*reinterpret_cast<const u64*>(obj))[slot]; }
 
+// sync's and yayoi's natives, called as C++ when installed (native_call.h).
+NativeCallee kLock{"sync", "_ZN9Framework6CMutex4LockEv"};
+NativeCallee kUnlock{"sync", "_ZN9Framework6CMutex6UnlockEv"};
+NativeCallee kEntityCtor{"yayoi", "_ZN4Aska5Yayoi12SQLiteDriver12EntityObjectC1Ev"};
+NativeCallee kEntityDtor{"yayoi", "_ZN4Aska5Yayoi12SQLiteDriver12EntityObjectD1Ev"};
+NativeCallee kSerialize{"yayoi", "_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9SerializeEPl"};
+NativeCallee kDoOpen{"yayoi", "_ZN4Aska5Yayoi12SQLiteDriver6DoOpenENS0_6Entity4ModeEPKcPKNS0_9DBAddressE"};
+NativeCallee kFind{"yayoi", "_ZN4Aska5Yayoi12SQLiteDriver4FindEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE"};
+static_assert(sizeof(TSharedArray) == sizeof(yayoi::SharedBytes));
+
+auto* as_mutex(u64 p) { return reinterpret_cast<sync::CMutex*>(p); }
+auto* as_entity(void* p) { return static_cast<yayoi::EntityObject*>(p); }
+auto* as_driver(u64 p) { return reinterpret_cast<yayoi::SQLiteDriver*>(p); }
+s64 driver_find(u64 driver, u64 sql, void* params, u32 n, void* entity) {
+    if (kFind.direct()) return as_driver(driver)->Find((const char*)sql, static_cast<const yayoi::QueryParam*>(params), n, as_entity(entity));
+    s64 st = 0;
+    call_x8(kFind.addr(), {driver, sql, (u64)params, n, (u64)entity}, &st);
+    return st;
+}
+
 // CStaticTransaction's transaction object (instance + 0x40: a CSqliteTransaction).
 u64 transaction() {
     static const u64 inst = g::sym("_ZN9Framework10TSingletonI18CStaticTransactionE11m_pInstanceE");
@@ -82,13 +105,16 @@ u64 transaction() {
 struct Locked {
     u64 mutex;
     Locked() {
-        static const u64 rmutex = g::sym("_ZN18CSqliteTransaction6rMutexEv"), lock = g::sym("_ZN9Framework6CMutex4LockEv");
+        static const u64 rmutex = g::sym("_ZN18CSqliteTransaction6rMutexEv");
         mutex = call(rmutex, {transaction()});
-        call(lock, {mutex});
+        if (kLock.direct()) as_mutex(mutex)->Lock();
+        else call(kLock.addr(), {mutex});
     }
     ~Locked() {
-        static const u64 rmutex = g::sym("_ZN18CSqliteTransaction6rMutexEv"), unlock = g::sym("_ZN9Framework6CMutex6UnlockEv");
-        call(unlock, {call(rmutex, {transaction()})});
+        static const u64 rmutex = g::sym("_ZN18CSqliteTransaction6rMutexEv");
+        u64 m = call(rmutex, {transaction()});
+        if (kUnlock.direct()) as_mutex(m)->Unlock();
+        else call(kUnlock.addr(), {m});
     }
 };
 
@@ -96,23 +122,29 @@ struct Locked {
 struct Entity {
     alignas(16) u8 bytes[0x80] = {};
     Entity() {
-        static const u64 eo = g::sym("_ZN4Aska5Yayoi12SQLiteDriver12EntityObjectC1Ev"), ec = g::sym("_ZN4Aska5Yayoi11EntityCacheC1Ev");
-        call(eo, {(u64)bytes});
+        static const u64 ec = g::sym("_ZN4Aska5Yayoi11EntityCacheC1Ev");
+        if (kEntityCtor.direct()) as_entity(bytes)->Ctor();
+        else call(kEntityCtor.addr(), {(u64)bytes});
         call(ec, {(u64)bytes + 0x60});
         bytes[0x78] = 0;
     }
     ~Entity() {
-        static const u64 eo = g::sym("_ZN4Aska5Yayoi12SQLiteDriver12EntityObjectD1Ev"), ec = g::sym("_ZN4Aska5Yayoi11EntityCacheD1Ev");
+        static const u64 ec = g::sym("_ZN4Aska5Yayoi11EntityCacheD1Ev");
         call(ec, {(u64)bytes + 0x60});
-        call(eo, {(u64)bytes});
+        if (kEntityDtor.direct()) as_entity(bytes)->Dtor();
+        else call(kEntityDtor.addr(), {(u64)bytes});
     }
 };
 
 // data = the serialized rows (TSharedArray's assignment, then the temporary released).
 void serialize_into(Entity& e, TSharedArray* data, s64* size) {
-    static const u64 ser = g::sym("_ZN4Aska5Yayoi12SQLiteDriver12EntityObject9SerializeEPl");
     TSharedArray res{};
-    call_x8(ser, {(u64)e.bytes, (u64)size}, &res);
+    if (kSerialize.direct()) {
+        yayoi::SharedBytes r = as_entity(e.bytes)->Serialize(size);
+        std::memcpy(&res, &r, sizeof res);
+    } else {
+        call_x8(kSerialize.addr(), {(u64)e.bytes, (u64)size}, &res);
+    }
     if (res.m_data != data->m_data) {
         TSharedArray old = *data;
         bool last = !old.m_counter || __atomic_sub_fetch(old.m_counter, 1, __ATOMIC_ACQ_REL) == 0;
@@ -130,8 +162,6 @@ void serialize_into(Entity& e, TSharedArray* data, s64* size) {
 }  // namespace
 
 void CSimpleSqliteConnector::QueryToResultObject(u32 query, void* params, u32 n, void* entity) {
-    static const u64 do_open = g::sym("_ZN4Aska5Yayoi12SQLiteDriver6DoOpenENS0_6Entity4ModeEPKcPKNS0_9DBAddressE"),
-                     find = g::sym("_ZN4Aska5Yayoi12SQLiteDriver4FindEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE");
     const ConnectorInfo* I = info_of(this);
     u64 t = transaction();
     u64 driver = call(vslot((void*)t, 4), {t});
@@ -139,19 +169,18 @@ void CSimpleSqliteConnector::QueryToResultObject(u32 query, void* params, u32 n,
     u64 q = I->queries + (u64)(s64)(s32)query * 0x20;
     u64 addr = call(vslot((void*)t, 5), {t, 0, 0});
     s64 st = 0;
-    call_x8(do_open, {driver, 0, 0, addr}, &st);
+    if (kDoOpen.direct()) st = as_driver(driver)->DoOpen(0, nullptr, reinterpret_cast<const yayoi::DBAddress*>(addr));
+    else call_x8(kDoOpen.addr(), {driver, 0, 0, addr}, &st);
     if (st < 0) return;
     u64 sql = call(I->build_query, {driver, q, (u64)&m_entity, 0});
     if (!sql) return;
-    call_x8(find, {driver, sql, (u64)params, n, (u64)entity}, &st);
+    driver_find(driver, sql, params, n, entity);
 }
 
 void CSimpleSqliteConnector::QueryToResultObjectSql(const char* sql, void* params, u32 n, void* entity) {
-    static const u64 find = g::sym("_ZN4Aska5Yayoi12SQLiteDriver4FindEPKcPKNS0_10QueryParamEmPNS1_12EntityObjectE");
     u64 t = transaction();
     u64 driver = call(vslot((void*)t, 4), {t});
-    s64 st = 0;
-    call_x8(find, {driver, (u64)sql, (u64)params, n, (u64)entity}, &st);
+    driver_find(driver, (u64)sql, params, n, entity);
 }
 
 void CSimpleSqliteConnector::QueryToMsgPack(u32 query, u32 id, TSharedArray* data, s64* size) {

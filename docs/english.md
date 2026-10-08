@@ -1594,7 +1594,7 @@ Conservative on purpose: a row is "near" only by the listed equivalences and wit
 
 | | official | official-credit | memory | machine | neutral |
 |---|---:|---:|---:|---:|---:|
-| `prmsg` (profiles: VA, illustrator, real name, age, birthplace, description, source, birthday, note) | 953 | 120 | 577 | 607 | 641 |
+| `prmsg` (profiles: VA, illustrator, real name, age, birthplace, description, source, birthday, note) | 953 | 120 | 577 | 598 (+ 9 agent) | 641 |
 | `hmmsg` (home and talk lines) | 519 | 0 | 6 | 1,885 | 0 |
 
 Per field: `prmsg_06` (descriptions) official 138, machine 180; `prmsg_02` (illustrators) above; `hmmsg_01/02` official 244 each, machine 356 each; the talk-mode lines (`hmmsg_09` and up) are almost all machine (Global had few). No machine `prmsg` / `hmmsg` row has Global English left but `cn0008_b01a_prmsg_06` (above): the rest are characters and lines Global never had.

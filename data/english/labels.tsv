@@ -210,7 +210,7 @@ ja_sha1	en	source	engine	date	editor	note
 8a963fbf6b496eb20b7d3dcc4d74207e36e903bf		derived				
 8d5e0dbce1033bbe31c4da1cea5a0f431c418fa5		derived				
 8e033bdd0a5c2718e177217eb8cc5bf653699238	Selecting a bonus will automatically\nprioritize characters with traits that\nenhance that bonus.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2-label/llama.cpp-b11443/t0	2026-10-07		
-8e2b3686df5f332680f5d0a55416ec5f0e358857	Your Combat Strength is too low to meet\nthe multiplayer requirements.\n\nPlease increase your Combat Strength by\nenhancing your Characters and weapons,\nor by obtaining more powerful ones,\nto participate in multiplayer.	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept; needs a person's review; term (en-terms 2026-10-08, english.md 7.18): 強化 Enhance
+8e2b3686df5f332680f5d0a55416ec5f0e358857	Your Combat Strength is too low to meet\nthe multiplayer requirements.\n\nPlease increase your Combat Strength by\nenhancing your Characters and weapons,\nor by obtaining more powerful ones,\nto participate in multiplayer.	agent		2026-10-07	enf-labels	the machine wording with the Japanese paragraphs kept; needs a person's review; term (en-terms 2026-10-08, english.md 7.18): Enhance for Strengthen
 8e4144161abd56cd26a9176453ab8250d2ee4116		derived				
 8ea5b4a238774d8a1a715b955bfc4ecf9f7ff378		derived				
 8f99b5f7c588405f7a69dc3fd693a5d90e1757dd		derived				

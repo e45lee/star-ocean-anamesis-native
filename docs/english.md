@@ -1594,6 +1594,8 @@ Agent `en-terms`, 2026-10-08. The user settled the six term splits of 7.16 ("ter
 
 **Going forward.** The glossary check fails a machine, agent, human or reviewed row whose Japanese has the term and whose English misses the term's English (as before) **or uses one of its `avoid` words** (new column `avoid` of `glossary.tsv`: a word starting with it, case and accents ignored: `Evol` is Evolve, evolution, evolved; `english_core.glossary_avoided`, `glossary_misses` reports `[term, english, "avoid: WORD"]`; tests `test_glossary_avoid`, `test_glossary_term_splits`). So an MT import or a `set` with Evolve, Strengthen, Assistance, Teleport, Transfer or Scenic for these terms is refused. The avoid words are needed because the term check is a substring test: "Assistance" contains "assist", so `Assist` alone could never flag it. Official rows only warn (`report`'s `glossary-warnings.tsv`), as before.
 
+**Japanese in notes.** `labels.tsv` holds no Japanese (7.14; its one term note says "Enhance for Strengthen"). The term and waiver notes of `master.tsv` and `story/` name the Japanese term (`進化 Augment`, `glossary-waive: 進化 (…)`), as en-followup's notes already did: game words, not texts; about 590 master and 25 story notes hold some Japanese.
+
 **Found on the way, not fixed:** `TS_6060`'s machine lines `6062_115_41` to `_46` and `_49` hold shifted or doubled English (`_42` says `_41`'s line, `_44` repeats `_43`, `_49` repeats `_48`): a chunk the engine misaligned; `_42` has a waiver so the check passes, the lines want a retranslation.
 
 ## 8. English UI art

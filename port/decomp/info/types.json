@@ -391,6 +391,455 @@
      "name": "DeserializeArray"
     }
    ]
+  },
+  {
+   "name": "InfoContainer",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "InfoBase"
+     },
+     "size": 56
+    },
+    {
+     "offset": 56,
+     "name": "m_body",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 8,
+       "signed": false
+      },
+      "count": 3
+     },
+     "size": 24
+    }
+   ],
+   "size": 80,
+   "align": 8
+  },
+  {
+   "name": "InfoProp",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "offset",
+     "type": {
+      "kind": "int",
+      "size": 2,
+      "signed": false
+     },
+     "size": 2
+    },
+    {
+     "offset": 2,
+     "name": "kind",
+     "type": {
+      "kind": "bytes",
+      "ctype": "InfoPropKind",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 3,
+     "name": "radian",
+     "type": {
+      "kind": "bytes",
+      "ctype": "_Bool",
+      "size": 1
+     },
+     "size": 1
+    },
+    {
+     "offset": 4,
+     "name": "n",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 8,
+   "align": 4
+  },
+  {
+   "name": "InfoChild",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "offset",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "cls",
+     "type": {
+      "kind": "ptr",
+      "to": "InfoClass"
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "InfoStep",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "kind",
+     "type": {
+      "kind": "bytes",
+      "ctype": "Kind",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "offset",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "key",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "width",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 24,
+     "name": "def",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": false
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
+   "name": "GuestTm",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "tm_sec",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "tm_min",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "tm_hour",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "tm_mday",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "tm_mon",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "tm_year",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "tm_wday",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 28,
+     "name": "tm_yday",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 32,
+     "name": "tm_isdst",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "pad_24",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 40,
+     "name": "tm_gmtoff",
+     "type": {
+      "kind": "int",
+      "size": 8,
+      "signed": true
+     },
+     "size": 8
+    },
+    {
+     "offset": 48,
+     "name": "tm_zone",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 56,
+   "align": 8
+  },
+  {
+   "name": "CTimeUtility",
+   "union": false,
+   "fields": [],
+   "size": 1,
+   "align": 1,
+   "methods": [
+    {
+     "ghidra": "0x1ec6370",
+     "symbol": "_ZN12CTimeUtility10str2time_tEPKclbb",
+     "name": "str2time_t"
+    }
+   ]
+  },
+  {
+   "name": "InfoClass",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "name",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "ztv",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "kind",
+     "type": {
+      "kind": "bytes",
+      "ctype": "InfoKind",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "size",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "props",
+     "type": {
+      "kind": "bytes",
+      "ctype": "std::span< InfoProp>",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 40,
+     "name": "children",
+     "type": {
+      "kind": "bytes",
+      "ctype": "std::span< InfoChild>",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 56,
+     "name": "init",
+     "type": {
+      "kind": "bytes",
+      "ctype": "std::span< InfoStep>",
+      "size": 16
+     },
+     "size": 16
+    },
+    {
+     "offset": 72,
+     "name": "elem",
+     "type": {
+      "kind": "ptr",
+      "to": "InfoClass"
+     },
+     "size": 8
+    },
+    {
+     "offset": 80,
+     "name": "key_size",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 84,
+     "name": "elem_prop",
+     "type": {
+      "kind": "struct",
+      "name": "InfoProp"
+     },
+     "size": 8
+    },
+    {
+     "offset": 96,
+     "name": "fn_copy",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 104,
+     "name": "fn_destroy",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 112,
+     "name": "fn_assign",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 120,
+     "name": "tail",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 128,
+   "align": 8
   }
  ]
 }

@@ -14,8 +14,9 @@
 
 namespace soa::native::lib_sqlite {
 
-// The 3.7.0 master (data/basmaster-3.7.0.sqlite3) copied to guest_internal_dir()/file_name; returns the
-// guest (Android) path, *host_copy the host file. "" (and a failure) without the master.
+// The 3.7.0 master (data/basmaster-3.7.0.sqlite3) copied to guest_internal_dir()/PID-file_name (one
+// per process: the data directory is shared); returns the guest (Android) path, *host_copy the host
+// file. "" (and a failure) without the master.
 std::string stage_master(TestContext& t, std::string* host_copy, const char* file_name);
 
 // One query of the corpus: SQL with '?' placeholders and their values (bound as text).

@@ -11,19 +11,24 @@
 #include <iterator>
 #include <regex>
 
+#include <unistd.h>
+
 #include "core/paths.h"
 #include "core/vfs.h"
 
 namespace soa::native::lib_sqlite {
 
 // The 3.7.0 master copied to a guest path (the game ATTACHes its decrypted copy by its Android path).
+// The name carries the process id: the data directory is shared by every soa of the user, and two
+// --selftest runs at once (parallel gates) truncated and removed each other's copy (a native side
+// that saw no tables: "row count: guest 176 / native 0").
 std::string stage_master(TestContext& t, std::string* host_copy, const char* file_name) {
     std::string src = find_repo_file("data/basmaster-3.7.0.sqlite3");
     if (src.empty()) {
         t.fail("data/basmaster-3.7.0.sqlite3 not found");
         return "";
     }
-    std::string guest = guest_internal_dir() + "/" + file_name;
+    std::string guest = guest_internal_dir() + "/" + std::to_string((long)getpid()) + "-" + file_name;
     *host_copy = host_path(guest.c_str());
     std::ifstream in(src, std::ios::binary);
     std::ofstream out(*host_copy, std::ios::binary | std::ios::trunc);

@@ -142,3 +142,10 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   FUN_0242a08c 109, FUN_02429994 52, FUN_0242a9f4 34, FUN_0242ac84 31), then the primitives
   (`DYNAMICS_CAPSULE::TestIntersection` 93, the `Run`s 178, `DynamicsSphere::TestIntersection` 70, the
   `Update`s 38). Only the non-MP `ArticulatedDynamicsManager` instantiations run.
+- **After** (the battle flow re-profiled with every native above, same machine, 2026-10-08): the
+  scope's guest self time 2,045 -> 339 samples (3.3% -> 0.8% of the run's busy samples), the natives
+  567 (1.4%): the scope's time 2,045 -> 906 samples. What stays guest code: the IDE collision
+  handler / dispatch pair (59 + 61: a spinlock and the dispatcher's synchronous posts around the
+  height objects' guest tests), `ADMHandler::Run` (24), `DynamicsCommandNotify::Handler` (20), the
+  managers' `Run`s and the rest of the scope's 750 functions (mostly unexecuted: set-up, cloning,
+  property Get / Set, the MP variants, rigid bodies).

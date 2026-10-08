@@ -1620,6 +1620,8 @@ The official speaker rows `cp0002_ta03a` (Eve & Coro), `_ta50a` (Bride Eve), `_t
 
 **Left as they are:** the 9 machine rows naming the costume 花嫁イヴリーシュ keep **Bride Eve**, Global's official title of the card (`cp0002_b03a_message`, an official glossary term): the chip, the two hair ornaments, the assist skill, the draw title and two Guide lines; for the user to confirm (a `human` glossary row 花嫁イヴリーシュ → Bride Evelysse and a swap would change them). Not her name: `message_m02_10_ms100_00` ("Eve of the Final Battle"), `shop_item_set_00078_message` and `D126_010_23` (New Year's Eve), and the EP3 title "The Leash Code" (Latin letters in the Japanese art; `standin-assets-en/recipes/20200430_campaign_001.json`).
 
+**Shot** (`work/english/evelysse/`, local): the campaign's story mc01_030 (`--lang en`), line `1010_030_06` (Global's official text) under the speaker name **Evelysse** (`cp0002_ta01a`, our row; it said Eve).
+
 **Found on the way, not fixed:** the glossary's term match treats ・ as katakana (`KATA`), so イヴリーシュ in 歌星イヴリーシュ・獄 counts as inside a longer word and isn't checked (the 4 Evreesh rows passed that way). About 745 machine story lines start with a speaker prefix the engine added ("Masked Man: …", "Yamato: …") although the line's Japanese has none; they want a clean-up pass.
 
 ### 7.19 The character bio pages; Global's credits and near matches
@@ -1718,7 +1720,7 @@ The per-row decisions (`work/english/bio/q7-word-changed-decisions.tsv`, local: 
 | machine | 2 | 3.7.0 says the A2 assist recovers AP (Ａ２が), Global's Japanese the party; Global's English names neither | `seed_message_180228517`, `seed_message_180228518` |
 | machine | 2 | the mission was renamed (花嫁の待つ家へ for あなたの花嫁は？) | `ticketmission_0002_short_message`, `ticketmission_0002_text_message` |
 | machine | 2 | 3.7.0 adds a line (weapons with gear set); Global's English also drops a line (147) | `uimsg_item_confirmation_1`, `uimsg_item_confirmation_3` |
-| machine | 1 | a different name: 3.7.0's speaker name is リーシュ, Global's イヴリーシュ (Evelysse); the machine's Eve is a question for a person | `cp0002_ta01a` |
+| machine | 1 | a different name: 3.7.0's speaker name is リーシュ, Global's イヴリーシュ (Evelysse); the machine's Eve was a question for a person; decided 2026-10-08: Evelysse (7.18) | `cp0002_ta01a` |
 | machine | 1 | Global's English is another effect (20% HP recovery…), not this row's | `factor_assist_skill_role_cp0208_b01a_6174_00_message` |
 | machine | 1 | 3.7.0 dropped the duration (２０秒間) Global's English keeps | `factor_message_100026` |
 | machine | 1 | 3.7.0 adds a condition: damage taken -30% only while invoking (紋章術の詠唱中に) | `factor_message_riria_911` |
@@ -1735,7 +1737,7 @@ The per-row decisions (`work/english/bio/q7-word-changed-decisions.tsv`, local: 
 | machine | 1 | 3.7.0 adds affinity and factor types to the filter conditions | `uimsg_sort_reset` |
 | machine | 1 | 3.7.0 dropped the mission name (Mission 2-31) | `uimsg_unopened_evolution` |
 
-Found, not changed: `cp0002_ta01a` (the speaker name リーシュ) is the machine's "Eve"; Global names the character Evelysse (イヴリーシュ). A name for a person to choose.
+Found, not changed: `cp0002_ta01a` (the speaker name リーシュ) is the machine's "Eve"; Global names the character Evelysse (イヴリーシュ). A name for a person to choose. **Decided (the user, 2026-10-08): Evelysse** ([7.18](#718-the-term-splits-decided-2026-10-08)); the row now says Evelysse.
 
 **4. Profiles' paragraphs restored.** 247 machine profiles (`*_prmsg_06*`) had run the Japanese paragraphs together (the MT import re-broke each text as one paragraph, 7.10). Their English sentences were aligned with the Japanese paragraphs (by meaning, sentence by sentence; every break at a sentence end, the text checked unchanged but for white space), and each paragraph re-broken at the import's budget (the widest Japanese line, at least 200 px), joined by a blank line as the Japanese. No word changed: the rows stay `machine` (engine and date kept) with the note `paragraphs (en-bio2 2026-10-08, english.md 7.20): the Japanese paragraph breaks restored, no rewording`. E.g. Reimi of the Phoenix Bow (`cp0402_b06a_prmsg_06`): three paragraphs as the Japanese. The 248th, `cn0008_b01a_prmsg_06`, took Global's English (3 above). The profile box shrinks a long text to fit (7.19); Reimi's three paragraphs fit readably (`work/english/bio2/bio2-profile-reimi.png`, local).
 

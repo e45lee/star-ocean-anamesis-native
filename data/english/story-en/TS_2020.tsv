@@ -19,7 +19,7 @@ message_id	ja_sha1	en	source
 2021_010_18	6338a6129fb6961fb6c53f236ff193683d160b75	W-war stories are usually so\nsad, right?! Our whole selling\npoint is being relentlessly\ncheerful! Ahahaha...	machine
 2021_010_19	df832aac7a7033592833db06736bc4574740f9a0	Ah... well, that makes sense. I\nguess that's a valid reason.	machine
 2021_010_20	1dad2667150fc903f625dec0f3f57d34803e4187	(She's being backed into a\ncorner by her own lie.)	machine
-2021_010_22	c3a2f56d8572bd9ffef67c40f6778db9437c8f1c	(Yeah... Eve is sweating a lot.)	machine
+2021_010_22	c3a2f56d8572bd9ffef67c40f6778db9437c8f1c	(Yeah... Evelysse is sweating a\nlot.)	machine
 2021_010_23	f3c43a6dda621f85c24edbb88949578a919ae476	Anyway, that Holy Land War is\nintensifying right now. That's\nwhy... the public safety has\ndeteriorated like this.	machine
 2021_020_01	a73e02bc805032940d305834c5777a874c16bcf9	<font color=blue>Euwin</font> Phew... You guys really\nare strong. Those weapons and\ngadgets aren't just for show,\nare they?	machine
 2021_020_02	1f242438819c4721011a815f641fea278bb39484	<font color=blue>Verda</font> You shouldn't be so\nsurprised.	machine
@@ -28,10 +28,10 @@ message_id	ja_sha1	en	source
 2021_020_05	a38f4d56fe10ac772e9d0934f5f9f1bc1c84511d	<font color=blue>Euwin</font> I mentioned it earlier.\nThe story of the <font color=yellow>Messenger of\nDaftes</font>.	machine
 2021_020_06	10e6c6b0dd6fd7b9c71482d5709de69f34f64546	Among the <font color=yellow>Messenger's powers</font>\nobtained by the victors of the Holy\nWar, there is something very similar to\nwhat you have, Verda.	machine
 2021_020_07	725fdf62479b549a64b063841ce3a829e785fa23	The same goes for Tika's\nmechanical arm.	machine
-2021_020_08	59d424d30e8095980d10fb26e0133962fc3cbbaa	<font color=blue>Eve</font> What does that mean?	machine
+2021_020_08	59d424d30e8095980d10fb26e0133962fc3cbbaa	<font color=blue>Evelysse</font> What does that\nmean?	machine
 2021_020_09	a21f1295b613bde108fe4a3a0b3531412fbb2fb9	<font color=blue>Euwin</font> Exactly what it sounds\nlike... It's essentially a blessing\nfrom the gods.	machine
 2021_020_10	c4751d3a3fa3ec68be369bbbf4ce20ae3c52f228	The Messenger of Daftes provides\nthings that could never be created\nusing the powers Rubarika or Baschen\npossess.	machine
-2021_020_11	f729c76eeb76e1141c5644ec510e1d9e8a2e96f8	<font color=blue>Eve</font> I don't quite understand,\nbut... I can see why people\nwould go to war to obtain such\npower.	machine
+2021_020_11	f729c76eeb76e1141c5644ec510e1d9e8a2e96f8	<font color=blue>Evelysse</font> I don't quite\nunderstand, but... I can see\nwhy people would go to war to\nobtain such power.	machine
 2021_020_12	5f1d7b2926e3dc3a617571b718221454856348a9	<font color=blue>Verda</font> Then is your power also\na "Messenger's power," Euwin?	machine
 2021_020_13	9a353a47c04e191f3242d33872c8651c53e8c7a4	<font color=blue>Euwin</font> Huh? Oh, this? Uh... no,\nthis is different.	machine
 2021_020_14	1764c7c57d5a77a3e7872365f2fe36c742605f9e	This... well, someone gave it to\nme.	machine
@@ -81,21 +81,21 @@ message_id	ja_sha1	en	source
 2021_030_44	366b3958df69f00373293d8a80409ec0ba73dad0	We know, we know. We've\ntaken that to heart. We\nwouldn't dream of getting our\npriorities mixed up.	machine
 2021_030_45	064aa40cf0c4bf3daadcaff98a1c4c4da8d12e7c	I hope we can uncover more\nanswers as we go.	machine
 2021_030_46	f70f1e7401e1511ffad0876c3da86a337f0bd355	For now, let's follow Euwin.\nFirst, we have to make it to\nCarlone!	machine
-2022_040_01	31199fe4634fe3cd572bd761e482621d2e623508	<font color=blue>Eve</font> Phew... Even though we\nsaid we came from Dagris, that\ncheckpoint was awfully intense.	machine
+2022_040_01	31199fe4634fe3cd572bd761e482621d2e623508	<font color=blue>Evelysse</font> Phew... Even though\nwe said we came from Dagris,\nthat checkpoint was awfully\nintense.	machine
 2022_040_02	e15139e7bdef65ab2b41fc51689f9648fab74de1	<font color=blue>Verda</font> Indeed. If we didn't have Euwin's\nRakstar family crest, I can't imagine\nwhat kind of unreasonable demands\nthey would have made.	machine
 2022_040_03	b5ceceba49dd19cc4156a8e3f67d55f4a56b2186	<font color=blue>Tika</font> Those soldiers were\nscary...	machine
-2022_040_05	31bc870a3a73e9412531c04043b95440eb27e52d	<font color=blue>Eve</font> The Captain is right. Because of\nthe war, even the soldiers in the\ninterior are on edge. It might be related\nto the rumors that public order is\ndeteriorating.	machine
+2022_040_05	31bc870a3a73e9412531c04043b95440eb27e52d	<font color=blue>Evelysse</font> The Captain is right. Because\nof the war, even the soldiers in the\ninterior are on edge. It might be related\nto the rumors that public order is\ndeteriorating.	machine
 2022_040_06	d7897bb9e84e85af2695f15f35a681117fb2ab52	<font color=blue>Tika</font> But they didn't say\nanything about Verda's gun or\nmy Arms.	machine
 2022_040_07	2e9b302c28d04e00d327f0537e8426b81b9dd016	Maybe it's because everyone\nknows about the "Power of the\nEnvoy."	machine
-2022_040_08	4083eaf0cadf5c664065c821ded2c74a336c3ba7	<font color=blue>Eve</font> There are so many things\nthat don't sit right with me... I'm\nfeeling uneasy, so I hope Euwin\ncomes back soon.	machine
+2022_040_08	4083eaf0cadf5c664065c821ded2c74a336c3ba7	<font color=blue>Evelysse</font> There are so many\nthings that don't sit right with\nme... I'm feeling uneasy, so I\nhope Euwin comes back soon.	machine
 2022_040_09	1db6e0f7e1f1401c5f580d100a96c28f6e1cd9dd	He disappeared somewhere as\nsoon as the checkpoint was\nover; I wonder what happened.	machine
 2022_040_10	53d3bc30c89376d056fcea2209b23ef5e61f669a	<font color=blue>Verda</font> He said he was going ahead to\narrange the travel permits to leave the\ncity, but I wonder if he ran into some\ntrouble...	machine
 2022_040_11	db4515e942c253c3fb3302530f1f450f1b97462b	Ah, thank goodness. Speak of\nthe devil.	machine
 2022_040_12	cca39c73fc4b45543b6679ad009280b44ad97c93	<font color=blue>Euwin</font> Hey, sorry to keep you\nwaiting. ...Things got a bit\ncomplicated, so I'm late.	machine
-2022_040_13	dc6b3b03e246ca17497337e5e239671309036cfb	<font color=blue>Eve</font> Complicated how?	machine
+2022_040_13	dc6b3b03e246ca17497337e5e239671309036cfb	<font color=blue>Evelysse</font> Complicated how?	machine
 2022_040_14	5793577f03a2cc39320d7b39ed041098acda2c1d	<font color=blue>Euwin</font> The eastern highway to\nthe royal capital has been\nclosed.	machine
 2022_040_15	a5dde5e2fbee15e9b32bc059ebc42e2f436eb87c	Apparently, a large number of\n"Baschen's Beasts" have appeared, and\ntravel is prohibited for a while to carry\nout a sweep operation.	machine
-2022_040_16	ca421c4a27ce392278203d6ece5e4f2fc9dbcccf	<font color=blue>Eve</font> Is there no other way to\nthe royal capital?	machine
+2022_040_16	ca421c4a27ce392278203d6ece5e4f2fc9dbcccf	<font color=blue>Evelysse</font> Is there no other way\nto the royal capital?	machine
 2022_040_17	4c13f9d7b0e58a80fc87bedd6e4734a10f41c7e8	<font color=blue>Euwin</font> There are, but I wouldn't\nrecommend them. You're\nalready people of uncertain\norigin.	machine
 2022_040_18	a8f14bfdf69c81e4c256a4c3f7017c663323686a	Posing as traveling performers\nduring wartime is practically\nasking to be suspected of\nbeing spies.	machine
 2022_040_19	6796b7721e70c581b20849b0dbbc1770f3d60a67	Rakstar's name carries weight\nin some places, but not others.\nUnless every second counts,\nit's better to wait here.	machine
@@ -103,11 +103,11 @@ message_id	ja_sha1	en	source
 2022_040_22	1b99ae047641da4dcd210a7b6f9ff4fff958f89d	Would it be acceptable if we\nwere the ones to exterminate\nthose beasts?	machine
 2022_040_23	e62101df76f187d57174f89a412d844c5a146f60	<font color=blue>Euwin</font> Now, now, don't be unreasonable.\nThe knights guarding the city walls and\nhighways have taken heavy losses.	machine
 2022_040_24	eccb99f93e8feb2d3464630c25a53b82274a1c8e	I know you're strong, but as\nyour guide, I can't let you\nthrow yourselves into danger.\nPlease, just be patient.	machine
-2022_040_25	f9200d240d0190a9f6fc0b5820b0847a3e77818b	<font color=blue>Eve</font> This is a problem.	machine
+2022_040_25	f9200d240d0190a9f6fc0b5820b0847a3e77818b	<font color=blue>Evelysse</font> This is a problem.	machine
 2022_040_26	c4fd24451fa7ea3abcda06cc6717f6501834da79	<font color=blue>Tika</font> Big brother Euwin is using\nhis name to help us out, so we\nshouldn't push him too hard.	machine
 2022_040_27	5492803e65d7382f25e92f4d97a48959742caa6f	I'll be fine, so why don't we wait\na little longer?	machine
 2022_040_28	1001e942b48d496c834117471e3455e5b32a3c34	<font color=blue>Verda</font> ...Hmm, it seems we\nwere being rather impatient.	machine
-2022_040_29	927821ed6016ea86b1367098d313f12942960b86	<font color=blue>Eve</font> ...You're right. Sorry, Euwin.	machine
+2022_040_29	927821ed6016ea86b1367098d313f12942960b86	<font color=blue>Evelysse</font> ...You're right. Sorry,\nEuwin.	machine
 2022_040_30	d797f1bceb925241c8c2deba2110ec96f5740a33	<font color=blue>Euwin</font> I appreciate you\nunderstanding. I'm going to go\ncheck on the state of the town\na bit more.	machine
 2022_040_31	f8d6e8d46ece06902472f78ec7e78ecafbd706f7	I've already arranged an inn, so\nif you want to rest, please go\nto the one on this note.	machine
 2022_040_32	644626a2f1f096cda8bb8071e992e123784cc0da	Also, you're free to explore the\ntown, but please try not to do\nanything that draws too much\nattention.	machine
@@ -176,36 +176,36 @@ message_id	ja_sha1	en	source
 2022_050_05	f90329e331e3776e849354a5ad93f25ac5c58e0a	Yeah! I'm fine! Right, Rekoro?	machine
 2022_050_06	6e1ed5abdd083c29f91462efae75a522676a8e97	Affirmative. While there is a\nslight decrease in physical\nstamina, no major abnormalities\nare detected.	machine
 2022_050_07	00ac1dafaccfbbf459b93acdf09766edbb589da1	If Tika is okay, then let's have\na brief strategy meeting before\nEuwin returns.	machine
-2022_050_09	a7dfdfe2804c12e1566c1bb0181a4df24d7567db	<font color=blue>Eve</font> You're right. I am curious\nto see what the town of\nCarlone looks like from space.\nCoro?	machine
+2022_050_09	a7dfdfe2804c12e1566c1bb0181a4df24d7567db	<font color=blue>Evelysse</font> You're right. I am\ncurious to see what the town\nof Carlone looks like from\nspace. Coro?	machine
 2022_050_10	0a96fe96105f7ff5bf85850ee38662f0e04149d9	<font color=blue>Coro</font> "..."	machine
-2022_050_11	303026859435de635772f897a79aa269b73d666c	<font color=blue>Eve</font> Coro?	machine
-2022_050_12	ab5ca119e7608fbfa4c60e96132402415b734e22	<font color=blue>Coro</font> "...Since nobody really\ntalks to me, I just figured you'd\nall forgotten about me. What is\nit, Miss Eve?"	machine
+2022_050_11	303026859435de635772f897a79aa269b73d666c	<font color=blue>Evelysse</font> Coro?	machine
+2022_050_12	ab5ca119e7608fbfa4c60e96132402415b734e22	<font color=blue>Coro</font> "...Since nobody really\ntalks to me, I just figured you'd\nall forgotten about me. What is\nit, Evelysse?"	machine
 2022_050_13	a3425bfe1a09d00d8f390970061c1a1207287931	<font color=blue>Verda</font> Stop sulking. How\nchildish.	machine
-2022_050_15	4108b0b02e5135c8aabdf04cb0c95ed404d6ab2e	<font color=blue>Eve</font> Exactly. There's no way I\ncould talk to you while Euwin is\naround.	machine
+2022_050_15	4108b0b02e5135c8aabdf04cb0c95ed404d6ab2e	<font color=blue>Evelysse</font> Exactly. There's no\nway I could talk to you while\nEuwin is around.	machine
 2022_050_16	e36d47f05ff28e3109ada47021821919813afbdb	<font color=blue>Coro</font> "Hmph! Hmph!"	machine
 2022_050_17	25cf944d99be61007b9f9c7c2d508b6acb6b1b20	<font color=blue>Rekoro</font> Captain. It appears your ship's AI, Coro,\nexhibits excessive emotional expression\nunnecessary for stable ship operation. I must\nsuggest that this could become an obstacle to\nTika's safety.	machine
 2022_050_18	6c9df02c8675959cf9313f8283144b1e622fda21	<font color=blue>Coro</font> "Hmph!! Fine by me! I'm\njust a useless AI whose only\nmerit is being creepy-cute\nanyway!"	machine
 2022_050_19	83d8c1a94ae44f67b1b86e0ef598eb31240be349	<font color=blue>Tika</font> Coro... I'm sorry. Were you\nlonely?	machine
 2022_050_20	eed093cce8129ce159dcad6da4c20f0e3dee35b4	<font color=blue>Coro</font> "...Hmph."	machine
-2022_050_21	6582ef004467aaddb94c41b1db97d586442ce449	<font color=blue>Eve</font> Coro! Cheer up already!\nTika is actually apologizing to\nyou!	machine
+2022_050_21	6582ef004467aaddb94c41b1db97d586442ce449	<font color=blue>Evelysse</font> Coro! Cheer up\nalready! Tika is actually\napologizing to you!	machine
 2022_050_22	ace431c845b6e8ca4388d1aeb0d11e2da8f47084	<font color=blue>Coro</font> "...So, what was it you\nwanted again?"	machine
-2022_050_23	0061289fc61b75a701f782d058b367b66b039af5	<font color=blue>Eve</font> Honestly! I want to know if\nthe long-range sensors in\nspace have picked up anything\nstrange in Carlone City!	machine
+2022_050_23	0061289fc61b75a701f782d058b367b66b039af5	<font color=blue>Evelysse</font> Honestly! I want to know if the\nlong-range sensors in space have\npicked up anything strange in Carlone\nCity!	machine
 2022_050_24	af27e3d44dea7843bb1f14ae90fe6a392a1a9c39	<font color=blue>Coro</font> "Nothing in particular~"	machine
-2022_050_25	8de3621b928d48820927f93ce20c0da1d6fc99e0	<font color=blue>Eve</font> Coro! Take this seriously!	machine
+2022_050_25	8de3621b928d48820927f93ce20c0da1d6fc99e0	<font color=blue>Evelysse</font> Coro! Take this\nseriously!	machine
 2022_050_26	0893c12456eb9e16addd8464fc20a182463a78c7	<font color=blue>Coro</font> "I am being serious! I really can't\ndetect anything from Carlone City that\ndoesn't match the average civilization\nlevel of this planet!"	machine
 2022_050_27	9b5d2736e15ad18670acd5679c750350068035fb	"At least I haven't detected\nanything like the 'servants of\nDaftes' or 'servant powers'\nthat Euwin mentioned!"	machine
-2022_050_28	e33a027d3bc8b95cca4367d565e690a204a88837	<font color=blue>Eve</font> ...I see.	machine
+2022_050_28	e33a027d3bc8b95cca4367d565e690a204a88837	<font color=blue>Evelysse</font> ...I see.	machine
 2022_050_29	ebf65bd5edef325d6567ef6ad66899c9bb012443	<font color=blue>Verda</font> What about the "Beast\nof Baschen"? Which is to say,\nthe Thornite.	machine
 2022_050_30	958a57366422b7bb7e2600e864241c9393072da6	<font color=blue>Coro</font> "That's the thing. On the road toward the\nroyal capital that Euwin mentioned, I can't\ndetect any biological signatures of the size or\nnumber that would cause that much damage to\nthe knights."	machine
-2022_050_31	59d424d30e8095980d10fb26e0133962fc3cbbaa	<font color=blue>Eve</font> What does that mean?	machine
+2022_050_31	59d424d30e8095980d10fb26e0133962fc3cbbaa	<font color=blue>Evelysse</font> What does that\nmean?	machine
 2022_050_32	497a0fc1f82d8737545d5902cb8e4a2125433a98	<font color=blue>Coro</font> "I can pick up the\nsubjugation force that was\ndispatched from Carlone.	machine
 2022_050_33	a24d1051391aface7a728859f6089a2752096a3e	There's a large forest along the road,\nand I suspect the pack of beasts is in\nthere, but I can't find any signatures\nthat look like beasts anywhere."	machine
-2022_050_34	671c1c04690b061c9398876f4445bb0e196544eb	<font color=blue>Eve</font> It's not interference again,\nis it? Not that there's a Pulse\nTower around here.	machine
+2022_050_34	671c1c04690b061c9398876f4445bb0e196544eb	<font color=blue>Evelysse</font> It's not interference\nagain, is it? Not that there's a\nPulse Tower around here.	machine
 2022_050_35	c43a286bd6285801707832d24a74b0cfa5f601d6	<font color=blue>Coro</font> "I don't think that's the\ncase, but...	machine
 2022_050_36	18f8f608178e574c8636f8a2a37aad4aeedaa37f	To begin with, I can't distinguish between a\nThornite-mutated individual and a normal one\nwithout optical confirmation, so honestly, I can't\ntell what's actually happening on the ground."	machine
 2022_050_37	97f26ae1e142004824e1ab0d500fbb3bd8f94cc5	<font color=blue>Verda</font> Hmm. Perhaps we will\nknow more once Euwin returns.	machine
 2022_050_38	e6d81dba6f0796dee751ca3f2f0d6f0636a07aaa	<font color=blue>Coro</font> "About that... don't you think it'd\nbe faster to just warp straight to the\nroyal capital of Rubarika instead of\nwaiting for the blockade to be lifted?"	machine
-2022_050_39	996d926d0d55b66b052fb12a4a608abf0fc83857	<font color=blue>Eve</font> That's true, but Euwin's\nguidance is invaluable.	machine
+2022_050_39	996d926d0d55b66b052fb12a4a608abf0fc83857	<font color=blue>Evelysse</font> That's true, but\nEuwin's guidance is invaluable.	machine
 2022_050_40	676e5840e583e9b654519b72fffeb6ebc307136f	Going to the royal capital\nblindly is completely different\nfrom going while being guided.	machine
 2022_050_41	52d25aface33417d2eef4fdea94cc1124e8ec91b	<font color=blue>Verda</font> Indeed. Even in this town, the\nunsettling effects of the war are visible\neverywhere. There is no guarantee that\nthe royal capital is any safer.	machine
 2022_050_42	b8909067bfb64b78bc441f668366d9fd2599e4bf	With Euwin as our guide, we\ncan at least reduce the risk of\nbeing treated as suspicious\npersons.	machine
@@ -216,10 +216,10 @@ message_id	ja_sha1	en	source
 2022_050_47	c884439c46ad36d2b867f655d608a72da8d29163	<font color=blue>Rekoro</font> I presume that at Tika's\nage, she would not have had\nthe opportunity to learn the\ndetails.	machine
 2022_050_48	0f3bac187bff8b8bae0e0f766bd3951603b1342d	This vessel also has no\nrecorded data that could\nupdate the basic information\nregarding Ewin Laxter.	machine
 2022_050_49	0ecedd2c04c100ac723b3c5e14587b2709ee0911	<font color=blue>Tika</font> I'm sorry...	machine
-2022_050_50	7abb18da606daafb81d8f237fed1ed7b51fdf037	<font color=blue>Eve</font> Don't apologize. It's not\nyour fault, Tika.	machine
+2022_050_50	7abb18da606daafb81d8f237fed1ed7b51fdf037	<font color=blue>Evelysse</font> Don't apologize. It's\nnot your fault, Tika.	machine
 2022_050_51	9711ed33f27334505a5d745df49d1020214b1a7c	From now on, if you notice\nanything or feel even a little\nuneasy, you must tell us, okay?	machine
 2022_050_52	917ce73090ac430fcef3d00c466896c3ab02146b	<font color=blue>Tika</font> Okay...	machine
-2022_050_53	283d5a3d88f3c164f41b98e1637485d7e0785e5d	<font color=blue>Eve</font> Anyway, we'll follow Euwin's lead\ntomorrow and head for the capital of\nRubarika as soon as the road blockade\nis lifted. Does that sound right?	machine
+2022_050_53	283d5a3d88f3c164f41b98e1637485d7e0785e5d	<font color=blue>Evelysse</font> Anyway, we'll follow Euwin's\nlead tomorrow and head for the capital\nof Rubarika as soon as the road\nblockade is lifted. Does that sound\nright?	machine
 2022_050_54	ae65e08c5cf4acb6429e7d74a9a6f08753729755	Coro, you're not to make a\nsound unless it's absolutely\nnecessary. Euwin will get\nsuspicious!	machine
 2022_050_55	ad4bca44466896c6ac20d8e85543358c64e6387b	<font color=blue>Verda</font> I wonder if Coro is even\ncapable of such a feat.	machine
 2022_050_56	8f353b27e3ccd307b1567e921ee56d60fc90d8cd	<font color=blue>Coro</font> "That's easy! If worst\ncomes to worst, I'll just say the\nCaptain is doing ventriloquism!"	machine
@@ -255,7 +255,7 @@ message_id	ja_sha1	en	source
 2023_070_12	cc04726104a51b09f9118b91aeca2f87caef8f35	A friend?	machine
 2023_070_13	db24d5dc20a0a8b3fe63c48de8e3d2dda9f2cc02	One of the few friends I can\ntruly open up to.	machine
 2023_070_14	340fc3e85c8420ca2ed41000c47ef67d1c5cfac9	An eccentric fellow who made\nthis weapon for me.	machine
-2023_070_15	b828e03a082b4a98a32b0ca9dae60028175d5c50	In that case, maybe Eve and\nthe others could come along...	machine
+2023_070_15	b828e03a082b4a98a32b0ca9dae60028175d5c50	In that case, maybe Evelysse\nand the others could come\nalong...	machine
 2023_070_16	d6eb0ca5d354f9aa13e0b6d103974b79e00384b1	This is a personal matter of\nmine. I can't involve you all in\nsomething dangerous. Not even\nas guides.	machine
 2023_070_17	182dd9da039caf8498c01d9f9ef808a084f4cfb2	I'll be back by morning, without fail. I\npromise I won't do anything reckless.\nSo, please just wait for me without\nsaying a word...	machine
 2023_070_18	1d6442ab5a1f41a2cc79569d901943e166ca7d01	Though, I have a feeling you\nwon't listen.	machine
@@ -268,7 +268,7 @@ message_id	ja_sha1	en	source
 2023_070_25	0b0b400d88a39c69734c77fb08f25f2102c9658b	No problem. Per the captain's orders, I\nalready hid a transmitter in Ewin\nLaxter's clothing during dinner. Tracking\nhim will be easy.	machine
 2023_070_27	948d48eee436cc48ccb29d1efb4e17210a55e3dd	The Captain was awake.	machine
 2023_070_28	9c03744047b6e31c2e08ae78d207f5c2b28a7c4b	...Yeah! I got it.	machine
-2023_070_29	b456294fee76d5eb217dd5dbb0e205f50ede55d3	Big sister Eve! Big sister Verda!\nCoro! Wake up!	machine
+2023_070_29	b456294fee76d5eb217dd5dbb0e205f50ede55d3	Evelysse! Verda! Coro! Wake\nup!	agent
 2023_080_01	d06a1df9e938772d48ddef279e3b38e20261973e	*Pant... pant...* That idiot... just\nhow far did he wander in...?	machine
 2023_080_02	8b4e3315b55e45d312f77f09a1e7f2b15a812494	The people at the camp said they\nhaven't seen him, and for that matter,\nhow can we not even know where the\nbeast packs are...?	machine
 2023_080_03	b8256a7cdd4d25a633d41f420740befe9010afef	!	machine
@@ -304,7 +304,7 @@ message_id	ja_sha1	en	source
 2023_090_18	6f8b25f5d3727f56380d2660b3a58d96f79e75ae	Until morning, the light from a\nteleportation beam within a\nhundred-meter radius of Euwin\nshould go unnoticed.	machine
 2023_090_19	02ea00e5037dcac0cef2db5d0a187822c910a95a	<font color=blue>Tika</font> Do you know where\nEuwin's friends are?	machine
 2023_090_20	353ebbd95d3c6f4379f918aca0dcebeaf8ad2181	<font color=blue>Coro</font> It's a forested area with poor\nvisibility, and it's difficult to track local\nresidents who aren't tagged. We don't\neven know who they are...	machine
-2023_090_21	51ce64f7076a505f2af4056f6fd6fd644ad18655	<font color=blue>Eve</font> That means we'll just have\nto go down there and save\nthem ourselves!	machine
+2023_090_21	51ce64f7076a505f2af4056f6fd6fd644ad18655	<font color=blue>Evelysse</font> That means we'll just\nhave to go down there and\nsave them ourselves!	machine
 2023_090_22	7d333b9e2ccc479e421d4329cc14487ef9a44a42	<font color=blue>Tika</font> Let's go, hurry!	machine
 2023_090_23	a97c511715f5109beab40173283a3d78ab10e9c0	<font color=blue>Coro</font> Just to be sure, Rekoro,\nis it really okay to let Tika drop\ndown?	machine
 2023_090_24	9e9fd284c9e71738d8824f789a59469386401f37	<font color=blue>Rekoro</font> As a life-pod AI, I have\nreservations about deploying\nTika into an area with a high\nprobability of combat.	machine
@@ -394,7 +394,7 @@ message_id	ja_sha1	en	source
 2024_120_19	aa06ac032b9778567b7747366fffc2496e3ac9ae	She really is called Welch!	machine
 2024_120_20	033364aecb983cf3f557618dbf8ade061dfcec19	They say there are three of\nevery kind of person in the\nworld, but was that on a\ngalactic scale?!	machine
 2024_120_21	8c9d22f7c758f25f33c606a8e697ec4d2a0f9a20	Stop it! Big brother Euwin is\ngoing to die!	machine
-2024_130_01	c51f007368f1c1d1f6bc04be393b0c2bd5daaef4	<font color=blue>Eve</font> S-so, that glowing sword of\nEuwin's... did you make that,\nWelch!?	machine
+2024_130_01	c51f007368f1c1d1f6bc04be393b0c2bd5daaef4	<font color=blue>Evelysse</font> S-so, that glowing\nsword of Euwin's... did you\nmake that, Welch!?	machine
 2024_130_02	664080697964cd35578e010fd001ca811e77ce3f	<font color=blue>Welch</font> Hehe, you bet! That's\nthe power of the "Messengers"\nfor ya!	machine
 2024_130_03	c376e41a9cf5f0db942c7a65ee4d41fa35609320	Once you understand the logic, making\nsomething like this is a piece of cake!\nNow, if only I could get the <font color=yellow>Messenger's\nLight Arrow</font> to work stably, it'd be\nperfect.	machine
 2024_130_04	5ca5fdf7be1faf9b85167dc5d735d41b19cb83e2	<font color=blue>Verda</font> I have heard it mentioned a few\ntimes, but what exactly is this\n"Messenger's Light Arrow"? Did you\ncreate that as well, Welch?	machine
@@ -412,10 +412,10 @@ message_id	ja_sha1	en	source
 2024_130_16	acc1ed2e7ccc3619d6d21c3ea6985f905ae6d832	The "Messenger's Light Arrow"\nis said to be exceptionally\nuseful compared to other\nrecent "Messenger's Powers."	machine
 2024_130_17	97288bf081debde5b8acd45437f7f7fd034cebe6	Just by leaving it in the sun for three\ndays or pouring Gem power into it, it\nbecomes many times stronger than a\nnormal bow and can hit many more\nenemies.	machine
 2024_130_18	d05e6f1b86b889ab5a67361155c94b5a7cc37000	Basically, it's what you'd call an\noverpowered weapon.	machine
-2024_130_19	f72371c5f3f00ce3b6b4a06962127d22c18a9c45	<font color=blue>Eve</font> Um, what exactly is this\n<font color=yellow>Daftes</font>?	machine
+2024_130_19	f72371c5f3f00ce3b6b4a06962127d22c18a9c45	<font color=blue>Evelysse</font> Um, what exactly is\nthis <font color=yellow>Daftes</font>?	machine
 2024_130_20	e12f9c606fd2685698593de899b140db58b8b1d2	<font color=blue>Welch</font> Whoa, aren't you a little\ntoo clueless, sweetie?	machine
 2024_130_21	9d3473183d871268dc00ed4f177475164c38c538	When I say Daftes, I obviously\nmean the star on the far side\nof the moon!	machine
-2024_130_22	55f60dbb936ad9a0567ae446256c6ee51e56904b	<font color=blue>Eve</font> The far side... of the\nmoon...	machine
+2024_130_22	55f60dbb936ad9a0567ae446256c6ee51e56904b	<font color=blue>Evelysse</font> The far side... of the\nmoon...	machine
 2024_130_23	cbbd162fbdb457070c6f0b743f89a1ef794cda4b	<font color=blue>Welch</font> The ladder that\nconnects Daftes to the moon,\nand the moon to Daftine, is the\n"Moonshadow Ladder."	machine
 2024_130_24	ee92756d885010cb22c4ba493bffec002389c7f1	It's generally thought of as a\n"miracle" descending from a\nworld far beyond the sky.	machine
 2024_130_25	92b493518a6f6cd92ac58ae5b0503a30d993bf0e	<font color=blue>Tika</font> Daftes... the twin star of\nDaftine.	machine
@@ -423,13 +423,13 @@ message_id	ja_sha1	en	source
 2024_130_27	18c30d92054e03affa69f6fd2e77f0e280a84966	<font color=blue>Welch</font> And the "Beast of Baschen" is\njust another nuisance of a\n"Messenger's Power" that descended\nwhen Baschen won the Holy Land War.	machine
 2024_130_28	0389281c0f71b88dd03d60a8b1b46cdbbfda5c0e	The main forces in the current Holy\nLand War are the "Messenger's Light\nArrows" on Rubarika's side and the\n"Beast of Baschen" on Baschen's side.	machine
 2024_130_29	94c56659ff038bab0eb3d8c652d035870e5b6c77	They're both just using\n"blessings from the sky" to kill\neach other in a completely\nfutile way.	machine
-2024_130_30	88245c61249ec437b87038c6e73b4d8875ae466d	<font color=blue>Eve</font> ...Welch...	machine
+2024_130_30	88245c61249ec437b87038c6e73b4d8875ae466d	<font color=blue>Evelysse</font> ...Welch...	machine
 2024_130_31	d31dc1f976f18c8c46bff05556f3aa4ab1455a12	So, anyway, I used a few of\nEu's connections,	machine
 2024_130_32	4bf9ebc7fd7b9af2f9d43b9e47bc70cb4ed7f880	and combined that with my\nsuper-delicious ultra-great atomic brain\nto get some "Messenger's Light Arrows"\nmass-produced by some starving\nknights.	machine
 2024_130_33	f8dece4ba4b59a47dafd70153de55603297951ab	Then I did a bunch of top-secret\nthis-and-that and blah-blah-blah, and\nthat's how we got the <font color=yellow>Twin Blades of\nLight</font> that Eu has!	machine
 2024_130_34	1a220650b304cea7d01742fea1b1e9b5c1b6c498	I'm quite curious about this\n"this-and-that" and\n"blah-blah-blah"...	machine
 2024_130_35	6c043a2fb4bbfe5f28c9532aa3fc2cda4863b4eb	Regardless, let us return to\nCarlone first. We can catch up\non the rest of the details then.	machine
-2024_130_36	039d75b8cf390c27e174f0132464038489ac275b	Eve: You're right. It doesn't seem like\nThornite is nearby, but I don't want us\nwandering through the forest and being\nmistaken for enemies by Carlone's\nsubjugation force.	machine
+2024_130_36	039d75b8cf390c27e174f0132464038489ac275b	Evelysse: You're right. It doesn't seem\nlike Thornite is nearby, but I don't want\nus wandering through the forest and\nbeing mistaken for enemies by\nCarlone's subjugation force.	machine
 2024_130_37	657a2727112e9147a378252bd90c36d4ebc2bcef	Aww, let's just quickly clear out all the\nbeasts in the forest while we're at it! I\nwant to show everyone that with my\ninventions, we don't even need the\n"Power of the Messenger"!	machine
 2024_130_38	b17129eb0869e57fd4b93a915bc4e3da6122bfc0	There is something wrong with the\n"beasts" in this forest. They look similar\nto the ones we saw near Dagris, but\ntheir power is on a completely different\nlevel.	machine
 2024_130_39	b15d204d91310a96ff27ae27df29d831c4ed0d9c	Besides, I cannot involve the\nCaptain and the others in\nsomething so dangerous.	machine
@@ -562,7 +562,7 @@ message_id	ja_sha1	en	source
 2026_180_30	90b0067c6ad8aa7f1bd73c0c5a2978705123ee65	What on earth are you talking\nabout?! Captain, stop playing\nalong with his provocations!	machine
 2026_180_31	9caf9b0e5e9688ea9ecc663e86122a948104f97c	Masked Man: I could just wipe\nyou all out right here and take\nher by force.	machine
 2026_180_32	d982a36b7d90ecdc489738d90ae7160778b1366d	Don't be ridiculous! There is no\nway we're handing Tika over to\nyou!	machine
-2026_180_33	f3e71d2ee8e17a12803b3be9bf5430f24c6689a5	Eve!	machine
+2026_180_33	f3e71d2ee8e17a12803b3be9bf5430f24c6689a5	Evelysse!	machine
 2026_180_34	dbfbcee9d5f553e21ea27fd2cbdb6f1f31ce1c38	Ah...!	machine
 2026_180_35	cc490239a91602ac1f55430bafec7a7482ca9ecd	Masked Man: "Tika"... So that\ngirl really is Tika Blanche...	machine
 2026_190_01	cc490239a91602ac1f55430bafec7a7482ca9ecd	Masked Man: "Tika"... So that\ngirl really is Tika Blanche...	machine
@@ -623,9 +623,9 @@ message_id	ja_sha1	en	source
 2026_200_18	a42cb7b0d0c0c51abaecf14d33f1e91c192d2a97	...A lot happened, but... we were\nonly able to save Welch\nbecause Tika brought the\nCaptain and the others.	machine
 2026_200_19	4f839e4145525f53a13f49e704ff15dc406a297c	I'll make it up to you with my\nactions. Thank you, truly.	machine
 2026_200_20	3bd67e0594435af95fb1ae7abb7b34d54a90dc4c	...Um, you're welcome.	machine
-2026_200_22	aeb20336b27104b00e3d6e360f31cd1ad4c0225b	Eve...	machine
+2026_200_22	aeb20336b27104b00e3d6e360f31cd1ad4c0225b	Evelysse...	machine
 2026_200_24	8ca5d690495e2225e063fdcd8fbf65140d20ae62	...I'm okay. I'm... I'll be fine...	machine
 2026_200_25	7c3a1d8087199bf5df45967da05fe32a80e95713	The shock must have been\ngreat. It might be best to leave\nher be for now.	machine
-2026_200_27	5ad35333f75d7642c8d671ed8dee22f7294ac07d	Yes... both to protect Tika... and to\nuncover the true nature of the "Beast\nWitch's" power, which mirrored Eve's\nsummoning arts...	machine
+2026_200_27	5ad35333f75d7642c8d671ed8dee22f7294ac07d	Yes... both to protect Tika... and to\nuncover the true nature of the "Beast\nWitch's" power, which mirrored\nEvelysse's summoning arts...	machine
 2026_200_28	7f30cf385390a59ed96c5d0d8bfbe6caa52998b6	Daftine's journey, and the Holy\nWar...	machine
 2026_200_29	2ab0c61887c2e5c3195691bffc2bb04c6fb5790a	It seems I shall have to keep a\nclose eye on things for a while.	machine

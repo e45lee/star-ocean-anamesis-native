@@ -11,8 +11,8 @@ message_id	ja_sha1	en	source
 6061_010_10	c54fc6cfbe472e8296eef5941999a9211914a0b9	However, the leadership of the\nRaza Space Force, who should\nbe navigating our future\nrelations, have all gone missing.	machine
 6061_010_11	5ea5f3fcd8253a94deb941487e3783664c1af1a2	Apparently, they vanished at\nsome point during the chaos of\nthat fleet battle.	machine
 6061_010_12	e4fcd36be7656f385e4068ad7bbeb1412d2675de	My, how unsettling...	machine
-6061_010_13	0abc3d1eee5291cf92c12087eeb34bbf99120c52	We defeated Asmodeus and\nEve is back, but there are still\nso many things we don't know...	machine
-6061_010_14	361f1959759ebb274d614f074f75d8c9c4e00eef	Rekoro, is Eve still not waking\nup?	machine
+6061_010_13	0abc3d1eee5291cf92c12087eeb34bbf99120c52	We defeated Asmodeus and\nEvelysse is back, but there are\nstill so many things we don't\nknow...	machine
+6061_010_14	361f1959759ebb274d614f074f75d8c9c4e00eef	Rekoro, is Evelysse still not\nwaking up?	machine
 6061_010_15	a68b6064e542ddddf5497e8ef311a8ee8581ddd7	Fortunately, her condition is\nstable, but there are no signs\nof her waking.	machine
 6061_010_16	72f774d7f9f1544e6c6cd13201b9aa4f7657005b	I see...	machine
 6061_010_17	134d8437f2269585ddbe22d9006a5e63be8c8f1b	Verda, Valka, and Henri are apparently\nadministering a serum using biological\nsamples from Asmodeus, but the\nresults have been underwhelming.	machine
@@ -20,7 +20,7 @@ message_id	ja_sha1	en	source
 6061_010_19	c5541f0d80838f25833c0c961e95bf0fff40516e	I know Verda and Henri; they\ncould never just ignore a\ndisease that consumes entire\nplanets.	machine
 6061_010_20	407292de10b9eefb757e3d61eaf4091af065f4a1	I just hope the damage doesn't\nspread any further... oh.	machine
 6061_010_22	77391b36b628ed7fbe1fc261acee1612f1899c45	Good work, Verda. Are you\nokay? You look exhausted...	machine
-6061_010_23	96b4b114539c1c4f2307494fe4c2513c93ad07d3	Hmm... Tika, you're right. I might have\npushed myself a bit too hard. Eve's\ncondition just isn't improving as quickly\nas I'd hoped...	machine
+6061_010_23	96b4b114539c1c4f2307494fe4c2513c93ad07d3	Hmm... Tika, you're right. I might have\npushed myself a bit too hard.\nEvelysse's condition just isn't improving\nas quickly as I'd hoped...	machine
 6061_010_24	8838222f60b2c3dfeb56bc15c8638ff6c097a231	Sit down here. Do you want\nsomething warm to drink?	machine
 6061_010_25	bed3ede9c1e43e34cd42d0afbf82232e77187b58	My apologies... By the way,\nCoro, how long do you plan on\nstaying dressed like that?	machine
 6061_010_26	42f2bab4c457a9aabccb2e246f2b03cbe00c498a	I'd love to repair myself, but\nright now every bit of material\nrefining must be dedicated to\ncreating the serum...	machine
@@ -36,7 +36,7 @@ message_id	ja_sha1	en	source
 6061_010_36	dd28b2cfd76fcef123eddf2d2398712ea505f184	Wait! Tika!! Stop!! Get away\nfrom Verda!!	machine
 6061_010_37	db648da9d93e1f9b4e6cc0d9d7dffb18c5bc7510	Huh? W-what!?	machine
 6061_010_38	d226ba8abe0f583e9500827cb09924612c60bfc4	...Was I too late...!!	machine
-6061_010_39	18a5bb64011e3a4220a20f12f32b0ec35602d895	Coro! Call Mastima and the\nCaptain! Then, get Valka and\nHenri away from Eve! Hurry!!	machine
+6061_010_39	18a5bb64011e3a4220a20f12f32b0ec35602d895	Coro! Call Mastima and the\nCaptain! Then, get Valka and\nHenri away from Evelysse!\nHurry!!	machine
 6061_010_40	632cc70abe6c4fa863de9ad8ad421965551e2b1e	...Rekoro, don't tell me I'm...	machine
 6061_010_41	3bc58a36569bc83064107ebb925dec597451c2b5	...You're infected.	machine
 6061_010_42	17f8d1fc934da08a934afa5db0988e3613051900	Whaaat!?	machine
@@ -59,14 +59,14 @@ message_id	ja_sha1	en	source
 6061_015_10	6ee244558133cc8b69412101daed454a0391c449	If that were the case, Valka\nshould have detected it the\nmoment he was brought\naboard the Overman.	machine
 6061_015_11	0fa391abda20d3a83fb10508ad8d620197bd8dc3	I have evacuated Euwin, Welch,\nand Lavarnia to the Overman,\nas I could definitively confirm\nthey are not infected.	machine
 6061_015_12	c67e821cd67c3a51081085eb946a4959c5477b73	As for Heath and Jeanne, they\nare currently waiting in the\ninfirmary since they are\ninfected.	machine
-6061_015_13	c3b12116e6eec8ac1d90af83b76e664e9915b548	Henri has not shown symptoms, but\nsince he was present for Eve's\nexamination from the beginning, there is\na suspicion of incubation.	machine
+6061_015_13	c3b12116e6eec8ac1d90af83b76e664e9915b548	Henri has not shown symptoms, but\nsince he was present for Evelysse's\nexamination from the beginning, there is\na suspicion of incubation.	machine
 6061_015_14	7f47235d5a9c10f8511a485b4e8008db4c138a47	Kevin is looking after everyone\nfor now, but...	machine
 6061_015_15	38711886195ab4ef74187be47ac0a49973b3f92c	In that case, it would mean it's\npurely a coincidence that we\nhaven't developed symptoms\nyet.	machine
 6061_015_16	fcfdb1f095b4d083e398110cf8de50a1f7cdb04b	Exactly. Especially for you, Captain; I\ncan't rule out the possibility that you're\nin the incubation period, just like Henri.	machine
 6061_015_17	ec60124fc2e69d5e164ddf6d8abcd6a0f1d114cb	What's the status of the serum\ndevelopment?	machine
-6061_015_18	01a504bb6e046734b1b8942390463777f49b4c5b	The prototype we've created\nso far has not been effective\nagainst Lady Eve...	agent
+6061_015_18	01a504bb6e046734b1b8942390463777f49b4c5b	The prototype we've created\nso far has not been effective\nagainst Lady Evelysse...	agent
 6061_015_19	44a7270190266fd4f88fe088875d22d602400933	...Furthermore, we'll need\nseparate serums tailored for\nDaftine, Daftes, Levarance, and\nEarthlings.	machine
-6061_015_20	c7e767b5f761beb825ffb4e32c918c2ff2e23ea8	As for Lady Eve and Givel, we\nhaven't even been able to\nidentify their genetic\nstructures.	agent
+6061_015_20	c7e767b5f761beb825ffb4e32c918c2ff2e23ea8	As for Lady Evelysse and Givel,\nwe haven't even been able to\nidentify their genetic\nstructures.	agent
 6061_015_21	172815a34d4da93c49b9d4ed7ed1ca9335a29837	Can't we detect a serum or\nantibodies from the bodies of\nRaza like Heath and Jeanne?	machine
 6061_015_22	8d580331c521eabdcec82696ee3575a7e8a26228	It seems their bodies don't\nactually possess antigens\nagainst the virus.	machine
 6061_015_23	21af74d458ab0d990a073a5647d08baba6a2bf32	Instead, it appears their bodies\nhave adapted to the virus's\npresence, rendering it\nharmless.	machine
@@ -89,32 +89,32 @@ message_id	ja_sha1	en	source
 6061_015_42	6edb76f8e44b78511222a1a38dbae987302ef40f	Damn it... it's happened!	machine
 6061_015_43	53187533e3096260ad2758d22250311135a9477a	Captain! Stay with us!	machine
 6061_015_44	5879ae2874f91f994de2926585f55a18cb997eee	Captain! Please, pull yourself\ntogether, Captain!!	machine
-6061_030_01	4fa0532f6da59ed065b3774aa57d9678e6bfa463	I can't believe this... To think the day\nwould come where the Captain and Eve\nboth catch the same illness and end up\nbedridden together... haha...	machine
+6061_030_01	4fa0532f6da59ed065b3774aa57d9678e6bfa463	I can't believe this... To think the day\nwould come where the Captain and\nEvelysse both catch the same illness\nand end up bedridden together... haha...	machine
 6061_030_03	52b01a282a7087665f07668316d59ff57f722784	Don't lose heart. For now, the\nmost important thing is to get\nsome rest. Please leave\neverything else to us.	machine
-6061_030_04	e7a816b48efdd845a94f6976c45ce1a5e3b9b916	Eve's condition seems to have\nstabilized for now, and she is\nsleeping soundly.	machine
+6061_030_04	e7a816b48efdd845a94f6976c45ce1a5e3b9b916	Evelysse's condition seems to\nhave stabilized for now, and\nshe is sleeping soundly.	machine
 6061_030_06	858cd1a33466b9069df79815e711d63d5a3b8f85	Mmm... sorry, but could you\nkeep an eye on Valka so she\ndoesn't start crying? She must\nbe exhausted.	machine
 6061_030_07	d9d3bf8c7793238bf7a9b35019532aad96bf740c	...It's okay. Valka is holding up.	machine
 6061_030_08	00069cdd97e0ba4af54cd5982ad16ad1aa79dc06	I see... she's grown strong...\nWait, is it presumptuous of me\nto say that?	machine
 6061_030_10	31f56e922b694ebb66b8040d294860523cca8926	Now, please get some sleep.\nWe'll be back later.	machine
 6061_030_11	b7131e1f7b5e160357c8f0d59957abddc61e8321	Hey, Captain, Coro.	machine
-6061_030_13	301f1771378300c3e4995d8dda28403f409efcc5	Ever since Eve disappeared, Tika and\nMastima have been fighting a lot,\nhaven't they? Mastima always\nsuspected Eve was plotting something...	machine
+6061_030_13	301f1771378300c3e4995d8dda28403f409efcc5	Ever since Evelysse disappeared, Tika\nand Mastima have been fighting a lot,\nhaven't they? Mastima always\nsuspected Evelysse was plotting\nsomething...	machine
 6061_030_14	9d12afc84db2ba34e8f9f0730d0619237085b07f	Now that you mention it, that's\ntrue.	machine
-6061_030_15	84db8cbb7641e283413d258b387a63b1c2cb6f63	Come to think of it, I feel like\nMastima has been suspicious\nof Eve ever since they were in\nDaftine...	machine
+6061_030_15	84db8cbb7641e283413d258b387a63b1c2cb6f63	Come to think of it, I feel like\nMastima has been suspicious\nof Evelysse ever since they\nwere in Daftine...	machine
 6061_030_16	f37018dd71600e400f9308b4d2ec4c5d4431f2ef	It's true that the conflict in\nDaftine over the Summoning\nGems was full of unnatural\noccurrences.	machine
-6061_030_17	55170801df7542cb2050f6bf76200bc103570e02	Eve possesses the same power\nas Givel.	machine
+6061_030_17	55170801df7542cb2050f6bf76200bc103570e02	Evelysse possesses the same\npower as Givel.	machine
 6061_030_18	32d270a7f97e13cf11d6d04dd790672fa35a7e7d	In that case, it isn't entirely\nunnatural to think there is\nsome kind of connection\nbetween the two...	machine
-6061_030_20	a0354deed69c9a39136da6fcac64b282d14bcc42	But... I simply couldn't believe\nthat Eve was such a\ncalculating, malicious person...	machine
-6061_030_21	d0e4c25994ff1e19c20134457df9768e3d0efca8	It couldn't be... Back then,\nEve...!	machine
+6061_030_20	a0354deed69c9a39136da6fcac64b282d14bcc42	But... I simply couldn't believe\nthat Evelysse was such a\ncalculating, malicious person...	machine
+6061_030_21	d0e4c25994ff1e19c20134457df9768e3d0efca8	It couldn't be... Back then,\nEvelysse...!	machine
 6061_030_22	7a071ebed6e6928b8c9fffa2800b689ec895d113	You're talking about when the captain\ncontracted Pyre Disease at the\nLevarance space station, aren't you,\nVerda?	machine
 6061_030_23	3c99ffac245099837ead095f7b26d8ab274d8898	...So, you remember that time\nas well, Coro?	machine
 6061_030_24	296cf983a2991f1bd8387d13e2a97d6a535a7663	How could I forget? A cure for\nPyre Disease hadn't even been\nestablished yet.	machine
 6061_030_25	ec256fa5da6fd636a6449f72784ace8a55eb4db1	And yet, the captain\nrecovered.	machine
-6061_030_26	6f307b78663013a93607cdbacef2b5a0fc932135	I could only conclude that Eve's\nsigil arts had made it happen.	machine
-6061_030_28	61a7db9390d58aba9b3980fa30119263ad102c9c	If Eve were a villain like Givel and only\nkept the captain alive because they\nwere useful... I don't think she would\nhave looked so desperate.	machine
+6061_030_26	6f307b78663013a93607cdbacef2b5a0fc932135	I could only conclude that\nEvelysse's sigil arts had made\nit happen.	machine
+6061_030_28	61a7db9390d58aba9b3980fa30119263ad102c9c	If Evelysse were a villain like Givel and\nonly kept the captain alive because\nthey were useful... I don't think she\nwould have looked so desperate.	machine
 6061_030_29	cbab74a18d963bb4744c2bb18eff63e8d0b90558	If she had been confident in\nher ability to save the captain...	machine
 6061_030_30	7df67d5fde63ddb194769dcd7dfad96f61fe2fe0	It would have been far more\neffective to calm the chaos\nand act composed if she\nwanted people to trust her...	machine
 6061_030_31	316bd664dd046e111dcabc4320128ffedeec8458	Everyone was so desperate\nback then.	machine
-6061_030_32	2c0d69f9bb3f1d672b98dc644812d5e1391be45f	True... Someone like Eve, who would go\nto such irrational lengths just to save\nher comrades... she couldn't possibly be\na villain.	machine
+6061_030_32	2c0d69f9bb3f1d672b98dc644812d5e1391be45f	True... Someone like Evelysse, who\nwould go to such irrational lengths just\nto save her comrades... she couldn't\npossibly be a villain.	machine
 6061_030_34	34612786d0ae8e315186fc74382a494fed4faf30	You're right... I believe so too.	machine
 6061_030_35	12147bf6c8b929e57d383a17a20f9a61a9724260	*Sigh*... I've talked too much.\nI'm going to sleep for a bit.	machine
 6061_030_37	bcf203942003d1ab17ab4fc172d3570a75bf55ef	All right. Please get some good\nrest.	machine
@@ -143,10 +143,10 @@ message_id	ja_sha1	en	source
 6062_100_22	b7d81e58f6993660279ad453140391353149246c	Speak of the devil. We have a\ntransmission from Coro. He\nwants everyone to return to\nthe ship.	machine
 6062_100_23	8644bf986bce9f78d304c175d0bc0d8f1a680801	"I wonder what happened? I\nhope it's not bad news..."	machine
 6062_100_24	f9608c385baf694354b3883e757cd787f7e55397	I don't know if this helps, but it\nseems they are about to leave\nthe Stardust Bazaar.	machine
-6062_100_25	bdc0a586e200ef800a11dce55c39569b6eef3975	Apparently, Eve has woken up.	machine
+6062_100_25	bdc0a586e200ef800a11dce55c39569b6eef3975	Apparently, Evelysse has\nwoken up.	machine
 6062_100_26	d0266993ffce130079272ddd5c92354a296e6d59	What!?	machine
 6062_100_27	523b7634a9a8e3e0d5f155626c312c8ceac1e3b8	Are you serious!?	machine
-6062_100_28	f5e56d8f0c1e898976f0117d231108be865b5cdf	"Yes. On Eve's orders, they are\ngoing to remove our\npetrification disease."	machine
+6062_100_28	f5e56d8f0c1e898976f0117d231108be865b5cdf	"Yes. On Evelysse's orders,\nthey are going to remove our\npetrification disease."	machine
 6062_100_29	675469ef18530564132b15866e50197961d81c5a	"They say the destination is\nPlanet Lazuli."	machine
 6062_110_01	884eae141130b7b25c355ce3c74422ba116abaf6	O shining stars... become the\nlight... that guides him...	machine
 6062_110_03	96dca1a3466b25fcebb96fa42e15bd606c1547c1	Nnh... ah...	machine
@@ -157,7 +157,7 @@ message_id	ja_sha1	en	source
 6062_110_09	dd158ecd4a1d0a3198f8449b9603b9f586a826e0	How is such a thing possible? I\nassume you can provide an\nexplanation.	machine
 6062_110_10	35ac2aafa082610d839b6bf69714511210747573	I know. I'll tell you everything...\nright, Givel?	machine
 6062_110_11	05f5b0499b70a9ec96b6ff5e64903ef6775a3371	...Do as you please.	machine
-6062_110_13	a056d67733da5b4408a0d49e989447a15d8a23bf	Miss Eve... could it be that your\nmemories...	machine
+6062_110_13	a056d67733da5b4408a0d49e989447a15d8a23bf	Evelysse... could it be that your\nmemories...	machine
 6062_110_14	ead64e70edc116f93715b4fae76b53f47342804d	...Yeah. To be honest, I lost\nmost of them back in Daftine.	machine
 6062_110_15	069c16ae8b27ebb8f63e1aff708a40ed21702582	So you admit it.	machine
 6062_110_16	72c4ac43738d7795edbad1b776069feda0bc5070	That's right. I knew Givel. Back\nthen, I let him escape.	machine
@@ -169,14 +169,14 @@ message_id	ja_sha1	en	source
 6062_110_23	355e6f94e5d452d44f878cc87b8c4fde2bf7593d	That might not be entirely\nwrong. More than anyone, I\nwanted Raza to return to\nwhere it belongs.	machine
 6062_110_24	16c9745b7fa0ff983223b0c98eea331b1a3aebdc	Because Raza... Earth... has\nvanished from the universe.	machine
 6062_115_01	ccf1ac5d56ffd573428de57781c4d577d461b477	Gone...? Are you saying that\nAnother Earth has warped\naway from the Solar System?	machine
-6062_115_02	78ff49a6c1cb233ba5f6854392561dbcd041ba25	How does Eve know about\nthis? Did she see it in the Urza\nSystem?	machine
+6062_115_02	78ff49a6c1cb233ba5f6854392561dbcd041ba25	How does Evelysse know about\nthis? Did she see it in the Urza\nSystem?	machine
 6062_115_03	7b57114f801bcf54610e61bbf125a5e0d590a661	No. I... I've known about it from\nthe very beginning.	machine
 6062_115_04	e3bdae667b1b649dfd8f6095b8037f1b8cb5d1dd	...From the beginning? What do\nyou mean by "the beginning"?\nWhat is this all about?	machine
 6062_115_05	41810968e4df56743ffcfae21340e36eeef6332f	The beginning. Ever since the\nEarth where Kevin's parents\nwere born became the planet\nRaza...	machine
 6062_115_06	45774df9476863a2b9a0342a377da1c4cd8fdfb4	B-but that was hundreds of\nyears ago!	machine
 6062_115_07	62320a991c140c04c309905caa4e2aa4c235d9d9	Being long-lived isn't necessarily\nstrange. Some of us, like me and\nMastima, can live many times longer\nthan a normal Human in our own flesh.	machine
 6062_115_08	cf90cd424f0492a32c3c65c88aa0bbf59ad8feb8	Henri, Kevin, and even Valka\nhave lived for a long time\nthanks to technology. But...	machine
-6062_115_09	6bb7ac4aa3634a00078438496240b8987b362c94	The fact that planet Raza was once\nEarth shouldn't be a part of this\nuniverse... To have known that from the\nstart... Lady Eve, who exactly are you?	agent
+6062_115_09	6bb7ac4aa3634a00078438496240b8987b362c94	The fact that planet Raza was once\nEarth shouldn't be a part of this\nuniverse... To have known that from the\nstart... Lady Evelysse, who exactly are\nyou?	agent
 6062_115_10	e3d4c904fd8509f13ac30ef5e2a643203f1b62a3	When you study Symbols for a\nlong time, you occasionally run\ninto that same question.	machine
 6062_115_11	7236f7fbb27b5cafc31f471be8c33e0bf5f699a8	No, not even Symbols, but simpler\nthings like physics and chemistry.\nThings that should have existed and\nformed naturally.	machine
 6062_115_12	80fe2731bbd85d46b31b786a38159702370eac9a	...I can feel the will of someone\nwho created them.	machine
@@ -200,11 +200,11 @@ message_id	ja_sha1	en	source
 6062_115_31	bd6fb00ca5d2d3d59891d2851ac894c35410b7cb	...It sounds as if you think you\nhave the right to decide the\nlife or death of an entire\nplanet.	machine
 6062_115_32	b38e2ce1b7443ee843bcd6a7324c5d823181e295	But based on what we've\nheard, that is exactly what\nthey are saying.	machine
 6062_115_33	02d33c6d3e6915c210ea3268a2487e4f860301a5	Talking as if they held a single\nplanet, or the entire universe,\nin the palm of their hand... truly\njust "god-complex show-offs."	machine
-6062_115_35	c3ee29494c9e1464db1ce4180391b1a26bfba5b4	That's right! I remember Eve\nbringing a planet back to life.	machine
-6062_115_36	c99cdbe31511651fae3fc0065d99ebc99cad4436	Planet Berbent. Didn't Eve do\nsomething to the entire dying\nplanet back then?	machine
+6062_115_35	c3ee29494c9e1464db1ce4180391b1a26bfba5b4	That's right! I remember\nEvelysse bringing a planet back\nto life.	machine
+6062_115_36	c99cdbe31511651fae3fc0065d99ebc99cad4436	Planet Berbent. Didn't Evelysse\ndo something to the entire\ndying planet back then?	machine
 6062_115_37	b3341dd61c3c791339ce89db3b6d49f4a6401f83	...That brings back memories. I\nremember that happening.	machine
 6062_115_38	e5b5025ff1906529382269adaf8ee1ec9db24544	Berbent... the planet that was\non the brink of destruction\nbecause of the Pulse Tower.	machine
-6062_115_39	8f2a7e0d85481c3b577f4c79c5dbce45f9d27d2a	That's right. Eve used a\nmysterious Symbol Art just\nonce on that planet.	machine
+6062_115_39	8f2a7e0d85481c3b577f4c79c5dbce45f9d27d2a	That's right. Evelysse used a\nmysterious Symbol Art just\nonce on that planet.	machine
 6062_115_40	838db558424cc2641405bc5604231d714175e48e	I don't know what kind of power was at\nwork, but a single person's Symbol Art\nstopped an earthquake that was\nshaking the entire surface of the\nplanet...	machine
 6062_115_41	9b39e8f3b0e516d9e2b4428d53191a4865a7e028	...It brings back memories. I\nremember that happening.	machine
 6062_115_42	d17225f02043e1237b9ddee2b6e360df8cf3eb7e	It's true that I hadn't recovered\nall of my memories back then.	machine
@@ -221,7 +221,7 @@ message_id	ja_sha1	en	source
 6062_115_53	bebbd9a2655873687fb0a9471a9301bd8cc7504a	Had he been captured by\nAsmodeus?	machine
 6062_115_54	21d363aba4be65f0fe0068ce8ae33a1bd0847104	...Yes.	machine
 6062_115_55	81ee83cc0b3ea69ca41be502a074b970d25331dd	...I'm totally lost here. Can you\njust clear things up for me?	machine
-6062_115_56	3afc6d290bb3d196de205287991d8a9698af1f35	What exactly is the relationship\nbetween Eve and Givel?	machine
+6062_115_56	3afc6d290bb3d196de205287991d8a9698af1f35	What exactly is the relationship\nbetween Evelysse and Givel?	machine
 6062_115_59	3cd3008c06de6c580c8d14439b47b9c633c62c40	Givel is... my younger brother.	machine
 6062_120_01	ac6bc7de7112c02d6a8dbe789837ee08bffa34ad	Oh.	machine
 6062_120_02	ac6bc7de7112c02d6a8dbe789837ee08bffa34ad	Oh.	machine
@@ -293,7 +293,7 @@ message_id	ja_sha1	en	source
 6062_130_02	443d1cf9d471477ebc4b187c0959b4a7968f6342	I don't know how human they\never were...	machine
 6062_130_03	278bdcdd9eb14992842463188fe95329f6c2b4d4	Because they hid their pathetic\nlittle ambitions, countless\npeople died who shouldn't\nhave.	machine
 6062_130_04	82bb9a376d10f03cad7a857f359b7a15bf10b62f	I can't bring myself to feel\nsorry for them.	machine
-6062_130_05	48052508c9cc60098a856ad240784cfea44ae0cc	Is it really over now? The war\nin the Azurite system, and\nEve's struggle...?	machine
+6062_130_05	48052508c9cc60098a856ad240784cfea44ae0cc	Is it really over now? The war\nin the Azurite system, and\nEvelysse's struggle...?	machine
 6062_130_06	740b7b4bb130871c566fcd4c8cd387764291ea32	No, there is still something\nimportant left to do.	machine
 6062_130_07	a1fc8d0db914326c1774025e25c4f6de8d57ef47	To ensure that nuisances like\nGrigori and Thornite never\ndisturb the peace of those\nliving in this universe again...	machine
 6062_130_08	23193bfc4321c5865948af68196a5e5155ce646e	We must make sure the people\nof Raza and Ober cannot\napproach this Urza System.	machine
@@ -321,45 +321,45 @@ message_id	ja_sha1	en	source
 6062_130_31	222bfd5d4125f5dcee3c59092aaf350359f7d64b	Sorry for summoning you\nwithout asking. Don't worry,\nyour Overman is still exactly\nwhere you parked it...	machine
 6062_130_32	8092c296866bcdd9decce4996f036798528824c8	It was just the perfect size for\nme to use on my own.	machine
 6062_130_33	a052d2bb4ab71b5d1e242b198e7915841975e915	On your own...	machine
-6062_130_34	447f68b93bfe18accb15c31a3bc9868edebc533a	Big sister Eve, you're not\nplanning on going off\nsomewhere by yourself again,\nare you...?	machine
+6062_130_34	447f68b93bfe18accb15c31a3bc9868edebc533a	Evelysse, you're not planning\non going off somewhere by\nyourself again, are you...?	machine
 6062_130_35	6877fc233438e47a09001e72bdf497ac5435aaec	...I'm sorry.	machine
 6062_130_36	8653c94cd404a70d9186a2f3f812d787d66d552f	...I've lost track of how many\ntimes I've apologized by now...	machine
 6062_130_37	05251a0b56f136a093c0437a5d76193c0ba111c0	But this is something that only\nI can do.	machine
 6062_130_38	75c50b2de33991f6ea4fdb30b0e4f0fd8ea85da0	No! You can't! I haven't even\nforgiven you for what you did\nthis time yet!	machine
 6062_130_39	7e4e00020d8b140ff8ed6cfec3f497acf7c12d15	And you still haven't properly\napologized to Lavarnia!	machine
-6062_130_40	dddb14e3287f9d43c540ebefd1be5445cfd74758	Hey! Eve! We're teammates,\naren't we?!	machine
+6062_130_40	dddb14e3287f9d43c540ebefd1be5445cfd74758	Hey! Evelysse! We're\nteammates, aren't we?!	machine
 6062_130_41	234f459a95f46577220b48aaa6fe6eb8e5b9d03e	If there's something you have\nto do, I'll help you! Let's go\ntogether!!	machine
 6062_130_42	5287b1f74ec084565df6238fd2c0455bc77c1833	...I'm sorry, Tika. But this time, I\npromise I'll come back.	machine
-6062_130_43	dc5804e3ab9d610c4141e0920d38c8267cd8a009	Eve!!	machine
+6062_130_43	dc5804e3ab9d610c4141e0920d38c8267cd8a009	Evelysse!!	machine
 6062_130_44	02c240ed61b71d3e465b0f5dbe2a20b67cb9ea7b	Givel! Behave yourself while I'm\ngone!	machine
 6062_130_45	c166081560acfcaa73b9827229914f6cb94dbf7e	I was wrong this time.	machine
 6062_130_46	4c1ad42b5862d2c9734e7becf9938eee533eb259	That's why my journey cannot\nend here!	machine
 6062_130_47	0a68c144d420f95f368a068e19939660db68e2fc	...Do as you please.	machine
-6062_130_48	b3970dd4b6d7dad15f1339c17e55285b3bc22c13	Eve... must you really go?	machine
-6062_130_49	f32716dda9581e55ec31853fd4f8b0d1722ab1a9	Eve...!	machine
+6062_130_48	b3970dd4b6d7dad15f1339c17e55285b3bc22c13	Evelysse... must you really go?	machine
+6062_130_49	f32716dda9581e55ec31853fd4f8b0d1722ab1a9	Evelysse...!	machine
 6062_130_51	72a04a53a22bfd0025ead90c5a1f0a130608dd1d	Captain. You know, I've always\nwondered why I was on that\nwasteland planet where I first\nmet you.	machine
 6062_130_52	aad217f21d60f4bb4692680ed503fdb79b3d2e36	Especially since there are so\nmany planets in the universe\nthat have a "Gate."	machine
 6062_130_54	64c7047ee417afd1df947e92e8192cb4fe46ac2e	Captain. Do you remember the\nplanet Maere?	machine
 6062_130_56	23912de8ca8081f8d919879cc7e234855c76c11a	That planet was so similar to\nEarth. To the beautiful, blue,\nlife-filled world that is your\nhome.	machine
 6062_130_57	013e7f080a82bc1394ccbe3c616f0bb2f2ac7183	Perhaps I was drawn to that\nplanet because it was so like\nEarth, and that is how I met\nyou...	machine
 6062_130_58	c340ff6ec471d048918d12e547680ef33653f27f	Maybe I'm overthinking it.	machine
-6062_130_60	efee97d652d0fc34602ba150d1115044c7908e6b	Captain! Please stop Eve!	machine
+6062_130_60	efee97d652d0fc34602ba150d1115044c7908e6b	Captain! Please stop Evelysse!	machine
 6062_130_61	51939f9705d3de759c9cdee87e2f66c6c46dfc07	Captain. I'm going to pass\nthrough the "Gate" on the\nplanet I came from to fulfill an\nimportant promise...	machine
 6062_130_62	3fc809e61659231605c7f7eb130376522314e4f8	But this time, I won't just leave\nin silence. I'll be back soon.	machine
 6062_130_63	19651554d99aa9fa0443b5d21dae4da31f9652d4	Please, just wait for me.	machine
-6062_140_01	fa07128fe4a7ad19f8d0220f7eb9e324ef50b928	Why! Why did she just leave\nagain without saying anything!?\nBig sister Eve... why...	machine
+6062_140_01	fa07128fe4a7ad19f8d0220f7eb9e324ef50b928	Why! Why did she just leave\nagain without saying anything!?\nEvelysse... why...	machine
 6062_140_02	e0c0dd8bef8b1c1f509139a0141c42c52290176f	...She has always been that way.\nKeeping the important things to herself,\ncarrying the burden alone, and acting\non her own whims.	machine
 6062_140_03	d59a56d3f81eb86ecf75695e6742c3198e8b148b	Even after arriving in this\nuniverse, nothing has changed.\nIt is utterly infuriating.	machine
 6062_140_04	94638d7dc94b7798767e50a9cfad655d7dec590d	She said she's heading to Planet\nMaere... at the Overman's current\nspeed, that distance will take over half\na year.	machine
-6062_140_05	fa551e323cd549be25a66b9c49f81e577a4a6343	I wonder what Eve's objective\nactually is?	machine
+6062_140_05	fa551e323cd549be25a66b9c49f81e577a4a6343	I wonder what Evelysse's\nobjective actually is?	machine
 6062_140_06	44d825abcd68d654f5c1bb60c5243aec2e2846e8	As Givel says, I doubt she has\nsuch a deeply calculated plan...	machine
-6062_140_07	d5ef6b17294b660aac945e1f7ea43b37b1122883	But... she was serious and\ndesperate... I suspect it was\nsomething Eve truly needed to\ndo.	machine
+6062_140_07	d5ef6b17294b660aac945e1f7ea43b37b1122883	But... she was serious and\ndesperate... I suspect it was\nsomething Evelysse truly\nneeded to do.	machine
 6062_140_08	bce8e44922c2f9509998cf49b0198248f4334f78	Tell me, Givel.	machine
 6062_140_09	ed306d712f71e6fd6771c4b96dd5a2e987941510	What?	machine
-6062_140_10	77608913d937be6765d0dd77c990a24f48a122a5	What is this "Gate" that Eve\nmentioned?	machine
+6062_140_10	77608913d937be6765d0dd77c990a24f48a122a5	What is this "Gate" that\nEvelysse mentioned?	machine
 6062_140_11	166a90972c391c728673c8a34f651152907c55f1	From the way she spoke, I can't help\nbut feel it's something different from\nthe "Gate of Urza" you mentioned. You\nknow something, don't you?	machine
 6062_140_12	f39813d20ab585caf754c6bc0d2dc3ccf17e1e12	...She told you herself. A\nwasteland planet located near\nPlanet Maere.	machine
-6062_140_13	29c0e1a80298c85be2bc807e1efe207b1ccc3255	And that is where the "Gate"\nEve is searching for is located,\neh?	machine
+6062_140_13	29c0e1a80298c85be2bc807e1efe207b1ccc3255	And that is where the "Gate"\nEvelysse is searching for is\nlocated, eh?	machine
 6062_140_14	3b4b0a40054ae617e76199dcb1399ffd35a88990	How should I know? I've never\neven been to that planet...	machine
 6062_140_15	d4c2fa81439eb7240889d4b2c6475a800c71e730	...Hm.	machine
 6062_140_16	2d3f9b4d140ad462a3a5eb6a413a580da3931c6c	What now?! What's happening\nthis time?!	machine
@@ -370,15 +370,15 @@ message_id	ja_sha1	en	source
 6062_140_21	f7a2b9abe8e95816f672aa7efafd51389cd65c3a	What?	machine
 6062_140_23	8763a016daa2440d6acca1998c667947e8468c82	Tika! Ricardo! Sorry to keep\nyou waiting!	machine
 6062_140_24	a68b3810ef576b6b5f1daf670e714e2bb81908aa	I've come back to keep my\npromise!!	machine
-6062_140_25	1e2120ab68fdd7db639901d50c12f0ca3dce8052	Big sister Eve!?	machine
-6062_140_26	aa8543f9c8d86221813f59b86a1c069322e9aad5	Huh? Wait, didn't Eve just fly\noff somewhere in the\nOverman?	machine
+6062_140_25	1e2120ab68fdd7db639901d50c12f0ca3dce8052	Evelysse!?	machine
+6062_140_26	aa8543f9c8d86221813f59b86a1c069322e9aad5	Huh? Wait, didn't Evelysse just\nfly off somewhere in the\nOverman?	machine
 6062_140_27	2d6077595ada6b30eb5e119eebaf47ba5f6645fb	And what the hell is this...?\nThat thing on her wrist is a\nDaftine Space Force colony\nship boarding tag!	machine
 6062_140_28	53a38a6b0e40620cf4d1c47eb10469d222cc0e2f	Tika! Ricardo! And Rekoro!\nSorry for the sudden request,\nbut can you all come over here\nfor a second?!	machine
 6062_140_29	74dbfb319e6219bd2704e8a01f8fdd15477f61c2	This Time Gate was opened\nfrom so far away that it's not\nvery stable!	machine
 6062_140_30	6c0e68d75672fc78471062687949d504eb63babc	Givel, you're there too, right! I'll\nbe back in a bit, so please\nhandle the cleanup!	machine
 6062_140_31	7dedb065a209b130ae191c2685fe178a6c580748	Do as thou wilt...	machine
 6062_140_32	5afb01fd4c05afac79bded5af449beb190d8d87a	Come on, Tika!	machine
-6062_140_33	cdce8496f1528c14f6b32f06d00065cab696be9b	Big sister Eve!	machine
+6062_140_33	cdce8496f1528c14f6b32f06d00065cab696be9b	Evelysse!	machine
 6062_140_34	127e8a8ee4606ebacee91a7bd96024c61bd76a48	...I can finally keep my promise.\nI've come from 200 years in\nthe future to get you!	machine
 6064_200_01	2f8aab50ae52378d7945f85f5576e81b430b545f	Oh, looks like they're back,\nWelch. ...Welch, you okay?	machine
 6064_200_02	1bbb8e8c8a7feb8a2f8bf2b76c978f5d5ba07d25	I know! I can see! Just shut up\nfor a second!	machine
@@ -516,19 +516,19 @@ message_id	ja_sha1	en	source
 6064_220_19	728628e6847b11a2dbe8c4230243c6c2c8a5789d	That is simply how life is. The\nHoly War of Daftine ended far\ntoo beautifully.	machine
 6064_220_20	16e071cfcb680b548add0fdcbfe5bf3d027a10c1	Could you actually say that in\nfront of Tika? I am certain she\nwould be furious.	machine
 6064_220_21	1e4b4cd27a01df2eb399db4fabf7dc52a0bf28eb	...Do you truly believe that Tika\nand Ricardo are coming back?	machine
-6064_220_22	ed79374dd6da27a988cb047e2ddba8f1891f6b1f	Eve said that they would\nreturn.	machine
+6064_220_22	ed79374dd6da27a988cb047e2ddba8f1891f6b1f	Evelysse said that they would\nreturn.	machine
 6064_220_23	d60da796cf18e89f8c506e0fdfea35832c8523f1	Evelysse said that. I am talking\nabout Tika and Ricardo.	machine
-6064_220_24	1830588addbedac96566d5bb905978e2f48943d8	Mastima. You still do not trust\nEve, do you?	machine
+6064_220_24	1830588addbedac96566d5bb905978e2f48943d8	Mastima. You still do not trust\nEvelysse, do you?	machine
 6064_220_25	47fcfe0040e2ce1d85936734c042db0bb41643fd	Naturally. Let me be clear: she\nis the same breed as the\nGiverese.	machine
 6064_220_26	6a42386f148f20995a83ce9b9e090a19e77db750	She deviates far too much\nfrom the laws of this universe.\nHer power, her very\nexistence―all of it.	machine
 6064_220_27	161c846cdc09613ce26a05d3de2c15923df242f6	What? You're making an issue\nof that now?	machine
 6064_220_28	099228cf66b87b133b1af027347235d9f6865140	What?	machine
 6064_220_29	00fef3858dd6cbb78e281fee0104d7da12351401	From our perspective, someone out\nthere who has supposedly lived for 3.7\nbillion years is also a being far removed\nfrom those laws.	machine
 6064_220_30	423097210fc2eed20e4fece407d4ec9bba5d267b	...Hmph.	machine
-6064_220_31	dba84ecc3b60d5e91a23658f1419a9f3aefad46e	It's far too late to be surprised\nthat Eve possesses\nsupernatural powers.	machine
-6064_220_32	56384f2179e2bdcdf8850f5ab3ee655e77b64fd4	If Eve is a being from another\ndimension, then that's simply\nhow it is.	machine
+6064_220_31	dba84ecc3b60d5e91a23658f1419a9f3aefad46e	It's far too late to be surprised\nthat Evelysse possesses\nsupernatural powers.	machine
+6064_220_32	56384f2179e2bdcdf8850f5ab3ee655e77b64fd4	If Evelysse is a being from\nanother dimension, then that's\nsimply how it is.	machine
 6064_220_33	346be873fdc57fae180b6b24f0db73b0d37949ad	Listen, Mastima.	machine
-6064_220_34	e8dcfbb27cd29fcac2ac8d39ffa4739f2f65c2fb	I know that Eve possesses a simple,\nhonest heart―one that laughs and gets\nangry over the little things in life, and\ncherishes her traveling companions.	machine
+6064_220_34	e8dcfbb27cd29fcac2ac8d39ffa4739f2f65c2fb	I know that Evelysse possesses a\nsimple, honest heart―one that laughs\nand gets angry over the little things in\nlife, and cherishes her traveling\ncompanions.	machine
 6064_220_35	2605bfc4daaeff64cd86c00ac038492d0cf51804	That's unscientific. There is no\nevidence for it.	machine
 6064_220_36	4f0a62b54d659fd56e11759883ae3409fd194749	Science is the study of\nreproducibility.	machine
 6064_220_37	227447c1c89bd8aeecbfdb01730280a37a0a34cc	Tell me, Mastima, in 3.7 billion years,\nhow much scientific, clear, and\naccurate reproducibility has been\nproven regarding the human heart?	machine
@@ -543,7 +543,7 @@ message_id	ja_sha1	en	source
 6064_220_47	ceb35d4a0f83709ea3b8f8c64776b55010448b17	Are you all finished with your\nvisit home?	machine
 6064_220_48	51adf1602d3c710e668102e2ae85cbc23f55a416	Yeah, I've kept them waiting.	machine
 6064_220_49	52619a78e350c164b434a1e3da269314a679abce	It seems there are still a few\nthings left to take care of.	machine
-6064_220_50	0b68c162ee957133aaae7256eff1686e0dcf0520	I see. I see... Eve.	machine
+6064_220_50	0b68c162ee957133aaae7256eff1686e0dcf0520	I see. I see... Evelysse.	machine
 6064_220_51	e2f59c8da351a7fc6c2bb2b3a955272cf0ef7042	...Yeah. I'm back, Verda.	machine
 6064_220_52	cac6aa544832e1f529a92be3d3fd2672f1af95c7	...Welcome home.	machine
 6064_220_53	877c78101424ded30ce8c11a603655a4725f8dbd	...Yes.	machine
@@ -596,14 +596,14 @@ message_id	ja_sha1	en	source
 6064_235_16	d0ef18a656043f900198a89f2a37118be27e9a8f	Hmm, I see. Well, I won't ask\nany more prying questions. I'm\nhere for pretty much the same\nreason anyway!	machine
 6064_235_17	f633963e65bd3e37c506a3c8dd83c38f64a95049	Come to think of it, Tika and Ricardo\nwent back once, 200 years later, right?\nDidn't you ever think to check in on\nwhat happened to the rest of us?	machine
 6064_235_18	7c1d659ae55777f10ddff432b6c0927f6cd58110	Hmm, actually, not really. We\nhad other things on our minds,\nand...	machine
-6064_235_19	0ac0258065df68588e49953dabf4fa33f4b01267	I still don't fully understand\nwhy Eve ended up the way she\ndid.	machine
+6064_235_19	0ac0258065df68588e49953dabf4fa33f4b01267	I still don't fully understand\nwhy Evelysse ended up the\nway she did.	machine
 6064_235_20	47aa981d14256f20d8529a81307c1df91f0ba39f	Were you able to reunite with\nyour grandparents safely?	machine
 6064_235_21	6542107c4d55f82c58cc16cfef342ebec1c8f6b2	Yeah. After escaping Kugo, my\nparents...	machine
 6064_235_22	5e1a1aaa3015d663dc31e905dcfcb14e0a29f06c	...made it back to Daftine\nsafely and reconciled with my\ngrandparents.	machine
 6064_235_23	b404887053a404794b80c8a802c6df424ea2cf7d	I mean, Daftine was in such a\nbad state that they wouldn't\nhave survived if they hadn't\nmade up.	machine
 6064_235_24	0fb5c8dc48bf170b00212be1cdd740202e72da49	They were trying to leave their\nhome planet to migrate in the\nfirst place, after all.	machine
 6064_235_25	6b3046cd5060dd13f630439362a604c083d4957e	It was the kind of situation\nwhere the warship Ricardo was\non could be shot down.	machine
-6064_235_26	7d46d329515fa322fc6994954232a75f6ec19969	Yeah, the Daftine Space Force\nwas practically wiped out, so\nwe couldn't really get around\nmuch in Eve's Overman...	machine
+6064_235_26	7d46d329515fa322fc6994954232a75f6ec19969	Yeah, the Daftine Space Force\nwas practically wiped out, so\nwe couldn't really get around\nmuch in Evelysse's Overman...	machine
 6064_235_27	7a83872e0a3d994af955e4b80e8347eeae090976	Could you not have simply\nstayed there?	machine
 6064_235_28	163897041385422a9b93d12c4aa2612b29a469df	No way. My brother agreed\nwith me right away.	machine
 6064_235_29	2c13fb5706a51a52de5c58f81a0f0b58d690ccfb	I see.	machine
@@ -612,7 +612,7 @@ message_id	ja_sha1	en	source
 6064_235_32	6440d6c78707edcc9d4be24e33a25dc227e0dee5	...And there were people who\nagreed with me.	machine
 6064_235_33	36498744cb3618b048d6035f1bbd23e8aded322e	People who agreed?	machine
 6064_235_34	f74be8cb2e198dc627346f56f171191dec80d8e2	Yeah. I was told not to say too\nmuch, but... I think this much is\nokay, right?	machine
-6064_235_35	a46eeec09699200823b2f94d6565a96db739262f	The person who contacted Eve\nand reunited the family\nmembers who had fled from\nKugo and us.	machine
+6064_235_35	a46eeec09699200823b2f94d6565a96db739262f	The person who contacted\nEvelysse and reunited the\nfamily members who had fled\nfrom Kugo and us.	machine
 6064_235_36	dd0c980742f375fa85edd7c38310018d70050c89	Their numbers had grown, but\nthey were as beautiful as ever.	machine
 6064_235_37	b344f6a2b294f1183a1de7f12e9c4202dd004955	Hmph.	machine
 6064_235_38	7dba1148baf94c4b79aedd3e6ba686f4734501cd	What's wrong? Do you have a\ncold?	machine
@@ -628,12 +628,12 @@ message_id	ja_sha1	en	source
 6064_235_49	94b74d3be692327c53b830e54e84e087baa5cf3e	Prepare yourself. I will make\nyou atone for every single life\nyou insulted. I swear it.	machine
 6064_235_50	f596494f9f7fa6c6f3b9e2b6b945d4abe6f2a27d	I'll make you use your life for\nthe sake of this universe until\nyou wish death were a mercy.	machine
 6064_235_51	cbfb63db7cbc02d90befe7bc1de11ae359dafc28	...I look forward to it, Witch of\nthe Beasts.	machine
-6064_235_52	4caecb5e1545bab50e403b5bba775219761076b9	...Rekoro, and... Eve.	machine
+6064_235_52	4caecb5e1545bab50e403b5bba775219761076b9	...Rekoro, and... Evelysse.	machine
 6064_235_53	877c78101424ded30ce8c11a603655a4725f8dbd	...Yes.	machine
 6064_235_54	984ec15eb6814cec7557ef8b16da63161806d9d9	I'm counting on you.	machine
 6064_235_55	427e0122769ce36ecd6c431c3c7649334c89d0ea	Yes, leave it to me.	machine
 6064_250_01	be729ca020315d2cf24d41945a3e437ea9da9508	I wonder... if I've managed to\nregain some of their trust.	machine
-6064_250_02	163beba235e19bc581d02b291257ab24107a822a	No one ever truly believed you were\nour enemy, Eve. They were simply\nbewildered because they didn't\nunderstand your motives.	machine
+6064_250_02	163beba235e19bc581d02b291257ab24107a822a	No one ever truly believed you were\nour enemy, Evelysse. They were simply\nbewildered because they didn't\nunderstand your motives.	machine
 6064_250_03	3ab6c3cb5f1ae4088a7ed104c1d68e4d36f59dea	...I see.	machine
 6064_250_04	e28cfb6f50b01196561fcb84980d17b1db08450c	As proof, no one would ever\ntry to force you to talk now\nthat you've returned.	machine
 6064_250_05	8e779d53743081e0d0d26f05855f3dfa7d9ce224	Setting aside the details,\nhaving a comrade by our side\nis what matters most.	machine
@@ -730,7 +730,7 @@ message_id	ja_sha1	en	source
 6064_265_01	85bf5078a78e31b53998e8a2629a7b0aa106a677	Well, shall we get going? Can\nyou hear me in the infirmary?\nMastima, I'm counting on you to\nwatch Givel.	machine
 6064_265_02	8a48b47500d609a2b56407485e8a28085748c603	Stop treating me like a threat!\nI'll be on my best behavior\neven if you don't tell me\nto―GAAAAAAAAH!?	machine
 6064_265_03	0854cdad7a3c425411ee277ee3b3f9254f67aa46	Don't open your mouth unless\nyou're told to.	machine
-6064_265_04	a21397f6dd5e546d05156adac56c50aa968f0d16	Oh, by the way. Eve.	machine
+6064_265_04	a21397f6dd5e546d05156adac56c50aa968f0d16	Oh, by the way. Evelysse.	machine
 6064_265_05	4f1a4cf895cc7954487f01929bdf65be1ea9b15f	"What is it?"	machine
 6064_265_06	b821631a0242c7227e9137c9dda393fe3c66e1fe	Make sure you negotiate so that we\ncan land on the planet's surface. After\nall, we can't conduct large-scale\nexperiments while cruising through\nspace.	machine
 6064_265_07	c2c2ab1336e5e3602073c3887213f96fbb6dc2e1	"Got it. Please be gentle with\nthem."	machine

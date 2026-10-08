@@ -1,6 +1,6 @@
 message_id	ja_sha1	en	source	engine	date	editor	note
 9996_010_01	5e0dd07213dd28824b567050a22dfc84292c7b25	Ah, Captain! Thanks for coming.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-9996_010_02	034b27ce2509b30a2f02d27c9f0b3f7eb51e8cd5	Miss Eve, what on earth are\nyou planning to do in the\nsummoning room? Please tell\nus already!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+9996_010_02	034b27ce2509b30a2f02d27c9f0b3f7eb51e8cd5	Evelysse, what on earth are\nyou planning to do in the\nsummoning room? Please tell\nus already!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		name (en-evelysse 2026-10-08): Miss Eve -> Evelysse (Global drops さん), the user's decision
 9996_010_03	210e9bd593b29c28ea9ade592e02ec8edaf3e68c	Today, I want to try out an\nadvanced application of my\nsummoning magic.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 9996_010_04	53d8ccd175a67ce66775d1d285aa1994fdf9498d	Advanced... like summoning\nsome super strong warrior? I'm\ngoing to request the strongest\nhero ever!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 9996_010_05	dfe72a30618beeea37e18b0e212d5154c451f22b	Hmm, it's a bit hard to explain\nproperly...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
@@ -11,7 +11,7 @@ message_id	ja_sha1	en	source	engine	date	editor	note
 9996_010_10	7cbc1f25c8c174cfcd63fb716d12f14379136f3d	Is it safe?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 9996_010_11	7a2be9be108a679d1c9407fa460ce73daeec5f0a	But it must be expensive,\nright?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 9996_010_12	fe37fbfc861810aea02a7bca7b443a4ba15fa9d1	Right?! Give me more praise\nevery once in a while!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-9996_010_14	297a795ec3733bfacd88aeb132cddc3309cca215	That's not fair, Eve! I worked\nso hard cleaning and preparing\nthis room too...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+9996_010_14	297a795ec3733bfacd88aeb132cddc3309cca215	That's not fair, Evelysse! I worked\nso hard cleaning and preparing\nthis room too...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		name (en-evelysse 2026-10-08): Eve -> Evelysse, the user's decision
 9996_010_15	2405711b9e7a8575e341c8048aacd492353bf2ed	I know, I know. Coro, you\nworked really hard to help\ndeliver this surprise to the\nCaptain.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 9996_010_16	fc3952cbe3a57f10a0cdbcedcd130bb0df7abc90	Since we're just entering a\nmemory, it'll probably feel like\nwe're having a very vivid\ndream.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 9996_010_17	7c667b32174466e8a170edbe856a4762b14ed5d2	We aren't actually warping to a\ndistant planet or time, so we\ncan return immediately once\nthe spell is broken.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		

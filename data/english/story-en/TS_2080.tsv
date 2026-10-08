@@ -22,7 +22,7 @@ message_id	ja_sha1	en	source
 2081_010_22	4a39f6ac5eed566d4711ec3dd818e9c1fbc4e423	As a soldier, it's absolutely\nunacceptable to bring a civilian\nchild to the front lines of a\nwar.	machine
 2081_010_24	b5ed0b1a5f96c8acef311be36448639d8517edcd	No, my apologies, Captain. I\nshouldn't have brought up\nsomething that's already been\ndecided...	machine
 2081_010_25	6b2a46ed6f7e91bc9c47de31da9e720efc846010	Well, I can understand how\nVerda feels.	machine
-2081_010_26	9e6266013352f858b6b2efbd680c91928604e8b3	Besides, by Ricardo's logic,\nEve, Verda, and Welch should\nalso be left waiting on the ship.	machine
+2081_010_26	9e6266013352f858b6b2efbd680c91928604e8b3	Besides, by Ricardo's logic,\nEvelysse, Verda, and Welch\nshould also be left waiting on\nthe ship.	machine
 2081_010_28	c77c7067ea0f89721e0728900fb1390ba9a0215f	Leave Tika behind on the\nship?! What do you mean by\nthat!	machine
 2081_010_29	52912700c0e3419eb4606a1b4f9f5144f7035fd0	Sister Verda...	machine
 2081_010_30	3aedfc7eb7babd9520e6a58afe7af3fecb7b9b6c	Whoa, is it really that\nsurprising?	machine
@@ -121,7 +121,7 @@ message_id	ja_sha1	en	source
 2081_030_29	f0e40c52ca0b2b73fe70e06b936b3dd60eddbc53	...To be honest, I am grateful to\nyou two.	machine
 2081_030_30	612f6299e08c91e95b557569f3a35ed4c9d2d99e	Henri & Valka: Hm?	machine
 2081_030_31	612f6299e08c91e95b557569f3a35ed4c9d2d99e	Hmm?	machine
-2081_030_32	4663670307a72e448bfe0b3f54d34750006fe544	Eve and the Captain are\nwonderful in their own way,\nbut...	machine
+2081_030_32	4663670307a72e448bfe0b3f54d34750006fe544	Evelysse and the Captain are\nwonderful in their own way,\nbut...	machine
 2081_030_33	819d28a4f98cb49792f16ea342e4e9b57b7999d1	They are far too\nstraightforward to be\nentrusted with this kind of\npolitical maneuvering.	machine
 2081_030_34	d4ac5901c08caf82948e499d707cf9ba5beed251	...Actually, I'm not very good at\nthat sort of thing...	machine
 2081_030_35	fdc088a91a79a627c4ee0b87e08bfd4b5af03971	I doubt that.	machine
@@ -148,15 +148,15 @@ message_id	ja_sha1	en	source
 2082_050_17	aafe53cd2c2d648f0c830ae9a2ad7a0a2c3707bd	<font color=blue>Valka</font>: Exactly what it sounds\nlike―a spell that transports\nwhatever it touches to a\ndesignated location.	machine
 2082_050_18	19905b23d42273793b7062e2c1cdb91c7155d41b	I believe it corresponds to the\nsymbol engraved on the floor\nat the entrance of this floor.	machine
 2082_050_19	e59e18ab20430de16b2752368ea87918b78db867	<font color=blue>Euwin</font>: So you're saying if we\ntouch that thing, we'll be sent\nright back to the entrance...	machine
-2082_050_20	13c7447176264d14ad85acba82d2f58f148a6a9b	<font color=blue>Eve</font>: Hey, Coro. Can you\nanalyze the movement of that\nweird object just from the\nvideo feed?	machine
+2082_050_20	13c7447176264d14ad85acba82d2f58f148a6a9b	<font color=blue>Evelysse</font>: Hey, Coro. Can you\nanalyze the movement of that\nweird object just from the\nvideo feed?	machine
 2082_050_21	9b028957ab030adf61ec28847e4aa9a253d1de60	The corridor is narrow, and it would be\nterrible if we accidentally touched it\nand got separated. I wonder if you can\nat least analyze its movement\npatterns...	machine
 2082_050_22	65463c21afe4054b679d17147b9c15efc55e1a3a	Wait, Captain?	machine
 2082_050_24	798b51f133ee696a1889152aaf7baf7938363c13	<font color=blue>Coro</font>: "Yes, you're right. This is\nprobably...	machine
 2082_050_25	4b0b3c9d759bae4435d0acd4ae01c24e24e871ab	Found it! I'll run the\ncalculations now!"	machine
-2082_050_26	1c2373c601a64ca8c1f6e48e49aa18a95b23c314	<font color=blue>Eve</font> W-what's wrong?	machine
+2082_050_26	1c2373c601a64ca8c1f6e48e49aa18a95b23c314	<font color=blue>Evelysse</font> W-what's wrong?	machine
 2082_050_27	22748157c64bf345aa5196c7f175c927d5dd4ef0	<font color=blue>Coro</font> 『Calculations complete. I'm\ntransferring the polyhedron's movement\npatterns to the Captain's Quad\nScanner.	machine
 2082_050_28	3de4245dbc0338a3f8bf43f774ceafc3ef984105	It's a lot of data since it's a\nradio transmission... but I think\nthis movement pattern should\nwork.』	machine
-2082_050_29	d10999605458e55cd4ead3c94d579e7508c4df62	<font color=blue>Eve</font> What do you mean...	machine
+2082_050_29	d10999605458e55cd4ead3c94d579e7508c4df62	<font color=blue>Evelysse</font> What do you mean...	machine
 2082_050_30	b55a2ad4031d433f1264c3f5881d49ae1c1d2276	Wait, this is incredibly detailed.\nYou can tell all this just by\nlooking? Did you actually\ncalculate this!?	machine
 2082_050_31	1b60fef9826faa80419ca77d4c6c941ddb3a73e8	<font color=blue>Coro</font> 『I did! There's no mistake!	machine
 2082_050_32	32073bbd89fd9728872c6fc931c052d8e8dba919	Actually, something has been\nbothering me for a while now...	machine
@@ -164,9 +164,9 @@ message_id	ja_sha1	en	source
 2082_050_34	25cafb95574f37e3924aab493cbb056c0500dfc5	<font color=blue>Ricardo</font> ....	machine
 2082_050_35	141f47a778d6b8d7efb7f615ab25074cd58cd75b	<font color=blue>Verda</font> What is the meaning of\nthis?	machine
 2082_050_36	4371efe310a05fe4a288ddc9b76e1c7c7e7bb8bd	<font color=blue>Coro</font> 『The polyhedron in\nquestion is also a dead ringer\nfor the devices installed in\nthose structures.』	machine
-2082_050_37	25afbe8eadf5bdce3b6e55a44cc78ca6c47b09c0	<font color=blue>Eve</font> Really? What kind of\nstructures are they?	machine
-2082_050_38	18175f7d5b9cdc313c85d9ba1b65e3167b74911c	<font color=blue>Coro</font> "I don't think you'd\nrecognize the name even if I\ntold you, Eve."	machine
-2082_050_39	af20064d42208294748808c9fa36ecc803140435	<font color=blue>Eve</font> Hey!! You can't just leave\nit at that...!	machine
+2082_050_37	25afbe8eadf5bdce3b6e55a44cc78ca6c47b09c0	<font color=blue>Evelysse</font> Really? What kind of\nstructures are they?	machine
+2082_050_38	18175f7d5b9cdc313c85d9ba1b65e3167b74911c	<font color=blue>Coro</font> "I don't think you'd\nrecognize the name even if I\ntold you, Evelysse."	machine
+2082_050_39	af20064d42208294748808c9fa36ecc803140435	<font color=blue>Evelysse</font> Hey!! You can't just\nleave it at that...!	machine
 2082_050_40	d632725b33e118795aa0291375c49aae16792838	<font color=blue>Ricardo</font> Your analysis is\nprobably correct.	machine
 2082_050_41	5e7ab7f845e5b53ae5d384f2c199ecc5b4a05b44	<font color=blue>Coro</font> "Huh?"	machine
 2082_050_42	907f7e069fc364cfd088596115a5a6abefc9ddf6	<font color=blue>Ricardo</font> I've heard that\nbuildings similar to this holy\nland, Asyl, exist all over the\nuniverse.	machine
@@ -295,9 +295,9 @@ message_id	ja_sha1	en	source
 2082_100_03	ca857c3b36a2c44618ffac463da9d2506a9a1331	What... what is this?!	machine
 2082_100_04	20f2d94af3536315518b8f32175ecddaf0fb3baa	The Exorciser! I had no need to\nrely on substitutes like the\nBeast Witch or the Guardian of\nthe Holy Land!	machine
 2082_100_05	ebc599406de5f44f215ea83d2a98d27734ba15e1	At last, I have found the true\nExorciser! A new world begins\nnow!	machine
-2082_100_06	5c3f9d01ed8c1d30eeb8e89d6dc6fb7dea74e733	There is an abnormal crest\nreaction oscillating between\nEve's disc and Givel's disc!	machine
+2082_100_06	5c3f9d01ed8c1d30eeb8e89d6dc6fb7dea74e733	There is an abnormal crest\nreaction oscillating between\nEvelysse's disc and Givel's disc!	machine
 2082_100_07	64895878724ea61d03ad4d4a47c915f71dabba19	I suspect their spells are\nresonating!	machine
-2082_100_08	cc62b8f22a4f12b42516d549ce34200deda3cd6f	Eve! You have to stop the\nsummoning...!	machine
+2082_100_08	cc62b8f22a4f12b42516d549ce34200deda3cd6f	Evelysse! You have to stop the\nsummoning...!	machine
 2082_100_09	b4c5162cd28f6761834f79398748ef223a72e45e	Something's wrong, I can't stop\nit!! The energy from the black\nsphere is... it's taking over my\ncrest!	machine
 2082_100_10	0a2b5a4d0b45dc151b34496341393d3c8eeae653	It's useless! Once the Exorciser\nis set in motion, it cannot be\nstopped!	machine
 2082_100_11	661f59d8a493ebbd90af95fd82ce8b3d37bdb846	From here, I shall...!	machine
@@ -381,10 +381,10 @@ message_id	ja_sha1	en	source
 2083_120_10	19ebae286ad282584e46052ad0ff4157ad0968dc	There is no way you could be\nignorant of the Exorciser!	machine
 2083_120_11	08f4a6f7331ea5e5edaa881e0ac3f64cfdd149af	Don't be ridiculous. Why would I\nknow anything about something\nso disgusting...	machine
 2083_120_12	2d4630d5336a181a3d1eb09602447e1b10f601a1	...I cannot tell if you are playing\ndumb or if you truly do not\nknow...!	machine
-2083_120_13	d1ff4c374d477b10e062a115a86f843de05e872c	Look out! Eve, get back!	machine
-2083_120_15	f3e71d2ee8e17a12803b3be9bf5430f24c6689a5	Eve!	machine
+2083_120_13	d1ff4c374d477b10e062a115a86f843de05e872c	Look out! Evelysse, get back!	machine
+2083_120_15	f3e71d2ee8e17a12803b3be9bf5430f24c6689a5	Evelysse!	machine
 2083_120_17	b064fc0b2c57867a79618719e37788f24028d47f	L-let go of me...! You...!!	machine
-2083_120_18	f3e71d2ee8e17a12803b3be9bf5430f24c6689a5	Eve!	machine
+2083_120_18	f3e71d2ee8e17a12803b3be9bf5430f24c6689a5	Evelysse!	machine
 2083_120_19	d833262ecd1e93e9388e10a15413a8f5a1b58a4a	Wait! Don't get closer! You'll be\nkilled! Can't you see that black\ndisc!	machine
 2083_120_20	5026a330bf7e067ccf2d1953628d1133fc71bfd9	Urgh...!	machine
 2083_120_21	3a0fc823bdc95c8c6bb2c26d3c4131ddfed6ab60	Good. Stay calm. As expected\nof Rubarika's great strategist,\nGeneral Ricardo...	machine
@@ -392,7 +392,7 @@ message_id	ja_sha1	en	source
 2083_120_23	551131783bcfcc996e10d7cdf3deffa609f7a809	I didn't want it to come to this.	machine
 2083_120_24	e191f74a837cb92dbd44e14b4a15d58dc68ed008	But there is far too much time before\nthe next ladder descends. I cannot\nimagine you lot staying quiet on this\nplanet until then...	machine
 2083_120_25	2ee6eaa013d8d6a67d83ca87e5cd746a1514a115	This is the only way.	machine
-2083_120_26	175fb944edf286bbc7a39bf74ec8a56f56bed7ed	What do you plan to do with\nEve!	machine
+2083_120_26	175fb944edf286bbc7a39bf74ec8a56f56bed7ed	What do you plan to do with\nEvelysse!	machine
 2083_120_27	1df4f390b5637c51e2787d58722f264573d7108b	Nothing. I shall treat her with\nthe utmost care.	machine
 2083_120_28	1da42eea20803356b2326c5ecafe95a2231999dd	Until the next ladder descends.	machine
 2083_120_29	d2caa48225c75f30806a15ed940747149a222789	Considering the years that\nhave already passed, waiting\nfor the next ladder is nothing.	machine
@@ -408,7 +408,7 @@ message_id	ja_sha1	en	source
 2083_130_01	a09b06250a75389aa80a4f60feafbb5c49b93121	Soon, Asyl will vanish. And you\nshall sink into the sea along\nwith it.	machine
 2083_130_02	43e61d515d02f0afd9ffda22bd5bb63a3ceaf23f	Never again shall you cling to\nmy heels.	machine
 2083_130_03	7b88feaa9164a1f85948e1aa3195c45eed7e3dad	Hey! Where the hell did he go?!\nWhat do you think you're doing,\nyou bastard!!	machine
-2083_130_04	069f14dcb5d87217db884d5199633b7cfe1fab36	Eve... Tika... How on earth did\nthings end up like this...?	machine
+2083_130_04	069f14dcb5d87217db884d5199633b7cfe1fab36	Evelysse... Tika... How on earth\ndid things end up like this...?	machine
 2083_130_05	1edb761f05bcaaee7ec98b00098d5fd271b2bf24	Confirming convergence of the\nspatial rift...	machine
 2083_130_06	e1dcbb6093cc6d45fbcb49d4ee32fdf5806c1049	...Verda. It seems that even in\nthis situation, we have no time\nto dwell on despair.	machine
 2083_130_07	7feadd6647be0b92c927b557c56945cfa98b024c	...Wait, something is wrong.	machine
@@ -431,7 +431,7 @@ message_id	ja_sha1	en	source
 2083_130_25	c6eb21328a76193c8fbfa58b082bd77fea7a1aff	Tika... Tika!	machine
 2083_130_26	7a02f9a8253432f0f78e8d7a8d05bb785254347b	We shouldn't have left her\nbehind... No, if I had stayed...	machine
 2083_130_28	ac17ed37da9156ddf5a48fb1af4d3eb113612e83	Captain... what are we\nsupposed to do!	machine
-2083_130_29	40ed1c850b5d8ea1b012b10d475937d287cfa453	We can't even leave Asyl, and\nnow we've lost Tika and Eve...	machine
+2083_130_29	40ed1c850b5d8ea1b012b10d475937d287cfa453	We can't even leave Asyl, and\nnow we've lost Tika and\nEvelysse...	machine
 2083_130_30	35747435762ba8655fead6cedc0279aa5a736e79	...And here I thought you were\na slightly more composed brat.	machine
 2083_130_31	4cab6925448dfa4983af490a5c1bf90a4c83ddbc	Hey, that's a bit harsh...	machine
 2083_130_32	a9d01c53dbff1da329bb630a1b9224a36176f887	...You were suspecting that I\nwasn't an ordinary Daftine,\nweren't you?	machine
@@ -516,7 +516,7 @@ message_id	ja_sha1	en	source
 2084_160_50	b93d3ea898852ae2fb004f5897e7d92de49a961e	She's Tika...?	machine
 2084_160_51	392060913fcb05fe04b4de65b83c0b6318598312	What? She's quite tall for...\nwait, what?!	machine
 2084_160_52	9a916544a615bdb977f0b85c06a90031cabe5101	It's a long story... but before\nthat, there's someone I want\nyou all to meet.	machine
-2084_160_53	fa38428b3eb8567bfa61ed13a60e86e7d433fad2	We absolutely have to save\nEve, who was kidnapped by\nGivel,	machine
+2084_160_53	fa38428b3eb8567bfa61ed13a60e86e7d433fad2	We absolutely have to save\nEvelysse, who was kidnapped\nby Givel,	machine
 2084_160_54	b694345d90f3812631f694070c51ba7b807f236c	and I think this person can tell\nyou the information we need,\nas well as everything else\nthat's going on.	machine
 2084_160_55	47c622d246e157cf106c502ac0889dcf951eb1fb	I wonder about that. I highly\ndoubt that guy will tell us\neverything honestly.	machine
 2084_160_56	4f9896848b1965b9636974a18627a2b153025663	Don't say things like that! He'll\nbe even less likely to talk.	machine

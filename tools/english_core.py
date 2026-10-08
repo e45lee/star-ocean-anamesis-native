@@ -717,9 +717,12 @@ def _gloss_forms(term):
 def glossary_avoided(flat, avoid):
     """The first of a term's avoided English words (glossary.tsv `avoid`) that `flat` (_gloss_norm'd)
     uses: a word starting with it ("Evol" is Evolve, Evolution, evolved), case and accents ignored;
-    else None."""
+    else None. A word ending in `$` counts only as a whole word ("Eve$" is Eve, Eve's, not Evelysse,
+    even, event: english.md 7.18, リーシュ)."""
     for a in avoid:
-        if re.search(r"(?<![a-z0-9])" + re.escape(_gloss_norm(a)), flat):
+        whole = a.endswith("$")
+        w = _gloss_norm(a[:-1] if whole else a)
+        if re.search(r"(?<![a-z0-9])" + re.escape(w) + (r"(?![a-z0-9])" if whole else ""), flat):
             return a
     return None
 

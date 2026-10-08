@@ -9,11 +9,14 @@ S = {
  "teal_t": {"size": 56, "bold": 3, "fill": "#ffffff", "outline": "#0a4a5a", "outline_width": 4, "glow": "#40ffffa0", "glow_radius": 3, "clear": "none"},
  "teal": {"size": 30, "bold": 2, "fill": "#ffffff", "outline": "#0a3a4a", "outline_width": 3, "align": "left", "leading": 10, "clear": "none"},
 }
-band = [150, 322, 720, 170]
+band = [150, 322, 720, 180]  # down to the panel's edge: the footnote line too
 write("pickup_img_chara_1610_002", "The standard character gacha's panel (Global's 10-chain).", S, [
     L("", "", band, "erase", band), L("", "", band, "band", band),
     L("10連で★4以上のキャラが1体確定!", "10-chain: 1 ★4+ character\nguaranteed!", [170, 326, 680, 120], "gold", size=40),
-    L("一部のキャラをご紹介>>", "Some of the characters >>", [470, 446, 380, 34], "white", size=24, align="right")])
+    L("一部のキャラをご紹介>>", "Some of the characters >>", [470, 446, 380, 34], "white", size=24, align="right"),
+    L("※進化や覚醒なども含む、強化が行われる前の状態で出現いたします。",
+      "*Characters appear before any enhancement (incl. evolution and awakening).", [170, 482, 680, 18], "white", size=15,
+      align="right")])
 whole = [196, 40, 704, 420]
 write("20200716_chara_PU_002", "The July 2020 apology gacha's notice panel.", S, [
     L("", "", whole, "erase", whole),

@@ -436,7 +436,7 @@ message_id	ja_sha1	en	source
 2015_180_04	4e8e28b09758db929dd0edc882c548dd08450cc5	Boy: I-I'm okay. I just tripped...	machine
 2015_180_05	01c7a45eb29d25be3e18f93ae7d86498345a80e5	No, it'll be terrible if bacteria\ngets into the wound. We have\nto treat it properly.	machine
 2015_180_06	9cc3d0d3de1ce64f9f03b30679b1b81504fbad96	Boy: W-wow...!	machine
-2015_180_07	fea885ad13315fc405c801c558769cd9e9d91eac	Evelysse is amazing!	machine
+2015_180_07	fea885ad13315fc405c801c558769cd9e9d91eac	Evelysse is amazing!	agent
 2015_180_08	a81db7b4abc6ef132ccbc16067a0d6337a54987f	Healing Symbol Arts, I see...	machine
 2015_180_09	4b4c1c6e5cf9d34fc069d299218a95feab4a8e08	Rekoro, for the time being,\nplease refrain from speaking in\nfront of the boy. I want to\navoid any trouble.	machine
 2015_180_10	c6f67cb6f87e8c20d9348c1217338ab810fd73aa	Oh, right.	machine
@@ -515,9 +515,9 @@ message_id	ja_sha1	en	source
 2016_210_23	5577424f45aea53991893cc34b7e2763444fd52f	This has become quite strange,\nTika.	machine
 2016_210_24	6642889c0109adcb3a2814184b4dcb8ae2e9e632	...!	machine
 2016_210_25	f34b308fe21496e8f2c662cafbda5035be656a7b	I need you to calm down...\nCould it be that you and\nRekoro...	machine
-2016_210_26	1a9af5f1fcf7a5b81901ce70b6552197648e2595	Evelysse, I...	machine
+2016_210_26	1a9af5f1fcf7a5b81901ce70b6552197648e2595	Evelysse, I...	agent
 2016_210_27	1a0d8aa3df9dc71b6e882fb26a14b68703c61d56	Nothing has been decided yet.	machine
-2016_210_28	7156496881aeea93d1553533400ff0b0d66414fa	"Evelysse, but this is..."	machine
+2016_210_28	7156496881aeea93d1553533400ff0b0d66414fa	"Evelysse, but this is..."	agent
 2016_210_29	938a0ce90deeb06b51291e2ec2e2d1ca99c82878	This is all just circumstantial\nevidence! Tika and Rekoro\nmight be mistaken about\nsomething.	machine
 2016_210_30	4bdc7d6ddd04c1e1d9753fb91c575b1b60e40308	Rekoro is an AI specialized in\nlife-saving; she doesn't have\nmilitary sensors or databases\nlike Coro does, right?	machine
 2016_210_31	919b3bae2cac7d69b25181cbe21bf6018a3971ae	It could just be a mistake...	machine
@@ -599,7 +599,7 @@ message_id	ja_sha1	en	source
 2017_250_18	0f62f1e17232142383ac293e1476a110814317c5	"I've checked the situation around the\nvillage with the long-range scanner!\nBiological signatures that appear to be\nThornite are approaching Dagris from\nall directions!"	machine
 2017_250_19	bd71c950a86cfa3383df602dbffb55351894df96	"A battle on this scale was not\nanticipated! I will teleport\neveryone back for containment\nimmediately! We must regroup!"	machine
 2017_250_20	9b2602f6710fa512bcd41367578f26c7d93a432e	No!!	machine
-2017_250_21	be89c4550758c03b1bc4cc151a48b7da72c621c7	"Evelysse!? But..."	machine
+2017_250_21	be89c4550758c03b1bc4cc151a48b7da72c621c7	"Evelysse!? But..."	agent
 2017_250_23	7a3c0a3b012066c180e25cc81ea095036102f4ec	"Captain, what are you\nthinking!"	machine
 2017_250_24	701b590991735271272576114881a060dbeb6f6a	While we're doing that, who\nknows how many people in\nDagris will fall victim to the\nThornite!	machine
 2017_250_25	44380c4bb68d09ba58e4520244e887c4e470cc82	It's okay! We can do this!	machine
@@ -661,7 +661,7 @@ message_id	ja_sha1	en	source
 2018_290_19	60919aa7505486b59ec2dfe8f0238968e32a9062	Young Man: Depending on the\ncircumstances...	machine
 2018_290_20	f49bb3b27a32e4db88f3d785d2ab56102efa6456	Are you suggesting we're\nspies?	machine
 2018_290_21	ff12cc5dc6cfc51109d5e1a4f6a6807852e489a5	Young Man: I might have to\nmake that call.	machine
-2018_290_22	f6c82b8b6ad9a6d3141c4247ddd91c4d0364aab9	Captain... Evelysse.	machine
+2018_290_22	f6c82b8b6ad9a6d3141c4247ddd91c4d0364aab9	Captain... Evelysse.	agent
 2018_290_23	d7e84b94df466c6ddaac723bd92f7da59d654722	Verda, Tika! Thank goodness,\nyou're safe. Are you hurt?	machine
 2018_290_24	f8e28d66c8fab9010a72cf0f7cee3b3f56a7f3fc	Hmm, we managed to get by.	machine
 2018_290_25	8475ed624406442267b76a6f903c19a537b677e5	Young Man: Hey, we met once\nbefore at the Village Chief's\nhouse.	machine

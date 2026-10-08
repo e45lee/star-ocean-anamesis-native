@@ -199,7 +199,7 @@ message_id	ja_sha1	en	source
 2072_100_15	9699af4f485929322a56b7b4b7654db05cc82111	<font color=blue>Rekoro</font> Even so, I cannot\nfathom Evelysse's reaction.	machine
 2072_100_16	7d4af4007a24d431ebefb9c4bcf362c260facbc9	I understand that she wishes\nfor peace in Daftine from a\nhumanitarian perspective.	machine
 2072_100_17	58dad09ae7fe44d21fcee387aab44ec55d18173f	But she should have no direct stake in\nDaftine's political situation, yet she has\nremained locked in her room since that\nconversation.	machine
-2072_100_18	334cd93e60f8fd3bbfbe30772214868863281c1c	<font color=blue>Tika</font> I wonder if Evelysse is\nokay...	machine
+2072_100_18	334cd93e60f8fd3bbfbe30772214868863281c1c	<font color=blue>Tika</font> I wonder if Evelysse is\nokay...	agent
 2072_100_19	6ea1665813cf806b84eb89f8db0826574466b9b3	<font color=blue>Henri</font> She is likely dwelling on\nwhat Karlyn and Verda said.	machine
 2072_100_20	97b426bb83dc6944f54463a043e95e75952eb381	<font color=blue>Tika</font> Huh?	machine
 2072_100_21	6b3b8244ea04525d45fd39762d6ba1a9da9cb4df	<font color=blue>Henri</font> Karlyn, though she didn't know at\nthe time, summoned my kin against\ntheir will and forced them to fight on\nthe battlefield.	machine
@@ -217,7 +217,7 @@ message_id	ja_sha1	en	source
 2072_100_33	8950effe041cf69cc426aff8bef7243edd88a29c	Respecting their judgment and letting\nthem gain experience interacting with\nothers on their own is also a form of\n"parental love."	machine
 2072_100_34	235833f444ce35165c8a8a59937cca588b9d8a6a	This is by no means "neglect."	machine
 2072_100_35	a8486c54e8d5c773627be6bec966be8989e0aa6a	...Humans are still so\nincomprehensible.	machine
-2072_110_01	6e5ae462a40288953605b1497c21ba44d5fb2dc9	Evelysse...? Are you okay?	machine
+2072_110_01	6e5ae462a40288953605b1497c21ba44d5fb2dc9	Evelysse...? Are you okay?	agent
 2072_110_02	159d5705ef3b3b7558ac9ab8f4805153457fb1e5	Oh, Tika.	machine
 2072_110_03	8901996e7c7adf4753dbd300fb3026efc991d306	Is everything alright?	machine
 2072_110_04	6a790e7837757ee073e659f78af788b80a5bea14	I suppose. I'm just... a little\ntired.	machine
@@ -230,14 +230,14 @@ message_id	ja_sha1	en	source
 2072_110_12	f021fea11dcfb5f6c3d4d92c6f7d0b9649092d0b	I've brought them all on a journey\nthrough the cosmos, across space and\ntime, with no guarantee that I can even\nsend them home.	machine
 2072_110_13	f390e9cfbd35a33ac9ca96da95de599d1e9e9057	But... it saved me.	machine
 2072_110_14	0fceb3bc5a6c5ca70e261fdfa0417fa04389ca69	What...?	machine
-2072_110_15	c9026eac83af7b9ef577fa03f4dcb759bc302fb2	I was saved because you were\nhere, Evelysse.	machine
+2072_110_15	c9026eac83af7b9ef577fa03f4dcb759bc302fb2	I was saved because you were\nhere, Evelysse.	agent
 2072_110_16	d39d4222dd83d3ced56c8c4157555956beafb8d9	Tika, but still...	machine
 2072_110_17	325bcf54ac340fd044992cac1cb9bbf83ee5b947	Because Evelysse and the\nothers saved Verda, I was...	agent
 2072_110_18	be1af6db7905017c6ed18cf59062dfe40ed90954	I was able to survive, even\nacross time.	machine
 2072_110_19	6724a1c6b007d585e482745037fc592240c2f856	Please, don't deny that...	machine
-2072_110_20	4e9d41f8320c3ffe21c9360f2b428882efbcee2e	Right now... you're all I have,\nEvelysse.	machine
+2072_110_20	4e9d41f8320c3ffe21c9360f2b428882efbcee2e	Right now... you're all I have,\nEvelysse.	agent
 2072_110_21	15e9ba8b4e6025ccded4af6fa5cab4092448c774	...Tika.	machine
-2072_110_22	24721201b29913454d4f1c14382490949a132a92	Evelysse is someone who uses\nher power to help others.	machine
+2072_110_22	24721201b29913454d4f1c14382490949a132a92	Evelysse is someone who uses\nher power to help others.	agent
 2072_110_23	13588dc36cc78e0629f8308a4be75cad5da79e3b	You're not someone who uses\npower to hurt people.	machine
 2072_110_24	e880553c782f8f2fac99aecf25049a7ba8a5b974	Even Big Sister Karlyn fought\nwith that power because she\nwanted to protect the people\nof Baschen...	machine
 2072_110_25	87833a2d1cc87446094d5470acaf639580ab6633	But that man, Givel...	machine

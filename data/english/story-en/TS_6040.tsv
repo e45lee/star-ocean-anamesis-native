@@ -500,7 +500,7 @@ message_id	ja_sha1	en	source
 6043_200_09	73bdd3017fd3628e6624e9a3d2c0fe9ed2cc5bda	You've gotta be kidding me...	machine
 6043_200_10	1ad4eb6c1d59e49eb0946d0727b64142b4965d90	On the bright side... despite the\nship's massive size, it seems\nonly a skeleton crew is\nassigned to operate it.	machine
 6043_200_11	b5166f60c57b9b563697df649c5de021057e22c2	I bet it's just crawling with\nPhantoms once we get inside,\nanyway.	machine
-6043_200_12	b5b7d9e4f1d0fcb780dff9770a01e6e2b6171419	We still have to go. After all,\nEvelysse is in there.	machine
+6043_200_12	b5b7d9e4f1d0fcb780dff9770a01e6e2b6171419	We still have to go. After all,\nEvelysse is in there.	agent
 6043_200_13	f9752c18be685fb04f8e215fbd677028484c32f5	This is a message from Asmodeus,\nCommander-in-Chief of the Ober Space\nForce. We are aware that you are\nsearching for traces of the Phantom\nfleet in the nearby sector.	machine
 6043_200_14	8e56b25fed900515d603ba472e2c735ecdd965e2	We wish to provide your ship with\ninformation regarding the truth of the\nwar between Raza and Ober. Therefore,\nwe request a face-to-face meeting with\nthe person in charge.	machine
 6043_200_15	07ad978efd433d2f689fcfe8f068b48b1e2b0bf6	I have sent the designated\ncoordinates. I look forward to a\npositive response. ...That is all.\nEnding transmission.	machine
@@ -526,7 +526,7 @@ message_id	ja_sha1	en	source
 6043_200_37	9686043a378980504c06c489bb7cf5025ec8fcdf	Why are you only telling me!	machine
 6043_200_38	4d517764ddbb3a39e50ccfe69004bd708e37ec04	Don't worry, Mr. Euwin. I'll make\nsure to cover Welch's back.	machine
 6043_200_39	a6674ed8b327cf3f67e54dcd36615cbd9a9d7f9e	Lover... not you too...	machine
-6043_200_40	c74af91e44a933db9098cb97e2592677ac492b76	No matter where it is, we just\nhave to keep moving. Big sister\nValka, do you think Evelysse is\non this ship?	machine
+6043_200_40	c74af91e44a933db9098cb97e2592677ac492b76	No matter where it is, we just\nhave to keep moving. Big sister\nValka, do you think Evelysse is\non this ship?	agent
 6043_200_41	c118103d9cdeab904bb744db1990a6b12ecbd59d	I have detected a biological\nsignature near the bridge.\nThere is a high probability that\nit is Lady Evelysse.	agent
 6043_200_42	4417f61f5ff8483943220ff0878801a425ae460f	However, there are two other\nbiological signatures as well...	machine
 6043_200_43	645badba8dd254ddef9b16808baba393699852c8	It could be Asmodeus, and maybe Givel.\nEither way, we have no choice but to\ngo. Captain, let's hurry and rescue\nEvelysse...	machine
@@ -736,12 +736,12 @@ message_id	ja_sha1	en	source
 6043_250_78	9ac4aff949e0b9ffac0b72b9d434df4cce5e9b2a	That is something we can only know\nonce we ask him ourselves. Though,\nthere is no telling if he will be honest\nwith us.	machine
 6043_250_79	1f6d9f135541b0988356a255cc9ea7cb0b2121b1	...I'll make him talk.	machine
 6043_250_80	9848d0cd27e4614e1508b60e043c30295318ace5	Tika...	machine
-6043_250_81	8cb901f9bf46608d194f2ee5f734cce8b600ffdd	Evelysse... was crying.	machine
+6043_250_81	8cb901f9bf46608d194f2ee5f734cce8b600ffdd	Evelysse... was crying.	agent
 6043_250_82	a9f9d511a4deb53ddb0a6367961d1ea430241cca	Hmm...	machine
-6043_250_83	d157943683cc7d9a65bd2984a5d5d3addadbb764	Evelysse had Givel taken as a\nhostage...	machine
-6043_250_84	5cab1bfc58ebe69c15ba94bfad7ec0bc1b93e532	I don't know why Evelysse tried\nto protect Givel...	machine
-6043_250_85	9aa48ede15b7dfba23577a453129ae36d6328dc0	One thing is for sure: Givel is\nthe reason Evelysse was\ncrying.	machine
-6043_250_86	ceb939ad0864aa4c5325cf637beabb7955d75ed2	Making Evelysse suffer over\nand over... I will never forgive\nhim.	machine
+6043_250_83	d157943683cc7d9a65bd2984a5d5d3addadbb764	Evelysse had Givel taken as a\nhostage...	agent
+6043_250_84	5cab1bfc58ebe69c15ba94bfad7ec0bc1b93e532	I don't know why Evelysse tried\nto protect Givel...	agent
+6043_250_85	9aa48ede15b7dfba23577a453129ae36d6328dc0	One thing is for sure: Givel is\nthe reason Evelysse was\ncrying.	agent
+6043_250_86	ceb939ad0864aa4c5325cf637beabb7955d75ed2	Making Evelysse suffer over\nand over... I will never forgive\nhim.	agent
 6043_250_87	ec91776f705c53994278475f3b903e4244fc31f9	...Indeed.	machine
 6043_250_88	921df8a38ee11ed153e3f764a532d041b37732d0	Hey, everyone! I told you the\nship is sinking! We have to\nevacuate, now!	machine
 6043_250_89	c97b00e80b139f2d34b2d6482df54bd8dc637608	Dammit! We let the enemy boss\nget away and we're all beat to\nhell! Curse it all!	machine

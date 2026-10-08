@@ -157,7 +157,7 @@ message_id	ja_sha1	en	source
 6062_110_09	dd158ecd4a1d0a3198f8449b9603b9f586a826e0	How is such a thing possible? I\nassume you can provide an\nexplanation.	machine
 6062_110_10	35ac2aafa082610d839b6bf69714511210747573	I know. I'll tell you everything...\nright, Givel?	machine
 6062_110_11	05f5b0499b70a9ec96b6ff5e64903ef6775a3371	...Do as you please.	machine
-6062_110_13	a056d67733da5b4408a0d49e989447a15d8a23bf	Evelysse... could it be that your\nmemories...	machine
+6062_110_13	a056d67733da5b4408a0d49e989447a15d8a23bf	Evelysse... could it be that your\nmemories...	agent
 6062_110_14	ead64e70edc116f93715b4fae76b53f47342804d	...Yeah. To be honest, I lost\nmost of them back in Daftine.	machine
 6062_110_15	069c16ae8b27ebb8f63e1aff708a40ed21702582	So you admit it.	machine
 6062_110_16	72c4ac43738d7795edbad1b776069feda0bc5070	That's right. I knew Givel. Back\nthen, I let him escape.	machine
@@ -321,7 +321,7 @@ message_id	ja_sha1	en	source
 6062_130_31	222bfd5d4125f5dcee3c59092aaf350359f7d64b	Sorry for summoning you\nwithout asking. Don't worry,\nyour Overman is still exactly\nwhere you parked it...	machine
 6062_130_32	8092c296866bcdd9decce4996f036798528824c8	It was just the perfect size for\nme to use on my own.	machine
 6062_130_33	a052d2bb4ab71b5d1e242b198e7915841975e915	On your own...	machine
-6062_130_34	447f68b93bfe18accb15c31a3bc9868edebc533a	Evelysse, you're not planning\non going off somewhere by\nyourself again, are you...?	machine
+6062_130_34	447f68b93bfe18accb15c31a3bc9868edebc533a	Evelysse, you're not planning\non going off somewhere by\nyourself again, are you...?	agent
 6062_130_35	6877fc233438e47a09001e72bdf497ac5435aaec	...I'm sorry.	machine
 6062_130_36	8653c94cd404a70d9186a2f3f812d787d66d552f	...I've lost track of how many\ntimes I've apologized by now...	machine
 6062_130_37	05251a0b56f136a093c0437a5d76193c0ba111c0	But this is something that only\nI can do.	machine
@@ -347,7 +347,7 @@ message_id	ja_sha1	en	source
 6062_130_61	51939f9705d3de759c9cdee87e2f66c6c46dfc07	Captain. I'm going to pass\nthrough the "Gate" on the\nplanet I came from to fulfill an\nimportant promise...	machine
 6062_130_62	3fc809e61659231605c7f7eb130376522314e4f8	But this time, I won't just leave\nin silence. I'll be back soon.	machine
 6062_130_63	19651554d99aa9fa0443b5d21dae4da31f9652d4	Please, just wait for me.	machine
-6062_140_01	fa07128fe4a7ad19f8d0220f7eb9e324ef50b928	Why! Why did she just leave\nagain without saying anything!?\nEvelysse... why...	machine
+6062_140_01	fa07128fe4a7ad19f8d0220f7eb9e324ef50b928	Why! Why did she just leave\nagain without saying anything!?\nEvelysse... why...	agent
 6062_140_02	e0c0dd8bef8b1c1f509139a0141c42c52290176f	...She has always been that way.\nKeeping the important things to herself,\ncarrying the burden alone, and acting\non her own whims.	machine
 6062_140_03	d59a56d3f81eb86ecf75695e6742c3198e8b148b	Even after arriving in this\nuniverse, nothing has changed.\nIt is utterly infuriating.	machine
 6062_140_04	94638d7dc94b7798767e50a9cfad655d7dec590d	She said she's heading to Planet\nMaere... at the Overman's current\nspeed, that distance will take over half\na year.	machine
@@ -370,7 +370,7 @@ message_id	ja_sha1	en	source
 6062_140_21	f7a2b9abe8e95816f672aa7efafd51389cd65c3a	What?	machine
 6062_140_23	8763a016daa2440d6acca1998c667947e8468c82	Tika! Ricardo! Sorry to keep\nyou waiting!	machine
 6062_140_24	a68b3810ef576b6b5f1daf670e714e2bb81908aa	I've come back to keep my\npromise!!	machine
-6062_140_25	1e2120ab68fdd7db639901d50c12f0ca3dce8052	Evelysse!?	machine
+6062_140_25	1e2120ab68fdd7db639901d50c12f0ca3dce8052	Evelysse!?	agent
 6062_140_26	aa8543f9c8d86221813f59b86a1c069322e9aad5	Huh? Wait, didn't Evelysse just\nfly off somewhere in the\nOverman?	machine
 6062_140_27	2d6077595ada6b30eb5e119eebaf47ba5f6645fb	And what the hell is this...?\nThat thing on her wrist is a\nDaftine Space Force colony\nship boarding tag!	machine
 6062_140_28	53a38a6b0e40620cf4d1c47eb10469d222cc0e2f	Tika! Ricardo! And Rekoro!\nSorry for the sudden request,\nbut can you all come over here\nfor a second?!	machine
@@ -378,7 +378,7 @@ message_id	ja_sha1	en	source
 6062_140_30	6c0e68d75672fc78471062687949d504eb63babc	Givel, you're there too, right! I'll\nbe back in a bit, so please\nhandle the cleanup!	machine
 6062_140_31	7dedb065a209b130ae191c2685fe178a6c580748	Do as thou wilt...	machine
 6062_140_32	5afb01fd4c05afac79bded5af449beb190d8d87a	Come on, Tika!	machine
-6062_140_33	cdce8496f1528c14f6b32f06d00065cab696be9b	Evelysse!	machine
+6062_140_33	cdce8496f1528c14f6b32f06d00065cab696be9b	Evelysse!	agent
 6062_140_34	127e8a8ee4606ebacee91a7bd96024c61bd76a48	...I can finally keep my promise.\nI've come from 200 years in\nthe future to get you!	machine
 6064_200_01	2f8aab50ae52378d7945f85f5576e81b430b545f	Oh, looks like they're back,\nWelch. ...Welch, you okay?	machine
 6064_200_02	1bbb8e8c8a7feb8a2f8bf2b76c978f5d5ba07d25	I know! I can see! Just shut up\nfor a second!	machine

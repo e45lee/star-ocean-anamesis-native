@@ -669,7 +669,7 @@ message_id	ja_sha1	en	source
 6055_400_50	a2b6bd695caecc0184ddead3eac0ff2f85c686ca	I understand... but if you do\nthat, someone will have to stay\nbehind on the ship...	machine
 6055_400_51	74417b74ba32aafb5a8bf59217bd692952cdcb1a	I shall remain as the acting\nvice-captain. By your logic, I am\ntechnically a human from Earth. I\nbelieve there should be no issue with\nme holding temporary command.	machine
 6055_400_52	c90afe3599551a0d8b87605cacedca27353928c6	I agree!	machine
-6055_400_53	eb3798f334f60bd6c54e4ea87bddf7112cef33a7	Then let's get going! Let's put\nan end to this war and solve\nthe mystery of Evelysse!	machine
+6055_400_53	eb3798f334f60bd6c54e4ea87bddf7112cef33a7	Then let's get going! Let's put\nan end to this war and solve\nthe mystery of Evelysse!	agent
 6055_400_54	b0a0d4f6ba40012bacf0feafc948c2adea02c267	I will now teleport you all to the\ntarget combat ship! Is\neveryone ready?!	machine
 6055_400_55	e60b9a1b3b99e9f385bfafd1d21311fa965836ad	Let us go!!	machine
 6055_410_01	e9904e43cfcc4f864790af330b9d4a6a673fa1f7	I can't believe they could\nteleport right past the enemy\nfleet... Their capabilities are\ntruly bottomless.	machine
@@ -708,7 +708,7 @@ message_id	ja_sha1	en	source
 6055_420_25	f8da749a84a6ffc0900e10c7c700cc10cbf70ed1	I am quite serious... However...\nRaza shall also be destroyed.	machine
 6055_420_26	da51f0a69bdf8256dd5234843aef73ca346521d8	What is this guy talking about?!\nThis is insane!!	machine
 6055_420_27	d16ec21742b5e9abb50fd3b310a0a709e0e77697	True. It would be faster to\nshow you rather than explain it.	machine
-6055_430_01	88b734615c2e16694777673f81d809ae15facc8a	Evelysse!!	machine
+6055_430_01	88b734615c2e16694777673f81d809ae15facc8a	Evelysse!!	agent
 6055_430_02	117bf0bdf70596acf2b2b1fc0580ca92621f51fa	...*cough*...	machine
 6055_430_03	03368b0c862b89cdcb39285b1fedf188b1413e74	Evelysse!	machine
 6055_430_04	45adfd774a229014e19293673c85f6214225997f	It's okay, I'm not letting you get\naway again! Lover'll be all over\nme if I don't bring you back.	machine

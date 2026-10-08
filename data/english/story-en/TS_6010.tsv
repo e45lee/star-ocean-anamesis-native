@@ -4,7 +4,7 @@ message_id	ja_sha1	en	source
 6011_020_04	e821f3ff2a1a0876e91329c1f038aec8433a6be1	Become a dark path that shall\nwhisk him away!!	machine
 6011_020_05	7bf46fc9a50348a11e8bd802fbda8e4d5691ccaf	W-what is this!?	machine
 6011_020_06	ccac0b9aca57bef06f09f3a29a6456c22121c50a	Wh-what's happening!? What's\ngoing on!	machine
-6011_020_07	3362be3cb89d8864bd87765960d7f61b429750a3	Evelysse!? What are you\ndoing!?	machine
+6011_020_07	3362be3cb89d8864bd87765960d7f61b429750a3	Evelysse!? What are you\ndoing!?	agent
 6011_020_08	8ad786f8699323c644bcc4285f21a7f1bacb5b8e	Tika! Get back! This summoning\nis...!	machine
 6011_020_09	83c2f42e28c8827f47625c497c7d68f700904c59	The Captain and the others\nshould be able to handle this\nopponent. Keep them occupied\nfor a while.	machine
 6011_020_10	8eb7675db816f32c6ed391c37b22f68ff6b94f4f	...And then, leave the <font color=yellow>Azurite\nStar System</font>.	machine
@@ -1080,14 +1080,14 @@ message_id	ja_sha1	en	source
 6014_320_16	bbe3f0541cc6dd376281c5b41fb53117ff5c27ce	...Lavarnia. Coro, Verda, Tika...\neveryone.	machine
 6014_320_17	eeddb85a95679998e1c08fb16816c584ff7b2775	Huh?	machine
 6014_320_18	5590ff8011105dbc9611adfe36ab2f63edc164d3	What?	machine
-6014_320_19	2c97197a845118b98b917868fa10d7e6bb2e001b	Evelysse?	machine
+6014_320_19	2c97197a845118b98b917868fa10d7e6bb2e001b	Evelysse?	agent
 6014_320_20	4b1217571eaf98d192f3efa95811bf777a40223d	And... Captain. I'm sorry.	machine
 6014_320_22	5d01b35438a6c4946d39713144c3839f48e318cf	Dark Star.	machine
 6014_320_24	d0266993ffce130079272ddd5c92354a296e6d59	What!?	machine
 6014_320_25	e821f3ff2a1a0876e91329c1f038aec8433a6be1	Become the dark path that\nsnatches him away!!	machine
 6014_320_26	7bf46fc9a50348a11e8bd802fbda8e4d5691ccaf	W-what is this!?	machine
 6014_320_27	ccac0b9aca57bef06f09f3a29a6456c22121c50a	W-what's happening!? What's\ngoing on!	machine
-6014_320_28	3362be3cb89d8864bd87765960d7f61b429750a3	Evelysse!? What are you\ndoing!?	machine
+6014_320_28	3362be3cb89d8864bd87765960d7f61b429750a3	Evelysse!? What are you\ndoing!?	agent
 6014_320_29	8ad786f8699323c644bcc4285f21a7f1bacb5b8e	Tika! Get back! This summoning\nis...!	machine
 6014_320_30	83c2f42e28c8827f47625c497c7d68f700904c59	With the Captain and the\nothers as they are now, they\nshould be able to defeat it.\nKeep it occupied for a while.	machine
 6014_320_31	79977260b1373e45772f73dcb028db33d406048b	...And then, leave the Azurite\nsystem.	machine
@@ -1113,7 +1113,7 @@ message_id	ja_sha1	en	source
 6014_330_12	983d1d894f618552e15824e9f103608a47a2bae4	...Hmph. Finally showing her\ntrue colors, is she? I don't\nknow what she was hiding, but\nshe seems quite desperate.	machine
 6014_330_13	fae2d3ceda287055dcbae744a1509be00763dfc5	Mastima!!	machine
 6014_330_14	703b862f1db6cf05029a12f4e36e63b093218a2d	...What is it?	machine
-6014_330_15	4e43a94f9af60b60bde58cebbe140bfc4024506a	Don't say another word!\nEvelysse... she wouldn't do\nsomething like this for no\nreason!	machine
+6014_330_15	4e43a94f9af60b60bde58cebbe140bfc4024506a	Don't say another word!\nEvelysse... she wouldn't do\nsomething like this for no\nreason!	agent
 6014_330_17	e38e04885afd38c7bef236b0e605856800e9c6cf	That was one hell of a\nmonster... Lover, you aren't\nhurt, are you?	machine
 6014_330_18	d6980e21849bf7077d6a5f1c79d68e926506fee8	...I'm okay... but... more than\nthat.	machine
 6014_330_19	d04d02d015020ce59cbfda39f4066b44b92c4b47	Huh?	machine

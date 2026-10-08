@@ -299,7 +299,7 @@ message_id	ja_sha1	en	source
 2043_110_39	f0eff9edc9f1e5d5ce40f88a703fa7e62be42b7f	Guard B: V-very well...	machine
 2043_110_40	1f14fd126ed363726e858db37206e5e532ffe7f1	Guard B: Very well... but we must first\nhear your side of the story. I require\nyou, as the guarantor, and one person\nfrom your group to come with me.	machine
 2043_110_41	5f6287e335c8c2be4887932fbb07bc79cb1d1ad9	I'll go.	machine
-2043_110_42	3df6528450dae0705e11a0aa6bacc716b6466faa	Evelysse!?	machine
+2043_110_42	3df6528450dae0705e11a0aa6bacc716b6466faa	Evelysse!?	agent
 2043_110_43	687c2eb9665ccdc9329c3124d1eac27238202a7a	It's okay. There's no danger.\nCaptain, please stay here and\nkeep Tika and the others calm.	machine
 2043_110_45	fe0926c5f1ee2ccaa55e2f894147664a7bcc8d02	Guard A: Is it settled? Then\nlet's move!	machine
 2043_110_47	3f5c4699edc7cac0f2093aeac53107bfe384dfd7	Indeed. We are the victims\nhere. I feel bad for the inn, but\nwe'll have to change rooms.	machine
@@ -486,7 +486,7 @@ message_id	ja_sha1	en	source
 2043_150_80	e830d4e2420c75e195ba37f6f668c88ba8d6ddaa	Whaaaaat!?	machine
 2043_150_81	240c116a59076464a876797e466ec4cb231c8e30	Get away from Verda and Tika!!	machine
 2043_150_82	392b19c3e55eec712688233d4715f5d884de5aeb	Aaaah, Evelysse, wait!!	machine
-2043_150_83	cd484bc5901d5043a1367d4ec74525a6513e1a29	Ah, Evelysse, calm down!	machine
+2043_150_83	cd484bc5901d5043a1367d4ec74525a6513e1a29	Ah, Evelysse, calm down!	agent
 2043_150_84	a7f5302a477f4b86b3ec006aaafc4037f7d9ee93	Whyyyy!?	machine
 2043_150_85	dea8374c121e293c1c6dab9745634c3715b2b57f	What did I do wrong?!	machine
 2044_200_01	7604ebeacae1323d9c2c8d3a69867637dd648d75	It's almost eerie that nothing's\nhappened today of all days.	machine
@@ -637,7 +637,7 @@ message_id	ja_sha1	en	source
 2045_310_52	d3c5d787d0a951729471ced72d83b0cb726bedbb	Guard: Seize them all!	machine
 2045_310_53	fcaad58e8856738ee1955fd36a550cc12f9b35ec	<font color=blue>Evelysse</font> Everyone... Tika, I'm so\nsorry...	machine
 2045_310_54	de2591058eb9d97d6776cfaa34fc2fa504286fd4	We were so close to meeting\nGeneral Ricardo, but now it's all\nbecause of me...	machine
-2045_310_55	6258465b438978224399b7c1ef2870a564e793c4	<font color=blue>Tika</font> That's not true! It's not\nyour fault, Evelysse!	machine
+2045_310_55	6258465b438978224399b7c1ef2870a564e793c4	<font color=blue>Tika</font> That's not true! It's not\nyour fault, Evelysse!	agent
 2045_310_56	560fdcc3c225821e00a95ee0f0aa2da1066180aa	<font color=blue>Welch</font> Exactly! No matter how\nyou look at it, the royal guards\nare the ones who are crazy!	machine
 2045_310_57	53efa284096617075b6aea340d1eb8fffa0c5263	Of all things, they lump us in\nwith the Beast Witch? What\nthe heck are they looking at!!	machine
 2045_310_58	362875eb673125e58c113289e816a678f927a5a9	<font color=blue>Euwin</font> Verda was talking to the Beast\nWitch, and Delta was in league with\nBaschen. They can't have us spreading\nthat word around.	machine

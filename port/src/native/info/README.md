@@ -90,6 +90,17 @@ temporary for every element a list holds: `InfoBaseArray<T>::DeserializeArray` c
 the two results' pointers as they are (both copies of one source keep the same ones). The CInteroperateParameter lookups (battle-gacha, `every=1`): 200,000 checks, 0 mismatches (IsExist(row) 48,281, Value(row, col)
 147,768, DeserializeChild 3,951); an earlier run 201,613 / 0.
 
+## Measurements
+
+Guest self time (`SOA_PROFILE` 1000 Hz, `port/scripts/rebuild_queue.py`, the login + battle flows: before = n-master's
+profile at the start of this work, after = this branch at 0e31f81, 2026-10-08): `info` **998 samples (1.1%) -> 306
+(0.7%)**; executed functions 783 -> 651, executed bytes 438K -> 248K. By kind (the generic natives' families): the
+infos' Initialize 227 -> 11 (CInfoManager's included), copies 83 -> 8, constructors 63 -> 4, destructors 50 -> 9,
+assignments 18 -> 0, moves 8 -> 0, `str2time_t` 43 -> 0. What is left: `CInfoManager`'s constructor (32),
+`CCharacterData`'s constructor (32), `InfoBaseArray` / `IInfoBaseMap` deserialization (30), `CParameterManager::Progress`
+(18), `StaminaUtility::FindGlobalNumberWithKey` (16), `CParameterManager::ClearMasterCache` (11). (The two runs'
+guest totals differ, 46,157 and 18,429 samples: other subsystems went native in between.)
+
 ## Next (not done)
 
 - The copies of the few infos whose containers lack what the natives need (a map without

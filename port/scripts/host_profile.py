@@ -2,12 +2,17 @@
 """Self time per host C++ function inside native replacements, from a SOA_PROFILE_HOST=1 profile.
 
     SOA_PROFILE=DIR SOA_PROFILE_HOST=1 <soa run>     (writes DIR/host.tsv, see core/profile.cpp)
-    port/scripts/host_profile.py DIR [DIR...] --soa build/port/soa [--top 80] [--grep REGEX]
+    port/scripts/host_profile.py DIR [DIR...] --soa build/port/soa [--top 80] [--grep REGEX] [--by-subsystem]
 
 The PCs are symbolized with `nm` of the soa executable (the one that ran: RelWithDebInfo keeps the
 static functions). Transcribed bodies (a2c: f_<library offset>) are also given the guest function
 at that offset (DIR/functions.tsv). Samples outside any symbol (libc, the JIT's code cache: none
 are expected, the sampler only signals threads inside native replacements) show as "?".
+
+--by-subsystem sums the samples by the C++ code's subsystem (the soa::native::<s> namespace; "(other)"
+for code outside one: the runtime, the port, common/ helpers). Unlike the guest-level stacks, which
+name a native's host work after the hook it entered through, this splits a native's time from the
+natives it calls as C++ members (a particle native calling kernel's PostMessage and sync's Enter).
 """
 import argparse
 import bisect
@@ -24,6 +29,7 @@ def main():
     ap.add_argument('--soa', default='build/port/soa')
     ap.add_argument('--top', type=int, default=60)
     ap.add_argument('--grep', help='only functions matching this regex (after the ranking)')
+    ap.add_argument('--by-subsystem', action='store_true', help='samples per soa::native::<s> namespace')
     a = ap.parse_args()
 
     out = subprocess.run(['nm', '-n', '-S', '-C', '--defined-only', a.soa], capture_output=True, text=True, check=True).stdout
@@ -57,6 +63,15 @@ def main():
                 name = syms[i][1]
             hist[name] += n
     print(f'# {total} host samples in native replacements')
+    if a.by_subsystem:
+        by = collections.Counter()
+        for name, n in hist.items():
+            m = re.search(r'\bsoa::native::(\w+)::', name)
+            by[m.group(1) if m else '(other)'] += n
+        print(f'{"samples":>7}  {"%":>5}  subsystem')
+        for k, n in by.most_common():
+            print(f'{n:7d}  {100.0 * n / max(total, 1):5.1f}  {k}')
+        return 0
     print(f'{"samples":>7}  {"%":>5}  function')
     shown = 0
     for name, n in hist.most_common():

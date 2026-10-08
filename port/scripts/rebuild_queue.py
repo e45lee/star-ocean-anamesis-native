@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The native rebuild's queue (port/PLAN.md task 6): guest time per subsystem, and the subsystems' dependency waves.
 
-Usage: rebuild_queue.py NAME=DIR [NAME=DIR...] [--markdown] [--min-edge N]
+Usage: rebuild_queue.py NAME=DIR [NAME=DIR...] [--markdown] [--min-edge N] [--native-list FILE | --soa SOA]
 
 Each DIR is a SOA_PROFILE + SOA_COVERAGE run of one flow (port/README.md "Profiling"; NAME labels its
 column, e.g. login=/tmp/p/login). Every guest function is assigned to a subsystem:
@@ -9,8 +9,10 @@ column, e.g. login=/tmp/p/login). Every guest function is assigned to a subsyste
   2. else the proposed SUBSYSTEMS table below, matched against the function's family (profile_report.py's
      family_of: the class or namespace; a local FUN_ function takes the family of the nearest preceding export,
      a hint, not a certainty).
-Prints, per subsystem: guest self time (samples where its code is the leaf, the JIT time a native removes)
-in total and per flow, inclusive time, executed / total functions and executed bytes, and its kind
+Prints where the busy time goes per flow (guest code, natives, HLE work), then per subsystem: guest self
+time (samples whose leaf is its guest code, the JIT time a native removes; natives never count here) in
+total and per flow, native self time (samples whose leaf is one of its natives, `--native-list` or
+`--soa`; see Profile for natives calling natives), inclusive time, executed / total functions and executed bytes, and its kind
 (rewrite, host library, own track). Then the dependency graph measured from the sampled stacks: an edge
 A -> B when A's code calls B's (weight = samples); edges under --min-edge samples are dropped; cycles
 (callbacks, virtual calls back up) are merged into one group. The waves: a subsystem can start when every
@@ -21,6 +23,7 @@ import argparse
 import collections
 import os
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -90,11 +93,134 @@ def scaffolded_scopes():
     return out
 
 
+# The port's own code that runs under a guest name: not a rebuild target, kept out of the waves. FakeApiCaller is
+# the in-process route (--server inproc): its natives run the local server's requests inside the client.
+PORT_OWN = [("(route)", re.compile(r"^~?FakeApiCaller$"))]
+
+
 def subsystem_of_family(fam):
-    for s, r in _SUB_RE:
+    for s, r in _SUB_RE + PORT_OWN:
         if r.search(fam):
             return s
     return None
+
+
+def native_symbols(lines, by_name, by_off, sub):
+    """`soa --list-native` lines -> {native symbol: subsystem}. A native counts for the subsystem its guest
+    function belongs to (the same assignment as the guest self time, so a family's guest and native time
+    land in one row); a symbol outside the function table takes the subsystem its note starts with
+    ("audio: ..."). Conditional natives (`[conditional]`, off unless an option asks) are listed too: they
+    are simply never sampled when off."""
+    out = {}
+    for line in lines:
+        p = line.rstrip("\n").split("\t")
+        if not p or not p[0]:
+            continue
+        sym, note = p[0], (p[-1] if len(p) > 1 else "")
+        i = by_off.get(int(sym[1:], 16)) if sym.startswith("@") else by_name.get(sym)
+        s = sub[i] if i is not None else None
+        if s is None or s == "(unassigned)":
+            m = re.match(r"(\w+): ", note)
+            if m and m.group(1) in LEVEL:
+                s = m.group(1)
+        out[sym] = s or "(unassigned)"
+    return out
+
+
+class Profile:
+    """The runs' samples by subsystem. Leaf frames (profile.cpp's stacks.folded):
+      - a guest function            -> guest self of its subsystem (JIT time: what a native would remove);
+        when the frame above it is "[native]<the same function>", it is the original body a native runs
+        (NATIVE_FUNCTION_ORIG trampolines, callee hooks): still guest code, also counted in `own_hook`;
+      - "[native]<symbol>"          -> native self of the symbol's subsystem (native_symbols); a native that
+        calls another native as a C++ member keeps the samples (the callee has no frame of its own;
+        SOA_PROFILE_HOST + host_profile.py --by-subsystem splits them by C++ code);
+      - "[hle]<import>"             -> HLE work, or waiting (IDLE_HLE: not busy, dropped);
+      - "[truncated]" / "[unknown]" -> other.
+    busy = guest + native + HLE work + other, per run."""
+
+    def __init__(self, runs, native_lines=None):
+        self.names = [n for n, _ in runs]
+        funcs = [(int(r[0], 16), int(r[1]), r[3]) for r in load_tsv(os.path.join(runs[0][1], "functions.tsv"))]
+        if not funcs:
+            sys.exit(f"{runs[0][1]}/functions.tsv missing")
+        self.funcs = funcs
+        dem = demangle_all([n for _, _, n in funcs])
+        scopes = scaffolded_scopes()
+        fam, sub = [], []
+        last = "(before first export)"
+        for o, s, n in funcs:
+            f = family_of(dem[n])
+            if f is None:
+                f = "~" + last
+            else:
+                last = f
+            fam.append(f)
+            owner = next((s for s, rx in scopes if not n.startswith("FUN_") and rx.search(dem[n])), None)
+            sub.append(owner or subsystem_of_family(f.lstrip("~")) or subsystem_of_family(f) or "(unassigned)")
+        self.fam, self.sub = fam, sub
+        by_name = {n: i for i, (_, _, n) in enumerate(funcs)}
+        by_off = {o: i for i, (o, _, _) in enumerate(funcs)}
+        self.native_sub = native_symbols(native_lines or [], by_name, by_off, sub)
+
+        C = collections.Counter
+        self.self_s, self.native_s, self.own_hook = C(), C(), C()   # subsystem -> samples
+        self.self_run = collections.defaultdict(C)                # run -> subsystem -> guest samples
+        self.native_run = collections.defaultdict(C)              # run -> subsystem -> native samples
+        self.incl_s, self.fam_self, self.edges = C(), C(), C()
+        self.native_fn = C()                                      # native symbol -> samples
+        self.busy, self.kind = C(), collections.defaultdict(C)    # run -> busy; run -> guest/native/hle/other
+        self.executed = set()
+        for name, d in runs:
+            for r in load_tsv(os.path.join(d, "coverage.tsv")):
+                i = by_off.get(int(r[0], 16))
+                if i is not None:
+                    self.executed.add(i)
+            for line in open(os.path.join(d, "stacks.folded")):
+                st, n = line.rstrip("\n").rsplit(" ", 1)
+                n = int(n)
+                frames = [f for f in st.split(";")[1:] if f not in ("[hle]<return-to-host>", "[native]<return-to-host>")]
+                if not frames:
+                    continue
+                leaf = frames[-1]
+                if leaf.startswith("[hle]") and leaf[5:] in IDLE_HLE:
+                    continue
+                self.busy[name] += n
+                idx = [by_name.get(f) for f in frames]
+                if idx[-1] is not None:
+                    s = sub[idx[-1]]
+                    self.kind[name]["guest"] += n
+                    self.self_s[s] += n
+                    self.self_run[name][s] += n
+                    self.fam_self[(s, fam[idx[-1]])] += n
+                    if len(frames) > 1 and frames[-2] == "[native]" + leaf:
+                        self.own_hook[s] += n
+                elif leaf.startswith("[native]"):
+                    sym = leaf[8:]
+                    s = self.native_sub.get(sym)
+                    if s is None:
+                        i = by_name.get(sym)
+                        s = sub[i] if i is not None else "(unassigned)"
+                    self.kind[name]["native"] += n
+                    self.native_s[s] += n
+                    self.native_run[name][s] += n
+                    self.native_fn[sym] += n
+                elif leaf.startswith("[hle]"):
+                    self.kind[name]["hle"] += n
+                else:
+                    self.kind[name]["other"] += n
+                seen = set()
+                prev = None
+                for i in idx:
+                    if i is None:
+                        continue
+                    s = sub[i]
+                    if s not in seen:
+                        seen.add(s)
+                        self.incl_s[s] += n
+                    if prev is not None and prev != s:
+                        self.edges[(prev, s)] += n
+                    prev = s
 
 
 def main():
@@ -103,6 +229,8 @@ def main():
     ap.add_argument("--min-edge", type=int, default=50, help="drop dependency edges under N samples")
     ap.add_argument("--markdown", action="store_true")
     ap.add_argument("--unassigned", type=int, default=25, help="list the N hottest unassigned families")
+    ap.add_argument("--native-list", help="output of `soa --list-native` (natives by subsystem; default: run --soa)")
+    ap.add_argument("--soa", default=os.path.join(REPO, "build/port/soa"), help="soa binary for --list-native")
     a = ap.parse_args()
     runs = []
     for r in a.runs:
@@ -110,78 +238,27 @@ def main():
         if not d:
             name, d = os.path.basename(os.path.normpath(r)), r
         runs.append((name, d))
-
-    funcs = [(int(r[0], 16), int(r[1]), r[3]) for r in load_tsv(os.path.join(runs[0][1], "functions.tsv"))]
-    if not funcs:
-        sys.exit(f"{runs[0][1]}/functions.tsv missing")
-    dem = demangle_all([n for _, _, n in funcs])
-    scopes = scaffolded_scopes()
-    fam, sub = [], []
-    last = "(before first export)"
-    for o, s, n in funcs:
-        f = family_of(dem[n])
-        if f is None:
-            f = "~" + last
-        else:
-            last = f
-        fam.append(f)
-        owner = next((s for s, rx in scopes if not n.startswith("FUN_") and rx.search(dem[n])), None)
-        sub.append(owner or subsystem_of_family(f.lstrip("~")) or subsystem_of_family(f) or "(unassigned)")
-    by_name = {n: i for i, (_, _, n) in enumerate(funcs)}
-    by_off = {o: i for i, (o, _, _) in enumerate(funcs)}
-
-    self_s = collections.Counter()           # subsystem -> guest leaf samples
-    self_run = collections.defaultdict(collections.Counter)  # run -> subsystem -> samples
-    incl_s = collections.Counter()
-    fam_self = collections.Counter()
-    edges = collections.Counter()            # (caller sub, callee sub) -> samples
-    busy = collections.Counter()
-    executed = set()
-    for name, d in runs:
-        for r in load_tsv(os.path.join(d, "coverage.tsv")):
-            i = by_off.get(int(r[0], 16))
-            if i is not None:
-                executed.add(i)
-        for line in open(os.path.join(d, "stacks.folded")):
-            st, n = line.rstrip("\n").rsplit(" ", 1)
-            n = int(n)
-            frames = [f for f in st.split(";")[1:] if f not in ("[hle]<return-to-host>", "[native]<return-to-host>")]
-            if not frames:
-                continue
-            leaf = frames[-1]
-            if leaf.startswith("[hle]") and leaf[5:] in IDLE_HLE:
-                continue
-            busy[name] += n
-            idx = [by_name.get(f) for f in frames]
-            if idx[-1] is not None:
-                s = sub[idx[-1]]
-                self_s[s] += n
-                self_run[name][s] += n
-                fam_self[(s, fam[idx[-1]])] += n
-            seen = set()
-            prev = None
-            for i in idx:
-                if i is None:
-                    continue
-                s = sub[i]
-                if s not in seen:
-                    seen.add(s)
-                    incl_s[s] += n
-                if prev is not None and prev != s:
-                    edges[(prev, s)] += n
-                prev = s
+    if a.native_list:
+        native_lines = open(a.native_list).read().splitlines()
+    else:
+        try:
+            native_lines = subprocess.run([a.soa, "--list-native"], capture_output=True, text=True, timeout=60).stdout.splitlines()
+        except (OSError, subprocess.TimeoutExpired):
+            native_lines = []
+    P = Profile(runs, native_lines)
+    sub, funcs, self_s, native_s, busy = P.sub, P.funcs, P.self_s, P.native_s, P.busy
 
     total_busy = sum(busy.values())
     nfun = collections.Counter(sub)
-    nexec = collections.Counter(sub[i] for i in executed)
+    nexec = collections.Counter(sub[i] for i in P.executed)
     bexec = collections.Counter()
-    for i in executed:
+    for i in P.executed:
         bexec[sub[i]] += funcs[i][1]
-    subs = sorted(set(sub) | set(self_s), key=lambda s: -self_s[s])
+    subs = sorted(set(sub) | set(self_s) | set(native_s), key=lambda s: (-self_s[s], -native_s[s]))
 
     # Dependencies: measured calls between subsystems, classified by level (see SUBSYSTEMS).
     down, same, up = (collections.defaultdict(list) for _ in range(3))
-    for (x, y), w in edges.items():
+    for (x, y), w in P.edges.items():
         if w < a.min_edge or "(unassigned)" in (x, y) or x not in LEVEL or y not in LEVEL:
             continue
         (down if LEVEL[y] < LEVEL[x] else same if LEVEL[y] == LEVEL[x] else up)[x].append((y, w))
@@ -189,20 +266,41 @@ def main():
         for x in d:
             d[x].sort(key=lambda yw: -yw[1])
 
-    pct = lambda x: f"{100.0 * x / total_busy:.1f}%" if total_busy else "-"
-    names = [n for n, _ in runs]
+    pct = lambda x, t=total_busy: f"{100.0 * x / t:.1f}%" if t else "-"
+    names = P.names
     fmt = lambda lst, k=6: ", ".join(f"{y} ({w})" for y, w in lst[:k]) + (" ..." if len(lst) > k else "") if lst else "-"
+
+    # Where the busy time goes, per flow.
+    kinds = [("guest", "guest code (JIT)"), ("native", "natives"), ("hle", "HLE work (GL, libc, ...)"), ("other", "other (truncated stacks)")]
+    tot_kind = collections.Counter()
+    for n in names:
+        tot_kind.update(P.kind[n])
     if a.markdown:
-        print("| # | Subsystem | Level | Kind | Guest self | " + " | ".join(names) + " | Inclusive | Executed fns | Executed bytes | What |")
-        print("|---|---|---|---|---|" + "---|" * len(names) + "---|---|---|---|")
+        print("| | " + " | ".join(names) + " | all |")
+        print("|---|" + "---|" * (len(names) + 1))
+        print("| busy samples | " + " | ".join(f"{busy[n]:,}" for n in names) + f" | {total_busy:,} |")
+        for k, label in kinds:
+            print(f"| {label} | " + " | ".join(pct(P.kind[n][k], busy[n]) for n in names) + f" | {pct(tot_kind[k])} |")
     else:
         print(f"busy samples: {total_busy} (" + ", ".join(f"{n} {busy[n]}" for n in names) + ")")
+        print("  " + ", ".join(f"{label} {pct(tot_kind[k])}" for k, label in kinds))
+    print()
+
+    if a.markdown:
+        print("| # | Subsystem | Level | Kind | Guest self | " + " | ".join(names) + " | Native self | Inclusive | Executed fns | Executed bytes | What |")
+        print("|---|---|---|---|---|" + "---|" * len(names) + "---|---|---|---|---|")
     for k, s in enumerate(subs, 1):
-        per = [f"{100.0 * self_run[n][s] / busy[n]:.1f}%" if busy[n] else "-" for n in names]
+        per = [f"{100.0 * P.self_run[n][s] / busy[n]:.1f}%" if busy[n] else "-" for n in names]
         row = [str(k), f"`{s}`", str(LEVEL.get(s, "-")), KIND.get(s, "-"), f"{self_s[s]} ({pct(self_s[s])})"] + per + [
-            pct(incl_s[s]), f"{nexec[s]}/{nfun[s]}", f"{bexec[s] // 1024}K", WHAT.get(s, "")]
+            f"{native_s[s]} ({pct(native_s[s])})" if native_s[s] else "-",
+            pct(P.incl_s[s]), f"{nexec[s]}/{nfun[s]}", f"{bexec[s] // 1024}K", WHAT.get(s, "")]
         print(("| " + " | ".join(row) + " |") if a.markdown else "  ".join(row))
     print()
+    own = sum(P.own_hook.values())
+    if own:
+        print(f"Guest self includes {own} samples ({pct(own)}) of original bodies run under their own native's hook "
+              "(NATIVE_FUNCTION_ORIG trampolines, callee hooks): " + ", ".join(f"{s} {n}" for s, n in P.own_hook.most_common(6)) + ".")
+        print()
     levels = sorted({LEVEL[s] for s in subs if s in LEVEL})
     if a.markdown:
         print("| Wave | Subsystem | Guest self | Depends on (measured calls down, samples) | Same-level calls (co-develop) | Callbacks from it upwards |")
@@ -212,10 +310,9 @@ def main():
             row = [str(lv), f"`{s}`", pct(self_s[s]), fmt(down[s]), fmt(same[s], 4), fmt(up[s], 4)]
             print(("| " + " | ".join(row) + " |") if a.markdown else "wave " + "  ".join(row))
     print()
-    un = sorted(((f, n) for (s, f), n in fam_self.items() if s == "(unassigned)"), key=lambda x: -x[1])[:a.unassigned]
+    un = sorted(((f, n) for (s, f), n in P.fam_self.items() if s == "(unassigned)"), key=lambda x: -x[1])[:a.unassigned]
     if un:
         print("Hottest unassigned families: " + ", ".join(f"{f} ({n})" for f, n in un))
-
 
 if __name__ == "__main__":
     main()

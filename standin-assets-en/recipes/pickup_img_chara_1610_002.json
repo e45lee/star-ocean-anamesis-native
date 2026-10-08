@@ -54,14 +54,14 @@
     150,
     322,
     720,
-    170
+    180
    ],
    "style": "erase",
    "cover": [
     150,
     322,
     720,
-    170
+    180
    ]
   },
   {
@@ -71,14 +71,14 @@
     150,
     322,
     720,
-    170
+    180
    ],
    "style": "band",
    "cover": [
     150,
     322,
     720,
-    170
+    180
    ]
   },
   {
@@ -104,6 +104,19 @@
    ],
    "style": "white",
    "size": 24,
+   "align": "right"
+  },
+  {
+   "jp": "※進化や覚醒なども含む、強化が行われる前の状態で出現いたします。",
+   "text": "*Characters appear before any enhancement (incl. evolution and awakening).",
+   "box": [
+    170,
+    482,
+    680,
+    18
+   ],
+   "style": "white",
+   "size": 15,
    "align": "right"
   }
  ]

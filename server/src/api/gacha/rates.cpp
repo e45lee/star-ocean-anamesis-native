@@ -49,6 +49,8 @@ std::vector<u8> gacha_rate_from_pools(ext::Ctx& ctx, const Request& req) {
     for (auto& page : ctx.pools->rate_info(id, format_time(ctx.now()))) {
         // (a) a pools file without the titles (the release packages'): the master's
         if (page.title.empty()) page.title = gacha_pools::name_from_master(ctx.m.h, page.id);
+        // (d) under --english the title's English (the server's own text: docs/server-rules.md#english)
+        page.title = gacha_pools::display_title(ctx.m.h, page.id, page.title);
         list.push(gacha_rate_info(page));
     }
     Value data = base_data(ctx);

@@ -329,6 +329,22 @@ def test_failing_human_row_falls_back(data, built):
     assert any(f["message_id"] == mid and f["source"] == "human" for f in b.failures)
 
 
+def test_agent_row_ranks_as_machine(data, built):
+    """An agent row (`set --source agent`: an AI agent wrote it) never replaces Global's English: where
+    an official row passes it loses, like a machine row; elsewhere it is served as `agent`."""
+    src = T.Ctx().src
+    off = next(m for m in sorted(built.out) if built.out[m][2] == "official" and not C.SPEC.findall(src.jp_rows[m])
+               and "<" not in src.jp_rows[m] and "\\n" not in src.jp_rows[m] and C.has_kana(src.jp_rows[m])
+               and not C.glossary_hits(src.jp_rows[m], built.glossary))
+    a, = gap_ids(built, 1, lambda ja: not C.glossary_hits(ja, built.glossary))
+    assert run(data, "--no-build", "set", off, "Agent words", "--source", "agent", "--by", "agent-x") == 0
+    assert run(data, "--no-build", "set", a, "Agent words", "--source", "agent", "--by", "agent-x") == 0
+    assert {m: r["source"] for m, r in table(data).items()} == {off: "agent", a: "agent"}
+    b = T.build(T.Ctx(data=data))
+    assert b.out[off][2] == "official"
+    assert b.out[a][2] == "agent" and b.out[a][1] == "Agent words"
+
+
 def test_review(data, built, tmp_path):
     src = T.Ctx().src
     a, = gap_ids(built, 1, lambda ja: not C.glossary_hits(ja, built.glossary))
@@ -587,11 +603,11 @@ def test_committed_tables_hold_only_our_rows(built):
     """The user's decision: data/english carries machine / human / reviewed rows (+ client strings),
     never Global's English; official / memory / template are derived at build time."""
     for r in T.read_tsv(T.DATA / "master-en.tsv", T.OUT_COLS):
-        assert r["source"] in ("machine", "human", "reviewed"), r
+        assert r["source"] in ("machine", "agent", "human", "reviewed"), r
     for p in (T.DATA / "story-en").glob("*.tsv"):
         assert p.name != "index.tsv"
         for r in T.read_tsv(p, T.OUT_COLS):
-            assert r["source"] in ("machine", "human", "reviewed"), r
+            assert r["source"] in ("machine", "agent", "human", "reviewed"), r
     assert all(r["source"] != "official" for r in T.read_tsv(T.DATA / "glossary.tsv", T.GLOSSARY_COLS))
     # the derived glossary still holds Global's terms
     assert sum(1 for r in built.glossary_rows if r["source"] == "official") == 3246

@@ -111,6 +111,30 @@ void greedy(std::string_view line, double budget, const Measure& measure, bool t
     }
 }
 
+size_t count_lines(const std::string& s) {
+    size_t n = 1;
+    for (char c : s) n += c == '\n';
+    return n;
+}
+
+// The greedy break at the narrowest budget (to 1/64 of the budget) that gives as many lines as the
+// greedy break at `budget`: even lines.
+void balanced(std::string_view line, double budget, const Measure& measure, bool tags_are_words, std::string* out) {
+    std::string best;
+    greedy(line, budget, measure, tags_are_words, &best);
+    size_t n = count_lines(best);
+    if (n < 2) return void(*out += best);
+    double lo = 0, hi = budget;
+    while (hi - lo > budget / 64) {
+        double mid = (lo + hi) / 2;
+        std::string t;
+        greedy(line, mid, measure, tags_are_words, &t);
+        if (count_lines(t) <= n) hi = mid, best = std::move(t);
+        else lo = mid;
+    }
+    *out += best;
+}
+
 }  // namespace
 
 bool is_space(char32_t c) {
@@ -155,6 +179,8 @@ std::string break_lines(std::string_view text, double budget, const Measure& mea
         std::string_view line = text.substr(start, nl == std::string_view::npos ? std::string_view::npos : nl - start);
         if (line.find(' ') == std::string_view::npos || (opt.skip_japanese && has_japanese(line)) || measure(line) <= budget)
             out.append(line);
+        else if (opt.balance)
+            balanced(line, budget, measure, opt.tags_are_words, &out);
         else
             greedy(line, budget, measure, opt.tags_are_words, &out);
         if (nl == std::string_view::npos) break;

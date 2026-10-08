@@ -3,7 +3,7 @@
 
 Files (data/english/, committed):
   master.tsv          the rows a person or an engine wrote: message_id, ja_sha1, en, source
-                      (machine | human | reviewed), engine, date, editor, note. Official, memory and
+                      (machine | agent | human | reviewed; agent: an AI agent wrote it, ranked as machine), engine, date, editor, note. Official, memory and
                       template English is NOT stored: the build derives it from the two master DBs.
   glossary.tsv        ja, en, kind, variants, source (human | machine), note. Global's terms
                       (official, Q8) are derived at load time (english_core.build_glossary), not stored.
@@ -25,7 +25,7 @@ Files (data/english/, committed):
 All TSVs: UTF-8, a header line, no quoting, a line break inside a text is the two characters \\n.
 
 Precedence per message_id (english.md 7.6): human/reviewed > official (Global by id, the five
-filters; plus Global token rows rewritten by E3) > memory (exact) / template > machine > Japanese.
+filters; plus Global token rows rewritten by E3) > memory (exact) / template > machine / agent > Japanese.
 A candidate that fails a check (english.md 7.5) is not served; the next one is tried, and the failure
 is listed by `report`. A table row whose ja_sha1 differs from the current Japanese is stale: not served.
 
@@ -78,6 +78,10 @@ CLIENT_COLS = ["message_id", "en", "note"]
 OUT_COLS = ["message_id", "ja_sha1", "en", "source"]
 REJECT_COLS = ["message_id", "ja_sha1", "engine", "date", "en", "problems"]
 HUMAN = ("human", "reviewed")
+# Rows an engine or an agent wrote, which a person has not checked: served only where no official,
+# memory or template row passes (english.md 7.9 step 7). `agent` is a row an AI agent wrote by hand
+# (`set --source agent`; its editor names the agent), ranked and checked like `machine`.
+MACHINE = ("machine", "agent")
 DERIVED = ("official", "memory", "template")
 GLOSSARY_RANK = {"human": 0, "official": 1, "machine": 2}
 
@@ -163,8 +167,8 @@ class Ctx:
         for r in rows:
             if r["message_id"] in t:
                 raise ValueError(f"master.tsv: {r['message_id']} twice")
-            if r["source"] not in ("machine",) + HUMAN:
-                raise ValueError(f"master.tsv: {r['message_id']}: source {r['source']!r} (machine|human|reviewed)")
+            if r["source"] not in MACHINE + HUMAN:
+                raise ValueError(f"master.tsv: {r['message_id']}: source {r['source']!r} (machine|agent|human|reviewed)")
             t[r["message_id"]] = r
         return t
 
@@ -179,8 +183,8 @@ class Ctx:
             for r in read_tsv(p, TABLE_COLS):
                 if r["message_id"] in t:
                     raise ValueError(f"{p}: {r['message_id']} twice")
-                if r["source"] not in ("machine",) + HUMAN:
-                    raise ValueError(f"{p}: {r['message_id']}: source {r['source']!r} (machine|human|reviewed)")
+                if r["source"] not in MACHINE + HUMAN:
+                    raise ValueError(f"{p}: {r['message_id']}: source {r['source']!r} (machine|agent|human|reviewed)")
                 r["file"] = p.stem
                 t[r["message_id"]] = r
         return t
@@ -315,7 +319,7 @@ def finish(ctx, glossary, source, en, ja):
         probs = C.check(e, e, font)
     else:
         probs = C.check(jn, e, font, glossary if source not in DERIVED else None,
-                        tags="strict" if source == "machine" else "subset")
+                        tags="strict" if source in MACHINE else "subset")
     return C.esc(e), probs, rebroken
 
 
@@ -424,14 +428,14 @@ def build(ctx):
         if t and t["source"] in HUMAN:
             cands.append((t["source"], t["en"]))
         cands += derived
-        if t and t["source"] == "machine":
-            cands.append(("machine", t["en"]))
+        if t and t["source"] in MACHINE:
+            cands.append((t["source"], t["en"]))
         b.klass[mid] = klass
         b.candidates[klass] += 1
-        if t and t["source"] == "machine" and mid not in b.ours:
-            e, probs, _ = finish(ctx, glossary, "machine", t["en"], ja)
+        if t and t["source"] in MACHINE and mid not in b.ours:
+            e, probs, _ = finish(ctx, glossary, t["source"], t["en"], ja)
             if not probs:
-                b.ours[mid] = (h, e, "machine")  # committed even where a derived row wins
+                b.ours[mid] = (h, e, t["source"])  # committed even where a derived row wins
         for c in cands:
             if len(c) == 2:  # a table row: finish it now (the glossary may have changed)
                 source = c[0]
@@ -522,7 +526,7 @@ def summary(b):
 STORY_BUDGET = 480   # px per line of the message window (font px; measured on a --lang en campaign shot, english.md 7.5)
 # (d) <player> expands to the player's name: counted as 120 px (about 8 Latin letters) when breaking
 PLAYER_PX = {"<player>": 120}
-STORY_SOURCES = ("official", "machine", "human", "reviewed")
+STORY_SOURCES = ("official", "machine", "agent", "human", "reviewed")
 STORY_LONG = 5       # lines: a served line needing this many or more is reported (E7)
 # E13: the window holds STORY_LINES lines; n lines are 40 n - 10 high at its FontSize 30 (lines 40
 # apart, 30 high: CEventScenarioMessageWindow::Show, CalcStringRect; (b) client evidence). A line
@@ -555,18 +559,18 @@ def story_finish(ctx, glossary, source, en, ja):
     breaks were made for a wider window, english.md 6.5)."""
     font = ctx.fnt
     e = C.unesc(en)
-    if source in HUMAN or source == "machine":
+    if source in HUMAN or source in MACHINE:
         e = unicodedata.normalize("NFC", e)
     e = font.fold(e).strip()
     e = story_break(font, e)
     probs = C.check(ja, e, font, glossary if source not in DERIVED else None, tags="strict")
     tags = C.TAG.findall(e)
     bad = [t for t in tags if not C.STORY_TAG.fullmatch(t)]
-    if source == "machine" and C.runaway(ja, e):
+    if source in MACHINE and C.runaway(ja, e):
         probs["runaway"] = len(e)  # an engine stuck repeating a sound ("CAPTAIIII...", "ka-ka-ka-...")
     if bad:
         probs["story_tag"] = bad  # an unknown tag likely crashes ParseMessage (english.md 3.3)
-    elif source != "machine" and "tags" in probs:
+    elif source not in MACHINE and "tags" in probs:
         # Global's (and a person's) English may colour other words or name <player> where JP says
         # 艦長: harmless as long as every tag is one ParseMessage reads and <font> is balanced.
         # An engine must keep the Japanese line's tags exactly.
@@ -646,8 +650,8 @@ def build_story(ctx, glossary, tables=None):
             if t and t["source"] in HUMAN:
                 cands.append((t["source"], t["en"]))
             cands += derived
-            if t and t["source"] == "machine":
-                cands.append(("machine", t["en"]))
+            if t and t["source"] in MACHINE:
+                cands.append((t["source"], t["en"]))
             if t:  # our row, committed whenever it passes (even where a derived line wins)
                 e, probs, _ = story_finish(ctx, glossary, t["source"], t["en"], ja)
                 if not probs:
@@ -947,7 +951,7 @@ def box_summary(rows):
 # the client's design width (english.md 6.7): a single line wider than this at the font's 24 px wraps
 # (labels, E10) or runs off the screen even in a full-width label; informational
 SCREEN_PX = 720
-C_SOURCES = ("official", "memory", "template", "machine", "human", "reviewed")
+C_SOURCES = ("official", "memory", "template", "machine", "agent", "human", "reviewed")
 
 
 def cmd_report(ctx, a):
@@ -1021,29 +1025,29 @@ def cmd_set(ctx, a):
     if sl is not None:
         text = a.text.replace("\r\n", "\n").replace("\n", "\\n")
         g = glossary_dict(glossary_rows(ctx))
-        e, probs, _ = story_finish(ctx, g, "human", text, sl[1])
+        e, probs, _ = story_finish(ctx, g, a.source, text, sl[1])
         if probs and not a.force:
             print(f"{a.id}: {json.dumps(probs, ensure_ascii=False)} (fix the text or pass --force)", file=sys.stderr)
             return 1
         tables = ctx.story_tables()
-        tables[a.id] = {"message_id": a.id, "ja_sha1": sl[2], "en": text, "source": "human", "engine": "",
+        tables[a.id] = {"message_id": a.id, "ja_sha1": sl[2], "en": text, "source": a.source, "engine": "",
                         "date": a.date or today(), "editor": a.by, "note": a.note or "", "file": sl[0]}
         ctx.write_story_tables(tables)
-        print(f"{a.id}: human story row ({sl[0]}) by {a.by}")
+        print(f"{a.id}: {a.source} story row ({sl[0]}) by {a.by}")
         rebuild(ctx, a)
         return 0
     table = ctx.table()
     ja = src.jp_rows.get(a.id)
     text = a.text.replace("\r\n", "\n").replace("\n", "\\n")
     g = glossary_dict(glossary_rows(ctx))
-    e, probs, _ = finish(ctx, g, "human", text, ja or "")
+    e, probs, _ = finish(ctx, g, a.source, text, ja or "")
     if probs and not a.force:
         print(f"{a.id}: {json.dumps(probs, ensure_ascii=False)} (fix the text or pass --force)", file=sys.stderr)
         return 1
     table[a.id] = {"message_id": a.id, "ja_sha1": C.sha1(ja) if ja is not None else "", "en": text,
-                   "source": "human", "engine": "", "date": a.date or today(), "editor": a.by, "note": a.note or ""}
+                   "source": a.source, "engine": "", "date": a.date or today(), "editor": a.by, "note": a.note or ""}
     ctx.write_table(table)
-    print(f"{a.id}: human row by {a.by}" + (f" (problems: {json.dumps(probs, ensure_ascii=False)})" if probs else ""))
+    print(f"{a.id}: {a.source} row by {a.by}" + (f" (problems: {json.dumps(probs, ensure_ascii=False)})" if probs else ""))
     rebuild(ctx, a)
     return 0
 
@@ -1054,8 +1058,8 @@ def cmd_review(ctx, a):
     rc = 0
     for mid in a.ids:
         t = table.get(mid) or stories.get(mid)
-        if not t or t["source"] != "machine":
-            print(f"{mid}: no machine row", file=sys.stderr)
+        if not t or t["source"] not in MACHINE:
+            print(f"{mid}: no machine or agent row", file=sys.stderr)
             rc = 1
             continue
         t.update(source="reviewed", editor=a.by, date=a.date or today())
@@ -1423,6 +1427,8 @@ def main(argv=None):
     p.add_argument("--note")
     p.add_argument("--date")
     p.add_argument("--force", action="store_true")
+    p.add_argument("--source", choices=("human", "agent"), default="human",
+                   help="agent: an AI agent wrote it (ranked like machine; --by names the agent)")
     p = sub.add_parser("review")
     p.add_argument("ids", nargs="+")
     p.add_argument("--by", required=True)

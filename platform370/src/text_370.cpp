@@ -490,18 +490,89 @@ void fit_talk(u64 label) {
 }
 
 void story_draw(u64 label);  // (E13, below)
+// The wrap's verdict for a short label shrunk on one line (a value no text has).
+const std::string kShrinkOneLine = std::string("\x01shrink", 7);
 void story_forget(u64 label);
 
 // ---- E10 (b): the label wrap ---------------------------------------------------------------------
 // The story message window's labels are E13's (the data breaks their lines, the window scales its
 // font): the wrap leaves them alone, so a text revealed a character at a time is never broken
 // differently from the whole line. Append's clones of the window's label are named "AppendMessage".
+// The header description of a menu (UI/etc2/*_common.csf Node_1|Node_maintitle/Text_2,
+// gacha_main.csf subtitle/text2): one line in the header bar beside the title.
+bool is_header_description(const CCocosLabel* l) {
+    std::string_view n = l->name();
+    if (n != "Text_2" && n != "text2") return false;
+    const cocos::CCocosNode* p = l->parent();
+    std::string_view pn = p ? p->m_name.view() : std::string_view();
+    return pn == "Node_1" || pn == "Node_maintitle" || pn == "subtitle";
+}
+
+// Labels that slide in are first drawn away from their place: a screen label is wrapped only once it
+// is drawn twice at the same world x (until then it is laid out again each frame).
+std::mutex g_x_mu;
+std::unordered_map<u64, float> g_last_x;
+bool settled(CCocosLabel* l, u64 label, float x) {
+    std::lock_guard<std::mutex> lk(g_x_mu);
+    auto it = g_last_x.find(label);
+    if (it != g_last_x.end() && it->second == x) return true;
+    if (g_last_x.size() > 65536) g_last_x.clear();  // (destroyed labels are dropped by forget_label)
+    g_last_x[label] = x;
+    l->m_flags |= cocos::kRelayoutFlags;
+    return false;
+}
+
+// A dialog's message (pop1/window/Text of the dialog layouts) that grows with its text: the room it
+// has between the window's top rule (line_1) and the buttons below it (Button_*, else line_2), in
+// its units, centred on the label; 0 when the dialog isn't laid out that way.
+float world_y(u64 node, float* sy) {
+    u64 m = guest_call(g_world, {node, 1});
+    alignas(16) float pos[4] = {}, scale[4] = {};
+    if (m) guest_call(g_prs, {m, (u64)pos, 0, (u64)scale});
+    *sy = scale[1] < 0 ? -scale[1] : scale[1];
+    return pos[1];
+}
+float dialog_room_h(CCocosLabel* l, u64 label) {
+    const cocos::CCocosNode* w = l->parent();
+    if (l->name() != "Text" || !w || w->m_name.view() != "window" || l->m_anchorY != 0.5f) return 0;
+    const cocos::CCocosNode* pop = (const cocos::CCocosNode*)(uintptr_t)w->m_parent;
+    if (!pop || pop->m_name.view() != "pop1") return 0;
+    float sy;
+    float cy = world_y(label, &sy);
+    if (sy < 0.2f) return 0;
+    float top = -1, bottom = -1, line2 = -1;
+    for (u64 c = w->m_firstChild; c; c = ((const cocos::CCocosNode*)c)->m_nextSibling) {
+        const cocos::CCocosNode* n = (const cocos::CCocosNode*)c;
+        std::string_view nm = n->m_name.view();
+        float s2;
+        float y = world_y(c, &s2);
+        float half = n->m_height * s2 / 2;
+        if (nm == "line_1" && y < cy) top = y + half;
+        else if (nm == "line_2" && y > cy) line2 = y - half;
+        else if (nm.substr(0, 6) == "Button" && n->m_height > 0 && y > cy && (bottom < 0 || y - half < bottom)) bottom = y - half;
+    }
+    if (bottom < 0) bottom = line2;
+    if (top < 0 || bottom < 0) return 0;
+    float half = std::min(cy - top, bottom - cy) - 4 * sy;  // a small margin from the rule and the buttons
+    return half > 12 ? 2 * half / sy : 0;
+}
+
 void maybe_wrap(u64 label) {
     CCocosLabel* l = as_label(label);
     if (is_talk_text(l)) return fit_talk(label);
     if (l->name() == "AppendMessage") return;
     if (text::label_states().is_story(label)) return story_draw(label);
     std::string_view s = l->text();
+    {
+        // a label this hook boxed (a short label shrunk to one line) whose text changed: its own box back
+        std::string boxed;
+        text::LabelStates::Box own;
+        if (!l->m_customSize || text::label_states().original_of(label, s, &boxed)) {
+        } else if (text::label_states().take_box(label, &own)) {
+            set_box(l, own);
+            text::label_states().erase_text(label);
+        }
+    }
     if (s.size() < 12 || l->m_tagMode || !l->m_renderer) return;
     bool space = s.find(' ') != std::string_view::npos;
     if (!space && s.find('\n') == std::string_view::npos) return;
@@ -513,23 +584,64 @@ void maybe_wrap(u64 label) {
     Geometry g{};
     float r = room(label, &g);
     if (r <= 0) return;
+    if (!l->m_customSize && !settled(l, label, g.x)) return;
     std::string key = src + '\x01' + std::to_string((int)r), out;
     if (!g_wrapped.get(key, &out)) {
-        soa::text::BreakOptions o;
-        o.keep_breaks = true, o.skip_japanese = true, o.tags_are_words = false;
         auto m = label_measure(l);
-        out = soa::text::break_lines(src, r, [&](std::string_view line) { return m(line).w; }, o);
-        // A fixed-size label that shrinks its text to fit (+0x282): keep the wrap only when the text
-        // then shrinks less (one-line boxes such as buttons read better shrunk than broken).
-        float bh = l->m_height;
-        if (out != src && l->m_customSize && l->m_shrink && bh > 0) {
-            soa::text::Extent eo = m(out), es = m(src);
-            if (text::fit_scale(eo.w, eo.h, r, bh) <= text::fit_scale(es.w, es.h, r, bh) + 0.01) out = src;
+        bool fixed = l->m_customSize && l->m_shrink && l->m_height > 0;
+        if (fixed && src.find('\n') == std::string::npos) {
+            // A fixed box that shrinks its text (Part 4): re-broken at the box for the fewest lines at
+            // the largest scale, then DrawSelf's own shrink (fit_box, as the home's talk box).
+            out = soa::text::fit_box(src, r, l->m_height, m).text;
+        } else if (!l->m_customSize && src.find('\n') == std::string::npos &&
+                   (is_header_description(l) ? m(src).w * 0.5 <= r : std::count(src.begin(), src.end(), ' ') < 3 && m(src).w * 0.6 <= r) &&
+                   m(src).w > r) {
+            // A menu's header description (one line in the header bar: the Japanese is one line) or a
+            // short label (up to three words: a name, a caption, a checkbox's text) wider than its
+            // room: kept on one line and shrunk into it (below; to at least 50% / 60%, else wrapped),
+            // not broken into lines that hang below the bar or a column of words.
+            out = kShrinkOneLine;
+        } else {
+            soa::text::BreakOptions o;
+            o.keep_breaks = true, o.skip_japanese = true, o.tags_are_words = false, o.balance = true;
+            out = soa::text::break_lines(src, r, [&](std::string_view line) { return m(line).w; }, o);
+            // A fixed-size label with its own breaks: keep the wrap only when the text then shrinks
+            // less (one-line boxes such as buttons read better shrunk than broken).
+            if (out != src && fixed) {
+                soa::text::Extent eo = m(out), es = m(src);
+                if (text::fit_scale(eo.w, eo.h, r, l->m_height) <= text::fit_scale(es.w, es.h, r, l->m_height) + 0.01) out = src;
+            }
         }
         g_wrapped.put(key, out);
         if (out != src && first_time(src))  // once per text (a sliding label is wrapped at each step)
-            LOGI("p370", "lang: wrapped a %s label's line to %.0f (world x %.0f y %.0f, scale %.2f, anchor %.2f): \"%.*s\"",
-                 l->m_customSize ? "fixed-size" : "screen", r, g.x, g.y, g.scale, g.anchor, (int)std::min<size_t>(src.size(), 80), src.data());
+            LOGI("p370", "lang: %s a %s label's line to %.0f (world x %.0f y %.0f, scale %.2f, anchor %.2f, align %u): \"%.*s\"",
+                 out == kShrinkOneLine ? "shrank" : "wrapped", l->m_customSize ? "fixed-size" : "screen", r, g.x, g.y, g.scale, g.anchor,
+                 l->m_hAlign, (int)std::min<size_t>(src.size(), 80), src.data());
+    }
+    if (out == kShrinkOneLine) {
+        // the label made a fixed box of the room's width and its one line's height, shrinking
+        text::label_states().keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
+        text::label_states().set(label, src, src);
+        set_box(l, {1, 1, r, (float)label_measure(l)(src).h});
+        if (std::string_view(src) != s) set_text(label, src);
+        return;
+    }
+    if (!l->m_customSize && !l->m_tagMode) {
+        // A dialog's message taller than the room above its buttons (Part 4: shrink, don't shorten):
+        // its lines kept, the label made a fixed box of that room that shrinks its text (IsCustomSize,
+        // +0x282), centred where it was; its own fields come back when its text changes.
+        float bh = dialog_room_h(l, label);
+        soa::text::Extent e = bh > 0 ? label_measure(l)(out) : soa::text::Extent{0, 0};
+        if (bh > 0 && e.h > bh) {
+            text::label_states().keep_box(label, {l->m_customSize, l->m_shrink, l->m_width, l->m_height});
+            text::label_states().set(label, out, src);
+            set_box(l, {1, 1, std::max(r, (float)e.w), bh});
+            if (first_time("\x06" + src))
+                LOGI("p370", "lang: shrank a dialog's message to %.0f%% to fit %.0f above its buttons: \"%.*s\"", bh / e.h * 100, bh,
+                     (int)std::min<size_t>(src.size(), 60), src.data());
+            if (out != s) set_text(label, out);
+            return;
+        }
     }
     if (out == s) return;
     if (out == src) text::label_states().erase_text(label);
@@ -540,6 +652,8 @@ void maybe_wrap(u64 label) {
 void forget_label(u64 label) {
     text::label_states().forget(label);
     story_forget(label);
+    std::lock_guard<std::mutex> lk(g_x_mu);
+    g_last_x.erase(label);
 }
 
 // bool CCocosLabel::DrawSelf(): x0 label.

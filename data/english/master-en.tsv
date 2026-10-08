@@ -33721,7 +33721,7 @@ uimsg_Sellitem_Warning_2	b4bf2eb3247eb35c1d4394631cc325c8dc055b44	Items with a r
 uimsg_Voice_switch_text	642726731de6b8b3791d5e3726c13637e82a642a	Change whether voices are played during Battles.	machine
 uimsg_Voice_switch_title	bf587daf40bd4a014f1fca20aaa3d62d5e65b857	Voice Playback Settings	machine
 uimsg_Weapon_Warning	336f9166419c6b1f287bb97a751b0fcb2a91f83a	Refining the Base Item. The Base Item\nand all materials used will be lost. Are\nyou sure?	machine
-uimsg_able_use_money	fe94c6d2719ecd682f7bff36c54e4e7cc3063c2e	Under 16 1\nmonth Up to\n5,000 yen\n16-19 1\nmonth Up to\n30,000 yen\n20 and over\nNo limit No\nlimit	machine
+uimsg_able_use_money	fe94c6d2719ecd682f7bff36c54e4e7cc3063c2e	Under 16\n1 month\nUp to 5,000 yen\n16-19\n1 month\nUp to 30,000 yen\n20 and over\nNo limit\nNo limit	agent
 uimsg_abnormal_Burn	74d12121712ce0f7851083fc6973d13c25631f2b	Burn	machine
 uimsg_abnormal_Curse	c91391b06649da2dc422d426cbcdfb91544c85dd	Curse	machine
 uimsg_abnormal_Fog	8f177f7e781b4ed97a7813a182494d1f5155521a	Fog	machine
@@ -35046,7 +35046,7 @@ uimsg_direct_item_shop_name	822ece16f2841c5cd6685d9851c4b2a04356eb78	Premium Sho
 uimsg_direct_item_shop_return_title	6f2d81ff0c33c92de7a0c09ea498960db6ce2dab	The item you wish to\npurchase has already been\nbought or is no longer\navailable. Returning to the\ntitle screen to update\ninformation.	machine
 uimsg_direct_shop_reverify	89271afa4fe8b8bbca9c957cd10ec8d1cfac52cf	Purchase completed\nsuccessfully.	machine
 uimsg_disable_talent	f9d7e75bc08464d1d4f0dcae8d5039a6a998e38a	Only effective in %s	machine
-uimsg_drop_bonus_on_this_condition	c5ce83dc870ac67449a9d72a9bd4d83d3a20d4de	+%u drops every %u hits	machine
+uimsg_drop_bonus_on_this_condition	c5ce83dc870ac67449a9d72a9bd4d83d3a20d4de	%u-hit combo: drops +%u	agent
 uimsg_effectalpha_setting2	07f3b8664608947d861360a6cdd7c1f8bee7268a	Ally\nCharacters\nEffect\nSettings	machine
 uimsg_empty_healing_item	bba977ead55804579b220caa0592bb4ee112c3a4	You do not\nhave any\nhealing items.	machine
 uimsg_episode2_allclear_message	3fbd12226feebc4a7ffb55efee920fe29c6ba821	You have cleared all of the Main Story\nfor this Episode. Stay tuned for future\nRenewed Vigor updates!	machine
@@ -36956,7 +36956,7 @@ uimsg_item_Warning_0	139132cf5740c3b9b16e5d13abbf403c1c8df845	The items selected
 uimsg_item_Warning_1	0f4e738caa3b87caa48964091a61d3cf82f080c8	Items with <fontcolor=red>Rarity ★3\nor higher</font> Items <fontcolor=red>leveled\nup via Enhance\nWeapon</font> Items with\n<fontcolor=red>Cap Inc.</font>	machine
 uimsg_item_confirmation_1	b4bf2eb3247eb35c1d4394631cc325c8dc055b44	Items with a rarity of 3\nstars or higher Items\nthat have been grown\nthrough enhancement\nsynthesis Items with\ntheir limit broken\nWeapons with Gear\nequipped	machine
 uimsg_item_confirmation_3	95afe5e5a9b1c1bc87436ca3aa852f9042713f6b	Items with a rarity of 5\nstars or higher Items\nthat have been grown\nthrough enhancement\nsynthesis Items with\ntheir limit broken\nWeapons with Gear\nequipped	machine
-uimsg_item_confirmation_sell_1	8c0dea2d0433da14c7a9640459fe197267bfdb66	Items with a rarity of 3\nstars or higher Items\ngrown through\nenhancement\nsynthesis Items with\ntheir limit broken\nWeapons with Gear\nequipped Accessories\nwith the inheritance\nfunction	machine
+uimsg_item_confirmation_sell_1	8c0dea2d0433da14c7a9640459fe197267bfdb66	Items with ★3 rarity or higher\nItems grown through enhancement synthesis\nItems with limit breaks applied\nWeapons with gear equipped\nAccessories with inheritance functions	agent
 uimsg_item_dialog_equipstorage_into	c7d4bb871c644c3674530e2d00020045e5050618	Move the selected\nequipment to storage?\nAre you sure?	machine
 uimsg_item_dialog_equipstorage_out	43988152cfa2e9a8e02423f6cca8e81eaa84e5c5	Remove the selected\nequipment from storage?\nAre you sure?	machine
 uimsg_item_dialog_gacha_equipstorage_out	049c42957d38414ce7af3ee3fad1c0c3f413e6ae	Remove the selected\nequipment from the Temporary\nStorage? Are you sure?	machine

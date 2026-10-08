@@ -1057,17 +1057,83 @@
    "fields": [
     {
      "offset": 0,
-     "name": "unk_000",
+     "name": "m_sync",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 944
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::OggSyncState",
+      "size": 32
      },
-     "size": 944
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "m_stream",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::OggStreamState",
+      "size": 408
+     },
+     "size": 408
+    },
+    {
+     "offset": 440,
+     "name": "m_page",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::OggPage",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 472,
+     "name": "m_packet",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::OggPacket",
+      "size": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 520,
+     "name": "m_info",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::VorbisInfo",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 576,
+     "name": "m_comment",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::VorbisComment",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 608,
+     "name": "m_dsp",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::VorbisDspState",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 752,
+     "name": "m_block",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::VorbisBlock",
+      "size": 192
+     },
+     "size": 192
     },
     {
      "offset": 944,
@@ -1090,17 +1156,33 @@
     },
     {
      "offset": 956,
-     "name": "unk_3bc",
+     "name": "m_framesLong",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 12
+      "kind": "int",
+      "size": 4,
+      "signed": false
      },
-     "size": 12
+     "size": 4
+    },
+    {
+     "offset": 960,
+     "name": "m_framesShort",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 964,
+     "name": "m_consumed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
     },
     {
      "offset": 968,
@@ -1114,7 +1196,17 @@
     },
     {
      "offset": 969,
-     "name": "unk_3c9",
+     "name": "m_pageEos",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 970,
+     "name": "unk_3ca",
      "type": {
       "kind": "array",
       "of": {
@@ -1122,9 +1214,66 @@
        "size": 1,
        "signed": false
       },
-      "count": 115
+      "count": 6
      },
-     "size": 115
+     "size": 6
+    },
+    {
+     "offset": 976,
+     "name": "m_buffers",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 8
+     },
+     "size": 64
+    },
+    {
+     "offset": 1040,
+     "name": "m_bufferSizes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 32
+    },
+    {
+     "offset": 1072,
+     "name": "m_bufferIndex",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1076,
+     "name": "m_loopEnd",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1080,
+     "name": "m_totalFrames",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
     },
     {
      "offset": 1084,
@@ -1138,7 +1287,17 @@
     },
     {
      "offset": 1085,
-     "name": "unk_43d",
+     "name": "m_loopState",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1086,
+     "name": "unk_43e",
      "type": {
       "kind": "array",
       "of": {
@@ -1146,9 +1305,53 @@
        "size": 1,
        "signed": false
       },
-      "count": 19
+      "count": 2
      },
-     "size": 19
+     "size": 2
+    },
+    {
+     "offset": 1088,
+     "name": "m_loopPos",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1092,
+     "name": "m_loopBlock",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1096,
+     "name": "m_loopStart",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1100,
+     "name": "unk_44c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
     }
    ],
    "size": 1104,

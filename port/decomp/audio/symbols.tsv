@@ -584,12 +584,12 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x2240194	0x2340194	68	_ZN4Aska7AskaOGG13PacketDecoder4InitEj	Aska::AskaOGG::PacketDecoder::Init(unsigned int)	codec	decompiled	
 0x22401d8	0x23401d8	20	_ZN4Aska7AskaOGG13PacketDecoder7SetPageEP8ogg_page	Aska::AskaOGG::PacketDecoder::SetPage(ogg_page*)	codec	decompiled	
 0x22401ec	0x23401ec	936	_ZN4Aska7AskaOGG16Decode_LoopStartEjj	Aska::AskaOGG::Decode_LoopStart(unsigned int, unsigned int)	codec	decompiled	
-0x2240594	0x2340594	252	_ZN4Aska7AskaOGG13DecodePacketsEjj	Aska::AskaOGG::DecodePackets(unsigned int, unsigned int)	codec	decompiled	
+0x2240594	0x2340594	252	_ZN4Aska7AskaOGG13DecodePacketsEjj	Aska::AskaOGG::DecodePackets(unsigned int, unsigned int)	codec	tested	
 0x2240690	0x2340690	80	_ZN4Aska7AskaOGG15DecodePageResetEv	Aska::AskaOGG::DecodePageReset()	codec	decompiled	
 0x22406e0	0x23406e0	20	_ZN4Aska7AskaOGG13PacketDecoder5ResetEv	Aska::AskaOGG::PacketDecoder::Reset()	codec	decompiled	
 0x22406f4	0x23406f4	24	_ZN4Aska7AskaOGG13PacketDecoder8ProgressEjPKaj	Aska::AskaOGG::PacketDecoder::Progress(unsigned int, signed char const*, unsigned int)	codec	decompiled	
 0x224070c	0x234070c	36	_ZNK4Aska7AskaOGG22Decode_CalcFrameSampleEj	Aska::AskaOGG::Decode_CalcFrameSample(unsigned int) const	codec	decompiled	
-0x2240730	0x2340730	540	_ZN4Aska7AskaOGG13Decode_PcmoutEj	Aska::AskaOGG::Decode_Pcmout(unsigned int)	codec	decompiled	
+0x2240730	0x2340730	540	_ZN4Aska7AskaOGG13Decode_PcmoutEj	Aska::AskaOGG::Decode_Pcmout(unsigned int)	codec	tested	
 0x224094c	0x234094c	224	_ZN4Aska7AskaOGG19Decode_GetDstBufferEjj	Aska::AskaOGG::Decode_GetDstBuffer(unsigned int, unsigned int)	codec	decompiled	
 0x2240a2c	0x2340a2c	16	_ZN4Aska7AskaOGG13PacketDecoderC1Ev	Aska::AskaOGG::PacketDecoder::PacketDecoder()	codec	decompiled	
 0x2240a3c	0x2340a3c	48	_ZN4Aska7AskaOGG13DecodeContextC2Ev	Aska::AskaOGG::DecodeContext::DecodeContext()	codec	decompiled	

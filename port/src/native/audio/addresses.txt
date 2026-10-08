@@ -5,3 +5,4 @@ kStrIllegalSoundType      str "Illegal sound type.(%08x)"
 kInvalidHandle            sym _ZN9Framework6CSound14iInvalidHandleE                # u64: a CElement's m_handle when free
 kPlayingElementsCallbackVtbl at 0x2aab048 ref _ZN9Framework13CSoundManager12PostProgressEv  # the vtable (its slots at + 0x10) of the ICallback PostProgress hands FunctorAllPlayingElements
 kDeleteCountdownExtra     at 0x26dbad0 f32 ref _ZN4Aska7SLVoice18SetDeleteCountdownEv   # added to the countdown while SoundManager::m_signalExtra is set
+kOggPcmScale              at 0x28d311c f32 ref _ZN4Aska7AskaOGG13Decode_PcmoutEj  # the float sample -> s16 scale (32767.0)

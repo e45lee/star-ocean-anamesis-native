@@ -18,6 +18,7 @@
 #include <cstdint>
 
 #include "../kernel/kernel_layout.h"  // Task, CTimeElement (kernel's classes)
+#include "../lib_vorbis/lib_vorbis_layout.h"  // the libogg / libVorbis structs AskaOGG embeds
 #include "../math/math_layout.h"      // Matrix, Vector, Quaternion (math's classes)
 #include "../memory/memory_layout.h"  // TObjectContainer (memory's class)
 #include "../sync/sync_layout.h"      // FastCriticalSection, CMutex (sync's classes)
@@ -330,23 +331,65 @@ static_assert(offsetof(WaveVoiceBase, m_buffer) == 0x30);
 using SLItf = const u64* const*;
 
 // Aska::AskaOGG: the voice's Ogg Vorbis decoder over lib_vorbis, guest size 0x450 (SLVoice + 0x58 .. 0x4a8).
-// Only the fields the voice reads: the decoded data a previous Decode couldn't hand over yet.
+// Layout from its constructor (DecodeContext's: memset of 0x3ca and 0x6e bytes), DecodeInit (the 8 decode
+// buffers from SoundMemory::ResourceAlloc, m_uiDecodePoolSize bytes rounded up to 0x200), DecodeHeader (the
+// frame targets from the rate), DecodeBody / DecodePackets / Decode_Pcmout / Decode_LoopStart
+// (port/decomp/audio/codec.c). The library's structs are embedded (lib_vorbis_layout.h; the host's live in
+// place when lib_vorbis is native). Decode hands back each call's PCM in the next of the 8 buffers (round
+// robin), so the voice can keep a few enqueued.
 class AskaOGG {
 public:
-    s64 Decode(const s8* data, u32 size, s8** out, u32 maxFrames, u32 a, u32 b);  // _ZN4Aska7AskaOGG6DecodeEPKajPPajjj (guest)
+    static constexpr u32 kBuffers = 8;
+    static constexpr s64 kErrStream = -0x3b8;   // a corrupt packet / stream (vorbis_synthesis_blockin / read failed)
+    static constexpr s64 kErrNoMemory = -0x3bf; // a decode buffer couldn't grow
 
-    u8 unk_000[0x3b0];
-    const s8* m_pendingData;   // 0x3b0
+    s64 Decode(const s8* data, u32 size, s8** out, u32 maxFrames, u32 a, u32 b);  // _ZN4Aska7AskaOGG6DecodeEPKajPPajjj (guest)
+    s64 DecodePackets(u32 offset, u32 maxFrames);   // _ZN4Aska7AskaOGG13DecodePacketsEjj
+    s64 Decode_Pcmout(u32 offset);                  // _ZN4Aska7AskaOGG13Decode_PcmoutEj
+
+    lib_vorbis::OggSyncState m_sync;        // 0x000
+    lib_vorbis::OggStreamState m_stream;    // 0x020
+    lib_vorbis::OggPage m_page;             // 0x1b8
+    lib_vorbis::OggPacket m_packet;         // 0x1d8
+    lib_vorbis::VorbisInfo m_info;          // 0x208: channels +0x20c
+    lib_vorbis::VorbisComment m_comment;    // 0x240
+    lib_vorbis::VorbisDspState m_dsp;       // 0x260
+    lib_vorbis::VorbisBlock m_block;        // 0x2f0
+    const s8* m_pendingData;   // 0x3b0: the source DecodeBody stopped in (m_hasPending)
     u32 m_pendingSize;         // 0x3b8
-    u8 unk_3bc[0xc];           // 0x3bc
-    u8 m_hasPending;           // 0x3c8: LockAndSubmitOGG submits m_pendingData first
-    u8 unk_3c9[0x73];          // 0x3c9
+    u32 m_framesLong;          // 0x3bc: frames per decode (DecodeHeader: from the rate; 0 = no limit)
+    u32 m_framesShort;         // 0x3c0: ... when the caller's budget is at most this many
+    u32 m_consumed;            // 0x3c4: source bytes of m_pendingData already fed to the sync layer
+    u8 m_hasPending;           // 0x3c8: a decode stopped at its frame target: packets are left (LockAndSubmitOGG submits m_pendingData first)
+    u8 m_pageEos;              // 0x3c9: the current page's header flag 4 (end of stream)
+    u8 unk_3ca[6];             // 0x3ca
+    s8* m_buffers[kBuffers];   // 0x3d0: the PCM out buffers (SoundMemory::ResourceAlloc)
+    u32 m_bufferSizes[kBuffers];  // 0x410
+    u32 m_bufferIndex;         // 0x430: the one being filled
+    u32 m_loopEnd;             // 0x434: DecodeBody's last argument, taken per page (nonzero: a loop jump after this page)
+    u32 m_totalFrames;         // 0x438: DecodeInit's first argument
     u8 m_headerStage;          // 0x43c: Decode parses headers while < 3
-    u8 unk_43d[0x13];          // 0x43d
+    u8 m_loopState;            // 0x43d: Decode_LoopStart's state (0 none, 1-4)
+    u8 unk_43e[2];             // 0x43e
+    u32 m_loopPos;             // 0x440
+    u32 m_loopBlock;           // 0x444
+    u32 m_loopStart;           // 0x448: DecodeInit's second argument
+    u8 unk_44c[4];             // 0x44c
 };
+static_assert(offsetof(AskaOGG, m_packet) == 0x1d8);
+static_assert(offsetof(AskaOGG, m_info) == 0x208);
+static_assert(offsetof(AskaOGG, m_dsp) == 0x260);
+static_assert(offsetof(AskaOGG, m_block) == 0x2f0);
 static_assert(offsetof(AskaOGG, m_pendingData) == 0x3b0);
+static_assert(offsetof(AskaOGG, m_framesLong) == 0x3bc);
+static_assert(offsetof(AskaOGG, m_consumed) == 0x3c4);
 static_assert(offsetof(AskaOGG, m_hasPending) == 0x3c8);
+static_assert(offsetof(AskaOGG, m_buffers) == 0x3d0);
+static_assert(offsetof(AskaOGG, m_bufferSizes) == 0x410);
+static_assert(offsetof(AskaOGG, m_bufferIndex) == 0x430);
 static_assert(offsetof(AskaOGG, m_headerStage) == 0x43c);
+static_assert(offsetof(AskaOGG, m_loopPos) == 0x440);
+static_assert(offsetof(AskaOGG, m_loopStart) == 0x448);
 static_assert(sizeof(AskaOGG) == 0x450);
 
 // Aska::SLVoice: one OpenSL ES player, guest size 0x648 (layout from the constructor, CreateVoice and the

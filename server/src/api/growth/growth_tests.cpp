@@ -10,6 +10,7 @@
 #include "core/time.h"
 #include "core/errors.h"
 #include "soaserver/msgpack.h"
+#include "testing/reply_shape.h"
 #include "testing/scratch.h"
 
 namespace soa::server {
@@ -117,7 +118,12 @@ NATIVE_TEST("growth/apis") {
                         if (e.i(id.c_str())) add_stock(c, (u32)e.i(id.c_str()), e.i(num.c_str()));
                     }
                 });
-            call(c, "EvolutionCharacter", {euid});
+            const std::vector<u8> evolved = call(c, "EvolutionCharacter", {euid});
+            // (no replay corpus evolves a character: the reply's shape pinned here)
+            t.expect_eq(data_shape(evolved, "EvolutionResult"),
+                        std::string("{use_fol:u UseStockItem:[{master_item_id:u use_count:u}] UpdatePlayerCharacter:{id:u "
+                                    "before_master_role_id:u after_master_role_id:u level:u is_rarity_7:u}}"),
+                        "EvolutionResult's shape");
             u32 after = (u32)c.st.one("select role_id from roster where uid = ?", {euid});
             t.expect_eq((u32)c.m.one("select rarity from master_role where id = ?", {after}), 6u, "evolved to rarity 6");
             // (b) back to level 1 (uimsg_next_strongth: the client's text says the level restarts)

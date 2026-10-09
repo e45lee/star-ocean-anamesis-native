@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "api/campaign/campaign.h"
+#include "api/gen/reply_types.h"  // the replies' C*Info types
 #include "soaserver/server.h"  // format_time
 
 namespace soa::server::campaign {
@@ -120,41 +121,36 @@ Value build_world_map_list(const State& s) {
     u32 last_cell = 0;
     if (auto it = m.missions.find(s.last_play); it != m.missions.end()) last_cell = it->second.cell;
     u32 last_map = last_cell ? m.cells.at(last_cell).map : 0;
-    Value list = Value::object();
-    Value& maps = list["WorldMap"] = Value::object();
+    infos::CActiveWorldMapMissionListInfo list;
     for (auto& [map, cells] : cells_by_map) {
         bool any_new = false;
         for (u32 cell : cells) any_new |= has_new(s, by_cell[cell]);
         const WorldMap& world_map = m.world_maps.at(map);
-        Value& info = maps[std::to_string(map)] = Value::object();
-        info["area_ct"] = (u64)cells.size();  // (d) the number of listed cells
-        info["is_new"] = any_new;
-        info["is_last_play"] = map == last_map;
-        info["opened_at"] = world_map.opened;
-        info["closed_at"] = world_map.closed;
+        list.WorldMap[map] = {.area_ct = (u32)cells.size(),  // (d) the number of listed cells
+                              .is_new = any_new,
+                              .is_last_play = map == last_map,
+                              .opened_at = world_map.opened,
+                              .closed_at = world_map.closed};
     }
-    Value& cell_lists = list["WorldMapCellList"] = Value::object();
     for (auto& [map, cells] : cells_by_map) {
-        Value& cell_list = cell_lists[std::to_string(map)] = Value::object();
-        for (u32 cell : cells) cell_list[std::to_string(cell)] = Value::object();
+        auto& cell_list = list.WorldMapCellList[map];
+        for (u32 cell : cells) cell_list[cell] = {};
     }
-    Value& mission_lists = list["WorldMapMission"] = Value::object();
     for (auto& [cell, missions] : by_cell) {
-        Value& mission_list = mission_lists[std::to_string(cell)] = Value::array();
+        auto& mission_list = list.WorldMapMission[cell];
         for (auto* mission : missions) {
             bool clear = s.cleared.count(mission->id) != 0;
-            Value& element = mission_list.push(Value::object());
-            element["id"] = mission->id;
-            element["is_new"] = !clear;
-            element["is_clear"] = clear;
-            element["is_last_play"] = mission->id == s.last_play;
-            element["mission_group_id"] = mission->group;
-            element["difficulty"] = mission->difficulty;
-            element["mission_type"] = mission->type;
-            element["scenario_library_id"] = mission->library;
+            mission_list.push_back({.id = mission->id,
+                                    .is_new = !clear,
+                                    .is_clear = clear,
+                                    .is_last_play = mission->id == s.last_play,
+                                    .mission_group_id = mission->group,
+                                    .difficulty = mission->difficulty,
+                                    .mission_type = mission->type,
+                                    .scenario_library_id = mission->library});
         }
     }
-    return list;
+    return infos::to_value(list);
 }
 
 // Player.world_map_progress (Episode 2, `chapter_1`) and world_map_progress_ep3 (`Episode03`).
@@ -199,40 +195,33 @@ Value build_active_mission_list(const State& s) {
         last_area = it->second.area;
         if (auto area = m.areas.find(last_area); area != m.areas.end()) last_planet = area->second.planet;
     }
-    Value list = Value::object();
-    Value& planets = list["Planet"] = Value::object();
+    infos::CActiveMissionListInfo list;
     for (auto& [planet, areas] : areas_by_planet) {
         bool any_new = false;
         for (u32 area : areas) any_new |= has_new(s, by_area[area]);
-        Value& info = planets[std::to_string(planet)] = Value::object();
-        info["area_ct"] = (u64)areas.size();  // (d) the number of listed areas
-        info["is_new"] = any_new;             // (d) an uncleared mission is listed
-        info["is_last_play"] = planet == last_planet;
+        list.Planet[planet] = {.area_ct = (u32)areas.size(),  // (d) the number of listed areas
+                               .is_new = any_new,             // (d) an uncleared mission is listed
+                               .is_last_play = planet == last_planet};
     }
-    Value& area_lists = list["Area"] = Value::object();
     for (auto& [planet, areas] : areas_by_planet) {
-        Value& planet_areas = area_lists[std::to_string(planet)] = Value::object();
-        for (u32 area : areas) {
-            Value& info = planet_areas[std::to_string(area)] = Value::object();
-            info["mission_ct"] = (u64)by_area[area].size();  // (d) the number of listed missions
-            info["is_new"] = has_new(s, by_area[area]);
-            info["is_last_play"] = area == last_area;
-            info["is_start_bighunt"] = false;  // (d) no big-hunt event running
-        }
+        auto& planet_areas = list.Area[planet];
+        for (u32 area : areas)
+            planet_areas[area] = {.mission_ct = (u32)by_area[area].size(),  // (d) the number of listed missions
+                                  .is_new = has_new(s, by_area[area]),
+                                  .is_last_play = area == last_area,
+                                  .is_start_bighunt = false};  // (d) no big-hunt event running
     }
-    Value& mission_lists = list["Mission"] = Value::object();
     for (auto& [area, missions] : by_area) {
-        Value& mission_list = mission_lists[std::to_string(area)] = Value::array();
+        auto& mission_list = list.Mission[area];
         for (auto* mission : missions) {
             bool clear = s.cleared.count(mission->id) != 0;
-            Value& element = mission_list.push(Value::object());
-            element["id"] = mission->id;
-            element["is_new"] = !clear;  // (d) new until cleared
-            element["is_clear"] = clear;
-            element["is_last_play"] = mission->id == s.last_play;
+            mission_list.push_back({.id = mission->id,
+                                    .is_new = !clear,  // (d) new until cleared
+                                    .is_clear = clear,
+                                    .is_last_play = mission->id == s.last_play});
         }
     }
-    return list;
+    return infos::to_value(list);
 }
 
 }  // namespace soa::server::campaign

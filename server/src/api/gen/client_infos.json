@@ -1,0 +1,7796 @@
+{
+ "generated": "tools/gen_infos.py --json (the info classes' wire schema); do not edit",
+ "lib": "libSOA.so: work/libSOA-3.7.0.so (3.7.0, sha256 698d55b9fdf93c3573b2e71dd614451529e0f396779e5021c68cc423b2b98c5e)",
+ "classes": {
+  "AddBuffByDeityCharacter": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "player_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "add_hp",
+     "type": "s32"
+    },
+    {
+     "key": "add_attack",
+     "type": "s32"
+    },
+    {
+     "key": "add_intelligence",
+     "type": "s32"
+    },
+    {
+     "key": "add_defence",
+     "type": "s32"
+    },
+    {
+     "key": "add_hit",
+     "type": "s32"
+    },
+    {
+     "key": "add_guard",
+     "type": "s32"
+    },
+    {
+     "key": "add_ap",
+     "type": "s32"
+    }
+   ]
+  },
+  "AssistDetailInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "assist_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "assist_limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "assist_favor",
+     "type": "u32"
+    }
+   ]
+  },
+  "CAchievementActiveInfoList": {
+   "kind": "map",
+   "elem": "CAchievementInfo",
+   "key": "u64"
+  },
+  "CAchievementInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_achievement_id",
+     "type": "u32"
+    },
+    {
+     "key": "limit_at",
+     "type": "string"
+    },
+    {
+     "key": "status",
+     "type": "u32"
+    },
+    {
+     "key": "count",
+     "type": "u32"
+    },
+    {
+     "key": "is_goal",
+     "type": "bool"
+    }
+   ]
+  },
+  "CAchievementKindInfoList": {
+   "kind": "map",
+   "elem": "CAchievementInfo",
+   "key": "u64"
+  },
+  "CAchievementReceiveInfoList": {
+   "kind": "map",
+   "elem": "CAchievementInfo",
+   "key": "u64"
+  },
+  "CActiveEventMissionListInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "EventArea",
+     "class": "CEventAreaInfoCategoryList"
+    },
+    {
+     "key": "EventMission",
+     "class": "CEventMissionInfoCategoryList"
+    }
+   ]
+  },
+  "CActiveMissionListInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "Planet",
+     "class": "CPlanetInfoCategoryList"
+    },
+    {
+     "key": "Area",
+     "class": "CAreaInfoCategoryListList"
+    },
+    {
+     "key": "Mission",
+     "class": "CMissionInfoCategoryList"
+    }
+   ]
+  },
+  "CActiveTowerMissionListInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "TowerArea",
+     "class": "CTowerAreaInfoCategoryList"
+    },
+    {
+     "key": "TowerMission",
+     "class": "CTowerMissionInfoCategoryList"
+    }
+   ]
+  },
+  "CActiveWorldMapMissionListInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "WorldMap",
+     "class": "CWorldMapInfoCategoryList"
+    },
+    {
+     "key": "WorldMapCellList",
+     "class": "CWorldMapCellInfoCategoryList"
+    },
+    {
+     "key": "WorldMapMission",
+     "class": "CWorldMapMissionInfoCategoryList"
+    }
+   ]
+  },
+  "CAddCharacterExpInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "character_id",
+     "type": "u64"
+    },
+    {
+     "key": "add_exp",
+     "type": "u32"
+    },
+    {
+     "key": "before_level",
+     "type": "u32"
+    },
+    {
+     "key": "before_exp",
+     "type": "u32"
+    },
+    {
+     "key": "after_level",
+     "type": "u32"
+    },
+    {
+     "key": "after_exp",
+     "type": "u32"
+    },
+    {
+     "key": "order_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CAddCharacterExpInfoList": {
+   "kind": "map",
+   "elem": "CAddCharacterExpInfo",
+   "key": "u64"
+  },
+  "CAddCharacterList": {
+   "kind": "map",
+   "elem": "CPersonInfo",
+   "key": "u64"
+  },
+  "CAddDecoObjectInfoList": {
+   "kind": "array",
+   "elem": "CDecoObjectInfo"
+  },
+  "CAddFollowInfoList": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "CAddFriendGaugeInfoMap": {
+   "kind": "map",
+   "elem": "CFriendGaugeInfo",
+   "key": "u64"
+  },
+  "CAddGearInfoList": {
+   "kind": "map",
+   "elem": "CGearInfo",
+   "key": "u64"
+  },
+  "CAddItemList": {
+   "kind": "map",
+   "elem": "CItemInfo",
+   "key": "u64"
+  },
+  "CAddMutualFollowIDInfo": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CAddOneTimeStorageInfo": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CAddPresentBoxInfoList": {
+   "kind": "map",
+   "elem": "CPresentBoxInfo",
+   "key": "u64"
+  },
+  "CAddStampList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CAddTitleList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CAddedItemReceiveList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CAreaInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "mission_ct",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    },
+    {
+     "key": "is_last_play",
+     "type": "bool"
+    },
+    {
+     "key": "is_start_bighunt",
+     "type": "bool"
+    }
+   ]
+  },
+  "CAreaInfoCategoryList": {
+   "kind": "map",
+   "elem": "CAreaInfo",
+   "key": "u64"
+  },
+  "CAreaInfoCategoryListList": {
+   "kind": "map",
+   "elem": "CAreaInfoCategoryList",
+   "key": "u64"
+  },
+  "CAttachedGearInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "type",
+     "type": "bool"
+    },
+    {
+     "key": "param1",
+     "type": "u32"
+    },
+    {
+     "key": "param2",
+     "type": "u32"
+    },
+    {
+     "key": "gear_id",
+     "type": "u64"
+    },
+    {
+     "key": "add_param_type1",
+     "type": "u32"
+    },
+    {
+     "key": "value1",
+     "type": "u32"
+    },
+    {
+     "key": "add_param_type2",
+     "type": "u32"
+    },
+    {
+     "key": "value2",
+     "type": "u32"
+    },
+    {
+     "key": "add_param_type3",
+     "type": "u32"
+    },
+    {
+     "key": "value3",
+     "type": "u32"
+    }
+   ]
+  },
+  "CAttachedGearInfoList": {
+   "kind": "array",
+   "elem": "CAttachedGearInfo"
+  },
+  "CAttackActionListInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CAttackActionListInfoList": {
+   "kind": "array",
+   "elem": "CAttackActionListInfo"
+  },
+  "CAutoSelectedCharacterIDInfo": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "CAwakenResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "use_fol",
+     "type": "u32"
+    },
+    {
+     "key": "awaken_level",
+     "type": "u32"
+    },
+    {
+     "key": "update_child_id",
+     "type": "u32"
+    },
+    {
+     "key": "update_child_mastery_talent_id",
+     "type": "u32"
+    },
+    {
+     "key": "UseStockItem",
+     "class": "CUseEvolutionResult_StackItemInfoList"
+    },
+    {
+     "key": "UpdateCharacter",
+     "class": "CUpdateCharacterInfo"
+    }
+   ]
+  },
+  "CBannerURLInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "url",
+     "type": "string"
+    }
+   ]
+  },
+  "CBannerURLInfoList": {
+   "kind": "array",
+   "elem": "CBannerURLInfo"
+  },
+  "CBattleEvaluationDropInfoList": {
+   "kind": "map",
+   "elem": "CMissionDropInfoList",
+   "key": "u64"
+  },
+  "CBattleEvaluationResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_battle_evaluation_id",
+     "type": "u32"
+    },
+    {
+     "key": "score",
+     "type": "u32"
+    },
+    {
+     "key": "drop_num",
+     "type": "u32"
+    },
+    {
+     "key": "DropList",
+     "class": "CMissionResultDropInfo"
+    }
+   ]
+  },
+  "CBattleEvaluationResultInfoList": {
+   "kind": "map",
+   "elem": "CBattleEvaluationResultInfo",
+   "key": "u64"
+  },
+  "CBattleLogInfo": {
+   "kind": "info",
+   "untyped": true,
+   "fields": [
+    {
+     "key": "is_defeat",
+     "type": null
+    },
+    {
+     "key": "damage_total",
+     "type": null
+    },
+    {
+     "key": "damage_total_party",
+     "type": null
+    },
+    {
+     "key": "hit_max",
+     "type": null
+    },
+    {
+     "key": "hit_total",
+     "type": null
+    },
+    {
+     "key": "rush_cooperate",
+     "type": null
+    },
+    {
+     "key": "rush_count",
+     "type": null
+    },
+    {
+     "key": "battle_result",
+     "type": null
+    },
+    {
+     "key": "continue_count",
+     "type": null
+    },
+    {
+     "key": "mission_type",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_stun",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_freeze",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_poison",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_paralysis",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_seal",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_curse",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_fog",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_burn",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_debuff",
+     "type": null
+    },
+    {
+     "key": "mission_time",
+     "type": null
+    },
+    {
+     "key": "mission_total_time",
+     "type": null
+    },
+    {
+     "key": "assist_cutin_count",
+     "type": null
+    },
+    {
+     "key": "order_count_all",
+     "type": null
+    },
+    {
+     "key": "order_count_invincible",
+     "type": null
+    },
+    {
+     "key": "order_count_bunker",
+     "type": null
+    },
+    {
+     "key": "order_count_heat_up",
+     "type": null
+    },
+    {
+     "key": "autoplay",
+     "type": null
+    }
+   ]
+  },
+  "CBattleParameterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "rental_sub_character_id",
+     "type": "u32"
+    },
+    {
+     "key": "PlayerCharacter",
+     "class": "CPlayerCharacterInfoList"
+    },
+    {
+     "key": "AttackActionList",
+     "class": "CAttackActionListInfoList"
+    },
+    {
+     "key": "BattleResultGearUiList",
+     "class": "CBattleResultGearUiList"
+    },
+    {
+     "key": "BattleResultInheritUiList",
+     "class": "CBattleResultInheritUiList"
+    }
+   ]
+  },
+  "CBattleRentalInfoList": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "CBattleResultGearUiList": {
+   "kind": "map",
+   "elem": "_CAttachedGearInfoList",
+   "key": "u64"
+  },
+  "CBattleResultInheritUiList": {
+   "kind": "map",
+   "elem": "InheritItemInfo",
+   "key": "u64"
+  },
+  "CBirthInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "year",
+     "type": "u32"
+    },
+    {
+     "key": "month",
+     "type": "u32"
+    }
+   ]
+  },
+  "CBlacklistIDInfo": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CBlacklistInfoList": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "CBlacklistPlayerListInfo": {
+   "kind": "map",
+   "elem": "CFollowPlayerListElementInfo",
+   "key": "u64"
+  },
+  "CBoostCharacterResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "get_exp",
+     "type": "u32"
+    },
+    {
+     "key": "before_level",
+     "type": "u32"
+    },
+    {
+     "key": "before_exp",
+     "type": "u32"
+    },
+    {
+     "key": "after_level",
+     "type": "u32"
+    },
+    {
+     "key": "after_exp",
+     "type": "u32"
+    },
+    {
+     "key": "is_big_success",
+     "type": "bool"
+    },
+    {
+     "key": "use_fol",
+     "type": "u32"
+    },
+    {
+     "key": "new_fol",
+     "type": "u32"
+    }
+   ]
+  },
+  "CBoostCharacterResultInfoMap": {
+   "kind": "map",
+   "elem": "CBoostCharacterResultInfo",
+   "key": "u64"
+  },
+  "CBoxGachaInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_box_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "max_box_count",
+     "type": "u32"
+    },
+    {
+     "key": "box_num",
+     "type": "u32"
+    },
+    {
+     "key": "order_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "is_maintenance",
+     "type": "bool"
+    }
+   ]
+  },
+  "CBoxGachaInfoList": {
+   "kind": "map",
+   "elem": "CBoxGachaInfo",
+   "key": "u64"
+  },
+  "CBoxGachaListInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "box_num",
+     "type": "u32"
+    },
+    {
+     "key": "total_count",
+     "type": "u32"
+    },
+    {
+     "key": "reset_count",
+     "type": "u32"
+    },
+    {
+     "key": "is_close",
+     "type": "u32"
+    },
+    {
+     "key": "is_reset",
+     "type": "u32"
+    },
+    {
+     "key": "next_master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_maintenance",
+     "type": "bool"
+    }
+   ]
+  },
+  "CBoxGachaListInfoList": {
+   "kind": "map",
+   "elem": "CBoxGachaListInfo",
+   "key": "u64"
+  },
+  "CBoxGachaResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "master_box_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "duplication",
+     "type": "bool"
+    }
+   ]
+  },
+  "CBoxGachaResultInfoList": {
+   "kind": "array",
+   "elem": "CBoxGachaResultInfo"
+  },
+  "CCampaignInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "type_id",
+     "type": "u32"
+    },
+    {
+     "key": "week_id",
+     "type": "u32"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    },
+    {
+     "key": "magnification",
+     "type": "float"
+    },
+    {
+     "key": "lot_drop_count_add",
+     "type": "u32"
+    },
+    {
+     "key": "master_area_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_area_id_label",
+     "type": "string"
+    },
+    {
+     "key": "master_mission_model_type",
+     "type": "s32"
+    }
+   ]
+  },
+  "CCampaignInfoList": {
+   "kind": "array",
+   "elem": "CCampaignInfo"
+  },
+  "CCharacterDecoObjectInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "index",
+     "type": "u32"
+    },
+    {
+     "key": "master_deco_object_id",
+     "type": "u32"
+    },
+    {
+     "key": "attach_bone",
+     "type": "string"
+    },
+    {
+     "key": "attach_type",
+     "type": "u32"
+    },
+    {
+     "key": "pos_x",
+     "type": "float"
+    },
+    {
+     "key": "pos_y",
+     "type": "float"
+    },
+    {
+     "key": "pos_z",
+     "type": "float"
+    },
+    {
+     "key": "rotate_x",
+     "type": "float"
+    },
+    {
+     "key": "rotate_y",
+     "type": "float"
+    },
+    {
+     "key": "rotate_z",
+     "type": "float"
+    },
+    {
+     "key": "slider_pos_x",
+     "type": "float"
+    },
+    {
+     "key": "slider_pos_y",
+     "type": "float"
+    },
+    {
+     "key": "slider_pos_z",
+     "type": "float"
+    },
+    {
+     "key": "slider_rotate_x",
+     "type": "float"
+    },
+    {
+     "key": "slider_rotate_y",
+     "type": "float"
+    },
+    {
+     "key": "slider_rotate_z",
+     "type": "float"
+    },
+    {
+     "key": "scale",
+     "type": "float"
+    }
+   ]
+  },
+  "CCharacterDecoObjectInfoList": {
+   "kind": "array",
+   "elem": "CCharacterDecoObjectInfo"
+  },
+  "CCharacterDecoSendInfo": {
+   "kind": "info",
+   "untyped": true,
+   "fields": [
+    {
+     "key": "character_id",
+     "type": null
+    },
+    {
+     "key": "hair_id",
+     "type": null
+    },
+    {
+     "key": "pose_id",
+     "type": null
+    }
+   ]
+  },
+  "CCheckInInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "limit_num",
+     "type": "u32"
+    },
+    {
+     "key": "get_at",
+     "type": "string"
+    },
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "present_message_id",
+     "type": "string"
+    },
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_id_label",
+     "type": "string"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "place_message_id",
+     "type": "u32"
+    },
+    {
+     "key": "place_message_id_label",
+     "type": "string"
+    },
+    {
+     "key": "longitude",
+     "type": "float"
+    },
+    {
+     "key": "latitude",
+     "type": "float"
+    },
+    {
+     "key": "distance_limit",
+     "type": "u32"
+    },
+    {
+     "key": "limit_count",
+     "type": "u32"
+    },
+    {
+     "key": "interval_day",
+     "type": "u32"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CCheckInInfoList": {
+   "kind": "array",
+   "elem": "CCheckInInfo"
+  },
+  "CCoinDepositInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "deposit_trans_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CCoinInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "coin",
+     "type": "u32"
+    },
+    {
+     "key": "free_coin",
+     "type": "u32"
+    },
+    {
+     "key": "yen",
+     "type": "u32"
+    },
+    {
+     "key": "order_id",
+     "type": "u32"
+    },
+    {
+     "key": "product_id",
+     "type": "string"
+    },
+    {
+     "key": "name",
+     "type": "string"
+    },
+    {
+     "key": "name_label",
+     "type": "string"
+    },
+    {
+     "key": "title_label",
+     "type": "string"
+    },
+    {
+     "key": "description_label",
+     "type": "string"
+    },
+    {
+     "key": "icon_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_once",
+     "type": "bool"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    },
+    {
+     "key": "limit_count",
+     "type": "u32"
+    },
+    {
+     "key": "interval_day",
+     "type": "u32"
+    },
+    {
+     "key": "bonus_type",
+     "type": "u32"
+    },
+    {
+     "key": "bonus_id",
+     "type": "u32"
+    },
+    {
+     "key": "bonus_id_label",
+     "type": "string"
+    },
+    {
+     "key": "starter_limit_day",
+     "type": "u32"
+    },
+    {
+     "key": "sale_type",
+     "type": "u32"
+    },
+    {
+     "key": "is_view_closed_at",
+     "type": "bool"
+    },
+    {
+     "key": "bought_at",
+     "type": "string"
+    },
+    {
+     "key": "limit_num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CCoinInfoList": {
+   "kind": "map",
+   "elem": "CCoinInfo",
+   "key": "u64"
+  },
+  "CCommonWebSiteInfo": {
+   "kind": "array",
+   "elem": "CWebViewInfoElement"
+  },
+  "CCommonWebViewInfo": {
+   "kind": "array",
+   "elem": "CWebViewInfoElement"
+  },
+  "CComposeResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "before_level",
+     "type": "u32"
+    },
+    {
+     "key": "before_boosted_point",
+     "type": "u32"
+    },
+    {
+     "key": "before_limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "after_level",
+     "type": "u32"
+    },
+    {
+     "key": "after_boosted_point",
+     "type": "u32"
+    },
+    {
+     "key": "after_limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "use_fol",
+     "type": "u32"
+    },
+    {
+     "key": "is_big_success",
+     "type": "bool"
+    },
+    {
+     "key": "lost_item_ids",
+     "class": "CLostItemIDsList"
+    },
+    {
+     "key": "UpdateGearList",
+     "class": "CUpdateGearList"
+    }
+   ]
+  },
+  "CConfigInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_config_id",
+     "type": "u32"
+    },
+    {
+     "key": "value",
+     "type": "string"
+    },
+    {
+     "key": "type",
+     "type": "u32"
+    }
+   ]
+  },
+  "CConfigInfoList": {
+   "kind": "array",
+   "elem": "CConfigInfo"
+  },
+  "CContentInfoMap": {
+   "kind": "map",
+   "elem": "CDropContentInfo",
+   "key": "u64"
+  },
+  "CDebugBonusInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "bonus_set_id",
+     "type": "u32"
+    },
+    {
+     "key": "bonus_set_id_label",
+     "type": "string"
+    }
+   ]
+  },
+  "CDebugBonusInfoMap": {
+   "kind": "map",
+   "elem": "CDebugBonusInfo",
+   "key": "u64"
+  },
+  "CDebugDropContentInfoList": {
+   "kind": "array",
+   "elem": "CDropContentInfo"
+  },
+  "CDebugDropContentInfoMap": {
+   "kind": "map",
+   "elem": "CDebugDropContentInfoList",
+   "key": "u64"
+  },
+  "CDebugFavorBonusContetsResultInfoList": {
+   "kind": "array",
+   "elem": "CFavorBonusContetsResultInfo"
+  },
+  "CDebugGearBarneyChanceInfoList": {
+   "kind": "array",
+   "elem": "CGearBarneyChanceInfo"
+  },
+  "CDebugGearDropInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CDebugGearGenerationInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "rare",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_kind_id",
+     "type": "u32"
+    },
+    {
+     "key": "normal_gear_id",
+     "type": "u32"
+    },
+    {
+     "key": "facter_index",
+     "type": "u32"
+    },
+    {
+     "key": "is_barney_chance",
+     "type": "bool"
+    },
+    {
+     "key": "is_facter",
+     "type": "bool"
+    }
+   ]
+  },
+  "CDebugGearGenerationInfoList": {
+   "kind": "array",
+   "elem": "CDebugGearGenerationInfo"
+  },
+  "CDebugGearGenerationInfoResult": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "DebugGearGenerationInfoList",
+     "class": "CDebugGearGenerationInfoList"
+    },
+    {
+     "key": "GearProbabilityInfoList",
+     "class": "CGearProbabilityInfoList"
+    },
+    {
+     "key": "rank_calculation",
+     "type": "u32"
+    },
+    {
+     "key": "factor_extraction",
+     "type": "float"
+    }
+   ]
+  },
+  "CDebugSphere211CommonDropIdList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CDebugSphere211CommonDropInfoList": {
+   "kind": "map",
+   "elem": "CDebugSphere211CommonDropIdList",
+   "key": "u64"
+  },
+  "CDebugSphere211FloorNumList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CDecoObjectInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_deco_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_favorite",
+     "type": "u32"
+    }
+   ]
+  },
+  "CDecoObjectInfoList": {
+   "kind": "array",
+   "elem": "CDecoObjectInfo"
+  },
+  "CDeepSpaceActiveShipInfoList": {
+   "kind": "map",
+   "elem": "CDeepSpaceShipInfo",
+   "key": "u64"
+  },
+  "CDeepSpaceAreaInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "DeepSpaceMissionList",
+     "class": "CDeepSpaceMissionInfoMap"
+    },
+    {
+     "key": "master_area_id",
+     "type": "u32"
+    },
+    {
+     "key": "current_exp",
+     "type": "u32"
+    },
+    {
+     "key": "max_exp",
+     "type": "u32"
+    },
+    {
+     "key": "ship_in_progress_num",
+     "type": "u32"
+    },
+    {
+     "key": "ship_complete_num",
+     "type": "u32"
+    },
+    {
+     "key": "is_last_play",
+     "type": "bool"
+    },
+    {
+     "key": "is_rare_mission",
+     "type": "bool"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    }
+   ]
+  },
+  "CDeepSpaceAreaInfoMap": {
+   "kind": "map",
+   "elem": "CDeepSpaceAreaInfo",
+   "key": "u64"
+  },
+  "CDeepSpaceBonusAllApplyInfoList": {
+   "kind": "map",
+   "elem": "CDeepSpaceBonusApplyInfoList",
+   "key": "u64"
+  },
+  "CDeepSpaceBonusApplyInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "bonus",
+     "type": "float"
+    }
+   ]
+  },
+  "CDeepSpaceBonusApplyInfoList": {
+   "kind": "map",
+   "elem": "CDeepSpaceBonusApplyInfo",
+   "key": "u64"
+  },
+  "CDeepSpaceCharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "character_id",
+     "type": "u64"
+    },
+    {
+     "key": "ship_id",
+     "type": "u32"
+    },
+    {
+     "key": "ship_slot",
+     "type": "u32"
+    }
+   ]
+  },
+  "CDeepSpaceCharacterInfoList": {
+   "kind": "map",
+   "elem": "CDeepSpaceCharacterInfo",
+   "key": "u64"
+  },
+  "CDeepSpaceDebugCharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "master_role_id_label",
+     "type": "string"
+    },
+    {
+     "key": "limit_limitbreak",
+     "type": "u32"
+    },
+    {
+     "key": "is_max_seed",
+     "type": "bool"
+    },
+    {
+     "key": "ep",
+     "type": "u32"
+    },
+    {
+     "key": "awaken_level",
+     "type": "u32"
+    }
+   ]
+  },
+  "CDeepSpaceDebugCharacterInfoMap": {
+   "kind": "map",
+   "elem": "CDeepSpaceDebugCharacterInfo",
+   "key": "u64"
+  },
+  "CDeepSpaceDebugRareMissionInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "rare_mission_id_label",
+     "type": "string"
+    },
+    {
+     "key": "is_item",
+     "type": "bool"
+    }
+   ]
+  },
+  "CDeepSpaceDebugRareMissionInfoList": {
+   "kind": "array",
+   "elem": "CDeepSpaceDebugRareMissionInfo"
+  },
+  "CDeepSpaceEndShipInfoList": {
+   "kind": "map",
+   "elem": "CDeepSpaceShipInfo",
+   "key": "u64"
+  },
+  "CDeepSpaceMissionInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_mission_id",
+     "type": "u32"
+    },
+    {
+     "key": "bonus_set_id",
+     "type": "u32"
+    },
+    {
+     "key": "ship_id",
+     "type": "u32"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    },
+    {
+     "key": "count_weekly_at",
+     "type": "string"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    },
+    {
+     "key": "play_count_daily",
+     "type": "u32"
+    },
+    {
+     "key": "play_count_weekly",
+     "type": "u32"
+    },
+    {
+     "key": "play_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CDeepSpaceMissionInfoMap": {
+   "kind": "map",
+   "elem": "CDeepSpaceMissionInfo",
+   "key": "u64"
+  },
+  "CDeepSpaceShipInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "ship_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_area_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_mission_id",
+     "type": "u32"
+    },
+    {
+     "key": "bonus_set_id",
+     "type": "u32"
+    },
+    {
+     "key": "item_id",
+     "type": "u32"
+    },
+    {
+     "key": "started_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CDeleteItemList": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "CDirectItemShopInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "yen",
+     "type": "u32"
+    },
+    {
+     "key": "order_id",
+     "type": "u32"
+    },
+    {
+     "key": "name_label",
+     "type": "string"
+    },
+    {
+     "key": "title_label",
+     "type": "string"
+    },
+    {
+     "key": "description_label",
+     "type": "string"
+    },
+    {
+     "key": "icon_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_once",
+     "type": "bool"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    },
+    {
+     "key": "limit_count",
+     "type": "u32"
+    },
+    {
+     "key": "interval_day",
+     "type": "u32"
+    },
+    {
+     "key": "bonus_id",
+     "type": "u32"
+    },
+    {
+     "key": "starter_limit_day",
+     "type": "u32"
+    },
+    {
+     "key": "sale_type",
+     "type": "u32"
+    },
+    {
+     "key": "is_view_closed_at",
+     "type": "u32"
+    },
+    {
+     "key": "thumbnail_id",
+     "type": "string"
+    },
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_id_label",
+     "type": "string"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "new_opened_at",
+     "type": "string"
+    },
+    {
+     "key": "new_closed_at",
+     "type": "string"
+    },
+    {
+     "key": "master_banner_id",
+     "type": "u32"
+    },
+    {
+     "key": "num_total",
+     "type": "u32"
+    },
+    {
+     "key": "bought_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CDirectItemShopInfoList": {
+   "kind": "array",
+   "elem": "CDirectItemShopInfo"
+  },
+  "CDropContentInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    },
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "bonus_category",
+     "type": "u32"
+    },
+    {
+     "key": "is_rare_bonus",
+     "type": "bool"
+    },
+    {
+     "key": "is_add_bonus",
+     "type": "bool"
+    },
+    {
+     "key": "is_hit_bonus",
+     "type": "bool"
+    },
+    {
+     "key": "is_rare_hit_bonus",
+     "type": "bool"
+    },
+    {
+     "key": "is_item",
+     "type": "bool"
+    }
+   ]
+  },
+  "CEquipAccessoryResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "Character",
+     "class": "CEquipAccessoryResultPersonInfoCategory"
+    },
+    {
+     "key": "Item",
+     "class": "CEquipAccessoryResultItemInfoCategory"
+    }
+   ]
+  },
+  "CEquipAccessoryResultItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "is_equip",
+     "type": "u32"
+    }
+   ]
+  },
+  "CEquipAccessoryResultItemInfoCategory": {
+   "kind": "map",
+   "elem": "CEquipAccessoryResultItemInfo",
+   "key": "u64"
+  },
+  "CEquipAccessoryResultPersonInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "accessory_item_id",
+     "type": "u64"
+    }
+   ]
+  },
+  "CEquipAccessoryResultPersonInfoCategory": {
+   "kind": "map",
+   "elem": "CEquipAccessoryResultPersonInfo",
+   "key": "u64"
+  },
+  "CEquipWeaponResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "Character",
+     "class": "CEquipWeaponResultPersonInfoCategory"
+    },
+    {
+     "key": "Item",
+     "class": "CEquipWeaponResultItemInfoCategory"
+    }
+   ]
+  },
+  "CEquipWeaponResultItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "is_equip",
+     "type": "u32"
+    }
+   ]
+  },
+  "CEquipWeaponResultItemInfoCategory": {
+   "kind": "map",
+   "elem": "CEquipWeaponResultItemInfo",
+   "key": "u64"
+  },
+  "CEquipWeaponResultPersonInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "weapon_item_id",
+     "type": "u64"
+    }
+   ]
+  },
+  "CEquipWeaponResultPersonInfoCategory": {
+   "kind": "map",
+   "elem": "CEquipWeaponResultPersonInfo",
+   "key": "u64"
+  },
+  "CEventAreaInfoCategoryList": {
+   "kind": "map",
+   "elem": "CAreaInfo",
+   "key": "u64"
+  },
+  "CEventMaintenanceInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_event_area_id",
+     "type": "u32"
+    },
+    {
+     "key": "status",
+     "type": "u32"
+    }
+   ]
+  },
+  "CEventMaintenanceInfoMap": {
+   "kind": "map",
+   "elem": "CEventMaintenanceInfo",
+   "key": "u64"
+  },
+  "CEventMissionInfoCategoryList": {
+   "kind": "map",
+   "elem": "CMissionInfoList",
+   "key": "u64"
+  },
+  "CEvolutionResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "use_fol",
+     "type": "u32"
+    },
+    {
+     "key": "UpdatePlayerCharacter",
+     "class": "CUpdatePlayerCharacter"
+    },
+    {
+     "key": "UseStockItem",
+     "class": "CUseEvolutionResult_StackItemInfoList"
+    }
+   ]
+  },
+  "CExchangeMaintenanceInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "status",
+     "type": "u32"
+    },
+    {
+     "key": "master_exchange_shop_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CExchangeMaintenanceInfoMap": {
+   "kind": "map",
+   "elem": "CExchangeMaintenanceInfo",
+   "key": "u64"
+  },
+  "CExchangeResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_exchange_shop_id",
+     "type": "u32"
+    },
+    {
+     "key": "ex_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "AddFreeCoin",
+     "type": "u32"
+    }
+   ]
+  },
+  "CExchangeShopExCountInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "ex_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CExchangeShopExCountInfoCategory": {
+   "kind": "map",
+   "elem": "CExchangeShopExCountInfo",
+   "key": "u64"
+  },
+  "CExchangeShopExCountInfoCategoryMap": {
+   "kind": "map",
+   "elem": "CExchangeShopExCountInfoCategory",
+   "key": "u64"
+  },
+  "CExpirationInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "is_read",
+     "type": "bool"
+    },
+    {
+     "key": "status",
+     "type": "u32"
+    },
+    {
+     "key": "limit_day",
+     "type": "u32"
+    },
+    {
+     "key": "limit_time",
+     "type": "string"
+    },
+    {
+     "key": "is_finished",
+     "type": "bool"
+    },
+    {
+     "key": "subscription_campaign_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CExpirationInfoList": {
+   "kind": "map",
+   "elem": "CExpirationInfo",
+   "key": "u64"
+  },
+  "CExpirationPurchaseCampaignInfoList": {
+   "kind": "map",
+   "elem": "_CExpirationInfoList",
+   "key": "u64"
+  },
+  "CFactorInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "factor_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CFactorInfoMap": {
+   "kind": "map",
+   "elem": "CFactorInfo",
+   "key": "u64"
+  },
+  "CFavorBonusContetsInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CFavorBonusContetsResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "FavorBonusContetsInfoList",
+     "class": "CFavorBonusContetsInfoList"
+    },
+    {
+     "key": "lot_character_id",
+     "type": "u64"
+    }
+   ]
+  },
+  "CFavoriteDecoObjectResult": {
+   "kind": "map",
+   "elem": "CDecoObjectInfo",
+   "key": "u64"
+  },
+  "CFollowIDInfo": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CFollowInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "order",
+     "type": "u32"
+    },
+    {
+     "key": "player",
+     "class": "CFollowPlayerInfo"
+    },
+    {
+     "key": "pc",
+     "class": "CFollowPersonInfo"
+    }
+   ]
+  },
+  "CFollowInfoList": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "CFollowPersonInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "accessory_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "exp",
+     "type": "u32"
+    },
+    {
+     "key": "limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "u32"
+    },
+    {
+     "key": "skill1",
+     "type": "u32"
+    },
+    {
+     "key": "skill2",
+     "type": "u32"
+    },
+    {
+     "key": "skill3",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_level",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "accessory_master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "accessory_level",
+     "type": "u32"
+    },
+    {
+     "key": "accessory_limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "add_hp",
+     "type": "u32"
+    },
+    {
+     "key": "add_attack",
+     "type": "u32"
+    },
+    {
+     "key": "add_intelligence",
+     "type": "u32"
+    },
+    {
+     "key": "add_defence",
+     "type": "u32"
+    },
+    {
+     "key": "add_hit",
+     "type": "u32"
+    },
+    {
+     "key": "add_guard",
+     "type": "u32"
+    },
+    {
+     "key": "add_ap",
+     "type": "u32"
+    },
+    {
+     "key": "awaken_level",
+     "type": "u32"
+    },
+    {
+     "key": "rush_skill1_id",
+     "type": "u32"
+    },
+    {
+     "key": "rush_skill1_level",
+     "type": "u32"
+    },
+    {
+     "key": "rush_skill1_factor_id",
+     "type": "u32"
+    },
+    {
+     "key": "rush_gauge_max",
+     "type": "u32"
+    },
+    {
+     "key": "rush_gauge_use",
+     "type": "u32"
+    },
+    {
+     "key": "favor_level",
+     "type": "u32"
+    },
+    {
+     "key": "parent_master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "mastery_talent_id",
+     "type": "u32"
+    },
+    {
+     "key": "hair_id",
+     "type": "u32"
+    },
+    {
+     "key": "pose_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_rarity_7",
+     "type": "u32"
+    },
+    {
+     "key": "InheritItemInfo",
+     "class": "InheritItemInfo"
+    },
+    {
+     "key": "Assist",
+     "class": "AssistDetailInfo"
+    },
+    {
+     "key": "AttachedGearInfoList",
+     "class": "CAttachedGearInfoList"
+    },
+    {
+     "key": "CharacterDecoObject",
+     "class": "CCharacterDecoObjectInfoList"
+    },
+    {
+     "key": "UniverseEffectualTalentInfoList",
+     "class": "UniverseEffectualTalentInfoList"
+    },
+    {
+     "key": "UniverseAddStatusInfo",
+     "class": "UniverseAddStatusInfo"
+    },
+    {
+     "key": "DeityInfo",
+     "class": "DeityInfo"
+    }
+   ]
+  },
+  "CFollowPlayerInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "name",
+     "type": "string"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "last_login_at",
+     "type": "string"
+    },
+    {
+     "key": "played_with_at",
+     "type": "string"
+    },
+    {
+     "key": "follow_status",
+     "type": "u32"
+    },
+    {
+     "key": "is_block",
+     "type": "bool"
+    },
+    {
+     "key": "is_rookie",
+     "type": "bool"
+    },
+    {
+     "key": "is_subscription",
+     "type": "bool"
+    },
+    {
+     "key": "title",
+     "type": "u32"
+    },
+    {
+     "key": "sphere211_floor_level",
+     "type": "u32"
+    },
+    {
+     "key": "sphere211_previous_floor_level",
+     "type": "u32"
+    }
+   ]
+  },
+  "CFollowPlayerListElementInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "last_login_at",
+     "type": "string"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_follower",
+     "type": "bool"
+    }
+   ]
+  },
+  "CFollowPlayerListInfo": {
+   "kind": "map",
+   "elem": "CFollowPlayerListElementInfo",
+   "key": "u64"
+  },
+  "CFooterBadgeInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "badge_type",
+     "type": "u32"
+    },
+    {
+     "key": "badge_category_type",
+     "type": "u32"
+    },
+    {
+     "key": "update_type",
+     "type": "u32"
+    },
+    {
+     "key": "start_at",
+     "type": "string"
+    },
+    {
+     "key": "end_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CFooterBadgeInfoList": {
+   "kind": "array",
+   "elem": "CFooterBadgeInfo"
+  },
+  "CFooterBadgeInfoMap": {
+   "kind": "map",
+   "elem": "CFooterBadgeInfoList",
+   "key": "u64"
+  },
+  "CFriendGaugeInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "target_player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_id",
+     "type": "u32"
+    },
+    {
+     "key": "reward_index",
+     "type": "u32"
+    },
+    {
+     "key": "gauge",
+     "type": "u32"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CFriendGaugeInfoMap": {
+   "kind": "map",
+   "elem": "CFriendGaugeInfo",
+   "key": "u64"
+  },
+  "CFriendGaugeUpdateInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "target_player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_id",
+     "type": "u32"
+    },
+    {
+     "key": "reward_index",
+     "type": "u32"
+    },
+    {
+     "key": "gauge",
+     "type": "u32"
+    },
+    {
+     "key": "gauge_before",
+     "type": "u32"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CFriendGaugeUpdateInfoMap": {
+   "kind": "map",
+   "elem": "CFriendGaugeUpdateInfo",
+   "key": "u64"
+  },
+  "CGachaCountInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "try_count",
+     "type": "u32"
+    },
+    {
+     "key": "loop_count",
+     "type": "u32"
+    },
+    {
+     "key": "reset_at",
+     "type": "string"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    }
+   ]
+  },
+  "CGachaCountInfoList": {
+   "kind": "map",
+   "elem": "CGachaCountInfo",
+   "key": "u64"
+  },
+  "CGachaDayLimitCountInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_bulk",
+     "type": "u32"
+    },
+    {
+     "key": "day_count",
+     "type": "u32"
+    },
+    {
+     "key": "total_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CGachaDayLimitCountInfoArray": {
+   "kind": "array",
+   "elem": "CGachaDayLimitCountInfo"
+  },
+  "CGachaHashInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "hash",
+     "type": "string"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CGachaHashInfoList": {
+   "kind": "array",
+   "elem": "CGachaHashInfo"
+  },
+  "CGachaHashInfoListInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "GachaHashList",
+     "class": "CGachaHashInfoList"
+    }
+   ]
+  },
+  "CGachaHashInfoMap": {
+   "kind": "map",
+   "elem": "CGachaHashInfoListInfo",
+   "key": "u64"
+  },
+  "CGachaMaintenanceInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "status",
+     "type": "u32"
+    }
+   ]
+  },
+  "CGachaMaintenanceInfoMap": {
+   "kind": "map",
+   "elem": "CGachaMaintenanceInfo",
+   "key": "u64"
+  },
+  "CGachaMutationTestResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_id_label",
+     "type": "string"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "is_mutation",
+     "type": "bool"
+    }
+   ]
+  },
+  "CGachaMutationTestResultInfoList": {
+   "kind": "map",
+   "elem": "CGachaMutationTestResultInfo",
+   "key": "u64"
+  },
+  "CGachaRateContentInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "type",
+     "type": "u32"
+    },
+    {
+     "key": "message_id",
+     "type": "string"
+    },
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "percentage",
+     "type": "string"
+    },
+    {
+     "key": "direct_message",
+     "type": "string"
+    },
+    {
+     "key": "order_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CGachaRateContentInfoList": {
+   "kind": "array",
+   "elem": "CGachaRateContentInfo"
+  },
+  "CGachaRateInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "title",
+     "type": "string"
+    },
+    {
+     "key": "introduction_msg",
+     "type": "string"
+    },
+    {
+     "key": "bonus_msg",
+     "type": "string"
+    },
+    {
+     "key": "stepup_number",
+     "type": "u32"
+    },
+    {
+     "key": "GachaRateContentInfoList",
+     "class": "CGachaRateContentInfoList"
+    }
+   ]
+  },
+  "CGachaRateInfoList": {
+   "kind": "array",
+   "elem": "CGachaRateInfo"
+  },
+  "CGachaResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "player_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "player_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "duplication",
+     "type": "bool"
+    },
+    {
+     "key": "is_mutation",
+     "type": "bool"
+    },
+    {
+     "key": "is_bonus",
+     "type": "bool"
+    }
+   ]
+  },
+  "CGachaResultInfoArray": {
+   "kind": "array",
+   "elem": "CGachaResultInfo"
+  },
+  "CGachaTestResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_id_label",
+     "type": "string"
+    },
+    {
+     "key": "rank",
+     "type": "u32"
+    },
+    {
+     "key": "weigh",
+     "type": "u32"
+    },
+    {
+     "key": "rate",
+     "type": "float"
+    },
+    {
+     "key": "count",
+     "type": "u32"
+    },
+    {
+     "key": "real_rate",
+     "type": "float"
+    },
+    {
+     "key": "master_item_gacha_id_label",
+     "type": "string"
+    }
+   ]
+  },
+  "CGachaTestResultInfoList": {
+   "kind": "map",
+   "elem": "CGachaTestResultInfo",
+   "key": "u64"
+  },
+  "CGearBarneyChanceInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "barney_chance_group_id",
+     "type": "u32"
+    },
+    {
+     "key": "barney_chance_type",
+     "type": "u32"
+    }
+   ]
+  },
+  "CGearGenerationInfoResult": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "AddGearInfoList",
+     "class": "CAddGearInfoList"
+    },
+    {
+     "key": "UpdateGearList",
+     "class": "CUpdateGearList"
+    },
+    {
+     "key": "CDeleteItemList",
+     "class": "CDeleteItemList"
+    },
+    {
+     "key": "is_barney_chance",
+     "type": "bool"
+    },
+    {
+     "key": "use_master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "barney_chance_type",
+     "type": "u32"
+    }
+   ]
+  },
+  "CGearInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "type",
+     "type": "bool"
+    },
+    {
+     "key": "param1",
+     "type": "u32"
+    },
+    {
+     "key": "param2",
+     "type": "u32"
+    },
+    {
+     "key": "player_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "slot_index",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    }
+   ]
+  },
+  "CGearInfoList": {
+   "kind": "map",
+   "elem": "CGearInfo",
+   "key": "u64"
+  },
+  "CGearProbabilityInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CGiftGachaResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "duplication",
+     "type": "bool"
+    },
+    {
+     "key": "limitBreakItemID",
+     "type": "u32"
+    },
+    {
+     "key": "limitBreakCount",
+     "type": "u32"
+    }
+   ]
+  },
+  "CGiftGachaResultInfoArray": {
+   "kind": "array",
+   "elem": "CGiftGachaResultInfo"
+  },
+  "CGradeUpResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "grade_up_m_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "base_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "use_fol",
+     "type": "u32"
+    },
+    {
+     "key": "lost_item_ids",
+     "class": "CLostItemIDsList"
+    },
+    {
+     "key": "UpdateGearList",
+     "class": "CUpdateGearList"
+    }
+   ]
+  },
+  "CGuideInformationInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CHostPlayerInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "UpdateMissionStartPlayerInfo",
+     "class": "UpdateMissionStartPlayerInfo"
+    },
+    {
+     "key": "UpdateStockItem",
+     "class": "CUpdateStackItemInfoList"
+    }
+   ]
+  },
+  "CInformationSiteInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "site_url",
+     "type": "string"
+    }
+   ]
+  },
+  "CItemBoostTestResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "big_success_count",
+     "type": "u32"
+    },
+    {
+     "key": "success_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CItemClearNewList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CItemDetailInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "item_type",
+     "type": "u32"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "boosted_point",
+     "type": "u32"
+    },
+    {
+     "key": "limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "is_equip",
+     "type": "u32"
+    },
+    {
+     "key": "is_lock",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "u32"
+    },
+    {
+     "key": "level_max",
+     "type": "u32"
+    },
+    {
+     "key": "limit_level",
+     "type": "u32"
+    },
+    {
+     "key": "master_weapon_id",
+     "type": "u32"
+    },
+    {
+     "key": "rarity",
+     "type": "u32"
+    },
+    {
+     "key": "sale_fol",
+     "type": "u32"
+    },
+    {
+     "key": "attack",
+     "type": "u32"
+    },
+    {
+     "key": "intelligence",
+     "type": "u32"
+    },
+    {
+     "key": "defence",
+     "type": "u32"
+    },
+    {
+     "key": "hit",
+     "type": "u32"
+    },
+    {
+     "key": "guard",
+     "type": "u32"
+    },
+    {
+     "key": "master_weapon_kind_id",
+     "type": "u32"
+    },
+    {
+     "key": "serial_number",
+     "type": "u32"
+    },
+    {
+     "key": "InheritItemInfo",
+     "class": "InheritItemInfo"
+    },
+    {
+     "key": "AttachedGearInfoList",
+     "class": "CAttachedGearInfoList"
+    }
+   ]
+  },
+  "CItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "item_type",
+     "type": "u32"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "boosted_point",
+     "type": "u32"
+    },
+    {
+     "key": "limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "is_equip",
+     "type": "u32"
+    },
+    {
+     "key": "is_lock",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "u32"
+    },
+    {
+     "key": "InheritItemInfo",
+     "class": "InheritItemInfo"
+    },
+    {
+     "key": "AttachedGearInfoList",
+     "class": "CAttachedGearInfoList"
+    }
+   ]
+  },
+  "CItemInfoList": {
+   "kind": "array",
+   "elem": "CItemInfo"
+  },
+  "CItemReceiveList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CItemShopInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "limit_count",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    },
+    {
+     "key": "reset_at",
+     "type": "string"
+    },
+    {
+     "key": "num_total",
+     "type": "u32"
+    },
+    {
+     "key": "loop_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CItemShopInfoList": {
+   "kind": "array",
+   "elem": "CItemShopInfo"
+  },
+  "CLimitBreakInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "before_master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "after_master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "before_limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "after_limit_break_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CLimitBreakInfoList": {
+   "kind": "map",
+   "elem": "CLimitBreakInfo",
+   "key": "u64"
+  },
+  "CLimitBreakItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CLimitBreakItemInfoList": {
+   "kind": "map",
+   "elem": "CLimitBreakItemInfo",
+   "key": "u64"
+  },
+  "CLockItemResult": {
+   "kind": "map",
+   "elem": "CItemInfo",
+   "key": "u64"
+  },
+  "CLoginBonusInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_login_bonus_id",
+     "type": "u32"
+    },
+    {
+     "key": "current_idx",
+     "type": "u32"
+    },
+    {
+     "key": "is_received_now",
+     "type": "bool"
+    }
+   ]
+  },
+  "CLoginBonusInfoList": {
+   "kind": "array",
+   "elem": "CLoginBonusInfo"
+  },
+  "CLostItemIDsList": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "CMascontInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_person_id",
+     "type": "u32"
+    },
+    {
+     "key": "type",
+     "type": "u32"
+    }
+   ]
+  },
+  "CMascontInfoList": {
+   "kind": "map",
+   "elem": "CMascontInfo",
+   "key": "u64"
+  },
+  "CMasterKiyakuVersionInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "kiyaku_version",
+     "type": "string"
+    },
+    {
+     "key": "update_kiyaku_string",
+     "type": "string"
+    }
+   ]
+  },
+  "CMasteryRewardInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CMissionCommonDropInfoList": {
+   "kind": "array",
+   "elem": "CMissionDropInfo"
+  },
+  "CMissionDropCharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "drop_type",
+     "type": "u32"
+    }
+   ]
+  },
+  "CMissionDropCharacterInfoList": {
+   "kind": "array",
+   "elem": "CMissionDropCharacterInfo"
+  },
+  "CMissionDropInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "id_label",
+     "type": "string"
+    }
+   ]
+  },
+  "CMissionDropInfoList": {
+   "kind": "array",
+   "elem": "CMissionDropInfo"
+  },
+  "CMissionDropItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "drop_type",
+     "type": "u32"
+    },
+    {
+     "key": "debug_name",
+     "type": "string"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    }
+   ]
+  },
+  "CMissionDropItemInfoList": {
+   "kind": "array",
+   "elem": "CMissionDropItemInfo"
+  },
+  "CMissionDropStackItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "drop_type",
+     "type": "u32"
+    },
+    {
+     "key": "debug_name",
+     "type": "string"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CMissionDropStackItemInfoList": {
+   "kind": "array",
+   "elem": "CMissionDropStackItemInfo"
+  },
+  "CMissionDropTestResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "MissionParameter",
+     "class": "CMissionParameterInfo"
+    }
+   ]
+  },
+  "CMissionElementInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    },
+    {
+     "key": "is_clear",
+     "type": "bool"
+    },
+    {
+     "key": "is_last_play",
+     "type": "bool"
+    }
+   ]
+  },
+  "CMissionInfoCategoryList": {
+   "kind": "map",
+   "elem": "CMissionInfoList",
+   "key": "u64"
+  },
+  "CMissionInfoList": {
+   "kind": "array",
+   "elem": "CMissionElementInfo"
+  },
+  "CMissionParameterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_mission_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_mission_id_label",
+     "type": "string"
+    },
+    {
+     "key": "is_surprise",
+     "type": "bool"
+    },
+    {
+     "key": "multi_player_count",
+     "type": "u32"
+    },
+    {
+     "key": "stamina_cost",
+     "type": "u32"
+    },
+    {
+     "key": "is_event_drop_by_favor",
+     "type": "bool"
+    },
+    {
+     "key": "overwrite_enemy_level",
+     "type": "u32"
+    },
+    {
+     "key": "add_enemy_level",
+     "type": "u32"
+    },
+    {
+     "key": "mission_stage",
+     "class": "CMissionStageInfoList"
+    },
+    {
+     "key": "mission_drop",
+     "class": "CMissionDropInfoList"
+    },
+    {
+     "key": "common_drop",
+     "class": "CMissionCommonDropInfoList"
+    },
+    {
+     "key": "mission_drop_rare",
+     "class": "CMissionRareDropInfoList"
+    },
+    {
+     "key": "battle_evaluation_drop",
+     "class": "CBattleEvaluationDropInfoList"
+    }
+   ]
+  },
+  "CMissionRareDropInfoList": {
+   "kind": "array",
+   "elem": "CMissionDropInfo"
+  },
+  "CMissionResultCharacterCategoryInfo": {
+   "kind": "map",
+   "elem": "CMissionResultCharacterInfo",
+   "key": "u64"
+  },
+  "CMissionResultCharacterFavorInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_role_same_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "before_favor_level",
+     "type": "u32"
+    },
+    {
+     "key": "before_favor_point",
+     "type": "u32"
+    },
+    {
+     "key": "after_favor_level",
+     "type": "u32"
+    },
+    {
+     "key": "after_favor_point",
+     "type": "u32"
+    },
+    {
+     "key": "added_event_drop_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CMissionResultCharacterFavorInfoMap": {
+   "kind": "map",
+   "elem": "CMissionResultCharacterFavorInfo",
+   "key": "u64"
+  },
+  "CMissionResultCharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "before_level",
+     "type": "u32"
+    },
+    {
+     "key": "before_exp",
+     "type": "u32"
+    },
+    {
+     "key": "after_level",
+     "type": "u32"
+    },
+    {
+     "key": "after_exp",
+     "type": "u32"
+    }
+   ]
+  },
+  "CMissionResultCommonDropInfo": {
+   "kind": "info",
+   "fields": []
+  },
+  "CMissionResultDropInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "fol",
+     "type": "u32"
+    },
+    {
+     "key": "free_coin",
+     "type": "u32"
+    },
+    {
+     "key": "up_fol_rate",
+     "type": "u32"
+    },
+    {
+     "key": "item",
+     "class": "CMissionDropItemInfoList"
+    },
+    {
+     "key": "stock_item",
+     "class": "CMissionDropStackItemInfoList"
+    },
+    {
+     "key": "AddStampList",
+     "class": "CAddStampList"
+    },
+    {
+     "key": "character",
+     "class": "CMissionDropCharacterInfoList"
+    }
+   ]
+  },
+  "CMissionResultPresentInfo": {
+   "kind": "info",
+   "fields": []
+  },
+  "CMissionResultRareDropInfo": {
+   "kind": "info",
+   "fields": []
+  },
+  "CMissionStageInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "id_label",
+     "type": "string"
+    },
+    {
+     "key": "serial_number",
+     "type": "u32"
+    },
+    {
+     "key": "master_mission_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_mission_id_label",
+     "type": "string"
+    },
+    {
+     "key": "order_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_stage_layout_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_stage_layout_id_label",
+     "type": "string"
+    },
+    {
+     "key": "is_boss",
+     "type": "bool"
+    },
+    {
+     "key": "master_enemy_party_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_map_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_map_id_label",
+     "type": "string"
+    },
+    {
+     "key": "stage_bgm",
+     "type": "u32"
+    },
+    {
+     "key": "is_surprise_enemy_stage",
+     "type": "bool"
+    }
+   ]
+  },
+  "CMissionStageInfoList": {
+   "kind": "array",
+   "elem": "CMissionStageInfo"
+  },
+  "CMutualFollowIDInfo": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CNeighborInfoList": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "COneTimeStorageItemClearNewList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "COneTimeStorageItemInfoList": {
+   "kind": "array",
+   "elem": "CStorageItemInfo"
+  },
+  "COptionInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "frame_rate",
+     "type": "u32"
+    },
+    {
+     "key": "resolution",
+     "type": "u32"
+    },
+    {
+     "key": "pad_hold",
+     "type": "u32"
+    },
+    {
+     "key": "camera_range",
+     "type": "u32"
+    },
+    {
+     "key": "camera_effect",
+     "type": "u32"
+    },
+    {
+     "key": "bgm_volume",
+     "type": "u32"
+    },
+    {
+     "key": "se_volume",
+     "type": "u32"
+    },
+    {
+     "key": "voice_volume",
+     "type": "u32"
+    },
+    {
+     "key": "is_notification",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPartialMaintenanceInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "status",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPartialMaintenanceInfoMap": {
+   "kind": "map",
+   "elem": "CPartialMaintenanceInfo",
+   "key": "u64"
+  },
+  "CPartyInfo": {
+   "kind": "info",
+   "untyped": true,
+   "fields": [
+    {
+     "key": "party_id",
+     "type": null
+    },
+    {
+     "key": "player_character_id1",
+     "type": null
+    },
+    {
+     "key": "player_character_id2",
+     "type": null
+    },
+    {
+     "key": "player_character_id3",
+     "type": null
+    }
+   ]
+  },
+  "CPartyUpdateInfo": {
+   "kind": "info",
+   "fields": []
+  },
+  "CPersonAddStatusResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "before_add_hp",
+     "type": "u32"
+    },
+    {
+     "key": "before_add_attack",
+     "type": "u32"
+    },
+    {
+     "key": "before_add_intelligence",
+     "type": "u32"
+    },
+    {
+     "key": "before_add_defence",
+     "type": "u32"
+    },
+    {
+     "key": "before_add_hit",
+     "type": "u32"
+    },
+    {
+     "key": "before_add_guard",
+     "type": "u32"
+    },
+    {
+     "key": "before_add_ap",
+     "type": "u32"
+    },
+    {
+     "key": "after_add_hp",
+     "type": "u32"
+    },
+    {
+     "key": "after_add_attack",
+     "type": "u32"
+    },
+    {
+     "key": "after_add_intelligence",
+     "type": "u32"
+    },
+    {
+     "key": "after_add_defence",
+     "type": "u32"
+    },
+    {
+     "key": "after_add_hit",
+     "type": "u32"
+    },
+    {
+     "key": "after_add_guard",
+     "type": "u32"
+    },
+    {
+     "key": "after_add_ap",
+     "type": "u32"
+    },
+    {
+     "key": "use_fol",
+     "type": "u32"
+    },
+    {
+     "key": "new_fol",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPersonInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "player_name",
+     "type": "string"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "accessory_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "exp",
+     "type": "u32"
+    },
+    {
+     "key": "limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "skill1",
+     "type": "u32"
+    },
+    {
+     "key": "skill1_label",
+     "type": "string"
+    },
+    {
+     "key": "skill1_level",
+     "type": "u32"
+    },
+    {
+     "key": "skill2",
+     "type": "u32"
+    },
+    {
+     "key": "skill2_label",
+     "type": "string"
+    },
+    {
+     "key": "skill2_level",
+     "type": "u32"
+    },
+    {
+     "key": "skill3",
+     "type": "u32"
+    },
+    {
+     "key": "skill3_label",
+     "type": "string"
+    },
+    {
+     "key": "skill3_level",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "u32"
+    },
+    {
+     "key": "add_hp",
+     "type": "u32"
+    },
+    {
+     "key": "add_attack",
+     "type": "u32"
+    },
+    {
+     "key": "add_intelligence",
+     "type": "u32"
+    },
+    {
+     "key": "add_defence",
+     "type": "u32"
+    },
+    {
+     "key": "add_hit",
+     "type": "u32"
+    },
+    {
+     "key": "add_guard",
+     "type": "u32"
+    },
+    {
+     "key": "add_ap",
+     "type": "u32"
+    },
+    {
+     "key": "awaken_level",
+     "type": "u32"
+    },
+    {
+     "key": "rush1",
+     "type": "u32"
+    },
+    {
+     "key": "rush1_label",
+     "type": "string"
+    },
+    {
+     "key": "rush1_level",
+     "type": "u32"
+    },
+    {
+     "key": "rush_skill1_factor_id",
+     "type": "u32"
+    },
+    {
+     "key": "rush_gauge_max",
+     "type": "u32"
+    },
+    {
+     "key": "rush_gauge_use",
+     "type": "u32"
+    },
+    {
+     "key": "ep",
+     "type": "u32"
+    },
+    {
+     "key": "assist_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "assisting_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "parent_master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "mastery_talent_id",
+     "type": "u32"
+    },
+    {
+     "key": "hair_id",
+     "type": "u32"
+    },
+    {
+     "key": "pose_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_rarity_7",
+     "type": "u32"
+    },
+    {
+     "key": "CharacterDecoObject",
+     "class": "CCharacterDecoObjectInfoList"
+    },
+    {
+     "key": "UniverseEffectualTalentInfoList",
+     "class": "UniverseEffectualTalentInfoList"
+    },
+    {
+     "key": "UniverseAddStatusInfo",
+     "class": "UniverseAddStatusInfo"
+    },
+    {
+     "key": "DeityInfo",
+     "class": "DeityInfo"
+    }
+   ]
+  },
+  "CPersonInfoList": {
+   "kind": "array",
+   "elem": "CPersonInfo"
+  },
+  "CPersonStatusInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "player_level",
+     "type": "u32"
+    },
+    {
+     "key": "player_name",
+     "type": "string"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "accessory_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "exp",
+     "type": "u32"
+    },
+    {
+     "key": "limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "skill1",
+     "type": "u32"
+    },
+    {
+     "key": "skill1_label",
+     "type": "string"
+    },
+    {
+     "key": "skill1_level",
+     "type": "u32"
+    },
+    {
+     "key": "skill2",
+     "type": "u32"
+    },
+    {
+     "key": "skill2_label",
+     "type": "string"
+    },
+    {
+     "key": "skill2_level",
+     "type": "u32"
+    },
+    {
+     "key": "skill3",
+     "type": "u32"
+    },
+    {
+     "key": "skill3_label",
+     "type": "string"
+    },
+    {
+     "key": "skill3_level",
+     "type": "u32"
+    },
+    {
+     "key": "hp",
+     "type": "float"
+    },
+    {
+     "key": "attack",
+     "type": "float"
+    },
+    {
+     "key": "intelligence",
+     "type": "float"
+    },
+    {
+     "key": "defence",
+     "type": "float"
+    },
+    {
+     "key": "hit",
+     "type": "float"
+    },
+    {
+     "key": "guard",
+     "type": "float"
+    },
+    {
+     "key": "ap",
+     "type": "float"
+    },
+    {
+     "key": "def_fire",
+     "type": "float"
+    },
+    {
+     "key": "def_water",
+     "type": "float"
+    },
+    {
+     "key": "def_wind",
+     "type": "float"
+    },
+    {
+     "key": "def_earth",
+     "type": "float"
+    },
+    {
+     "key": "def_thunder",
+     "type": "float"
+    },
+    {
+     "key": "def_light",
+     "type": "float"
+    },
+    {
+     "key": "def_dark",
+     "type": "float"
+    },
+    {
+     "key": "rush1",
+     "type": "u32"
+    },
+    {
+     "key": "rush1_label",
+     "type": "string"
+    },
+    {
+     "key": "rush_skill1_factor_id",
+     "type": "u32"
+    },
+    {
+     "key": "rush1_level",
+     "type": "u32"
+    },
+    {
+     "key": "next_exp",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_weapon_kind_id",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_kind_id_label",
+     "type": "string"
+    },
+    {
+     "key": "weapon_master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_level",
+     "type": "u32"
+    },
+    {
+     "key": "accessory_master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "accessory_limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "accessory_level",
+     "type": "u32"
+    },
+    {
+     "key": "up_exp_rate",
+     "type": "u32"
+    },
+    {
+     "key": "up_fol_rate",
+     "type": "u32"
+    },
+    {
+     "key": "add_drop_num",
+     "type": "u32"
+    },
+    {
+     "key": "add_character_bonus",
+     "type": "u32"
+    },
+    {
+     "key": "add_event_drop_num",
+     "type": "u32"
+    },
+    {
+     "key": "is_rookie",
+     "type": "bool"
+    },
+    {
+     "key": "is_subscription",
+     "type": "bool"
+    },
+    {
+     "key": "title",
+     "type": "u32"
+    },
+    {
+     "key": "add_hp",
+     "type": "u32"
+    },
+    {
+     "key": "add_attack",
+     "type": "u32"
+    },
+    {
+     "key": "add_intelligence",
+     "type": "u32"
+    },
+    {
+     "key": "add_defence",
+     "type": "u32"
+    },
+    {
+     "key": "add_hit",
+     "type": "u32"
+    },
+    {
+     "key": "add_guard",
+     "type": "u32"
+    },
+    {
+     "key": "add_ap",
+     "type": "u32"
+    },
+    {
+     "key": "add_ap_by_favor",
+     "type": "u32"
+    },
+    {
+     "key": "awaken_level",
+     "type": "u32"
+    },
+    {
+     "key": "rush_gauge_max",
+     "type": "u32"
+    },
+    {
+     "key": "rush_gauge_use",
+     "type": "u32"
+    },
+    {
+     "key": "is_multi_main_character",
+     "type": "bool"
+    },
+    {
+     "key": "favor_level",
+     "type": "u32"
+    },
+    {
+     "key": "parent_master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "mastery_talent_id",
+     "type": "u32"
+    },
+    {
+     "key": "hair_id",
+     "type": "u32"
+    },
+    {
+     "key": "pose_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_rarity_7",
+     "type": "u32"
+    },
+    {
+     "key": "factor_list",
+     "class": "CFactorInfoMap"
+    },
+    {
+     "key": "Assist",
+     "class": "AssistDetailInfo"
+    },
+    {
+     "key": "CharacterDecoObject",
+     "class": "CCharacterDecoObjectInfoList"
+    },
+    {
+     "key": "UniverseEffectualTalentInfoList",
+     "class": "UniverseEffectualTalentInfoList"
+    },
+    {
+     "key": "UniverseAddStatusInfo",
+     "class": "UniverseAddStatusInfo"
+    },
+    {
+     "key": "UniverseDeityBoostInfo",
+     "class": "UniverseDeityBoostInfo"
+    },
+    {
+     "key": "DeityInfo",
+     "class": "DeityInfo"
+    },
+    {
+     "key": "UniverseDeityBoostInfo",
+     "class": "AddBuffByDeityCharacter"
+    }
+   ]
+  },
+  "CPlanetInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "area_ct",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    },
+    {
+     "key": "is_last_play",
+     "type": "bool"
+    }
+   ]
+  },
+  "CPlanetInfoCategoryList": {
+   "kind": "map",
+   "elem": "CPlanetInfo",
+   "key": "u64"
+  },
+  "CPlayMissionInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "is_play",
+     "type": "u32"
+    },
+    {
+     "key": "mission_id",
+     "type": "u32"
+    },
+    {
+     "key": "type",
+     "type": "u32"
+    },
+    {
+     "key": "is_multi",
+     "type": "u32"
+    },
+    {
+     "key": "is_expired",
+     "type": "bool"
+    },
+    {
+     "key": "is_maintenance",
+     "type": "bool"
+    },
+    {
+     "key": "episode_type_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_sphere211_floor_asset_id",
+     "type": "u32"
+    },
+    {
+     "key": "sphere211_floor_level",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPlayerCharacterFavorInfoElement": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_role_same_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "favor_point",
+     "type": "u32"
+    },
+    {
+     "key": "favor_level",
+     "type": "u32"
+    },
+    {
+     "key": "added_event_drop_at",
+     "type": "string"
+    },
+    {
+     "key": "favor_up_count_by_tap",
+     "type": "u32"
+    },
+    {
+     "key": "updated_by_tap_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CPlayerCharacterFavorInfoMap": {
+   "kind": "map",
+   "elem": "CPlayerCharacterFavorInfoElement",
+   "key": "u64"
+  },
+  "CPlayerCharacterInfoList": {
+   "kind": "array",
+   "elem": "CPersonStatusInfo"
+  },
+  "CPlayerCharacterMasteryInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "character_id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "parent_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "dojo_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_type_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_1_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_2_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_3_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_4_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_5_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CPlayerCharacterMasteryInfoMap": {
+   "kind": "map",
+   "elem": "CPlayerCharacterMasteryInfo",
+   "key": "u64"
+  },
+  "CPlayerInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "native_user_id",
+     "type": "u32"
+    },
+    {
+     "key": "name",
+     "type": "string"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "party_id",
+     "type": "u32"
+    },
+    {
+     "key": "stamina_max",
+     "type": "u32"
+    },
+    {
+     "key": "stamina",
+     "type": "u32"
+    },
+    {
+     "key": "exp",
+     "type": "u32"
+    },
+    {
+     "key": "inquiry_rank",
+     "type": "u32"
+    },
+    {
+     "key": "inquiry_point",
+     "type": "u32"
+    },
+    {
+     "key": "vip_rank",
+     "type": "u32"
+    },
+    {
+     "key": "vip_point",
+     "type": "u32"
+    },
+    {
+     "key": "fol",
+     "type": "u32"
+    },
+    {
+     "key": "item_stock",
+     "type": "u32"
+    },
+    {
+     "key": "storage_stock",
+     "type": "u32"
+    },
+    {
+     "key": "gear_num",
+     "type": "u32"
+    },
+    {
+     "key": "gear_stock",
+     "type": "u32"
+    },
+    {
+     "key": "stamina_update",
+     "type": "string"
+    },
+    {
+     "key": "last_login_at",
+     "type": "string"
+    },
+    {
+     "key": "favor_bonus_received_at",
+     "type": "string"
+    },
+    {
+     "key": "device_type",
+     "type": "u32"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    },
+    {
+     "key": "stamina_max_time",
+     "type": "u32"
+    },
+    {
+     "key": "is_level_up",
+     "type": "bool"
+    },
+    {
+     "key": "support_pc_id",
+     "type": "u64"
+    },
+    {
+     "key": "follow_max",
+     "type": "u32"
+    },
+    {
+     "key": "stamina_update_by_favor",
+     "type": "string"
+    },
+    {
+     "key": "tower_try_count",
+     "type": "u32"
+    },
+    {
+     "key": "time_saving_use_count",
+     "type": "u32"
+    },
+    {
+     "key": "world_map_progress",
+     "type": "u32"
+    },
+    {
+     "key": "world_map_progress_ep3",
+     "type": "u32"
+    },
+    {
+     "key": "home_pc_id",
+     "type": "u64"
+    },
+    {
+     "key": "is_3d_home",
+     "type": "bool"
+    },
+    {
+     "key": "mascot_id",
+     "type": "u32"
+    },
+    {
+     "key": "search_id",
+     "type": "string"
+    },
+    {
+     "key": "tutorial_status",
+     "type": "u64"
+    },
+    {
+     "key": "view_status",
+     "type": "u64"
+    },
+    {
+     "key": "view_status2",
+     "type": "u64"
+    },
+    {
+     "key": "tagName",
+     "type": "string"
+    },
+    {
+     "key": "is_rookie",
+     "type": "bool"
+    },
+    {
+     "key": "title",
+     "type": "u32"
+    },
+    {
+     "key": "kiyaku_version",
+     "type": "string"
+    },
+    {
+     "key": "sphere211_revive_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPremiumLoginBonusInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_premium_login_bonus_id",
+     "type": "u32"
+    },
+    {
+     "key": "current_idx",
+     "type": "u32"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    },
+    {
+     "key": "is_updated",
+     "type": "bool"
+    },
+    {
+     "key": "is_next",
+     "type": "bool"
+    }
+   ]
+  },
+  "CPremiumLoginBonusInfoList": {
+   "kind": "array",
+   "elem": "CPremiumLoginBonusInfo"
+  },
+  "CPresentBoxAddInfoList": {
+   "kind": "array",
+   "elem": "CPresentBoxInfo"
+  },
+  "CPresentBoxGetList": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "CPresentBoxInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "reason_type",
+     "type": "u32"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "is_receive",
+     "type": "u32"
+    },
+    {
+     "key": "reason_param",
+     "type": "string"
+    },
+    {
+     "key": "free_text_message_id",
+     "type": "string"
+    },
+    {
+     "key": "deadline_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CPresentBoxInfoList": {
+   "kind": "array",
+   "elem": "CPresentBoxInfo"
+  },
+  "CPresentBoxReceiveCharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "duplication",
+     "type": "bool"
+    }
+   ]
+  },
+  "CPresentBoxReceiveCharacterInfoList": {
+   "kind": "array",
+   "elem": "CPresentBoxReceiveCharacterInfo"
+  },
+  "CPresentBoxReceiveDecoInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_deco_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPresentBoxReceiveDecoInfoList": {
+   "kind": "array",
+   "elem": "CPresentBoxReceiveDecoInfo"
+  },
+  "CPresentBoxReceiveGearInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CPresentBoxReceiveInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "fol",
+     "type": "u32"
+    },
+    {
+     "key": "free_coin",
+     "type": "u32"
+    },
+    {
+     "key": "item",
+     "class": "CPresentBoxReceiveItemInfoList"
+    },
+    {
+     "key": "StockItem",
+     "class": "CPresentBoxReceiveStackItemInfoList"
+    },
+    {
+     "key": "Character",
+     "class": "CPresentBoxReceiveCharacterInfoList"
+    },
+    {
+     "key": "Stamp",
+     "class": "CPresentBoxReceiveStampInfoList"
+    },
+    {
+     "key": "Title",
+     "class": "CPresentBoxReceiveTitleInfoList"
+    },
+    {
+     "key": "PresentBoxReceiveGearInfoList",
+     "class": "CPresentBoxReceiveGearInfoList"
+    },
+    {
+     "key": "AddOneTimeStorageInfo",
+     "class": "CAddOneTimeStorageInfo"
+    }
+   ]
+  },
+  "CPresentBoxReceiveItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPresentBoxReceiveItemInfoList": {
+   "kind": "array",
+   "elem": "CPresentBoxReceiveItemInfo"
+  },
+  "CPresentBoxReceiveStackItemInfoList": {
+   "kind": "array",
+   "elem": "CPresentBoxReceiveItemInfo"
+  },
+  "CPresentBoxReceiveStampInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_stamp_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPresentBoxReceiveStampInfoList": {
+   "kind": "array",
+   "elem": "CPresentBoxReceiveStampInfo"
+  },
+  "CPresentBoxReceiveTitleInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_title_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CPresentBoxReceiveTitleInfoList": {
+   "kind": "array",
+   "elem": "CPresentBoxReceiveTitleInfo"
+  },
+  "CPresentGetResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "get",
+     "class": "CPresentBoxGetList"
+    },
+    {
+     "key": "add",
+     "class": "CPresentBoxAddInfoList"
+    },
+    {
+     "key": "result",
+     "class": "CPresentBoxReceiveInfo"
+    }
+   ]
+  },
+  "CPurchasedItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "bonus_type",
+     "type": "u32"
+    },
+    {
+     "key": "name_label",
+     "type": "string"
+    },
+    {
+     "key": "title_label",
+     "type": "string"
+    }
+   ]
+  },
+  "CReceiveAchievementList": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "CRemoveFamiliarCharacterList": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "CRemoveFollowInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CSaleGachaCountInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "once_limit_num",
+     "type": "u32"
+    },
+    {
+     "key": "bulk_limit_num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CSaleGachaCountInfoList": {
+   "kind": "map",
+   "elem": "CSaleGachaCountInfo",
+   "key": "u64"
+  },
+  "CSearchResultInfo": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "CSellResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "total_fol",
+     "type": "u32"
+    },
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "item_ids",
+     "class": "CSellResultItemList"
+    },
+    {
+     "key": "StockItem",
+     "class": "CSellResultStackItemMap"
+    },
+    {
+     "key": "UpdateGearList",
+     "class": "CUpdateGearList"
+    }
+   ]
+  },
+  "CSellResultItemList": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "CSellResultStackItemMap": {
+   "kind": "map",
+   "elem": "CStackItemInfo",
+   "key": "u64"
+  },
+  "CServerBuildInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "BuildNumber",
+     "type": "string"
+    },
+    {
+     "key": "BuildId",
+     "type": "string"
+    },
+    {
+     "key": "BuildScmRevision",
+     "type": "string"
+    },
+    {
+     "key": "BuildScmURL",
+     "type": "string"
+    }
+   ]
+  },
+  "CSkillInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "skill_level",
+     "type": "u32"
+    },
+    {
+     "key": "master_skill_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CSkillInfoArray": {
+   "kind": "array",
+   "elem": "CSkillInfo"
+  },
+  "CSkillInfoMap": {
+   "kind": "map",
+   "elem": "CSkillInfoArray",
+   "key": "u32"
+  },
+  "CStackItemClearNewList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CStackItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "item_type",
+     "type": "u32"
+    },
+    {
+     "key": "sort_name_idx",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "u32"
+    },
+    {
+     "key": "use_count",
+     "type": "u32"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CStackItemInfoList": {
+   "kind": "array",
+   "elem": "CStackItemInfo"
+  },
+  "CStampList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CStampSlotInfo": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CStepUpGachaInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_gacha_id",
+     "type": "u32"
+    },
+    {
+     "key": "try_count",
+     "type": "u32"
+    },
+    {
+     "key": "is_close",
+     "type": "u32"
+    },
+    {
+     "key": "restart_count",
+     "type": "u32"
+    },
+    {
+     "key": "next_master_gacha_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CStepUpGachaInfoList": {
+   "kind": "map",
+   "elem": "CStepUpGachaInfo",
+   "key": "u64"
+  },
+  "CStorageItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "item_type",
+     "type": "u32"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "boosted_point",
+     "type": "u32"
+    },
+    {
+     "key": "limit_break_count",
+     "type": "u32"
+    },
+    {
+     "key": "is_equip",
+     "type": "u32"
+    },
+    {
+     "key": "is_lock",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "u32"
+    },
+    {
+     "key": "InheritItemInfo",
+     "class": "InheritItemInfo"
+    },
+    {
+     "key": "AttachedGearInfoList",
+     "class": "CAttachedGearInfoList"
+    },
+    {
+     "key": "update_at_time",
+     "type": "u64"
+    }
+   ]
+  },
+  "CStorageItemInfoList": {
+   "kind": "array",
+   "elem": "CStorageItemInfo"
+  },
+  "CT_WorldBossInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "world_boss_id",
+     "type": "u32"
+    },
+    {
+     "key": "wave",
+     "type": "u32"
+    },
+    {
+     "key": "wave_started_at",
+     "type": "string"
+    },
+    {
+     "key": "wave_clear_time",
+     "type": "u32"
+    },
+    {
+     "key": "bighunt_started_at",
+     "type": "string"
+    },
+    {
+     "key": "bighunt_closed_at",
+     "type": "string"
+    },
+    {
+     "key": "next_required_num",
+     "type": "u64"
+    },
+    {
+     "key": "add_item1_num",
+     "type": "u32"
+    },
+    {
+     "key": "add_item2_num",
+     "type": "u32"
+    },
+    {
+     "key": "add_item3_num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CTitleList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CTowerAreaInfoCategoryList": {
+   "kind": "map",
+   "elem": "CAreaInfo",
+   "key": "u64"
+  },
+  "CTowerMissionInfoCategoryList": {
+   "kind": "map",
+   "elem": "CMissionInfoList",
+   "key": "u64"
+  },
+  "CUniverseBoardIdList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CUniverseBoardList": {
+   "kind": "map",
+   "elem": "CUniverseBoardIdList",
+   "key": "u64"
+  },
+  "CUpdateAttachedGearInfoList": {
+   "kind": "map",
+   "elem": "_CAttachedGearInfoList",
+   "key": "u64"
+  },
+  "CUpdateBoxGachaInfoList": {
+   "kind": "map",
+   "elem": "CBoxGachaInfo",
+   "key": "u64"
+  },
+  "CUpdateBoxGachaListInfoList": {
+   "kind": "map",
+   "elem": "CBoxGachaListInfo",
+   "key": "u64"
+  },
+  "CUpdateCharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "exp",
+     "type": "u32"
+    },
+    {
+     "key": "skill1",
+     "type": "u32"
+    },
+    {
+     "key": "skill1_level",
+     "type": "u32"
+    },
+    {
+     "key": "skill2",
+     "type": "u32"
+    },
+    {
+     "key": "skill2_level",
+     "type": "u32"
+    },
+    {
+     "key": "skill3",
+     "type": "u32"
+    },
+    {
+     "key": "skill3_level",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "u32"
+    },
+    {
+     "key": "rush_skill",
+     "type": "u32"
+    },
+    {
+     "key": "rush_skill_level",
+     "type": "u32"
+    },
+    {
+     "key": "rush_skill_factor_id",
+     "type": "u32"
+    },
+    {
+     "key": "rush_gauge_max",
+     "type": "u32"
+    },
+    {
+     "key": "rush_gauge_use",
+     "type": "u32"
+    },
+    {
+     "key": "weapon_kind",
+     "type": "u32"
+    }
+   ]
+  },
+  "CUpdateCharacterInfoList": {
+   "kind": "array",
+   "elem": "CUpdateCharacterInfo"
+  },
+  "CUpdateCharacterMasteryInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "character_id",
+     "type": "u64"
+    },
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "parent_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "dojo_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_type_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_1_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_2_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_3_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_4_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "master_mastery_step_5_option_no",
+     "type": "u32"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    },
+    {
+     "key": "mastery_talent_id",
+     "type": "u32"
+    },
+    {
+     "key": "parent_master_role_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CUpdateCharacterMasteryInfoArray": {
+   "kind": "array",
+   "elem": "CUpdateCharacterMasteryInfo"
+  },
+  "CUpdateDeepSpaceBonusAllApplyInfoList": {
+   "kind": "map",
+   "elem": "CDeepSpaceBonusApplyInfoList",
+   "key": "u64"
+  },
+  "CUpdateDeityInfoList": {
+   "kind": "map",
+   "elem": "DeityInfo",
+   "key": "u64"
+  },
+  "CUpdateFavorByTapResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "same_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "favor_level",
+     "type": "u32"
+    },
+    {
+     "key": "favor_point",
+     "type": "u32"
+    },
+    {
+     "key": "RemainingUpdateFavorCountByTap",
+     "type": "u32"
+    }
+   ]
+  },
+  "CUpdateGearList": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "CUpdateOneTimeStorageItemInfoList": {
+   "kind": "map",
+   "elem": "CStorageItemInfo",
+   "key": "u64"
+  },
+  "CUpdatePlayerCharacter": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "before_master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "after_master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "is_rarity_7",
+     "type": "u32"
+    }
+   ]
+  },
+  "CUpdateStackItemInfoList": {
+   "kind": "map",
+   "elem": "CStackItemInfo",
+   "key": "u64"
+  },
+  "CUpdateStepUpGachaInfoList": {
+   "kind": "map",
+   "elem": "CStepUpGachaInfo",
+   "key": "u64"
+  },
+  "CUpdateStorageItemInfoList": {
+   "kind": "map",
+   "elem": "CStorageItemInfo",
+   "key": "u64"
+  },
+  "CUpdateStorageLockList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CUpdatedAchievementList": {
+   "kind": "map",
+   "elem": "CAchievementInfo",
+   "key": "u64"
+  },
+  "CUseEvolutionResult_StackItemInfoList": {
+   "kind": "array",
+   "elem": "CStackItemInfo"
+  },
+  "CUseResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "StockItem",
+     "class": "CUseResultStackItemMap"
+    }
+   ]
+  },
+  "CUseResultStackItemMap": {
+   "kind": "map",
+   "elem": "CStackItemInfo",
+   "key": "u64"
+  },
+  "CUseStackItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "use_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "CUserFavorResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "same_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "favor_level",
+     "type": "u32"
+    },
+    {
+     "key": "favor_point",
+     "type": "u32"
+    }
+   ]
+  },
+  "CWalletInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "ios_coin",
+     "type": "u32"
+    },
+    {
+     "key": "android_coin",
+     "type": "u32"
+    },
+    {
+     "key": "free_coin",
+     "type": "u32"
+    },
+    {
+     "key": "total_coin",
+     "type": "u32"
+    },
+    {
+     "key": "pay_coin",
+     "type": "u32"
+    }
+   ]
+  },
+  "CWebViewInfo": {
+   "kind": "array",
+   "elem": "CWebViewInfoElement"
+  },
+  "CWebViewInfoElement": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "key",
+     "type": "string"
+    },
+    {
+     "key": "value",
+     "type": "string"
+    }
+   ]
+  },
+  "CWorldBossInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "world_boss_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_item_id1",
+     "type": "u32"
+    },
+    {
+     "key": "num1",
+     "type": "u64"
+    },
+    {
+     "key": "master_item_id2",
+     "type": "u32"
+    },
+    {
+     "key": "num2",
+     "type": "u64"
+    },
+    {
+     "key": "master_item_id3",
+     "type": "u32"
+    },
+    {
+     "key": "num3",
+     "type": "u64"
+    },
+    {
+     "key": "wave",
+     "type": "u32"
+    }
+   ]
+  },
+  "CWorldBossItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "content_type",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CWorldBossMissionTimeBonusDropItemInfoList": {
+   "kind": "array",
+   "elem": "CWorldBossItemInfo"
+  },
+  "CWorldBossPlayerInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "world_boss_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_item_id1",
+     "type": "u32"
+    },
+    {
+     "key": "num1",
+     "type": "u64"
+    },
+    {
+     "key": "master_item_id2",
+     "type": "u32"
+    },
+    {
+     "key": "num2",
+     "type": "u64"
+    },
+    {
+     "key": "master_item_id3",
+     "type": "u32"
+    },
+    {
+     "key": "num3",
+     "type": "u64"
+    },
+    {
+     "key": "wave",
+     "type": "u32"
+    },
+    {
+     "key": "is_received",
+     "type": "bool"
+    },
+    {
+     "key": "is_notified",
+     "type": "bool"
+    },
+    {
+     "key": "is_new_open",
+     "type": "bool"
+    }
+   ]
+  },
+  "CWorldBossPlayerInfoList": {
+   "kind": "map",
+   "elem": "CWorldBossPlayerInfo",
+   "key": "u64"
+  },
+  "CWorldMapCellInfo": {
+   "kind": "info",
+   "untyped": true,
+   "fields": [
+    {
+     "key": "mission_ct",
+     "type": null
+    },
+    {
+     "key": "is_new",
+     "type": null
+    },
+    {
+     "key": "is_last_play",
+     "type": null
+    },
+    {
+     "key": "is_start_bighunt",
+     "type": null
+    }
+   ]
+  },
+  "CWorldMapCellInfoCategoryList": {
+   "kind": "map",
+   "elem": "CWorldMapCellInfoList",
+   "key": "u64"
+  },
+  "CWorldMapCellInfoList": {
+   "kind": "map",
+   "elem": "CWorldMapCellInfo",
+   "key": "u64"
+  },
+  "CWorldMapInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "area_ct",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    },
+    {
+     "key": "is_last_play",
+     "type": "bool"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "CWorldMapInfoCategoryList": {
+   "kind": "map",
+   "elem": "CWorldMapInfo",
+   "key": "u64"
+  },
+  "CWorldMapMaintenanceInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "status",
+     "type": "u32"
+    },
+    {
+     "key": "master_select_part_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "CWorldMapMaintenanceInfoMap": {
+   "kind": "map",
+   "elem": "CWorldMapMaintenanceInfo",
+   "key": "u64"
+  },
+  "CWorldMapMissionElementInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "bool"
+    },
+    {
+     "key": "is_clear",
+     "type": "bool"
+    },
+    {
+     "key": "is_last_play",
+     "type": "bool"
+    },
+    {
+     "key": "mission_group_id",
+     "type": "u32"
+    },
+    {
+     "key": "difficulty",
+     "type": "u32"
+    },
+    {
+     "key": "scenario_library_id",
+     "type": "u32"
+    },
+    {
+     "key": "mission_type",
+     "type": "u32"
+    }
+   ]
+  },
+  "CWorldMapMissionInfoCategoryList": {
+   "kind": "map",
+   "elem": "CWorldMapMissionInfoList",
+   "key": "u64"
+  },
+  "CWorldMapMissionInfoList": {
+   "kind": "array",
+   "elem": "CWorldMapMissionElementInfo"
+  },
+  "CWorldMapScenarioLibraryInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "CharacterChipInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u64"
+    },
+    {
+     "key": "master_role_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    }
+   ]
+  },
+  "CharacterChipInfoList": {
+   "kind": "map",
+   "elem": "CharacterChipInfo",
+   "key": "u64"
+  },
+  "CheckEventRankingResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_event_ranking_group_id",
+     "type": "u32"
+    },
+    {
+     "key": "RankingResultInfoList",
+     "class": "RankingResultInfoList"
+    }
+   ]
+  },
+  "DeepMissionEndResultPlayerInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "level",
+     "type": "u32"
+    },
+    {
+     "key": "stamina",
+     "type": "u32"
+    },
+    {
+     "key": "stamina_max",
+     "type": "u32"
+    },
+    {
+     "key": "exp",
+     "type": "u32"
+    },
+    {
+     "key": "fol",
+     "type": "u32"
+    },
+    {
+     "key": "is_level_up",
+     "type": "bool"
+    },
+    {
+     "key": "tower_try_count",
+     "type": "u32"
+    },
+    {
+     "key": "time_saving_use_count",
+     "type": "u32"
+    },
+    {
+     "key": "stamina_update",
+     "type": "string"
+    }
+   ]
+  },
+  "DeityInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "deity_role_category_id",
+     "type": "u32"
+    },
+    {
+     "key": "familiar_count",
+     "type": "u32"
+    },
+    {
+     "key": "set_index",
+     "type": "u32"
+    }
+   ]
+  },
+  "EventRankingInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "rank",
+     "type": "u32"
+    },
+    {
+     "key": "rank_ui",
+     "type": "u32"
+    },
+    {
+     "key": "score",
+     "type": "u64"
+    },
+    {
+     "key": "party_player_id1",
+     "type": "u32"
+    },
+    {
+     "key": "party_player_id2",
+     "type": "u32"
+    },
+    {
+     "key": "party_player_id3",
+     "type": "u32"
+    },
+    {
+     "key": "party_player_id4",
+     "type": "u32"
+    },
+    {
+     "key": "party_player_id1_valid",
+     "type": "bool"
+    },
+    {
+     "key": "party_player_id2_valid",
+     "type": "bool"
+    },
+    {
+     "key": "party_player_id3_valid",
+     "type": "bool"
+    },
+    {
+     "key": "party_player_id4_valid",
+     "type": "bool"
+    },
+    {
+     "key": "party_role_id1",
+     "type": "u32"
+    },
+    {
+     "key": "party_role_id2",
+     "type": "u32"
+    },
+    {
+     "key": "party_role_id3",
+     "type": "u32"
+    },
+    {
+     "key": "party_role_id4",
+     "type": "u32"
+    },
+    {
+     "key": "battle_id",
+     "type": "u32"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    }
+   ]
+  },
+  "EventRankingInfoList": {
+   "kind": "array",
+   "elem": "EventRankingInfo"
+  },
+  "EventRankingInfoListMap": {
+   "kind": "map",
+   "elem": "EventRankingInfoList",
+   "key": "u64"
+  },
+  "EventRankingPlayerInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "name",
+     "type": "string"
+    }
+   ]
+  },
+  "EventRankingPlayerInfoMap": {
+   "kind": "map",
+   "elem": "EventRankingPlayerInfo",
+   "key": "u64"
+  },
+  "EventRankingTopInfoList": {
+   "kind": "array",
+   "elem": "EventRankingInfo"
+  },
+  "EventRankingTopInfoListMap": {
+   "kind": "map",
+   "elem": "EventRankingTopInfoList",
+   "key": "u64"
+  },
+  "FooterMissionInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "ep1_new_area_count",
+     "type": "u32"
+    },
+    {
+     "key": "is_open_extra_dungeon",
+     "type": "bool"
+    },
+    {
+     "key": "is_open_event_mission",
+     "type": "bool"
+    },
+    {
+     "key": "is_open_evolution",
+     "type": "bool"
+    },
+    {
+     "key": "is_open_multiplay",
+     "type": "bool"
+    }
+   ]
+  },
+  "GetEventRankingResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "EventRankingInfoListMap",
+     "class": "EventRankingInfoListMap"
+    },
+    {
+     "key": "EventRankingTopInfoListMap",
+     "class": "EventRankingTopInfoListMap"
+    },
+    {
+     "key": "EventRankingPlayerInfoMap",
+     "class": "EventRankingPlayerInfoMap"
+    }
+   ]
+  },
+  "InheritItemInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "inherited_master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "inherited_master_item_limit_break_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "InheritResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "base_player_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "lost_master_item_id",
+     "type": "u32"
+    },
+    {
+     "key": "lost_player_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "lost_item_limit_break_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "MissionEndResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "mission_time",
+     "type": "u32"
+    }
+   ]
+  },
+  "PartySetCharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "party_id",
+     "type": "u32"
+    },
+    {
+     "key": "party_index",
+     "type": "u32"
+    },
+    {
+     "key": "character_id",
+     "type": "u64"
+    },
+    {
+     "key": "weapon_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "accessory_item_id",
+     "type": "u64"
+    },
+    {
+     "key": "skill_id1",
+     "type": "u32"
+    },
+    {
+     "key": "skill_id2",
+     "type": "u32"
+    },
+    {
+     "key": "skill_id3",
+     "type": "u32"
+    },
+    {
+     "key": "assist_character_id",
+     "type": "u64"
+    }
+   ]
+  },
+  "PartySetCharacterInfoList": {
+   "kind": "array",
+   "elem": "PartySetCharacterInfo"
+  },
+  "PartySetInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "party_id",
+     "type": "u32"
+    },
+    {
+     "key": "icon_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_lock",
+     "type": "bool"
+    },
+    {
+     "key": "PartySetCharacter",
+     "class": "PartySetCharacterInfoList"
+    }
+   ]
+  },
+  "PartySetInfoMap": {
+   "kind": "map",
+   "elem": "PartySetInfo",
+   "key": "u64"
+  },
+  "PickupCharaterChipResultInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "PickupCharaterChipResultInfoMap": {
+   "kind": "map",
+   "elem": "_PickupCharaterChipResultInfoList",
+   "key": "u64"
+  },
+  "RankingResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_event_ranking_id",
+     "type": "u32"
+    },
+    {
+     "key": "score",
+     "type": "u64"
+    },
+    {
+     "key": "rank",
+     "type": "u32"
+    }
+   ]
+  },
+  "RankingResultInfoList": {
+   "kind": "array",
+   "elem": "RankingResultInfo"
+  },
+  "RecentlyPlayedDetailInfoMap": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "SetAssistResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "character_id",
+     "type": "u64"
+    },
+    {
+     "key": "assist_id",
+     "type": "u64"
+    },
+    {
+     "key": "old_assist_id",
+     "type": "u64"
+    }
+   ]
+  },
+  "SetAssistResultList": {
+   "kind": "array",
+   "elem": "SetAssistResultInfo"
+  },
+  "Sphere211AutoMemberSelectResultInfo": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "Sphere211CharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_character_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211CharacterInfoMap": {
+   "kind": "map",
+   "elem": "Sphere211CharacterInfo",
+   "key": "u64"
+  },
+  "Sphere211EndResult": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "floor_num",
+     "type": "u32"
+    },
+    {
+     "key": "rank",
+     "type": "u32"
+    },
+    {
+     "key": "treasure_num",
+     "type": "u32"
+    },
+    {
+     "key": "previous_season_id",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211FloorAssetInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "floor_level",
+     "type": "u32"
+    },
+    {
+     "key": "master_sphere211_asset_id",
+     "type": "u32"
+    },
+    {
+     "key": "master_sphere211_mission_box_id",
+     "type": "u32"
+    },
+    {
+     "key": "overwrite_enemy_level",
+     "type": "u32"
+    },
+    {
+     "key": "is_cleared",
+     "type": "u32"
+    },
+    {
+     "key": "is_new",
+     "type": "u32"
+    },
+    {
+     "key": "can_play",
+     "type": "u32"
+    },
+    {
+     "key": "is_playing",
+     "type": "u32"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    }
+   ]
+  },
+  "Sphere211FloorAssetInfoMap": {
+   "kind": "map",
+   "elem": "Sphere211FloorAssetInfo",
+   "key": "u64"
+  },
+  "Sphere211FloorClearInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "floor_level",
+     "type": "u32"
+    },
+    {
+     "key": "master_sphere211_asset_id",
+     "type": "u32"
+    },
+    {
+     "key": "lot_floor_num",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211FloorClearResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "clear_present_id",
+     "type": "u32"
+    },
+    {
+     "key": "clear_present_content_type",
+     "type": "u32"
+    },
+    {
+     "key": "clear_present_num",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211FloorInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "floor_level",
+     "type": "u32"
+    },
+    {
+     "key": "mission_clear_streak",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211FollowFloorInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "floor_level",
+     "type": "u32"
+    },
+    {
+     "key": "follow_status",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211FollowFloorInfoList": {
+   "kind": "array",
+   "elem": "Sphere211FollowFloorInfo"
+  },
+  "Sphere211RankingDetailInfoMap": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "Sphere211RankingInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "floor_level",
+     "type": "u32"
+    },
+    {
+     "key": "rank",
+     "type": "u32"
+    },
+    {
+     "key": "rank_ui",
+     "type": "u32"
+    },
+    {
+     "key": "entered_at",
+     "type": "string"
+    }
+   ]
+  },
+  "Sphere211RankingInfoMap": {
+   "kind": "map",
+   "elem": "Sphere211RankingInfo",
+   "key": "u64"
+  },
+  "Sphere211RankingTopInfoMap": {
+   "kind": "map",
+   "elem": "Sphere211RankingInfo",
+   "key": "u64"
+  },
+  "Sphere211RentalCharacterDetailInfoMap": {
+   "kind": "map",
+   "elem": "CFollowInfo",
+   "key": "u64"
+  },
+  "Sphere211RentalCharacterInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "follow_player_id",
+     "type": "u32"
+    },
+    {
+     "key": "is_used",
+     "type": "u32"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    }
+   ]
+  },
+  "Sphere211RentalCharacterInfoMap": {
+   "kind": "map",
+   "elem": "Sphere211RentalCharacterInfo",
+   "key": "u64"
+  },
+  "Sphere211ReviveResultInfoList": {
+   "kind": "valarray",
+   "value": "u64"
+  },
+  "Sphere211StaminaInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "stamina",
+     "type": "u32"
+    },
+    {
+     "key": "stamina_update",
+     "type": "string"
+    },
+    {
+     "key": "stamina_max",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211TreasureDropInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "type",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211TreasureDropInfoList": {
+   "kind": "array",
+   "elem": "Sphere211TreasureDropInfo"
+  },
+  "Sphere211TreasureInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "num",
+     "type": "u32"
+    },
+    {
+     "key": "total_num",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211TreasureResultInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "content_id",
+     "type": "u32"
+    },
+    {
+     "key": "num",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211TreasureResultInfoList": {
+   "kind": "array",
+   "elem": "Sphere211TreasureResultInfo"
+  },
+  "Sphere211TreasureResultInfoMap": {
+   "kind": "map",
+   "elem": "Sphere211TreasureResultInfoList",
+   "key": "u64"
+  },
+  "Sphere211TreasureResultLotInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "lot_num",
+     "type": "u32"
+    }
+   ]
+  },
+  "Sphere211TreasureResultLotInfoMap": {
+   "kind": "map",
+   "elem": "Sphere211TreasureResultLotInfo",
+   "key": "u64"
+  },
+  "SubscriptionCampaignResult": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_subscription_campaign_id",
+     "type": "u32"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "SubscriptionCampaignResultList": {
+   "kind": "array",
+   "elem": "SubscriptionCampaignResult"
+  },
+  "SubscriptionGachaCountInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_subscription_type_id",
+     "type": "u32"
+    },
+    {
+     "key": "gacha_count",
+     "type": "u32"
+    },
+    {
+     "key": "created_at",
+     "type": "string"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "SubscriptionGachaCountInfoList": {
+   "kind": "array",
+   "elem": "SubscriptionGachaCountInfo"
+  },
+  "SubscriptionHistoryInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_subscription_plan_id",
+     "type": "u32"
+    },
+    {
+     "key": "name_label",
+     "type": "string"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "SubscriptionHistoryInfoList": {
+   "kind": "array",
+   "elem": "SubscriptionHistoryInfo"
+  },
+  "SubscriptionInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_subscription_type_id",
+     "type": "u32"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "SubscriptionInfoMap": {
+   "kind": "map",
+   "elem": "SubscriptionInfo",
+   "key": "u64"
+  },
+  "SubscriptionPlanInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "master_subscription_plan_id",
+     "type": "u32"
+    },
+    {
+     "key": "updated_at",
+     "type": "string"
+    },
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "SubscriptionPlanInfoMap": {
+   "kind": "map",
+   "elem": "SubscriptionPlanInfo",
+   "key": "u64"
+  },
+  "TowerScheduleInfoArray_S2C": {
+   "kind": "map",
+   "elem": "TowerScheduleInfo_S2C",
+   "key": "u64"
+  },
+  "TowerScheduleInfo_S2C": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "opened_at",
+     "type": "string"
+    },
+    {
+     "key": "closed_at",
+     "type": "string"
+    }
+   ]
+  },
+  "UniverseAddStatusInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "player_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "add_hp",
+     "type": "u32"
+    },
+    {
+     "key": "add_attack",
+     "type": "u32"
+    },
+    {
+     "key": "add_intelligence",
+     "type": "u32"
+    },
+    {
+     "key": "add_defence",
+     "type": "u32"
+    },
+    {
+     "key": "add_hit",
+     "type": "u32"
+    },
+    {
+     "key": "add_guard",
+     "type": "u32"
+    },
+    {
+     "key": "add_ap",
+     "type": "u32"
+    }
+   ]
+  },
+  "UniverseDeityBoostInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "player_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "add_hp",
+     "type": "s32"
+    },
+    {
+     "key": "add_attack",
+     "type": "s32"
+    },
+    {
+     "key": "add_intelligence",
+     "type": "s32"
+    },
+    {
+     "key": "add_defence",
+     "type": "s32"
+    },
+    {
+     "key": "add_hit",
+     "type": "s32"
+    },
+    {
+     "key": "add_guard",
+     "type": "s32"
+    },
+    {
+     "key": "add_ap",
+     "type": "s32"
+    }
+   ]
+  },
+  "UniverseEffectualTalentInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "UpdateMissionStartPlayerInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "id",
+     "type": "u32"
+    },
+    {
+     "key": "stamina",
+     "type": "u32"
+    },
+    {
+     "key": "stamina_update",
+     "type": "string"
+    },
+    {
+     "key": "stamina_max_time",
+     "type": "u32"
+    },
+    {
+     "key": "is_rookie",
+     "type": "bool"
+    },
+    {
+     "key": "sphere211_revive_count",
+     "type": "u32"
+    }
+   ]
+  },
+  "UpdateUniverseAddStatusInfo": {
+   "kind": "map",
+   "elem": "UniverseAddStatusInfo",
+   "key": "u64"
+  },
+  "UpdateUniverseEffectualTalentInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "UpdateUniverseLevelInfo": {
+   "kind": "info",
+   "fields": [
+    {
+     "key": "player_id",
+     "type": "u32"
+    },
+    {
+     "key": "player_character_id",
+     "type": "u64"
+    },
+    {
+     "key": "update_level",
+     "type": "s32"
+    }
+   ]
+  },
+  "UpdatedEventRankingIdList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "_CAttachedGearInfoList": {
+   "kind": "array",
+   "elem": "CAttachedGearInfo"
+  },
+  "_CExpirationInfoList": {
+   "kind": "array",
+   "elem": "CExpirationInfo"
+  },
+  "_PickupCharaterChipResultInfoList": {
+   "kind": "valarray",
+   "value": "u32"
+  }
+ },
+ "manager": [
+  {
+   "key": "Player",
+   "class": "CPlayerInfo"
+  },
+  {
+   "key": "HostPlayer",
+   "class": "CHostPlayerInfo"
+  },
+  {
+   "key": "Character",
+   "class": "CPersonInfoList"
+  },
+  {
+   "key": "Item",
+   "class": "CItemInfoList"
+  },
+  {
+   "key": "PartySet",
+   "class": "PartySetInfoMap"
+  },
+  {
+   "key": "PartySetResult",
+   "class": "PartySetInfo"
+  },
+  {
+   "key": "FooterMissionInfo",
+   "class": "FooterMissionInfo"
+  },
+  {
+   "key": "ActiveMissionList",
+   "class": "CActiveMissionListInfo"
+  },
+  {
+   "key": "ActiveTowerMissionList",
+   "class": "CActiveTowerMissionListInfo"
+  },
+  {
+   "key": "ActiveEventMissionList",
+   "class": "CActiveEventMissionListInfo"
+  },
+  {
+   "key": "ActiveWorldMapMissionList",
+   "class": "CActiveWorldMapMissionListInfo"
+  },
+  {
+   "key": "WorldMapScenarioLibraryInfoList",
+   "class": "CWorldMapScenarioLibraryInfoList"
+  },
+  {
+   "key": "Wallet",
+   "class": "CWalletInfo"
+  },
+  {
+   "key": "PresentBox",
+   "class": "CPresentBoxInfoList"
+  },
+  {
+   "key": "SellResult",
+   "class": "CSellResultInfo"
+  },
+  {
+   "key": "UseResult",
+   "class": "CUseResultInfo"
+  },
+  {
+   "key": "BattleParameter",
+   "class": "CBattleParameterInfo"
+  },
+  {
+   "key": "MissionParameter",
+   "class": "CMissionParameterInfo"
+  },
+  {
+   "key": "MissionResultCharacter",
+   "class": "CMissionResultCharacterCategoryInfo"
+  },
+  {
+   "key": "DropList",
+   "class": "CMissionResultDropInfo"
+  },
+  {
+   "key": "ClearPresentList",
+   "class": "CMissionResultPresentInfo"
+  },
+  {
+   "key": "CommonDropList",
+   "class": "CMissionResultCommonDropInfo"
+  },
+  {
+   "key": "RareDropList",
+   "class": "CMissionResultRareDropInfo"
+  },
+  {
+   "key": "MissionEndResult",
+   "class": "MissionEndResultInfo"
+  },
+  {
+   "key": "MissionResultCharacterFavor",
+   "class": "CMissionResultCharacterFavorInfoMap"
+  },
+  {
+   "key": "PartyUpdate",
+   "class": "CPartyUpdateInfo"
+  },
+  {
+   "key": "PresentGetResult",
+   "class": "CPresentGetResultInfo"
+  },
+  {
+   "key": "EquipWeaponResult",
+   "class": "CEquipWeaponResultInfo"
+  },
+  {
+   "key": "EquipAccessoryResult",
+   "class": "CEquipAccessoryResultInfo"
+  },
+  {
+   "key": "SetAssistResult",
+   "class": "SetAssistResultInfo"
+  },
+  {
+   "key": "SetAssistResultList",
+   "class": "SetAssistResultList"
+  },
+  {
+   "key": "AddItem",
+   "class": "CAddItemList"
+  },
+  {
+   "key": "AddCharacter",
+   "class": "CAddCharacterList"
+  },
+  {
+   "key": "UpdateCharacter",
+   "class": "CUpdateCharacterInfo"
+  },
+  {
+   "key": "UpdateCharacterList",
+   "class": "CUpdateCharacterInfoList"
+  },
+  {
+   "key": "GachaItems",
+   "class": "CGachaResultInfoArray"
+  },
+  {
+   "key": "GachaRateInfoList",
+   "class": "CGachaRateInfoList"
+  },
+  {
+   "key": "GachaHashMap",
+   "class": "CGachaHashInfoMap"
+  },
+  {
+   "key": "LoginBonus",
+   "class": "CLoginBonusInfoList"
+  },
+  {
+   "key": "PremiumLoginBonus",
+   "class": "CPremiumLoginBonusInfoList"
+  },
+  {
+   "key": "ItemGetList",
+   "class": "CItemReceiveList"
+  },
+  {
+   "key": "BoostedCharacterResult",
+   "class": "CBoostCharacterResultInfoMap"
+  },
+  {
+   "key": "StockItem",
+   "class": "CStackItemInfoList"
+  },
+  {
+   "key": "UseStockItem",
+   "class": "CUseStackItemInfo"
+  },
+  {
+   "key": "SkillList",
+   "class": "CSkillInfoMap"
+  },
+  {
+   "key": "CharacterAddStatusResult",
+   "class": "CPersonAddStatusResultInfo"
+  },
+  {
+   "key": "LockItemResult",
+   "class": "CLockItemResult"
+  },
+  {
+   "key": "Option",
+   "class": "COptionInfo"
+  },
+  {
+   "key": "BattleLog",
+   "class": "CBattleLogInfo"
+  },
+  {
+   "key": "EvolutionResult",
+   "class": "CEvolutionResultInfo"
+  },
+  {
+   "key": "ComposeResult",
+   "class": "CComposeResultInfo"
+  },
+  {
+   "key": "GradeUpResult",
+   "class": "CGradeUpResultInfo"
+  },
+  {
+   "key": "ExchangeResult",
+   "class": "CExchangeResultInfo"
+  },
+  {
+   "key": "ExchangeShopExCount",
+   "class": "CExchangeShopExCountInfoCategoryMap"
+  },
+  {
+   "key": "WebView",
+   "class": "CWebViewInfo"
+  },
+  {
+   "key": "LimitBreakCharacter",
+   "class": "CLimitBreakInfoList"
+  },
+  {
+   "key": "LimitBreakItem",
+   "class": "CLimitBreakItemInfoList"
+  },
+  {
+   "key": "CharacterChipInfoList",
+   "class": "CharacterChipInfoList"
+  },
+  {
+   "key": "UpdateStockItem",
+   "class": "CUpdateStackItemInfoList"
+  },
+  {
+   "key": "BattleRental",
+   "class": "CBattleRentalInfoList"
+  },
+  {
+   "key": "FollowID",
+   "class": "CFollowIDInfo"
+  },
+  {
+   "key": "MutualFollowID",
+   "class": "CMutualFollowIDInfo"
+  },
+  {
+   "key": "Follow",
+   "class": "CFollowInfoList"
+  },
+  {
+   "key": "FollowPlayerList",
+   "class": "CFollowPlayerListInfo"
+  },
+  {
+   "key": "BlacklistID",
+   "class": "CBlacklistIDInfo"
+  },
+  {
+   "key": "Blacklist",
+   "class": "CBlacklistInfoList"
+  },
+  {
+   "key": "BlacklistPlayerList",
+   "class": "CBlacklistPlayerListInfo"
+  },
+  {
+   "key": "NeighborList",
+   "class": "CNeighborInfoList"
+  },
+  {
+   "key": "CheckInInfoList",
+   "class": "CCheckInInfoList"
+  },
+  {
+   "key": "SearchResult",
+   "class": "CSearchResultInfo"
+  },
+  {
+   "key": "Achievement",
+   "class": "CAchievementActiveInfoList"
+  },
+  {
+   "key": "ReceiveAchievement",
+   "class": "CAchievementReceiveInfoList"
+  },
+  {
+   "key": "AddPresent",
+   "class": "CAddPresentBoxInfoList"
+  },
+  {
+   "key": "BannerURLInfoList",
+   "class": "CBannerURLInfoList"
+  },
+  {
+   "key": "PlayMission",
+   "class": "CPlayMissionInfo"
+  },
+  {
+   "key": "TowerSchedule",
+   "class": "TowerScheduleInfoArray_S2C"
+  },
+  {
+   "key": "CommonWebView",
+   "class": "CCommonWebViewInfo"
+  },
+  {
+   "key": "CommonWebSite",
+   "class": "CCommonWebSiteInfo"
+  },
+  {
+   "key": "Birth",
+   "class": "CBirthInfo"
+  },
+  {
+   "key": "CoinList",
+   "class": "CCoinInfoList"
+  },
+  {
+   "key": "CoinDeposit",
+   "class": "CCoinDepositInfo"
+  },
+  {
+   "key": "UpdatedAchievement",
+   "class": "CUpdatedAchievementList"
+  },
+  {
+   "key": "AddItemGetList",
+   "class": "CAddedItemReceiveList"
+  },
+  {
+   "key": "GachaCount",
+   "class": "CGachaCountInfoList"
+  },
+  {
+   "key": "SubscriptionGachaCount",
+   "class": "SubscriptionGachaCountInfoList"
+  },
+  {
+   "key": "SaleGachaCount",
+   "class": "CSaleGachaCountInfoList"
+  },
+  {
+   "key": "ServerBuildInfo",
+   "class": "CServerBuildInfo"
+  },
+  {
+   "key": "ItemClearNewList",
+   "class": "CItemClearNewList"
+  },
+  {
+   "key": "StackItemClearNewList",
+   "class": "CStackItemClearNewList"
+  },
+  {
+   "key": "StampList",
+   "class": "CStampList"
+  },
+  {
+   "key": "StampSlot",
+   "class": "CStampSlotInfo"
+  },
+  {
+   "key": "AddStampList",
+   "class": "CAddStampList"
+  },
+  {
+   "key": "TitleList",
+   "class": "CTitleList"
+  },
+  {
+   "key": "AddTitleList",
+   "class": "CAddTitleList"
+  },
+  {
+   "key": "BoxGachaList",
+   "class": "CBoxGachaListInfoList"
+  },
+  {
+   "key": "BoxGacha",
+   "class": "CBoxGachaInfoList"
+  },
+  {
+   "key": "UpdateBoxGachaList",
+   "class": "CUpdateBoxGachaListInfoList"
+  },
+  {
+   "key": "UpdateBoxGacha",
+   "class": "CUpdateBoxGachaInfoList"
+  },
+  {
+   "key": "BoxGachaItems",
+   "class": "CBoxGachaResultInfoList"
+  },
+  {
+   "key": "StepUpGacha",
+   "class": "CStepUpGachaInfoList"
+  },
+  {
+   "key": "UpdateStepUpGacha",
+   "class": "CUpdateStepUpGachaInfoList"
+  },
+  {
+   "key": "PartialMaintenance",
+   "class": "CPartialMaintenanceInfoMap"
+  },
+  {
+   "key": "RemoveFollow",
+   "class": "CRemoveFollowInfo"
+  },
+  {
+   "key": "CampaignInfo",
+   "class": "CCampaignInfoList"
+  },
+  {
+   "key": "FriendGauge",
+   "class": "CFriendGaugeInfoMap"
+  },
+  {
+   "key": "FriendGaugeUpdate",
+   "class": "CFriendGaugeUpdateInfoMap"
+  },
+  {
+   "key": "ReceiveAchievementList",
+   "class": "CReceiveAchievementList"
+  },
+  {
+   "key": "GiftGachaItems",
+   "class": "CGiftGachaResultInfoArray"
+  },
+  {
+   "key": "AwakenResult",
+   "class": "CAwakenResultInfo"
+  },
+  {
+   "key": "ItemShopInfoList",
+   "class": "CItemShopInfoList"
+  },
+  {
+   "key": "MasterKiyakuVersion",
+   "class": "CMasterKiyakuVersionInfo"
+  },
+  {
+   "key": "ItemShopInfo",
+   "class": "CItemShopInfo"
+  },
+  {
+   "key": "DirectItemShopInfoList",
+   "class": "CDirectItemShopInfoList"
+  },
+  {
+   "key": "DirectItemShopInfo",
+   "class": "CDirectItemShopInfo"
+  },
+  {
+   "key": "GachaDayLimitCountInfo",
+   "class": "CGachaDayLimitCountInfoArray"
+  },
+  {
+   "key": "GachaTestResult",
+   "class": "CGachaTestResultInfoList"
+  },
+  {
+   "key": "ItemBoostTestResult",
+   "class": "CItemBoostTestResultInfo"
+  },
+  {
+   "key": "MissionDropTestResultInfo",
+   "class": "CMissionDropTestResultInfo"
+  },
+  {
+   "key": "CGachaMutationTestResult",
+   "class": "CGachaMutationTestResultInfoList"
+  },
+  {
+   "key": "DeepSpaceArea",
+   "class": "CDeepSpaceAreaInfo"
+  },
+  {
+   "key": "DeepSpaceShip",
+   "class": "CDeepSpaceShipInfo"
+  },
+  {
+   "key": "characters",
+   "class": "CDeepSpaceCharacterInfoList"
+  },
+  {
+   "key": "add_characters_exp",
+   "class": "CAddCharacterExpInfoList"
+  },
+  {
+   "key": "AutoSelectedResult",
+   "class": "CAutoSelectedCharacterIDInfo"
+  },
+  {
+   "key": "CContentInfoMap",
+   "class": "CContentInfoMap"
+  },
+  {
+   "key": "DeepMissionPlayer",
+   "class": "DeepMissionEndResultPlayerInfo"
+  },
+  {
+   "key": "DebugBonusInfoList",
+   "class": "CDebugBonusInfoMap"
+  },
+  {
+   "key": "CDebugDeepCharacterList",
+   "class": "CDeepSpaceDebugCharacterInfoMap"
+  },
+  {
+   "key": "CWorldBossInfo",
+   "class": "CWorldBossInfo"
+  },
+  {
+   "key": "CT_WorldBossInfo",
+   "class": "CT_WorldBossInfo"
+  },
+  {
+   "key": "CWorldBossPlayerInfoList",
+   "class": "CWorldBossPlayerInfoList"
+  },
+  {
+   "key": "CWorldBossPlayerInfo",
+   "class": "CWorldBossPlayerInfo"
+  },
+  {
+   "key": "WorldBossMissionTimeBonusDropItemInfoList",
+   "class": "CWorldBossMissionTimeBonusDropItemInfoList"
+  },
+  {
+   "key": "UpdateDeepSpaceBonusAllApplyInfoList",
+   "class": "CUpdateDeepSpaceBonusAllApplyInfoList"
+  },
+  {
+   "key": "DeepSpaceBonusAllApplyInfoList",
+   "class": "CDeepSpaceBonusAllApplyInfoList"
+  },
+  {
+   "key": "DeepSpaceDebugRareMissionInfoList",
+   "class": "CDeepSpaceDebugRareMissionInfoList"
+  },
+  {
+   "key": "CDebugDropContentInfoMap",
+   "class": "CDebugDropContentInfoMap"
+  },
+  {
+   "key": "ConfigInfoList",
+   "class": "CConfigInfoList"
+  },
+  {
+   "key": "ConfigInfo",
+   "class": "CConfigInfo"
+  },
+  {
+   "key": "PlayerCharacterFavorMap",
+   "class": "CPlayerCharacterFavorInfoMap"
+  },
+  {
+   "key": "UseFavorResultInfo",
+   "class": "CUserFavorResultInfo"
+  },
+  {
+   "key": "UpdateFavorByTapResultInfo",
+   "class": "CUpdateFavorByTapResultInfo"
+  },
+  {
+   "key": "FavorBonusContetsResultInfo",
+   "class": "CFavorBonusContetsResultInfo"
+  },
+  {
+   "key": "DebugFavorBonusContetsResultInfoList",
+   "class": "CDebugFavorBonusContetsResultInfoList"
+  },
+  {
+   "key": "DeepSpaceAreaList",
+   "class": "CDeepSpaceAreaInfoMap"
+  },
+  {
+   "key": "DeepSpaceActiveShipInfoList",
+   "class": "CDeepSpaceActiveShipInfoList"
+  },
+  {
+   "key": "DeepSpaceEndShipInfoList",
+   "class": "CDeepSpaceEndShipInfoList"
+  },
+  {
+   "key": "MascontInfoList",
+   "class": "CMascontInfoList"
+  },
+  {
+   "key": "GuideInformationInfoList",
+   "class": "CGuideInformationInfoList"
+  },
+  {
+   "key": "RecentlyPlayedDetail",
+   "class": "RecentlyPlayedDetailInfoMap"
+  },
+  {
+   "key": "StorageItem",
+   "class": "CStorageItemInfoList"
+  },
+  {
+   "key": "OneTimeStorageItem",
+   "class": "COneTimeStorageItemInfoList"
+  },
+  {
+   "key": "UpdateStorageItem",
+   "class": "CUpdateStorageItemInfoList"
+  },
+  {
+   "key": "UpdateOneTimeStorageItem",
+   "class": "CUpdateOneTimeStorageItemInfoList"
+  },
+  {
+   "key": "OneTimeStorageItemClearNewList",
+   "class": "COneTimeStorageItemClearNewList"
+  },
+  {
+   "key": "UpdateStorageLockList",
+   "class": "CUpdateStorageLockList"
+  },
+  {
+   "key": "AddOneTimeStorageInfo",
+   "class": "CAddOneTimeStorageInfo"
+  },
+  {
+   "key": "Subscription",
+   "class": "SubscriptionInfoMap"
+  },
+  {
+   "key": "SubscriptionPlan",
+   "class": "SubscriptionPlanInfoMap"
+  },
+  {
+   "key": "SubscriptionHistory",
+   "class": "SubscriptionHistoryInfoList"
+  },
+  {
+   "key": "PurchasedItemInfo",
+   "class": "CPurchasedItemInfo"
+  },
+  {
+   "key": "GearInfoList",
+   "class": "CGearInfoList"
+  },
+  {
+   "key": "AddGearInfoList",
+   "class": "CAddGearInfoList"
+  },
+  {
+   "key": "UpdateGearList",
+   "class": "CUpdateGearList"
+  },
+  {
+   "key": "UpdateAttachedGearInfoList",
+   "class": "CUpdateAttachedGearInfoList"
+  },
+  {
+   "key": "GearGenerationInfoResult",
+   "class": "CGearGenerationInfoResult"
+  },
+  {
+   "key": "DebugGearGenerationInfoResult",
+   "class": "CDebugGearGenerationInfoResult"
+  },
+  {
+   "key": "GearBarneyChanceInfo",
+   "class": "CGearBarneyChanceInfo"
+  },
+  {
+   "key": "DebugGearDropInfoList",
+   "class": "CDebugGearDropInfoList"
+  },
+  {
+   "key": "DebugGearBarneyChanceInfoList",
+   "class": "CDebugGearBarneyChanceInfoList"
+  },
+  {
+   "key": "PlayerCharacterMasteryInfoMap",
+   "class": "CPlayerCharacterMasteryInfoMap"
+  },
+  {
+   "key": "UpdateCharacterMasteryInfoArray",
+   "class": "CUpdateCharacterMasteryInfoArray"
+  },
+  {
+   "key": "MasteryRewardInfo",
+   "class": "CMasteryRewardInfo"
+  },
+  {
+   "key": "GachaMaintenanceInfoMap",
+   "class": "CGachaMaintenanceInfoMap"
+  },
+  {
+   "key": "EventMaintenanceInfoMap",
+   "class": "CEventMaintenanceInfoMap"
+  },
+  {
+   "key": "ExchangeMaintenanceInfoMap",
+   "class": "CExchangeMaintenanceInfoMap"
+  },
+  {
+   "key": "WorldMapMaintenanceInfoMap",
+   "class": "CWorldMapMaintenanceInfoMap"
+  },
+  {
+   "key": "FooterBadgeInfoMap",
+   "class": "CFooterBadgeInfoMap"
+  },
+  {
+   "key": "DecoObject",
+   "class": "CDecoObjectInfoList"
+  },
+  {
+   "key": "FavoriteDecoObjectResult",
+   "class": "CFavoriteDecoObjectResult"
+  },
+  {
+   "key": "CharacterDeco",
+   "class": "CCharacterDecoSendInfo"
+  },
+  {
+   "key": "AddDecoObject",
+   "class": "CAddDecoObjectInfoList"
+  },
+  {
+   "key": "InheritResultInfo",
+   "class": "InheritResultInfo"
+  },
+  {
+   "key": "ExpirationInfoList",
+   "class": "CExpirationInfoList"
+  },
+  {
+   "key": "ExpirationInfo",
+   "class": "CExpirationInfo"
+  },
+  {
+   "key": "Sphere211TreasureResultInfoMap",
+   "class": "Sphere211TreasureResultInfoMap"
+  },
+  {
+   "key": "Sphere211TreasureResultLotInfoMap",
+   "class": "Sphere211TreasureResultLotInfoMap"
+  },
+  {
+   "key": "Sphere211FloorInfo",
+   "class": "Sphere211FloorInfo"
+  },
+  {
+   "key": "Sphere211FloorAssetInfoMap",
+   "class": "Sphere211FloorAssetInfoMap"
+  },
+  {
+   "key": "Sphere211TreasureInfo",
+   "class": "Sphere211TreasureInfo"
+  },
+  {
+   "key": "Sphere211TreasureDropInfoList",
+   "class": "Sphere211TreasureDropInfoList"
+  },
+  {
+   "key": "Sphere211CharacterInfoMap",
+   "class": "Sphere211CharacterInfoMap"
+  },
+  {
+   "key": "Sphere211StaminaInfo",
+   "class": "Sphere211StaminaInfo"
+  },
+  {
+   "key": "Sphere211FloorClearResultInfo",
+   "class": "Sphere211FloorClearResultInfo"
+  },
+  {
+   "key": "Sphere211FloorClearInfo",
+   "class": "Sphere211FloorClearInfo"
+  },
+  {
+   "key": "Sphere211RentalCharacterInfoMap",
+   "class": "Sphere211RentalCharacterInfoMap"
+  },
+  {
+   "key": "Sphere211RentalCharacterDetailInfoMap",
+   "class": "Sphere211RentalCharacterDetailInfoMap"
+  },
+  {
+   "key": "Sphere211EndResult",
+   "class": "Sphere211EndResult"
+  },
+  {
+   "key": "Sphere211RankingTopInfoMap",
+   "class": "Sphere211RankingTopInfoMap"
+  },
+  {
+   "key": "Sphere211RankingInfoMap",
+   "class": "Sphere211RankingInfoMap"
+  },
+  {
+   "key": "Sphere211RankingDetailInfoMap",
+   "class": "Sphere211RankingDetailInfoMap"
+  },
+  {
+   "key": "Sphere211FollowFloorInfoList",
+   "class": "Sphere211FollowFloorInfoList"
+  },
+  {
+   "key": "DebugSphere211CommonDropIdList",
+   "class": "CDebugSphere211CommonDropInfoList"
+  },
+  {
+   "key": "DebugSphere211FloorNumList",
+   "class": "CDebugSphere211FloorNumList"
+  },
+  {
+   "key": "Sphere211AutoMemberSelectResultInfo",
+   "class": "Sphere211AutoMemberSelectResultInfo"
+  },
+  {
+   "key": "CUpdateDeityInfoList",
+   "class": "CUpdateDeityInfoList"
+  },
+  {
+   "key": "CRemoveFamiliarCharacterList",
+   "class": "CRemoveFamiliarCharacterList"
+  },
+  {
+   "key": "Sphere211ReviveResultInfoList",
+   "class": "Sphere211ReviveResultInfoList"
+  },
+  {
+   "key": "AddFriendGauge",
+   "class": "CAddFriendGaugeInfoMap"
+  },
+  {
+   "key": "AddMutualFollowID",
+   "class": "CAddMutualFollowIDInfo"
+  },
+  {
+   "key": "AddFollow",
+   "class": "CAddFollowInfoList"
+  },
+  {
+   "key": "CUniverseBoardList",
+   "class": "CUniverseBoardList"
+  },
+  {
+   "key": "UpdateUniverseEffectualTalentInfoList",
+   "class": "UpdateUniverseEffectualTalentInfoList"
+  },
+  {
+   "key": "UpdateUniverseAddStatusInfo",
+   "class": "UpdateUniverseAddStatusInfo"
+  },
+  {
+   "key": "UpdateUniverseLevelInfo",
+   "class": "UpdateUniverseLevelInfo"
+  },
+  {
+   "key": "GetAchievementApiInfoList",
+   "class": "CAchievementKindInfoList"
+  },
+  {
+   "key": "BattleEvaluationResultInfoList",
+   "class": "CBattleEvaluationResultInfoList"
+  },
+  {
+   "key": "GetEventRankingResultInfo",
+   "class": "GetEventRankingResultInfo"
+  },
+  {
+   "key": "CheckEventRankingResultInfo",
+   "class": "CheckEventRankingResultInfo"
+  },
+  {
+   "key": "UpdatedEventRankingIdList",
+   "class": "UpdatedEventRankingIdList"
+  },
+  {
+   "key": "PickupCharaterChipResultInfoList",
+   "class": "PickupCharaterChipResultInfoList"
+  },
+  {
+   "key": "PickupCharaterChipResultInfoMap",
+   "class": "PickupCharaterChipResultInfoMap"
+  },
+  {
+   "key": "CExpirationPurchaseCampaignInfoList",
+   "class": "CExpirationPurchaseCampaignInfoList"
+  },
+  {
+   "key": "SubscriptionCampaignResultList",
+   "class": "SubscriptionCampaignResultList"
+  },
+  {
+   "key": "CInformationSiteInfo",
+   "class": "CInformationSiteInfo"
+  }
+ ],
+ "manager_props": [
+  "ReceiveAchievementId",
+  "IsUpdateAchievement",
+  "AddFollow",
+  "AddBlacklist",
+  "RemoveBlacklist",
+  "PresentBoxCount",
+  "NumDecoObject",
+  "master_mission_id",
+  "master_event_mission_id",
+  "master_tower_mission_id",
+  "Sphere211CurrentId",
+  "Sphere211NeedsReset",
+  "MainteAnnounce",
+  "MainteMode",
+  "ClearPlanetId",
+  "AssetPath",
+  "MasterPath",
+  "LobbyPath",
+  "LobbyProxyPath",
+  "LobbyProxyPort",
+  "BattleProxyPath",
+  "BattleProxyPort",
+  "r_ver",
+  "a_ver",
+  "DebugTime",
+  "Time",
+  "MaintenanceMessage",
+  "IsLoginBonus",
+  "GameID",
+  "RentalBonus",
+  "RentalCount",
+  "Sphere211RentalBonus",
+  "Sphere211RentalCount",
+  "IsJudgment",
+  "JudgmentUrl",
+  "IsReview",
+  "start_bigHunt_area_id",
+  "RemainingEventDropBonusCountByFavor",
+  "RemainingUpdateFavorCountByTap",
+  "IsHealedByFavor",
+  "is_mission_continue",
+  "LatestEpisodeVersion",
+  "subscription_hitory_total_count"
+ ]
+}

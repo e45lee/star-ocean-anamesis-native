@@ -93,6 +93,8 @@ tools/tests_for.py --git-diff main   # what T1 would run, and why
 tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 min)
 ```
 
+- A gate takes at most 4 game slots at once by default (`--game-slots N`; its tests/diff run is held to N too),
+  so several gates share the 15-slot pool; raise it only when the pool is idle.
 - Run the cheapest tests that prove the change; T3 only when asked. Items marked KNOWN in
   `tests/tiers.json` don't fail the gate.
 - Server changes: add a replay corpus line (`server/tests/replay/`, see its `COVERAGE.md`) rather

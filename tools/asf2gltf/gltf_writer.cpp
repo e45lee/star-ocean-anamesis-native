@@ -22,6 +22,7 @@
 #include <functional>
 #include <cstdio>
 #include <fstream>
+#include <cstring>
 #include <map>
 #include <set>
 
@@ -332,12 +333,14 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
             json pbr = {{"metallicFactor", 0.0}, {"roughnessFactor", 0.8}};
             int base_slot = roles.base;
             std::array<float, 4> factor{1, 1, 1, 1};
-            for (const auto& c : m.constants)
-                if (!roles.lit && c.id == 5 && c.index == 0 && !c.values.empty()) {
-                    bool unit = true;
-                    for (float v : c.values[0]) unit &= v >= 0 && v <= 1;
-                    if (unit) factor = c.values[0];
-                }
+            // an unlit shader's colour: constant 0x14 (eyelashes), else constant 5 index 0 (hair)
+            for (int want : {0x14, 5})
+                for (const auto& c : m.constants)
+                    if (!roles.lit && factor == std::array<float, 4>{1, 1, 1, 1} && c.id == want && c.index == 0 && !c.values.empty()) {
+                        bool unit = true;
+                        for (float v : c.values[0]) unit &= v >= 0 && v <= 1;
+                        if (unit) factor = c.values[0];
+                    }
             if (base_slot < 0 && !roles.lit && !m.textures.empty() && factor == std::array<float, 4>{1, 1, 1, 1}) base_slot = 0;
             if (base_slot >= 0 && base_slot < (int)m.textures.size()) {
                 int t = texture_of(m.textures[base_slot].id, false);
@@ -552,8 +555,206 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         }
     }
 
-    // ---- animations (soa/aaf.h)
-    // (added with the evaluator)
+    // ---- animations (soa/aaf.h): one glTF animation per .aaf. Rotation keys (quaternion
+    // tracks) go out as they are, premultiplied by the joint orient: LINEAR (the game slerps) or
+    // STEP; a Vector Hermite translation / scale whose tangents map goes out as CUBICSPLINE
+    // (tangent / key interval in seconds); everything else is sampled at every frame (LINEAR).
+    // Constraints and other controllers are recorded in the animation's extras.
+    std::map<std::string, int> node_by_name;
+    for (const asf::Node& n : s.nodes) node_by_name.emplace(n.name, n.index);
+    for (const Anim& an : in.anims) {
+        soa::aaf::Animation a;
+        std::string e;
+        if (!soa::aaf::load(an.file, a, &e)) { if (err) *err = an.name + ": " + e; return false; }
+        json anim = {{"name", an.title.empty() ? an.name : an.title}, {"channels", json::array()}, {"samplers", json::array()}};
+        json ax = {{"source", an.name}, {"fps", opt.fps}, {"length_frames", a.length}};
+        if (!an.role.empty()) ax["role"] = an.role;
+        json channel_notes = json::array(), skipped = json::array(), unmatched = json::array();
+        const float fps = opt.fps;
+        const float length = a.length > 0 ? a.length : 1.0f;
+        auto add_sampler = [&](const std::vector<float>& times, const std::vector<float>& values, int comps,
+                               const char* interp) {
+            std::vector<float> secs(times.size());
+            for (size_t i = 0; i < times.size(); i++) secs[i] = times[i] / fps;
+            size_t ti = b.accessor(secs.data(), secs.size(), kFloat, "SCALAR", 1, 0, false, true);
+            const char* type = comps == 4 ? "VEC4" : comps == 3 ? "VEC3" : "SCALAR";
+            size_t vi = b.accessor(values.data(), values.size() / comps, kFloat, type, comps, 0);
+            anim["samplers"].push_back({{"input", ti}, {"output", vi}, {"interpolation", interp}});
+            return anim["samplers"].size() - 1;
+        };
+        // the controllers of each node, by attribute
+        struct Tracks { std::vector<const soa::aaf::Controller*> t[3], txyz, s[3], sxyz, rq, rot_other; };
+        std::map<int, Tracks> tracks;
+        for (size_t ti = 0; ti < a.targets.size(); ti++) {
+            const auto& tg = a.targets[ti];
+            for (int ci : tg.controllers) {
+                const auto& c = a.controllers[ci];
+                if (!c.keyframed()) {
+                    json k = {{"target", tg.name}, {"controller", soa::aaf::controller_kind_name(c.kind)}};
+                    if (c.kind >= 6 && c.kind <= 8 && c.offset + 0x40 <= an.file.size()) {
+                        const char* src = (const char*)&an.file[c.offset + 0x20];
+                        if (!memcmp(src, "R:", 2)) k["source"] = std::string(src + 2, strnlen(src + 2, 30));
+                        k["not_baked"] = "constraint evaluation not reproduced (docs/notes.md: Animations (AAF) for tools)";
+                    }
+                    skipped.push_back(k);
+                    continue;
+                }
+                auto it = node_by_name.find(tg.name);
+                if (tg.type != 0 || it == node_by_name.end()) {
+                    unmatched.push_back({{"target", tg.name}, {"attribute", soa::aaf::attribute_name(c.attr)}});
+                    continue;
+                }
+                std::string why;
+                if (!soa::aaf::supported(c, &why) && !c.constant()) {
+                    skipped.push_back({{"target", tg.name}, {"attribute", soa::aaf::attribute_name(c.attr)}, {"why", why}});
+                    continue;
+                }
+                Tracks& T = tracks[it->second];
+                switch (c.attr) {
+                case soa::aaf::kTranslateX: case soa::aaf::kTranslateY: case soa::aaf::kTranslateZ: T.t[c.attr - 1].push_back(&c); break;
+                case soa::aaf::kTranslateXYZ: T.txyz.push_back(&c); break;
+                case soa::aaf::kScaleX: case soa::aaf::kScaleY: case soa::aaf::kScaleZ: T.s[c.attr - 10].push_back(&c); break;
+                case soa::aaf::kScaleXYZ: T.sxyz.push_back(&c); break;
+                case soa::aaf::kRotateQuaternion: T.rq.push_back(&c); break;
+                case soa::aaf::kRotateX: case soa::aaf::kRotateY: case soa::aaf::kRotateZ: case soa::aaf::kRotateXYZ:
+                    T.rot_other.push_back(&c);
+                    break;
+                default:
+                    skipped.push_back({{"target", tg.name}, {"attribute", soa::aaf::attribute_name(c.attr)},
+                                       {"why", "not a node transform (a value the game's code reads)"}});
+                }
+            }
+        }
+        auto value_of = [&](const soa::aaf::Controller& c, float f, float out[4]) {
+            if (c.constant()) soa::aaf::evaluate_constant(a, c, out);
+            else soa::aaf::evaluate(a, c, f, out);
+        };
+        std::vector<float> frames;
+        for (float f = 0; f <= length + 1e-4f; f += 1.0f) frames.push_back(f);
+        if (frames.back() < length) frames.push_back(length);
+        for (auto& [ni, T] : tracks) {
+            const asf::Node& n = s.nodes[ni];
+            bool piv = false;
+            for (int i = 0; i < 3; i++) piv |= n.pivot[1][i] != 0 || n.pivot[2][i] != 0 || n.pos_offset[i] != 0;
+            Quat jo = n.joint ? Quat{n.joint_orient[0], n.joint_orient[1], n.joint_orient[2], n.joint_orient[3]} : Quat{};
+            // rotation
+            if (!T.rq.empty()) {
+                const auto& c = *T.rq.back();
+                std::vector<float> times, vals;
+                const char* interp = "LINEAR";
+                bool exact = c.constant() || (c.pre == 0 && c.post == 0);
+                if (c.constant()) {
+                    float v[4] = {0, 0, 0, 1};
+                    value_of(c, 0, v);
+                    times = {0.0f};
+                    Quat q = qnorm(qmul(jo, {v[0], v[1], v[2], v[3]}));
+                    vals = {(float)q.x, (float)q.y, (float)q.z, (float)q.w};
+                } else if (exact) {
+                    const uint8_t* kf = &an.file[c.kf];
+                    if (c.cp_type == soa::aaf::kQuaternionStep) interp = "STEP";
+                    Quat prev{};
+                    for (uint32_t k = 0; k < c.count; k++) {
+                        float tk = soa::aff::rdf(kf + 0x18 + k * 4);
+                        float v[4] = {0, 0, 0, 1};
+                        value_of(c, tk, v);
+                        Quat q = qmul(jo, {v[0], v[1], v[2], v[3]});
+                        // the game's slerp takes the short way: keep neighbours in one hemisphere
+                        if (k && prev.x * q.x + prev.y * q.y + prev.z * q.z + prev.w * q.w < 0) q = {-q.x, -q.y, -q.z, -q.w};
+                        prev = q;
+                        times.push_back(tk);
+                        vals.insert(vals.end(), {(float)q.x, (float)q.y, (float)q.z, (float)q.w});
+                    }
+                } else {
+                    for (float f : frames) {
+                        float v[4] = {0, 0, 0, 1};
+                        value_of(c, f, v);
+                        Quat q = qnorm(qmul(jo, {v[0], v[1], v[2], v[3]}));
+                        times.push_back(f);
+                        vals.insert(vals.end(), {(float)q.x, (float)q.y, (float)q.z, (float)q.w});
+                    }
+                }
+                size_t si = add_sampler(times, vals, 4, interp);
+                anim["channels"].push_back({{"sampler", si}, {"target", {{"node", ni}, {"path", "rotation"}}}});
+                channel_notes.push_back({{"node", n.name}, {"path", "rotation"}, {"from", std::string(soa::aaf::cp_type_name(c.cp_type)) + " " + soa::aaf::compression_name(c.comp)},
+                                         {"interpolation", interp}, {"how", c.constant() ? "constant" : exact ? "keys as they are (slerp = glTF LINEAR)" : "sampled every frame (out-of-range mode)"}});
+            }
+            if (!T.rot_other.empty())
+                skipped.push_back({{"target", n.name}, {"attribute", "rotate X/Y/Z/XYZ (Euler)"}, {"why", "Euler rotation tracks: their target layout is not established"}});
+            // translation / scale
+            for (int which = 0; which < 2; which++) {
+                auto& comp = which ? T.s : T.t;
+                auto& vec = which ? T.sxyz : T.txyz;
+                if (vec.empty() && comp[0].empty() && comp[1].empty() && comp[2].empty()) continue;
+                const char* path = which ? "scale" : "translation";
+                std::vector<float> times, vals;
+                const char* interp = "LINEAR";
+                std::string how = "sampled every frame";
+                bool cubic_ok = !which ? !piv : true;
+                if (!vec.empty() && comp[0].empty() && comp[1].empty() && comp[2].empty() && cubic_ok && !vec.back()->constant() &&
+                    vec.back()->comp == soa::aaf::kF32 && vec.back()->pre == 0 && vec.back()->post == 0 &&
+                    (vec.back()->cp_type == soa::aaf::kVector || vec.back()->cp_type == soa::aaf::kVectorLinear ||
+                     vec.back()->cp_type == soa::aaf::kVectorStep)) {
+                    const auto& c = *vec.back();
+                    const uint8_t* kf = &an.file[c.kf];
+                    const uint8_t* cp = kf + 0x18 + (size_t)c.count * 4;
+                    if (c.cp_type == soa::aaf::kVector) {
+                        // CUBICSPLINE: [in, value, out] per key; the game's tangents are per interval
+                        interp = "CUBICSPLINE";
+                        how = "Hermite keys as glTF cubic spline (tangent / interval in seconds)";
+                        for (uint32_t k = 0; k < c.count; k++) {
+                            float tk = soa::aff::rdf(kf + 0x18 + k * 4);
+                            float dprev = k ? (tk - soa::aff::rdf(kf + 0x18 + (k - 1) * 4)) / fps : 0;
+                            float dnext = k + 1 < c.count ? (soa::aff::rdf(kf + 0x18 + (k + 1) * 4) - tk) / fps : 0;
+                            const uint8_t* p = cp + (size_t)k * 36;
+                            times.push_back(tk);
+                            for (int i = 0; i < 3; i++) vals.push_back(dprev ? soa::aff::rdf(p + 12 + i * 4) / dprev : 0.0f);
+                            for (int i = 0; i < 3; i++) vals.push_back(soa::aff::rdf(p + i * 4));
+                            for (int i = 0; i < 3; i++) vals.push_back(dnext ? soa::aff::rdf(p + 24 + i * 4) / dnext : 0.0f);
+                        }
+                    } else {
+                        interp = c.cp_type == soa::aaf::kVectorStep ? "STEP" : "LINEAR";
+                        how = "keys as they are";
+                        for (uint32_t k = 0; k < c.count; k++) {
+                            times.push_back(soa::aff::rdf(kf + 0x18 + k * 4));
+                            for (int i = 0; i < 3; i++) vals.push_back(soa::aff::rdf(cp + ((size_t)k * 3 + i) * 4));
+                        }
+                    }
+                } else {
+                    for (float f : frames) {
+                        float v3[3] = {which ? n.scale[0] : n.pos[0], which ? n.scale[1] : n.pos[1], which ? n.scale[2] : n.pos[2]};
+                        if (!vec.empty()) {
+                            float v[4] = {v3[0], v3[1], v3[2], 1};
+                            value_of(*vec.back(), f, v);
+                            for (int i = 0; i < 3; i++) v3[i] = v[i];
+                        }
+                        for (int i = 0; i < 3; i++)
+                            if (!comp[i].empty()) {
+                                float v[4] = {v3[i], 0, 0, 0};
+                                value_of(*comp[i].back(), f, v);
+                                v3[i] = v[0];
+                            }
+                        if (!which && !n.joint) {  // the pivot terms, as for the rest pose
+                            double rv[3], av[3];
+                            for (int i = 0; i < 3; i++) av[i] = n.pivot[1][i] - n.scale[i] * n.pivot[2][i];
+                            qrot({n.rot[0], n.rot[1], n.rot[2], n.rot[3]}, av, rv);
+                            for (int i = 0; i < 3; i++) v3[i] += (float)(n.pos_offset[i] + rv[i]);
+                        }
+                        times.push_back(f);
+                        vals.insert(vals.end(), {v3[0], v3[1], v3[2]});
+                    }
+                }
+                size_t si = add_sampler(times, vals, 3, interp);
+                anim["channels"].push_back({{"sampler", si}, {"target", {{"node", ni}, {"path", path}}}});
+                channel_notes.push_back({{"node", n.name}, {"path", path}, {"interpolation", interp}, {"how", how}});
+            }
+        }
+        ax["channels"] = channel_notes;
+        if (!skipped.empty()) ax["not_exported"] = skipped;
+        if (!unmatched.empty()) ax["targets_not_in_model"] = unmatched;
+        for (auto& [k, v] : an.extras.items()) ax[k] = v;
+        anim["extras"] = ax;
+        if (!anim["channels"].empty()) doc["animations"].push_back(anim);
+    }
 
     if (!ext_used.empty()) doc["extensionsUsed"] = std::vector<std::string>(ext_used.begin(), ext_used.end());
     while (b.bin.size() % 4) b.bin.push_back(0);

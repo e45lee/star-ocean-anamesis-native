@@ -5,6 +5,8 @@
 #include <soa/aff.h>
 #include <soa/asf.h>
 
+#include <nlohmann/json.hpp>
+
 #include <string>
 #include <vector>
 
@@ -12,6 +14,7 @@ namespace gltf {
 
 struct Options {
     bool separate = false;   // .gltf + .bin instead of .glb
+    float fps = 60.0f;       // the game's frames per second (glTF time = frame / fps)
     bool extensions = true;  // KHR_animation_pointer / KHR_node_visibility / KHR_texture_transform;
                              // false (--no-ext): baked or dropped for plain viewers
 };
@@ -20,6 +23,8 @@ struct Anim {
     std::string name;        // its game path (Motion/... or an .aaf inside a package: PKG:member)
     soa::aff::Bytes file;    // decoded
     std::string role;        // the animation-set role (idle, attack, ...), "" when unknown
+    std::string title;       // the glTF animation's name ("" : the member's name)
+    nlohmann::ordered_json extras;  // more to record (effect triggers, signals: tools/asf2gltf/anim_set.py)
 };
 
 struct Input {

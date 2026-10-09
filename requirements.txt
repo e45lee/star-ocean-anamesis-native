@@ -3,7 +3,7 @@
 pycryptodome
 # soa_save/script.py, tools/server_replay_record.py, tools/check_download.py,
 # tools/compare_tutorial.py, server/tests/ninja/tools/gen_ninja_vectors.py, docs/multiplayer/prototype,
-# control/soadrive/sessions/events.py (the event menu's list), the tests
+# control/soadrive/sessions/events.py (the event menu's list), tools/asf2gltf/anim_set.py, the tests
 msgpack
 # tests/, control/tests
 pytest

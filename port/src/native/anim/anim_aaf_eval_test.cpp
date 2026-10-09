@@ -39,6 +39,7 @@ using namespace render::testutil;
 
 TEST_PROBE(g_probeEvalSet, "_ZN4Aska10AafHandler9SetValuesEf");
 TEST_PROBE(g_probeEvalBlend, "_ZN4Aska10AafHandler11BlendValuesEff");
+TEST_PROBE(g_probeTimeProgress, "_ZN9Framework21CAnimationTimeElement8ProgressEf");
 
 u32 rd32u(const u8* p) {
     u32 v;
@@ -176,6 +177,17 @@ NATIVE_TEST("anim/aaf-eval-dump") {
         }, 3000, "AafHandler::SetValues / BlendValues", false);
     }
     fprintf(stderr, "anim/aaf-eval-dump: %d animation files, %ld values recorded in %s\n", rec.files, rec.records, dir);
+    // The frames an animation advances per game frame (CAnimationTimeElement::Progress(float)'s
+    // argument), with the game's frame rate: the glTF export's frames per second.
+    for (int i = 0; i < 8; i++) {
+        probe_call(t, g_probeTimeProgress, [&](Cpu& c) {
+            float a;
+            u32 b = (u32)c.v(0).lo;
+            std::memcpy(&a, &b, 4);
+            fprintf(stderr, "anim/aaf-eval-dump: CAnimationTimeElement::Progress(%g)\n", a);
+            return true;
+        }, 3000, "CAnimationTimeElement::Progress", false);
+    }
     t.expect_eq(rec.files > 0, true, "at least one animation recorded");
 }
 

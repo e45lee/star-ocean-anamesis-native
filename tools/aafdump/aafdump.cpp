@@ -88,10 +88,19 @@ void print_anim(const aaf::Animation& a, const soa::asf::Scene* s, bool keys) {
             if (c.keyframed()) {
                 std::string why;
                 bool ok = aaf::supported(c, &why);
-                printf(" %s %s %s%s%s keys %u range [%g, %g] pre %d post %d", aaf::attribute_name(c.attr),
-                       aaf::cp_type_name(c.cp_type), aaf::compression_name(c.comp), c.constant() ? " constant" : "",
-                       c.frame_sorted() ? " frame-sorted" : "", c.count, c.start, c.end, c.pre, c.post);
-                if (!ok) printf(" (not evaluated: %s)", why.c_str());
+                printf(" %s %s %s%s", aaf::attribute_name(c.attr), aaf::cp_type_name(c.cp_type), aaf::compression_name(c.comp),
+                       c.frame_sorted() ? " frame-sorted" : "");
+                if (c.constant()) {
+                    float v[4] = {0, 0, 0, 0};
+                    aaf::evaluate_constant(a, c, v);
+                    int n = aaf::components(c.cp_type);
+                    printf(" constant (");
+                    for (int i = 0; i < n; i++) printf(i ? " %g" : "%g", v[i]);
+                    printf(")");
+                } else {
+                    printf(" keys %u range [%g, %g] pre %d post %d", c.count, c.start, c.end, c.pre, c.post);
+                    if (!ok) printf(" (not evaluated: %s)", why.c_str());
+                }
             } else {
                 printf(" (+1 %d, +4 %d, flags 0x%02x, size 0x%x)", c.sub, c.comp, c.flags, c.size);
                 if (c.kind >= 6 && c.kind <= 8 && c.offset + 0x50 <= d.size()) {
@@ -101,7 +110,7 @@ void print_anim(const aaf::Animation& a, const soa::asf::Scene* s, bool keys) {
                 }
             }
             printf("\n");
-            if (keys && c.keyframed()) {
+            if (keys && c.keyframed() && !c.constant()) {
                 const uint8_t* kf = &d[c.kf];
                 for (uint32_t k = 0; k < c.count && k < 4096; k++) {
                     float tk = soa::aff::rdf(kf + 0x18 + k * 4);
@@ -116,9 +125,10 @@ void print_anim(const aaf::Animation& a, const soa::asf::Scene* s, bool keys) {
 
 int sample(const aaf::Animation& a, float t) {
     for (const aaf::Controller& c : a.controllers) {
-        if (!c.keyframed() || !aaf::supported(c)) continue;
+        if (!c.keyframed() || (!c.constant() && !aaf::supported(c))) continue;
         float v[4] = {0, 0, 0, 1};
-        aaf::evaluate(a, c, t, v);
+        if (c.constant()) aaf::evaluate_constant(a, c, v);
+        else aaf::evaluate(a, c, t, v);
         int n = aaf::components(c.cp_type);
         printf("%s %s t=%g:", a.targets[c.target].name.c_str(), aaf::attribute_name(c.attr), t);
         for (int i = 0; i < (n == 3 ? 3 : n); i++) printf(" %.9g", v[i]);
@@ -132,10 +142,11 @@ int csv(const aaf::Animation& a, const std::string& path, float step) {
     if (!f) { fprintf(stderr, "aafdump: cannot write %s\n", path.c_str()); return 1; }
     fprintf(f, "target,attribute,frame,x,y,z,w\n");
     for (const aaf::Controller& c : a.controllers) {
-        if (!c.keyframed() || !aaf::supported(c)) continue;
+        if (!c.keyframed() || (!c.constant() && !aaf::supported(c))) continue;
         for (float t = 0; t <= a.length + 1e-3f; t += step) {
             float v[4] = {0, 0, 0, 1};
-            aaf::evaluate(a, c, t, v);
+            if (c.constant()) aaf::evaluate_constant(a, c, v);
+            else aaf::evaluate(a, c, t, v);
             int n = aaf::components(c.cp_type);
             fprintf(f, "%s,%s,%g", a.targets[c.target].name.c_str(), aaf::attribute_name(c.attr), t);
             for (int i = 0; i < 4; i++) {

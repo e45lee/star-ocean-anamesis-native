@@ -6,13 +6,20 @@
 //                work/SOA-3.7.0-canonical-data.zip of the checkout), e.g. Character/etc2/hi/cp0303_b04a.asf,
 //                or a local file (ADLD-wrapped with its game path in it, or already decoded)
 //   -o OUT       OUT.glb (one self-contained file), or OUT.gltf + OUT.bin with --gltf
+//   --aaf ANIM   an animation: an .aaf, PKG.apk:MEMBER.aaf (a motion package's member), or PKG.apk
+//                (every .aaf in it); repeatable; each becomes a named glTF animation
+//   --set FILE   an animation set (JSON, tools/asf2gltf/anim_set.py): {"animations": [{"source": ANIM,
+//                "name": ..., "role": ..., "extras": {...}}]}: names, roles and the effect triggers
+//   --fps N      the game's animation frames per second (default 60: docs/notes.md)
 //   --info       print the scene (nodes, objects, meshsets, vertex formats, materials, textures)
 //   --textures DIR  also write every texture level 0 as DIR/<object>_<id>.png
 //   --check-gl-dump DIR  compare every meshset's vertex and index bytes with the buffers a run of
 //                the game uploaded (soa with SOA_GL_BUFFER_DUMP=DIR): prints one line per meshset
 //                and "match N/M"; exit 1 unless every meshset matched
+#include <soa/aaf.h>
 #include <soa/aff.h>
 #include <soa/asf.h>
+#include <soa/aska_image.h>
 #include <soa/file_tree.h>
 #include <soa/png.h>
 
@@ -151,9 +158,43 @@ int check_gl_dump(const soa::asf::Scene& s, const std::string& dir) {
     return ok == total ? 0 : 1;
 }
 
+// ANIM (an .aaf, PKG.apk:MEMBER, or PKG.apk: all its .aaf members) as animations.
+bool add_anims(Source& src, const std::string& arg, std::vector<gltf::Anim>& out, std::string* err) {
+    std::string path = arg, member;
+    size_t colon = arg.find(".apk:");
+    if (colon != std::string::npos) {
+        path = arg.substr(0, colon + 4);
+        member = arg.substr(colon + 5);
+    }
+    Bytes file;
+    std::string name;
+    if (!load_input(src, path, file, name, err)) return false;
+    auto entries = soa::aska::isf_entries(file);
+    if (entries.empty()) {
+        gltf::Anim an;
+        an.name = name.empty() ? path : name;
+        an.file = std::move(file);
+        out.push_back(std::move(an));
+        return true;
+    }
+    bool found = false;
+    for (const auto& e : entries) {
+        bool aaf = e.name.size() > 4 && e.name.substr(e.name.size() - 4) == ".aaf";
+        if (member.empty() ? !aaf : e.name != member) continue;
+        if ((size_t)e.offset + e.size > file.size()) continue;
+        gltf::Anim an;
+        an.name = path + ":" + e.name;
+        an.file.assign(file.begin() + e.offset, file.begin() + e.offset + e.size);
+        out.push_back(std::move(an));
+        found = true;
+    }
+    if (!found && err) *err = arg + ": no such member";
+    return found;
+}
+
 void usage() {
     fprintf(stderr,
-            "usage: asf2gltf [--data DIR|ZIP] MODEL [-o OUT.glb] [--gltf] [--aaf ANIM]... [--no-ext]\n"
+            "usage: asf2gltf [--data DIR|ZIP] MODEL [-o OUT.glb] [--gltf] [--aaf ANIM]... [--set FILE] [--fps N] [--no-ext]\n"
             "                [--info] [--textures DIR] [--check-gl-dump DIR]\n");
 }
 
@@ -162,7 +203,7 @@ void usage() {
 int main(int argc, char** argv) {
     Source src;
     src.data_path = repo_dir_of(argv[0]) + "/work/SOA-3.7.0-canonical-data.zip";
-    std::string model, out, textures_dir, gl_dump;
+    std::string model, out, textures_dir, gl_dump, set_file;
     std::vector<std::string> anims;
     bool info = false;
     gltf::Options opt;
@@ -177,6 +218,8 @@ int main(int argc, char** argv) {
         else if (a == "--gltf") opt.separate = true;
         else if (a == "--no-ext") opt.extensions = false;
         else if (a == "--aaf") anims.push_back(next());
+        else if (a == "--set") set_file = next();
+        else if (a == "--fps") opt.fps = std::stof(next());
         else if (a == "--info") info = true;
         else if (a == "--textures") textures_dir = next();
         else if (a == "--check-gl-dump") gl_dump = next();
@@ -213,11 +256,23 @@ int main(int argc, char** argv) {
         gltf::Input in;
         in.scene = &scene;
         in.source_name = name;
-        Source* sp = &src;
-        for (const std::string& a : anims) {
-            gltf::Anim an;
-            if (!load_input(*sp, a, an.file, an.name, &err)) { fprintf(stderr, "asf2gltf: %s\n", err.c_str()); return 1; }
-            in.anims.push_back(std::move(an));
+        for (const std::string& a : anims)
+            if (!add_anims(src, a, in.anims, &err)) { fprintf(stderr, "asf2gltf: %s\n", err.c_str()); return 1; }
+        if (!set_file.empty()) {
+            Bytes js;
+            if (!read_file(set_file, js)) { fprintf(stderr, "asf2gltf: cannot read %s\n", set_file.c_str()); return 1; }
+            nlohmann::ordered_json set = nlohmann::ordered_json::parse(js.begin(), js.end(), nullptr, false);
+            if (set.is_discarded() || !set.contains("animations")) { fprintf(stderr, "asf2gltf: %s: not an animation set\n", set_file.c_str()); return 1; }
+            for (auto& e : set["animations"]) {
+                std::vector<gltf::Anim> one;
+                if (!add_anims(src, e.value("source", ""), one, &err)) { fprintf(stderr, "asf2gltf: %s\n", err.c_str()); return 1; }
+                for (auto& an : one) {
+                    an.title = e.value("name", "");
+                    an.role = e.value("role", "");
+                    if (e.contains("extras")) an.extras = e["extras"];
+                    in.anims.push_back(std::move(an));
+                }
+            }
         }
         if (!gltf::write(in, opt, out, &err)) { fprintf(stderr, "asf2gltf: %s\n", err.c_str()); return 1; }
     }

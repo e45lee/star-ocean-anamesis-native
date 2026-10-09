@@ -11,7 +11,7 @@ log line (phase changes, the server's request lines), then screenshots. The serv
 
 The phone: the shared pre-downloaded one, linked (scripts/shared-phone.sh); SOA_PHONE=DIR another,
 SOA_PHONE=none an empty one (the client then downloads its 3 GB from the in-process CDN after Login).
-Usage: port/scripts/battle_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
+Usage: port/scripts/battle_session.sh <soa> <out-dir> <scratch-dir> [--soa-arg FLAG]...   (from any directory)
 Env: FLOW_MISSION, SEED_RNG, WATCH=1; SOA_COVERAGE / SOA_PROFILE pass through to soa.
 Targets: port-inproc (the `mission:` / `phase:` shortcuts and the phase lines are the port's)."""
 import os
@@ -27,6 +27,9 @@ WRAPPER = "port/scripts/battle_session.sh"
 
 def options(ap):
     common.port_options(ap, extra=False)
+    ap.add_argument("--soa-arg", action="append", default=[], dest="soa_args",
+                    help="an extra soa flag (repeatable; e.g. --soa-arg=--seed --soa-arg=SEED.xml: another party, "
+                         "tools/make_test_seed.py --home: the home character leads party 1)")
 
 
 def main(o):

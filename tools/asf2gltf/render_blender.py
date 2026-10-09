@@ -3,7 +3,7 @@ Blender and the pictures for the comparison with the game (docs/notes.md "glTF e
 
     blender -b -P tools/asf2gltf/render_blender.py -- IN.glb OUT.png [--anim NAME] [--frame F]
             [--frames F0,F1,..] [--view front|side|back|three-quarter] [--size WxH] [--engine EEVEE|CYCLES|WORKBENCH]
-            [--target NODE] [--distance D] [--fov DEG] [--elevation DEG] [--log]
+            [--target NODE] [--center X,Y,Z] [--follow BONE] [--distance D] [--fov DEG] [--elevation DEG] [--hide NAME,..] [--log]
 
 Blender's glTF importer needs numpy: a distribution Blender that runs on the system Python (Ubuntu's
 blender 4.0) finds it through PYTHONPATH=.venv/lib/python3.12/site-packages (the checkout's venv has
@@ -26,7 +26,7 @@ from mathutils import Vector
 def args():
     a = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     o = {"anim": None, "frame": None, "frames": None, "view": "front", "size": (540, 960), "engine": "EEVEE",
-         "target": None, "distance": None, "fov": 30.0, "elevation": 5.0, "log": False}
+         "target": None, "distance": None, "fov": 30.0, "elevation": 5.0, "log": False, "center": None, "hide": [], "follow": None}
     pos = []
     i = 0
     while i < len(a):
@@ -42,6 +42,9 @@ def args():
         elif k == "--fov": o["fov"] = float(a[i + 1]); i += 2
         elif k == "--elevation": o["elevation"] = float(a[i + 1]); i += 2
         elif k == "--log": o["log"] = True; i += 1
+        elif k == "--center": o["center"] = [float(x) for x in a[i + 1].split(",")]; i += 2
+        elif k == "--hide": o["hide"] = a[i + 1].split(","); i += 2
+        elif k == "--follow": o["follow"] = a[i + 1]; i += 2
         else: pos.append(k); i += 1
     o["in"], o["out"] = pos[0], pos[1]
     return o
@@ -79,18 +82,29 @@ def main():
         for m in bpy.data.materials:
             print(f"LOG material {m.name}")
     if o["anim"]:
-        act = bpy.data.actions.get(o["anim"])
-        if act is None:
-            cands = [a.name for a in bpy.data.actions if a.name.startswith(o["anim"])]
-            act = bpy.data.actions.get(cands[0]) if cands else None
-        if act is None:
-            raise SystemExit(f"no action {o['anim']}: {[a.name for a in bpy.data.actions]}")
+        # the importer keeps each glTF animation as an action per object (named "<animation>_<object>",
+        # truncated) on the objects' NLA tracks: make the requested one the active action everywhere
+        found = 0
         for ob in sc.objects:
-            if ob.animation_data or ob.type == "ARMATURE":
-                ob.animation_data_create()
-                # the importer names an object's action "<anim>_<object>" when several objects animate
-                mine = bpy.data.actions.get(act.name.split("_")[0] + "_" + ob.name) or act
-                ob.animation_data.action = mine
+            ad = ob.animation_data
+            if not ad:
+                continue
+            pick = None
+            for tr in ad.nla_tracks:
+                for st in tr.strips:
+                    if st.action and st.action.name.startswith(o["anim"]):
+                        pick = st.action
+                tr.mute = True
+            if pick is None and ad.action and not ad.action.name.startswith(o["anim"]):
+                ad.action = None
+            if pick is not None:
+                ad.action = pick
+                found += 1
+        if not found:
+            raise SystemExit(f"no animation {o['anim']}: {sorted(set(a.name for a in bpy.data.actions))[:20]}")
+    for ob in sc.objects:  # --hide: objects whose name starts with one of these
+        if any(ob.name.startswith(h) for h in o["hide"]):
+            ob.hide_render = True
     frames = o["frames"] or [o["frame"] if o["frame"] is not None else sc.frame_current]
     res = sc.render
     res.resolution_x, res.resolution_y = o["size"]
@@ -118,12 +132,24 @@ def main():
     cam.data.angle = math.radians(o["fov"])
     for i, f in enumerate(frames):
         sc.frame_set(int(math.floor(f)), subframe=f - math.floor(f))
-        if o["target"] and o["target"] in sc.objects:
+        follow = None
+        if o["follow"]:  # a bone of the armature: the camera aims at it every frame
+            for ob in sc.objects:
+                if ob.type == "ARMATURE" and o["follow"] in ob.pose.bones:
+                    follow = ob.matrix_world @ ob.pose.bones[o["follow"]].head
+        if follow is not None:
+            c = follow
+            size = 1.0
+        elif o["center"]:  # glTF metres (x, y up, z) -> Blender (x, -z, y)
+            cx, cy, cz = o["center"]
+            c = Vector((cx, -cz, cy))
+            size = 1.0
+        elif o["target"] and o["target"] in sc.objects:
             c = sc.objects[o["target"]].matrix_world.translation
             lo, hi = bbox([x for x in sc.objects])
             size = (hi - lo).length
         else:
-            lo, hi = bbox([x for x in sc.objects])
+            lo, hi = bbox([x for x in sc.objects if not x.hide_render])
             c = (lo + hi) / 2
             size = max(hi.z - lo.z, (hi.x - lo.x) * 1.8)
         d = o["distance"] or size / (2 * math.tan(cam.data.angle / 2)) * 1.15

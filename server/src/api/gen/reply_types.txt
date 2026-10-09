@@ -36,3 +36,27 @@ CEquipWeaponResultInfo: Character Item
 CEquipAccessoryResultPersonInfo: id accessory_item_id
 CEquipAccessoryResultItemInfo: +id:u64
 CEquipAccessoryResultInfo: Character Item
+
+# ---- mastery (api/growth/mastery.cpp) ----
+
+# A 師弟 pair (GetMasteryInfo's PlayerCharacterMasteryInfoMap, by the disciple's uid).
+CPlayerCharacterMasteryInfo: character_id player_id parent_character_id dojo_no master_mastery_step_type_id master_mastery_step_1_option_no master_mastery_step_2_option_no master_mastery_step_3_option_no master_mastery_step_4_option_no master_mastery_step_5_option_no created_at updated_at
+
+# The pair after TrainMastery / ResetMastery, with what the disciple's CPersonInfo gets.
+CUpdateCharacterMasteryInfo: character_id player_id parent_character_id dojo_no master_mastery_step_type_id master_mastery_step_1_option_no master_mastery_step_2_option_no master_mastery_step_3_option_no master_mastery_step_4_option_no master_mastery_step_5_option_no created_at updated_at mastery_talent_id parent_master_role_id
+
+# The 皆伝 gift.
+CMasteryRewardInfo: master_item_id num
+
+# A stack item's count now (UpdateStockItem; its master item id also as `id`, which the client's
+# CStackItemInfo doesn't read). TrainMastery sends the list as an array, though the client's
+# CUpdateStackItemInfoList is a map (IInfoBaseMap<u64, CStackItemInfo>).
+CStackItemInfo as UpdateStackItemInfo: +id:u32 master_item_id num
+
+# ---- settings (api/settings/) ----
+
+# An option's value (ConfigInfoList, ConfigInfo).
+CConfigInfo: master_config_id value type
+
+# The birth month (Birth).
+CBirthInfo: year month

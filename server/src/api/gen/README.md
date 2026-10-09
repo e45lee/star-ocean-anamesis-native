@@ -44,3 +44,5 @@ do the core's shared builders that other modules extend (`CPlayerInfo`, the `Ite
 | Family | Classes |
 |---|---|
 | growth (`api/growth/growth.cpp`) | CBoostCharacterResultInfo, CLimitBreakInfo, CEvolutionResultInfo (+ CUpdatePlayerCharacter, UseStackItemInfo), CAwakenResultInfo, CUpdateCharacterInfo, CPersonAddStatusResultInfo, CEquipWeaponResultInfo / CEquipAccessoryResultInfo (and their person and item infos) |
+| mastery (`api/growth/mastery.cpp`) | CPlayerCharacterMasteryInfo, CUpdateCharacterMasteryInfo, CMasteryRewardInfo, UpdateStackItemInfo (UpdateStockItem, sent as an array: the client's CUpdateStackItemInfoList is a map) |
+| settings (`api/settings/`) | CConfigInfo, CBirthInfo, the value lists WorldMapScenarioLibraryInfoList and GuideInformationInfoList |

@@ -148,4 +148,70 @@ Value to_value(const CEquipAccessoryResultInfo& v) {
     return o;
 }
 
+Value to_value(const CPlayerCharacterMasteryInfo& v) {
+    Value o = Value::object();
+    o["character_id"] = v.character_id;
+    o["player_id"] = v.player_id;
+    o["parent_character_id"] = v.parent_character_id;
+    o["dojo_no"] = v.dojo_no;
+    o["master_mastery_step_type_id"] = v.master_mastery_step_type_id;
+    o["master_mastery_step_1_option_no"] = v.master_mastery_step_1_option_no;
+    o["master_mastery_step_2_option_no"] = v.master_mastery_step_2_option_no;
+    o["master_mastery_step_3_option_no"] = v.master_mastery_step_3_option_no;
+    o["master_mastery_step_4_option_no"] = v.master_mastery_step_4_option_no;
+    o["master_mastery_step_5_option_no"] = v.master_mastery_step_5_option_no;
+    o["created_at"] = v.created_at;
+    o["updated_at"] = v.updated_at;
+    return o;
+}
+
+Value to_value(const CUpdateCharacterMasteryInfo& v) {
+    Value o = Value::object();
+    o["character_id"] = v.character_id;
+    o["player_id"] = v.player_id;
+    o["parent_character_id"] = v.parent_character_id;
+    o["dojo_no"] = v.dojo_no;
+    o["master_mastery_step_type_id"] = v.master_mastery_step_type_id;
+    o["master_mastery_step_1_option_no"] = v.master_mastery_step_1_option_no;
+    o["master_mastery_step_2_option_no"] = v.master_mastery_step_2_option_no;
+    o["master_mastery_step_3_option_no"] = v.master_mastery_step_3_option_no;
+    o["master_mastery_step_4_option_no"] = v.master_mastery_step_4_option_no;
+    o["master_mastery_step_5_option_no"] = v.master_mastery_step_5_option_no;
+    o["created_at"] = v.created_at;
+    o["updated_at"] = v.updated_at;
+    o["mastery_talent_id"] = v.mastery_talent_id;
+    o["parent_master_role_id"] = v.parent_master_role_id;
+    return o;
+}
+
+Value to_value(const CMasteryRewardInfo& v) {
+    Value o = Value::object();
+    o["master_item_id"] = v.master_item_id;
+    o["num"] = v.num;
+    return o;
+}
+
+Value to_value(const UpdateStackItemInfo& v) {
+    Value o = Value::object();
+    o["id"] = v.id;
+    o["master_item_id"] = v.master_item_id;
+    o["num"] = v.num;
+    return o;
+}
+
+Value to_value(const CConfigInfo& v) {
+    Value o = Value::object();
+    o["master_config_id"] = v.master_config_id;
+    o["value"] = v.value;
+    o["type"] = v.type;
+    return o;
+}
+
+Value to_value(const CBirthInfo& v) {
+    Value o = Value::object();
+    o["year"] = v.year;
+    o["month"] = v.month;
+    return o;
+}
+
 }  // namespace soa::server::infos

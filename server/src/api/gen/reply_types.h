@@ -165,4 +165,78 @@ struct CEquipAccessoryResultInfo {
 };
 Value to_value(const CEquipAccessoryResultInfo& v);
 
+// A 師弟 pair (GetMasteryInfo's PlayerCharacterMasteryInfoMap, by the disciple's uid).
+// CPlayerCharacterMasteryInfo: the keys in the order sent.
+struct CPlayerCharacterMasteryInfo {
+    u64 character_id = 0;
+    u32 player_id = 0;
+    u64 parent_character_id = 0;
+    u32 dojo_no = 0;
+    u32 master_mastery_step_type_id = 0;
+    u32 master_mastery_step_1_option_no = 0;
+    u32 master_mastery_step_2_option_no = 0;
+    u32 master_mastery_step_3_option_no = 0;
+    u32 master_mastery_step_4_option_no = 0;
+    u32 master_mastery_step_5_option_no = 0;
+    std::string created_at;
+    std::string updated_at;
+};
+Value to_value(const CPlayerCharacterMasteryInfo& v);
+
+// The pair after TrainMastery / ResetMastery, with what the disciple's CPersonInfo gets.
+// CUpdateCharacterMasteryInfo: the keys in the order sent.
+struct CUpdateCharacterMasteryInfo {
+    u64 character_id = 0;
+    u32 player_id = 0;
+    u64 parent_character_id = 0;
+    u32 dojo_no = 0;
+    u32 master_mastery_step_type_id = 0;
+    u32 master_mastery_step_1_option_no = 0;
+    u32 master_mastery_step_2_option_no = 0;
+    u32 master_mastery_step_3_option_no = 0;
+    u32 master_mastery_step_4_option_no = 0;
+    u32 master_mastery_step_5_option_no = 0;
+    std::string created_at;
+    std::string updated_at;
+    u32 mastery_talent_id = 0;
+    u32 parent_master_role_id = 0;
+};
+Value to_value(const CUpdateCharacterMasteryInfo& v);
+
+// The 皆伝 gift.
+// CMasteryRewardInfo: the keys in the order sent.
+struct CMasteryRewardInfo {
+    u32 master_item_id = 0;
+    u32 num = 0;
+};
+Value to_value(const CMasteryRewardInfo& v);
+
+// A stack item's count now (UpdateStockItem; its master item id also as `id`, which the client's
+// CStackItemInfo doesn't read). TrainMastery sends the list as an array, though the client's
+// CUpdateStackItemInfoList is a map (IInfoBaseMap<u64, CStackItemInfo>).
+// CStackItemInfo (as UpdateStackItemInfo): the keys in the order sent. The client's keys not sent: item_type, sort_name_idx, is_new, use_count, player_id.
+struct UpdateStackItemInfo {
+    u32 id = 0;  // not read by CStackItemInfo
+    u32 master_item_id = 0;
+    u32 num = 0;
+};
+Value to_value(const UpdateStackItemInfo& v);
+
+// An option's value (ConfigInfoList, ConfigInfo).
+// CConfigInfo: the keys in the order sent.
+struct CConfigInfo {
+    u32 master_config_id = 0;
+    std::string value;
+    u32 type = 0;
+};
+Value to_value(const CConfigInfo& v);
+
+// The birth month (Birth).
+// CBirthInfo: the keys in the order sent.
+struct CBirthInfo {
+    u32 year = 0;
+    u32 month = 0;
+};
+Value to_value(const CBirthInfo& v);
+
 }  // namespace soa::server::infos

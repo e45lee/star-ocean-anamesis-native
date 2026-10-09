@@ -22,9 +22,11 @@
 //     MasteryTalentID / MasteryRoleID / IsClearAllMasteryTraining report only past four.
 #include "api/growth/mastery.h"
 
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "api/gen/reply_types.h"  // the replies' C*Info types
 #include "api/growth/growth_args.h"
 #include "api/player/player_info.h"
 #include "core/errors.h"
@@ -102,39 +104,43 @@ Member member(Ctx& ctx, CharacterUid uid) {
     return c;
 }
 
-// CPlayerCharacterMasteryInfo of a pair (b: its Initialize's keys, above).
-Value mastery_info(Ctx& ctx, const Pair& p) {
-    Value info = Value::object();
-    info["character_id"] = p.disciple.v;
-    info["player_id"] = player_id(ctx).v;
-    info["parent_character_id"] = p.master.v;
-    info["dojo_no"] = p.dojo_no;
-    info["master_mastery_step_type_id"] = p.type_id;
-    for (u32 k = 0; k < kSteps; k++) info["master_mastery_step_" + std::to_string(k + 1) + "_option_no"] = p.option[k];
-    info["created_at"] = ctx.fmt_time(p.created_at);
-    info["updated_at"] = ctx.fmt_time(p.updated_at);
+// A pair's fields (b: CPlayerCharacterMasteryInfo's Initialize's keys, above), into Info:
+// CPlayerCharacterMasteryInfo or CUpdateCharacterMasteryInfo.
+template <class Info>
+Info pair_fields(Ctx& ctx, const Pair& p) {
+    Info info;
+    info.character_id = p.disciple.v;
+    info.player_id = player_id(ctx).v;
+    info.parent_character_id = p.master.v;
+    info.dojo_no = p.dojo_no;
+    info.master_mastery_step_type_id = p.type_id;
+    static_assert(kSteps == 5);
+    info.master_mastery_step_1_option_no = p.option[0];
+    info.master_mastery_step_2_option_no = p.option[1];
+    info.master_mastery_step_3_option_no = p.option[2];
+    info.master_mastery_step_4_option_no = p.option[3];
+    info.master_mastery_step_5_option_no = p.option[4];
+    info.created_at = ctx.fmt_time(p.created_at);
+    info.updated_at = ctx.fmt_time(p.updated_at);
     return info;
 }
+
+// CPlayerCharacterMasteryInfo of a pair.
+infos::CPlayerCharacterMasteryInfo mastery_info(Ctx& ctx, const Pair& p) { return pair_fields<infos::CPlayerCharacterMasteryInfo>(ctx, p); }
 
 // CUpdateCharacterMasteryInfo: the pair plus what the disciple's CPersonInfo gets (b:
 // OnTrainMasteryRes copies them; 0 until all five trainings are cleared, since a non-zero parent
 // role counts as a finished training to InitializeMastery).
-Value update_info(Ctx& ctx, const Pair& p) {
-    Value info = mastery_info(ctx, p);
+infos::CUpdateCharacterMasteryInfo update_info(Ctx& ctx, const Pair& p) {
+    infos::CUpdateCharacterMasteryInfo info = pair_fields<infos::CUpdateCharacterMasteryInfo>(ctx, p);
     MasteryInheritance inh = mastery_inheritance(ctx, p.disciple);
-    info["mastery_talent_id"] = inh.mastery_talent_id;
-    info["parent_master_role_id"] = inh.parent_master_role_id;
+    info.mastery_talent_id = inh.mastery_talent_id;
+    info.parent_master_role_id = inh.parent_master_role_id;
     return info;
 }
 
 // UpdateStockItem's entry for a stack item (the count now), as RemoveGear sends it.
-Value stock_entry(Ctx& ctx, u32 item) {
-    Value e = Value::object();
-    e["id"] = item;
-    e["master_item_id"] = item;
-    e["num"] = stock_count(ctx, item);
-    return e;
-}
+infos::UpdateStackItemInfo stock_entry(Ctx& ctx, u32 item) { return {.id = item, .master_item_id = item, .num = stock_count(ctx, item)}; }
 
 // (b) 師弟解消 (uimsg_mastary_dialog2 / dialog4): parting loses the trainings and the inherited
 // talent: the row goes.
@@ -192,9 +198,8 @@ std::vector<u8> form_pair(Ctx& ctx, const args::TrainMasteryArgs& a) {
     ctx.st.q("insert into mastery (uid, master_uid, dojo_no, type_id, created_at, updated_at) values (?, ?, ?, ?, ?, ?)",
              {a.disciple_uid, a.master_uid, a.dojo_no, a.step_type_id, now, now});
     Pair p = pair_of_disciple(ctx, a.disciple_uid);
-    Value data = ctx.base_data(), list = Value::array();
-    list.push(update_info(ctx, p));
-    data["UpdateCharacterMasteryInfoArray"] = list;
+    Value data = ctx.base_data();
+    data["UpdateCharacterMasteryInfoArray"] = infos::to_array(std::vector{update_info(ctx, p)});
     // read by mastery_session.sh
     LOGI("server", "TrainMastery: paired master %llx and disciple %llx in dojo %u (type %u)", (unsigned long long)a.master_uid.v,
          (unsigned long long)a.disciple_uid.v, a.dojo_no, a.step_type_id);
@@ -253,14 +258,15 @@ std::optional<CharacterUid> graduated_disciple_of(Ctx& ctx, CharacterUid master_
 //   CPlayerCharacterMasteryInfo keyed by the disciple's uid.
 // Answers: the player state, PlayerCharacterMasteryInfoMap.
 std::vector<u8> get_mastery_info(Ctx& ctx, const Request&) {
-    Value data = ctx.base_data(), map = Value::object();
+    Value data = ctx.base_data();
+    infos::InfoMap<u64, infos::CPlayerCharacterMasteryInfo> map;
     int n = 0;
     ctx.st.q("select * from mastery order by uid", {}, [&](const Row& row) {
         Pair p = read_pair(row);
-        map[std::to_string(p.disciple.v)] = mastery_info(ctx, p);
+        map[p.disciple.v] = mastery_info(ctx, p);
         n++;
     });
-    data["PlayerCharacterMasteryInfoMap"] = map;
+    data["PlayerCharacterMasteryInfoMap"] = infos::to_map(map);
     LOGI("server", "GetMasteryInfo: %d pair(s)", n);  // read by mastery_session.sh
     return body(data);
 }
@@ -322,9 +328,9 @@ std::vector<u8> train_mastery(Ctx& ctx, const Request& req) {
     if (num) add_stock(ctx, item, -(int64_t)num);
     add_fol(ctx, -(int64_t)need_fol);
     ctx.st.q("update mastery set step" + std::to_string(a.step) + " = ?, updated_at = ? where uid = ?", {option, ctx.now(), p.disciple});
-    Value changed = Value::array();
-    if (num) changed.push(stock_entry(ctx, item));
-    Value reward;  // Nil: no 皆伝 yet
+    std::vector<infos::UpdateStackItemInfo> changed;
+    if (num) changed.push_back(stock_entry(ctx, item));
+    std::optional<infos::CMasteryRewardInfo> reward;  // none: no 皆伝 yet
     if (a.step == kSteps) {
         // (a) the 皆伝 gift
         u32 reward_item =
@@ -332,19 +338,16 @@ std::vector<u8> train_mastery(Ctx& ctx, const Request& req) {
         u32 reward_num = ctx.global_u32("mastery_reward_num", 1);
         if (reward_item && reward_num) {
             add_stock(ctx, reward_item, reward_num);
-            if (num && reward_item == item) changed.arr.back() = stock_entry(ctx, reward_item);  // the medal paid, then given
-            else changed.push(stock_entry(ctx, reward_item));
-            reward = Value::object();
-            reward["master_item_id"] = reward_item;
-            reward["num"] = reward_num;
+            if (num && reward_item == item) changed.back() = stock_entry(ctx, reward_item);  // the medal paid, then given
+            else changed.push_back(stock_entry(ctx, reward_item));
+            reward = infos::CMasteryRewardInfo{reward_item, reward_num};
         }
     }
     p = pair_of_disciple(ctx, a.disciple_uid);
-    Value data = ctx.base_data(), list = Value::array();
-    list.push(update_info(ctx, p));
-    data["UpdateCharacterMasteryInfoArray"] = list;
-    if (reward.type != Value::Nil) data["MasteryRewardInfo"] = reward;
-    data["UpdateStockItem"] = changed;
+    Value data = ctx.base_data();
+    data["UpdateCharacterMasteryInfoArray"] = infos::to_array(std::vector{update_info(ctx, p)});
+    if (reward) data["MasteryRewardInfo"] = infos::to_value(*reward);
+    data["UpdateStockItem"] = infos::to_array(changed);  // (an array: the client's CUpdateStackItemInfoList is a map)
     data["StockItem"] = ctx.stock();
     // read by mastery_session.sh
     LOGI("server", "TrainMastery: disciple %llx training %u/%u option %u%s, FOL -%u%s", (unsigned long long)p.disciple.v, a.step, kSteps, option,
@@ -368,13 +371,10 @@ std::vector<u8> reset_mastery(Ctx& ctx, const Request& req) {
     const auto a = args::ResetMasteryArgs::from(req);
     Pair p = pair_between(ctx, a.a, a.b);
     if (!p.found) return refuse(ctx, "ResetMastery", "no such pair", ErrorCode::kItemUnusable);
-    Value info = mastery_info(ctx, p);
-    info["mastery_talent_id"] = 0u;
-    info["parent_master_role_id"] = 0u;
+    infos::CUpdateCharacterMasteryInfo info = pair_fields<infos::CUpdateCharacterMasteryInfo>(ctx, p);  // (talent and parent role 0)
     part(ctx, p);
-    Value data = ctx.base_data(), list = Value::array();
-    list.push(info);
-    data["UpdateCharacterMasteryInfoArray"] = list;
+    Value data = ctx.base_data();
+    data["UpdateCharacterMasteryInfoArray"] = infos::to_array(std::vector{info});
     // read by mastery_session.sh
     LOGI("server", "ResetMastery: parted master %llx and disciple %llx (%u training(s) cleared)", (unsigned long long)p.master.v,
          (unsigned long long)p.disciple.v, p.cleared());

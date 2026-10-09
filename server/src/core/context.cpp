@@ -30,8 +30,13 @@ void ext::Ctx::tick_stamina() { server::tick_stamina(*this); }
 u32 ext::Ctx::global_u32(const char* key, u32 dflt) { return master::global_u32(m.h, key, dflt); }
 std::vector<u32> ext::Ctx::player_next() { return master::player_next(m.h); }
 u32 ext::Ctx::player_level_max() { return master::player_level_max(m.h); }
+void ext::Ctx::grant(const Grant& what, Granted& granted) { server::grant(*this, what, granted); }
 void ext::Ctx::grant(u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& chars) {
-    server::grant(*this, Drop{type, id, num, 0}, items, stocks, chars);
+    Granted granted;
+    server::grant(*this, Grant{as_content_type(type), id, num, 0}, granted);
+    for (Value& e : granted.items.arr) items.push(std::move(e));
+    for (Value& e : granted.stocks.arr) stocks.push(std::move(e));
+    for (Value& e : granted.characters.arr) chars.push(std::move(e));
 }
 // A refusal inside the core mission is the module's to report: Nil, the core's refusal stays set.
 Value ext::Ctx::core_mission(const Request& r, const MissionOverride* ov) {

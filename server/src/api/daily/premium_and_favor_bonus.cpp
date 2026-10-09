@@ -21,10 +21,6 @@ namespace soa::server {
 namespace {
 using namespace ext;
 
-// (a) content type 11 = a premium login bonus pass, content_id = its master_premium_login_bonus
-// (docs/api.md "Content types").
-constexpr u32 kContentPremiumPass = 11;
-
 // The start of the current login day: (a)+(b) master_global login_bonus_reset_hour, as the
 // login bonus.
 ServerTime login_day_start(Ctx& ctx) { return day_start(ctx.now(), (int)ctx.global_u32("login_bonus_reset_hour", 4)); }
@@ -44,7 +40,8 @@ Value* player_map(Value& data) {
 //       (the pass was sold in master_direct_item_shop, pshop_ploginbonus_001; docs/api.md "Content
 //       types"). There is no purchase route in the port, so the bonus is off unless the state
 //       holds a pass (d): a type-11 grant records one, from page 0.
-void grant_premium_pass(Ctx& ctx, u32 pass_id, u32, Value&, Value&, Value&) {
+void grant_premium_pass(Ctx& ctx, const Grant& what, Granted&) {
+    const u32 pass_id = what.id;
     ctx.st.q("insert into premium_pass (id, granted_at) values (?, ?) on conflict(id) do update set granted_at = excluded.granted_at, day_index = 0",
              {pass_id, ctx.now()});
     LOGI("server", "premium login bonus pass %u granted", pass_id);
@@ -294,7 +291,9 @@ std::vector<u8> stamina_heal_by_favor(Ctx& ctx, const Request&) {
 // "The module registry and its order").
 void register_daily() {
     using namespace ext;
-    add_grant(kContentPremiumPass, grant_premium_pass);
+    // (a) content type 11 = a premium login bonus pass, content_id = its master_premium_login_bonus
+    // (docs/api.md "Content types").
+    add_grant(ContentType::kPremiumPass, grant_premium_pass);
     add_player_load(load_daily_bonuses);
     add_api({"StaminaHealByFavor"}, stamina_heal_by_favor);
 }

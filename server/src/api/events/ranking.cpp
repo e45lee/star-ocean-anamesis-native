@@ -256,16 +256,13 @@ std::vector<u8> check_event_ranking_result(Ctx& ctx, const Request&) {
 
 // (a) the reward tier of `rank`: the master_event_ranking_reward row of the ranking with the
 // smallest required_ranking >= rank (b: CEventRankingResult::Initialize's tier ranges).
-struct Reward {
-    u32 type = 0, id = 0, num = 0;
-};
-Reward reward_for(Ctx& ctx, u32 ranking, u32 rank) {
-    Reward reward;
+Grant reward_for(Ctx& ctx, u32 ranking, u32 rank) {
+    Grant reward;
     ctx.m.q(
         "select content_type, content_id, num from master_event_ranking_reward where ranking_reward_group_id = ? and required_ranking >= ? "
         "order by required_ranking limit 1",
         {ranking, rank}, [&](const Row& reward_row) {
-            reward.type = (u32)reward_row.i("content_type");
+            reward.type = as_content_type(reward_row.i("content_type"));
             reward.id = (u32)reward_row.i("content_id");
             reward.num = (u32)std::max<int64_t>(1, reward_row.i("num"));
         });
@@ -284,22 +281,22 @@ Reward reward_for(Ctx& ctx, u32 ranking, u32 rank) {
 std::vector<u8> receive_event_ranking_result(Ctx& ctx, const Request&) {
     u32 group = due_group(ctx);
     Value info = result_info(ctx, group);
-    Value items = Value::array(), stocks = Value::array(), characters = Value::array();
+    Granted granted;
     if (group) {
         for (const Value& result : info.find("RankingResultInfoList")->arr) {
             u32 ranking = (u32)result.get_u("master_event_ranking_id");
-            Reward reward = reward_for(ctx, ranking, kOnlyRank);
-            if (reward.type) grant_with_item_sets(ctx, reward.type, reward.id, reward.num, items, stocks, characters);
-            LOGI("server", "ReceiveEventRankingResult: ranking %u rank 1 -> content %u/%u x%u", ranking, reward.type, reward.id, reward.num);
+            const Grant reward = reward_for(ctx, ranking, kOnlyRank);
+            if (reward.type != ContentType::kNone) grant_with_item_sets(ctx, reward, granted);
+            LOGI("server", "ReceiveEventRankingResult: ranking %u rank 1 -> content %u/%u x%u", ranking, to_u32(reward.type), reward.id, reward.num);
         }
         ctx.st.q("insert or replace into event_rank_received (group_id, received_at) values (?, ?)", {group, ctx.now()});
     }
     Value data = ctx.base_data();
     data["CheckEventRankingResultInfo"] = info;
-    ext::add_items(data, items);
-    if (!characters.arr.empty()) {
+    ext::add_items(data, granted.items);
+    if (!granted.characters.arr.empty()) {
         Value add_character = Value::object();
-        for (auto& character : characters.arr) add_character[std::to_string(character.get_u("id"))] = character;
+        for (auto& character : granted.characters.arr) add_character[std::to_string(character.get_u("id"))] = character;
         data["AddCharacter"] = add_character;
     }
     data["StockItem"] = ctx.stock();

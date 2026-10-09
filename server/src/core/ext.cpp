@@ -30,8 +30,8 @@ std::vector<ClientMasterFn>& client_masters() {
     static std::vector<ClientMasterFn> v;
     return v;
 }
-std::map<u32, GrantFn>& grants() {
-    static std::map<u32, GrantFn> m;
+std::map<ContentType, GrantFn>& grants() {
+    static std::map<ContentType, GrantFn> m;
     return m;
 }
 std::vector<ItemExtraFn>& item_extras() {
@@ -76,21 +76,21 @@ std::vector<std::string> registration_errors() {
     return errors();
 }
 
-void add_grant(u32 content_type, GrantFn fn, const char* file, int line) {
-    if (grants().count(content_type)) {
-        registration_error("content type " + std::to_string(content_type) + " granted twice", file, line);
+void add_grant(ContentType type, GrantFn fn, const char* file, int line) {
+    if (grants().count(type)) {
+        registration_error("content type " + std::to_string(to_u32(type)) + " granted twice", file, line);
         return;
     }
-    grants()[content_type] = std::move(fn);
-    record_hook("Grant", file, line, "content type " + std::to_string(content_type));
+    grants()[type] = std::move(fn);
+    record_hook("Grant", file, line, "content type " + std::to_string(to_u32(type)));
 }
 void add_item_extra(ItemExtraFn fn, const char* file, int line) {
     item_extras().push_back(std::move(fn));
     record_hook("ItemExtra", file, line);
 }
-const GrantFn* find_grant(u32 content_type) {
+const GrantFn* find_grant(ContentType type) {
     modules::register_all();
-    auto it = grants().find(content_type);
+    auto it = grants().find(type);
     return it == grants().end() ? nullptr : &it->second;
 }
 void item_extra(Sql& st, Sql& m, ItemUid uid, Value& item) {
@@ -124,10 +124,11 @@ void mission_result_extra(Ctx& c, const MissionInfo& mi, Value& data) {
     modules::register_all();
     for (auto& f : result_extras()) f(c, mi, data);
 }
-void add_drop(Ctx& c, Value& d, u32 type, u32 id, u32 num, u32 drop_type) {
-    if (!num) return;
-    Value items = Value::array(), stocks = Value::array(), chars = Value::array();
-    c.grant(type, id, num, items, stocks, chars);
+void add_drop(Ctx& c, Value& d, const Grant& what) {
+    if (!what.num) return;
+    const u32 drop_type = what.drop_type;
+    Granted granted;
+    c.grant(Grant{what.type, what.id, what.num, 0}, granted);  // (the drop type is set on the lists' entries below)
     // (b) the result screen lists DropList entries by their first property, the content id, with
     // content_type and drop_type (api/missions/mission_end.cpp); the owned uids go in AddItem /
     // AddCharacter.
@@ -143,7 +144,7 @@ void add_drop(Ctx& c, Value& d, u32 type, u32 id, u32 num, u32 drop_type) {
         if (v.type != Value::Arr) v = Value::array();
         return v;
     };
-    for (Value e : items.arr) {
+    for (Value e : granted.items.arr) {
         e["drop_type"] = drop_type;
         Value one = Value::array();
         one.push(e);
@@ -151,22 +152,22 @@ void add_drop(Ctx& c, Value& d, u32 type, u32 id, u32 num, u32 drop_type) {
         e["id"] = e.get_u("master_item_id");
         list("item").push(e);
     }
-    for (Value e : chars.arr) {
+    for (Value e : granted.characters.arr) {
         e["drop_type"] = drop_type;
         Value& add = d["AddCharacter"];
         if (add.type != Value::Map) add = Value::object();
         add[std::to_string(e.get_u("id"))] = e;
         e["id"] = e.get_u("master_role_id");
-        e["content_type"] = 2u;
+        e["content_type"] = to_u32(ContentType::kCharacter);
         list("character").push(e);
     }
-    for (Value e : stocks.arr) {
+    for (Value e : granted.stocks.arr) {
         e["drop_type"] = drop_type;
         list("stock_item").push(e);
     }
-    if (type == 3) dl["fol"] = (u32)dl.get_u("fol") + num;
-    if (type == 4) dl["free_coin"] = (u32)dl.get_u("free_coin") + num;
-    if (!stocks.arr.empty()) d["StockItem"] = c.stock();
+    if (what.type == ContentType::kFol) dl["fol"] = (u32)dl.get_u("fol") + what.num;
+    if (what.type == ContentType::kFreeCoin) dl["free_coin"] = (u32)dl.get_u("free_coin") + what.num;
+    if (!granted.stocks.arr.empty()) d["StockItem"] = c.stock();
     Value base = c.base_data();  // FOL / coins / Player as they are now
     for (auto& [k, v] : base.map) d[k] = v;
 }
@@ -249,7 +250,7 @@ int64_t counter(Ctx& c, const std::string& key) { return c.st.one("select value 
 Arg present_content_id(u32 type, u32 id) {
     // (a) the wallet types, 3 FOL and 4 free coins (docs/api.md "Content types"), name no content:
     // their master rows' content_id is 0, stored as NULL ("none", PLAN-schema 3.1, S8)
-    if ((type == 3 || type == 4) && id == 0) return nullptr;
+    if ((type == to_u32(ContentType::kFol) || type == to_u32(ContentType::kFreeCoin)) && id == 0) return nullptr;
     return id;
 }
 void add_present(Ctx& c, u32 type, u32 id, u32 num, u32 reason_type, u32 reason_param, const std::string& text) {

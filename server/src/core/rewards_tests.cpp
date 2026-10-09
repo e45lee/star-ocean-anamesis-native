@@ -20,21 +20,22 @@ NATIVE_TEST("rewards/item-sets") {
             "having min(content_type) between 5 and 10 and max(content_type) between 5 and 10 order by item_set_id limit 1",
             {});
         if (!set) return t.fail("no stack-item set in master_item_set");
-        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
-        grant_with_item_sets(c, kContentTypeItemSet, set, 2, items, stocks, chars);
-        t.expect_eq((u32)stocks.arr.size(), (u32)c.m.one("select count(*) from master_item_set where item_set_id = ?", {set}),
+        Granted granted;
+        grant_with_item_sets(c, Grant{ContentType::kItemSet, set, 2}, granted);
+        t.expect_eq((u32)granted.stocks.arr.size(), (u32)c.m.one("select count(*) from master_item_set where item_set_id = ?", {set}),
                     "one StockItem per row");
         // the nested sets (a set in a set in a set) end in grants
         u32 coins = 0;
-        Value i2 = Value::array(), s2 = Value::array(), c2 = Value::array();
-        grant_with_item_sets(c, kContentTypeItemSet, 184028475u, 1, i2, s2, c2, &coins);
-        t.expect_eq(i2.arr.size() + s2.arr.size() + c2.arr.size() + coins > 0, true, "the nested set grants something");
+        Granted nested;
+        grant_with_item_sets(c, Grant{ContentType::kItemSet, 184028475u, 1}, nested, &coins);
+        t.expect_eq(nested.items.arr.size() + nested.stocks.arr.size() + nested.characters.arr.size() + coins > 0, true,
+                    "the nested set grants something");
         // a set containing itself (shadowing the master's table with a temp copy plus that row)
         c.m.exec("create temp table master_item_set as select * from main.master_item_set");
         c.m.exec("insert into temp.master_item_set (id, item_set_id, order_id, content_id, content_type, num) values (1, 7, 1, 7, 99, 1)");
-        Value i3 = Value::array(), s3 = Value::array(), c3 = Value::array();
-        grant_with_item_sets(c, kContentTypeItemSet, 7, 1, i3, s3, c3);  // returns: the depth guard
-        t.expect_eq(i3.arr.size() + s3.arr.size() + c3.arr.size(), (size_t)0, "a self-containing set grants nothing");
+        Granted none;
+        grant_with_item_sets(c, Grant{ContentType::kItemSet, 7, 1}, none);  // returns: the depth guard
+        t.expect_eq(none.items.arr.size() + none.stocks.arr.size() + none.characters.arr.size(), (size_t)0, "a self-containing set grants nothing");
         c.m.exec("drop table temp.master_item_set");
         c.st.exec("rollback");
     });

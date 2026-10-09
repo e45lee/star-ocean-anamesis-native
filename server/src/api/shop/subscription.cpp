@@ -29,6 +29,8 @@
 namespace soa::server::subscription {
 
 using ext::Ctx;
+using ext::Grant;
+using ext::Granted;
 using ext::Row;
 
 namespace {
@@ -64,7 +66,7 @@ namespace {
 // Rules: docs/server-rules.md#passes
 //   (a) num the days (30 for the Galaxy Pass, 14 for the character passes); (d) 30 when 0.
 // Adds nothing to the grant's lists (the pass reaches the client through Subscription).
-void grant_subscription_plan(Ctx& ctx, u32 id, u32 num, Value&, Value&, Value&) { grant_plan(ctx, id, num ? num : kDefaultPassDays, ctx.now()); }
+void grant_subscription_plan(Ctx& ctx, const Grant& what, Granted&) { grant_plan(ctx, what.id, what.num ? what.num : kDefaultPassDays, ctx.now()); }
 
 }  // namespace
 
@@ -158,7 +160,8 @@ Value ext::subscription_state(Ctx& ctx) { return subscription::subscription_info
 // "The module registry and its order").
 void register_subscription() {
     using namespace ext;
-    add_grant(subscription::kContentTypePass, subscription::grant_subscription_plan);
+    // (a) content type 20: a pass (docs/api.md "Content types").
+    add_grant(ContentType::kPass, subscription::grant_subscription_plan);
     add_player_load(subscription::load_subscriptions);
 }
 

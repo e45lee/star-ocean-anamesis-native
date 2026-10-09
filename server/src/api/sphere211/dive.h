@@ -14,6 +14,8 @@
 namespace soa::server::sphere211 {
 
 using ext::Ctx;
+using ext::Grant;
+using ext::Granted;
 using ext::Row;
 
 // ---- the log, the RNG (state.cpp) ----------------------------------------------------------------
@@ -78,9 +80,9 @@ void tick_stamina(Ctx& ctx);
 // ---- treasure boxes (rewards.cpp) -------------------------------------------------------------
 void add_boxes(Ctx& ctx, const Floor& floor, u32 count);
 void lot_ranks(Ctx& ctx, const Season& season);
-// Opens the dive's boxes into the player's items; `result` (when given) gets
-// Sphere211TreasureResultInfoMap's entries; null outputs are discarded.
-void open_boxes(Ctx& ctx, const Season& season, Value* items, Value* stocks, Value* characters, Value* result);
+// Opens the dive's boxes into the player's items; `granted` (when given) gets what they added,
+// `result` (when given) Sphere211TreasureResultInfoMap's entries; null outputs are discarded.
+void open_boxes(Ctx& ctx, const Season& season, Granted* granted, Value* result);
 
 // ---- the season ranking (ranking.cpp) ----------------------------------------------------------
 u32 ranking_group_of(ext::Sql& master, u32 season_id);

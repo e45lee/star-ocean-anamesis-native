@@ -29,8 +29,6 @@ using ext::Row;
 
 namespace {
 
-// (a) master content type 1: an item (a weapon, when a gacha draws it: gacha_pools::Unit).
-constexpr u32 kContentTypeItem = 1;
 // gacha_history.rank: the draw's rank as a letter, S (index 0) .. D (4) (d: our column).
 constexpr const char* kRankLetters = "SABCD";
 // (d) GetGachaInData's window for a master row without one: open since the service start / for good.
@@ -350,7 +348,8 @@ void draw_units(ext::Ctx& ctx, const Row& gacha_row, GachaDraw& draw) {
         u32 role = 0;
         if (ctx.pools->is_open() && ctx.pools->draw(draw.id, bonus, format_time(ctx.now()), (*ctx.rng)(), (*ctx.rng)(), pool_rank, unit)) {
             rank = pool_rank;
-            if (unit.content_type == kContentTypeItem) {  // a weapon: a new unique item (AddItem)
+            // (a) content type 1: an item (a weapon, when a gacha draws it: gacha_pools::Unit)
+            if (as_content_type(unit.content_type) == ContentType::kItem) {  // a weapon: a new unique item (AddItem)
                 draw_weapon(ctx, draw, unit, rank, k);
                 continue;
             }

@@ -417,12 +417,12 @@ std::vector<u8> sphere211_floor_clear(Ctx& ctx, const Request& req) {
     u32 level = (u32)ctx.st.one("select floor_level from sphere where id = 1", {});
     Floor floor = floor_row(ctx, season, level);
     Value data = ctx.base_data();
-    Value items = Value::array(), stocks = Value::array(), characters = Value::array();
+    Granted granted;
     Value result = Value::object();
     ctx.m.q("select * from master_sphere211_floor_clear_present where clear_present_group_id = ? and level <= ? order by level desc limit 1",
             {season.clear_present_group, level}, [&](const Row& present_row) {
                 u32 type = (u32)present_row.i("content_type"), id = (u32)present_row.i("content_id"), num = (u32)present_row.i("num");
-                ctx.grant(type, id, num, items, stocks, characters);
+                ctx.grant(Grant{as_content_type(type), id, num}, granted);
                 result["clear_present_id"] = id;
                 result["clear_present_content_type"] = type;
                 result["clear_present_num"] = num;
@@ -444,7 +444,7 @@ std::vector<u8> sphere211_floor_clear(Ctx& ctx, const Request& req) {
                               {ctx.st.one("select asset_group from sphere where id = 1", {})});
     ctx.st.q("update sphere set clear_asset = ?, lot_floor_num = ?", {goal ? goal : 1u, lot_floor_num(ctx, total)});
     ctx.st.q("update sphere set best_floor = max(best_floor, ?)", {level});
-    if (!stocks.arr.empty()) data["StockItem"] = ctx.stock();
+    if (!granted.stocks.arr.empty()) data["StockItem"] = ctx.stock();
     put_state(ctx, season, data);
     LOGI("server", "Sphere211FloorClear(%u): floor %u cleared, %u boxes, next-floor lot %u", goal, level, floor.floor_clear_treasure_num,
          (u32)ctx.st.one("select lot_floor_num from sphere where id = 1", {}));
@@ -525,7 +525,8 @@ std::vector<u8> sphere211_stamina_heal(Ctx& ctx, const Request&) {
 std::vector<u8> return_sphere211(Ctx& ctx, const Request&) {
     Season season = load_dive(ctx);
     Value data = ctx.base_data();
-    Value items = Value::array(), stocks = Value::array(), characters = Value::array(), result = Value::object();
+    Granted granted;
+    Value result = Value::object();
     u32 floor = (u32)ctx.st.one("select floor_level from sphere where id = 1", {});
     lot_ranks(ctx, season);
     Value lots = Value::object();
@@ -535,7 +536,7 @@ std::vector<u8> return_sphere211(Ctx& ctx, const Request&) {
         lots[std::to_string(key)] = info;
     }
     data["Sphere211TreasureResultLotInfoMap"] = lots;
-    open_boxes(ctx, season, &items, &stocks, &characters, &result);
+    open_boxes(ctx, season, &granted, &result);
     u32 back = (u32)ctx.st.one("select count(*) from sphere_departed", {});
     ctx.st.exec("delete from sphere_departed");
     // (a) "※使用可能回数は帰還することで回復します" (uimsg_sphere211_mission_start_with_deity); (b)
@@ -543,8 +544,8 @@ std::vector<u8> return_sphere211(Ctx& ctx, const Request&) {
     ctx.st.q("update sphere set streak = 0, revive_count = 0", {});
     data["Sphere211TreasureResultInfoMap"] = result;
     data["StockItem"] = ctx.stock();
-    if (!items.arr.empty()) data["Item"] = ctx.items();
-    if (!characters.arr.empty()) data["Character"] = ctx.roster();
+    if (!granted.items.arr.empty()) data["Item"] = ctx.items();
+    if (!granted.characters.arr.empty()) data["Character"] = ctx.roster();
     put_state(ctx, season, data);
     LOGI("server", "ReturnSphere211: %u characters back, floor %u", back, floor);
     return ext::body(data);

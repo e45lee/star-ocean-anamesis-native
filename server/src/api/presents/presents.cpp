@@ -56,22 +56,18 @@ Value present_box(ext::Ctx& ctx) {
     return box;
 }
 
-// What receiving presents added, as grant() lists it: AddItem, StockItem, AddCharacter.
-struct Received {
-    Value items = Value::array(), stocks = Value::array(), characters = Value::array();
-};
-
 // Marks one unreceived present received and grants its content as a drop is (into `added`).
 // False when there is no such present.
-bool receive_present(ext::Ctx& ctx, u64 present_id, Received& added) {
+bool receive_present(ext::Ctx& ctx, u64 present_id, Granted& added) {
     bool open = false;
-    Drop content{};
+    Grant content;
     ctx.st.q("select * from presents where id = ? and received_at is null", {present_id}, [&](const Row& present_row) {
         open = true;
-        content = Drop{(u32)present_row.i("content_type"), (u32)present_row.i("content_id"), (u32)std::max<int64_t>(1, present_row.i("num")), 0};
+        content = Grant{as_content_type(present_row.i("content_type")), (u32)present_row.i("content_id"),
+                        (u32)std::max<int64_t>(1, present_row.i("num")), 0};
     });
     if (!open) return false;
-    grant(ctx, content, added.items, added.stocks, added.characters);
+    grant(ctx, content, added);
     ctx.st.q("update presents set received_at = ? where id = ?", {ctx.now(), present_id});
     return true;
 }
@@ -109,7 +105,7 @@ std::vector<u8> present_list(ext::Ctx& ctx, const Request&) {
 std::vector<u8> get_present(ext::Ctx& ctx, const Request& req) {
     const auto args = args::GetPresentArgs::from(req);
     u32 fol_before = (u32)ctx.st.one("select fol from player", {}), coins_before = (u32)ctx.st.one("select free_coin from player", {});
-    Received added;
+    Granted added;
     Value received = Value::array();
     for (u64 present_id : args.present_ids)
         if (receive_present(ctx, present_id, added)) received.push(present_id);

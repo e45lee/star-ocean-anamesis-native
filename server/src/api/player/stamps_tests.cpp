@@ -100,13 +100,13 @@ NATIVE_TEST("player/stamps-grant") {
     bool ran = ext::with_scratch_server(t.rand_u64(), [&](ext::Ctx& ctx) {
         ctx.st.exec("begin");
         load(ctx);
-        const ext::GrantFn* grant = ext::find_grant(12);
+        const ext::GrantFn* grant = ext::find_grant(ContentType::kStamp);
         if (!grant) return t.fail("content type 12 has no grant");
         const u32 reward = (u32)ctx.m.one("select content_id from master_achievement where content_type = 12 order by id limit 1", {});
-        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
-        (*grant)(ctx, reward, 1, items, stocks, chars);
-        (*grant)(ctx, reward, 1, items, stocks, chars);  // twice: owned once
-        (*grant)(ctx, 12345, 1, items, stocks, chars);   // not a master_stamp id: skipped
+        ext::Granted granted;
+        (*grant)(ctx, ext::Grant{ContentType::kStamp, reward, 1}, granted);
+        (*grant)(ctx, ext::Grant{ContentType::kStamp, reward, 1}, granted);  // twice: owned once
+        (*grant)(ctx, ext::Grant{ContentType::kStamp, 12345, 1}, granted);   // not a master_stamp id: skipped
         t.expect_eq(ctx.st.one("select count(*) from stamps where id = ?", {reward}), (int64_t)1, "stamp owned");
         t.expect_eq(ctx.st.one("select count(*) from stamps where id = 12345", {}), (int64_t)0, "an unknown id skipped");
         Request present_req;

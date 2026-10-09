@@ -47,39 +47,36 @@ void lot_ranks(Ctx& ctx, const Season& season) {
 // Opens the dive's boxes: each box one row of its rank's common drop group
 // (master_sphere211_treasure_contents <rank>_common_drop_id, a) lotted by rate_weigh (a), granted
 // to the player (d: directly, as the box result screen shows them obtained).
-void open_boxes(Ctx& ctx, const Season& season, Value* items, Value* stocks, Value* characters, Value* result) {
+void open_boxes(Ctx& ctx, const Season& season, Granted* granted, Value* result) {
     lot_ranks(ctx, season);
     u32 drop_groups[kRankD + 1] = {};
     ctx.m.q("select * from master_sphere211_treasure_contents where id = ?", {season.treasure_contents}, [&](const Row& contents_row) {
         const char* cols[] = {"s_common_drop_id", "a_common_drop_id", "b_common_drop_id", "c_common_drop_id", "d_common_drop_id"};
         for (u32 rank = 0; rank <= kRankD; rank++) drop_groups[rank] = (u32)contents_row.i(cols[rank]);
     });
-    Value no_items = Value::array(), no_stocks = Value::array(), no_characters = Value::array();
+    Granted discarded;
+    Granted& into = granted ? *granted : discarded;
     std::vector<std::pair<int64_t, u32>> boxes;
     ctx.st.q("select id, rank from sphere_box order by id", {},
              [&](const Row& box_row) { boxes.push_back({box_row.i("id"), (u32)box_row.i("rank")}); });
     for (auto [box_id, rank] : boxes) {
-        struct Content {
-            u32 type, id, num;
-        };
-        std::vector<std::pair<u32, Content>> drops;
+        std::vector<std::pair<u32, Grant>> drops;
         ctx.m.q("select rate_weigh, content_type, content_id, num from master_common_drop where common_drop_id = ?",
                 {drop_groups[std::min<u32>(rank, kRankD)]}, [&](const Row& drop_row) {
-                    drops.push_back({(u32)drop_row.i("rate_weigh"),
-                                     {(u32)drop_row.i("content_type"), (u32)drop_row.i("content_id"), (u32)std::max<int64_t>(1, drop_row.i("num"))}});
+                    drops.push_back({(u32)drop_row.i("rate_weigh"), Grant{as_content_type(drop_row.i("content_type")), (u32)drop_row.i("content_id"),
+                                                                          (u32)std::max<int64_t>(1, drop_row.i("num"))}});
                 });
         int k = weighted_index(ctx, drops);
         if (k < 0) continue;
-        Content content = drops[k].second;
-        ctx.grant(content.type, content.id, content.num, items ? *items : no_items, stocks ? *stocks : no_stocks,
-                  characters ? *characters : no_characters);
+        const Grant content = drops[k].second;
+        ctx.grant(content, into);
         if (result) {
             // (b) Sphere211TreasureResultInfoMap {rank: [Sphere211TreasureResultInfo {content_id,
             // num}]} (the list class has no key of its own; CSphereBoxResult::GetRewardItemList),
             // (d) content_type added for completeness.
             Value info = Value::object();
             info["content_id"] = content.id;
-            info["content_type"] = content.type;
+            info["content_type"] = to_u32(content.type);
             info["num"] = content.num;
             Value& list = (*result)[std::to_string(kRankD - std::min<u32>(rank, kRankD))];  // client keys: 0 D .. 4 S (b)
             if (list.type != Value::Arr) list = Value::array();

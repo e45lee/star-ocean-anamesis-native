@@ -20,10 +20,6 @@ using ext::Row;
 
 namespace {
 
-// The content types a first-clear present can be (master_mission_clear_present.content_type; a:
-// docs/api.md "Content types").
-constexpr u32 kContentItem = 1, kContentCharacter = 2, kContentFol = 3, kContentFreeCoin = 4;
-
 // A MissionEnd in progress: the play it ends and what each step granted, in the order the steps
 // run (mission_end below).
 struct MissionEnd {
@@ -36,7 +32,7 @@ struct MissionEnd {
     u32 player_exp = 0, character_exp = 0, fol = 0;  // the mission's player EXP, EXP per member, FOL
     u32 level_before = 0, level_after = 0;           // the player's
     Value result_characters, result_favor;           // MissionResultCharacter, MissionResultCharacterFavor
-    Value added_items, added_stocks, added_characters;  // what the drops added (AddItem, StockItem, AddCharacter)
+    Granted added;                                   // what the drops added (AddItem, StockItem, AddCharacter)
     Rolled rolled;
     bool first_clear = false;
     std::vector<std::string> unlocked;  // the id_labels of the missions it unlocked
@@ -147,16 +143,14 @@ void characters_exp_and_favor(ext::Ctx& ctx, MissionEnd& end) {
 
 // 5. The drop roll, granted.
 void roll_and_grant_drops(ext::Ctx& ctx, MissionEnd& end) {
-    end.added_items = Value::array();
-    end.added_stocks = Value::array();
-    end.added_characters = Value::array();
+    end.added = Granted();
     // the party's roles, in roster order (the character bonus counts them, not their order)
     std::vector<u32> roles;
     ctx.st.q("select r.role_id from roster r where r.uid in (select uid from play_member) order by r.uid", {},
              [&](const Row& roster_row) { roles.push_back((u32)roster_row.i("role_id")); });
     const MissionRef& ref = end.mission_ref;
     end.rolled = roll_drops(ctx, end.mission, ref.table, ref.type, ref.area, end.surprise, roles);
-    for (const Drop& drop : end.rolled.drops) grant(ctx, drop, end.added_items, end.added_stocks, end.added_characters);
+    for (const Grant& drop : end.rolled.drops) grant(ctx, drop, end.added);
 }
 
 // 6. The first clear and the missions it unlocks.
@@ -189,15 +183,18 @@ void clear_presents(ext::Ctx& ctx, MissionEnd& end) {
         ctx.st.q("insert into presents (content_type, content_id, num, reason_type, reason_param, created_at) values (?,?,?,?,?,?)",
                  {present_row.i("content_type"), ext::present_content_id((u32)present_row.i("content_type"), (u32)present_row.i("content_id")),
                   present_row.i("num"), (int)ext::kPresentMissionClear /* (d) the reason */, end.mission, ctx.now()});
-        u32 content_type = (u32)present_row.i("content_type"), content_id = (u32)present_row.i("content_id"), num = (u32)present_row.i("num");
+        // (a) the present's content type (master_mission_clear_present.content_type; docs/api.md
+        // "Content types")
+        const ContentType content_type = as_content_type(present_row.i("content_type"));
+        u32 content_id = (u32)present_row.i("content_id"), num = (u32)present_row.i("num");
         Value entry = Value::object();
         entry["id"] = content_id;
-        entry["content_type"] = content_type;
+        entry["content_type"] = to_u32(content_type);
         entry["drop_type"] = 0u;
-        if (content_type == kContentFreeCoin) end.present_free_coins += num;
-        else if (content_type == kContentItem) end.present_items.push(entry);
-        else if (content_type == kContentCharacter) end.present_characters.push(entry);
-        else if (content_type != kContentFol) {
+        if (content_type == ContentType::kFreeCoin) end.present_free_coins += num;
+        else if (content_type == ContentType::kItem) end.present_items.push(entry);
+        else if (content_type == ContentType::kCharacter) end.present_characters.push(entry);
+        else if (content_type != ContentType::kFol) {
             entry["use_count"] = num;
             entry["num"] = num;
             end.present_stocks.push(entry);
@@ -235,20 +232,20 @@ Value drop_list_info(const MissionEnd& end) {
     // element's first property (`id`) as the content id (master item / role), its
     // content_type and drop_type; the owned uids go in AddItem / AddCharacter instead.
     Value shown_items = Value::array(), shown_characters = Value::array();
-    for (const Value& item : end.added_items.arr) {
+    for (const Value& item : end.added.items.arr) {
         Value shown = item;
         shown["id"] = item.get_u("master_item_id");
         shown_items.push(shown);
     }
-    for (const Value& character : end.added_characters.arr) {
+    for (const Value& character : end.added.characters.arr) {
         Value shown = character;
         shown["id"] = character.get_u("master_role_id");
-        shown["content_type"] = kContentCharacter;
+        shown["content_type"] = to_u32(ContentType::kCharacter);
         shown_characters.push(shown);
     }
     drop_list["item"] = shown_items;
     drop_list["character"] = shown_characters;
-    drop_list["stock_item"] = end.added_stocks;
+    drop_list["stock_item"] = end.added.stocks;
     return drop_list;
 }
 
@@ -278,11 +275,11 @@ Value mission_end_data(ext::Ctx& ctx, MissionEnd& end) {
     data["Achievement"] = ext::achievement_state(ctx);
     data["DropList"] = drop_list_info(end);
     if (end.first_clear) data["ClearPresentList"] = clear_present_list_info(end);
-    ext::add_items(data, end.added_items);
-    if (!end.added_stocks.arr.empty()) data["StockItem"] = stack_item_info_list(ctx);
-    if (!end.added_characters.arr.empty()) {
+    ext::add_items(data, end.added.items);
+    if (!end.added.stocks.arr.empty()) data["StockItem"] = stack_item_info_list(ctx);
+    if (!end.added.characters.arr.empty()) {
         Value add_character = Value::object();
-        for (auto& character : end.added_characters.arr) add_character[std::to_string(character.get_u("id"))] = character;
+        for (auto& character : end.added.characters.arr) add_character[std::to_string(character.get_u("id"))] = character;
         data["AddCharacter"] = add_character;
     }
     data["MissionResultCharacter"] = end.result_characters;
@@ -297,7 +294,7 @@ void log_mission_end(ext::Ctx& ctx, const MissionEnd& end) {
     const Rolled& rolled = end.rolled;
     // read by battle_session.sh, rental_session.sh
     LOGI("server", "MissionEnd mission %u: player exp +%u (level %u -> %u), fol +%u, %zu items, %zu stack drops%s, time %u ms, favor for %zu",
-         mission, end.player_exp, end.level_before, end.level_after, end.fol, end.added_items.arr.size(), end.added_stocks.arr.size(),
+         mission, end.player_exp, end.level_before, end.level_after, end.fol, end.added.items.arr.size(), end.added.stocks.arr.size(),
          end.first_clear ? ", first clear" : "", end.mission_time, end.result_favor.map.size());
     // read by restore_missions.sh
     LOGI(

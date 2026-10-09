@@ -1,6 +1,6 @@
 // Differential tests of Aska::Quaternion's natives (math_quaternion.cpp) and of the .rodata
 // constants the math natives copy, against the 3.7.0 guest.
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/math/math_constants.h"
 #include "native/math/math_layout.h"
 #include "native/math/math_test_util.h"

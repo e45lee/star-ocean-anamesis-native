@@ -4,7 +4,7 @@
 #include <cstring>
 #include <vector>
 
-#include "core/thread_record.h"
+#include "soaruntime/core/thread_record.h"
 #include "native/common/native.h"
 #include "native/common/native_method.h"
 #include "native/hash/hash_layout.h"

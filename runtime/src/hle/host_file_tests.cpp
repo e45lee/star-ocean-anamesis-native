@@ -17,7 +17,7 @@
 #include <filesystem>
 #include <string>
 
-#include "core/selftest.h"
+#include "soaruntime/core/selftest.h"
 #include "hle/host_file.h"
 
 namespace soa {

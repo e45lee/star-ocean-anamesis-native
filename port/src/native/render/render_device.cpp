@@ -11,9 +11,9 @@
 // Live check (soa --live-check render): render_check.h's gl_run_both.
 #include <cstring>
 
-#include "core/cpu.h"
-#include "core/hle.h"
-#include "hle/gl_host.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/hle/gl_host.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
 #include "native/common/native_method.h"

@@ -2,7 +2,7 @@
 // The programs' command lines on CLI11 (vcpkg `cli11`, linked through soa_env): what every program
 // shares. The option groups shared by more than one program are defined once, next to the type
 // they fill:
-//   - runtime/src/app/cli.h               the window, scripted driving, the device (soa, soa-emu, soa-viewer)
+//   - runtime/include/soaruntime/app/cli.h               the window, scripted driving, the device (soa, soa-emu, soa-viewer)
 //   - platform370/include/platform370/cli.h  the 3.7.0 phone's clock, patch and network (soa, soa-emu)
 //   - server/include/soaserver/cli.h      the local server's rules and state (soa, soa-server)
 //   - here                                --repo, --download / --download-dir, --download-prefer,

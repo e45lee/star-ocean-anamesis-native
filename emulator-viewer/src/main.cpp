@@ -25,19 +25,19 @@
 #include <string>
 #include <vector>
 
-#include "android/ndk.h"
-#include "android/platform.h"
-#include "android/zip.h"
-#include "app/host.h"
-#include "core/cpu.h"
-#include "core/device.h"
-#include "core/gdbstub.h"
-#include "core/hle.h"
-#include "core/loader.h"
-#include "core/log.h"
-#include "core/profile.h"
-#include "core/vfs.h"
-#include "jni/jvm.h"
+#include "soaruntime/android/ndk.h"
+#include "soaruntime/android/platform.h"
+#include "soaruntime/android/zip.h"
+#include "soaruntime/app/host.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/device.h"
+#include "soaruntime/core/gdbstub.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/profile.h"
+#include "soaruntime/core/vfs.h"
+#include "soaruntime/jni/jvm.h"
 #include "cli.h"
 
 using namespace soa;

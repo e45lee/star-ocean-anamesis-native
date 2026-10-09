@@ -8,7 +8,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa {
 

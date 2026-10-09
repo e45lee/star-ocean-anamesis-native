@@ -1,5 +1,5 @@
 // Runtime self-test registry (see selftest.h).
-#include "core/selftest.h"
+#include "soaruntime/core/selftest.h"
 
 #include <cstdarg>
 #include <cstdio>

@@ -26,9 +26,9 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "core/options.h"
 #include "native/api/api_layout.h"
 #include "native/common/guest_assert.h"

@@ -17,7 +17,7 @@
 #include <mutex>
 #include <unordered_map>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/lockstep.h"
 #include "native/common/native.h"
 

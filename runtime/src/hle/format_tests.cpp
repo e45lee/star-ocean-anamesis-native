@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <string>
 
-#include "core/selftest.h"
+#include "soaruntime/core/selftest.h"
 #include "hle/format.h"
 
 namespace soa {

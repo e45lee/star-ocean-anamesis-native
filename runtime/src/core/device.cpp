@@ -1,5 +1,5 @@
 // The emulated device's configuration (see device.h).
-#include "core/device.h"
+#include "soaruntime/core/device.h"
 
 namespace soa {
 

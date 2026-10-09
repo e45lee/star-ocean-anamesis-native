@@ -74,7 +74,7 @@ case $test in
     echo "PASS: soa.exe --list-native == Linux's ($(wc -l < "$out/linux.txt") natives, same order)" ;;
   runtime-tests)
     # (run in the stage; its scratch files go to the Windows temp dir. The exit status covers the
-    # exit: nothing per-thread runs after the static destructors, runtime/src/core/thread_record.h.)
+    # exit: nothing per-thread runs after the static destructors, runtime/include/soaruntime/core/thread_record.h.)
     rc=0
     (cd "$stage" && timeout -k 10 600 ./build-win/runtime/soaruntime_tests.exe) > "$out/soaruntime_tests.log" 2>&1 || rc=$?
     grep -a "^FAIL" "$out/soaruntime_tests.log" | head -20

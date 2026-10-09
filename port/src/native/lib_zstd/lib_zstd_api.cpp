@@ -14,7 +14,7 @@
 #include <cstring>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/native.h"
 
 namespace soa::native::lib_zstd {

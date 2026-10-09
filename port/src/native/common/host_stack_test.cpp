@@ -1,5 +1,5 @@
 // runtime/guest-thread-host-stack: a guest thread's host stack keeps its kGuestThreadHostStack for
-// the JIT whatever the program's static TLS (runtime/src/hle/thread.h). glibc places the static
+// the JIT whatever the program's static TLS (runtime/include/soaruntime/hle/thread.h). glibc places the static
 // TLS block at the top of each thread's stack, inside the requested size: when the port's TLS grew
 // to 160 KB (input's live-check buffers, n-io), the game thread kept ~90 KB of its 256 KiB, and
 // the tower menu's ~55 nested guest_calls overflowed it (session:tower died with SIGSEGV).
@@ -8,7 +8,7 @@
 #ifndef _WIN32
 #include <pthread.h>
 
-#include "hle/thread.h"
+#include "soaruntime/hle/thread.h"
 #include "native/common/test.h"
 
 using namespace soa;

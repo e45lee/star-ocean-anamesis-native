@@ -7899,6 +7899,78 @@ inline constexpr InfoClass kInfo_CInfoManager{"CInfoManager", "_ZTV12CInfoManage
     X(CMissionResultCharacterFavorInfo, Dtor, "_ZN32CMissionResultCharacterFavorInfoD2Ev") \
     /* end of INFO_COPIES */
 
+// X(map container, symbol): IInfoBaseMap<K, T>::DeserializeChild for the maps whose T the natives
+// construct, move into a node, destroy and initialize (one per address; the container names K and T).
+#define INFO_MAP_DESERIALIZERS(X) \
+    X(CAddItemList, "_ZN12IInfoBaseMapIm9CItemInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CCoinInfoList, "_ZN12IInfoBaseMapIm9CCoinInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CGearInfoList, "_ZN12IInfoBaseMapIm9CGearInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CFactorInfoMap, "_ZN12IInfoBaseMapIm11CFactorInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CUseResultStackItemMap, "_ZN12IInfoBaseMapIm14CStackItemInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CContentInfoMap, "_ZN12IInfoBaseMapIm16CDropContentInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CFollowInfoList, "_ZN12IInfoBaseMapIm11CFollowInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(PartySetInfoMap, "_ZN12IInfoBaseMapIm12PartySetInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CMascontInfoList, "_ZN12IInfoBaseMapIm12CMascontInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CAddCharacterList, "_ZN12IInfoBaseMapIm11CPersonInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CBoxGachaInfoList, "_ZN12IInfoBaseMapIm13CBoxGachaInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CGachaHashInfoMap, "_ZN12IInfoBaseMapIm22CGachaHashInfoListInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CDebugBonusInfoMap, "_ZN12IInfoBaseMapIm15CDebugBonusInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CDeepSpaceMissionInfoMap, "_ZN12IInfoBaseMapIm21CDeepSpaceMissionInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CExpirationInfoList, "_ZN12IInfoBaseMapIm15CExpirationInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CFriendGaugeInfoMap, "_ZN12IInfoBaseMapIm16CFriendGaugeInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CGachaCountInfoList, "_ZN12IInfoBaseMapIm15CGachaCountInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CLimitBreakInfoList, "_ZN12IInfoBaseMapIm15CLimitBreakInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(SubscriptionInfoMap, "_ZN12IInfoBaseMapIm16SubscriptionInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CBattleResultInheritUiList, "_ZN12IInfoBaseMapIm15InheritItemInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CStepUpGachaInfoList, "_ZN12IInfoBaseMapIm16CStepUpGachaInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CUpdateDeityInfoList, "_ZN12IInfoBaseMapIm9DeityInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CBoxGachaListInfoList, "_ZN12IInfoBaseMapIm17CBoxGachaListInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CDeepSpaceAreaInfoMap, "_ZN12IInfoBaseMapIm18CDeepSpaceAreaInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CFollowPlayerListInfo, "_ZN12IInfoBaseMapIm28CFollowPlayerListElementInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CharacterChipInfoList, "_ZN12IInfoBaseMapIm17CharacterChipInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CPlanetInfoCategoryList, "_ZN12IInfoBaseMapIm11CPlanetInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CAddPresentBoxInfoList, "_ZN12IInfoBaseMapIm15CPresentBoxInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CEquipWeaponResultPersonInfoCategory, "_ZN12IInfoBaseMapIm28CEquipWeaponResultPersonInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CEquipWeaponResultItemInfoCategory, "_ZN12IInfoBaseMapIm26CEquipWeaponResultItemInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CLimitBreakItemInfoList, "_ZN12IInfoBaseMapIm19CLimitBreakItemInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CSaleGachaCountInfoList, "_ZN12IInfoBaseMapIm19CSaleGachaCountInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CUpdatedAchievementList, "_ZN12IInfoBaseMapIm16CAchievementInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(Sphere211RankingInfoMap, "_ZN12IInfoBaseMapIm20Sphere211RankingInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(SubscriptionPlanInfoMap, "_ZN12IInfoBaseMapIm20SubscriptionPlanInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CAddCharacterExpInfoList, "_ZN12IInfoBaseMapIm20CAddCharacterExpInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CEventMaintenanceInfoMap, "_ZN12IInfoBaseMapIm21CEventMaintenanceInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CGachaMaintenanceInfoMap, "_ZN12IInfoBaseMapIm21CGachaMaintenanceInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CGachaTestResultInfoList, "_ZN12IInfoBaseMapIm20CGachaTestResultInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CWorldBossPlayerInfoList, "_ZN12IInfoBaseMapIm20CWorldBossPlayerInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CDeepSpaceEndShipInfoList, "_ZN12IInfoBaseMapIm18CDeepSpaceShipInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CEquipAccessoryResultPersonInfoCategory, "_ZN12IInfoBaseMapIm31CEquipAccessoryResultPersonInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CEquipAccessoryResultItemInfoCategory, "_ZN12IInfoBaseMapIm29CEquipAccessoryResultItemInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CFavoriteDecoObjectResult, "_ZN12IInfoBaseMapIm15CDecoObjectInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CFriendGaugeUpdateInfoMap, "_ZN12IInfoBaseMapIm22CFriendGaugeUpdateInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CWorldMapInfoCategoryList, "_ZN12IInfoBaseMapIm13CWorldMapInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(EventRankingPlayerInfoMap, "_ZN12IInfoBaseMapIm22EventRankingPlayerInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(Sphere211CharacterInfoMap, "_ZN12IInfoBaseMapIm22Sphere211CharacterInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CEventAreaInfoCategoryList, "_ZN12IInfoBaseMapIm9CAreaInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CPartialMaintenanceInfoMap, "_ZN12IInfoBaseMapIm23CPartialMaintenanceInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CUpdateStorageItemInfoList, "_ZN12IInfoBaseMapIm16CStorageItemInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(Sphere211FloorAssetInfoMap, "_ZN12IInfoBaseMapIm23Sphere211FloorAssetInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(TowerScheduleInfoArray_S2C, "_ZN12IInfoBaseMapIm21TowerScheduleInfo_S2CE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CDeepSpaceCharacterInfoList, "_ZN12IInfoBaseMapIm23CDeepSpaceCharacterInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CExchangeMaintenanceInfoMap, "_ZN12IInfoBaseMapIm24CExchangeMaintenanceInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CWorldMapMaintenanceInfoMap, "_ZN12IInfoBaseMapIm24CWorldMapMaintenanceInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(UpdateUniverseAddStatusInfo, "_ZN12IInfoBaseMapIm21UniverseAddStatusInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CBoostCharacterResultInfoMap, "_ZN12IInfoBaseMapIm25CBoostCharacterResultInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CPlayerCharacterFavorInfoMap, "_ZN12IInfoBaseMapIm32CPlayerCharacterFavorInfoElementE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CPlayerCharacterMasteryInfoMap, "_ZN12IInfoBaseMapIm27CPlayerCharacterMasteryInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CBattleEvaluationResultInfoList, "_ZN12IInfoBaseMapIm27CBattleEvaluationResultInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CDeepSpaceDebugCharacterInfoMap, "_ZN12IInfoBaseMapIm28CDeepSpaceDebugCharacterInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(Sphere211RentalCharacterInfoMap, "_ZN12IInfoBaseMapIm28Sphere211RentalCharacterInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CGachaMutationTestResultInfoList, "_ZN12IInfoBaseMapIm28CGachaMutationTestResultInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(Sphere211TreasureResultLotInfoMap, "_ZN12IInfoBaseMapIm30Sphere211TreasureResultLotInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CMissionResultCharacterCategoryInfo, "_ZN12IInfoBaseMapIm27CMissionResultCharacterInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    X(CMissionResultCharacterFavorInfoMap, "_ZN12IInfoBaseMapIm32CMissionResultCharacterFavorInfoE16DeserializeChildEPKN4Aska4ASON6AValue4AMapE") \
+    /* end of INFO_MAP_DESERIALIZERS */
+
 // X(Class, Initialize symbol): every info above whose Initialize the natives take (one per address).
 #define INFO_INITIALIZERS(X) \
     X(CBirthInfo, "_ZN10CBirthInfo10InitializeEv") \

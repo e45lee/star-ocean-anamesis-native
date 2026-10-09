@@ -1,6 +1,6 @@
 // The host GL contexts behind the guest's EGL (app/sdl_gl.h).
 #include "app/sdl_gl.h"
-#include "core/thread_record.h"
+#include "soaruntime/core/thread_record.h"
 
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
@@ -14,8 +14,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "core/log.h"
-#include "hle/gl_host.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/hle/gl_host.h"
 
 namespace soa::app::sdlgl {
 

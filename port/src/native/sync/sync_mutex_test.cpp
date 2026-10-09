@@ -7,8 +7,8 @@
 #include <chrono>
 #include <cstring>
 
-#include "core/loader.h"
-#include "hle/thread.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/hle/thread.h"
 #include "native/common/test.h"
 #include "native/common/gen/common_addresses.h"
 #include "native/sync/gen/sync_addresses.h"

@@ -7,8 +7,8 @@
 // texture would be uploaded first are skipped (the upload would run in the recorded runs).
 #include <cstring>
 
-#include "core/cpu.h"
-#include "hle/gl_host.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/hle/gl_host.h"
 #include "native/common/native.h"
 #include "native/render/render_check.h"
 #include "native/render/render_layout.h"

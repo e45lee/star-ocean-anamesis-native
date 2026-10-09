@@ -12,7 +12,7 @@
 #include <thread>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/test.h"
 #include "native/memory/memory_check.h"
 #include "native/memory/memory_heap.h"

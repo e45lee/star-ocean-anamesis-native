@@ -464,6 +464,293 @@
    ]
   },
   {
+   "name": "AudioEmitter",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "Audio3DObject"
+     },
+     "size": 240
+    },
+    {
+     "offset": 240,
+     "name": "m_unk0f0",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 244,
+     "name": "m_distanceScale",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 248,
+     "name": "m_gains",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 272,
+     "name": "m_rangeScale",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 276,
+     "name": "unk_114",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 280,
+     "name": "m_curve",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 288,
+     "name": "m_computed",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 289,
+     "name": "unk_121",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 296,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2069cb4",
+     "symbol": "_ZN4Aska12AudioEmitterC1Ev",
+     "name": "AudioEmitter"
+    },
+    {
+     "ghidra": "0x2069d24",
+     "symbol": "_ZN4Aska12AudioEmitterD1Ev",
+     "name": "~AudioEmitter"
+    },
+    {
+     "ghidra": "0x2069d38",
+     "symbol": "_ZN4Aska12AudioEmitterD0Ev",
+     "name": "~AudioEmitter"
+    },
+    {
+     "ghidra": "0x2069d60",
+     "symbol": "_ZN4Aska12AudioEmitter7ComputeEv",
+     "name": "Compute"
+    }
+   ]
+  },
+  {
+   "name": "AudioMessage",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_message",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_arg0",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_arg1",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 24,
+   "align": 8
+  },
+  {
+   "name": "SoundRequest",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_type",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "unk_04",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_data",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 16,
+   "align": 8
+  },
+  {
+   "name": "TSoundDynamicQueue<AudioMessage>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_write",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_read",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_items",
+     "type": {
+      "kind": "ptr",
+      "to": "AudioMessage"
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
    "name": "WaveStreamView",
    "union": false,
    "fields": [
@@ -896,17 +1183,83 @@
    "fields": [
     {
      "offset": 0,
-     "name": "unk_000",
+     "name": "m_sync",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 944
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::OggSyncState",
+      "size": 32
      },
-     "size": 944
+     "size": 32
+    },
+    {
+     "offset": 32,
+     "name": "m_stream",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::OggStreamState",
+      "size": 408
+     },
+     "size": 408
+    },
+    {
+     "offset": 440,
+     "name": "m_page",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::OggPage",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 472,
+     "name": "m_packet",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::OggPacket",
+      "size": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 520,
+     "name": "m_info",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::VorbisInfo",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 576,
+     "name": "m_comment",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::VorbisComment",
+      "size": 32
+     },
+     "size": 32
+    },
+    {
+     "offset": 608,
+     "name": "m_dsp",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::VorbisDspState",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 752,
+     "name": "m_block",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::lib_vorbis::VorbisBlock",
+      "size": 192
+     },
+     "size": 192
     },
     {
      "offset": 944,
@@ -929,17 +1282,33 @@
     },
     {
      "offset": 956,
-     "name": "unk_3bc",
+     "name": "m_framesLong",
      "type": {
-      "kind": "array",
-      "of": {
-       "kind": "int",
-       "size": 1,
-       "signed": false
-      },
-      "count": 12
+      "kind": "int",
+      "size": 4,
+      "signed": false
      },
-     "size": 12
+     "size": 4
+    },
+    {
+     "offset": 960,
+     "name": "m_framesShort",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 964,
+     "name": "m_consumed",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
     },
     {
      "offset": 968,
@@ -953,7 +1322,17 @@
     },
     {
      "offset": 969,
-     "name": "unk_3c9",
+     "name": "m_pageEos",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 970,
+     "name": "unk_3ca",
      "type": {
       "kind": "array",
       "of": {
@@ -961,9 +1340,66 @@
        "size": 1,
        "signed": false
       },
-      "count": 115
+      "count": 6
      },
-     "size": 115
+     "size": 6
+    },
+    {
+     "offset": 976,
+     "name": "m_buffers",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "ptr",
+       "to": null
+      },
+      "count": 8
+     },
+     "size": 64
+    },
+    {
+     "offset": 1040,
+     "name": "m_bufferSizes",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 4,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 32
+    },
+    {
+     "offset": 1072,
+     "name": "m_bufferIndex",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1076,
+     "name": "m_loopEnd",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1080,
+     "name": "m_totalFrames",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
     },
     {
      "offset": 1084,
@@ -977,7 +1413,17 @@
     },
     {
      "offset": 1085,
-     "name": "unk_43d",
+     "name": "m_loopState",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1086,
+     "name": "unk_43e",
      "type": {
       "kind": "array",
       "of": {
@@ -985,9 +1431,53 @@
        "size": 1,
        "signed": false
       },
-      "count": 19
+      "count": 2
      },
-     "size": 19
+     "size": 2
+    },
+    {
+     "offset": 1088,
+     "name": "m_loopPos",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1092,
+     "name": "m_loopBlock",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1096,
+     "name": "m_loopStart",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1100,
+     "name": "unk_44c",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
     }
    ],
    "size": 1104,
@@ -1671,6 +2161,76 @@
    ]
   },
   {
+   "name": "TSoundDynamicQueue<SoundRequest>",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_write",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_read",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "m_capacity",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "unk_14",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "m_items",
+     "type": {
+      "kind": "ptr",
+      "to": "SoundRequest"
+     },
+     "size": 8
+    }
+   ],
+   "size": 32,
+   "align": 8
+  },
+  {
    "name": "SoundObject",
    "union": false,
    "fields": [
@@ -1726,7 +2286,26 @@
     },
     {
      "offset": 304,
-     "name": "unk_130",
+     "name": "m_requests",
+     "type": {
+      "kind": "struct",
+      "name": "TSoundDynamicQueue<SoundRequest>"
+     },
+     "size": 32
+    },
+    {
+     "offset": 336,
+     "name": "m_requestCs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 480,
+     "name": "unk_1e0",
      "type": {
       "kind": "array",
       "of": {
@@ -1734,9 +2313,9 @@
        "size": 1,
        "signed": false
       },
-      "count": 184
+      "count": 8
      },
-     "size": 184
+     "size": 8
     },
     {
      "offset": 488,
@@ -2364,9 +2943,168 @@
        "size": 1,
        "signed": false
       },
-      "count": 1680
+      "count": 24
      },
-     "size": 1680
+     "size": 24
+    },
+    {
+     "offset": 928,
+     "name": "m_listener",
+     "type": {
+      "kind": "struct",
+      "name": "AudioListener"
+     },
+     "size": 288
+    },
+    {
+     "offset": 1216,
+     "name": "unk_4c0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 336
+     },
+     "size": 336
+    },
+    {
+     "offset": 1552,
+     "name": "m_volumeDb",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1556,
+     "name": "unk_614",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1560,
+     "name": "m_listenerRange",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1564,
+     "name": "m_speakerAngles",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 1588,
+     "name": "unk_634",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 1600,
+     "name": "m_speakers",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "bytes",
+       "ctype": "Vector"
+      },
+      "count": 6
+     },
+     "size": 96
+    },
+    {
+     "offset": 1696,
+     "name": "m_innerRadius",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1700,
+     "name": "m_outerRadius",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1704,
+     "name": "m_distanceUnit",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1708,
+     "name": "unk_6ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1712,
+     "name": "m_listenerCurve",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1720,
+     "name": "unk_6b8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 864
+     },
+     "size": 864
     },
     {
      "offset": 2584,
@@ -3029,9 +3767,42 @@
        "size": 1,
        "signed": false
       },
-      "count": 252
+      "count": 52
      },
-     "size": 252
+     "size": 52
+    },
+    {
+     "offset": 80,
+     "name": "m_messages",
+     "type": {
+      "kind": "struct",
+      "name": "TSoundDynamicQueue<AudioMessage>"
+     },
+     "size": 32
+    },
+    {
+     "offset": 112,
+     "name": "m_messageCs",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::sync::FastCriticalSection",
+      "size": 144
+     },
+     "size": 144
+    },
+    {
+     "offset": 256,
+     "name": "unk_100",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 24
+     },
+     "size": 24
     },
     {
      "offset": 280,

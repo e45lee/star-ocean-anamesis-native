@@ -3,10 +3,10 @@
 // query reports "nothing to download".
 #include <vector>
 
-#include "android/platform.h"
-#include "core/log.h"
-#include "core/vfs.h"
-#include "jni/jvm.h"
+#include "soaruntime/android/platform.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/vfs.h"
+#include "soaruntime/jni/jvm.h"
 
 namespace soa::jni {
 

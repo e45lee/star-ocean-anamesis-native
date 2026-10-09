@@ -188,6 +188,12 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
   function; `tools/gen_addresses.py` writes `gen/<s>_addresses.h`, T0 `generated` checks it), never a
   typed vaddr. A native regression: `soa --natives route` (only the port's own hooks) and
   `--natives-skip SUBSYS` narrow it down (port/src/native/README.md "Which natives run").
+- **Natives call natives as natives**, not through `guest_call`.
+  - Within a family that is always installed together: a typed C++ member call.
+  - Across subsystems: a `NativeCallee` (`port/src/native/common/native_call.h`). It calls the native directly and
+    falls back to `guest_call` under `--natives route` / `--natives-skip`, `--selftest`, live checks and `--gdb`.
+  - `guest_call` stays only for a hook's own original, dynamic vtable dispatch, and targets that are still guest code.
+  - Classify new call sites in [CALLS.md](port/src/native/CALLS.md).
 - Check `soa --list-native` before porting a symbol, and look in `port/src/native/common/` for an
   existing helper (`git merge main` first) before adding one.
 

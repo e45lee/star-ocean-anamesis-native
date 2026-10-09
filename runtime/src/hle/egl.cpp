@@ -28,9 +28,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "android/ndk.h"
-#include "core/hle.h"
-#include "core/log.h"
+#include "soaruntime/android/ndk.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
 #include "hle/egl_state.h"
 #include "hle/gfx.h"
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Fails on a non-trivial thread_local in our code (runtime/README.md "Per-thread state";
-runtime/src/core/thread_record.h).
+runtime/include/soaruntime/core/thread_record.h).
 
     tools/check_thread_local.py [BUILD_DIR]     (default build/, as T0's build step left it;
                                                  build-win/ works too: MinGW's emulated TLS)
@@ -109,7 +109,7 @@ def main():
     for p in problems:
         print("FAIL:", p)
     if problems:
-        print("FAIL: non-trivial thread_local: use thread_object<T, Tag>() (runtime/src/core/thread_record.h; "
+        print("FAIL: non-trivial thread_local: use thread_object<T, Tag>() (runtime/include/soaruntime/core/thread_record.h; "
               "runtime/README.md \"Per-thread state\")")
         return 1
     if not objs:

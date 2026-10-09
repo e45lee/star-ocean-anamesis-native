@@ -13,7 +13,7 @@
 // command and at exit. port/scripts/profile_report.py turns them into a report.
 #include <cstdio>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 
 namespace soa {
 

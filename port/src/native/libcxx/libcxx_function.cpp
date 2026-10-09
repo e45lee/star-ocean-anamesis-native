@@ -2,7 +2,7 @@
 // callable's __base vtable, as the game's code makes them.
 #include "native/libcxx/libcxx_function.h"
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa::native::libcxx {
 

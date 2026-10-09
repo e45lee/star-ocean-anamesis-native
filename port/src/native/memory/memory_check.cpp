@@ -9,8 +9,8 @@
 #include <string>
 #include <vector>
 
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "native/common/live_check.h"
 #include "native/memory/memory_heap.h"
 #include "native/memory/memory_pools.h"

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/native_call.h"
 #include "native/common/test.h"
 #include "native/data_formats/data_formats_layout.h"

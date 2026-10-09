@@ -86,6 +86,6 @@ endforeach()
 
 # The port includes every library of the repository but the emulators' code (cmake/flags.cmake)
 soa_check_includes(port/ DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
-                   ALLOW ${CMAKE_CURRENT_SOURCE_DIR}/src ${SOA_REPO_DIR}/runtime/src ${SOA_REPO_DIR}/platform370/include
+                   ALLOW ${CMAKE_CURRENT_SOURCE_DIR}/src ${SOA_REPO_DIR}/runtime/include ${SOA_REPO_DIR}/platform370/include
                          ${SOA_REPO_DIR}/server/include ${SOA_REPO_DIR}/server ${SOA_REPO_DIR}/webview/include
                          ${SOA_REPO_DIR}/common/include)

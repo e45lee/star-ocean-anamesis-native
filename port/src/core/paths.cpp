@@ -3,7 +3,7 @@
 
 #include <soa/install.h>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "core/options.h"
 
 namespace soa {

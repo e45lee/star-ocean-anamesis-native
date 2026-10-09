@@ -1,4 +1,4 @@
-#include "frontend/movie_decoder.h"
+#include "soaruntime/frontend/movie_decoder.h"
 
 #include <cstdio>
 #include <cstring>

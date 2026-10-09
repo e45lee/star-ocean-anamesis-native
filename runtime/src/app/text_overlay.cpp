@@ -20,8 +20,8 @@
 #include <utility>
 #include <vector>
 
-#include "android/platform.h"
-#include "core/log.h"
+#include "soaruntime/android/platform.h"
+#include "soaruntime/core/log.h"
 #include "frontend/text_entry.h"
 
 namespace soa::app::text_overlay {

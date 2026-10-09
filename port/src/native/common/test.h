@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/native.h"
 
 namespace soa {

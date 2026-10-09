@@ -34,7 +34,7 @@ endif()
 # (AGENTS.md "Layering"). The include path of each target is the backstop; this names the file.
 set(SOA_INCLUDE_ROOTS
   ${SOA_REPO_DIR}/common/include ${SOA_REPO_DIR}/common/win32
-  ${SOA_REPO_DIR}/runtime/src
+  ${SOA_REPO_DIR}/runtime/include ${SOA_REPO_DIR}/runtime/src
   ${SOA_REPO_DIR}/platform370/include ${SOA_REPO_DIR}/platform370/src
   ${SOA_REPO_DIR}/server/include ${SOA_REPO_DIR}/server/src ${SOA_REPO_DIR}/server
   ${SOA_REPO_DIR}/webview/include ${SOA_REPO_DIR}/webview/src

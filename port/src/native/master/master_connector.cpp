@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/native.h"
 #include "native/common/native_call.h"
 #include "native/master/master_family.h"

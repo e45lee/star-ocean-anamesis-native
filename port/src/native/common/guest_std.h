@@ -9,8 +9,8 @@
 #include <string>
 #include <string_view>
 
-#include "core/cpu.h"
 #include "native/libcxx/libcxx_layout.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa::guest {
 

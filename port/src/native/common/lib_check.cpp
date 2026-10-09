@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/gen/common_addresses.h"
 #include "native/common/test.h"
 

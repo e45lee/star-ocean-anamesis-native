@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/guest_std.h"
 #include "native/lib_sqlite/lib_sqlite.h"
 #include "native/yayoi/yayoi_layout.h"

@@ -22,7 +22,10 @@ tests, Ghidra types): port/src/native/README.md "Per-subsystem workflow".
 | `AudioPlayer`, `WaveVoiceBase`, `WaveBuffer`, `WaveStreamView` | - | the chain FlushDeletingSoundObject reads (player +0x118 -> voice +0x30 -> buffer +8 -> stream +0x3fc / +0x728); AudioPlayer::m_state (+0x18) | partial views (the stream is resource's MultiMediaStream family) |
 | `Sequencer2`, `AudioMessageNote`, `WaitingNoteNotify` (Aska) | 0x110, 0x40, 0x18 | the Sequencer2 constructor, AddMessageNote, Arrange / ProcessMessageNote | proven by `audio/sequencer` |
 | `SLVoice` (Aska) | 0x648 | the constructor, CreateVoice, the submit path | proven by `audio/voice-submit` (the fields the submit path uses; the playback parameters +0x18..0x30 opaque) |
-| `WaveBuffer` (CBR / VBRBuffer), `AskaOGG` (partial), `AaoWAVE` (partial), `WaveStreamView` | 0x78, 0x450, -, - | CreateVoice's construction, Lock / UnlockBuffer, AskaOGG::Decode, the voice's reads; the stream is resource's MultiMediaStream (slots 19 Lock, 20 Unlock, 23 IsEnd) | the buffer proven by `audio/voice-submit` |
+| `TSoundDynamicQueue<T>` (Aska), `AudioMessage`, `SoundObject::RequestContainer` (`SoundRequest`) | 0x20, 0x18, 0x10 | SEControlObject's constructor (write 1 / read 0, a 5-slot buffer), AddEx, RequestSet's inlined AddEx; AudioPlayer's queue +0x50 under its lock +0x70, SoundObject's +0x130 under +0x150 | proven by `audio/mailboxes` |
+| `AskaOGG` (Aska) | 0x450 | the constructor / DecodeContext's, DecodeInit, DecodeHeader, DecodeBody, DecodePackets, Decode_Pcmout, Decode_LoopStart; the library's structs embedded (lib_vorbis_layout.h) | proven by `audio/ogg-decode` (the decoder's own fields from +0x3b0) |
+| `WaveBuffer` (CBR / VBRBuffer), `AaoWAVE` (partial), `WaveStreamView` | 0x78, -, - | CreateVoice's construction, Lock / UnlockBuffer, AskaOGG::Decode, the voice's reads; the stream is resource's MultiMediaStream (slots 19 Lock, 20 Unlock, 23 IsEnd) | the buffer proven by `audio/voice-submit` |
+| `AudioEmitter` (Aska) | 0x128 | the constructor (SEControlObject + 0x200), Compute; SoundManager's 3D fields (the listener at +0x3a0, the speakers' angles +0x61c and places +0x640, the radii, the curves, the volume) | proven by `audio/3d-emitter` |
 | `Audio3DObject`, `AudioListener` (Aska) | 0xf0, 0x120 | the AudioListener / AudioEmitter constructors, UpdateMatrix, Compute, Audio3DEngine's members | proven by `audio/3d-listener` |
 | `CElement` (Framework::CSound) | 0x70 | the constructor, Initialize, Activate, PostProgress, TObjectContainer<CElement>'s 0x70 stride | proven by `audio/framework-progress`, `audio/element-post-progress` |
 | `CSoundManager` (Framework) | >= 0x84 | the constructor, Initialize, Pre/PostProgress, the accessors | proven by `audio/framework-progress` |
@@ -33,7 +36,7 @@ lock code) and `CMutex` (CSoundManager's, through a pointer), kernel's `Task` (A
 
 ## Natives
 
-48 bound (`soa --list-native`: the 41 `audio:` ones and the seven `Aska::AskaADPCM::*`). Live checks:
+55 bound (`soa --list-native`: the 48 `audio:` ones and the seven `Aska::AskaADPCM::*`). Live checks:
 `soa --live-check audio[:every=N][:out=FILE]` (shadow checks; default every=16) and
 `--live-check audio_leaf[:every=N][:out=FILE]` (record / replay; `audio_check.h`).
 Result (2026-10-08, `port/scripts/restore_session.sh`, the battle-gacha flow, audio every=2, audio_leaf every=1): PASS;
@@ -61,8 +64,11 @@ covers PCM voices only (a compressed voice's callback is one atomic add): none p
 | `Framework::CSound::CElement::PostProgress` (the watchdog stop, the release of a finished sound object) | `audio_framework.cpp` | `audio/element-post-progress` | inside PostProgress's check (its only caller) |
 | `Aska::Sequencer2::AddMessageNote` / `DeleteMessageNote` / `DeleteAllMessageNote` / `ArrangeMessageNote` / `ProcessMessageNote` / `AudioRun` / `IsWaitingNote`, `Sequencer2::WaitingNoteNotify::Handler` | `audio_sequencer.cpp` | `audio/sequencer` (random notes of every type incl. NaN times, the player's states, the pool and SendMessage stubbed) | the guest on a shadow sequencer (its notes copied, the notify moved to the shadow's), Acquire / ReleaseMessageNote and SendMessage stubbed; calls, list, notes, count, clock, notify compared; AudioRun's two passes are checked as Arrange / Process |
 | `Aska::Audio3DObject::UpdateMatrix`, `Aska::AudioListener::Compute` | `audio_3d.cpp` | `audio/3d-listener` (a fake node's random world matrix, or none) | the guest and the native again on two shadows of the object: equal bytes |
+| `Aska::AudioEmitter::Compute` (the six speaker gains: the far share panned by angle, the near share by inverse distance, the two curves, the master volume; the disassembly's order of operations, FMAX / FMINNM, the libm's acosf / powf / sqrtf as the HLE gives them: bit-exact; no fused multiply-adds in the guest's code) | `audio_3d.cpp` | `audio/3d-emitter` (2,000 private emitters around the live listener across its radii, on its axis, at it, NaN places, a fake curve, NaN curve values) | the guest and the native again on two shadows of the emitter: gains and flag equal |
 | `Aska::SoundManager::ArrangeCommandList` / `ProcessCommandList` / `AddSoundCommand` / `InsertSoundCommand` / `RemoveSoundCommand` / `UpdateAllSoundStatus` / `QuerySoundHandle` / `AddSoundHandle` / `RemoveSoundHandle` / `AddDeletingSoundObject` / `FlushDeletingSoundObject` | `audio_sound_manager.cpp` | `audio/sound-manager-lists` (private pools of commands, handles, objects; ArrangeCommand / ProcessCommand stubbed with per-command results and follow-up commands; the releases and UpdateSoundStatus logged) | the guest on a shadow manager whose lists are copies taken before the native ran, the guest callees answered with the native run's results; calls, lists and counts compared; a node from another thread = a race; QuerySoundHandle a getter |
 | `Aska::SLVoice::AudioSignal`, `ProcAudioBuffer`, `LockAndSubmitData` / `ADPCM` / `OGG` (x8 results), `SubmitBufferDataPCM` / `ADPCM` / `OGG`, `SubmitDummyDataAdpcm` / `Ogg`, `SetDeleteCountdown`; `Aska::WaveBuffer::LockBuffer` / `UnlockBuffer` | `audio_voice.cpp`, `audio_voice_check.cpp` | `audio/voice-submit` (ADPCM / OGG / PCM voices in random queue states over a fake stream and buffer queue; the decoder, LockBufferEx and the pool stubbed from one script) | the guest on a shadow voice (the captured voice, a copy of its wave buffer over a proxy stream, a proxy buffer-queue interface, scratch decode buffers), AskaOGG::Decode / VBRBuffer::LockBufferEx / the pool replayed from the native's log; calls, voice and buffer compared |
+| `Aska::AudioPlayer::SendMessage` / `GetMessage`, `Aska::SoundObject::RequestSet` / `RequestGet` (a push or pop of the owner's TSoundDynamicQueue under its lock; RequestSet's growth inlined, SendMessage's through AddEx, which stays guest: SendMessage is its only caller) | `audio_message.cpp` | `audio/mailboxes` (rings of 2-6 slots, random pushes / pops until they fill and grow through the game's sound memory) | the guest on a shadow owner holding a copy of the queue the native found under the lock: result, out-parameter, the queue's fields and slots against the native's under the same lock; a push that grows the ring is skipped (none in the flows) |
+| `Aska::AskaOGG::DecodePackets` (DecodeBody's per-page packet loop, up to the frame target), `Decode_Pcmout` (float -> s16, interleaved, into the current out buffer, which grows by 64 KiB); the library through its guest symbols (direct host calls when lib_vorbis is native, the guest library under `--natives-skip lib_vorbis`) | `audio_ogg.cpp` | `audio/ogg-decode` (two BGMs of the download decoded through the guest's Decode, the voice's way, on two decoders: all guest, and with these two stubbed by the natives; budgets from 1 frame to 0x40000, small buffers that grow, loop ends that run Decode_LoopStart; every result and PCM byte, the fields, the pool size) | the guest on a shadow decoder (the object as found, its out buffer a copy), the library's calls and SoundMemory's Resource* answered from the native's log (pcmout's float rows copied); DecodePackets' Decode_Pcmout runs the guest's too; calls, result, fields from +0x3b0 and the out buffer's written bytes compared |
 | `Aska::AskaADPCM::Decode`, `Decode_M08` / `M16` / `S08` / `S16`, `Init`, `GetSamplesPerBlock` | `audio_adpcm.cpp` | `audio/adpcm-decode` (random streams, all block sizes incl. degenerate ones, cut streams), `audio/adpcm-init` | record / replay (the object, the input, the output); the Decode_* only through Decode (their only caller) |
 
 ## Dependencies
@@ -125,5 +131,29 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   without the lock: the playback parameters (+0x18..0x30), m_kicks and m_deleteCountdown (AudioKick),
   m_pendingBuffers (the callback). Guest quirk kept as is: when MultiMediaStream::Lock returns 0 it writes
   nothing, and LockAndSubmitData then enqueues 0 bytes at an uninitialized pointer (the native: null).
+- **AskaOGG's packets.** DecodeBody feeds the source to the sync layer 0x2000 bytes at a time and, per page,
+  calls DecodePackets (or Decode_LoopStart after a loop jump), which decodes packets until none is left
+  or the frame target (m_framesShort when the caller's budget fits it, else m_framesLong; minus one) is
+  passed outside a loop page and not at the end of the stream: then m_hasPending, and the voice hands the
+  same source back. A packet ogg_stream_packetout reports as a hole is skipped; a vorbis_synthesis error
+  skips blockin but still drains the PCM. Decode_Pcmout's conversion is `fmul 32767.0f; fadd 0.5f;
+  fcvtms` (toward -inf, not a C cast: Ghidra shows `(int)`), clamped to [-0x8000, 0x7fff]; a buffer too
+  small grows by 64 KiB through SoundMemory::ResourceAlloc and raises m_uiDecodePoolSize (the next
+  decoders start that large).
+- **3D panning (AudioEmitter::Compute).** The speakers' slots are 0..5 with 3 unused (angles, places and gains
+  alike). The far share goes to the two speakers whose angles (0..2pi, around the listener's up axis, in the
+  listener's frame) bracket the source's, linearly; the near share to the five by 1 / distance, normalized.
+  Ghidra's decompile reorders the near gains' products (`(near * norm) * inv` where the code does
+  `near * (norm * inv)`): the native follows the disassembly.
+- **Left to the guest (measured, battle-gacha profile 2026-10-08, the audio scope's guest self 371 samples of
+  33,526 busy):** SoundManager::SoundProcessSync (26: the sound thread's frame, a dozen callees and virtuals
+  that would each need replaying), AudioSignal::Run (19: posting the notifies to the dispatcher), Pause /
+  ResumeInterruptProcess (6), AudioEffector::AudioRun (its effect callback does the work; no effector ran in
+  these flows), SoundServer's note pool (29), CParameterSound* (the sound table's loading, ~40).
+- **The mailboxes.** TSoundDynamicQueue's m_read is the last slot read and m_write the next one written
+  (empty: the slot after m_read is m_write; full: m_write == m_read); a full ring grows by one slot, the
+  old buffer (from SoundMemory::Malloc) returned with operator delete (the block's owner is in its header,
+  so the mix works). Game quirk kept: a ring of one slot (never made: the constructor's is 5) would write
+  its first push past the buffer, since m_write starts at 1.
 - **Not audio's:** Aska::WaveModifier / WaveModifierCPUGL / WaveDistortionFilter are the GL screen
   distortion (render's), whatever their name.

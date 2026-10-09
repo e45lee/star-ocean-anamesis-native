@@ -15,7 +15,7 @@
 // GetAllocatedManager: a native would cost more than the guest's two instructions).
 #include "native/memory/memory_heap.h"
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/guest_std.h"
 #include "native/common/native_method.h"
 #include "native/memory/memory_check.h"

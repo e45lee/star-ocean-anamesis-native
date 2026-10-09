@@ -36,10 +36,10 @@
 #include <string>
 #include <thread>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "core/gdb_protocol.h"
-#include "core/gdbstub.h"
-#include "core/log.h"
+#include "soaruntime/core/gdbstub.h"
+#include "soaruntime/core/log.h"
 
 using namespace soa;
 

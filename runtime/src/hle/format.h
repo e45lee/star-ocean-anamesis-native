@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "core/abi.h"
+#include "soaruntime/core/abi.h"
 
 #ifdef _WIN32
 #define WIN_HOST true

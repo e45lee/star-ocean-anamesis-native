@@ -24,9 +24,9 @@
 #include <string>
 #include <vector>
 
-#include "android/platform.h"
-#include "app/page_overlay.h"
-#include "core/log.h"
+#include "soaruntime/android/platform.h"
+#include "soaruntime/app/page_overlay.h"
+#include "soaruntime/core/log.h"
 #include "native/ui/webview_local.h"
 #include "soaserver/server.h"
 #include "soawebview/page.h"

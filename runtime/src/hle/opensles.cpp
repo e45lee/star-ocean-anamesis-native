@@ -14,10 +14,10 @@
 #include <thread>
 #include <vector>
 
-#include "core/hle.h"
-#include "core/log.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
 #include "hle/audio.h"
-#include "core/selftest.h"
+#include "soaruntime/core/selftest.h"
 
 namespace soa {
 namespace {

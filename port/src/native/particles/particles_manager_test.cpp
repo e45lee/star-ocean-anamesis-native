@@ -7,7 +7,7 @@
 #include <random>
 #include <string>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/test.h"
 #include "native/particles/particles_check.h"
 

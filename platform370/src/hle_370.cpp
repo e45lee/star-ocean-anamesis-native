@@ -29,8 +29,8 @@
 
 #include <soa/local_time.h>
 
-#include "core/hle.h"
-#include "core/log.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
 #include "internal.h"
 
 namespace soa::platform370::detail {

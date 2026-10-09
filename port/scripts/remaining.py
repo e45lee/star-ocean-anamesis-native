@@ -24,10 +24,8 @@ import argparse
 import collections
 import os
 import re
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from profile_report import IDLE_HLE, demangle_all, family_of, fmt_bytes, load_tsv, table  # noqa: E402
+from profile_report import IDLE_HLE, demangle_all, family_of, fmt_bytes, load_tsv, table
 
 TRANSCRIBED = re.compile(r"a2c|transcribed", re.I)
 
@@ -149,7 +147,7 @@ def main():
             natives[i] = sym
             labels[i] = lab
 
-    executed, first_hit = set(), {}
+    executed = set()
     calls = collections.Counter()
     self_s, incl_s = collections.Counter(), collections.Counter()
     native_self = collections.Counter()

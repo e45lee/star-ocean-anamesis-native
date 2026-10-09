@@ -24,8 +24,7 @@ import sys
 
 import msgpack
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from ninja_client import F, Client  # noqa: E402
+from ninja_client import F, Client
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ALGS = {"SEED": 0x01E6AC1B, "AES128": 0x021D4314, "Blowfish": 0x03478CAF, "CAST128": 0x048A4DFE,

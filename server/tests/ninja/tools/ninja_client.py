@@ -6,16 +6,13 @@ time) are implemented here. Addresses are ELF vaddrs (Ghidra = vaddr + 0x100000)
 """
 import os
 import struct
-import sys
 
-from unicorn import UC_ARCH_ARM64, UC_HOOK_CODE, UC_MODE_ARM, Uc, UcError
+from unicorn import UC_ARCH_ARM64, UC_HOOK_CODE, UC_MODE_ARM, Uc
 from unicorn.arm64_const import (UC_ARM64_REG_CPACR_EL1, UC_ARM64_REG_LR, UC_ARM64_REG_PC, UC_ARM64_REG_SP,
                                  UC_ARM64_REG_TPIDR_EL0, UC_ARM64_REG_X0, UC_ARM64_REG_X1, UC_ARM64_REG_X8)
 
-REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
-sys.path.insert(0, os.path.join(REPO, "tools"))
-from elfinfo import lib  # noqa: E402
-from elftools.elf.relocation import RelocationSection  # noqa: E402
+from elfinfo import lib
+from elftools.elf.relocation import RelocationSection
 
 STACK, HEAP, STUBS, TLS, STOP = 0x7F000000, 0x60000000, 0x7E000000, 0x7D000000, 0x7FFFF000
 HEAP_SIZE = 0x4000000

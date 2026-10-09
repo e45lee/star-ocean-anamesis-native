@@ -12,8 +12,7 @@ import collections
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from profile_report import demangle_all, family_of  # noqa: E402
+from profile_report import demangle_all, family_of
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 

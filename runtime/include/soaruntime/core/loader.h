@@ -47,8 +47,11 @@ struct LoadedLib {
     std::unordered_map<std::string, Export> exports;
 };
 
-// Loads and relocates an AArch64 shared object. Imports are resolved via Hle.
-LoadedLib* load_library(const std::string& path);
+// Loads and relocates an AArch64 shared object. Imports are resolved via Hle. nullptr when the file
+// can't be read or isn't a loadable AArch64 shared library (not ELF, another machine, truncated,
+// an unsupported relocation): `*error` (when given) says why, as "PATH: reason", and the log has it
+// too; nothing of the image stays mapped or registered.
+LoadedLib* load_library(const std::string& path, std::string* error = nullptr);
 
 // The address of the same exported symbol (+ the same offset into it) in another loaded image
 // (e.g. another build of the library). 0 when `addr` isn't inside an exported function/object of `from`, or `to`

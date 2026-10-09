@@ -29,6 +29,7 @@
 #include <soa/paths.h>
 
 #include "soaruntime/android/ndk.h"
+#include "soaruntime/app/boot.h"
 #include "soaruntime/app/host.h"
 #include "soaruntime/android/platform.h"
 #include "soaruntime/android/zip.h"
@@ -55,9 +56,6 @@
 #include "soaserver/master_source.h"
 
 using namespace soa;
-namespace soa {
-void install_traces(LoadedLib& lib);
-}
 
 namespace {
 
@@ -247,57 +245,52 @@ int main(int argc, char** argv) {
 
     // The emulated device (runtime/include/soaruntime/core/device.h): a phone with the 3.7.0 app. platform370
     // registers its pieces with the runtime's extension points and sets app_version ("3.7.0") and
-    // the device clock, so it comes before hle_init / Vm::init.
+    // the device clock, so it comes before hle_init / Vm::init (app::boot).
     device_config().guest_cpus = cl.guest_cpus;
     platform370::install(p370);
-    vfs_init({data_dir});
     LOGI("main", "3.7.0 client %s, APK %s, data %s, natives: %s", lib_path.c_str(), apk_path.c_str(), data_dir.c_str(),
          selftest ? "none (--selftest)" : native_set_name(natives));
 
-    cpu_global_init();
-    if (!gdb_addr.empty()) {  // --gdb: the debugger hooks go on before any guest code runs
-        std::string err;
-        if (!gdb_listen(gdb_addr, &err)) {
-            fprintf(stderr, "%s\n", err.c_str());
-            return 2;
-        }
-    }
-    hle_init();
-    auto& vm = jni::Vm::get();
-    vm.init();
-    LoadedLib* lib = load_library(lib_path);
-    // platform370's native patch (service_stop_day), before any native hook.
-    switch (platform370::install_patches(*lib)) {
-        case platform370::PatchStatus::Hooked: break;
-        case platform370::PatchStatus::Disabled: LOGI("main", "--no-patch: the client's service-end check is live"); break;
-        case platform370::PatchStatus::NotFound: LOGW("main", "platform370's service_stop_day patch found no 3.7.0 FindGlobalStringWithKey"); break;
-    }
-    // --lang / --voice-lang (platform370 lang_370.cpp, text_370.cpp): with --lang en the CLanguage,
-    // CCocosLabel::SetText and DrawSelf hooks; none is a native, so the natives below don't replace them.
-    platform370::install_language(*lib);
-    // The FakeApiCaller route's hooks only in-process; with --server HOST the client's own
-    // NetworkApiCaller runs untouched. (The main image is the 3.7.0 client; no
-    // second image is mapped.)
-    if (!selftest) install_native_functions(*lib, natives, inproc, args.natives_skip);
-    if (selftest) install_test_hooks(*lib);  // test harness hooks (see NATIVE_TEST_HOOK)
-    if (!selftest) install_traces(*lib);
-    profile_init(*lib);  // SOA_COVERAGE / SOA_PROFILE
-    app::start_watchdog();  // SOA_WATCHDOG
-
-    auto& am = asset_manager();
-    if (!download_dir.empty()) {
-        if (!am.set_download_dir(download_dir, cl.download_prefer)) fatal("--download %s: neither a folder nor a zip", download_dir.c_str());
-        LOGI("main", "download dir %s (%s the APK)", download_dir.c_str(), am.download_prefer() ? "preferred over" : "fallback for");
-    }
-    if (!cl.standin_off && !cl.standin_dir.empty()) {
-        am.set_standin_dir(cl.standin_dir);
-        LOGI("main", "stand-in assets %s (after the APK and the download dir)", cl.standin_dir.c_str());
-    }
+    // The runtime's bring-up (runtime/include/soaruntime/app/boot.h).
+    app::BootConfig boot;
+    boot.data_dir = data_dir;
+    boot.lib_path = lib_path;
+    boot.gdb = gdb_addr;
+    boot.download_dir = download_dir;
+    boot.download_prefer = cl.download_prefer;
     // The 3.7.0 APK is a single APK (no splits, no asset packs, no Play Core); the asset manager
     // indexes the zip.
-    if (!am.add_apk(apk_path)) fatal("--apk: cannot open %s", apk_path.c_str());
-
-    run_initializers(*lib);
+    boot.apks = {apk_path};
+    boot.traces = !selftest;
+    boot.after_load = [&](LoadedLib& lib) {
+        // platform370's native patch (service_stop_day), before any native hook.
+        switch (platform370::install_patches(lib)) {
+            case platform370::PatchStatus::Hooked: break;
+            case platform370::PatchStatus::Disabled: LOGI("main", "--no-patch: the client's service-end check is live"); break;
+            case platform370::PatchStatus::NotFound: LOGW("main", "platform370's service_stop_day patch found no 3.7.0 FindGlobalStringWithKey"); break;
+        }
+        // --lang / --voice-lang (platform370 lang_370.cpp, text_370.cpp): with --lang en the CLanguage,
+        // CCocosLabel::SetText and DrawSelf hooks; none is a native, so the natives below don't replace them.
+        platform370::install_language(lib);
+        // The FakeApiCaller route's hooks only in-process; with --server HOST the client's own
+        // NetworkApiCaller runs untouched. (The main image is the 3.7.0 client; no
+        // second image is mapped.)
+        if (!selftest) install_native_functions(lib, natives, inproc, args.natives_skip);
+        if (selftest) install_test_hooks(lib);  // test harness hooks (see NATIVE_TEST_HOOK)
+    };
+    boot.add_assets = [&](AssetManager& am, std::string*) {
+        if (!cl.standin_off && !cl.standin_dir.empty()) {
+            am.set_standin_dir(cl.standin_dir);
+            LOGI("main", "stand-in assets %s (after the APK and the download dir)", cl.standin_dir.c_str());
+        }
+        return true;
+    };
+    std::string boot_error;
+    LoadedLib* lib = app::boot(boot, &boot_error);
+    if (!lib) {
+        fprintf(stderr, "soa: %s\n", boot_error.c_str());
+        return 2;
+    }
     // --selftest boots the game without native replacements and runs the differential tests
     // once the game's memory manager exists (many guest functions allocate through it); see
     // the main loop.

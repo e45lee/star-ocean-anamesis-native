@@ -28,6 +28,7 @@
 #include "soaruntime/android/ndk.h"
 #include "soaruntime/android/platform.h"
 #include "soaruntime/android/zip.h"
+#include "soaruntime/app/boot.h"
 #include "soaruntime/app/host.h"
 #include "soaruntime/core/cpu.h"
 #include "soaruntime/core/device.h"
@@ -41,9 +42,6 @@
 #include "cli.h"
 
 using namespace soa;
-namespace soa {
-void install_traces(LoadedLib& lib);  // core/trace.cpp: SOA_TRACE
-}
 
 namespace {
 
@@ -252,54 +250,47 @@ int main(int argc, char** argv) {
     // master_global.service_stop_day (emulator-viewer/README.md "Dates").
     device_config().guest_cpus = guest_cpus;
     device_config().app_version = "3.8.0";  // the XAPK's versionName
-    vfs_init({data_dir});
 
-    auto t0 = std::chrono::steady_clock::now();
-    cpu_global_init();
-    if (!gdb_addr.empty()) {  // --gdb: the debugger hooks go on before any guest code runs
-        std::string err;
-        if (!gdb_listen(gdb_addr, &err)) {
-            fprintf(stderr, "%s\n", err.c_str());
-            return 2;
-        }
-    }
-    hle_init();             // + net_offline.cpp
-    jni::Vm::get().init();  // the runtime's Java side, incl. playcore (jni/java_playcore.cpp)
-    LoadedLib* lib = load_library(lib_path);
-    install_traces(*lib);   // SOA_TRACE
-    profile_init(*lib);     // SOA_COVERAGE / SOA_PROFILE
-    app::start_watchdog();  // SOA_WATCHDOG
-
-    auto& am = asset_manager();
-    auto t_pkg = std::chrono::steady_clock::now();
-    for (const char* f : {kBaseApk, "assetinstalltime.apk"}) {
-        auto z = pkg.open(f);
-        if (!z || !am.add_zip(std::move(z), pkg.describe(f))) fatal("cannot open %s", pkg.describe(f).c_str());
-    }
-    // Fast-follow / on-demand packs aren't in the APKPure XAPK (their BGM and talk-scene sounds
-    // are missing then, as on a phone that never fetched them), but can be supplied as split APKs.
-    for (const char* pack : {"assetfastfollow", "assetondemand1"}) {
-        for (std::string f : {std::string(pack) + ".apk", std::string("split_") + pack + ".apk"}) {
-            auto z = pkg.has(f) ? pkg.open(f) : nullptr;
-            if (z && install_asset_pack(*z, pkg.describe(f), pack)) {
-                platform_add_asset_pack(pack);
-                break;
+    // The runtime's bring-up (runtime/include/soaruntime/app/boot.h); the runtime's Java side
+    // includes playcore (jni/java_playcore.cpp).
+    app::BootConfig boot;
+    boot.log_tag = "viewer";
+    boot.data_dir = data_dir;
+    boot.lib_path = lib_path;
+    boot.gdb = gdb_addr;
+    boot.download_dir = download_dir;  // the same option as soa / soa-emu: serves assets missing from the APKs
+    boot.download_prefer = download_prefer;
+    boot.apks = extra_apks;
+    boot.add_assets = [&](AssetManager& am, std::string* error) {
+        auto t_pkg = std::chrono::steady_clock::now();
+        for (const char* f : {kBaseApk, "assetinstalltime.apk"}) {
+            auto z = pkg.open(f);
+            if (!z || !am.add_zip(std::move(z), pkg.describe(f))) {
+                *error = "cannot open " + pkg.describe(f);
+                return false;
             }
         }
-        if (!platform_has_asset_pack(pack)) LOGI("viewer", "asset pack %s not present (%s.apk); its sounds are missing", pack, pack);
+        // Fast-follow / on-demand packs aren't in the APKPure XAPK (their BGM and talk-scene sounds
+        // are missing then, as on a phone that never fetched them), but can be supplied as split APKs.
+        for (const char* pack : {"assetfastfollow", "assetondemand1"}) {
+            for (std::string f : {std::string(pack) + ".apk", std::string("split_") + pack + ".apk"}) {
+                auto z = pkg.has(f) ? pkg.open(f) : nullptr;
+                if (z && install_asset_pack(*z, pkg.describe(f), pack)) {
+                    platform_add_asset_pack(pack);
+                    break;
+                }
+            }
+            if (!platform_has_asset_pack(pack)) LOGI("viewer", "asset pack %s not present (%s.apk); its sounds are missing", pack, pack);
+        }
+        LOGI("viewer", "game assets indexed from %s in %.3f s", pkg.where().c_str(),
+             std::chrono::duration<double>(std::chrono::steady_clock::now() - t_pkg).count());
+        return true;
+    };
+    std::string boot_error;
+    LoadedLib* lib = app::boot(boot, &boot_error);
+    if (!lib) {
+        fprintf(stderr, "soa-viewer: %s\n", boot_error.c_str());
+        return 2;
     }
-    LOGI("viewer", "game assets indexed from %s in %.3f s", pkg.where().c_str(),
-         std::chrono::duration<double>(std::chrono::steady_clock::now() - t_pkg).count());
-    for (auto& f : extra_apks)
-        if (!am.add_apk(f)) fatal("--apk: cannot open %s", f.c_str());
-    // The same option as soa / soa-emu (runtime AssetManager::set_download_dir).
-    if (!download_dir.empty()) {
-        if (!am.set_download_dir(download_dir, download_prefer)) fatal("--download %s: neither a folder nor a zip", download_dir.c_str());
-        LOGI("viewer", "download dir %s: serves assets %s the APKs", download_dir.c_str(), download_prefer ? "before" : "missing from");
-    }
-
-    run_initializers(*lib);
-    LOGI("viewer", "library loaded and initialised in %.1f s",
-         std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
     app::run(*lib, host);
 }

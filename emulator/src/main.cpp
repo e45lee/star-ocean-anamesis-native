@@ -21,6 +21,7 @@
 
 #include "soaruntime/android/ndk.h"
 #include "soaruntime/android/zip.h"
+#include "soaruntime/app/boot.h"
 #include "soaruntime/app/host.h"
 #include "soaruntime/core/cpu.h"
 #include "soaruntime/core/device.h"
@@ -35,9 +36,6 @@
 #include "cli.h"
 
 using namespace soa;
-namespace soa {
-void install_traces(LoadedLib& lib);  // core/trace.cpp: SOA_TRACE
-}
 
 namespace {
 
@@ -66,7 +64,7 @@ std::vector<std::string> find_checkouts(const std::string& given) {
 }  // namespace
 
 int main(int argc, char** argv) {
-    std::string gdb_addr;  // --gdb HOST:PORT (core/gdbstub.h)
+    std::string gdb_addr;  // --gdb HOST:PORT (core/gdbstub.h; app::boot)
     env::warn_removed_env("soa-emu", env::kEmu);  // SOA_* settings that are flags now
     signal(SIGPIPE, SIG_IGN);
     app::install_host_hooks();
@@ -132,40 +130,28 @@ int main(int argc, char** argv) {
         for (auto& [name, addr] : n.hosts) LOGI("emu", "network: %s -> %s", name.c_str(), addr.empty() ? n.server_host.c_str() : addr.c_str());
     }
     device_config().guest_cpus = guest_cpus;
-    vfs_init({data_dir});
 
-    auto t0 = std::chrono::steady_clock::now();
-    cpu_global_init();
-    if (!gdb_addr.empty()) {  // --gdb: the debugger hooks go on before any guest code runs
-        std::string err;
-        if (!gdb_listen(gdb_addr, &err)) {
-            fprintf(stderr, "%s\n", err.c_str());
-            return 2;
-        }
+    // The runtime's bring-up (runtime/include/soaruntime/app/boot.h).
+    app::BootConfig boot;
+    boot.log_tag = "emu";
+    boot.data_dir = data_dir;
+    boot.lib_path = lib_path;
+    boot.gdb = gdb_addr;
+    boot.download_dir = download_dir;
+    boot.download_prefer = download_prefer;
+    boot.apks = apks;  // the 3.7.0 APK is a single APK (no splits, no asset packs)
+    boot.after_load = [](LoadedLib& lib) {
+        // platform370's native patch: before any guest code runs.
+        if (platform370::install_patches(lib) == platform370::PatchStatus::Disabled)
+            LOGI("emu", "--no-patch: no native patches; the client's service-end check is live%s",
+                 platform370::local_time() ? " (local time keeps daylight saving: --no-dst-fix for the shipped reading)" : "");
+        platform370::install_language(lib);  // --lang / --voice-lang
+    };
+    std::string boot_error;
+    LoadedLib* lib = app::boot(boot, &boot_error);
+    if (!lib) {
+        fprintf(stderr, "soa-emu: %s\n", boot_error.c_str());
+        return 2;
     }
-    hle_init();             // + platform370: fmod, the clock, the network redirect
-    jni::Vm::get().init();  // + platform370: the 3.7.0 Java answers, the HTTP client
-    LoadedLib* lib = load_library(lib_path);
-    // platform370's native patch: before any guest code runs.
-    if (platform370::install_patches(*lib) == platform370::PatchStatus::Disabled)
-        LOGI("emu", "--no-patch: no native patches; the client's service-end check is live%s",
-             platform370::local_time() ? " (local time keeps daylight saving: --no-dst-fix for the shipped reading)" : "");
-    platform370::install_language(*lib);  // --lang / --voice-lang
-    install_traces(*lib);  // SOA_TRACE
-    profile_init(*lib);    // SOA_COVERAGE / SOA_PROFILE
-    app::start_watchdog(); // SOA_WATCHDOG
-
-    auto& am = asset_manager();
-    if (!download_dir.empty()) {
-        if (!am.set_download_dir(download_dir, download_prefer)) fatal("--download %s: neither a folder nor a zip", download_dir.c_str());
-        LOGI("emu", "download dir %s: a temporary stand-in for the CDN (%s the APK)", download_dir.c_str(), download_prefer ? "preferred over" : "fallback for");
-    }
-    // The 3.7.0 APK is a single APK (no splits, no asset packs); the asset manager indexes the zip.
-    for (auto& f : apks)
-        if (!am.add_apk(f)) fatal("--apk: cannot open %s", f.c_str());
-
-    run_initializers(*lib);
-    LOGI("emu", "library loaded and initialised in %.1f s",
-         std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
     app::run(*lib, host);
 }

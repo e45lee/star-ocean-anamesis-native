@@ -392,6 +392,10 @@ int main(int argc, char** argv) {
             if (!read_file(set_file, js)) { fprintf(stderr, "asf2gltf: cannot read %s\n", set_file.c_str()); return 1; }
             nlohmann::ordered_json set = nlohmann::ordered_json::parse(js.begin(), js.end(), nullptr, false);
             if (set.is_discarded() || !set.contains("animations")) { fprintf(stderr, "asf2gltf: %s: not an animation set\n", set_file.c_str()); return 1; }
+            // the set's own data (role, person, the Home3D table: tools/asf2gltf/anim_set.py) as the file's extras
+            in.extras["soa_set"] = {{"role", set.value("role", "")}, {"person", set.value("person", "")},
+                                    {"set_file", set_file.substr(set_file.find_last_of("/\\") + 1)}};
+            if (set.contains("home3d")) in.extras["soa_home3d"] = set["home3d"];
             for (auto& e : set["animations"]) {
                 std::vector<gltf::Anim> one;
                 if (!add_anims(src, e.value("source", ""), one, &err)) { fprintf(stderr, "asf2gltf: %s\n", err.c_str()); return 1; }

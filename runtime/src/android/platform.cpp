@@ -1,6 +1,6 @@
 // Host platform state (see platform.h). Moved from port/src/main.cpp; the frontend's actions are
 // the host program's HostHooks.
-#include "android/platform.h"
+#include "soaruntime/android/platform.h"
 
 #include <algorithm>
 #include <vector>

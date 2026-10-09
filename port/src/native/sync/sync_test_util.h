@@ -6,7 +6,7 @@
 #include <thread>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/sync/sync_layout.h"
 
 namespace soa::native::sync::test {

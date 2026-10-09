@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/test.h"
 #include "native/kernel/kernel_layout.h"
 

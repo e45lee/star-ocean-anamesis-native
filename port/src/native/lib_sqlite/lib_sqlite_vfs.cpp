@@ -5,8 +5,8 @@
 #include <mutex>
 #include <string>
 
-#include "core/log.h"
-#include "core/vfs.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/vfs.h"
 #include "native/lib_sqlite/lib_sqlite.h"
 
 namespace soa::native::lib_sqlite {

@@ -11,10 +11,10 @@
 #include <cstring>
 #include <string>
 
-#include "core/cpu.h"
-#include "core/hle.h"
-#include "core/selftest.h"
-#include "core/vfs.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/selftest.h"
+#include "soaruntime/core/vfs.h"
 
 namespace soa {
 namespace {

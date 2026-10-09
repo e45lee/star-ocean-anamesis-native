@@ -1,6 +1,6 @@
 # port/src: where things live
 
-The `soa` binary is built from every `*.cpp` under this folder (`port/CMakeLists.txt`, `GLOB_RECURSE`; part of the repository's build, `scripts/build.sh`: `build/port/soa`) plus the JIT host runtime library, `runtime/` at the repo root (`libsoaruntime`; `runtime/README.md`), whose objects are linked first, and the local server library, `server/` at the repo root (`libsoaserver`; `server/README.md`), linked last. Includes are always written from here or from `runtime/src`: `#include "native/battle/battle_calc.h"`, `#include "core/cpu.h"`.
+The `soa` binary is built from every `*.cpp` under this folder (`port/CMakeLists.txt`, `GLOB_RECURSE`; part of the repository's build, `scripts/build.sh`: `build/port/soa`) plus the JIT host runtime library, `runtime/` at the repo root (`libsoaruntime`; `runtime/README.md`), whose objects are linked first, and the local server library, `server/` at the repo root (`libsoaserver`; `server/README.md`), linked last. Includes are always written from here or from the runtime's public headers (`runtime/include`): `#include "native/battle/battle_calc.h"`, `#include "soaruntime/core/cpu.h"`.
 
 The runtime (`runtime/src/`) holds what any host of the Android `libSOA.so` needs:
 
@@ -16,7 +16,7 @@ This folder is the port:
 
 | Folder | What it is |
 |---|---|
-| `main.cpp` | Command line and startup: the 3.7.0 APK and lib, platform370, the server mode (`--server inproc\|HOST`), natives, `--selftest` (as `HostConfig::tick`) and the port's debug commands (`HostConfig::command`). The window, input, audio and main loop are the runtime's desktop host loop, `runtime/src/app/host.h` |
+| `main.cpp` | Command line and startup: the 3.7.0 APK and lib, platform370, the server mode (`--server inproc\|HOST`), natives, `--selftest` (as `HostConfig::tick`) and the port's debug commands (`HostConfig::command`). The window, input, audio and main loop are the runtime's desktop host loop, `runtime/include/soaruntime/app/host.h` |
 | `core/` | Port-only run state: options (`core/options.h`: `ClientOptions` + `ServerOptions`, the two groups of `soa --help`) and repo paths (`core/paths.h`). The rest of `core/` is in `runtime/src/core/`; both are reached as `core/...` |
 | (`server/` at the repo root) | The local game server for `--server inproc` is the library `libsoaserver` (`server/README.md`; rules in `docs/server-rules.md`). The port's side of it (capturing requests from the guest as the wire carries them, battle log included, the `soaserver/hooks.h` asset index, the config from the run options, the in-process CDN, the tests that need the game) is `native/api/server_adapters.*`, `server_cdn.cpp` and `zz_server_guest_test.cpp` |
 | (`platform370/` at the repo root) | The 3.7.0 platform layer shared with `soa-emu` (`platform370/README.md`) |
@@ -27,7 +27,7 @@ This folder is the port:
 
 File-name conventions inside a folder:
 - `<family>.cpp` / `.h`: natives.
-- `*_test.cpp`: selftests (`soa --selftest "<prefix>/"`). `zz_*_test.cpp` must register last. `--selftest` runs the runtime's own `RUNTIME_TEST`s (`runtime/src/core/selftest.h`) first, then these, then the server library's.
+- `*_test.cpp`: selftests (`soa --selftest "<prefix>/"`). `zz_*_test.cpp` must register last. `--selftest` runs the runtime's own `RUNTIME_TEST`s (`runtime/include/soaruntime/core/selftest.h`) first, then these, then the server library's.
 
 | Folder | Contents |
 |---|---|

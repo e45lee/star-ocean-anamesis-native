@@ -14,6 +14,6 @@ target_include_directories(soa-emu PRIVATE src)
 target_link_libraries(soa-emu PRIVATE soa_guest_code)
 # the emulator: the runtime, platform370 and common/include (cmake/flags.cmake); nobody else includes emulator/
 soa_check_includes(emulator/ DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
-                   ALLOW ${CMAKE_CURRENT_SOURCE_DIR}/src ${SOA_REPO_DIR}/runtime/src ${SOA_REPO_DIR}/platform370/include
+                   ALLOW ${CMAKE_CURRENT_SOURCE_DIR}/src ${SOA_REPO_DIR}/runtime/include ${SOA_REPO_DIR}/platform370/include
                          ${SOA_REPO_DIR}/common/include)
 target_link_libraries(soa-emu PRIVATE soaplatform370 soaruntime_app $<LINK_LIBRARY:WHOLE_ARCHIVE,soaruntime>)

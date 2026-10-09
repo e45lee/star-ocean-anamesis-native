@@ -11,7 +11,7 @@
 #include <cstring>
 #include <string>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/native.h"
 #include "native/render/render_check.h"
 #include "native/render/render_layout.h"

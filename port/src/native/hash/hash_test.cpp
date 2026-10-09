@@ -11,7 +11,7 @@
 #include <soa/file_tree.h>
 #include <soa/install.h>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "core/paths.h"
 #include "native/common/test.h"
 #include "native/common/test_assets.h"

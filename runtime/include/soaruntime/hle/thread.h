@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa {
 

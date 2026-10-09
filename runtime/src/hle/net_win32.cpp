@@ -18,10 +18,10 @@
 #include <mutex>
 #include <vector>
 
-#include "core/hle.h"
+#include "soaruntime/core/hle.h"
 #include "core/host_fd.h"
 #include "core/linux_errno.h"
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 
 namespace soa {
 

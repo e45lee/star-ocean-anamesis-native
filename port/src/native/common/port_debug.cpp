@@ -29,7 +29,7 @@
 #include <mutex>
 #include <vector>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "native/common/guest_std.h"
 #include "native/common/memstats.h"
 #include "native/common/native.h"

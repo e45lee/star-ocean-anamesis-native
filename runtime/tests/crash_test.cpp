@@ -26,8 +26,8 @@
 #include <cstring>
 #include <string>
 
-#include "core/cpu.h"
-#include "core/hle.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/hle.h"
 
 using namespace soa;
 

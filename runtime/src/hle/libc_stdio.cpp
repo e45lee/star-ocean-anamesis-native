@@ -19,9 +19,9 @@
 #include <string>
 #include <vector>
 
-#include "core/hle.h"
-#include "core/log.h"
-#include "core/vfs.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/vfs.h"
 #include "hle/format.h"
 #include "hle/host_file.h"
 

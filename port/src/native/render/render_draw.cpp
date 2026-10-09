@@ -18,9 +18,9 @@
 #include <cstring>
 #include <string>
 
-#include "core/cpu.h"
-#include "core/loader.h"
-#include "hle/gl_host.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/hle/gl_host.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
 #include "native/common/native_call.h"

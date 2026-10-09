@@ -2,8 +2,8 @@
 // (port/decomp/sync/event.c). The guest's sem_t holds nothing the host uses: the HLE keeps the host
 // semaphore in a side table keyed by the sem_t's guest address (hle/thread.h), the same one the
 // guest's sem_* imports reach, so native and guest calls on one semaphore interoperate.
-#include "core/cpu.h"
-#include "hle/thread.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/hle/thread.h"
 #include "native/common/native_method.h"
 #include "native/sync/sync_check.h"
 #include "native/sync/sync_layout.h"

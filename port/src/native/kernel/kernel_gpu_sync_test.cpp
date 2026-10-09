@@ -7,8 +7,8 @@
 #include <cstring>
 #include <string>
 
-#include "core/cpu.h"
-#include "hle/thread.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/hle/thread.h"
 #include "native/common/guest_stub.h"
 #include "native/common/test.h"
 #include "native/kernel/kernel_layout.h"

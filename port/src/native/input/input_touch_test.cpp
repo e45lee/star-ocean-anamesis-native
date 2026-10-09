@@ -5,8 +5,8 @@
 // aren't installed: t.call reaches the guest code.
 #include <cstring>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/test.h"
 #include "native/input/input_check.h"
 #include "native/input/input_layout.h"

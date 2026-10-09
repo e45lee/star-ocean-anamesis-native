@@ -24,7 +24,7 @@
 #include <cstring>
 #include <string>
 
-#include "frontend/movie_decoder.h"
+#include "soaruntime/frontend/movie_decoder.h"
 
 #ifdef _WIN32
 #include <fcntl.h>

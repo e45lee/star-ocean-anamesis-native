@@ -14,8 +14,8 @@
 #include <mutex>
 #include <unordered_map>
 
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "native/common/guest_std.h"
 
 namespace soa::native {

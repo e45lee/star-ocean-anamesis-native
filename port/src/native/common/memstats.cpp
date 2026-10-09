@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "core/options.h"
 #include "native/common/guest_std.h"
 #include "native/memory/memory_callees.h"

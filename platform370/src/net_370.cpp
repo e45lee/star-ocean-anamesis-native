@@ -35,9 +35,9 @@
 #include <set>
 #include <string>
 
-#include "core/hle.h"
-#include "core/log.h"
-#include "core/thread_record.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/thread_record.h"
 #include "internal.h"
 #include "platform370/platform370.h"
 

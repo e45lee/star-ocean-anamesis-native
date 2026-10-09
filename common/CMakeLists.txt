@@ -9,7 +9,7 @@
 #   soa_env_tests  its unit tests (build/common/soa_env_tests); tests/env_removed.sh checks the
 #                  programs' warnings.
 # include/soa/cli.h, the programs' command lines on CLI11 (the rules every program shares; the
-# option groups shared by several programs live beside the types they fill: runtime/src/app/cli.h,
+# option groups shared by several programs live beside the types they fill: runtime/include/soaruntime/app/cli.h,
 # platform370/include/platform370/cli.h, server/include/soaserver/cli.h), so soa_env carries CLI11.
 add_library(soa_env INTERFACE)
 target_include_directories(soa_env INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -50,7 +50,7 @@ target_link_libraries(soa_sock_tests PRIVATE soa_warnings)
 # soa_zip: read-only ZIP archives on minizip-ng (vcpkg.json): include/soa/zip.h, src/zip.cpp. APKs,
 # APKs inside another zip read in place (an archive inside an archive), ZIP64 data zips; stored entries are
 # served from the file mapping (pointer + file offset), deflated ones inflated; const methods are
-# thread-safe. The runtime's ZipArchive (runtime/src/android/zip.h) is this class; the server can
+# thread-safe. The runtime's ZipArchive (runtime/include/soaruntime/android/zip.h) is this class; the server can
 # link it without the runtime.
 #   soa_zip_tests  its unit tests (build/common/soa_zip_tests): synthetic archives, nested,
 #                  ranges, CRC, ZIP64 (a sparse file past 4 GiB), concurrent readers.

@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 
 namespace soa::touch_script {
 

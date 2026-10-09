@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "native/common/native.h"
 #include "native/data_formats/data_formats_layout.h"
 #include "native/info/gen/info_addresses.h"

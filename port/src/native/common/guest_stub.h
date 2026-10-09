@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa::native {
 

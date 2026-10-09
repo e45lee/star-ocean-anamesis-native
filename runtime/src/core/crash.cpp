@@ -13,8 +13,8 @@
 #include <cstdio>
 #include <cstring>
 
-#include "core/cpu.h"
-#include "core/thread_record.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/thread_record.h"
 
 namespace soa {
 

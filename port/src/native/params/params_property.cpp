@@ -8,7 +8,7 @@
 #include <mutex>
 #include <vector>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/arm_float.h"
 #include "native/common/native.h"
 #include "native/params/params_check.h"

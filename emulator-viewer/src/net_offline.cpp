@@ -22,8 +22,8 @@
 #include <cstring>
 #include <string>
 
-#include "core/hle.h"
-#include "core/log.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
 
 namespace soa::viewer {
 namespace {

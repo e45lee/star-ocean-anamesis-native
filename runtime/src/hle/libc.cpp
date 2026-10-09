@@ -14,9 +14,9 @@
 
 #include <mutex>
 
-#include "core/hle.h"
+#include "soaruntime/core/hle.h"
 #include "core/linux_errno.h"
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "hle/format.h"
 
 namespace soa {

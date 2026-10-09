@@ -16,7 +16,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include "core/abi.h"
+#include "soaruntime/core/abi.h"
 #include "native/common/native.h"
 
 namespace soa {

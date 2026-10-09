@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "core/gdb_protocol.h"
-#include "core/selftest.h"
+#include "soaruntime/core/selftest.h"
 
 namespace soa {
 namespace {

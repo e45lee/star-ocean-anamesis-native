@@ -22,7 +22,7 @@ build/emulator/soa-emu --headless --control /tmp/emu.fifo
 control/soactl.py /tmp/emu.fifo tap:364:713 wait:3000 shot:/tmp/emu.png
 ```
 
-`soa-emu --help` lists the options (CLI11, `src/cli.cpp`; the ones it shares with `soa` are defined once: `runtime/src/app/cli.h`, `platform370/include/platform370/cli.h`, `common/include/soa/cli.h`). A value-taking option given twice: the last one wins (`--apk`, `--shot`, `--do`, `--map-host` collect); an error prints one line and exits 2.
+`soa-emu --help` lists the options (CLI11, `src/cli.cpp`; the ones it shares with `soa` are defined once: `runtime/include/soaruntime/app/cli.h`, `platform370/include/platform370/cli.h`, `common/include/soa/cli.h`). A value-taking option given twice: the last one wins (`--apk`, `--shot`, `--do`, `--map-host` collect); an error prints one line and exits 2.
 
 | Option | Meaning |
 |---|---|
@@ -189,7 +189,7 @@ On a phone a local reference always has a non-zero low byte (ART's reference-kin
 
 **Evidence.** Socket traces (thread ids, `select` sets, `getsockopt`, `send`) of good and bad runs are identical up to `SO_ERROR` = 0; in a bad run the client never calls `TARPCPeer::RPCSend`. A run with hooks on the `NoLoginStart` path caught `GetUUIDConsistently` returning null, followed by `DisconnectDialog`. Forcing the reference's low byte to zero failed 3 runs of 3, forcing it non-zero passed 16 of 16; unmodified, 1 of 13 (untraced) and 1 of 10 (traced) failed. The socket layer was ruled out: `select` / `connect` / `send` / `getsockopt` pass through to the host, errno is per thread, the non-blocking flags are translated, the atomics are CAS-backed, and the client's queues are mutex-protected.
 
-**Fixed in the runtime (agent `r2-runtime-fixes`, 2026-10-01).** Every handle the JNI layer gives the guest now has a non-zero low byte, as ART's do: `Object` (strings, arrays, classes, instances, boxes), `Method` (jmethodID) and `Field` (jfieldID) are allocated through `TaggedAlloc` (`runtime/src/jni/jvm.h`), at 8 (mod 16) past a 16-aligned block (`runtime/README.md` "Platform fidelity"). This is a platform-fidelity fix, not a client change; `soa` gets it too.
+**Fixed in the runtime (agent `r2-runtime-fixes`, 2026-10-01).** Every handle the JNI layer gives the guest now has a non-zero low byte, as ART's do: `Object` (strings, arrays, classes, instances, boxes), `Method` (jmethodID) and `Field` (jfieldID) are allocated through `TaggedAlloc` (`runtime/include/soaruntime/jni/jvm.h`), at 8 (mod 16) past a 16-aligned block (`runtime/README.md` "Platform fidelity"). This is a platform-fidelity fix, not a client change; `soa` gets it too.
 - **Tests:** the runtime test `jni/references-low-byte` checks 256 of each handle kind, including `SetSharedPreferences`' Boolean read the guest's way. With the offset removed it finds 383 of 6,656 handles with a zero low byte.
 - **Sessions:** `emulator_session.sh` with `NO_RETRY=1` (no リトライ fallback) sent `NoLoginStart` by itself at 22-24 s in every run, each with a new UUID:
   - 21 seeded runs of 21: 9 full sessions (1 on a fresh phone, 8 with `FRESH_KVS=1` on its data) and 12 `SESSION_PLAY=0` runs with `FRESH_KVS=1`;

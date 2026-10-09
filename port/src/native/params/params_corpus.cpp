@@ -7,8 +7,8 @@
 #include <mutex>
 #include <unordered_set>
 
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "native/params/params_check.h"
 #include "native/params/params_property.h"
 

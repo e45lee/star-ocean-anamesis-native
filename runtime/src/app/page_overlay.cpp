@@ -1,7 +1,7 @@
 // A host-drawn image over the game (page_overlay.h). The GL side is the Dragalia Lost project's
 // web view blit (platformdl/src/webview_dl.cpp webview_draw_overlay): a texture behind a read
 // framebuffer, blitted into the window's framebuffer, with the bindings it touches restored.
-#include "app/page_overlay.h"
+#include "soaruntime/app/page_overlay.h"
 
 #include <GLES3/gl3.h>
 

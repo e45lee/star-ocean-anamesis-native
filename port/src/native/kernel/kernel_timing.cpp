@@ -16,8 +16,8 @@
 #include <ctime>
 #include <vector>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/arm_float.h"
 #include "native/common/native_method.h"
 #include "native/kernel/kernel_check.h"

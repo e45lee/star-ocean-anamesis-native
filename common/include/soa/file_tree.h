@@ -4,7 +4,7 @@
 // SOA-3.7.0-canonical-data.zip (work/ in a checkout, game/ in a package) without extracting it, or
 // an extracted folder. Readers: the server's CDN and its asset index (server/src/cdn), the master's
 // derivation (soaserver/master_source.h), the runtime's download fallback for assets and movies
-// (runtime/src/android/ndk.h AssetManager::set_download_dir).
+// (runtime/include/soaruntime/android/ndk.h AssetManager::set_download_dir).
 //
 // Paths are relative, '/'-separated ("sqlite/basmaster.sqlite3"). A zip whose only top-level entry
 // is one folder holding the tree (e.g. SOA-data/...) is read from inside that folder.

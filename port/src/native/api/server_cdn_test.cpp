@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "jni/jvm.h"
+#include "soaruntime/jni/jvm.h"
 #include "native/api/server_adapters.h"
 #include "native/common/test.h"
 #include "platform370/platform370.h"

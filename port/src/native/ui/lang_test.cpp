@@ -24,7 +24,7 @@
 #include <set>
 #include <string>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "core/paths.h"
 #include "native/common/test.h"
 #include "platform370/platform370.h"

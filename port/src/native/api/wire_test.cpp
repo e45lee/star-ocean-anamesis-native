@@ -42,8 +42,8 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/api/client_battle_log.h"
 #include "native/api/packet_log.h"
 #include "native/api/server_adapters.h"

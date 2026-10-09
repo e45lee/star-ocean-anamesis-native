@@ -3,7 +3,7 @@
 // with the guest's own .rodata strings: `file` and `format` are ELF vaddrs of the lib (a Ghidra
 // decompile's UNK_ / DAT_ address minus 0x100000), up to two format arguments (variadic: x3, x4).
 // The shipped build's gDoAssert reports and returns, so the native goes on as the guest does.
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa::native {
 

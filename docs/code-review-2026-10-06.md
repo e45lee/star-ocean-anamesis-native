@@ -353,6 +353,13 @@ used everywhere. Then the `Grant` / `Granted` structs from the plan.
 - Rename the port's `core/` folder.
 - Replace the header globals with accessors.
 
+(CR10, 2026-10-08: the 23 headers the runtime's users include, and the one `.inc` they include, moved to
+`runtime/include/soaruntime/<folder>/` (`#include "soaruntime/core/cpu.h"`); `runtime/src` is an include
+dir of the runtime's own targets only (`soaruntime_private`), and every user's `soa_check_includes` allows
+`runtime/include` alone. With the `soaruntime/` prefix the port's `core/` can no longer shadow a runtime
+header, so it keeps its name. `.text` byte-identical for soa, soa-emu, soa-viewer and soa-server, Linux
+and Windows. The header globals are unchanged.)
+
 <a id="r5"></a>
 #### R5. The bring-up sequence is copied into three hosts (M, S–M, risk L)
 

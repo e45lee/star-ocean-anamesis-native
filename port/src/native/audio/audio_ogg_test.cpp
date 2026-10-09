@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/audio/audio_layout.h"
 #include "native/common/guest_stub.h"
 #include "native/common/test.h"

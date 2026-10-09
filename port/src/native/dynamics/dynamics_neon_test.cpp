@@ -4,7 +4,7 @@
 // ties); compared bit for bit.
 #include <cstring>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/test.h"
 #include "native/dynamics/dynamics_neon.h"
 

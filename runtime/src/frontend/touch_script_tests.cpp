@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "core/selftest.h"
+#include "soaruntime/core/selftest.h"
 #include "frontend/touch_script.h"
 
 namespace soa {

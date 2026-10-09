@@ -6,9 +6,9 @@
 #include <map>
 #include <memory>
 
-#include "android/ndk.h"
-#include "core/cpu.h"
-#include "core/log.h"
+#include "soaruntime/android/ndk.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/log.h"
 #include "core/options.h"
 #include "core/paths.h"
 #include "native/api/client_battle_log.h"

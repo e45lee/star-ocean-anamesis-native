@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa {
 

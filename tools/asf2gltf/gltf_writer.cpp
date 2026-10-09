@@ -1077,9 +1077,11 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                         json srcs = json::array();
                         for (int i = 0; i < h[0x1e] && c.offset + 0x20 + (i + 1) * 0x30 <= an.file.size(); i++) {
                             const uint8_t* q = h + 0x20 + i * 0x30;
-                            float w;
+                            float w, so[3];
                             memcpy(&w, q + 0x2c, 4);
+                            memcpy(so, q + 0x20, 12);  // the source's own offset (SetPoint @024217a8 adds it to its position)
                             json sj = {{"weight", w}};
+                            if (so[0] != 0 || so[1] != 0 || so[2] != 0) sj["offset"] = {so[0], so[1], so[2]};
                             if (!memcmp(q, "R:", 2)) {
                                 std::string nm((const char*)q + 2, strnlen((const char*)q + 2, 0x2a));
                                 sj["node"] = nm;

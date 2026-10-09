@@ -28,14 +28,12 @@ import os
 import re
 import sqlite3
 import struct
-import sys
 import zipfile
 
 import msgpack
 
 REPO = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-sys.path.insert(0, REPO)
-from soa_save import adld, slz  # noqa: E402
+from soa_save import adld, slz
 
 
 class Data:
@@ -277,7 +275,10 @@ def home3d_table(data, db, db_gl, en_tsv, person, rows, anim_name, h3_file):
     return {"schema": "soa_home3d/1", "source": h3_file, "person": person["id_label"],
             "home_voice_package": person.get("home_voice_sound_package"),
             "faces_package": f"Motion/home_{cp}.apk",
-            "camera": {"height_offset": as_number(person.get("home3d_camera_height_offset")),
+            # CHomeModelViewManager::SetCameraPos @01477a10 (docs/notes.md "Orientation and the home camera"): the
+            # map's camera1 / camera1_aim, 15 degrees, aim height 90 + height + height_offset + (1 - 0.1 (a / 0.5625 - 1)) * -130
+            "camera": {"height": as_number(person.get("height")),
+                       "height_offset": as_number(person.get("home3d_camera_height_offset")),
                        "depth_offset": as_number(person.get("home3d_camera_depth_offset"))},
             "clips": clips, "rules": HOME3D_RULES, "rows": out_rows}
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate the server's request argument structs: server/src/api/gen/request_args.h, one `*Args` struct per
 method (or group of methods with one signature) and its `from(const Request&)`, from two inputs
 (server/src/api/gen/README.md "Requests"):

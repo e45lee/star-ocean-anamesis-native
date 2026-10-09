@@ -9,8 +9,8 @@
 // allocators' vtables go straight to these members when the vtable is a TFixedLengthAllocator<N>'s,
 // else to the guest's slot. Not native (cold): the constructors, NumAllocated, IsFree, the reports,
 // EnableMutex / DisableMutex, BlockSize (8 bytes: reached through the vtable only).
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/guest_std.h"
 #include "native/common/native_method.h"
 #include "native/memory/memory_callees.h"

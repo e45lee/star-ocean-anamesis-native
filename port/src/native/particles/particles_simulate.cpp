@@ -11,9 +11,9 @@
 #include <cstring>
 #include <mutex>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/arm_float.h"
-#include "core/thread_record.h"
+#include "soaruntime/core/thread_record.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
 #include "native/common/native_call.h"

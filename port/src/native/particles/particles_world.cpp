@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/guest_std.h"
 #include "native/common/guest_stub.h"
 #include "native/common/live_check.h"

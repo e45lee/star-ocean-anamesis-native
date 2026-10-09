@@ -9,7 +9,7 @@
 // rElement / crElement ask the object's NumElements through its vtable (slot 4) for the range check:
 // when the slot is this instantiation's own NumElements the native reads m_count directly (a pure
 // callee: the live check's replay runs the guest one unrecorded), else it calls the slot.
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/live_call.h"
 #include "native/containers/containers_family.h"
 #include "native/containers/containers_object_container.h"

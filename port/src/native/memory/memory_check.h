@@ -27,7 +27,7 @@
 
 #include <atomic>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/memory/memory_layout.h"
 
 namespace soa::native::memory::check {

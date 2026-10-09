@@ -9,8 +9,8 @@
 #include <cstdlib>
 #include <cstdarg>
 
-#include "core/log.h"
-#include "core/selftest.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/selftest.h"
 #include "native/common/native.h"
 #include "soaserver/testing.h"  // the server library's tests (top-level server/)
 

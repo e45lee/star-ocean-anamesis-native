@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "core/thread_record.h"  // thread_end, thread_object: per-thread state
+#include "soaruntime/core/thread_record.h"  // thread_end, thread_object: per-thread state
 
 namespace Dynarmic::A64 { class Jit; }
 

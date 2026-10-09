@@ -1,7 +1,7 @@
 // The live check of the sync natives: the family, the observations, shadows (sync_check.h).
 #include "native/sync/sync_check.h"
 
-#include "hle/thread.h"
+#include "soaruntime/hle/thread.h"
 
 namespace soa::native::sync {
 

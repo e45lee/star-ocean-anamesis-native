@@ -16,7 +16,7 @@
 // destructor (guest code) still stops it.
 #include <cstring>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/guest_std.h"
 #include "native/scene/scene_check.h"
 #include "native/scene/scene_dispatch.h"

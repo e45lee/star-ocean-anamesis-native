@@ -176,7 +176,7 @@ scripts/build.sh --windows --target soa-server          # one part
   runtime's, so the header includes it before its define; call `rename()`, never
   `std::filesystem::rename`); `thread_local` destructors (its TLS is emulated and libstdc++ runs
   them after the TLS blocks are freed: our code has only trivial `thread_local`s,
-  `runtime/src/core/thread_record.h`; cpp-httplib's get a replacement `__cxa_thread_atexit` in
+  `runtime/include/soaruntime/core/thread_record.h`; cpp-httplib's get a replacement `__cxa_thread_atexit` in
   soa-server's `server/net/thread_atexit_win32.cpp`); `mkdtemp` (mingw-w64 12+ only);
   and the C runtime is `msvcrt.dll`, not the UCRT (no `_get_timezone`; `long` is 32 bits).
 - What `msvcrt.dll` does differently from the UCRT, and what covers it (checked 2026-10-06):

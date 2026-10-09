@@ -21,11 +21,11 @@
 #include <cinttypes>
 #include <string>
 
-#include "core/device.h"
+#include "soaruntime/core/device.h"
 #include "core/crash.h"
-#include "core/hle.h"
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 
 namespace soa {
 

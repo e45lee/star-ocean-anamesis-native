@@ -5,7 +5,7 @@
 // from a literal), B / BL (an absolute branch through x16), B.cond / CBZ / CBNZ / TBZ / TBNZ (the
 // same test, branching to an absolute-branch stub). LDR (literal) isn't: 0. x16 (IP0) is clobbered,
 // as a veneer may at any call. Call it before the entry is patched.
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa {
 

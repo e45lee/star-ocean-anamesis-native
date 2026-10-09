@@ -19,7 +19,7 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
 #include "native/common/native_method.h"

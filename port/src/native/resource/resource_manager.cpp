@@ -12,8 +12,8 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/guest_assert.h"
 #include "native/common/guest_std.h"
 #include "native/common/live_check.h"

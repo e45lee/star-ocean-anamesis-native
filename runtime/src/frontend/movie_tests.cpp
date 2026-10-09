@@ -12,10 +12,10 @@
 #include <string>
 #include <thread>
 
-#include "core/selftest.h"
-#include "core/vfs.h"
+#include "soaruntime/core/selftest.h"
+#include "soaruntime/core/vfs.h"
 #include "frontend/movie.h"
-#include "frontend/movie_decoder.h"
+#include "soaruntime/frontend/movie_decoder.h"
 
 namespace soa {
 namespace {

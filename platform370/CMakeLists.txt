@@ -15,10 +15,10 @@
 set(SOA_PLATFORM370_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 # platform370 may include the runtime, nothing else of the repository: every quoted #include in
-# platform370/ must name a file in platform370/src, platform370/include or runtime/src (or next to
+# platform370/ must name a file in platform370/src, platform370/include or runtime/include (or next to
 # the including file). Nothing from port/, server/, emulator/.
 soa_check_includes(platform370/ DIRS ${SOA_PLATFORM370_DIR}/src ${SOA_PLATFORM370_DIR}/include
-                   ALLOW ${SOA_PLATFORM370_DIR}/src ${SOA_PLATFORM370_DIR}/include ${SOA_REPO_DIR}/runtime/src
+                   ALLOW ${SOA_PLATFORM370_DIR}/src ${SOA_PLATFORM370_DIR}/include ${SOA_REPO_DIR}/runtime/include
                          ${SOA_REPO_DIR}/common/include)
 
 file(GLOB SOA_PLATFORM370_SOURCES CONFIGURE_DEPENDS ${SOA_PLATFORM370_DIR}/src/*.cpp)

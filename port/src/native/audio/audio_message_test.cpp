@@ -8,7 +8,7 @@
 #include <cstring>
 #include <string>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/audio/audio_layout.h"
 #include "native/common/test.h"
 

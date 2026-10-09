@@ -1,6 +1,6 @@
 // Star Ocean: anamnesis desktop host. Loads the Android libSOA.so under an ARM64 JIT and
 // drives it like Android's NativeActivity would. The window, input, audio, the activity bring-up
-// and the main loop are the runtime's desktop host loop (runtime/src/app/host.h).
+// and the main loop are the runtime's desktop host loop (runtime/include/soaruntime/app/host.h).
 //
 // The client is the 3.7.0 online build, from the 3.7.0 APK, on the 3.7.0 platform layer
 // (platform370/), with two server modes: --server inproc (the default; the local server library
@@ -28,22 +28,22 @@
 #include <soa/game_files.h>
 #include <soa/paths.h>
 
-#include "android/ndk.h"
-#include "app/host.h"
-#include "android/platform.h"
-#include "android/zip.h"
-#include "core/cpu.h"
-#include "core/device.h"
-#include "core/gdbstub.h"
-#include "core/hle.h"
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/android/ndk.h"
+#include "soaruntime/app/host.h"
+#include "soaruntime/android/platform.h"
+#include "soaruntime/android/zip.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/device.h"
+#include "soaruntime/core/gdbstub.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "core/cli.h"
 #include "core/options.h"
 #include "core/paths.h"
-#include "core/profile.h"
-#include "core/vfs.h"
-#include "jni/jvm.h"
+#include "soaruntime/core/profile.h"
+#include "soaruntime/core/vfs.h"
+#include "soaruntime/jni/jvm.h"
 #include "native/common/lib_check.h"
 #include "native/common/live_check.h"
 #include "native/common/native.h"
@@ -76,7 +76,7 @@ bool start_inproc_cdn(std::string* err);                // native/api/server_cdn
 int main(int argc, char** argv) {
     env::warn_removed_env("soa", env::kSoa);  // SOA_* settings that are flags now: one line each
     signal(SIGPIPE, SIG_IGN);
-    // The runtime's calls into this frontend (runtime/src/android/platform.h).
+    // The runtime's calls into this frontend (runtime/include/soaruntime/android/platform.h).
     app::install_host_hooks();
     // The command line (core/cli.cpp: the client options and soa-server's server options).
     RunOptions& opt = mutable_options();  // from the command line only
@@ -245,7 +245,7 @@ int main(int argc, char** argv) {
         LOGI("main", "server inproc: CDN in-process (no sockets): %s", what.c_str());
     }
 
-    // The emulated device (runtime/src/core/device.h): a phone with the 3.7.0 app. platform370
+    // The emulated device (runtime/include/soaruntime/core/device.h): a phone with the 3.7.0 app. platform370
     // registers its pieces with the runtime's extension points and sets app_version ("3.7.0") and
     // the device clock, so it comes before hle_init / Vm::init.
     device_config().guest_cpus = cl.guest_cpus;
@@ -311,9 +311,9 @@ int main(int argc, char** argv) {
         return h == 813289606u ? 0 : 1;
     }
 
-    // ---- window, activity, event loop: the runtime's desktop host loop (runtime/src/app/host.h) ----
+    // ---- window, activity, event loop: the runtime's desktop host loop (runtime/include/soaruntime/app/host.h) ----
     // --headless / --windowed, else headless for --selftest only. The hidden window renders like a
-    // shown one (runtime/src/app/host.h: HostConfig::hidden).
+    // shown one (runtime/include/soaruntime/app/host.h: HostConfig::hidden).
     if (headless < 0) headless = selftest;
     host.hidden = headless != 0;
     if (host.hidden) LOGI("main", "headless: the window isn't shown");

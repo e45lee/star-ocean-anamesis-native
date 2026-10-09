@@ -14,7 +14,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "native/common/guest_std.h"
 #include "native/common/live_check.h"
 #include "native/yayoi/yayoi_guest.h"

@@ -6,7 +6,7 @@
 #include <cstring>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/dynamics/dynamics_family.h"
 #include "native/dynamics/dynamics_neon.h"
 #include "native/dynamics/gen/dynamics_addresses.h"

@@ -1,5 +1,5 @@
 // JNIEnv / JavaVM function tables backed by the fake VM in jvm.h.
-#include "jni/jvm.h"
+#include "soaruntime/jni/jvm.h"
 
 #include <cinttypes>
 #include <cstring>
@@ -7,8 +7,8 @@
 #include <set>
 #include <unordered_map>
 
-#include "core/abi.h"
-#include "core/log.h"
+#include "soaruntime/core/abi.h"
+#include "soaruntime/core/log.h"
 #include "hle/format.h"
 #include "jni/jni_names.h"
 

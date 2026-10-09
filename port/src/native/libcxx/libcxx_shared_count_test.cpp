@@ -4,7 +4,7 @@
 // counting guest functions) must agree after every step.
 #include <cstring>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/test.h"
 #include "native/libcxx/libcxx_layout.h"
 

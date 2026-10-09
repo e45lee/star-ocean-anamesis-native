@@ -5,7 +5,7 @@
 // switches.
 #pragma once
 
-#include "core/abi.h"
+#include "soaruntime/core/abi.h"
 #include "native/yayoi/yayoi_layout.h"
 
 namespace soa::native::yayoi {

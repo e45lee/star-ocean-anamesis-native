@@ -2,7 +2,7 @@
 // build/runtime/soaruntime_tests.
 #include <string>
 
-#include "core/selftest.h"
+#include "soaruntime/core/selftest.h"
 #include "frontend/text_entry.h"
 
 namespace soa {

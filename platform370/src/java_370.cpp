@@ -19,11 +19,11 @@
 #include <mutex>
 #include <string>
 
-#include "core/device.h"
-#include "core/log.h"
-#include "core/vfs.h"
+#include "soaruntime/core/device.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/vfs.h"
 #include "internal.h"
-#include "jni/jvm.h"
+#include "soaruntime/jni/jvm.h"
 
 namespace soa::platform370::detail {
 namespace {

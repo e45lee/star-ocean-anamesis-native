@@ -1,5 +1,5 @@
 // host_mem.h: mmap on Linux, VirtualAlloc and file mappings on Windows.
-#include "core/host_mem.h"
+#include "soaruntime/core/host_mem.h"
 
 #include <cstdint>
 

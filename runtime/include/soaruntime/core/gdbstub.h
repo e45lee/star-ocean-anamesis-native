@@ -15,7 +15,7 @@
 // thread before the native runs (gdb_call_native). Linux and Windows (sockets through soa/sock.h).
 #include <string>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa {
 

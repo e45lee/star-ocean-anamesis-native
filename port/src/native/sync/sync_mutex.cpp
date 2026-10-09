@@ -15,9 +15,9 @@
 #endif
 #include <pthread.h>
 
-#include "core/cpu.h"
-#include "core/loader.h"
-#include "hle/thread.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/hle/thread.h"
 #include "native/common/guest_std.h"
 #include "native/common/native_method.h"
 #include "native/sync/sync_check.h"

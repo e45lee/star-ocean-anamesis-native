@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/gen/common_addresses.h"
 #include "native/common/live_call.h"
 #include "native/data_formats/data_formats_layout.h"

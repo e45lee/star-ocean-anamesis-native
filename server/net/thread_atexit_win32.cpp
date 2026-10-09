@@ -1,6 +1,6 @@
 // thread_local destructors for cpp-httplib on Windows (MinGW GCC only). Only third-party code
 // needs this: our own code has no thread_local with a destructor or a dynamic initializer
-// (runtime/src/core/thread_record.h; tools/check_thread_local.py in T0), but cpp-httplib's header
+// (runtime/include/soaruntime/core/thread_record.h; tools/check_thread_local.py in T0), but cpp-httplib's header
 // (0.58) has about ten (std::regex, std::set, std::mt19937, ...), compiled into this library's
 // http_server.cpp and client.cpp, so soa-server is the one program that links this file (soa,
 // soa-emu, soa-viewer and soaruntime_tests reference no __cxa_thread_atexit; the check verifies).

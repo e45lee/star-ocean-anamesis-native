@@ -11,8 +11,8 @@
 #include <thread>
 #include <vector>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/test.h"
 #include "native/resource/resource_layout.h"
 

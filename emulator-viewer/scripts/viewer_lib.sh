@@ -44,7 +44,7 @@ start_viewer() {
             { echo "FAIL: the XAPK isn't staged (scripts/windows-stage.sh --viewer)"; exit 1; }
         [ -n "${VIEWER_DATA:-}" ] || phone=$("${py[@]}" "w.local_dir('$phone')")
         # port 0: the viewer picks one and logs it (in mirrored networking a port tried from WSL
-        # stays refused to Windows for a while: soadrive/winhost.py free_ports)
+        # stays refused to Windows for a while: soadrive/proc.py free_ports)
         (cd "${SOA_WIN_STAGE:-/mnt/c/soa-win}" && exec timeout -k 10 "${VIEWER_TIMEOUT:-1800}" "$bin" --data "$(wslpath -w "$phone")" \
             --headless --size ${W}x$H --control tcp:127.0.0.1:0 "$@") > "$log" 2>&1 &
         vpid=$!

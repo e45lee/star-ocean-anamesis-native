@@ -1,9 +1,16 @@
-"""Screens: RMSE (ImageMagick, on a 182x324 copy as port/scripts/smoke.py), flat-frame and colour
-probes, settled screenshots (PLAN-consolidate D10, D11)."""
+"""Screens: RMSE (Pillow and numpy, on a 182x324 copy), flat-frame and colour probes (ImageMagick),
+settled screenshots (PLAN-consolidate D10, D11)."""
+import collections
+import functools
+import hashlib
+import io
 import os
 import shutil
 import subprocess
 import time
+
+import numpy as np
+from PIL import Image
 
 
 # Regions (window pixels at 729x1296: x0, y0, x1, y1) blanked on both images before a comparison.
@@ -17,29 +24,99 @@ GACHA_CAROUSEL = (0, 320, 729, 875)
 EVENT_CAROUSEL = (0, 190, 729, 320)
 
 
-def _masked(path, regions, tmp):
-    args = ["convert", path, "-resize", "729x1296!", "-fill", "black"]
-    for x0, y0, x1, y1 in regions:
-        args += ["-draw", "rectangle %d,%d %d,%d" % (x0, y0, x1, y1)]
-    subprocess.run(args + [tmp], capture_output=True)
-    return tmp
+# ---- RMSE (Pillow and numpy; the one copy: port/scripts/smoke.py, tools/compare_tutorial.py and
+# control/flowctl.py use it). It reproduces what the drivers' thresholds were tuned on, ImageMagick's
+# `compare -metric RMSE -resize SIZE` (to about 1e-5): a copy fitted into SIZE (aspect kept, the
+# size rounded), resampled in two clamped passes, the RMSE over R, G and B normalized to 0..1. Its
+# filter: Lanczos (3 lobes), or Mitchell for a masked copy (ImageMagick's masked copy gained an
+# alpha channel, which made it pick Mitchell; the masked thresholds were tuned on that).
+def _lanczos(x):
+    x = np.abs(x)
+    return np.where(x < 3, np.sinc(x) * np.sinc(x / 3), 0.0)
+
+
+def _mitchell(x, b=1 / 3, c=1 / 3):
+    x = np.abs(x)
+    near = ((12 - 9 * b - 6 * c) * x ** 3 + (-18 + 12 * b + 6 * c) * x ** 2 + (6 - 2 * b)) / 6
+    far = ((-b - 6 * c) * x ** 3 + (6 * b + 30 * c) * x ** 2 + (-12 * b - 48 * c) * x + (8 * b + 24 * c)) / 6
+    return np.where(x < 1, near, np.where(x < 2, far, 0.0))
+
+
+_FILTERS = {"lanczos": (_lanczos, 3.0), "mitchell": (_mitchell, 2.0)}
+
+
+@functools.lru_cache(maxsize=64)
+def _weights(n_in, n_out, name):
+    """One axis's resampling matrix (n_out, n_in), float32."""
+    kernel, support = _FILTERS[name]
+    scale = n_out / n_in
+    blur = max(1.0 / scale, 1.0)
+    reach = support * blur
+    w = np.zeros((n_out, n_in), dtype=np.float32)
+    for o in range(n_out):
+        center = (o + 0.5) / scale
+        lo, hi = max(int(center - reach + 0.5), 0), min(int(center + reach + 0.5), n_in)
+        k = kernel((np.arange(lo, hi) + 0.5 - center) / blur)
+        w[o, lo:hi] = k / k.sum()
+    return w
+
+
+def _resize(px, w, h, name):
+    """px (H, W, 3) resampled to (h, w, 3): columns, then rows (each a matrix product), each pass
+    clamped to 0..1."""
+    rows, cols, ch = px.shape
+    t = np.ascontiguousarray(px.transpose(0, 2, 1)).reshape(rows * ch, cols) @ _weights(cols, w, name).T
+    t = np.clip(t, 0.0, 1.0).reshape(rows, ch * w)
+    t = np.clip(_weights(rows, h, name) @ t, 0.0, 1.0)
+    return t.reshape(h, ch, w).transpose(0, 2, 1)
+
+
+def _fit(size, w, h):
+    """(width, height) of a w x h image fitted into size ("WxH" or (W, H)), the aspect kept."""
+    bw, bh = (int(v) for v in size.lower().split("x")) if isinstance(size, str) else size
+    f = min(bw / w, bh / h)
+    return max(1, int(w * f + 0.5)), max(1, int(h * f + 0.5))
+
+
+_COPIES = collections.OrderedDict()  # (content hash, mask, size) -> pixels: a watcher compares each shot twice
+
+
+def _pixels(path, mask, size):
+    with open(path, "rb") as f:
+        data = f.read()
+    key = (hashlib.sha1(data).digest(), tuple(mask), size)
+    if key in _COPIES:
+        _COPIES.move_to_end(key)
+        return _COPIES[key]
+    with Image.open(io.BytesIO(data)) as im:
+        px = np.asarray(im.convert("RGB"), dtype=np.float32) / np.float32(255)
+    if mask:  # the regions are window pixels at 729x1296: the copy is that size first (8-bit)
+        if px.shape[:2] != (1296, 729):
+            px = np.round(_resize(px, 729, 1296, "lanczos") * 255) / np.float32(255)
+        px = px.copy()
+        for x0, y0, x1, y1 in mask:
+            px[y0:y1 + 1, x0:x1 + 1] = 0.0
+    if size is not None:
+        w, h = _fit(size, px.shape[1], px.shape[0])
+        if (w, h) != (px.shape[1], px.shape[0]):
+            px = _resize(px, w, h, "mitchell" if mask else "lanczos")
+    _COPIES[key] = px
+    while len(_COPIES) > 8:
+        _COPIES.popitem(last=False)
+    return px
 
 
 def rmse(a, b, mask=(), size="182x324"):
-    """ImageMagick's normalized RMSE of a and b on `size` copies (182x324, with the regions in
-    `mask` blanked on both); 1.0 when it can't compare."""
-    if mask:
-        a = _masked(a, mask, b + ".mask-a.png")
-        b = _masked(b, mask, b + ".mask-b.png")
-    r = subprocess.run(["compare", "-metric", "RMSE", "-resize", size, a, b, "null:"], capture_output=True, text=True)
-    if mask:
-        for f in (a, b):
-            os.remove(f) if os.path.exists(f) else None
-    out = r.stderr.strip()
+    """The normalized RMSE (0..1) of the screenshots a and b on copies fitted into `size` ("WxH";
+    None: as they are), the regions in `mask` blanked on both. 1.0 (as different as can be) when
+    it can't compare: a file missing or unreadable, or the copies' sizes differ."""
     try:
-        return float(out[out.index("(") + 1:out.index(")")])
-    except ValueError:
+        x, y = _pixels(a, mask, size), _pixels(b, mask, size)
+    except (OSError, ValueError):
         return 1.0
+    if x.shape != y.shape:
+        return 1.0
+    return float(np.sqrt(np.mean((x.astype(np.float64) - y) ** 2)))
 
 
 def fx(path, expr, crop=None):

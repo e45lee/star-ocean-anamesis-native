@@ -14,7 +14,7 @@ OUT_DIR/NN-name.png, with a side-by-side strip in OUT_DIR/strip.png.
 - Without a baseline, each later step waits a fixed time, generously, and the screenshots become
   a new baseline.
 - With a baseline (an earlier run's OUT_DIR, normally tests/smoke-base), each step polls
-  screenshots until the screen matches the baseline's (ImageMagick RMSE on a downscaled copy <=
+  screenshots until the screen matches the baseline's (soadrive.screens.rmse on a downscaled copy <=
   SMOKE_MAX_RMSE, default 0.08; the home character animates and the mascot's line changes, so the
   home screens get 0.12) and only then taps. That keeps the run independent of machine load. A
   step that never matches within SMOKE_STEP_TIMEOUT seconds (default 90) fails the run.
@@ -34,6 +34,8 @@ import subprocess
 import sys
 import time
 
+from soadrive.screens import rmse  # (182x324 copies; 1.0 when it can't compare)
+
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 MAX_RMSE = float(os.environ.get("SMOKE_MAX_RMSE", "0.08"))
 STEP_TIMEOUT = float(os.environ.get("SMOKE_STEP_TIMEOUT", "90"))
@@ -51,16 +53,6 @@ STEPS = [
     ("07-home", 10, "tap:665:1250"),       # footer その他 (phase 12)
     ("08-other", 8, "quit"),
 ]
-
-
-def rmse(a, b):
-    r = subprocess.run(["compare", "-metric", "RMSE", "-resize", "182x324", a, b, "null:"],
-                       capture_output=True, text=True)
-    out = r.stderr.strip()
-    try:
-        return float(out[out.index("(") + 1:out.index(")")])
-    except ValueError:
-        return 1.0
 
 
 def main():

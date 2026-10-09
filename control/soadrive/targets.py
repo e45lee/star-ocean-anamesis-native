@@ -461,7 +461,7 @@ class Run:
                 argv = [self.launcher]
             argv += client + cfg.client_args + launcher_server_args(srv + pkt)
             if port_in_use(LAUNCHER_PORT) or port_in_use(LAUNCHER_PORT + 80):
-                gp = (winhost.free_ports if self.win else proc.free_ports)(1)[0]
+                gp = proc.free_ports(1, self.win)[0]
                 self.note("the launcher's port %d is taken: --port %d" % (LAUNCHER_PORT, gp))
                 argv += ["--port", str(gp)]
             self.client = proc.Proc(os.path.basename(self.launcher), argv, self.client_log, env=env, limit=cfg.limit,
@@ -482,7 +482,7 @@ class Run:
                                     limit=cfg.limit, env=env, slot_fd=self.slot, cwd=cwd)
         else:
             for attempt in range(4):
-                gp, hp = (winhost.free_ports if self.win else proc.free_ports)(2)
+                gp, hp = proc.free_ports(2, self.win)
                 lo = cfg.loopback
                 self.server = proc.Proc("soa-server", [server_binary, "--listen", gdb.host_port(lo, gp),
                                                        "--http", gdb.host_port(lo, hp), "--data", wp(os.path.dirname(self.state_db))] +
@@ -497,10 +497,10 @@ class Run:
                 if self.grep(self.server_log, r"^soa-server: ready"):
                     break
                 self.server.stop()
-                # a Windows soa-server whose ports Windows refused (winhost.free_ports): other ports
-                if not (self.win and self.grep(self.server_log, re.escape(winhost.IN_USE))) or attempt == 3:
+                # a port taken between free_ports and the bind (proc.free_ports): other ports
+                if not proc.addr_in_use(self.server_log) or attempt == 3:
                     raise Abort("soa-server didn't start (see %s)" % self.server_log)
-                self.note("soa-server: ports %d/%d in use on Windows; trying others" % (gp, hp))
+                self.note("soa-server: ports %d/%d in use; trying others" % (gp, hp))
             self.client = proc.Proc(os.path.basename(binary), [binary] + client + cfg.client_args +
                                     ["--server", gdb.host_port(cfg.loopback, gp), "--http", gdb.host_port(cfg.loopback, hp)],
                                     self.client_log, env=env,
@@ -748,8 +748,9 @@ class Run:
         return False
 
     def keep_shot(self, name, src):
+        """src (a screenshot; None when none was taken: a dead client) kept as the shot `name`."""
         dst = self.layout.shot_path(name)
-        if os.path.exists(src):
+        if src and os.path.exists(src):
             shutil.copyfile(src, dst)
             self.shot_names.append(name)
         return dst

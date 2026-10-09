@@ -199,6 +199,13 @@ def _fake_run(tmp_path, script):
     return r
 
 
+def test_keep_shot_without_a_screenshot(tmp_path):
+    # a dead client's look() is None: the shot is missing, not a driver error (session home, CR8)
+    r = _fake_run(tmp_path, "exit 0")
+    assert not os.path.exists(r.keep_shot("20-menu", None))
+    r.stop()
+
+
 def test_a_wait_fails_fast_when_the_client_exits(tmp_path):
     import pytest
     from soadrive import targets

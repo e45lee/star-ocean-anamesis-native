@@ -1,6 +1,7 @@
 """Processes: start under `timeout -k`, keep the PID, stop by PID (its own process group), an RSS cap;
 free ports; repo files in a worktree (PLAN-consolidate D1-D3)."""
 import os
+import random
 import signal
 import socket
 import subprocess
@@ -26,14 +27,58 @@ def repo_file(rel):
     return str(p) if p is not None else None
 
 
-def free_ports(n):
-    socks = [socket.socket() for _ in range(n)]
-    for s in socks:
-        s.bind(("127.0.0.1", 0))
-    ports = [s.getsockname()[1] for s in socks]
-    for s in socks:
-        s.close()
-    return ports
+def free_ports(n, win=False):
+    """n distinct ports for a program to listen on. Nothing holds them: another process can take one
+    before the program binds it, so a caller that starts a listener retries on ADDR_IN_USE in its
+    log (targets.Run.start does, for soa-server on both platforms).
+    Linux: the kernel's pick (bound to 127.0.0.1:0, then closed).
+    win (a Windows program from WSL): random, below WSL's ephemeral range (mirrored networking
+    reserves that for WSL's sockets), not listened on here. Not tried with a bind: in mirrored
+    networking a port bound and closed in WSL stays refused to Windows for a while (WSAEADDRINUSE).
+    A control channel takes port 0 instead (winhost.control_port)."""
+    if not win:
+        socks = [socket.socket() for _ in range(n)]
+        for s in socks:
+            s.bind(("127.0.0.1", 0))
+        ports = [s.getsockname()[1] for s in socks]
+        for s in socks:
+            s.close()
+        return ports
+    lo, hi = 30000, 44000
+    try:
+        with open("/proc/sys/net/ipv4/ip_local_port_range") as f:
+            hi = min(hi, int(f.read().split()[0]) - 1)
+    except (OSError, ValueError, IndexError):
+        pass
+    used = set()
+    for t in ("/proc/net/tcp", "/proc/net/tcp6"):
+        try:
+            with open(t) as f:
+                for line in f.readlines()[1:]:
+                    used.add(int(line.split()[1].rsplit(":", 1)[1], 16))
+        except (OSError, ValueError, IndexError):
+            pass
+    out = []
+    while len(out) < n:
+        p = random.randint(lo, hi)
+        if p not in used and p not in out:
+            out.append(p)
+    return out
+
+
+# A listener's bind failure as soa-server logs it (sock::last_error: strerror(EADDRINUSE) on Linux,
+# WSAEADDRINUSE's message on Windows).
+ADDR_IN_USE = ("Address already in use", "Only one usage of each socket address")
+
+
+def addr_in_use(log):
+    """True when the log says a port was taken (ADDR_IN_USE)."""
+    try:
+        with open(log, errors="replace") as f:
+            text = f.read()
+    except OSError:
+        return False
+    return any(m in text for m in ADDR_IN_USE)
 
 
 class Proc:

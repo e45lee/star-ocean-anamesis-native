@@ -16,8 +16,7 @@ classified: transport, or a behavioural difference), the battle (party, enemies,
 screenshots (RMSE per milestone pair, montages, the tutorial frames aligned) and the two server
 states (every table, times masked). emulator/README.md "Tutorial parity".
 
-Needs ImageMagick (compare, convert, montage) for the screenshots and python3-msgpack for the
-emulator's battle log.
+The screenshots' RMSE is soadrive.screens.rmse (Pillow, numpy); --montage needs ImageMagick's montage.
 """
 import argparse
 import difflib
@@ -29,6 +28,11 @@ import sqlite3
 import statistics
 import subprocess
 import sys
+
+from PIL import Image
+
+from soadrive.screens import rmse
+from soadrive.state import ID_COLS, TIME_COL
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(REPO, "tests", "tutorial_milestones.txt")
@@ -209,15 +213,10 @@ def mission_time(log):
 
 
 # ---- screenshots -------------------------------------------------------------------------------
-def rmse(a, b):
-    p = subprocess.run(["compare", "-metric", "RMSE", a, b, "null:"], capture_output=True, text=True)
-    m = re.search(r"\(([0-9.e+-]+)\)", p.stderr)
-    return float(m.group(1)) if m else None
-
-
 def tiny(f):
-    return subprocess.run(["convert", f, "-resize", "45x80!", "-colorspace", "gray", "-depth", "8", "gray:-"],
-                          capture_output=True).stdout
+    """A 45x80 grey copy's bytes (aligning the tutorial frames)."""
+    with Image.open(f) as im:
+        return im.convert("RGB").resize((45, 80), Image.LANCZOS).convert("L").tobytes()
 
 
 def tiny_rmse(a, b):
@@ -226,11 +225,9 @@ def tiny_rmse(a, b):
 
 
 # ---- server state -------------------------------------------------------------------------------
-TIME_COL = re.compile(r"(_at$|^at$|^time$|_time$|_day$|^date|stamina_at|_secs$)")  # as control/soadrive/state.py (PLAN-schema S9)
-ID_COLS = {("player", "id"), ("player", "search_id")}
-
-
 def state_rows(db):
+    """{table: (columns, sorted rows)} of every table, the times and ids masked as soadrive.state
+    masks them (its TIME_COL and ID_COLS: one list)."""
     c = sqlite3.connect("file:%s?mode=ro" % db, uri=True)
     t = {}
     for (name,) in c.execute("select name from sqlite_master where type = 'table' order by name"):
@@ -241,6 +238,7 @@ def state_rows(db):
             rows.append(tuple("<time>" if TIME_COL.search(col) else "<id>" if (name, col) in ID_COLS else v
                               for col, v in zip(cols, r)))
         t[name] = (cols, sorted(rows, key=repr))
+    c.close()
     return t
 
 
@@ -377,10 +375,10 @@ def compare(port_out, emu_out, name, montage_dir):
             print("- %s: missing (%s%s)" % (nm, "" if os.path.exists(a) else pf + " ", "" if os.path.exists(b) else ef))
             unexplained += 1
             continue
-        v = rmse(a, b)
-        ok = v is not None and v <= mx
+        v = rmse(a, b, size=None)  # (full size; 1.0 when it can't compare)
+        ok = v <= mx
         note = "" if ok else (" (expected: " + why + ")" if why else " DIFFERENT")
-        print("- %s: RMSE %.3f (limit %.2f)%s" % (nm, v if v is not None else -1, mx, note))
+        print("- %s: RMSE %.3f (limit %.2f)%s" % (nm, v, mx, note))
         if not ok and not why:
             unexplained += 1
         if montage_dir:

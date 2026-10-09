@@ -24,9 +24,11 @@ Tools and notes for *STAR OCEAN: anamnesis* (JP, `com.square_enix.android_google
 
 ```sh
 # the game files aren't in git: put them in place first ("Game files" below)
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+scripts/setup-venv.sh     # .venv: requirements.txt (pinned), and this checkout's code on its path; run Python as tools/py
 tools/extract.sh          # unpack the XAPK into work/extracted: decomp.sh --v380 and Waydroid; optional for the viewer (emulator-viewer/), which reads the XAPK in place
 ```
+
+**Python.** Everything runs on one interpreter, `.venv`'s, through `tools/py` (the executable `.py` files' shebangs, the shell scripts and `tests/tiers.json` call it; it names `scripts/setup-venv.sh` when `.venv` is missing). `scripts/setup-venv.sh` installs `requirements.txt` (pinned versions) and writes `soa-checkout.pth`, which makes the checkout's code importable without `sys.path` edits: `soa_save`, `control/` (`soadrive`, `soaslot`, ...), `tools/` and `port/scripts/`. Its paths are relative, so a worktree, whose `.venv` is a link to the main checkout's, imports its own code (`scripts/setup-venv.sh --pth` rewrites only the `.pth`). `pyproject.toml` holds the pytest configuration. The drivers also need ImageMagick (`sudo apt install imagemagick`) for their colour probes and popup fingerprints (`control/soadrive/screens.py` `fx` / `mean`, `popups.py`) and montages; the screenshot RMSE is Pillow and numpy (`soadrive.screens.rmse`).
 
 ### Build dependencies
 
@@ -440,7 +442,7 @@ in Japanese; the `-en` launchers are the English game (docs/PLAN-english.md Q5, 
 
 `tools/check_no_380.sh` checks that no reference to the offline build is left outside the viewer and `docs/history/` (it lists what may keep one).
 
-`.venv/bin/python -m pytest tests`. They use the sanitized saves committed in `data/saves/` (`data/saves/README.md`); your own saves stay in the ignored `samples/`.
+`tools/py -m pytest` (`tests/` and `control/tests/`; `pyproject.toml`). They use the sanitized saves committed in `data/saves/` (`data/saves/README.md`); your own saves stay in the ignored `samples/`.
 
 The port's tests (`build/port/soa --selftest`, `port/scripts/smoke.sh`, the `port/scripts/*_session.sh` sessions; `port/README.md`) and the emulator's (`emulator/scripts/`) run headless: the game renders into a hidden window, so no window opens, but they still need an X display. `WATCH=1` shows the port's window while a script runs (the scripts pass `--windowed` instead of `--headless`); `soa --headless` / `--windowed` choose by hand. The session scripts of both start from the shared pre-downloaded 3.7.0 phone `work/phone-3.7.0` (build it once with `scripts/make-phone-370.sh`, verify it with `scripts/check-phone-370.sh`; `SOA_PHONE=none` runs the full download instead; `port/README.md` "The shared pre-downloaded phone").
 

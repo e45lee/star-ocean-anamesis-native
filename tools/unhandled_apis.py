@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """List the API methods the local server has no handler for, and how each is answered today.
 
 Joins `soa-server --list-apis` (method, FunctionID, handler file or "-") with the 3.7.0 client's

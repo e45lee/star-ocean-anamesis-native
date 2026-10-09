@@ -1,10 +1,10 @@
-import json
 import pathlib
 import subprocess
 import sys
 
 import pytest
 
+from soa_save import paths
 from soa_save.kvs import KVSFile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -70,8 +70,15 @@ def test_roster_english_names():
     assert m.role(game.get_u32("player_home_pc_roleid"))["name_en"] == "Summer Maria"
 
 
-@pytest.mark.skipif(not sorted((ROOT / "apk").glob("*.xapk")),  # 380-ok: soa_save edits the offline build
-                    reason="needs the offline game's package in apk/ (untracked; absent in a worktree)")
+def _no_xapk():  # 380-ok: the offline game's package
+    try:
+        paths.xapk()  # 380-ok: soa_save edits the offline build
+        return False
+    except FileNotFoundError:
+        return True
+
+
+@pytest.mark.skipif(_no_xapk(), reason="needs the offline game's package in apk/ (untracked; here or in the main checkout)")  # 380-ok
 def test_unlock_all_keeps_existing(tmp_path):
     from soa_save.roster import roster, unlock_all
     game = KVSFile.load(ROOT / SEED)

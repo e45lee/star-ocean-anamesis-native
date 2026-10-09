@@ -15,7 +15,6 @@ its state DB (the table `config`), so they hold for both targets. Ends with PASS
 Usage: port/scripts/settings_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
 Env: SOA_PHONE, SEED_RNG, WATCH=1.
 Targets: port-inproc (default), port-server (the server's lines are read from its log)."""
-import os
 import sqlite3
 
 from ..proc import repo_file

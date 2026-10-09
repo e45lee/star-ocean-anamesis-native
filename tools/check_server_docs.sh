@@ -46,13 +46,13 @@ findings=0 fail=0
 note() { echo "  $*"; }
 
 echo "== 1. doc comments: handlers (the 2.5 block with a label), hooks, include/soaserver functions"
-python3 tools/server_doc_coverage.py --server "$server" | sed 's/^/  /'
+"$repo/tools/py" tools/server_doc_coverage.py --server "$server" | sed 's/^/  /'
 [ "${PIPESTATUS[0]}" = 0 ] || findings=$((findings + 1))
 
 echo "== 2. docs links, 5. log lines, 6. agent mentions (tools/server_evidence.py)"
 # the verdict is server_evidence.py --check's exit code (0, 10 findings, 11 a log line gone; anything
 # else: the tool failed, which fails the check), never a grep of its printed lines
-ev=$(python3 tools/server_evidence.py --check); evrc=$?
+ev=$("$repo/tools/py" tools/server_evidence.py --check); evrc=$?
 echo "$ev" | grep -E "^(doc links|log lines|agent mentions|server-rules links quoted|CHECK: )" | sed 's/^/  /'
 case $evrc in
   0) ;;
@@ -60,24 +60,24 @@ case $evrc in
   *) [ $evrc = 11 ] || note "tools/server_evidence.py --check failed (exit $evrc)"
      findings=$((findings + 1)); fail=1 ;;
 esac
-python3 tools/server_rules_doc.py --check | sed 's/^/  /'
+"$repo/tools/py" tools/server_rules_doc.py --check | sed 's/^/  /'
 [ "${PIPESTATUS[0]}" = 0 ] || findings=$((findings + 1))
 
 echo "== 3. server/API-INDEX.md"
 if [ -x "$server" ]; then
-  python3 tools/server_index.py --check --server "$server" | sed 's/^/  /'
+  "$repo/tools/py" tools/server_index.py --check --server "$server" | sed 's/^/  /'
   [ "${PIPESTATUS[0]}" = 0 ] || findings=$((findings + 1))
 else
   note "no $server: not checked (build soa-server, or pass --server)"
   findings=$((findings + 1))
 fi
-python3 tools/gen_error_codes.py --check | sed 's/^/  /'
+"$repo/tools/py" tools/gen_error_codes.py --check | sed 's/^/  /'
 [ "${PIPESTATUS[0]}" = 0 ] || findings=$((findings + 1))
 
 echo "== 4. evidence"
 if [ -n "$rev" ]; then
   # --waivers: a loss passes only when each commit that made one says "Evidence removed:" itself
-  python3 tools/server_evidence.py --against "$rev" --waivers | sed 's/^/  /'
+  "$repo/tools/py" tools/server_evidence.py --against "$rev" --waivers | sed 's/^/  /'
   [ "${PIPESTATUS[0]}" = 0 ] || { findings=$((findings + 1)); fail=1; }
 else
   note "(no --evidence REV given)"

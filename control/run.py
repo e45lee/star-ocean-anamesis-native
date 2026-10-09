@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../tools/py" "$0" "$@"'
 """Runs a named session (control/soadrive/sessions/<name>.py) against a target.
 
     control/run.py [--target emu|port-server|port-inproc] SESSION [the session's arguments...]
@@ -18,16 +18,13 @@ soadrive/targets.py Run.state_check): a violation fails the session.
 """
 import argparse
 import importlib
-import os
 import pkgutil
 import signal
 import sys
 import traceback
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
-import soaslot  # noqa: E402
-from soadrive import sessions, targets  # noqa: E402
+import soaslot
+from soadrive import sessions, targets
 
 
 def session_names():

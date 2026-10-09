@@ -37,18 +37,18 @@ trap 'kill $pid 2>/dev/null || true' EXIT
 while [ ! -p "$TMP/fifo" ]; do sleep 1; done
 S=$OUT/shots; L=$OUT/log.txt
 fails=0
-c() { python3 $CTL --timeout 400 "$TMP/fifo" "$@" > /dev/null; }
+c() { tools/py $CTL --timeout 400 "$TMP/fifo" "$@" > /dev/null; }
 # go NAME REGEX -- CMD...: the commands, resent until REGEX is logged; a miss is reported and counted.
 go() {
   n=$1; rx=$2; shift 3
-  if python3 $FLOW tap-until "$TMP/fifo" "$L" "$rx" 60 20 3 -- "$@" > /dev/null; then echo "ok   $n"; else echo "FAIL $n (no '$rx')"; fails=$((fails + 1)); fi
+  if tools/py $FLOW tap-until "$TMP/fifo" "$L" "$rx" 60 20 3 -- "$@" > /dev/null; then echo "ok   $n"; else echo "FAIL $n (no '$rx')"; fails=$((fails + 1)); fi
 }
 fail() { echo "FAIL: $*"; c quit || true; exit 1; }
 
 # The title (phase 1), TAP TO START -> Login -> the data check (or the download) -> home (phase 4).
 phone370_title "$TMP/fifo" "$L"; c shot:$S/01-title.png
 phone370_login "$TMP/fifo" "$L" "$S"
-python3 $FLOW login-popups "$TMP/fifo" "$L" - - $S/02-home.png > /dev/null || fail "the login popups didn't close"
+tools/py $FLOW login-popups "$TMP/fifo" "$L" - - $S/02-home.png > /dev/null || fail "the login popups didn't close"
 # The mascot (コロ): a line.
 c tap:90:900 wait:4000 shot:$S/03-mascot.png
 

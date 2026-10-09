@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Validate a 3.7.0 download (its zip or a folder) against its own manifests and version.bin.
 
   .venv/bin/python tools/check_download.py [DIR] [--manifest {all,Bulk,Individual,ep1,ep2,ep3}]
@@ -61,7 +61,6 @@ from collections import defaultdict
 import msgpack
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)
 from soa_save.adld import aes_cipher, chash32, xor  # noqa: E402
 from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 

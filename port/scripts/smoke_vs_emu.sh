@@ -28,7 +28,7 @@ clock=${SMOKE_CLOCK:-2026-09-30 12:00:00}
 master=$(repo_file "$repo" data/basmaster-3.7.0.sqlite3) || master=$repo/data/basmaster-3.7.0.sqlite3
 rm -rf "${out:?}"; mkdir -p "$out/server"
 elog=$out/emu.log slog=$out/server.log fifo=$out/fifo
-read -r game_port http_port < <(python3 -c '
+read -r game_port http_port < <("$repo/tools/py" -c '
 import socket
 s = [socket.socket() for _ in range(2)]
 for x in s: x.bind(("127.0.0.1", 0))
@@ -60,7 +60,7 @@ timeout -k 10 1800 "$emu" --data "$out/emu" --headless --size 729x1296 --control
 epid=$!
 while [ ! -p "$fifo" ]; do sleep 1; kill -0 $epid 2>/dev/null || { echo "FAIL: soa-emu exited (log $elog)"; exit 1; }; done
 
-ctl() { python3 control/soactl.py --timeout 120 "$fifo" "$@" > /dev/null 2>&1; }
+ctl() { "$repo/tools/py" control/soactl.py --timeout 120 "$fifo" "$@" > /dev/null 2>&1; }
 fails=0
 : > "$out/rmse.txt"
 # screen NAME LIMIT: wait until the emulator's screen matches the baseline's; the best RMSE.
@@ -84,7 +84,7 @@ screen() {
 # The title (after the server answered NoLoginStart), TAP TO START until Login.
 for _ in $(seq 1 300); do grep -q 'request NoLoginStart' "$slog" && break; sleep 1; done
 screen 01-title 0.08
-python3 control/flowctl.py tap-until "$fifo" "$slog" 'request Login ' 90 10 6 -- tap:364:1000 > /dev/null || { echo "FAIL: no Login"; exit 1; }
+"$repo/tools/py" control/flowctl.py tap-until "$fifo" "$slog" 'request Login ' 90 10 6 -- tap:364:1000 > /dev/null || { echo "FAIL: no Login"; exit 1; }
 # The data check; a download dialog when the phone lacks the server's edited master (ダウンロード,
 # then 完了), until home opens the notice board.
 for i in $(seq 1 60); do
@@ -92,7 +92,7 @@ for i in $(seq 1 60); do
     [ $i -gt 6 ] && ctl tap:515:800 wait:3000 tap:364:790
     sleep 5
 done
-python3 control/flowctl.py login-popups "$fifo" "$elog" - - - > "$out/popups.txt" 2>&1 || { echo "FAIL: login popups ($(tail -1 "$out/popups.txt"))"; exit 1; }
+"$repo/tools/py" control/flowctl.py login-popups "$fifo" "$elog" - - - > "$out/popups.txt" 2>&1 || { echo "FAIL: login popups ($(tail -1 "$out/popups.txt"))"; exit 1; }
 screen 02-home 0.12;      ctl wait:500 tap:180:1250
 screen 03-charmenu 0.08;  ctl wait:500 tap:364:435
 screen 04-charlist 0.08;  ctl wait:500 tap:364:600

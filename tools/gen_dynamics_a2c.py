@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/dynamics/gen/dynamics_a2c.cpp: the Aska dynamics family transcribed by a2c.py.
 
 Covers the articulated dynamics (hair / cloth / accessory bones): ArticulatedDynamicsManager{,Base},
@@ -28,7 +28,6 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
 import genlib  # noqa: E402 (before a2c: the default lib is 3.7.0's)
 
 _spec = importlib.util.spec_from_file_location('a2c', os.path.join(HERE, 'a2c.py'))

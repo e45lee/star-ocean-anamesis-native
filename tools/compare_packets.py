@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Compare two soa-server packet logs (soa-server --log-packets DIR -> DIR/packets.log): the
 requests two clients sent for the same scripted flow, e.g. soa --server (the port on the 3.7.0
 client) and soa-emu (the unmodified 3.7.0 client), each against a fresh soa-server with the same

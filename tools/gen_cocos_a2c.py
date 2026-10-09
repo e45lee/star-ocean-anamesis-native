@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/ui/cocos/gen/cocos_a2c.cpp: Framework::Cocos functions transcribed from the ARM64
 by a2c.py (CALL_FALLBACK: other calls go to the guest through objmgr's a2c_call, i.e. straight to
 native replacements where they exist). Unnamed functions are named as tools/genlib.py does
@@ -9,8 +9,7 @@ import importlib.util
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before a2c: the default lib is 3.7.0's)
+import genlib  # (before a2c: the default lib is 3.7.0's)
 
 _spec = importlib.util.spec_from_file_location('a2c', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'a2c.py'))
 a2c = importlib.util.module_from_spec(_spec)

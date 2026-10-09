@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """The local server's doc-comment coverage (docs/history/PLAN-readability.md 2.5 and R19), for
 tools/check_server_docs.sh:
 
@@ -22,7 +22,6 @@ import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "tools"))
 import server_index as si  # noqa: E402
 
 LABEL_RE = re.compile(r"\(([abcd])\)|\(([abcd]):|[;,] ([abcd]):")  # as tools/server_evidence.py

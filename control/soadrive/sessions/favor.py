@@ -12,7 +12,6 @@ Usage: port/scripts/restore_favor_session.sh <soa> <out-dir> <scratch-dir>   (fr
 Env: SOA_PHONE (scripts/shared-phone.sh), FLOW_MISSION, SEED_RNG, WATCH=1.
 Targets: port-inproc (the `mission:` / `phase:` shortcut, the in-process server's favor lines)."""
 import os
-import re
 import sqlite3
 
 from ..flows import mission

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Checks the reconstructed gacha pick-ups (data/gacha_pools.sqlite3) against the banner images.
 
 Every character banner of STAR OCEAN: anamnesis is composited from the characters' own illustrations
@@ -45,8 +45,6 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-sys.path.insert(0, HERE)
-sys.path.insert(0, ROOT)
 from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 
 ART_KEY = re.compile(r"(c[a-z]\d+)_b(\d+)([a-z])")

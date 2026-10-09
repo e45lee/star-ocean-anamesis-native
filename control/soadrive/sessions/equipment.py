@@ -18,7 +18,6 @@ FAIL (exit 1). About 6 minutes.
 Usage: port/scripts/equipment_session.sh <soa> <out-dir> <scratch-dir>   (from any directory)
 Env: SOA_PHONE (scripts/shared-phone.sh), SEED_RNG, WATCH=1.
 Targets: port-inproc (default), port-server (the server's lines are read from soa-server's log)."""
-import os
 import sqlite3
 
 from ..proc import repo_file

@@ -37,7 +37,6 @@ def options(ap):
 
 def main(o):
     s = common.port_run(o, common.port_config(o))
-    c = s.ctl
 
     H, G = common.HOME_MASK, common.GACHA_MASK
 

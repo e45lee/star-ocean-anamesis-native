@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """End-to-end regression run of the port on the 3.7.0 client (the in-process server).
 
 Usage: smoke.py SOA OUT_DIR [BASELINE_DIR] [extra soa args...]
@@ -14,7 +14,7 @@ OUT_DIR/NN-name.png, with a side-by-side strip in OUT_DIR/strip.png.
 - Without a baseline, each later step waits a fixed time, generously, and the screenshots become
   a new baseline.
 - With a baseline (an earlier run's OUT_DIR, normally tests/smoke-base), each step polls
-  screenshots until the screen matches the baseline's (ImageMagick RMSE on a downscaled copy <=
+  screenshots until the screen matches the baseline's (soadrive.screens.rmse on a downscaled copy <=
   SMOKE_MAX_RMSE, default 0.08; the home character animates and the mascot's line changes, so the
   home screens get 0.12) and only then taps. That keeps the run independent of machine load. A
   step that never matches within SMOKE_STEP_TIMEOUT seconds (default 90) fails the run.
@@ -34,6 +34,8 @@ import subprocess
 import sys
 import time
 
+from soadrive.screens import rmse  # (182x324 copies; 1.0 when it can't compare)
+
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 MAX_RMSE = float(os.environ.get("SMOKE_MAX_RMSE", "0.08"))
 STEP_TIMEOUT = float(os.environ.get("SMOKE_STEP_TIMEOUT", "90"))
@@ -51,16 +53,6 @@ STEPS = [
     ("07-home", 10, "tap:665:1250"),       # footer その他 (phase 12)
     ("08-other", 8, "quit"),
 ]
-
-
-def rmse(a, b):
-    r = subprocess.run(["compare", "-metric", "RMSE", "-resize", "182x324", a, b, "null:"],
-                       capture_output=True, text=True)
-    out = r.stderr.strip()
-    try:
-        return float(out[out.index("(") + 1:out.index(")")])
-    except ValueError:
-        return 1.0
 
 
 def main():
@@ -84,7 +76,6 @@ def main():
     # and the client save.
     # (phone370_client_save: the committed save with no episode pack on its books.)
     # The machine-wide game slot pool (control/soaslot.py): queued here; soa inherits the slot.
-    sys.path.insert(0, os.path.join(REPO, "control"))
     import soaslot
     slot = soaslot.acquire("smoke")
     subprocess.run(["sh", "-c", '. port/scripts/phone370.sh && phone370_prepare "$1" && phone370_client_save "$1/data/shared_prefs"', "sh", data],
@@ -129,7 +120,7 @@ def main():
     results = []
     try:
         # The title: its phase-1 log line first (the boot takes a while under the JIT).
-        ok, msg = sh('python3 control/flowctl.py wait-log "$2" "port_debug: phase 1 " 300', 330)
+        ok, msg = sh('tools/py control/flowctl.py wait-log "$2" "port_debug: phase 1 " 300', 330)
         if not ok:
             failures.append("no title (phase 1): " + msg.splitlines()[-1] if msg else "no title")
         for name, delay, action in ([] if failures else STEPS):
@@ -171,7 +162,7 @@ def main():
                 # notice board and the LOGIN BONUS popup.
                 ok, msg = sh('phone370_login "$1" "$2"', 900)
                 if ok:
-                    ok, msg = sh('python3 control/flowctl.py login-popups "$1" "$2" - - -', 300)
+                    ok, msg = sh('tools/py control/flowctl.py login-popups "$1" "$2" - - -', 300)
                 print(("ok   " if ok else "FAIL ") + "login: " + (msg.splitlines()[-1] if msg else ""), flush=True)
                 if not ok:
                     failures.append("login: " + msg)

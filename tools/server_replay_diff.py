@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """RG4 of docs/history/PLAN-readability.md: replays every corpus with two soa-server builds and compares.
 
     tools/server_replay_diff.sh [--out DIR] [--keep] BIN_A BIN_B [CORPUS_DIR...]

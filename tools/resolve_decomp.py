@@ -2,13 +2,11 @@
 
 Usage: resolve_decomp.py < in.c > out.c
 """
-import os
 import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from elfinfo import GHIDRA_BASE, lib  # noqa: E402
+from elfinfo import GHIDRA_BASE, lib
 
 L = lib()
 names = {}

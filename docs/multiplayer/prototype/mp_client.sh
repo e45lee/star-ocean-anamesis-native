@@ -28,7 +28,7 @@ mkdir -p "$out/server" "$out/packets"
 . "$repo/scripts/shared-phone.sh"
 shared_phone_resolve "$repo"
 if [ -n "${SOA_PHONE:-}" ]; then shared_phone_link "$SOA_PHONE" "$out/emu" || exit 1; else mkdir -p "$out/emu"; fi
-read -r game_port http_port < <(python3 -c '
+read -r game_port http_port < <("$repo/tools/py" -c '
 import socket
 s = [socket.socket() for _ in range(2)]
 for x in s: x.bind(("127.0.0.1", 0))
@@ -50,7 +50,7 @@ timeout -k 10 3600 "$emu" --data "$out/emu" --headless --size 729x1296 --control
     --server 127.0.0.1:$game_port --lobby 127.0.0.1:$lobby_port --http 127.0.0.1:$http_port > "$elog" 2>&1 &
 epid=$!
 echo "client: soa-server $spid, soa-emu $epid, fifo $fifo"
-ctl() { python3 "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; }
+ctl() { "$repo/tools/py" "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; }
 until_do() {  # until_do SECONDS TAP PATTERN FILE: tap every 4 s until PATTERN is in FILE
     local end=$(( $(date +%s) + $1 )) next=0
     while ! grep -q -- "$3" "$4" 2>/dev/null; do
@@ -72,7 +72,7 @@ while ! grep -q "ShowWebView(http" "$elog"; do
     case $((i % 3)) in 0) ctl tap:364:1043;; 1) ctl tap:515:800;; 2) ctl tap:364:790;; esac
     i=$((i + 1)); sleep 6
 done
-python3 "$flowctl" login-popups "$fifo" "$elog" "$out/notice.png" "$out/login-bonus.png" "$out/home.png" > "$out/popups.txt" 2>&1
+"$repo/tools/py" "$flowctl" login-popups "$fifo" "$elog" "$out/notice.png" "$out/login-bonus.png" "$out/home.png" > "$out/popups.txt" 2>&1
 n=$(grep -c "> GetMissionList" "$plog")
 end=$(( $(date +%s) + 60 )) next=0
 while [ "$(grep -c "< GetMissionListRes" "$plog")" -le "$n" ]; do
@@ -87,4 +87,4 @@ ctl tap:363:665 wait:4000 "shot:$out/mission-detail.png"
 echo "HOLD: drive via $fifo; rm $out/HOLD to stop"
 touch "$out/HOLD"
 while [ -e "$out/HOLD" ] && kill -0 $epid 2>/dev/null; do sleep 2; done
-python3 "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
+"$repo/tools/py" "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1

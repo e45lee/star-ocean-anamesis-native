@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Reconstructs the per-gacha draw pools of STAR OCEAN: anamnesis (3.7.0).
 
 The live server drew from tables named by `master_gacha.table_name` (`master_gacha_item_*`),
@@ -637,7 +637,7 @@ class Builder:
                 pickup_rows.append((g["id"], ct, cid, s))
             if gt == 2:
                 continue
-            pools, rule = {}, {}
+            pools = {}
             if gt == 0:
                 pu = sorted({cid for ct, cid, _ in p if ct == 2})
                 general5 = self.roles_released(t0, t, lambda b: b["rarity"] == 5 and not b["limited"])
@@ -784,8 +784,6 @@ def report(m, b, res, out_db):
 
 def default_master():
     """data/basmaster-3.7.0.sqlite3 (untracked), here or in the main checkout of a git worktree."""
-    if ROOT not in sys.path:
-        sys.path.insert(0, ROOT)
     from soa_save.paths import master_db
 
     db = master_db()

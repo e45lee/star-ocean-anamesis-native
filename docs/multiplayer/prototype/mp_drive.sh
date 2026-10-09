@@ -14,7 +14,7 @@ here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "$here/../../.." && pwd)
 soactl=$repo/control/soactl.py
 mkdir -p "$shots"
-ctl() { local o=$1; shift; python3 "$soactl" --timeout 180 "$o/fifo" "$@" > /dev/null 2>&1; }
+ctl() { local o=$1; shift; "$repo/tools/py" "$soactl" --timeout 180 "$o/fifo" "$@" > /dev/null 2>&1; }
 both() { ctl "$host" "shot:$shots/$1-host.png" & ctl "$guest" "shot:$shots/$1-guest.png"; wait; }
 steps=${*:-host-room guest-join battle}
 for step in $steps; do

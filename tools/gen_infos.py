@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/info/gen/info_classes.h: the client's info classes (InfoBase and every class
 derived from it: CPlayerInfo, CPersonInfo, ..., the response parts) as recovered layouts, and what each
 one's Initialize does, for the info subsystem's natives (port/src/native/info/README.md "Info classes").
@@ -41,7 +41,6 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
 import genlib  # noqa: E402 (before elfinfo: the default lib)
 
 from unicorn import UC_HOOK_MEM_WRITE  # noqa: E402

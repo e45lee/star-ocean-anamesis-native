@@ -1,14 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/engine/gen/objmgr_a2c.cpp: ObjectManager culling and painting-list builders
 transcribed from the ARM64 by a2c.py with its CALL_FALLBACK (guest calls through a2c_call) and EXCLUSIVE (exclusive
 load/store pairs as host CAS). Usage: tools/gen_objmgr_a2c.py port/src/native/engine/gen/objmgr_a2c.cpp"""
 import importlib.util
 import os
-import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
+import genlib  # (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
 _spec = importlib.util.spec_from_file_location('a2c', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'a2c.py'))
 a2c = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(a2c)

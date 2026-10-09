@@ -61,7 +61,7 @@ phone=$out/emu
 dl=$phone/data/files/download
 elog=$out/emu.log slog=$out/server.log fifo=$out/fifo
 W=729 H=1296
-read -r game_port http_port < <(python3 -c '
+read -r game_port http_port < <("$repo/tools/py" -c '
 import socket
 s = [socket.socket() for _ in range(2)]
 for x in s: x.bind(("127.0.0.1", 0))
@@ -83,7 +83,7 @@ results=() failed=0
 pass() { results+=("PASS  $1"); echo "PASS  $1 ($(( $(date +%s) - t0 ))s)"; }
 miss() { results+=("FAIL  $1"); echo "FAIL  $1"; failed=1; }
 finish() {
-    [ -p "$fifo" ] && kill -0 "${epid:-0}" 2>/dev/null && python3 "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
+    [ -p "$fifo" ] && kill -0 "${epid:-0}" 2>/dev/null && "$repo/tools/py" "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
     if grep -qE "Unhandled SIG|\*\*\* host signal" "$elog" 2>/dev/null; then miss "soa-emu crashed (see $elog)"; fi
     echo "---"
     printf '%s\n' "${results[@]}"
@@ -96,7 +96,7 @@ finish() {
 . "$repo/scripts/shared-phone.sh"
 shared_phone_link "$phone_src" "$phone" > "$out/phone-link.txt" 2>&1 || { miss "phone ($(tail -n 1 "$out/phone-link.txt"))"; finish; }
 rm -f "$dl/$member"
-python3 - "$dl/version.bin" "$member" > "$out/phone-prep.txt" 2>&1 <<'EOF' || { miss "phone: version.bin"; finish; }
+"$repo/tools/py" - "$dl/version.bin" "$member" > "$out/phone-prep.txt" 2>&1 <<'EOF' || { miss "phone: version.bin"; finish; }
 import os, sys, msgpack
 path, name = sys.argv[1], sys.argv[2]
 v = msgpack.unpackb(open(path, "rb").read(), raw=False, strict_map_key=False)
@@ -125,7 +125,7 @@ mkdir -p "$out/served"
 base=http://127.0.0.1:$http_port/download/$rev/Android
 curl -sf -o "$out/served/version.bin" "$base/version.bin" || { miss "served: GET version.bin"; finish; }
 curl -sf -o "$out/served/basmaster-en.sqlite3" "$base/$member" || { miss "served: GET $member"; finish; }
-bundle=$(python3 - "$out/served/version.bin" "$member" <<'EOF'
+bundle=$("$repo/tools/py" - "$out/served/version.bin" "$member" <<'EOF'
 import sys, msgpack
 sys.path.insert(0, sys.path[0])
 v = msgpack.unpackb(open(sys.argv[1], "rb").read(), raw=False, strict_map_key=False)["assets"]
@@ -135,11 +135,11 @@ if not e or e.get("encType") != 2: sys.exit(1)
 print(e["parentHash"])
 EOF
 ) || { miss "served: no $member entry (encType 2) in version.bin"; finish; }
-ind=$(python3 -c "
+ind=$("$repo/tools/py" -c "
 import sys; sys.path.insert(0, '$repo')
 from soa_save.adld import chash32
 print('I/5374616e/%08x.bin' % chash32(b'$member'))")
-want=$(python3 -c "
+want=$("$repo/tools/py" -c "
 import sys; sys.path.insert(0, '$repo')
 from soa_save.adld import chash32
 print(chash32(b'$ind'))")
@@ -152,7 +152,7 @@ timeout -k 10 2400 "$emu" --data "$phone" --headless --size ${W}x$H --control "$
     --server 127.0.0.1:$game_port --http 127.0.0.1:$http_port > "$elog" 2>&1 &
 epid=$!
 alive() { kill -0 $epid 2>/dev/null; }
-ctl() { python3 "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; }
+ctl() { "$repo/tools/py" "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; }
 in_plog() { grep -q -- "$1" "$out/packets/packets.log" 2>/dev/null; }
 in_elog() { grep -q -- "$1" "$elog" 2>/dev/null; }
 in_slog() { tail -n +$((slog_base + 1)) "$slog" 2>/dev/null | grep -q -- "$1"; }

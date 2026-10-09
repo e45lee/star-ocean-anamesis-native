@@ -1,12 +1,9 @@
 """tools/unpack_download.py: archive layout handling (no game files needed)."""
-import os
-import sys
 import zipfile
 
 import pytest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
-import unpack_download as u  # noqa: E402
+import unpack_download as u
 
 
 def make_zip(path, names):

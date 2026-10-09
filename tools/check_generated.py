@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Fails when a generated source is stale against the 3.7.0 lib (T0 `generated`).
 
     tools/check_generated.py [--lib LIB]
@@ -28,9 +28,7 @@ import tempfile
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
-import genlib  # noqa: E402
+import genlib
 
 REPO = genlib.REPO
 APK = os.path.join(REPO, "apk", "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk")

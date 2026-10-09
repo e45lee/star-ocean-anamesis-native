@@ -1,12 +1,9 @@
 """tools/server_replay_record.py's reply reader (msgpack): data.Time of a reply, and the replies it skips."""
-import os
-import sys
 import time
 
 import msgpack
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
-import server_replay_record as rr  # noqa: E402
+import server_replay_record as rr
 
 STAMP = "2026-10-01 03:58:00"
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """The hot methods of one subsystem, by class, with their callers (port/PLAN.md task 6).
 
 Usage: hot_methods.py SUBSYSTEM NAME=DIR [NAME=DIR...] [--top N] [--callers K] [--markdown]
@@ -12,11 +12,9 @@ This is the list a code agent starts from: the biggest wins and who drives them.
 import argparse
 import collections
 import os
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from profile_report import IDLE_HLE, demangle_all, family_of, load_tsv  # noqa: E402
-from rebuild_queue import scaffolded_scopes, subsystem_of_family  # noqa: E402
+from profile_report import IDLE_HLE, demangle_all, family_of, load_tsv
+from rebuild_queue import scaffolded_scopes, subsystem_of_family
 
 
 def short(dem, n=110):

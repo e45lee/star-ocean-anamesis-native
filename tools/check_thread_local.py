@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Fails on a non-trivial thread_local in our code (runtime/README.md "Per-thread state";
 runtime/include/soaruntime/core/thread_record.h).
 

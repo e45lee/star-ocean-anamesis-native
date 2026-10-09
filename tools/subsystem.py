@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Per-subsystem scaffolding for the native rebuild (port/PLAN.md task 6; port/src/native/README.md
 "Per-subsystem workflow").
 
@@ -42,8 +42,7 @@ import subprocess
 import sys
 import tempfile
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "port", "scripts"))
-from profile_report import qualified_name, split_qualified  # noqa: E402
+from profile_report import qualified_name, split_qualified
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")

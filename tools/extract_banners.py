@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Extract the gacha banner and pickup images of the 3.7.0 data set to PNG, with an index.
 
 Sources (in the 3.7.0 download, --download: work/SOA-3.7.0-canonical-data.zip, read in place, or a folder):
@@ -43,7 +43,6 @@ import tempfile
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)
 from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 from soa_save.paths import master_db  # noqa: E402
 

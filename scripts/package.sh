@@ -7,4 +7,4 @@
 #   (both platforms unless one is named; zips into dist/ unless --out)
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
-exec python3 "$repo/tools/package.py" "$@"
+exec "$repo/tools/py" "$repo/tools/package.py" "$@"

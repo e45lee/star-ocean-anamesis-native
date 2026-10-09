@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """Self time per host C++ function inside native replacements, from a SOA_PROFILE_HOST=1 profile.
 
     SOA_PROFILE=DIR SOA_PROFILE_HOST=1 <soa run>     (writes DIR/host.tsv, see core/profile.cpp)

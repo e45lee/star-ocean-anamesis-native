@@ -61,56 +61,56 @@ phone370_prepare() {
 }
 
 phone370_title() {
-    python3 control/flowctl.py wait-log "$2" 'port_debug: phase 1 ' 300 || { echo "FAIL: no title (phase 1)"; exit 1; }
-    python3 control/soactl.py --timeout 400 "$1" wait:3000
+    tools/py control/flowctl.py wait-log "$2" 'port_debug: phase 1 ' 300 || { echo "FAIL: no title (phase 1)"; exit 1; }
+    tools/py control/soactl.py --timeout 400 "$1" wait:3000
 }
 
 phone370_login() {
     _f=$1; _l=$2; _s=${3:-}
     # TAP TO START -> Login (a tap during the title's fade-in is sometimes dropped).
-    python3 control/flowctl.py tap-until "$_f" "$_l" 'request Login ' 90 10 6 -- tap:364:1000 || { echo "FAIL: no Login after TAP TO START"; exit 1; }
+    tools/py control/flowctl.py tap-until "$_f" "$_l" 'request Login ' 90 10 6 -- tap:364:1000 || { echo "FAIL: no Login after TAP TO START"; exit 1; }
     phone370_data "$_f" "$_l" "$_s"
 }
 
 phone370_data() {
     _f=$1; _l=$2; _s=${3:-}; _u=${4:-'port_debug: phase 4 '}
     if [ -n "${SOA_PHONE:-}" ]; then
-        python3 control/flowctl.py wait-log "$_l" 'version_latest_Bulk' 120 || { echo "FAIL: no data check"; exit 1; }
-        if ! python3 control/flowctl.py wait-log "$_l" "$_u" 60 > /dev/null 2>&1; then
+        tools/py control/flowctl.py wait-log "$_l" 'version_latest_Bulk' 120 || { echo "FAIL: no data check"; exit 1; }
+        if ! tools/py control/flowctl.py wait-log "$_l" "$_u" 60 > /dev/null 2>&1; then
             # A download dialog after all: data the phone lacks, e.g. the master the server edited
             # for this run's options (--restore-tower's banner rows: 35 MB). ダウンロード (515:800),
             # then 完了 (364:790); both spots are empty on the other dialog.
-            [ -n "$_s" ] && python3 control/soactl.py --timeout 400 "$_f" shot:"$_s/00-download-dialog.png"
-            python3 control/flowctl.py tap-until "$_f" "$_l" "$_u" 300 10 30 -- tap:515:800 wait:3000 tap:364:790 ||
+            [ -n "$_s" ] && tools/py control/soactl.py --timeout 400 "$_f" shot:"$_s/00-download-dialog.png"
+            tools/py control/flowctl.py tap-until "$_f" "$_l" "$_u" 300 10 30 -- tap:515:800 wait:3000 tap:364:790 ||
                 { echo "FAIL: no '$_u' after the data check"; exit 1; }
         fi
     else
         # CPhase_DataDownload (phase 19): the episode data is missing (決定 364:1043), then the
         # download dialog (ダウンロード 515:800), the bundles, 完了 (364:790).
-        python3 control/flowctl.py wait-log "$_l" 'port_debug: phase 19 ' 120 || { echo "FAIL: no data download phase"; exit 1; }
-        python3 control/flowctl.py tap-until "$_f" "$_l" 'version_latest_Bulk' 120 8 10 -- wait:3000 tap:364:1043 || { echo "FAIL: no manifest check"; exit 1; }
-        python3 control/flowctl.py tap-until "$_f" "$_l" 'I/http: GET .*/Android/B/' 120 10 10 -- tap:515:800 || { echo "FAIL: the download didn't start"; exit 1; }
+        tools/py control/flowctl.py wait-log "$_l" 'port_debug: phase 19 ' 120 || { echo "FAIL: no data download phase"; exit 1; }
+        tools/py control/flowctl.py tap-until "$_f" "$_l" 'version_latest_Bulk' 120 8 10 -- wait:3000 tap:364:1043 || { echo "FAIL: no manifest check"; exit 1; }
+        tools/py control/flowctl.py tap-until "$_f" "$_l" 'I/http: GET .*/Android/B/' 120 10 10 -- tap:515:800 || { echo "FAIL: the download didn't start"; exit 1; }
         _last=-1; _same=0
         while [ $_same -lt 30 ]; do  # the downloads stop: no new GET for 30 s
             _n=$(grep -c 'I/http: GET' "$_l" || true)
             if [ "$_n" = "$_last" ]; then _same=$((_same + 1)); else _same=0; _last=$_n; fi
             sleep 1
         done
-        [ -n "$_s" ] && python3 control/soactl.py --timeout 400 "$_f" shot:"$_s/00-download-done.png"
-        python3 control/flowctl.py tap-until "$_f" "$_l" "$_u" 120 8 10 -- tap:364:790 || { echo "FAIL: no '$_u' after the download"; exit 1; }
+        [ -n "$_s" ] && tools/py control/soactl.py --timeout 400 "$_f" shot:"$_s/00-download-done.png"
+        tools/py control/flowctl.py tap-until "$_f" "$_l" "$_u" 120 8 10 -- tap:364:790 || { echo "FAIL: no '$_u' after the download"; exit 1; }
     fi
 }
 
 phone370_episode_list() {
     _f=$1; _l=$2; _x=${3:-270}; _y=${4:-1085}
-    python3 control/flowctl.py tap-until "$_f" "$_l" 'port_debug: phase (5|8) ' 60 20 3 -- tap:$_x:$_y || return 1
+    tools/py control/flowctl.py tap-until "$_f" "$_l" 'port_debug: phase (5|8) ' 60 20 3 -- tap:$_x:$_y || return 1
     [ "$(grep -o 'port_debug: phase [58] ' "$_l" | tail -n 1)" = 'port_debug: phase 8 ' ] && return 0
     # phase 5: the last episode's map. Ep選択 is at 655:485 on a world map (Episodes 2, 3), at
     # 655:375 on Episode 1's planet select (where 655:485 is on the planet: harmless). The log
     # can't tell them apart in time (the server's lines are buffered, the phase lines aren't).
-    python3 control/soactl.py --timeout 400 "$_f" wait:5000 > /dev/null
-    python3 control/flowctl.py tap-until "$_f" "$_l" 'port_debug: phase 8 ' 12 12 1 -- tap:655:485 > /dev/null 2>&1 ||
-        python3 control/flowctl.py tap-until "$_f" "$_l" 'port_debug: phase 8 ' 60 20 3 -- tap:655:375
+    tools/py control/soactl.py --timeout 400 "$_f" wait:5000 > /dev/null
+    tools/py control/flowctl.py tap-until "$_f" "$_l" 'port_debug: phase 8 ' 12 12 1 -- tap:655:485 > /dev/null 2>&1 ||
+        tools/py control/flowctl.py tap-until "$_f" "$_l" 'port_debug: phase 8 ' 60 20 3 -- tap:655:375
 }
 
 phone370_client_save() {

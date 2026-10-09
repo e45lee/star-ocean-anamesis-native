@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/api/gen/fakeapi_tables.inc from a libSOA.so (FakeApiCaller).
 
 The port's FakeApiCaller (port/src/native/api/fakeapi.cpp) needs, per request method, the
@@ -40,7 +40,6 @@ from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
 from capstone.arm64 import ARM64_OP_IMM, ARM64_OP_MEM, ARM64_OP_REG
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
 import genlib  # noqa: E402 (the output header's lib stamp)
 from elfinfo import Lib  # noqa: E402
 

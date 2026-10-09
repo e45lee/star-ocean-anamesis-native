@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Cut the committed sample of the params corpus from recorded ones (port/src/native/params/README.md "Tests").
 
 `soa --live-check params:dump:out=FILE` records every distinct input of CParameterElementBase::Deserialize to

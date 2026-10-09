@@ -4,11 +4,10 @@ tags_are_words 1; trim is str.strip() first, as story_finish does). The C++ brea
 (soa/line_break.h) passes every row in build/common/soa_text_tests, so the two agree."""
 import pathlib
 import re
-import sys
+
+import english_core as C
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
-import english_core as C  # noqa: E402
 
 VECTORS = ROOT / "common" / "tests" / "line_break_vectors.tsv"
 

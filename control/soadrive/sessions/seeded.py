@@ -25,7 +25,6 @@ SaleGacha, the coins debited and ten draws in the state; home. Prints PASS / FAI
 a final PASS / FAIL (exit 0 / 1). Kills only the processes it started.
 Targets: emu (default), port-server, port-inproc (the wire's own milestones are skipped there)."""
 import os
-import re
 import subprocess
 import sys
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Unpack a 3.7.0 download archive and verify it is complete.
 
 Extracts a zip of the game's download tree (the one the client fetches after login: version.bin,
@@ -27,8 +27,7 @@ import os
 import sys
 import zipfile
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import check_download  # noqa: E402
+import check_download
 
 ZONE_SUFFIX = ":Zone.Identifier"
 

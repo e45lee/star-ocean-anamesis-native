@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Asset coverage of the master DB's events, Sphere 211, tower and banners against asset sources.
 
 Usage: event_coverage.py --db MASTER.sqlite3 --src PATH [--src PATH ...] [--json OUT] [--md OUT] [--quiet]
@@ -16,8 +16,7 @@ DB and the sources, so rerun it whenever more assets are downloaded:
 """
 import argparse, collections, io, json, os, re, sqlite3, sys, zipfile
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from soa_save.download_tree import DownloadTree  # noqa: E402
+from soa_save.download_tree import DownloadTree
 
 
 def norm(p):

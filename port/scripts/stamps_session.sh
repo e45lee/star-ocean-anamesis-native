@@ -6,4 +6,4 @@
 # Env: SOA_PHONE (scripts/shared-phone.sh), SEED_RNG, WATCH=1.
 # The session is control/soadrive/sessions/stamps.py (its doc: the steps, the outputs):
 # `control/run.py stamps --help`; control/run.py --list. Exit 0 = PASS, 1 = FAIL.
-exec python3 "$(dirname "$0")/../../control/run.py" stamps "$@"
+exec "$(dirname "$0")/../../tools/py" "$(dirname "$0")/../../control/run.py" stamps "$@"

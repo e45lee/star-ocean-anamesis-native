@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Files a resolved Ghidra decompile (tools/decomp.sh / decomp_at.sh) into a subsystem's decompile store.
 
 Usage (called by tools/decomp.sh / decomp_at.sh --into; not usually by hand):
@@ -30,7 +30,6 @@ import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GHIDRA_BASE = 0x100000
 SYMBOLS_COLUMNS = ["vaddr", "ghidra", "size", "symbol", "demangled", "topic", "status", "note"]

@@ -7,7 +7,7 @@
 set -eu
 repo=$(cd "$(dirname "$0")/.." && pwd)
 build=${1:-$repo/build}
-exec python3 - "$repo" "$build" <<'PY'
+exec "$repo/tools/py" - "$repo" "$build" <<'PY'
 import os, re, subprocess, sys
 repo, build = sys.argv[1], sys.argv[2]
 src = open(os.path.join(repo, "common/include/soa/env.h")).read()

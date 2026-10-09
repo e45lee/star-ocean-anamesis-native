@@ -33,7 +33,7 @@ elapsed() { awk -v a="$t0" -v b="$(date +%s%N)" 'BEGIN { printf "%.1f", (b - a) 
 
 # No server: the client's server address (soa-emu --server, default 127.0.0.1:44300) is moved to a
 # free port nothing listens on, so a soa-server another session runs can't answer.
-free_port=$(python3 -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])')
+free_port=$("$repo/tools/py" -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])')
 # The machine-wide game slot pool (control/soaslot.sh): one slot for this script's client, held
 # until the script exits; queued here when the machine is full.
 SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take "emulator_boot.sh"
@@ -73,7 +73,7 @@ attempts_above() { [ "$(attempts)" -gt "$1" ]; }
 # The communication-error dialog: the dialog's band across the middle of the screen
 # (rows 505 and 620 at x=364: dark teal / dark slate) over the black background (rows 300, 970).
 is_error_dialog() {
-    python3 - "$1" <<'EOF'
+    "$repo/tools/py" - "$1" <<'EOF'
 import struct, sys, zlib
 d = open(sys.argv[1], 'rb').read()
 i, idat = 8, b''
@@ -93,7 +93,7 @@ EOF
 dialog_shown() {
     local shot=$out/$1.png
     rm -f "$shot"
-    python3 "$soactl" --timeout 30 "$fifo" "shot:$shot" > /dev/null 2>&1 || return 1
+    "$repo/tools/py" "$soactl" --timeout 30 "$fifo" "shot:$shot" > /dev/null 2>&1 || return 1
     is_error_dialog "$shot"
 }
 
@@ -105,12 +105,12 @@ wait_for "the communication-error dialog" 120 dialog_shown error1
 t_dialog=$(elapsed)
 # 3. Retry: back to the network, and the dialog again.
 n=$(attempts)
-python3 "$soactl" --timeout 30 "$fifo" "tap:$RETRY" > /dev/null || fail "control FIFO"
+"$repo/tools/py" "$soactl" --timeout 30 "$fifo" "tap:$RETRY" > /dev/null || fail "control FIFO"
 wait_for "the retry's connection attempt" 60 attempts_above "$n"
 wait_for "the dialog after the retry" 60 dialog_shown error2
 t_retry=$(elapsed)
 
-python3 "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
+"$repo/tools/py" "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
 warnings=$(grep -c '^W/jni\|^W/loader' "$log" || true)
 echo "network path at ${t_net}s, error dialog at ${t_dialog}s, retry -> dialog again at ${t_retry}s; JVM/HLE warnings: $warnings"
 echo "screenshots: $out/error1.png $out/error2.png"

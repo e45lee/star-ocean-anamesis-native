@@ -1,11 +1,10 @@
 """A relocated libSOA.so under unicorn: the lib's segments with every dynamic relocation applied
 (imports bound to trap stubs), a bump heap, and Python hooks on function addresses."""
 import struct
-import sys
 
 from elftools.elf.relocation import RelocationSection
 from unicorn import UC_ARCH_ARM64, UC_HOOK_CODE, UC_MODE_ARM, Uc
-from unicorn.arm64_const import (UC_ARM64_REG_CPACR_EL1, UC_ARM64_REG_LR, UC_ARM64_REG_PC, UC_ARM64_REG_SP,
+from unicorn.arm64_const import (UC_ARM64_REG_CPACR_EL1, UC_ARM64_REG_LR, UC_ARM64_REG_SP,
                                  UC_ARM64_REG_X0)
 
 STACK_TOP, STACK_SIZE = 0x7F000000, 0x100000

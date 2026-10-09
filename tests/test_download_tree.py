@@ -3,14 +3,11 @@ under one top folder) read the same way, in place (no extraction)."""
 import io
 import os
 import pathlib
-import sys
 import zipfile
 
 import pytest
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
-from soa_save.download_tree import DEFAULT, DownloadTree, open_member_or_file  # noqa: E402
+from soa_save.download_tree import DEFAULT, DownloadTree, open_member_or_file
 
 FILES = {
     "version.bin": b"\x81\xa8revision\xa41471",

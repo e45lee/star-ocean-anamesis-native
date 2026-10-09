@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """Rank the guest families a flow executes that baseline runs don't.
 
 Usage: coverage_diff.py FLOW_DIR [BASE_DIR...] [--top N]
@@ -12,8 +12,7 @@ import collections
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from profile_report import demangle_all, family_of  # noqa: E402
+from profile_report import demangle_all, family_of
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """The shapes the server's replies give the client's info classes: per class, the key orders and value types
 the replay corpora's replies send, against what the client reads (server/src/api/gen/client_infos.json).
 
@@ -25,13 +25,11 @@ import os
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
 
 import msgpack
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "tools"))
 import server_replay_diff as rd  # noqa: E402
 
 SCHEMA = os.path.join(REPO, "server/src/api/gen/client_infos.json")

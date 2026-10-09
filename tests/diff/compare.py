@@ -7,13 +7,14 @@
 Writes the report and returns PASS/FAIL."""
 import os
 import subprocess
+import sys
 
 from soadrive import screens, state
 from soadrive.proc import REPO
 
 
 def packets(ref, run):
-    cmd = ["python3", os.path.join(REPO, "tools/compare_packets.py"), "--labels", ref.target, run.target, "--mask-battle-log",
+    cmd = [sys.executable, os.path.join(REPO, "tools/compare_packets.py"), "--labels", ref.target, run.target, "--mask-battle-log",
            "--collapse-title-repeat", "--float-time-sync", ref.packets, run.packets]
     if "port-inproc" in (ref.target, run.target):
         cmd.insert(2, "--transport-neutral")

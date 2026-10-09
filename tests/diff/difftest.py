@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """tests/diff: the port against the emulator, flow by flow (tests/diff/README.md).
 
     tests/diff/run.sh [FLOW...] [--target emu,port-server,port-inproc] [--out DIR] [--keep]

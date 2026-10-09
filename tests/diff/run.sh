@@ -10,4 +10,4 @@
 # Env: SOA, SOA_EMU, SOA_SERVER (the binaries; default build/port/soa, build/emulator/soa-emu,
 #      build/server/soa-server), SOA_PHONE (scripts/shared-phone.sh: default the shared phone).
 # Runs from any directory; headless; kills only the processes it started. Exit 1 on a difference.
-exec python3 "$(dirname "$0")/difftest.py" "$@"
+exec "$(dirname "$0")/../../tools/py" "$(dirname "$0")/difftest.py" "$@"

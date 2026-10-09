@@ -485,6 +485,7 @@ public:
     static constexpr int kSlotAttach = 2;
     static constexpr int kSlotProgress = 5;
     static constexpr int kSlotOnCreated = 6;
+    static constexpr int kSlotCreateSubFiber = 9;
     // m_status values (Activate / Wait / ActivateFromActivating / CFiberKernel::Progress)
     // 0: not created / destroyed (IsDestroyed), 4: Destroy(true) requested (Progress destroys and deletes it)
     static constexpr s32 kStatusNone = 0, kStatusActivating = 1, kStatusActive = 2, kStatusWaiting = 3,

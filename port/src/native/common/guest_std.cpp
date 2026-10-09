@@ -44,48 +44,17 @@ void delete_array(void* p) {
     guest_call(fn, {(u64)p});
 }
 
-void String::init(std::string_view s) {
-    init();
-    size_t n = s.size();
-    if (n < 23) {
-        raw[0] = (unsigned char)(n << 1);
-        std::memcpy(raw + 1, s.data(), n);
-        raw[1 + n] = 0;
-        return;
-    }
-    // libc++: allocation = round_up(n + 1, 16); stored capacity word = allocation | 1.
-    u64 alloc = (n + 16) & ~15ull;
-    char* p = (char*)stl_alloc(alloc);
-    if (!p) fatal("guest string allocation of %" PRIu64 " bytes failed", alloc);
-    std::memcpy(p, s.data(), n);
-    p[n] = 0;
-    u64 cap = alloc | 1, size = n, ptr = (u64)p;
-    std::memcpy(raw, &cap, 8);
-    std::memcpy(raw + 8, &size, 8);
-    std::memcpy(raw + 16, &ptr, 8);
-}
-
-void String::destroy() {
-    if (is_long()) stl_free((void*)data());
-    init();
-}
-
-void String::assign(std::string_view s) {
-    // s may alias our own buffer: copy first.
-    std::string copy(s);
-    destroy();
-    init(copy);
-}
-
-void StringList::push_back(std::string_view s) {
-    auto* n = (Node*)stl_alloc(sizeof(Node));
-    if (!n) fatal("guest list node allocation failed");
-    n->value.init(s);
-    n->next = (u64)this;
-    n->prev = prev;
-    ((Node*)prev)->next = (u64)n;  // prev is the sentinel itself when empty (its 'next' field)
-    prev = (u64)n;
-    count++;
-}
-
 }  // namespace soa::guest
+
+// libcxx_layout.h's host-side string helpers allocate from the game's STL allocator.
+namespace soa::native::libcxx {
+
+void* host_string_alloc(u64 bytes) {
+    void* p = guest::stl_alloc(bytes);
+    if (!p) fatal("guest string allocation of %" PRIu64 " bytes failed", bytes);
+    return p;
+}
+
+void host_string_free(void* p) { guest::stl_free(p); }
+
+}  // namespace soa::native::libcxx

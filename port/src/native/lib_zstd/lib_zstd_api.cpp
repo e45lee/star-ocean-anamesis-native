@@ -142,12 +142,7 @@ u64 dstream_in_size() { return ZSTD_DStreamInSize(); }
 u64 dstream_out_size() { return ZSTD_DStreamOutSize(); }
 
 namespace {
-struct Bound {
-    const char* sym;
-    HostFn fn;
-    u64* orig;
-};
-const Bound kBound[] = {
+const BoundNative kBound[] = {
     {"ZSTD_createDStream", wrap<&create_dstream>(), &orig.create},
     {"ZSTD_freeDStream", wrap<&free_dstream>(), &orig.free_},
     {"ZSTD_initDStream", wrap<&init_dstream>(), &orig.init},
@@ -157,16 +152,12 @@ const Bound kBound[] = {
     {"ZSTD_DStreamInSize", wrap<&dstream_in_size>(), &orig.in_size},
     {"ZSTD_DStreamOutSize", wrap<&dstream_out_size>(), &orig.out_size},
 };
-bool register_all() {
-    for (const Bound& b : kBound) register_native_function({b.sym, b.fn, "lib_zstd: host zstd", nullptr, b.orig});
-    return true;
-}
-const bool g_registered = register_all();
+const bool g_registered = register_bound(kBound, "lib_zstd: host zstd");
 }  // namespace
 
 live::Lockstep& lockstep() { return g_check; }
 void use_originals(u64 (*sym)(const char*)) {
-    for (const Bound& b : kBound) *b.orig = sym ? sym(b.sym) : 0;
+    bind_originals(kBound, sym);
 }
 
 }  // namespace soa::native::lib_zstd

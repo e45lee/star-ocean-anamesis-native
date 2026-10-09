@@ -33,6 +33,8 @@
 #include "native/common/guest_std.h"
 #include "native/common/memstats.h"
 #include "native/common/native.h"
+#include "native/game/game_layout.h"
+#include "native/params/params_layout.h"
 #include "soa/chash32.h"
 #include "soaserver/server.h"
 
@@ -43,7 +45,17 @@ std::mutex g_mutex;
 std::deque<std::string> g_queue;
 bool g_debugwin = false;
 
-u64 fld_u64(u64 p, u64 off) { return *(u64*)(p + off); }
+using game::CBase;
+using game::CPhase;
+using game::CPhase_Base;
+using params::CParameterUI;
+
+// CParameterManager::pParameterUI(), or null.
+CParameterUI* parameter_ui() {
+    static u64 pm = guest::sym("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE");
+    static u64 ui_fn = guest::sym("_ZNK17CParameterManager12pParameterUIEv");
+    return reinterpret_cast<CParameterUI*>(guest_call(ui_fn, {*(const u64*)pm}));
+}
 
 u64 guest_cstr(const std::string& s) {
     u64 p = (u64)guest::new_array_nothrow(s.size() + 1);
@@ -51,55 +63,57 @@ u64 guest_cstr(const std::string& s) {
     return p;  // leaked on purpose: the callee may keep it
 }
 
-void run(const std::string& cmd, u64 phase_mgr) {
+void run(const std::string& cmd, CPhase* phase_mgr) {
     if (cmd == "memstats" || cmd.rfind("memstats:", 0) == 0) {
         memstats::log(cmd.size() > 9 ? cmd.c_str() + 9 : "requested");
         return;
     }
     if (cmd.rfind("phase:", 0) == 0) {
         u32 id = (u32)strtoul(cmd.c_str() + 6, nullptr, 0);
-        // What CPhase::RequestSwitch does: ToClose the present phase, remember the request.
-        u64 cur = fld_u64(phase_mgr, 0x48);
+        // What CPhase::RequestSwitch does: ToRelease the present phase, remember the request.
+        CBase* cur = phase_mgr->m_pPresentSubstance;
         if (!cur) return;
-        u32 now = *(u32*)(phase_mgr + 0x38);
-        // A menu phase (Home, OtherMenu, Shop, Gacha, ...) leaves when its
-        // screen closes: +0x20 = the next phase, then delete the screen (+0x24 its UI id), as a
-        // menu button does.
+        u32 now = phase_mgr->m_present;
+        // A menu phase (Home, OtherMenu, Shop, Gacha, ...; a CPhase_Base) leaves when its screen
+        // closes: m_nextPhase = the next phase, then delete the screen (m_screenUiId), as a menu
+        // button does.
         static const u32 menu[] = {4, 7, 8, 9, 0xa, 0xb, 0xc, 0xe, 0x11, 0x12, 0x1c};
+        auto* menu_phase = reinterpret_cast<CPhase_Base*>(cur);
         for (u32 m : menu)
-            if (m == now && *(u32*)(cur + 8) == 2) {
+            if (m == now && menu_phase->m_step == 2) {
                 static u64 del = guest::sym("_ZN10CUIManager8DeleteUIEj");
                 static u64 inst = guest::sym("_ZN9Framework10TSingletonI10CUIManagerE11m_pInstanceE");
-                LOGI("port_debug", "menu phase %u: close screen %u, next phase %#x", now, *(u32*)(cur + 0x24), id);
-                *(u32*)(cur + 0x20) = id;
-                guest_call(del, {*(u64*)inst, *(u32*)(cur + 0x24)});
+                LOGI("port_debug", "menu phase %u: close screen %u, next phase %#x", now, menu_phase->m_screenUiId, id);
+                menu_phase->m_nextPhase = id;
+                guest_call(del, {*(u64*)inst, menu_phase->m_screenUiId});
                 return;
             }
         LOGI("port_debug", "RequestSwitch(%#x) from phase %u", id, now);
-        guest_call(fld_u64(fld_u64(cur, 0), 0x20), {cur});
-        *(u32*)(phase_mgr + 0x40) = id;
+        guest_call(static_cast<const u64*>(cur->vtable)[CBase::kSlotToRelease], {(u64)cur});
+        phase_mgr->m_request = id;
         return;
     }
     if (cmd.rfind("mission:", 0) == 0) {
-        static u64 pm = guest::sym("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE");
-        static u64 ui_fn = guest::sym("_ZNK17CParameterManager12pParameterUIEv");
-        u64 ui = guest_call(ui_fn, {*(u64*)pm});
+        CParameterUI* ui = parameter_ui();
         u32 id = chash32(cmd.c_str() + 8);
-        LOGI("port_debug", "selected mission %s (%#x), was %#x", cmd.c_str() + 8, id, ui ? *(u32*)(ui + 0x1a0) : 0);
-        if (ui) *(u32*)(ui + 0x1a0) = id;
+        LOGI("port_debug", "selected mission %s (%#x), was %#x", cmd.c_str() + 8, id, ui ? ui->m_selectMissionId : 0);
+        if (ui) ui->m_selectMissionId = id;
         return;
     }
     if (cmd.rfind("uiset:", 0) == 0) {
-        static u64 pm = guest::sym("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE");
-        static u64 ui_fn = guest::sym("_ZNK17CParameterManager12pParameterUIEv");
-        u64 ui = guest_call(ui_fn, {*(u64*)pm});
+        // By design a write at an offset the command names (to try fields not recovered yet; the known
+        // ones: params_layout.h CParameterUI).
+        CParameterUI* ui = parameter_ui();
         u64 off = 0, val = 0;
         char* e;
         off = strtoull(cmd.c_str() + 6, &e, 0);
         if (*e == ':') val = strtoull(e + 1, nullptr, 0);
         if (ui && off < 0x10000) {
-            LOGI("port_debug", "CParameterUI+%#" PRIx64 " = %#" PRIx64 " (was %#x)", off, val, *(u32*)(ui + off));
-            *(u32*)(ui + off) = (u32)val;
+            u8* field = reinterpret_cast<u8*>(ui) + off;
+            u32 was, now = (u32)val;
+            memcpy(&was, field, 4);
+            LOGI("port_debug", "CParameterUI+%#" PRIx64 " = %#" PRIx64 " (was %#x)", off, val, was);
+            memcpy(field, &now, 4);
         }
         return;
     }
@@ -165,7 +179,7 @@ bool command(const std::string& cmd) {
 void on_phase_progress(u64 phase_mgr) {
     // One log line per phase change, so scripts (control/flowctl.py wait-log) can wait on it.
     static u32 last = ~0u;
-    u32 now = *(u32*)(phase_mgr + 0x38);
+    u32 now = reinterpret_cast<const CPhase*>(phase_mgr)->m_present;
     if (now != last) {
         LOGI("port_debug", "phase %u (%#x)", now, now);
         last = now;
@@ -176,7 +190,7 @@ void on_phase_progress(u64 phase_mgr) {
         std::lock_guard lk(g_mutex);
         q.swap(g_queue);
     }
-    for (auto& c : q) run(c, phase_mgr);
+    for (auto& c : q) run(c, reinterpret_cast<CPhase*>(phase_mgr));
     if (g_debugwin) {
         static u64 progress = guest::sym("_ZN9Framework13CDebugWindows8ProgressEf");
         GuestArgs a;

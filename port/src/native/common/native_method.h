@@ -58,3 +58,6 @@ constexpr HostFn wrap_method() { return &wrapped_method<M>; }
 // A guest member function replaced by a member of the recovered class.
 #define NATIVE_METHOD(sym, method, note) NATIVE_REGISTER(sym, ::soa::wrap_method<method>(), note, nullptr, nullptr, nullptr, #method)
 #define NATIVE_METHOD_IF(sym, method, note, cond) NATIVE_REGISTER(sym, ::soa::wrap_method<method>(), note, cond, nullptr, nullptr, #method)
+// A member of the in-process route's own classes (group kGroupRoute, as NATIVE_ROUTE_FUNCTION).
+#define NATIVE_ROUTE_METHOD(sym, method, note) \
+    NATIVE_REGISTER(sym, ::soa::wrap_method<method>(), note, nullptr, nullptr, ::soa::kGroupRoute, #method)

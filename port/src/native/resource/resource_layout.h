@@ -508,6 +508,7 @@ public:
     // 13 _InitializeByDirectFile, 14 _InitializeByMemory, 15 pBufferDirect() const, 16 IsExpansionFinished() const,
     // 17 StartExpansion(); the Aska::Task vtable at +0xc0 is _ZTV + 0xb0 (Run at its slot 13 through a thunk).
     void Handler(u64 status);                                   // slot 0: CFileLoader::Handler, PhaseLoadingFinish, 1 -> 2
+    static constexpr int kSlotPImage = 10;                      // const u8* pImage() const: the loaded bytes
     u64 Align() const;                                          // slot 6
     void Initialize(u32 fileNumber, const tMemoryDescription* desc);                 // slot 7
     void InitializeByDirectFile(const char* path, const tMemoryDescription* desc, const char* folder);  // slot 8

@@ -376,6 +376,24 @@ using CocosCommonResourceNode = libcxx::hash_node<libcxx::pair<String, CParamete
 static_assert(offsetof(CocosCommonResourceNode, value) == 0x10);
 static_assert(sizeof(CocosCommonResourceNode) == 0x10 + 0x18 + 0xd0);
 
+// CParameterUI: the UI's shared state (CParameterManager::pParameterUI()). Partial: the mission selection the
+// port's control commands set (common/port_debug.cpp mission: / uiset:). Layout from Reset (+0x140 / +0x144
+// as one word 0x600000000, +0x1a0 = 0) and GetSelectMissionTitle (+0x140 the selected mission's kind, <= 5:
+// 0 master_mission, 1 master_event_mission, ...; +0x1a0 its id) (port/decomp/params/parameter_ui.c). Size not
+// recovered (beyond 0xc070).
+class CParameterUI {
+public:
+    u8 unk_000[0x140];          // 0x000
+    u32 m_selectMissionType;    // 0x140: the kind of mission selected (the table GetSelectMissionTitle reads;
+                                //        CPhase_Mission opens 5 as the extra dungeon / Sphere 211 menu, 2 the tower)
+    u32 m_unk144;               // 0x144: Reset: 6
+    u8 unk_148[0x1a0 - 0x148];  // 0x148
+    u32 m_selectMissionId;      // 0x1a0: the selected mission's id (CHash32 of its label; CPhase_Battle hands
+                                //        it to CStageManager::Initialize)
+};
+static_assert(offsetof(CParameterUI, m_selectMissionType) == 0x140);
+static_assert(offsetof(CParameterUI, m_selectMissionId) == 0x1a0);
+
 }  // namespace soa::native::params
 
 #endif  // SOA_NATIVE_PARAMS_LAYOUT_H

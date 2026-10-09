@@ -419,3 +419,11 @@ NATIVE_TEST("memory/layout-mapped-memory-manager") {
     t.expect_eq(live->m_auids.base.m_tableSize, bucket(retTable), "live auids table");
     t.expect_eq(live->m_addresses.base.base.base.m_used.m_numBits, retPool * 4, "live addresses pool");
 }
+
+// The heap's callback slots (memory_layout.h kBadAllocNotifySlotHandler / kMemoryNotifySlotFreeing): the
+// bad-allocation handler's vtable as CApplicationMemory's (Framework::CBadAllocateNotifyRetry) has it.
+NATIVE_TEST("memory/notify-slots") {
+    auto* vt = (const u64*)(t.sym("_ZTVN9Framework23CBadAllocateNotifyRetryE") + 0x10);
+    t.expect_eq(vt[kBadAllocNotifySlotHandler], t.sym("_ZN9Framework23CBadAllocateNotifyRetry7HandlerEm"),
+                "slot 0: CBadAllocateNotifyRetry::Handler(unsigned long)");
+}

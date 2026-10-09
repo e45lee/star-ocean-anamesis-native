@@ -102,6 +102,29 @@ static_assert(offsetof(InfoBase, m_properties) == 0x08);
 static_assert(offsetof(InfoBase, m_children) == 0x20);
 static_assert(sizeof(InfoBase) == 0x38);
 
+// ---- the parameter manager (partial) --------------------------------------------------------------------
+
+// CParameterManager (TSingleton): the client's parameter sets and infos. Partial: what --fake-server-schema
+// (api/fakeapi.cpp's dump) reads. Layout from the constructor (a CFiberUnit(0x600) at 0, the empty list at
+// +0x68, CInfoManager() at +0x600) and Deserialize(AMap const*) (each listed parameter set's slot 4
+// Deserialize(map), then the CInfoManager by its key: slot 0 / 1 by the value's kind, slot 3 the key;
+// "status" to +0xb728). CInfoManager (gen/info_classes.h) begins with its InfoBase; its child at +0x950
+// (kCInfoManagerInit) is an InfoBase whose children map (+0x970 of the CInfoManager: its constructor's
+// `str x8, [x19, #0x970]` with x8 = +0x978, an empty map) holds infos by their name's hash. Size not
+// recovered (beyond 0xb72c).
+class CParameterManager {
+public:
+    u8 unk_000[0x68];                       // 0x000: the CFiberUnit (0x38) and the fields after it
+    libcxx::list<InfoBase*> m_parameters;   // 0x068: the registered parameter sets (some InfoBase-derived)
+    u8 unk_080[0x600 - 0x80];               // 0x080
+    InfoBase m_infoManager;                 // 0x600: CInfoManager's InfoBase
+    u8 unk_638[0xf50 - 0x638];              // 0x638: the rest of CInfoManager's first children
+    InfoBase m_infoManagerChild950;         // 0xf50: CInfoManager's child at +0x950
+};
+static_assert(offsetof(CParameterManager, m_parameters) == 0x68);
+static_assert(offsetof(CParameterManager, m_infoManager) == 0x600);
+static_assert(offsetof(CParameterManager, m_infoManagerChild950) + offsetof(InfoBase, m_children) == 0xf70);
+
 // ---- the info classes (gen/info_classes.h, tools/gen_infos.py) ------------------------------------------
 //
 // Every class derived from InfoBase is an InfoBase, its properties (params_layout.h) and its children,

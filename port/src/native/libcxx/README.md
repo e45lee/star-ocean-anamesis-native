@@ -30,9 +30,9 @@ structs and reads the result back through the fields (all 7 pass).
 
 | Type | Guest size | Layout | Proof (test: guest code run) |
 |---|---|---|---|
-| `basic_string<C>` (`string_rep` / `string_long_rep` / `string_short_rep`) | 0x18 | long {cap\|1, size, data}; short {size<<1, chars[23]} | `libcxx/layout-string`: the game string's `insert(pos, char const*)` (short, then long), `replace`, `reserve`, `~basic_string`; NUL, capacity word odd, allocation a multiple of 16; same reads as `guest::String` |
+| `basic_string<C>` (`string_rep` / `string_long_rep` / `string_short_rep`) | 0x18 | long {cap\|1, size, data}; short {size<<1, chars[23]} | `libcxx/layout-string`: the game string's `insert(pos, char const*)` (short, then long), `replace`, `reserve`, `~basic_string`; NUL, capacity word odd, allocation a multiple of 16 |
 | `vector<T>` | 0x18 | begin, end, end_cap | `libcxx/layout-vector`: `vector<String>::__push_back_slow_path<String&&>` 9x: size, capacity 1,2,4,8,16 (2x growth), elements |
-| `list<T>`, `list_node<T>` | 0x18; node 0x10 + T | sentinel {prev, next}, size; node {prev, next, value} | `libcxx/layout-list`: `list<String>::emplace_back<char const*&>` 4x, walk both ways (and through `guest::StringList`), `remove(String const&)` back to empty |
+| `list<T>`, `list_node<T>` | 0x18; node 0x10 + T | sentinel {prev, next}, size; node {prev, next, value} | `libcxx/layout-list`: `list<String>::emplace_back<char const*&>` 4x, walk both ways, `remove(String const&)` back to empty |
 | `tree<V>` (map / set), `tree_node<V>`, `tree_node_base` | 0x18; node 0x20 + V | begin_node, root (= end node's left), size; node {left, right, parent, is_black, value@0x20} | `libcxx/layout-tree`: `__tree<value_type<unsigned, IParameterProperty*>>::__emplace_unique_key_args` 300 random keys (runs `__tree_balance_after_insert`): size, in-order keys/values, begin_node = leftmost, root's parent = end node, parent links, red-black invariants; `__tree::destroy` |
 | `hash_table<V>` (unordered_map / set), `hash_node<V>` | 0x28; node 0x10 + V | buckets, bucket_count, first, size, max_load_factor; node {next, hash, value} | `libcxx/layout-hash`: `unordered_map<unsigned, bool>::operator[]` 400 random keys (rehashes): returned reference = node value, hash = key, size, load factor, one list through all nodes, bucket[b] = the node before b's first, empty buckets null |
 | `shared_count`, `shared_weak_count`, `shared_ptr_emplace<T>`, `shared_ptr_pointer<P>`, `shared_ptr<T>` / `weak_ptr<T>`, `unique_ptr<T>` | 0x10 / 0x18 / 0x18+T / 0x20 / 0x10 / 8 | {vtable, shared_owners, shared_weak_owners}; emplace value @0x18 | `libcxx/layout-shared-ptr`: `__add_shared`, `__add_weak`, `lock` (live and expired), `__release_shared`, `__release_weak` (both classes); `__shared_ptr_emplace<StringDBEelement, BAS_STLAllocator>`'s vtable slots 0, 1, 2, 4 = its D2, D0, `__on_zero_shared`, `__on_zero_shared_weak`. `shared_ptr` / `unique_ptr` themselves: NDK header only |
@@ -78,8 +78,13 @@ Subsystems whose types or functions this one uses (port/REBUILD-QUEUE.md has the
   native frees guest STL memory with `guest::stl_free` (native/common/guest_std.h). `std::allocator` (regex,
   streams, `std::function`'s heap `__func`) uses `operator new` / `delete`.
 - **Strings:** allocation = round_up(n + 1, 16) (`__recommend`), stored capacity word = allocation | 1;
-  short strings hold up to 22 characters. `guest::String` / `guest::StringList` (common/guest_std.h) are the
-  same objects (static_asserted in the test).
+  short strings hold up to 22 characters. `guest::String` (common/guest_std.h) is `basic_string<char>`, whose
+  host-side helpers (`init` / `assign` / `destroy`, `view` / `str`) build the game's strings from natives with
+  the STL allocator (code review CR10, P5: one model of the guest's libc++, not two).
+- **Host-side walks and std::function:** `tree<V>::next` / `lower_bound` / `find` / `for_each` (and
+  `tree_next`) are what the guest inlines into its map walks; `libcxx_function.h` `function_copy_construct` /
+  `function_destroy` / `function_slot` are std::function's inlined copy and destructor through the callable's
+  vtable (test `libcxx/function-copy-destroy`; the inline form through `fakeapi/requests`).
 - **Copy, not move:** `vector<String>::__push_back_slow_path<String&&>` copies the source string (allocates
   a new buffer for a long one) instead of moving it: CSTLAllocator's `construct` takes `const T&`, most likely.
   A native that pushes strings must copy too (or the guest's source string keeps its buffer, as it does).

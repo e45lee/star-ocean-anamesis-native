@@ -620,7 +620,7 @@ void* MemoryManager::AllocateFromRing(u64 size, s64 align, TryOne tryOne) {
         rq.m_retries = &retries;
         rq.m_result = nullptr;
         const u64* vt = *static_cast<const u64* const*>(m_badAllocNotify);
-        guest_call(vt[0], {(u64)m_badAllocNotify, (u64)&rq});
+        guest_call(vt[kBadAllocNotifySlotHandler], {(u64)m_badAllocNotify, (u64)&rq});
         if (rq.m_result) return rq.m_result;
     }
 }
@@ -673,7 +673,7 @@ void MemoryManager::LocalFree(MemoryBlock* b) {
         m_cs.Leave();
         void* notify = b->m_notify;
         const u64* vt = *static_cast<const u64* const*>(notify);
-        guest_call(vt[1], {(u64)notify, (u64)b->Data()});
+        guest_call(vt[kMemoryNotifySlotFreeing], {(u64)notify, (u64)b->Data()});
         m_cs.Enter();
         const u8 used = b->m_used;
         b->m_notify = nullptr;

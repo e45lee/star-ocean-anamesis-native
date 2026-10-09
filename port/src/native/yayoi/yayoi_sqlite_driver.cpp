@@ -82,9 +82,9 @@ s64 SQLiteDriver::Open(void* setting) {
 s64 SQLiteDriver::DoOpen(u32 mode, const char*, const DBAddress* address) {
     if (mode == 0) mode = m_inTransaction ? 2 : 0;
     if (!address) {
-        // IDriverSetting<SQLiteDriver>'s vtable slot 0 (setting, mode): the address for the mode.
+        // IDriverSetting<SQLiteDriver>::GetDefaultServer(mode, (no name)): the address for the mode.
         const u64* vt = *static_cast<const u64* const*>(m_setting);
-        address = (const DBAddress*)guest_call(vt[0], {(u64)m_setting, (u64)mode});
+        address = (const DBAddress*)guest_call(vt[kDriverSettingSlotGetDefaultServer], {(u64)m_setting, (u64)mode});
     }
     bool open = true;
     if (address == m_address) {

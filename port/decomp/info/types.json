@@ -393,6 +393,84 @@
    ]
   },
   {
+   "name": "CParameterManager",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_000",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 104
+     },
+     "size": 104
+    },
+    {
+     "offset": 104,
+     "name": "m_parameters",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::list<InfoBase *>",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 128,
+     "name": "unk_080",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1408
+     },
+     "size": 1408
+    },
+    {
+     "offset": 1536,
+     "name": "m_infoManager",
+     "type": {
+      "kind": "struct",
+      "name": "InfoBase"
+     },
+     "size": 56
+    },
+    {
+     "offset": 1592,
+     "name": "unk_638",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 2328
+     },
+     "size": 2328
+    },
+    {
+     "offset": 3920,
+     "name": "m_infoManagerChild950",
+     "type": {
+      "kind": "struct",
+      "name": "InfoBase"
+     },
+     "size": 56
+    }
+   ],
+   "size": 3976,
+   "align": 8
+  },
+  {
    "name": "InfoContainer",
    "union": false,
    "fields": [

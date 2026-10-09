@@ -20,6 +20,7 @@
 #include "soaruntime/jni/jvm.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
+#include "native/ui/cocos_node.h"
 #include "soaserver/server.h"
 
 namespace soa::webview {
@@ -45,8 +46,11 @@ u64 search_by_tree_name(u64 root, const char* path) {
 
 // The page area's label: a clone of window/box/Text in window/Panel_1, anchored top-left.
 void show_page(u64 view, const std::string& text) {
-    u64 vt = *(u64*)view;
-    u64 root = guest_call(*(u64*)(vt + 0x58), {view});  // the popup's layout node (as OpenView gets it)
+    using native::ui::CCocosNode;
+    using native::ui::CCocosSceneUnit;
+    // The popup's layout node, as OpenView gets it: CCocosSceneUnit::GetCocosScene().
+    const auto* unit = reinterpret_cast<const CCocosSceneUnit*>(view);
+    u64 root = guest_call(static_cast<const u64*>(unit->vtable)[CCocosSceneUnit::kSlotGetCocosScene], {view});
     if (!root) return;
     u64 src = search_by_tree_name(root, "window/box/Text");
     u64 panel = search_by_tree_name(root, "window/Panel_1");
@@ -54,8 +58,11 @@ void show_page(u64 view, const std::string& text) {
         LOGW("webview", "local page: the popup has no %s", src ? "window/Panel_1" : "window/box/Text");
         return;
     }
-    u64 label = guest_call(*(u64*)(*(u64*)src + 0x28), {src, 0});  // CCocosLabel::Clone(nullptr)
+    auto* text_node = reinterpret_cast<CCocosNode*>(src);
+    const u64* text_vt = static_cast<const u64*>(text_node->m_hierarchy.vtable);
+    auto* label = reinterpret_cast<CCocosNode*>(guest_call(text_vt[CCocosNode::kSlotClone], {src, 0}));  // CCocosLabel::Clone(nullptr)
     if (!label) return;
+    const auto* panel_node = reinterpret_cast<const CCocosNode*>(panel);
     // The page area's top-left, 24 units in, in world coordinates (as OpenView measures the web
     // view's rect: the panel's world position is its centre, its size = layout size x scale).
     // World y grows downwards here (SetWorldPosition), and the label's anchor (0, 0) puts its first
@@ -66,19 +73,18 @@ void show_page(u64 view, const std::string& text) {
     const float* wp = (const float*)(u64)guest_call(world_pos, {panel, 1});
     const float* ls = (const float*)(u64)guest_call(layout_size, {panel});
     if (!wp || !ls) return;
-    float cx = wp[0], cy = wp[1], w = ls[0] * *(float*)(panel + 0x9c), h = ls[1] * *(float*)(panel + 0xa0);
-    float* anchor = (float*)(label + 0x84);
-    anchor[0] = 0.0f;
-    anchor[1] = 0.0f;
+    float cx = wp[0], cy = wp[1], w = ls[0] * panel_node->m_scale[0], h = ls[1] * panel_node->m_scale[1];
+    label->m_anchor[0] = 0.0f;
+    label->m_anchor[1] = 0.0f;
     alignas(8) float at[2] = {cx - w * 0.5f + 24.0f, cy - h * 0.5f + 24.0f};
     static u64 set_text = S("_ZN9Framework5Cocos11CCocosLabel7SetTextERKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS_13CSTLAllocatorIcNS_22CSTLStringAllocatorInfEEEEE");
     guest::String s;
     s.init(text);
-    guest_call(set_text, {label, (u64)&s});
+    guest_call(set_text, {(u64)label, (u64)&s});
     s.destroy();
     static u64 add_child = S("_ZN9Framework5Cocos10CCocosNode8AddChildEPS1_");
-    guest_call(add_child, {panel, label});
-    guest_call(set_world, {label, (u64)at});
+    guest_call(add_child, {panel, (u64)label});
+    guest_call(set_world, {(u64)label, (u64)at});
     LOGI("webview", "local page shown (%zu bytes; page area %.0fx%.0f at %.0f,%.0f)", text.size(), w, h, cx, cy);
 }
 

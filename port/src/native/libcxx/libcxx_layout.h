@@ -26,6 +26,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
+#include <string>
+#include <string_view>
 
 namespace soa::native::libcxx {
 
@@ -55,7 +58,12 @@ struct pair {
 // word 0 = the allocation's capacity | 1 (allocations are rounded to 16 bytes: __recommend), word 1 =
 // size, word 2 = data. The game's strings are basic_string<char, char_traits<char>,
 // Framework::CSTLAllocator<char, Framework::CSTLStringAllocatorInf>>; native/common/guest_std.h's
-// guest::String is the same object (static_asserted in libcxx_layout_test.cpp).
+// guest::String is this type (basic_string<char>), with the host-side helpers below.
+// The game's STL allocator for the host-side string helpers (native/common/guest_std.cpp: guest::stl_alloc /
+// stl_free, i.e. CAssignedMemoryManagerForSTLAllocator; the allocation is fatal when it fails).
+void* host_string_alloc(u64 bytes);
+void host_string_free(void* p);
+
 template <typename C>
 struct string_long_rep {
     u64 cap;   // 0x00: allocated characters (incl. the NUL) | 1
@@ -101,6 +109,42 @@ public:
     u64 size() const { return is_long() ? r.l.size : r.s.head.size >> 1; }
     u64 capacity() const { return is_long() ? (r.l.cap & ~u64(1)) - 1 : kMinCap - 1; }
     const C* data() const { return is_long() ? r.l.data : r.s.data; }
+    std::basic_string_view<C> view() const { return {data(), size()}; }
+    std::basic_string<C> str() const { return std::basic_string<C>(view()); }
+
+    // Host-side construction for natives that hand the game a string (the game's char strings only):
+    // init() an empty string; init(s) a copy of s (short up to 22 characters, else an allocation of
+    // (size + 16) & ~15 bytes, as the guest's inlined constructor makes it); neither frees anything.
+    // assign(s) replaces the contents (s may point into them); destroy() frees a long string's storage
+    // and leaves it empty.
+    void init() { r.words[0] = r.words[1] = r.words[2] = 0; }
+    void init(std::basic_string_view<C> s) {
+        static_assert(sizeof(C) == 1, "the host-side helpers build the game's char strings");
+        init();
+        const u64 n = s.size();
+        if (n < kMinCap) {
+            r.s.head.size = static_cast<u8>(n << 1);
+            std::memcpy(r.s.data, s.data(), n);
+            r.s.data[n] = 0;
+            return;
+        }
+        const u64 bytes = (n + 16) & ~u64(15);
+        C* p = static_cast<C*>(host_string_alloc(bytes));
+        std::memcpy(p, s.data(), n);
+        p[n] = 0;
+        r.l.cap = bytes | 1;
+        r.l.size = n;
+        r.l.data = p;
+    }
+    void assign(std::basic_string_view<C> s) {
+        std::basic_string<C> copy(s);
+        destroy();
+        init(copy);
+    }
+    void destroy() {
+        if (is_long()) host_string_free(r.l.data);
+        init();
+    }
 
     string_rep<C> r;  // 0x00
 };
@@ -134,7 +178,7 @@ static_assert(offsetof(vector<u32>, end_) == 0x08 && offsetof(vector<u32>, end_c
 // std::__ndk1::list<T, Alloc> (__list_imp: __end_ = the sentinel __list_node_base {__prev_, __next_},
 // then __size_alloc_ = __compressed_pair<size_type, Alloc>). Circular: the sentinel is the list
 // object itself (an empty list's prev / next point at it). Nodes: {__prev_, __next_, __value_}.
-// native/common/guest_std.h's guest::StringList is list<basic_string<char>>.
+// (The game's string lists: list<basic_string<char>>, ListString below.)
 template <typename T>
 struct list_node {
     list_node* prev;  // 0x00
@@ -180,6 +224,19 @@ static_assert(offsetof(tree_node_base, right) == 0x08 && offsetof(tree_node_base
 // port/decomp/libcxx/tree.c): a free function template.
 void __tree_balance_after_insert(tree_node_base* root, tree_node_base* x);
 
+// The in-order successor of x (libc++'s __tree_next_iter, which the guest inlines into every map walk):
+// the leftmost node of x's right subtree, else the first ancestor x is in the left subtree of; after the
+// last node, the end node.
+inline tree_node_base* tree_next(tree_node_base* x) {
+    if (x->right) {
+        x = x->right;
+        while (x->left) x = x->left;
+        return x;
+    }
+    while (x->parent->left != x) x = x->parent;
+    return x->parent;
+}
+
 template <typename V>
 struct tree_node {
     tree_node* left;    // 0x00
@@ -202,6 +259,38 @@ public:
 
     tree_node_base* end_node() { return reinterpret_cast<tree_node_base*>(&root); }
     tree_node<V>* begin() { return begin_node; }
+
+    // Host-side walks, as the guest inlines them (they read only the links and the keys).
+    // end() is the end node as a node pointer: compare with it, never read its value.
+    tree_node<V>* end() { return reinterpret_cast<tree_node<V>*>(end_node()); }
+    static tree_node<V>* next(tree_node<V>* n) {
+        return reinterpret_cast<tree_node<V>*>(tree_next(reinterpret_cast<tree_node_base*>(n)));
+    }
+    // For a map (V = pair<K, T>): the first node whose key is not less than k (__lower_bound from the
+    // root), or end(); find(k): that node when its key equals k, else end().
+    template <typename K>
+    tree_node<V>* lower_bound(const K& k) {
+        tree_node<V>* res = end();
+        for (tree_node<V>* n = root; n;) {
+            if (n->value.first < k) {
+                n = n->right;
+            } else {
+                res = n;
+                n = n->left;
+            }
+        }
+        return res;
+    }
+    template <typename K>
+    tree_node<V>* find(const K& k) {
+        tree_node<V>* n = lower_bound(k);
+        return n != end() && !(k < n->value.first) ? n : end();
+    }
+    // f(node) for every node, in key order (f must not unlink the node it is given).
+    template <typename F>
+    void for_each(F&& f) {
+        for (tree_node<V>* n = begin_node; n != end(); n = next(n)) f(n);
+    }
 
     tree_node<V>* begin_node;  // 0x00: leftmost node (== end_node() when empty)
     tree_node<V>* root;        // 0x08: __pair1_.first().__left_ (the end node is this field's address)

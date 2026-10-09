@@ -11,7 +11,7 @@ blender 4.0) finds it through PYTHONPATH=.venv/lib/python3.12/site-packages (the
 numpy, requirements.txt).
 
 Without --anim: the rest pose. --face NAME layers a facial animation (held) under --anim. --anim plays the named glTF animation (Blender's action of that name) at --frame (scene frames at
-the file's rate; glTF seconds * fps); --frames writes one picture per frame, OUT with _NNN before
+the game's rate, 60: glTF seconds * 60); --frames writes one picture per frame, OUT with _NNN before
 its extension. The camera looks at the model's bounding box (or the node --target) from the --view
 side, portrait by default (the game is a portrait game). --log prints what the importer made
 (objects, armature bones, actions and their frame ranges, materials) for the report.
@@ -75,6 +75,10 @@ def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     # the armature's rest = the glTF nodes' transforms (not a bind pose guessed from the inverse bind
     # matrices): a pose bone at identity is then the node's rest, e.g. Maria's Zoption keeps its 0.001 scale
+    # the importer turns glTF seconds into scene frames at the scene's rate: the game's 60 (the factory
+    # default, 24, made --frame F the game's frame 2.5 F)
+    bpy.context.scene.render.fps = 60
+    bpy.context.scene.render.fps_base = 1.0
     bpy.ops.import_scene.gltf(filepath=o["in"], guess_original_bind_pose=False)
     sc = bpy.context.scene
     if o["log"]:

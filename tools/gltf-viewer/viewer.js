@@ -386,19 +386,23 @@ function setCamera(kind) {
   state.model.gltf.scene.traverse((o) => {
     let vis = true;
     for (let p = o; p; p = p.parent) vis = vis && p.visible;
-    if (!(o.isMesh && vis)) return;
+    if (!(o.isMesh && vis) || o.userData.soaPrepassOf) return;  // (the game mode's pre-pass copies: the same mesh)
     let b;
-    if (o.isSkinnedMesh) { o.computeBoundingBox(); b = o.boundingBox.clone().applyMatrix4(o.matrixWorld); } else {
+    if (o.isSkinnedMesh) {  // (the bones' current pose)
+      o.skeleton.update();
+      o.computeBoundingBox();
+      b = o.boundingBox.clone().applyMatrix4(o.matrixWorld);
+    } else {
       o.geometry.computeBoundingBox();
       b = o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld);
     }
     if (b.max.y - b.min.y < 50 && b.max.y - b.min.y > 0.02) box.union(b);  // not scenery, not a collapsed mesh
   });
   if (box.isEmpty()) box.set(new THREE.Vector3(-1, 0, -1), new THREE.Vector3(1, 2, 1));
+  if (camera.fov !== 30) { camera.fov = 30; camera.updateProjectionMatrix(); }
   const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
   let target = c.clone(), dist = Math.max(size.y, size.x * 1.6) / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) * 1.1;
   let az = 0, el = 0.08;
-  if (camera.fov !== 30) { camera.fov = 30; camera.updateProjectionMatrix(); }
   if (kind === 'three-quarter') az = 35;
   if (kind === 'side') az = 90;
   if (kind === 'back') az = 180;
@@ -476,8 +480,8 @@ window.soaRenderAt = (anim, frameNo, cam) => {
   if (anim !== undefined && anim !== null) selectAnim(Number(anim));
   state.playing = false;
   state.time = (frameNo || 0) / clipFps(state.anim);
-  if (cam) setCamera(cam);
   step(0);
+  if (cam) { setCamera(cam); step(0); }
   renderView();
   return true;
 };
@@ -501,3 +505,4 @@ window.soaHome = (cmd) => {
 };
 // for the headless test: load a glTF given as text (a .gltf with data: URIs)
 window.soaLoadText = (text, label) => { window.soaViewerReady = false; window.soaViewerError = ''; load(new TextEncoder().encode(text).buffer, label || 'test.gltf'); };
+window.soaCamera = camera;

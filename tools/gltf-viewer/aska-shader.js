@@ -283,6 +283,7 @@ export class GameMaterials {
     this.G.makeScale(-s, s, s).multiply(_m.copy(root.matrixWorld).invert());
     const Ginv = this.G.clone().invert();
     camera.updateMatrixWorld();
+    camera.matrixWorldInverse.copy(camera.matrixWorld).invert();  // (the renderer refreshes it only when it draws)
     // clip = P * V * G^-1 * world_game; the shader's z = 2 z' - w, so row 2 gives (z + w) / 2
     const clip = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse).multiply(Ginv);
     const e = clip.elements;  // column-major

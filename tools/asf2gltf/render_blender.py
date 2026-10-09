@@ -4,6 +4,7 @@ Blender and the pictures for the comparison with the game (docs/notes.md "glTF e
     blender -b -P tools/asf2gltf/render_blender.py -- IN.glb OUT.png [--anim NAME] [--frame F]
             [--frames F0,F1,..] [--view front|side|back|three-quarter] [--size WxH] [--engine EEVEE|CYCLES|WORKBENCH]
             [--target NODE] [--center X,Y,Z] [--follow BONE] [--distance D] [--fov DEG] [--elevation DEG] [--hide NAME,..] [--log]
+            [--clip END] [--no-cull]
 
 Blender's glTF importer needs numpy: a distribution Blender that runs on the system Python (Ubuntu's
 blender 4.0) finds it through PYTHONPATH=.venv/lib/python3.12/site-packages (the checkout's venv has
@@ -26,7 +27,7 @@ from mathutils import Vector
 def args():
     a = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     o = {"face": None, "anim": None, "frame": None, "frames": None, "view": "front", "size": (540, 960), "engine": "EEVEE",
-         "target": None, "distance": None, "fov": 30.0, "elevation": 5.0, "log": False, "center": None, "hide": [], "follow": None, "no_cull": False}
+         "target": None, "distance": None, "fov": 30.0, "elevation": 5.0, "log": False, "center": None, "hide": [], "follow": None, "no_cull": False, "clip": None}
     pos = []
     i = 0
     while i < len(a):
@@ -47,6 +48,7 @@ def args():
         elif k == "--hide": o["hide"] = a[i + 1].split(","); i += 2
         elif k == "--no-cull": o["no_cull"] = True; i += 1
         elif k == "--follow": o["follow"] = a[i + 1]; i += 2
+        elif k == "--clip": o["clip"] = float(a[i + 1]); i += 2
         else: pos.append(k); i += 1
     o["in"], o["out"] = pos[0], pos[1]
     return o
@@ -158,6 +160,8 @@ def main():
     sc.collection.objects.link(cam)
     sc.camera = cam
     cam.data.angle = math.radians(o["fov"])
+    if o["clip"]:  # the far plane in metres (Blender's default, 100 m, cuts a battle background's distant parts)
+        cam.data.clip_end = o["clip"]
     for i, f in enumerate(frames):
         sc.frame_set(int(math.floor(f)), subframe=f - math.floor(f))
         follow = None

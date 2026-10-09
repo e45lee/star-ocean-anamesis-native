@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "api/gen/reply_types.h"  // the replies' C*Info types
+#include "api/gen/request_args.h"  // the requests' arguments
 #include "api/settings/settings.h"
 #include "core/errors.h"
 #include "core/log.h"
@@ -56,18 +57,6 @@ struct UpdateBirthYearMonthArgs {
     }
 };
 
-// SendGuideInformation(u32 master_guide_information_id) (b: CGuideInformation::Progress sends the
-// shown guide's id when the player follows its link).
-struct SendGuideInformationArgs {
-    u32 guide_id = 0;
-    static SendGuideInformationArgs from(const Request& r) { return {r.ints.empty() ? 0u : (u32)r.ints[0]}; }
-};
-
-// ReadExpirationInfo(CSTLVector<u32> const& ids) (b: CTermInfoUI::Progress, the ids it shows).
-struct ReadExpirationInfoArgs {
-    std::vector<u64> ids;
-    static ReadExpirationInfoArgs from(const Request& r) { return {r.vecs.empty() ? std::vector<u64>() : r.vecs[0]}; }
-};
 }  // namespace args
 
 namespace settings {

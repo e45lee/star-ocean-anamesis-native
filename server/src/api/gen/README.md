@@ -62,7 +62,7 @@ strings and vectors the decoder puts into `Request::ints` / `strs` / `vecs` must
 kind. The comments (the client's callers and their evidence) are in the spec and are copied into the
 header.
 
-Converted: growth and mastery (the former `api/growth/growth_args.h`). Not yet: `core/request_args.h`
+Converted: growth and mastery (the former `api/growth/growth_args.h`), paid currency, settings (UpdateBirthYearMonth stays hand-written: it parses its text). Not yet: `core/request_args.h`
 (the core's), and the modules' own `*Args`. Some of those have logic the grammar doesn't express:
 CreatePlayer's default name, UpdateBirthYearMonth's parsed text, AchievementReceive's and the item
 APIs' vector conversions. Those stay hand-written, beside a generated struct for their positional part

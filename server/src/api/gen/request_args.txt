@@ -54,3 +54,28 @@ TrainMastery: disciple_uid:CharacterUid master_uid:CharacterUid dojo_no step_typ
 # CMasteryTrainingAllClearDialog's @01b94244 (its DojoInfo's two characters, master first as
 # CMasteryTop::UpdateList builds it). The handler finds the pair either way.
 ResetMastery: a:CharacterUid b:CharacterUid
+
+# ---- paid currency (api/shop/coins.cpp) ----
+
+# CoinDepositCreate(u8 platform, s32 product, s8 const* user): (b) Progress_Purchase sends
+# platform 1, the CCoinInfo id the player chose and the literal "user_id".
+CoinDepositCreate: platform product ...
+
+# CoinDeposit{Android,IOS,Amazon}Update(u32 trans id, s8 const* receipt, s8 const* signature).
+CoinDepositAndroidUpdate, CoinDepositIOSUpdate, CoinDepositAmazonUpdate as CoinDepositUpdateArgs: trans_id receipt:str signature:str
+
+# ---- settings (api/settings/) ----
+
+# SendGuideInformation(u32 master_guide_information_id) (b: CGuideInformation::Progress sends the
+# shown guide's id when the player follows its link).
+SendGuideInformation: guide_id
+
+# ReadExpirationInfo(CSTLVector<u32> const& ids) (b: CTermInfoUI::Progress, the ids it shows).
+ReadExpirationInfo: ids:u64vec
+
+# UpdateConfig(u32 master_config_id, s8 const* value, u32 type) (b: CSystemSettingMenu's
+# AutoEquipSettingSend and tNotifyData send it; the wire's u32 · char[191] · u32).
+UpdateConfig: master_config_id value:str type
+
+# GetScenarioLibraryInfoList(u32 episode_type_id) (b: CScenarioLibrary::RequestListReceiveApi).
+GetScenarioLibraryInfoList: episode_type_id

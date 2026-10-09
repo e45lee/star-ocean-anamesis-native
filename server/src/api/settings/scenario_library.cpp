@@ -22,20 +22,13 @@
 #include <vector>
 
 #include "api/gen/reply_types.h"  // to_array
+#include "api/gen/request_args.h"  // the requests' arguments
 #include "api/settings/settings.h"
 #include "core/log.h"
 #include "core/modules.h"
 #include "soaserver/ext.h"
 
 namespace soa::server {
-
-namespace args {
-// GetScenarioLibraryInfoList(u32 episode_type_id) (b: CScenarioLibrary::RequestListReceiveApi).
-struct GetScenarioLibraryInfoListArgs {
-    u32 episode_type_id = 0;
-    static GetScenarioLibraryInfoListArgs from(const Request& r) { return {r.ints.empty() ? 0u : (u32)r.ints[0]}; }
-};
-}  // namespace args
 
 namespace settings {
 

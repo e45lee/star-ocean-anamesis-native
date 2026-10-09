@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "api/gen/reply_types.h"  // the replies' C*Info types
+#include "api/gen/request_args.h"  // the requests' arguments
 #include "core/errors.h"
 #include "core/log.h"
 #include "core/modules.h"
@@ -32,29 +33,6 @@
 #include "soaserver/ext.h"
 
 namespace soa::server {
-
-namespace args {
-// CoinDepositCreate(u8 platform, s32 product, s8 const* user): (b) Progress_Purchase sends
-// platform 1, the CCoinInfo id the player chose and the literal "user_id".
-struct CoinDepositCreateArgs {
-    u32 platform = 0, product = 0;
-    static CoinDepositCreateArgs from(const Request& req) {
-        return {req.ints.size() > 0 ? (u32)req.ints[0] : 0, req.ints.size() > 1 ? (u32)req.ints[1] : 0};
-    }
-};
-// CoinDeposit{Android,IOS,Amazon}Update(u32 trans id, s8 const* receipt, s8 const* signature).
-struct CoinDepositUpdateArgs {
-    u32 trans_id = 0;
-    std::string receipt, signature;
-    static CoinDepositUpdateArgs from(const Request& req) {
-        CoinDepositUpdateArgs a;
-        a.trans_id = req.ints.size() > 0 ? (u32)req.ints[0] : 0;
-        if (req.strs.size() > 0) a.receipt = req.strs[0];
-        if (req.strs.size() > 1) a.signature = req.strs[1];
-        return a;
-    }
-};
-}  // namespace args
 
 using ext::body;
 using ext::Ctx;

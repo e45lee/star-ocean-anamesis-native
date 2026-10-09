@@ -178,4 +178,83 @@ struct ResetMasteryArgs {
     }
 };
 
+// CoinDepositCreate(u8 platform, s32 product, s8 const* user): (b) Progress_Purchase sends
+// platform 1, the CCoinInfo id the player chose and the literal "user_id".
+// CoinDepositCreate: the wire's arguments s8 s32 blob.
+struct CoinDepositCreateArgs {
+    u32 platform = 0;
+    u32 product = 0;
+    static CoinDepositCreateArgs from(const Request& r) {
+        CoinDepositCreateArgs a;
+        a.platform = (u32)int_at(r, 0);
+        a.product = (u32)int_at(r, 1);
+        return a;
+    }
+};
+
+// CoinDeposit{Android,IOS,Amazon}Update(u32 trans id, s8 const* receipt, s8 const* signature).
+// CoinDepositAndroidUpdate, CoinDepositIOSUpdate, CoinDepositAmazonUpdate: the wire's arguments u32 blob blob.
+struct CoinDepositUpdateArgs {
+    u32 trans_id = 0;
+    std::string receipt;
+    std::string signature;
+    static CoinDepositUpdateArgs from(const Request& r) {
+        CoinDepositUpdateArgs a;
+        a.trans_id = (u32)int_at(r, 0);
+        a.receipt = str_at(r, 0);
+        a.signature = str_at(r, 1);
+        return a;
+    }
+};
+
+// SendGuideInformation(u32 master_guide_information_id) (b: CGuideInformation::Progress sends the
+// shown guide's id when the player follows its link).
+// SendGuideInformation: the wire's arguments u32.
+struct SendGuideInformationArgs {
+    u32 guide_id = 0;
+    static SendGuideInformationArgs from(const Request& r) {
+        SendGuideInformationArgs a;
+        a.guide_id = (u32)int_at(r, 0);
+        return a;
+    }
+};
+
+// ReadExpirationInfo(CSTLVector<u32> const& ids) (b: CTermInfoUI::Progress, the ids it shows).
+// ReadExpirationInfo: the wire's arguments vec32.
+struct ReadExpirationInfoArgs {
+    std::vector<u64> ids;
+    static ReadExpirationInfoArgs from(const Request& r) {
+        ReadExpirationInfoArgs a;
+        a.ids = (r.vecs.size() > 0 ? r.vecs[0] : std::vector<u64>());
+        return a;
+    }
+};
+
+// UpdateConfig(u32 master_config_id, s8 const* value, u32 type) (b: CSystemSettingMenu's
+// AutoEquipSettingSend and tNotifyData send it; the wire's u32 · char[191] · u32).
+// UpdateConfig: the wire's arguments u32 str[191] u32.
+struct UpdateConfigArgs {
+    u32 master_config_id = 0;
+    std::string value;
+    u32 type = 0;
+    static UpdateConfigArgs from(const Request& r) {
+        UpdateConfigArgs a;
+        a.master_config_id = (u32)int_at(r, 0);
+        a.value = str_at(r, 0);
+        a.type = (u32)int_at(r, 1);
+        return a;
+    }
+};
+
+// GetScenarioLibraryInfoList(u32 episode_type_id) (b: CScenarioLibrary::RequestListReceiveApi).
+// GetScenarioLibraryInfoList: the wire's arguments u32.
+struct GetScenarioLibraryInfoListArgs {
+    u32 episode_type_id = 0;
+    static GetScenarioLibraryInfoListArgs from(const Request& r) {
+        GetScenarioLibraryInfoListArgs a;
+        a.episode_type_id = (u32)int_at(r, 0);
+        return a;
+    }
+};
+
 }  // namespace soa::server::args

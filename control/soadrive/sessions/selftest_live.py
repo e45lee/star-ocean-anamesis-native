@@ -8,7 +8,7 @@ phone, linked), home, the login popups closed; with --at battle also ミッシ�
 Mere -> 1-05 -> MissionStart, 15 s into the battle. Then OUT/start-tests is created
 (SOA_SELFTEST_START_FILE), the tests run on the game's threads and soa exits with their result.
 
-Usage: control/run.py --target port-server selftest-live SOA OUT TMP FILTER [--at home|battle]
+Usage: control/run.py --target port-server selftest-live SOA OUT TMP FILTER [--at home|battle] [--server-arg FLAG]...
   (port/scripts/selftest_live.sh SOA OUT TMP FILTER [--at home|battle])
 OUT/log.txt is soa's log: the tests' "ok / FAIL" lines and the summary ("N/M native tests passed").
 Prints PASS (every selected test passed) or FAIL; exit 0 / 1.
@@ -30,6 +30,9 @@ def options(ap):
     common.port_options(ap, extra=False)
     ap.add_argument("filter", help="the self-tests to run (soa --selftest FILTER)")
     ap.add_argument("--at", choices=("home", "battle"), default="home", help="the screen the tests run on")
+    ap.add_argument("--server-arg", action="append", default=[],
+                    help="an extra soa-server flag (repeatable; e.g. --server-arg=--seed --server-arg=SEED.xml: "
+                         "another home character, tools/make_test_seed.py)")
 
 
 def main(o):
@@ -39,7 +42,7 @@ def main(o):
         os.remove(start)
     # client_save False: the phone's own client save, as the seeded session runs (the port sessions'
     # save, with no episode pack on its books, opens the episode list instead of Mere's planet select)
-    cfg = common.port_config(o, server_args=["--campaign-seed", "mf01_001"], limit=2400,
+    cfg = common.port_config(o, server_args=["--campaign-seed", "mf01_001"] + list(o.server_arg), limit=2400,
                              env={"SOA_SELFTEST_START_FILE": start}, client_save=False)
     cfg.client_args = ["--selftest", o.filter]  # soa-server: SOA_SERVER (default build/server/soa-server)
     try:

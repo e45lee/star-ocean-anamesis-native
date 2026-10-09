@@ -4,6 +4,7 @@
 // lib      libSOA-3.7.0.so  sha256 698d55b9fdf93c3573b2e71dd614451529e0f396779e5021c68cc423b2b98c5e  (45988160 bytes)
 // tool     Ghidra 12.1.2 analyzeHeadless -noanalysis, tools/ghidra_scripts/DecompileMatching.java, tools/resolve_decomp.py
 // run      2026-10-08 13:04 UTC: tools/decomp.sh '--into' 'audio/sound_manager' 'Aska::Sound[A-Za-z0-9]*::' 'Aska::SEControlObject::' 'Aska::Sequencer2::'
+// run      2026-10-08 21:33 UTC: tools/decomp.sh '--into' 'audio/sound_manager' 'TSoundDynamicQueue'
 
 // ==== Aska::Sequencer2::Sequencer2()
 // vaddr 0x1f6a53c | ghidra 0x206a53c | size 124 | symbol _ZN4Aska10Sequencer2C2Ev | lib libSOA-3.7.0.so | 2026-10-08
@@ -13157,6 +13158,68 @@ code_r0x023422c4:
   return;
 }
 
+// ==== Aska::TSoundDynamicQueue<Aska::EffectorRequest::RequestContainer>::~TSoundDynamicQueue()
+// vaddr 0x2242728 | ghidra 0x2342728 | size 56 | symbol _ZN4Aska18TSoundDynamicQueueINS_15EffectorRequest16RequestContainerEED0Ev | lib libSOA-3.7.0.so | 2026-10-08
+void _ZN4Aska18TSoundDynamicQueueINS_15EffectorRequest16RequestContainerEED0Ev(long *param_1)
+
+{
+  undefined *puVar1;
+  
+  puVar1 = PTR__ZTVN4Aska13TDynamicQueueINS_15EffectorRequest16RequestContainerELb1EEE_02cb7d20;
+  *(undefined4 *)(param_1 + 2) = 0;
+  *param_1 = (long)(puVar1 + 0x10);
+  param_1[1] = 1;
+  if (param_1[3] != 0) {
+    operator delete[](void*)();
+  }
+  (*(code *)PTR__ZdlPv_02ca4758)(param_1);
+  return;
+}
+
+// ==== Aska::TSoundDynamicQueue<Aska::EffectorRequest::RequestContainer>::AddEx()
+// vaddr 0x2242760 | ghidra 0x2342760 | size 224 | symbol _ZN4Aska18TSoundDynamicQueueINS_15EffectorRequest16RequestContainerEE5AddExEv | lib libSOA-3.7.0.so | 2026-10-08
+long _ZN4Aska18TSoundDynamicQueueINS_15EffectorRequest16RequestContainerEE5AddExEv(long param_1)
+
+{
+  uint uVar1;
+  long lVar2;
+  int iVar3;
+  
+  uVar1 = *(uint *)(param_1 + 8);
+  if (*(uint *)(param_1 + 0xc) == uVar1) {
+    lVar2 = Aska::SoundMemory::Malloc(unsigned long)((ulong)(*(int *)(param_1 + 0x10) + 1) * 0x98);
+    if (lVar2 == 0) {
+      return 0;
+    }
+    memcpy(lVar2,*(long *)(param_1 + 0x18) + (ulong)*(uint *)(param_1 + 8) * 0x98,
+                    (ulong)(*(int *)(param_1 + 0x10) - *(uint *)(param_1 + 8)) * 0x98);
+    if (*(uint *)(param_1 + 0xc) != 0) {
+      memcpy(lVar2 + (ulong)(uint)(*(int *)(param_1 + 0x10) - *(int *)(param_1 + 8)) * 0x98
+                      ,*(undefined8 *)(param_1 + 0x18),(ulong)*(uint *)(param_1 + 0xc) * 0x98);
+    }
+    if (*(long *)(param_1 + 0x18) != 0) {
+      operator delete(void*)();
+    }
+    uVar1 = *(uint *)(param_1 + 0x10);
+    iVar3 = 0;
+    *(long *)(param_1 + 0x18) = lVar2;
+    *(uint *)(param_1 + 8) = uVar1;
+    *(undefined4 *)(param_1 + 0xc) = 0;
+    *(uint *)(param_1 + 0x10) = uVar1 + 1;
+    lVar2 = lVar2 + (ulong)uVar1 * 0x98;
+  }
+  else {
+    lVar2 = *(long *)(param_1 + 0x18) + (ulong)uVar1 * 0x98;
+    iVar3 = 0;
+    if (uVar1 + 1 < *(uint *)(param_1 + 0x10)) {
+      iVar3 = uVar1 + 1;
+    }
+    *(uint *)(param_1 + 8) = uVar1 + 1;
+  }
+  *(int *)(param_1 + 8) = iVar3;
+  return lVar2;
+}
+
 // ==== Aska::SoundUtility::DownMix_4To2(float*, float const*)
 // vaddr 0x2243f90 | ghidra 0x2343f90 | size 12 | symbol _ZN4Aska12SoundUtility12DownMix_4To2EPfPKf | lib libSOA-3.7.0.so | 2026-10-08
 void _ZN4Aska12SoundUtility12DownMix_4To2EPfPKf(undefined8 param_1,undefined8 param_2)
@@ -13183,6 +13246,79 @@ void _ZN4Aska12SoundUtility13DownMix_51To4EPfPKf(undefined8 param_1,undefined8 p
   (*(code *)PTR__ZN4Aska12SoundUtility11DownMix_To4EPfPKfi_02c9f2f0)(param_1,param_2,6);
   return;
 }
+
+// ==== Aska::TSoundDynamicQueue<Aska::AudioMessage>::AddEx()
+// vaddr 0x2244388 | ghidra 0x2344388 | size 228 | symbol _ZN4Aska18TSoundDynamicQueueINS_12AudioMessageEE5AddExEv | lib libSOA-3.7.0.so | 2026-10-08
+long _ZN4Aska18TSoundDynamicQueueINS_12AudioMessageEE5AddExEv(long param_1)
+
+{
+  uint uVar1;
+  long lVar2;
+  int iVar3;
+  
+  uVar1 = *(uint *)(param_1 + 8);
+  if (*(uint *)(param_1 + 0xc) == uVar1) {
+    lVar2 = Aska::SoundMemory::Malloc(unsigned long)((ulong)(*(int *)(param_1 + 0x10) + 1) * 0x18);
+    if (lVar2 == 0) {
+      return 0;
+    }
+    memcpy(lVar2,*(long *)(param_1 + 0x18) + (ulong)*(uint *)(param_1 + 8) * 0x18,
+                    (ulong)(*(int *)(param_1 + 0x10) - *(uint *)(param_1 + 8)) * 0x18);
+    if (*(uint *)(param_1 + 0xc) != 0) {
+      memcpy(lVar2 + (ulong)(uint)(*(int *)(param_1 + 0x10) - *(int *)(param_1 + 8)) * 0x18
+                      ,*(undefined8 *)(param_1 + 0x18),(ulong)*(uint *)(param_1 + 0xc) * 0x18);
+    }
+    if (*(long *)(param_1 + 0x18) != 0) {
+      operator delete(void*)();
+    }
+    uVar1 = *(uint *)(param_1 + 0x10);
+    iVar3 = 0;
+    *(long *)(param_1 + 0x18) = lVar2;
+    *(uint *)(param_1 + 8) = uVar1;
+    *(undefined4 *)(param_1 + 0xc) = 0;
+    *(uint *)(param_1 + 0x10) = uVar1 + 1;
+    lVar2 = lVar2 + (ulong)uVar1 * 0x18;
+  }
+  else {
+    lVar2 = *(long *)(param_1 + 0x18) + (ulong)uVar1 * 0x18;
+    iVar3 = 0;
+    if (uVar1 + 1 < *(uint *)(param_1 + 0x10)) {
+      iVar3 = uVar1 + 1;
+    }
+    *(uint *)(param_1 + 8) = uVar1 + 1;
+  }
+  *(int *)(param_1 + 8) = iVar3;
+  return lVar2;
+}
+
+// ==== Aska::TSoundDynamicQueue<Aska::AudioMessage>::~TSoundDynamicQueue()
+// vaddr 0x22458b4 | ghidra 0x23458b4 | size 56 | symbol _ZN4Aska18TSoundDynamicQueueINS_12AudioMessageEED0Ev | lib libSOA-3.7.0.so | 2026-10-08
+void _ZN4Aska18TSoundDynamicQueueINS_12AudioMessageEED0Ev(long *param_1)
+
+{
+  undefined *puVar1;
+  
+  puVar1 = PTR__ZTVN4Aska13TDynamicQueueINS_12AudioMessageELb1EEE_02cc2768;
+  *(undefined4 *)(param_1 + 2) = 0;
+  *param_1 = (long)(puVar1 + 0x10);
+  param_1[1] = 1;
+  if (param_1[3] != 0) {
+    operator delete[](void*)();
+  }
+  (*(code *)PTR__ZdlPv_02ca4758)(param_1);
+  return;
+}
+
+
+// FAILED to create function at 02971ec0 typeinfo name for Aska::TSoundDynamicQueue<Aska::SoundObject::RequestContainer>
+// FAILED to create function at 029d96f0 typeinfo name for Aska::TSoundDynamicQueue<Aska::EffectorRequest::RequestContainer>
+// FAILED to create function at 029d98b0 typeinfo name for Aska::TSoundDynamicQueue<Aska::AudioMessage>
+// FAILED to create function at 02bb38a8 Aska::TSoundDynamicQueue<Aska::SoundObject::RequestContainer>::vtable
+// FAILED to create function at 02bb38e0 Aska::TSoundDynamicQueue<Aska::SoundObject::RequestContainer>::typeinfo
+// FAILED to create function at 02c5f418 Aska::TSoundDynamicQueue<Aska::EffectorRequest::RequestContainer>::vtable
+// FAILED to create function at 02c5f440 Aska::TSoundDynamicQueue<Aska::EffectorRequest::RequestContainer>::typeinfo
+// FAILED to create function at 02c5f828 Aska::TSoundDynamicQueue<Aska::AudioMessage>::vtable
+// FAILED to create function at 02c5f860 Aska::TSoundDynamicQueue<Aska::AudioMessage>::typeinfo
 
 // ==== Aska::SoundCommand::ProcessCommand(Aska::SoundCommand**)
 // vaddr 0x2246970 | ghidra 0x2346970 | size 1544 | symbol _ZN4Aska12SoundCommand14ProcessCommandEPPS0_ | lib libSOA-3.7.0.so | 2026-10-08

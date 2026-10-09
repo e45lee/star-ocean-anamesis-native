@@ -5,3 +5,9 @@ kStrIllegalSoundType      str "Illegal sound type.(%08x)"
 kInvalidHandle            sym _ZN9Framework6CSound14iInvalidHandleE                # u64: a CElement's m_handle when free
 kPlayingElementsCallbackVtbl at 0x2aab048 ref _ZN9Framework13CSoundManager12PostProgressEv  # the vtable (its slots at + 0x10) of the ICallback PostProgress hands FunctorAllPlayingElements
 kDeleteCountdownExtra     at 0x26dbad0 f32 ref _ZN4Aska7SLVoice18SetDeleteCountdownEv   # added to the countdown while SoundManager::m_signalExtra is set
+kOggPcmScale              at 0x28d311c f32 ref _ZN4Aska7AskaOGG13Decode_PcmoutEj  # the float sample -> s16 scale (32767.0)
+kEmitterEpsilon           at 0x26e519c f32 ref _ZN4Aska12AudioEmitter7ComputeEv   # 1e-6: a direction shorter than this has no angle
+kEmitterTwoPi             at 0x26edb34 f32 ref _ZN4Aska12AudioEmitter7ComputeEv   # 2 pi: the angle's range
+kEmitterSilentDb          at 0x2865bf8 f32 ref _ZN4Aska12AudioEmitter7ComputeEv   # -96 dB: silence
+kEmitterDbScale           at 0x26edb4c f32 ref _ZN4Aska12AudioEmitter7ComputeEv   # 1 / 20 (dB -> the power of 10)
+kEmitterVolumeScale       at 0x26e3fd8 f32 ref _ZN4Aska12AudioEmitter7ComputeEv   # 1.4: the 3D sounds' gain

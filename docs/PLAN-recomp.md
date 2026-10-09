@@ -1,12 +1,27 @@
 # Plan: static recompilation of libSOA.so (getting rid of the JIT)
 
-**Status: plan, for the user's review** (written 2026-10-08 by agent recomp-plan; nothing here is
+**Status: plan; the user's decisions of 2026-10-08 are recorded below ("Decisions"); stays a plan until the user starts P0** (written 2026-10-08 by agent recomp-plan; nothing else here is
 decided). It answers the user's question of 2026-10-08, "how many more waves before we can get rid
 of the JIT?": hand-porting alone never gets there, because the long tail is too long (below), so
 this plan proposes to **translate every guest function of `libSOA.so` into generated C++ ahead of
 time, with the hand-written natives as overrides on top**. The numbers marked *measured* come from
 the prototype in [`tools/recomp-proto/`](../tools/recomp-proto/build.sh) ("The prototype" below)
 or from the lib itself; *estimated* numbers are extrapolations from them.
+
+## Decisions (the user, 2026-10-08)
+
+The open questions of 8, answered; the status stays "plan" until the user starts P0.
+
+| # | Question | Decision |
+|---|---|---|
+| D1 | Release packages and the game-files rule | **An explicit exception:** releases ship the recompiled binaries, like the Global master DB exception (`data/basmaster-gl.sqlite3`). When it ships, AGENTS.md's "Game files" rule and `tools/package.py`'s allow-list / scan get the matching line (the recompiled `soa` binaries by name, nothing else of the translation: no generated sources) |
+| D2 | Generated code in git or at build | **Generated at build time**, not committed (`build/recomp/`) |
+| D3 | Build budget | **Cold code in a separately cached library**, keyed by the lib's and the translator's hashes (so native work never rebuilds it); hot code built with the program |
+| D4 | The waves | **Pause new Wave B/C subsystems until P1** (Wave B is on hold already) |
+| D5 | The JIT after P4 | **dynarmic stays as a debug-only reference** (`--engine jit`); P4 makes it optional at run time, it doesn't remove it |
+| D6 | `soa-emu` | **Stays on the JIT** as the unmodified reference client (what `tests/diff/` compares against) |
+| D7 | Binary size | **~95-110 MB larger binaries are acceptable** |
+| D8 | The prototype | **Kept in `tools/recomp-proto/`**, with the gap sweep committed |
 
 ## 0. Why hand-porting can't remove the JIT
 
@@ -63,10 +78,10 @@ or from the lib itself; *estimated* numbers are extrapolations from them.
    not the original bytes; otherwise the "no JIT entry" counter of P2 could never reach 0 and the
    recomp-vs-JIT checks would compare the JIT with itself.
 2. **After P3:** `recomp` is the default; the JIT stays as a **debug-only reference** (`--engine
-   jit`, the differential tests' second opinion) for one or two batches.
-3. **P4:** dynarmic leaves the runtime. Its *frontend* (decoder + IR, a host library) stays a
-   build-time dependency of the translator only, and only if the generated code isn't committed
-   (5).
+   jit`, the differential tests' second opinion), kept for good (D5).
+3. **P4 (D5):** dynarmic stays, as the debug-only reference `--engine jit`; the default
+   paths no longer touch it (no JIT state per thread, no fastmem handling unless `--engine jit`).
+   Its *frontend* (decoder + IR) is also the translator's build-time dependency (D2).
 
 ### What it buys
 
@@ -94,7 +109,7 @@ or from the lib itself; *estimated* numbers are extrapolations from them.
   jumps (2.4), the exclusive monitor (2.3).
 - **Binary distribution:** the generated code is a translation of the game's code, and so is a
   `soa` binary compiled from it: under the hard rule "release packages never contain game files"
-  it can't ship as today's packages do (8, question 1, the first decision this plan needs).
+  it ships under an explicit exception (D1), as the Global master DB does.
 
 ## 2. The translator
 
@@ -110,7 +125,7 @@ hand-written header (`recomp_rt.h`). Reasons, all measured on this lib:
   the game's traps), in 18 s on one core. Coverage of that pass: the blocks reachable by direct
   control flow from each entry cover **88.4%** of the functions' 22.63 MB (jump-table case bodies
   aren't followed, since a `BR` block names no successor); with a gap sweep (every uncovered address
-  inside a function becomes a block start, `RECOMP_SWEEP=1`) **96.7%**, still with no undecodable
+  inside a function becomes a block start, `--sweep`) **96.7%**, still with no undecodable
   instruction; the only `Interpret` terminals (128) are zero padding inside two functions' bounds, and
   the rest of the uncovered 3.3% is padding of that kind. The production translator recovers jump
   tables (2.4) and keeps the sweep as the backstop.
@@ -343,7 +358,7 @@ per 570k-line unit, so units of ~50k lines). Tables (dispatch, line tables) add 
   the random sample's object 6x bigger (4.0 MB -> 24.9 MB, compile 71 -> 81 s), so the generated
   code gets none by default (the guest-address line table of 4 serves crash reports) and `-g1`
   with split DWARF on request.
-- **Generated at build time, not committed** (recommended; question 1): the lib is in git (the APK),
+- **Generated at build time, not committed** (D2): the lib is in git (the APK),
   the translator is ~1-2k lines of C++ linking dynarmic's frontend, and translating takes 18 s, so
   the build regenerates `build/recomp/*.cpp` whenever the lib or the translator changes ("prefer
   regeneration"). That also keeps a 20 M-line translation of the game's code out of the repository.
@@ -383,11 +398,11 @@ per 570k-line unit, so units of ~50k lines). Tables (dispatch, line tables) add 
 
 | Phase | Content | Exit criteria | Estimate (agent-days) | Parallelism |
 |---|---|---|---|---|
-| **P0** | The translator as a real tool (`tools/recomp/`, from the prototype): all ~250 opcodes in `recomp_rt.h`, jump-table recovery (plus the gap sweep), PLT resolution, exclusives, TPIDR; the opcode-level tests; CMake target generating `build/recomp/` for a chosen function list; question 1 decided | All opcodes implemented; every byte of every function covered by a block or known padding; the opcode tests at 0 mismatches against the JIT; hash and math (plus 2-3 more leaf subsystems) pass their NATIVE_TESTs with recompiled originals | 6-10 | 2-3 agents (opcode families: integer/flags, scalar FP, vector, memory/atomics) |
+| **P0** | The translator as a real tool (`tools/recomp/`, from the prototype): all ~250 opcodes in `recomp_rt.h`, jump-table recovery (plus the gap sweep), PLT resolution, exclusives, TPIDR; the opcode-level tests; CMake target generating `build/recomp/` for a chosen function list | All opcodes implemented; every byte of every function covered by a block or known padding; the opcode tests at 0 mismatches against the JIT; hash and math (plus 2-3 more leaf subsystems) pass their NATIVE_TESTs with recompiled originals | 6-10 | 2-3 agents (opcode families: integer/flags, scalar FP, vector, memory/atomics) |
 | **P1** | `--engine mixed`: the runtime's dispatch table, `St` shared with `Cpu`, guest threads starting in recompiled code, the JIT on a dispatch miss; translate the login flow's executed functions | `rebase_inproc_session` PASS with `--engine mixed` and those functions recompiled; recomp-vs-JIT live checks at 0 over login; profiler and crash reports map host PCs to guest functions | 8-12 | 3 agents (runtime dispatch + threads; profiler/crash/GDB; translator fixes) |
 | **P2** | All 103,939 functions translated; per-function generated tests (sharded); exceptions (2.5); the four flows, `tests/diff/`, Windows | Every session in T1/T2 passes with `--engine recomp` and **no** JIT entry in a run (a counter that must stay 0); generated tests at 0 mismatches; Windows stage passes | 10-15 | 4-5 agents (test generator; exceptions; flows; Windows; build splitting) |
 | **P3** | `recomp` the default; JIT `--engine jit` debug-only; the GDB stub on recomp (entry breakpoints, debug translation) | A batch of normal work (T2 twice) green on recomp; release packages built with recomp | 4-6 | 2 agents |
-| **P4** | Remove dynarmic from the runtime (and `map_guest_code`, the JIT state, fastmem handling); `soa-emu` keeps it (it's the unmodified reference client) or moves to recomp too (question 4) | `soa` links no dynarmic; T0-T2 green | 2-4 | 1-2 agents |
+| **P4** | The JIT only behind `--engine jit` (D5): no JIT state, `map_guest_code` or fastmem handling on the default paths; `soa-emu` stays on the JIT (D6); the package exception (D1) in AGENTS.md and `tools/package.py`; the cold-code cache (D3) | `soa` runs every T0-T2 test without creating a JIT; `--engine jit` still passes T0; release packages built with recomp | 2-4 | 1-2 agents |
 
 Total *estimated*: ~30-47 agent-days, i.e. with 3-5 agents in parallel roughly 2-3 weeks of
 calendar time, P0-P1 being the critical path.
@@ -401,7 +416,7 @@ calendar time, P0-P1 being the critical path.
 | Missing function entries (computed jumps into code Ghidra and our discovery didn't find) | The dispatch-miss log in P1-P2 (with the JIT as fallback) feeds the function list; after P4 a miss is a fatal error with the address |
 | Exceptions turn out to be thrown and caught through game frames | 2.5's resume mechanism; the 395 landing-pad functions are known |
 | Atomics: a guest spin loop with LDXR/STXR relying on the monitor clearing on context switch | Value-based CAS (as the JIT); WFE/SEV as host yields |
-| Generated code distributed by mistake | It's under `build/` only; `tools/package.py`'s scan gains a rule for the generated sources and for a binary that contains them (question 1) |
+| Generated code distributed by mistake | It's under `build/` only; `tools/package.py`'s scan refuses the generated sources; only the recompiled binaries are allowed, by name (D1) |
 
 ### What happens to the hand-porting waves
 
@@ -414,36 +429,14 @@ calendar time, P0-P1 being the critical path.
     boundaries (SQLite, zlib, ...: already done);
   - **families the 1:1 translation keeps slow:** NEON-heavy code where the NaN slow paths and lane
     loops dominate (skinning, particles).
-- **Recommendation:** finish the Wave B items already in flight; pause starting new subsystems
-  for speed until P1 measures recomp end to end; then re-rank Wave B/C by "readable code we want"
+- **Decided (D4):** new Wave B/C subsystems are paused until P1 measures recomp end to end; then re-rank Wave B/C by "readable code we want"
   rather than by guest time.
 
 ## 8. Open questions for the user
 
-1. **Release packages and the game-files rule.** A `soa` built from recompiled code contains the
-   game's code in another form, which the packaging allow-list and scan (`tools/package.py`) can't
-   see. Options: (a) **ship the translator, not the translation**: the release contains the runtime,
-   the natives and the translator; the user's install (first run, or an install script) translates
-   their own `libSOA.so` and compiles it (needs a C++ compiler on the user's machine and minutes of
-   CPU: heavy on Windows), or links a cached build of it; (b) keep releases on the JIT (`--engine jit`
-   stays in the release build) and use recomp only for development and the user's own builds;
-   (c) treat the translation like the master DB exception (`data/basmaster-gl.sqlite3`), an explicit
-   user decision. This decides what P3-P4 deliver (whether dynarmic can leave the release build at
-   all), so it comes first.
-2. **Generated code in git or generated at build?** Recommended: at build (18 s to translate,
-   minutes to compile, reproducible from the APK in git, and no translation of the game's code in the
-   repository). Committing it would make diffs reviewable but adds ~22 M lines per translator change.
-3. **The JIT's future:** delete dynarmic after P4, or keep `--engine jit` as a debug-only reference
-   (it costs a dependency and the code that drives it)?
-4. **Build budget:** is ~45-70 CPU-minutes for a clean build (plus the same for the Windows cross
-   build) acceptable, with incremental builds untouched by native work? Or should cold code be
-   built once into a cached library (a vcpkg-like binary cache keyed by the lib's and translator's
-   hashes)?
-5. **`soa-emu`:** keep it on the JIT forever as the unmodified reference client (recommended: it's
-   what `tests/diff/` compares against), or move it to recomp too?
-6. **Waves:** pause new Wave B/C subsystems (beyond what's in flight) until P1's measurement, as
-   recommended in 7?
-7. **Binary size:** recomp binaries are ~95-110 MB larger (if 1 allows shipping them at all); fine?
+Answered on 2026-10-08: "Decisions" at the top (D1-D7). The questions were: release packages and
+the game-files rule; generated code in git or at build; the JIT's future; the build budget;
+`soa-emu`; pausing the waves; binary size.
 
 ## The prototype (`tools/recomp-proto/`, kept)
 
@@ -452,7 +445,7 @@ Linux-only, not part of the CMake build or of any gate: `tools/recomp-proto/buil
 
 | File | What |
 |---|---|
-| `recomp_gen.cpp` | the translator: dynarmic's `A64::Translate` per block, its IR passes, C++ out; `stats` mode over the whole lib; `emit [--locals]` for a function list; `RECOMP_ONLY_OPS=FILE` for size samples, `RECOMP_SWEEP=1` the gap sweep (2.1) |
+| `recomp_gen.cpp` | the translator: dynarmic's `A64::Translate` per block, its IR passes, C++ out; `stats` mode over the whole lib; `emit [--locals]` for a function list; `--only-ops FILE` for size samples, `--sweep` the gap sweep (2.1) |
 | `recomp_rt.h` | the register file and 121 opcodes' semantics (FPCR 0, AArch64 NaN rules, dynarmic's FPToFixed) |
 | `harness.cpp` | loads the lib with the runtime (no natives), runs each function under the JIT and recompiled on the same random inputs, compares registers and memory; then times both |
 | `functions.txt` | the 83 sample functions (17 hash, 66 math; 69 leaves, 14 with calls to imports or each other) and their argument kinds |
@@ -463,7 +456,7 @@ Linux-only, not part of the CMake build or of any gate: `tools/recomp-proto/buil
   of the 22.63 MB): 103,939 functions, 1,168,582 blocks, 13,044,962 IR instructions; 250 distinct
   opcodes; 0 undecodable; calls: 296,689 direct (264,042 via the PLT to the lib's own functions,
   21,981 to 376 imports, 10,666 straight), 44,858 indirect; 85,661 returns; 7,332 indirect jumps;
-  25,496 direct branches leaving a function; 419 BRK. With `RECOMP_SWEEP=1` (96.7% covered):
+  25,496 direct branches leaving a function; 419 BRK. With `--sweep` (96.7% covered):
   1,243,895 blocks, 14,370,250 IR instructions, 251 opcodes, 310,972 direct and 47,293 indirect
   calls, 7,524 indirect jumps, 128 `Interpret` terminals (zero padding).
 - **Correctness:** 83 functions, 166,000 runs, 0 mismatches (both emit modes); 11,296 calls fell

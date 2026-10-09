@@ -41,13 +41,13 @@ message_id	ja_sha1	en	source
 6021_020_15	deda95b53d51ae8f6498fa7672a8a5b30294d702	Don't worry. It looks like...	machine
 6021_020_16	14e11b44cd59837c19cff7e5074259f2097e0aaf	It's definitely our contact!!	machine
 6021_020_17	65eda3d775c85ce38653b6a0c7a961880d301f8f	They won't ambush us, but\nthey should be pretty tough.\nStay sharp!	machine
-6021_030_01	22a0a36873035cc215b191c1c629b68d924a1abf	Smuggler: Hehe... looks like the\nRose family still keeps some\nimpeccable skill on their side.	machine
+6021_030_01	22a0a36873035cc215b191c1c629b68d924a1abf	Hehe... looks like the Rose\nfamily still keeps some\nimpeccable skill on their side.	machine
 6021_030_02	b332046f3562b64480e92c8c1dadc398beafaa26	...It's nothing special.	machine
-6021_030_03	9238e736564462d0015372f661dd138b5dfdb85d	Smuggler: Don't be so modest.	machine
-6021_030_04	37b7e7f3e73599a28a70da5cfd7f0550f8704d3a	Smuggler: Since the cargo was smaller\nthan I expected, I worried that Gartoga\nwas finally on the decline, but it seems\nI was mistaken.	machine
-6021_030_05	3191da78fc9a54b6df9999616aa31dc1688fdbdb	Smuggler: I haven't seen Gems\nof this purity in years. How on\nearth did you get your hands\non these?	machine
+6021_030_03	9238e736564462d0015372f661dd138b5dfdb85d	Don't be so modest.	machine
+6021_030_04	37b7e7f3e73599a28a70da5cfd7f0550f8704d3a	Since the cargo was smaller than I\nexpected, I worried that Gartoga was\nfinally on the decline, but it seems I\nwas mistaken.	machine
+6021_030_05	3191da78fc9a54b6df9999616aa31dc1688fdbdb	I haven't seen Gems of this\npurity in years. How on earth\ndid you get your hands on\nthese?	machine
 6021_030_06	38ece964fa8c80f2fcd4e7072ca250aea13c789e	...Trade secret.	machine
-6021_030_07	784df5fc566345fa6c26cddb6b1c59d4d8a64c26	Smuggler: Figures. I'd like to\nkeep things on good terms with\nyou people.	machine
+6021_030_07	784df5fc566345fa6c26cddb6b1c59d4d8a64c26	Figures. I'd like to keep things\non good terms with you people.	machine
 6021_030_08	d66a1121a254d1f60c8d4e119e78dad0fcf1f8e1	Fighting creatures and machines sent\nby the traders at every waypoint, and\nonly starting the trade upon victory...	machine
 6021_030_09	d8b1a35779a74048135952888f9bb91b0aa2730e	...Why use such an inefficient\nmethod? It feels as though\nboth parties only suffer\nlosses...	machine
 6021_030_10	62c4a0455b21cece8aef1f0c10713e2e70d40581	That's just how smuggling works in\nwartime. You never know where the\nmilitary has cast their nets. It was a\ncommon practice back in Rubarika, too.	machine
@@ -394,80 +394,80 @@ message_id	ja_sha1	en	source
 6023_100_78	39df5a0f550307a6e46cacb8bd31df815ecff4f9	What's with you?	machine
 6023_100_79	94ca3f1ef90a18faac86a6823a8521f1ae4cc86c	Look, in my experience, when you see\nsomething unexpected during a\nbattlefield negotiation... the bigger the\ndiscrepancy from the plan, the worse\nthe outcome.	machine
 6023_120_01	9025568d49b7f6220ffcf56d8dc89f6546463b21	...Here is the sample for this\nshipment.	machine
-6023_120_02	578262792deca63a46822cad85f174cd6fa1141a	Captain McKinley: Hmm. This is\nof much higher quality than I\nwas led to believe.	machine
+6023_120_02	578262792deca63a46822cad85f174cd6fa1141a	Hmm. This is of much higher\nquality than I was led to\nbelieve.	machine
 6023_120_03	f2efe1ed04bd8ea9c2b22c9cf35f3022e5ca5419	...I found a better connection\nafter the order was placed.	machine
-6023_120_04	357929a3f426bd47e8bcaefa6355ab88b9be9bd0	Captain McKinley: You seem\nfar more capable than what my\npredecessor told me. Splendid.	machine
+6023_120_04	357929a3f426bd47e8bcaefa6355ab88b9be9bd0	You seem far more capable\nthan what my predecessor told\nme. Splendid.	machine
 6023_120_05	7c3db8b6d9f3f3bfc92f099f9070d3bfe15e74b7	...Are you satisfied with the\ncontents?	machine
-6023_120_06	b139df109d6b2f9c85f49473062a0d4a608c744f	Captain McKinley: Of course. A\nhappy accident, as they say.	machine
+6023_120_06	b139df109d6b2f9c85f49473062a0d4a608c744f	Of course. A happy accident,\nas they say.	machine
 6023_120_07	daa32c5eff52079dc0ce5fbbdfacd3baab0410b8	...From where I'm standing, it\nlooks like a normal transaction.	machine
 6023_120_08	1a5049238d91e3f3ae9f489c94054139a9fbdafc	He mentioned a predecessor;\nmaybe they just happened to\nbe here?	machine
 6023_120_09	f14cb143a584740239e86adcd7069454a8a3884c	...If that's the case, then fine.	machine
 6023_120_10	e9949a378bcc7d28fd459f2db30c6875030d02b1	But that "chance" is what worries me. If\nnothing happens, then good. Keep a\nclose eye on his subordinates'\nmovements as well.	machine
-6023_120_11	ab8dd9707c5f1a5c996e2c132770fbb6af584fba	Captain McKinley: Now then,\nmay we move the cargo\ninside?	machine
+6023_120_11	ab8dd9707c5f1a5c996e2c132770fbb6af584fba	Now then, may we move the\ncargo inside?	machine
 6023_120_12	3d5bb65e935c4706d6854dd7b0ae30198cddb401	...My people will handle the\ntransport. That is the standard\nrule.	machine
 6023_120_13	436d15017e031b2d8c064e938a2fbb5b8a8b4b7d	...Help the guest carry their\nluggage.	machine
 6023_120_14	35fc609f3e76e202d0860688f217adc3287aaa14	Yes. I understand.	machine
 6023_120_15	1e8b774de8efb0ba33b3620e893c5f8eb40f1311	The containers are divided up\ninside these wooden crates.	machine
 6023_120_16	eecb5527f09bc1a157a89185294bb8a9f32ff12b	Each one is small enough to\ncarry by hand, so I'll bring them\nin first.	machine
 6023_120_17	9c25ecd6d05c42e9db0033f091a69305ef24c5eb	There's only one crate left.\nBefore that, could you bring in\nthe payment for what's been\ndelivered so far?	machine
-6023_120_18	65720e67f221b31270421d971e6f68197f97e9be	Captain McKinley: I see. Just\nwait a moment. You don't need\nto help any further.	machine
+6023_120_18	65720e67f221b31270421d971e6f68197f97e9be	I see. Just wait a moment. You\ndon't need to help any further.	machine
 6023_120_19	5590ff8011105dbc9611adfe36ab2f63edc164d3	What?	machine
-6023_120_20	53375c62e592d5eaaa8c262dc22a92a7159d75a9	Captain McKinley: Everyone,\nhands up! Any suspicious\nmovement and I'll shoot on\nsight without warning.	machine
+6023_120_20	53375c62e592d5eaaa8c262dc22a92a7159d75a9	Everyone, hands up! Any\nsuspicious movement and I'll\nshoot on sight without warning.	machine
 6023_120_21	bd0cee8c4e5928f86c960e6f72298dfe7efdaaaa	...What is the meaning of this?	machine
-6023_120_22	a42769840bc5fe4b82dae7ec9002a534f766fc21	Captain McKinley: There's\nnothing to it. I don't know what\nyou've misunderstood, but this\nis an inspection.	machine
-6023_120_23	d456350ad0878b48f52343cdb7b7393fef3926ab	Captain McKinley: We will\nhandle the final delivery and\nthe inspection ourselves.\nThanks for your cooperation.	machine
+6023_120_22	a42769840bc5fe4b82dae7ec9002a534f766fc21	There's nothing to it. I don't\nknow what you've\nmisunderstood, but this is an\ninspection.	machine
+6023_120_23	d456350ad0878b48f52343cdb7b7393fef3926ab	We will handle the final delivery\nand the inspection ourselves.\nThanks for your cooperation.	machine
 6023_120_24	8640a1291fe9964c18379303167bc4e050f39041	...Just as I thought.	machine
-6023_120_25	7a12360f7665fce031153825c8989248b4359c23	McKinley Captain: Originally,\nthe Askis, a supply ship from\nthe 5th Fleet, was supposed to\ncome here.	machine
-6023_120_26	32dc87d0602ece0fe7bb605db3ba938949112022	McKinley Captain: Smuggling\nwith petty pirates isn't a\nmatter we'd normally take\nseriously during wartime.	machine
-6023_120_27	6d420349cdacce8abf23ae4ba23447c66764ae6e	McKinley Captain: However, the\nother day, the Askis was split\nin two and sank in this sector.	machine
-6023_120_29	67e65a4009c29265e7004442eaa5c3d46edd1a9f	McKinley Captain: From the recovered\nblack box, we learned that the Askis\nhad commissioned the Rose family for\nsmuggling.	machine
-6023_120_30	6be123b4bb3027bf75fe1a9b0e9e77e5575c2d1a	McKinley Captain: If it came to light\nthat merchants from the Stardust\nBazaar illegally intervened in the\nconflict between Raza and Ober,	machine
-6023_120_31	71b82b5391a9009baf28ed839d27d133542b1ac7	McKinley Captain: and that a\nproud soldier of our Space\nNavy was complicit, it would be\na massive scandal.	machine
-6023_120_32	e32f594fddf78ab511ecfbbb10f7ab2f08ab7f3e	McKinley Captain: I'm sure you\nunderstand why this cannot be\nmade public.	machine
+6023_120_25	7a12360f7665fce031153825c8989248b4359c23	Originally, the Askis, a supply\nship from the 5th Fleet, was\nsupposed to come here.	machine
+6023_120_26	32dc87d0602ece0fe7bb605db3ba938949112022	Smuggling with petty pirates\nisn't a matter we'd normally\ntake seriously during wartime.	machine
+6023_120_27	6d420349cdacce8abf23ae4ba23447c66764ae6e	However, the other day, the\nAskis was split in two and sank\nin this sector.	machine
+6023_120_29	67e65a4009c29265e7004442eaa5c3d46edd1a9f	From the recovered black box,\nwe learned that the Askis had\ncommissioned the Rose family\nfor smuggling.	machine
+6023_120_30	6be123b4bb3027bf75fe1a9b0e9e77e5575c2d1a	If it came to light that merchants from\nthe Stardust Bazaar illegally intervened\nin the conflict between Raza and Ober,	machine
+6023_120_31	71b82b5391a9009baf28ed839d27d133542b1ac7	and that a proud soldier of our\nSpace Navy was complicit, it\nwould be a massive scandal.	machine
+6023_120_32	e32f594fddf78ab511ecfbbb10f7ab2f08ab7f3e	I'm sure you understand why\nthis cannot be made public.	machine
 6023_120_33	08a40c88c1bf94e03115ffcc7dfa6d0aa68058ef	...We have maintained a good\nrelationship until now. Are you\nbetraying us now?	machine
-6023_120_34	1ac0af886d7712afacf872606a701358dc6faf01	McKinley Captain: The situation has\nchanged. Our military is determined to\nsecure a mining site for Gems of such\nhigh quality.	machine
+6023_120_34	1ac0af886d7712afacf872606a701358dc6faf01	The situation has changed. Our\nmilitary is determined to\nsecure a mining site for Gems\nof such high quality.	machine
 6023_120_35	a65bb68579c4ac02605a53ae07e4432bb253bbbf	...Even if you capture me, I will\nnever tell you where it is.	machine
-6023_120_36	18ea71f91871e08a1cb0bf9113f48b263702b663	McKinley Captain: We'll just\nhave to see about that.	machine
-6023_120_37	22e62b0bfe997ab55648078772aed7e265b5e4f1	McKinley Captain: Besides, you\naren't the only one who can\ngive us the answer.	machine
-6023_120_38	f8f89cfefd39b4932f027598bb1fd4f16cd6b687	Captain McKinley: Lavarnia\nRose, the only daughter of the\nRose family head.	machine
-6023_120_39	598ce79639b2c22417a77e51bad9c3d98c3e09c3	Captain McKinley: I'm sure your\nfather will understand once I\nspeak with him about you.	machine
+6023_120_36	18ea71f91871e08a1cb0bf9113f48b263702b663	We'll just have to see about\nthat.	machine
+6023_120_37	22e62b0bfe997ab55648078772aed7e265b5e4f1	Besides, you aren't the only\none who can give us the\nanswer.	machine
+6023_120_38	f8f89cfefd39b4932f027598bb1fd4f16cd6b687	Lavarnia Rose, the only\ndaughter of the Rose family\nhead.	machine
+6023_120_39	598ce79639b2c22417a77e51bad9c3d98c3e09c3	I'm sure your father will\nunderstand once I speak with\nhim about you.	machine
 6023_120_40	e8e6274d4734fa8cab698a9aa4b71d4e5bb3a95b	...Are you planning to insult my\nfather?	machine
-6023_120_41	5b48b715ba75b6b49eaf3d42809167aaa888e9df	Captain McKinley: Not at all. I\nexpect him to be a good father\nwho loves his daughter.	machine
-6023_120_42	c24a248a001f8a137d66fa118f50a051b91666ad	Captain McKinley: Now,\nsurrender. I won't treat you\npoorly.	machine
+6023_120_41	5b48b715ba75b6b49eaf3d42809167aaa888e9df	Not at all. I expect him to be a\ngood father who loves his\ndaughter.	machine
+6023_120_42	c24a248a001f8a137d66fa118f50a051b91666ad	Now, surrender. I won't treat\nyou poorly.	machine
 6023_120_43	7784220a891e52d39852a20ad592c1c744ef3428	Whenever someone says they\nwon't treat you poorly, they\nalways end up doing exactly\nthat.	machine
-6023_120_44	a5688855095ea60a17cbc215ea923eddf088f293	Captain McKinley: Hmm.\nLooking closer, you're a\nSuccubus of the Ober lineage.	machine
-6023_120_45	ba0c40aaa837533858b607e6f69b763e7334b06e	Captain McKinley: Well... your\nfates are sealed here\nregardless. However...	machine
-6023_120_46	8a6decb414d39f301505d4f049448ef65feb75a1	Captain McKinley: If you agree to serve\nme personally from now on, I might just\nspare the lives of your crew as a\nspecial favor.	machine
+6023_120_44	a5688855095ea60a17cbc215ea923eddf088f293	Hmm. Looking closer, you're a\nSuccubus of the Ober lineage.	machine
+6023_120_45	ba0c40aaa837533858b607e6f69b763e7334b06e	Well... your fates are sealed\nhere regardless. However...	machine
+6023_120_46	8a6decb414d39f301505d4f049448ef65feb75a1	If you agree to serve me\npersonally from now on, I might\njust spare the lives of your\ncrew as a special favor.	machine
 6023_120_47	0fe4ee699e967932a000be8446b63035081daa36	...The quality of Raza's army\nhas truly plummeted.	machine
-6023_120_48	e3a45582c3be6ed1b242b0defa34dc020edd727d	Captain McKinley: Hmph, a\nmere Succubus acting so high\nand mighty. You! Take this\nwoman into cu―	machine
+6023_120_48	e3a45582c3be6ed1b242b0defa34dc020edd727d	Hmph, a mere Succubus acting\nso high and mighty. You! Take\nthis woman into cu―	machine
 6023_120_49	b8caf6f7b8ae8092a4c7c73013b8c4615f9d6c6b	Don't you dare screw with us!!	machine
-6023_120_50	e7ae444ecd53b9d58711bc299c08faacf0984a87	McKinley Captain: Gah!?	machine
-6023_120_51	a72cb4dd0bbd81705a7fd49ae3dca75080d52541	McKinley Captain: ...Wh-what!?\nWhere did you...!?	machine
+6023_120_50	e7ae444ecd53b9d58711bc299c08faacf0984a87	Gah!?	machine
+6023_120_51	a72cb4dd0bbd81705a7fd49ae3dca75080d52541	...Wh-what!? Where did you...!?	machine
 6023_120_53	e7ec5eb2bc2acc2d13015df3af9753445d808add	Heath!?	machine
 6023_120_54	0094dead78ae8328f7eb38bb7133be71b0e4d661	...You idiot, I told you to wait\nfor my signal...	machine
 6023_120_55	f188ab9fefc2919edd27ee389f4d3c4ef2571b6f	You've got a lot of nerve\ntalking to her like that! And you\ncall yourself the captain of a\nflagship!? You're pathetic!	machine
-6023_120_56	710471c552b404e3e9b8372be2b12af4348ec627	McKinley Captain: ...! You\ninsolent brat...! Do you not care\nwhat happens to your leader\nand your comrades!?	machine
+6023_120_56	710471c552b404e3e9b8372be2b12af4348ec627	...! You insolent brat...! Do you\nnot care what happens to your\nleader and your comrades!?	machine
 6023_120_57	76bdda5d3748c6713c4cebed4bfe9ec04a891135	Ha! If the top of the fleet talks\nlike some low-life thug, it's no\nwonder Ober is pushing the\nfront line forward!	machine
-6023_120_58	d10028ee793d41ef955d72760d26440f18e63c99	McKinley Captain: Y-you...!\nWhich unit do you belong to...!?	machine
+6023_120_58	d10028ee793d41ef955d72760d26440f18e63c99	Y-you...! Which unit do you\nbelong to...!?	machine
 6023_120_59	96aceac46739a04fe8b9e78c4349f09fd32a72ed	...! Heath! Stop!!	machine
 6023_120_60	2f793117a1d4dc4d50752263592033b88bcc72c4	I'm Second Lieutenant Heath of\nthe Heath Bureau! A crewman\nof the combat ship Isabel, led\nby Major Jeanne Marswest!	machine
 6023_120_61	389f91a634cceb43a87fdfcc9b36a273580c3710	He's a complete moron...\nhonestly.	machine
-6023_120_62	ffaef654d6ed49ae2128e78d9947139f0fa02aa6	McKinley Captain: The Isabel!?\nMajor Marswest...!?	machine
-6023_120_63	17776a4e6917f9a1a6330155126fdde18d87992d	Captain McKinley: ...Hehehe...\nWell, well, to think you're\ntraveling with a deserter from\nour own army...!	machine
-6023_120_64	1f2a026b13a3228e9f91f936f1a1620d50a207b9	Captain McKinley: Perfect!\nCapture them all!	machine
+6023_120_62	ffaef654d6ed49ae2128e78d9947139f0fa02aa6	The Isabel!? Major\nMarswest...!?	machine
+6023_120_63	17776a4e6917f9a1a6330155126fdde18d87992d	...Hehehe... Well, well, to think\nyou're traveling with a deserter\nfrom our own army...!	machine
+6023_120_64	1f2a026b13a3228e9f91f936f1a1620d50a207b9	Perfect! Capture them all!	machine
 6023_120_65	5b5326c354b33cc6556cedec920e3c250eb5408d	Hey, Captain! How long are we\nsupposed to just stand here\nand listen to this scumbag\ntalk?	machine
-6023_120_66	2d72f5d4440d835b97a7f6c6b2c8cc45ef6984a3	Captain McKinley: You! Who\ngave you permission to speak?!\nShut your―	machine
+6023_120_66	2d72f5d4440d835b97a7f6c6b2c8cc45ef6984a3	You! Who gave you permission\nto speak?! Shut your―	machine
 6023_120_68	548bc1d39b289ed7fb135177bddd1541754b5094	Roger that! Charging in!!	machine
 6023_120_69	2ab85bbc270ab2bd77a11f91ff3f8c7aa27238f6	I'm tired of waiting!	machine
 6023_120_70	1a78849b192415d5486b2798c99008defd5ea250	Nobody move! You are\nsurrounded!	machine
-6023_120_71	2bab606a7b9be994b1a7af99133ec08d26a62861	Captain McKinley: W-what...!?\nAn ambush...!?	machine
+6023_120_71	2bab606a7b9be994b1a7af99133ec08d26a62861	W-what...!? An ambush...!?	machine
 6023_120_72	37e7e1a2a42c51408b0b13c94bf477e733342a61	Hehe, how's that! Did you really\nthink we'd come here without a\nplan~?	machine
 6023_120_73	9b108c715a066df5b20d2f5b4c7039d3accb61e6	If you don't want to get hurt, everyone\nget back to your ships! You have no\nchance of winning if you fight us here\nand now!	machine
-6023_120_74	b3fb159de675aaee50d2fc2188e2bdfbbbe3edc4	Captain McKinley: Gah... Do you really\nthink mere Bazaar pirates can defeat\nthe Raza Space Force in close-quarters\ncombat!!	machine
-6023_120_75	bc08f3e2179f6b996a8e02450a07a9c9e4d1d222	Captain McKinley: All hands to\nbattle stations! Crush those\npirate ships!	machine
+6023_120_74	b3fb159de675aaee50d2fc2188e2bdfbbbe3edc4	Gah... Do you really think mere\nBazaar pirates can defeat the\nRaza Space Force in\nclose-quarters combat!!	machine
+6023_120_75	bc08f3e2179f6b996a8e02450a07a9c9e4d1d222	All hands to battle stations!\nCrush those pirate ships!	machine
 6023_140_01	891b7acd02167a68f7576cf25a71cf5c0be2bf7f	Hmph. All talk.	machine
 6023_140_02	65c2a76f63a6732ed1039ab8be9d75cfe7ad264d	It's honestly appalling that they\nwere so arrogant given their\nactual skill level.	machine
-6023_140_03	b37fe5e78163b508974cd649158ada7b7b40142a	McKinley: W-w-who do you\nthink you are?! Are you with\nthe Ober army?! Eeek!	machine
+6023_140_03	b37fe5e78163b508974cd649158ada7b7b40142a	W-w-who do you think you\nare?! Are you with the Ober\narmy?! Eeek!	machine
 6023_140_04	2984897a74ecc4a38c87d8f8de474d6b6d8eb666	We be neither Raza nor Ober.\nJust simple travelers.	machine
 6023_140_05	878e974f7aca528de6cc5026c2cb5ebd67d08bae	Simple travelers who cannot\nstand by and watch evil deeds.	machine
 6023_140_06	4fb2bcb5efa8cd9bfaa49330cec803c46cb850d4	These guys are nothing. Should\nwe just take down McKinley\nand the rest while we're at it?	machine
@@ -479,13 +479,13 @@ message_id	ja_sha1	en	source
 6023_140_12	658205202308ec95cd171e4ba1faded8be74d392	No, it's not a bad idea. I didn't\nexpect discipline on the front\nlines to be this lax.	machine
 6023_140_13	bfde91093081cc3b988fbf0a7bcc59efc59713a6	If we seize the McKinley here,\nwe might be able to reunite\nwith the boss sooner.	machine
 6023_140_14	9f0b1aae23ce05bebe16783451a797daf9bf2b98	It'd be interesting to use the\nentire ship as evidence to\nexpose the corruption on the\nfront lines.	machine
-6023_140_15	92f4d2e50d5b6517d105cffb2e338624f5885404	McKinley Captain: Gugh...	machine
+6023_140_15	92f4d2e50d5b6517d105cffb2e338624f5885404	Gugh...	machine
 6023_140_16	091c7320e419adea641095f86cbe1e542f11e45d	Exactly! If we can pull it off,\nlet's just do it!	machine
 6023_140_17	dfede3fd2dfef88c46a95f3bfbeb481e0094b865	By the way, Heath.	machine
 6023_140_18	ed306d712f71e6fd6771c4b96dd5a2e987941510	What?	machine
 6023_140_19	40d93163605ba6c4e27423697cb0b8de9e3d222a	Those tube-looking things on\nthe McKinley's walls are moving\nweirdly. What are those?	machine
 6023_140_20	4e48b2f03bb677f37335c79698793585f05edb66	...Huh?	machine
-6023_140_21	a0d21a85aa6fc3b6a6fadc6c98fa8ecb3d6ba021	McKinley Captain: Retreat!\nFire!!	machine
+6023_140_21	a0d21a85aa6fc3b6a6fadc6c98fa8ecb3d6ba021	Retreat! Fire!!	machine
 6023_140_22	c68248cde76523ee3e58e90f90fa500b21e0eaae	Hey! They're getting away!	machine
 6023_140_23	7359c05905d60dbf88d5c8a7953822b50d4fd733	Dammit, incoming fire!!\nEveryone, get back to the ship!\nCoro! Get ready for takeoff\nimmediately!!	machine
 6023_140_24	63d2b96f4fa1ca9a260ce0328a515babb4e1dcc3	"Awa-wa-wa! Understood!\nEveryone, please hurry and\nescape!!"	machine
@@ -601,13 +601,13 @@ message_id	ja_sha1	en	source
 6024_170_46	1ae28e34d4bc7a41d25634fcb9aea74f41024d04	Yes. I never imagined I'd\nencounter it so close to the\nDaft system...	machine
 6024_170_47	bd3e68ca13ec9cb585346adf6eadf66fb6cbf9c2	What is this even about...?	machine
 6024_170_48	3c8d85ba0e81fd2f29414b78055cd492ddad6d5e	This "Gate" was once known as\nthe <font color=yellow>Urza System</font>.	machine
-6024_180_01	62f89802a07a2cf35fa2474aa8f9ca8032162e5b	Master Mastima: The image of Evelysse\nreflected in that water mirror just now\nwas from the slightly distant past. It\nwas likely footage from a few days ago.	machine
+6024_180_01	62f89802a07a2cf35fa2474aa8f9ca8032162e5b	The image of Evelysse reflected in that\nwater mirror just now was from the\nslightly distant past. It was likely\nfootage from a few days ago.	machine
 6024_180_02	f4fa3c1b6235110f9b36c24ef482300734c85149	Footage of the past? If you\nknow about this "Gate," Master\nMastima...	machine
-6024_180_03	5bdac3cf601c7ba1eb309017f8c75c2f1acce09f	Master Mastima: Yes. I read a\nthesis regarding this back\nduring the era of Planet Nede.	machine
-6024_180_04	166ea02549b4af0ceb551f43236fa9698bb6bf2c	Master Mastima: Its basic\nfunction is exactly as we just\nwitnessed.	machine
-6024_180_05	c555509c95576400472951222d31e92430f19994	Master Mastima: It can\narbitrarily project images from\na specific point in the past\nonto the water mirror.	machine
-6024_180_06	87cf4bf5c4f6032c4135526184d08c33749a0c45	Master Mastima: Right now, all\nof us, including Karlyn Kayson,\nare deeply concerned with\nEvelysse's whereabouts.	machine
-6024_180_07	94c233e3fdc92cc8abfbb32b70f6b52b9b2aedaa	Master Mastima: That is why\nthe mirror showed his recent\npast.	machine
+6024_180_03	5bdac3cf601c7ba1eb309017f8c75c2f1acce09f	Yes. I read a thesis regarding\nthis back during the era of\nPlanet Nede.	machine
+6024_180_04	166ea02549b4af0ceb551f43236fa9698bb6bf2c	Its basic function is exactly as\nwe just witnessed.	machine
+6024_180_05	c555509c95576400472951222d31e92430f19994	It can arbitrarily project images\nfrom a specific point in the\npast onto the water mirror.	machine
+6024_180_06	87cf4bf5c4f6032c4135526184d08c33749a0c45	Right now, all of us, including\nKarlyn Kayson, are deeply\nconcerned with Evelysse's\nwhereabouts.	machine
+6024_180_07	94c233e3fdc92cc8abfbb32b70f6b52b9b2aedaa	That is why the mirror showed\nhis recent past.	machine
 6024_180_08	7fd33482f65d98f1d044807cc7c1c62e12717c6a	Projecting images of the past...\nit sounds simple when you say\nit, but isn't that incredibly\ngroundbreaking?	machine
 6024_180_09	6cde9f7e074b4a9bddeb5f0628aa3e52560fff80	I wonder if Raza and Ober are\nfighting over Lazuli just to get\ntheir hands on this.	machine
 6024_180_10	6e409afbe33903ceb7630844886e251304c34153	Oh! That could be it! I mean, if you\nknow when, where, and what your\nopponent did, it'd be way easier to\npredict their strategy!	machine
@@ -617,13 +617,13 @@ message_id	ja_sha1	en	source
 6024_180_14	f7359f22e415ce369f18f660f9e3667ced0fe982	If anything, you'd think they'd\nmake it public as a strategic\nadvantage to boost morale.	machine
 6024_180_15	37a8c376d9b8ccf7bed50fc40d896560f3a7678c	In the first place, what was the\ncreator thinking, bringing\nsomething like this to such a\nbarren planet...?	machine
 6024_180_16	61691e29f2909a125c9386ba18555b5d47a14d73	Master Mastima, since there\nwere papers left behind in\nNede, is this a product of\nNede?	machine
-6024_180_17	22597e73f7448559538753b17095a6d8fce1b907	Master Mastima: No, I don't know who\ncreated this. The people of Nede\nmerely discovered and investigated this\n"Gate."	machine
+6024_180_17	22597e73f7448559538753b17095a6d8fce1b907	No, I don't know who created\nthis. The people of Nede\nmerely discovered and\ninvestigated this "Gate."	machine
 6024_180_18	8a162fb9bf810936a6a28c5129ea779dbe038801	Discovered...?	machine
 6024_180_19	8d3134b2865a59e50ae44cca30fc4f06036f9da6	If the researchers of that time\ndiscovered it, does that mean it dates\nback even further than when the\nparadise of Nede flourished?	machine
-6024_180_20	70096096f47ad1a17b7973c90325724152e1167f	Master Mastima: That is\ncorrect.	machine
+6024_180_20	70096096f47ad1a17b7973c90325724152e1167f	That is correct.	machine
 6024_180_21	26c9848be7c8f755af38a150f7deb6a4bb2e0eec	To think technology to see\nimages of the past existed\nthat long ago...!	machine
-6024_180_22	6c185f74e33fbe9ebb1095f1f51058e0a1569715	Master Mastima: Yes. However,\n"seeing images of the past" is\nmerely a secondary effect of\nthe Urza System.	machine
-6024_180_23	8d5db7cefbc5f5898dafc081c319b52578dfb02a	Master Mastima: The primary\npurpose of the Urza System\nis...	machine
+6024_180_22	6c185f74e33fbe9ebb1095f1f51058e0a1569715	Yes. However, "seeing images\nof the past" is merely a\nsecondary effect of the Urza\nSystem.	machine
+6024_180_23	8d5db7cefbc5f5898dafc081c319b52578dfb02a	The primary purpose of the\nUrza System is...	machine
 6024_180_24	a000617bba0f5d06e8ba1a11e834db9f6f80b10f	!!	machine
 6024_180_25	0f5392cf5d9f3b4f68d60ca9e88211dad8c86e4b	Hm? What's wrong all of a\nsudden?	machine
 6024_180_26	85a191404de6d8e73840106b5fc31ad5a9e190fb	...Something is approaching.	machine
@@ -643,7 +643,7 @@ message_id	ja_sha1	en	source
 6024_180_40	55582fa1420d61fda7f36d7e371ab6c6d9b73b07	Dammit! It's coming at us full\ntilt! What the hell is wrong with\nthis planet?! This is nothing\nlike what I was told!	machine
 6024_180_41	5f6509ca3058a069cdca4a84ccceea83bfe56abc	...I was already frustrated...\nbecause the ship is broken...	machine
 6024_180_42	f08dc538ecb32fed3bf69b4d6355f49116f94c59	I'll tear you apart and use you\nfor spare parts!!	machine
-6024_190_01	04ac751359257c7fc1193db5da73861058b17066	Lady Lavarnia: ...Hmph. Just\naccept your fate and become\na spare part for the Overman.	machine
+6024_190_01	04ac751359257c7fc1193db5da73861058b17066	...Hmph. Just accept your fate\nand become a spare part for\nthe Overman.	machine
 6024_190_02	1be7aa7c5b2154f28dc494bf54f79347a9ad818e	A masterful display. I wondered\nif you were inexperienced in\ncombat, but Lady Lavarnia is\nquite the warrior.	machine
 6024_190_03	c2f4761ab08c4bd4ffcc5820fc2d8a3f0d7b3eab	Well, she is a member of the\npirates, after all. You'll get\nburned if you underestimate\nher.	machine
 6024_190_04	b61a92fee9407a8a09cc2c2ce4150a4f226c009b	I thought the Succubus was\nthe type to rely more on glyph\narts and special abilities.	machine
@@ -652,9 +652,9 @@ message_id	ja_sha1	en	source
 6024_190_07	523679d0d5435beb5a68290b244af689c1693ef1	What! She made those too!?\nI've been wondering about\nthose mechanical wings this\nwhole time!	machine
 6024_190_08	11a4d1736258dc166d1a7452fea2e48b3261f8bc	Yeah. Well, it's a long story.	machine
 6024_190_09	b0fe0035e4a35a094a1ab751ae7d61700664bde1	Being the daughter of a pirate captain\nmakes for a complicated life. Just... try\nnot to mention that they aren't real\nwings.	machine
-6024_190_10	af4796d1817d25aa5139b96ddffd44878ecf883c	Lady Lavarnia: Heath! What are\nyou chatting about! I'm going to\ntear this thing apart and fix\nthe ship.	machine
+6024_190_10	af4796d1817d25aa5139b96ddffd44878ecf883c	Heath! What are you chatting\nabout! I'm going to tear this\nthing apart and fix the ship.	machine
 6024_190_11	6c46cb45c1f200f3f61a11b4204716a557e5fc60	Ah! If you're taking it apart, I\nwant to do it! Leave it to me,\nleave it to me!	machine
-6024_190_12	088f2bd5feb0162c91a436bab9378afd9d96c88a	Lady Lavarnia: Fine then, be\nmy guest.	machine
+6024_190_12	088f2bd5feb0162c91a436bab9378afd9d96c88a	Fine then, be my guest.	machine
 6024_190_13	4bc6684c71359e00802ff0d16e600d1c8fcc51d8	Yay!! Finally, finally I get to\ntake it apart!!	machine
 6024_190_14	dfc063dfc5c84e6a19c3ec66a43d9eb8d19d5927	Big sister Welch looks so\nenergetic!	machine
 6024_190_15	f574f014bdc1141a071d6beaac6427e6091c2ad4	Well, she gets to mess around\nwith unfamiliar machinery to\nher heart's content...	machine

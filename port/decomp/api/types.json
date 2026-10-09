@@ -1,0 +1,6 @@
+{
+ "subsystem": "api",
+ "generated_by": "tools/subsystem.py export-types api",
+ "header": "port/src/native/api/api_layout.h",
+ "structs": []
+}

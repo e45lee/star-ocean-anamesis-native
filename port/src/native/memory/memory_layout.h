@@ -244,6 +244,15 @@ static_assert(offsetof(MemoryManager, m_parent) == 0x58);
 static_assert(offsetof(MemoryManager, m_cs) == 0x60);
 static_assert(sizeof(MemoryManager) == 0xf0);
 
+// The two callback interfaces the heap calls through the guest's vtables (VIRTUALS.md 1.4; memory is below
+// kernel, whose kernel_layout.h INotify is the first one):
+//   - m_badAllocNotify: an Aska::INotify (Framework::CBadAllocateNotify / CBadAllocateNotifyRetry: _ZTV slot 0
+//     Handler(unsigned long), 1 / 2 the destructors), handed the BadAllocateRequest below;
+//   - MemoryBlock::m_notify: an Aska::IMemoryNotify (no implementer's vtable is exported); LocalFree calls
+//     its slot 1 (notify, the block's data) before freeing the block.
+constexpr int kBadAllocNotifySlotHandler = 0;
+constexpr int kMemoryNotifySlotFreeing = 1;
+
 // The request MemoryManager::Malloc / MallocHigh / AlignedMalloc / AlignedMallocHigh pass to
 // m_badAllocNotify's vtable slot 0 when no manager of the ring can satisfy them (built on the caller's
 // stack; the handler, e.g. Framework::CBadAllocateNotifyRetry, frees memory and may allocate into

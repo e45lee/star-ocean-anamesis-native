@@ -200,12 +200,7 @@ s32 checked_yuv(u32** planes, const void* data, u64 size) {
 }
 
 namespace {
-struct Bound {
-    const char* sym;
-    HostFn fn;
-    u64* orig;
-};
-const Bound kBound[] = {
+const BoundNative kBound[] = {
     {"_ZN4Aska8JpegUtil7GetInfoEPjS1_PNS0_10ColorSpaceEPbS4_PKvm", wrap<&checked_get_info>(), &orig.get_info},
     {"_ZN4Aska8JpegUtil6DecodeEPvmjjPKvmRKNS0_12ILineScannerES6_S6_RKNS0_10IAllocatorE", wrap<&checked_decode>(), &orig.decode},
     {"_ZN4Aska8JpegUtil12GetPlaneInfoEPjS1_S1_S1_S1_PKvm", wrap<&checked_plane_info>(), &orig.plane_info},
@@ -213,16 +208,12 @@ const Bound kBound[] = {
     {"_ZN4Aska8JpegUtil9DecodeYuvEPPjPKvm", wrap<&checked_yuv>(), &orig.yuv},
     {"_Z8glj_ilogj", wrap<&glj_ilog>(), &orig.ilog},
 };
-bool register_all() {
-    for (const Bound& b : kBound) register_native_function({b.sym, b.fn, "lib_jpeg: Aska::JpegUtil on host IJG libjpeg 9b", nullptr, b.orig});
-    return true;
-}
-const bool g_registered = register_all();
+const bool g_registered = register_bound(kBound, "lib_jpeg: Aska::JpegUtil on host IJG libjpeg 9b");
 }  // namespace
 
 live::Lockstep& lockstep() { return g_check; }
 void use_originals(u64 (*sym)(const char*)) {
-    for (const Bound& b : kBound) *b.orig = sym ? sym(b.sym) : 0;
+    bind_originals(kBound, sym);
 }
 
 }  // namespace soa::native::lib_jpeg

@@ -164,10 +164,10 @@ void serialize_into(Entity& e, TSharedArray* data, s64* size) {
 void CSimpleSqliteConnector::QueryToResultObject(u32 query, void* params, u32 n, void* entity) {
     const ConnectorInfo* I = info_of(this);
     u64 t = transaction();
-    u64 driver = call(vslot((void*)t, 4), {t});
+    u64 driver = call(vslot((void*)t, kTransactionPSubstance), {t});
     if ((s32)query > (s32)I->count - 1) return;
     u64 q = I->queries + (u64)(s64)(s32)query * 0x20;
-    u64 addr = call(vslot((void*)t, 5), {t, 0, 0});
+    u64 addr = call(vslot((void*)t, kTransactionGetDefaultServer), {t, 0, 0});
     s64 st = 0;
     if (kDoOpen.direct()) st = as_driver(driver)->DoOpen(0, nullptr, reinterpret_cast<const yayoi::DBAddress*>(addr));
     else call_x8(kDoOpen.addr(), {driver, 0, 0, addr}, &st);
@@ -179,7 +179,7 @@ void CSimpleSqliteConnector::QueryToResultObject(u32 query, void* params, u32 n,
 
 void CSimpleSqliteConnector::QueryToResultObjectSql(const char* sql, void* params, u32 n, void* entity) {
     u64 t = transaction();
-    u64 driver = call(vslot((void*)t, 4), {t});
+    u64 driver = call(vslot((void*)t, kTransactionPSubstance), {t});
     driver_find(driver, (u64)sql, params, n, entity);
 }
 

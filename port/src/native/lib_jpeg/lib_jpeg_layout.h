@@ -33,13 +33,15 @@ using s64 = std::int64_t;
 // Guest objects: vtable slot 0.
 class ILineScanner {
 public:
-    void Scan(u8* dst, const u8* src, s32 width) const;  // operator()(u8*, const u8*, int) const
+    static constexpr int kSlotScan = 0;                  // operator()(u8*, const u8*, int) const
+    void Scan(u8* dst, const u8* src, s32 width) const;  // slot 0
     const void* const* vtable;                           // 0x00
 };
 // Aska::JpegUtil::IAllocator: the scanline buffer's allocator (FnASKAEngineAllocator: the engine heap).
 // Vtable slots 0, 1.
 class IAllocator {
 public:
+    static constexpr int kSlotMalloc = 0, kSlotFree = 1;
     void* Malloc(u64 size) const;  // slot 0
     void Free(void* p) const;      // slot 1
     const void* const* vtable;     // 0x00

@@ -410,12 +410,7 @@ s64 packet_blocksize(VorbisInfo* vi, OggPacket* op) {
 // ---- the natives ----
 
 namespace {
-struct Bound {
-    const char* sym;
-    HostFn fn;
-    u64* orig;
-};
-const Bound kBound[] = {
+const BoundNative kBound[] = {
     {"ogg_memory_hook", wrap<&ogg_memory_hook_>(), &orig.memory_hook},
     {"ogg_sync_init", wrap<&sync_init>(), &orig.sync_init},
     {"ogg_sync_clear", wrap<&sync_clear>(), &orig.sync_clear},
@@ -449,16 +444,12 @@ const Bound kBound[] = {
     {"vorbis_synthesis_restart", wrap<&synthesis_restart>(), &orig.restart},
     {"vorbis_packet_blocksize", wrap<&packet_blocksize>(), &orig.packet_blocksize},
 };
-bool register_all() {
-    for (const Bound& b : kBound) register_native_function({b.sym, b.fn, "lib_vorbis: host libogg / libVorbis", nullptr, b.orig});
-    return true;
-}
-const bool g_registered = register_all();
+const bool g_registered = register_bound(kBound, "lib_vorbis: host libogg / libVorbis");
 }  // namespace
 
 live::Lockstep& lockstep() { return g_check; }
 void use_originals(u64 (*sym)(const char*)) {
-    for (const Bound& b : kBound) *b.orig = sym ? sym(b.sym) : 0;
+    bind_originals(kBound, sym);
 }
 
 }  // namespace soa::native::lib_vorbis

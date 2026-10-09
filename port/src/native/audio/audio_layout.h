@@ -280,6 +280,7 @@ static_assert(offsetof(WaveVoiceBase, m_buffer) == 0x30);
 // An OpenSL ES interface as the guest holds it (SLAndroidSimpleBufferQueueItf, SLPlayItf, SLVolumeItf, ...):
 // a pointer to a table of functions; the HLE (runtime) makes them. Slot 0 of the buffer queue is Enqueue.
 using SLItf = const u64* const*;
+constexpr int kSLBufferQueueEnqueue = 0;  // SLAndroidSimpleBufferQueueItf: Enqueue(itf, buffer, size)
 
 // Aska::AskaOGG: the voice's Ogg Vorbis decoder over lib_vorbis, guest size 0x450 (SLVoice + 0x58 .. 0x4a8).
 // Only the fields the voice reads: the decoded data a previous Decode couldn't hand over yet.

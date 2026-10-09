@@ -56,7 +56,7 @@ s64 stream_unlock(WaveStreamView* s, u64 size) {
     return r;
 }
 s32 enqueue(SLItf itf, const void* data, u32 size) {
-    s32 r = (s32)guest_call((*itf)[0], {(u64)itf, (u64)data, (u64)size});
+    s32 r = (s32)guest_call((*itf)[kSLBufferQueueEnqueue], {(u64)itf, (u64)data, (u64)size});
     if (t_vobs) t_vobs->log("Enqueue", (u64)itf, (u64)data, size, (u64)(u32)r);
     return r;
 }

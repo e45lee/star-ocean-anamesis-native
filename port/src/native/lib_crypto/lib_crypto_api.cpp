@@ -93,26 +93,17 @@ void cbc_encrypt(const u8* in, u8* out, u64 length, const AesKey* key, u8* ivec,
 }
 
 namespace {
-struct Bound {
-    const char* sym;
-    HostFn fn;
-    u64* orig;
-};
-const Bound kBound[] = {
+const BoundNative kBound[] = {
     {"private_AES_set_encrypt_key", wrap<&set_encrypt_key>(), &orig.set_encrypt},
     {"private_AES_set_decrypt_key", wrap<&set_decrypt_key>(), &orig.set_decrypt},
     {"AES_cbc_encrypt", wrap<&cbc_encrypt>(), &orig.cbc},
 };
-bool register_all() {
-    for (const Bound& b : kBound) register_native_function({b.sym, b.fn, "lib_crypto: host libcrypto (AES)", nullptr, b.orig});
-    return true;
-}
-const bool g_registered = register_all();
+const bool g_registered = register_bound(kBound, "lib_crypto: host libcrypto (AES)");
 }  // namespace
 
 live::Lockstep& lockstep() { return g_check; }
 void use_originals(u64 (*sym)(const char*)) {
-    for (const Bound& b : kBound) *b.orig = sym ? sym(b.sym) : 0;
+    bind_originals(kBound, sym);
 }
 
 }  // namespace soa::native::lib_crypto

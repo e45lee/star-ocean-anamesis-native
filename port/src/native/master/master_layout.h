@@ -94,6 +94,14 @@ struct SharedPtr {
 };
 static_assert(sizeof(SharedPtr) == 0x10);
 
+// CSqliteTransaction (CStaticTransaction + 0x40, the master DB's): the vtable slots the connector calls.
+// _ZTV18CSqliteTransaction: 0 / 1 destructors, 2 Open(char const*), 3 Close(), 4 pSubstance() (the
+// Aska::Yayoi::SQLiteDriver), 5 GetDefaultServer(Entity::Mode, char const*) const (the DBAddress).
+enum TransactionSlot : u32 {
+    kTransactionPSubstance = 4,
+    kTransactionGetDefaultServer = 5,
+};
+
 // The connector interface the tables call (CSimpleSqliteConnector<...>'s vtable): slot numbers.
 // Layout of the connector itself below (CSimpleSqliteConnector).
 enum ConnectorSlot : u32 {

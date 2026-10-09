@@ -1,0 +1,4 @@
+# port/decomp/api/scope.txt: the guest functions the `api` subsystem owns, as Python regexes on the
+# demangled name (one per line; `#` comments). tools/rebuild_queue.py ranks subsystems by these;
+# tools/subsystem.py check warns about a function claimed by two subsystems.
+^(\S+ )?~?(FakeApiCaller|IApiCaller|CApiNotify)(<|::)

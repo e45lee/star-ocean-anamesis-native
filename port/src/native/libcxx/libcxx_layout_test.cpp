@@ -12,6 +12,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "native/common/guest_std.h"
@@ -24,9 +25,7 @@ namespace {
 namespace lx = soa::native::libcxx;
 using U32Bool = lx::pair<u32, bool>;
 
-static_assert(sizeof(guest::String) == sizeof(lx::String), "guest_std.h's String is basic_string<char>");
-static_assert(sizeof(guest::StringList) == sizeof(lx::ListString), "guest_std.h's StringList is list<String>");
-static_assert(sizeof(guest::StringList::Node) == sizeof(lx::ListStringNode));
+static_assert(std::is_same_v<guest::String, lx::String>, "guest_std.h's String is basic_string<char>");
 
 // The game's string: basic_string<char, char_traits<char>, Framework::CSTLAllocator<char, CSTLStringAllocatorInf>>.
 constexpr const char* kStrReserve = "_ZNSt6__ndk112basic_stringIcNS_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS3_22CSTLStringAllocatorInfEEEE7reserveEm";
@@ -48,9 +47,7 @@ void check_string(TestContext& t, const lx::String& s, const std::string& want, 
     } else if (s.r.s.head.size >> 1 > 22) {
         t.fail("%s: short size %u", what, s.r.s.head.size >> 1);
     }
-    // the same object as guest_std.h reads it
-    const auto* g = reinterpret_cast<const guest::String*>(&s);
-    if (g->view() != want) t.fail("%s: guest::String reads \"%s\"", what, g->str().c_str());
+    if (s.view() != want) t.fail("%s: view() reads \"%s\"", what, s.str().c_str());
 }
 
 NATIVE_TEST("libcxx/layout-string") {
@@ -105,7 +102,7 @@ NATIVE_TEST("libcxx/layout-vector") {
         g.destroy();
     }
     for (size_t i = 0; i < want.size(); i++) check_string(t, v.begin_[i], want[i], "vector element");
-    for (size_t i = 0; i < want.size(); i++) reinterpret_cast<guest::String*>(&v.begin_[i])->destroy();
+    for (size_t i = 0; i < want.size(); i++) v.begin_[i].destroy();
     guest::stl_free(v.begin_);
 }
 
@@ -129,10 +126,6 @@ NATIVE_TEST("libcxx/layout-list") {
     }
     t.expect_eq(i, want.size(), "nodes from next to the sentinel");
     t.expect_eq((u64)l.prev->next, (u64)l.sentinel(), "the last node's next is the sentinel");
-    // the same list through guest_std.h
-    std::vector<std::string> seen;
-    reinterpret_cast<guest::StringList*>(&l)->for_each([&](const guest::String& s) { seen.push_back(s.str()); });
-    t.expect_eq(seen == want, true, "guest::StringList walk");
     for (auto& w : want) {
         guest::String key;
         key.init(w);

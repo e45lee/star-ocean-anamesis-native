@@ -197,26 +197,17 @@ s32 inflate_end(ZStream* strm) {
 }
 
 namespace {
-struct Bound {
-    const char* sym;
-    HostFn fn;
-    u64* orig;
-};
-const Bound kBound[] = {
+const BoundNative kBound[] = {
     {"inflateInit2_", wrap<&inflate_init2>(), &orig.init2},
     {"inflate", wrap<&inflate_>(), &orig.inflate},
     {"inflateEnd", wrap<&inflate_end>(), &orig.end},
 };
-bool register_all() {
-    for (const Bound& b : kBound) register_native_function({b.sym, b.fn, "lib_zlib: host zlib (inflate)", nullptr, b.orig});
-    return true;
-}
-const bool g_registered = register_all();
+const bool g_registered = register_bound(kBound, "lib_zlib: host zlib (inflate)");
 }  // namespace
 
 live::Lockstep& lockstep() { return g_check; }
 void use_originals(u64 (*sym)(const char*)) {
-    for (const Bound& b : kBound) *b.orig = sym ? sym(b.sym) : 0;
+    bind_originals(kBound, sym);
 }
 
 }  // namespace soa::native::lib_zlib

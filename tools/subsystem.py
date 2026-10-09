@@ -49,8 +49,9 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 SYMBOLS_COLUMNS = ["vaddr", "ghidra", "size", "symbol", "demangled", "topic", "status", "note"]
 STATUSES = {"decompiled", "typed", "native", "tested", "skip"}
-# Folders of src/native/ that predate the scaffolding (not subsystems of the rebuild).
-LEGACY = {"api", "common", "restore", "ui"}
+# Folders of src/native/ that predate the scaffolding (not subsystems of the rebuild). `api` was one until
+# code review CR10 (P5) scaffolded it for FakeApiCaller's layout.
+LEGACY = {"common", "restore", "ui"}
 
 
 def paths(root, s):

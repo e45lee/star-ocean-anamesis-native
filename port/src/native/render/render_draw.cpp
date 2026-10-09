@@ -106,7 +106,7 @@ thread_local bool t_mark_callees = false;
 bool GpuResource::EnsureUploaded() {
     if (!NeedsUpload()) return true;
     auto* h = reinterpret_cast<const u64* const*>(m_handler);
-    if (!(guest_call((*h)[0], {(u64)m_handler, (u64)this}) & 1)) return false;
+    if (!(guest_call((*h)[kHandlerSlotUpdate], {(u64)m_handler, (u64)this}) & 1)) return false;
     m_dirty = 0;
     return true;
 }

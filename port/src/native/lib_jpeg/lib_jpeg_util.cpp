@@ -67,12 +67,12 @@ u32 glj_ilog(u32 x) {
 }
 
 void ILineScanner::Scan(u8* dst, const u8* src, s32 width) const {
-    guest_call((u64)(uintptr_t)vtable[0], {(u64)(uintptr_t)this, (u64)(uintptr_t)dst, (u64)(uintptr_t)src, (u64)(u32)width});
+    guest_call((u64)(uintptr_t)vtable[kSlotScan], {(u64)(uintptr_t)this, (u64)(uintptr_t)dst, (u64)(uintptr_t)src, (u64)(u32)width});
 }
 void* IAllocator::Malloc(u64 size) const {
-    return (void*)(uintptr_t)guest_call((u64)(uintptr_t)vtable[0], {(u64)(uintptr_t)this, size});
+    return (void*)(uintptr_t)guest_call((u64)(uintptr_t)vtable[kSlotMalloc], {(u64)(uintptr_t)this, size});
 }
-void IAllocator::Free(void* p) const { guest_call((u64)(uintptr_t)vtable[1], {(u64)(uintptr_t)this, (u64)(uintptr_t)p}); }
+void IAllocator::Free(void* p) const { guest_call((u64)(uintptr_t)vtable[kSlotFree], {(u64)(uintptr_t)this, (u64)(uintptr_t)p}); }
 
 namespace {
 

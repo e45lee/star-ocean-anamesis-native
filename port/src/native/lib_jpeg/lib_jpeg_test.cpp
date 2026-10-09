@@ -265,4 +265,14 @@ NATIVE_TEST("lib_jpeg/live-check") {
 }
 
 }  // namespace
+
+// The interfaces' slots the natives call (lib_jpeg_layout.h), on the game's implementers.
+NATIVE_TEST("lib_jpeg/interface-slots") {
+    auto* scan = (const u64*)(t.sym("_ZTVN4Aska8JpegUtil21FnGrayscaleLineReaderE") + 0x10);
+    t.expect_eq(scan[ILineScanner::kSlotScan], t.sym("_ZNK4Aska8JpegUtil21FnGrayscaleLineReaderclEPhPKhi"), "ILineScanner slot 0");
+    auto* alloc = (const u64*)(t.sym("_ZTVN4Aska8JpegUtil21FnASKAEngineAllocatorE") + 0x10);
+    t.expect_eq(alloc[IAllocator::kSlotMalloc], t.sym("_ZNK4Aska8JpegUtil21FnASKAEngineAllocator6MallocEm"), "IAllocator slot 0");
+    t.expect_eq(alloc[IAllocator::kSlotFree], t.sym("_ZNK4Aska8JpegUtil21FnASKAEngineAllocator4FreeEPv"), "IAllocator slot 1");
+}
+
 }  // namespace soa::native::lib_jpeg

@@ -28,14 +28,12 @@ import os
 import re
 import sqlite3
 import struct
-import sys
 import zipfile
 
 import msgpack
 
 REPO = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-sys.path.insert(0, REPO)
-from soa_save import adld, slz  # noqa: E402
+from soa_save import adld, slz
 
 
 class Data:

@@ -153,7 +153,9 @@ void with_default_unpack(F&& upload) {
 }
 
 // ETC1 isn't exposed on GLES3 contexts by every driver, but ETC1 data is valid ETC2 RGB8.
+void draw_dump_texture(const char* call, GLenum target, GLint level, GLenum fmt, GLsizei w, GLsizei h, GLsizei size, const void* data);
 void host_glCompressedTexImage2D(GLenum target, GLint level, GLenum fmt, GLsizei w, GLsizei h, GLint border, GLsizei size, const void* data) {
+    draw_dump_texture("compressed", target, level, fmt, w, h, size, data);
     if (fmt == GL_ETC1_RGB8_OES) fmt = GL_COMPRESSED_RGB8_ETC2;
     if (const u8* rgba = decode_srgb_etc2(fmt, w, h, border, size, data)) {
         with_default_unpack([&] { s_glTexImage2D(target, level, GL_SRGB8_ALPHA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba); });
@@ -162,6 +164,7 @@ void host_glCompressedTexImage2D(GLenum target, GLint level, GLenum fmt, GLsizei
     s_glCompressedTexImage2D(target, level, fmt, w, h, border, size, data);
 }
 void host_glCompressedTexSubImage2D(GLenum target, GLint level, GLint x, GLint y, GLsizei w, GLsizei h, GLenum fmt, GLsizei size, const void* data) {
+    if (x == 0 && y == 0) draw_dump_texture("compressed-sub", target, level, fmt, w, h, size, data);
     if (const u8* rgba = decode_srgb_etc2(fmt, w, h, 0, size, data)) {
         with_default_unpack([&] { s_glTexSubImage2D(target, level, x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, rgba); });
         return;
@@ -237,6 +240,177 @@ void dump_buffer(const char* call, GLenum target, GLuint buf, GLintptr off, GLsi
     fprintf(d->index, "%llu\t%s\t0x%x\t%u\t%lld\t%lld\t%016llx\n", (unsigned long long)d->seq++, call, target, buf,
             (long long)off, (long long)len, (unsigned long long)h);
     fflush(d->index);
+}
+// SOA_GL_DRAW_DUMP=<dir> (diagnostic): what each distinct draw used, to tell which texture, shader
+// and blend state the game gives a model's meshes (tools/asf2gltf, docs/notes.md "Meshes (ASF)").
+// DIR/textures.tsv: texture name, level 0 upload (call, format, size, fnv1a64 of the bytes);
+// DIR/draws.tsv: per distinct draw: its number, program, element buffer, count, offset, the 2D
+// textures of units 0-7 (as the fnv1a64 of their level-0 upload, "-" none, "?" not seen), blend
+// (on, src, dst), cull (on, face), depth write; DIR/draw_<n>.txt: the draw's uniforms (arrays up
+// to 256 elements) at its first time and again every 600th (a later frame's skinning matrices);
+// DIR/program_<n>.txt: the program's shader sources.
+// Pair it with SOA_GL_BUFFER_DUMP (buffer names -> contents). Off when unset.
+struct DrawDump {
+    std::mutex mu;
+    std::string dir;
+    FILE* draws = nullptr;
+    FILE* textures = nullptr;
+    std::unordered_map<std::string, std::pair<int, long>> seen;
+    std::set<GLuint> programs;
+    std::unordered_map<GLuint, std::string> sources;
+    std::unordered_map<GLint, std::string> tex_hash;  // texture name -> its level-0 upload
+    std::unordered_map<GLuint, std::vector<GLuint>> attached;  // program -> its shaders (they may be detached after linking)
+    int next = 0;
+};
+DrawDump* draw_dump() {
+    static DrawDump* d = []() -> DrawDump* {
+        const char* dir = env::env_str("SOA_GL_DRAW_DUMP");
+        if (!dir || !*dir) return nullptr;
+        auto* b = new DrawDump;
+        b->dir = dir;
+        b->draws = fopen((b->dir + "/draws.tsv").c_str(), "w");
+        b->textures = fopen((b->dir + "/textures.tsv").c_str(), "w");
+        if (!b->draws || !b->textures) { LOGW("gl", "SOA_GL_DRAW_DUMP: cannot write in %s", dir); delete b; return nullptr; }
+        return b;
+    }();
+    return d;
+}
+uint64_t fnv1a64(const void* data, size_t n) {
+    uint64_t h = 0xcbf29ce484222325ull;
+    for (size_t i = 0; i < n; i++) h = (h ^ ((const uint8_t*)data)[i]) * 0x100000001b3ull;
+    return h;
+}
+void draw_dump_texture(const char* call, GLenum target, GLint level, GLenum fmt, GLsizei w, GLsizei h, GLsizei size, const void* data) {
+    DrawDump* d = draw_dump();
+    if (!d || level != 0 || !data || target != GL_TEXTURE_2D) return;
+    GLint tex = 0;
+    s_glGetIntegerv(GL_TEXTURE_BINDING_2D, &tex);
+    char hx[24];
+    snprintf(hx, sizeof hx, "%016llx", (unsigned long long)fnv1a64(data, (size_t)size));
+    std::lock_guard lk(d->mu);
+    d->tex_hash[tex] = hx;
+    fprintf(d->textures, "%d\t%s\t0x%x\t%dx%d\t%d\t%s\n", tex, call, fmt, w, h, size, hx);
+    fflush(d->textures);
+}
+void host_glShaderSource(GLuint shader, GLsizei count, const GLchar* const* str, const GLint* len) {
+    if (DrawDump* d = draw_dump()) {
+        std::string text;
+        for (GLsizei i = 0; i < count; i++) text += len && len[i] >= 0 ? std::string(str[i], (size_t)len[i]) : std::string(str[i]);
+        std::lock_guard lk(d->mu);
+        d->sources[shader] = text;
+    }
+    s_glShaderSource(shader, count, str, len);
+}
+void host_glAttachShader(GLuint prog, GLuint shader) {
+    if (DrawDump* d = draw_dump()) {
+        std::lock_guard lk(d->mu);
+        d->attached[prog].push_back(shader);
+    }
+    s_glAttachShader(prog, shader);
+}
+void draw_dump_draw(GLenum mode, GLsizei count, GLenum type, const void* offset) {
+    DrawDump* d = draw_dump();
+    if (!d) return;
+    GLint prog = 0, ebo = 0, active = 0;
+    s_glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+    s_glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ebo);
+    s_glGetIntegerv(GL_ACTIVE_TEXTURE, &active);
+    GLint units_[8];
+    for (int u = 0; u < 8; u++) {
+        s_glActiveTexture(GL_TEXTURE0 + u);
+        GLint t = 0;
+        s_glGetIntegerv(GL_TEXTURE_BINDING_2D, &t);
+        units_[u] = t;
+    }
+    s_glActiveTexture((GLenum)active);
+    GLint bsrc = 0, bdst = 0, cullface = 0;
+    s_glGetIntegerv(GL_BLEND_SRC_RGB, &bsrc);
+    s_glGetIntegerv(GL_BLEND_DST_RGB, &bdst);
+    s_glGetIntegerv(GL_CULL_FACE_MODE, &cullface);
+    GLboolean dmask = 0;
+    s_glGetBooleanv(GL_DEPTH_WRITEMASK, &dmask);
+    std::lock_guard lk(d->mu);
+    std::string units;
+    for (int u = 0; u < 8; u++) {
+        if (u) units += ",";
+        auto it = d->tex_hash.find(units_[u]);
+        units += units_[u] == 0 ? std::string("-") : it == d->tex_hash.end() ? std::string("?") : it->second;
+    }
+    char line[1024];
+    snprintf(line, sizeof line, "%d\t%d\t0x%x\t%d\t0x%x\t%lld\t%s\tblend %d 0x%x 0x%x\tcull %d 0x%x\tdepthwrite %d", prog, ebo, mode, count, type,
+             (long long)(intptr_t)offset, units.c_str(), (int)s_glIsEnabled(GL_BLEND), bsrc, bdst, (int)s_glIsEnabled(GL_CULL_FACE), cullface,
+             (int)dmask);
+    auto& seen = d->seen[line];  // {number, times drawn}
+    if (seen.second++ == 0) {
+        seen.first = d->next++;
+        fprintf(d->draws, "%d\t%s\n", seen.first, line);
+        fflush(d->draws);
+    } else if (seen.second % 600 != 0) {
+        return;  // (the uniforms again every 600 draws: a later frame's pose)
+    }
+    int n = seen.first;
+    if (prog && d->programs.insert((GLuint)prog).second) {
+        if (FILE* f = fopen((d->dir + "/program_" + std::to_string(prog) + ".txt").c_str(), "w")) {
+            std::vector<GLuint> sh = d->attached[(GLuint)prog];
+            for (size_t i = 0; i < sh.size(); i++) {
+                auto it = d->sources.find(sh[i]);
+                std::string text;
+                if (it != d->sources.end()) text = it->second;
+                else {  // set before the dump saw it (another path): ask the driver
+                    GLint n2 = 0;
+                    s_glGetShaderiv(sh[i], GL_SHADER_SOURCE_LENGTH, &n2);
+                    if (n2 > 0) {
+                        text.resize((size_t)n2);
+                        s_glGetShaderSource(sh[i], n2, nullptr, text.data());
+                        text.resize(strlen(text.c_str()));
+                    }
+                }
+                fprintf(f, "==== shader %u\n%s\n", sh[i], text.empty() ? "(source not seen)" : text.c_str());
+            }
+            fclose(f);
+        }
+    }
+    if (!prog) return;
+    FILE* f = fopen((d->dir + "/draw_" + std::to_string(n) + ".txt").c_str(), "w");
+    if (!f) return;
+    GLint nu = 0;
+    s_glGetProgramiv((GLuint)prog, GL_ACTIVE_UNIFORMS, &nu);
+    for (GLint i = 0; i < nu; i++) {
+        char name[256];
+        GLsizei nl = 0;
+        GLint size = 0;
+        GLenum ty = 0;
+        s_glGetActiveUniform((GLuint)prog, (GLuint)i, sizeof name, &nl, &size, &ty, name);
+        std::string base(name);
+        size_t br = base.find('[');
+        if (br != std::string::npos) base = base.substr(0, br);
+        for (GLint e = 0; e < size && e < 256; e++) {
+            std::string nm = size > 1 ? base + "[" + std::to_string(e) + "]" : std::string(name);
+            GLint loc = s_glGetUniformLocation((GLuint)prog, nm.c_str());
+            if (loc < 0) continue;
+            if (ty == GL_SAMPLER_2D || ty == GL_SAMPLER_CUBE || ty == GL_INT || ty == GL_SAMPLER_2D_SHADOW || ty == GL_SAMPLER_3D) {
+                GLint v = 0;
+                s_glGetUniformiv((GLuint)prog, loc, &v);
+                fprintf(f, "%s 0x%x = %d\n", nm.c_str(), ty, v);
+            } else {
+                GLfloat v[16] = {0};
+                s_glGetUniformfv((GLuint)prog, loc, v);
+                int k = ty == GL_FLOAT ? 1 : ty == GL_FLOAT_VEC2 ? 2 : ty == GL_FLOAT_VEC3 ? 3 : ty == GL_FLOAT_MAT4 ? 16 : 4;
+                fprintf(f, "%s 0x%x =", nm.c_str(), ty);
+                for (int c = 0; c < k; c++) fprintf(f, " %g", v[c]);
+                fprintf(f, "\n");
+            }
+        }
+    }
+    fclose(f);
+}
+void host_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* offset) {
+    if (draw_dump()) draw_dump_draw(mode, count, type, offset);
+    s_glDrawElements(mode, count, type, offset);
+}
+void host_glDrawRangeElements(GLenum mode, GLuint lo, GLuint hi, GLsizei count, GLenum type, const void* offset) {
+    if (draw_dump()) draw_dump_draw(mode, count, type, offset);
+    s_glDrawRangeElements(mode, lo, hi, count, type, offset);
 }
 void host_glBufferData(GLenum target, GLsizeiptr len, const void* data, GLenum usage) {
     if (buffer_dump()) dump_buffer("data", target, bound_buffer(target), 0, len, data);
@@ -570,6 +744,10 @@ void register_gles(Hle& h) {
     GL_TRANSLATED(glTexStorage2D, wrap<&host_glTexStorage2D>())
     GL_TRANSLATED(glMapBufferRange, wrap<&host_glMapBufferRange>())
     GL_TRANSLATED(glBufferData, wrap<&host_glBufferData>())
+    GL_TRANSLATED(glShaderSource, wrap<&host_glShaderSource>())
+    GL_TRANSLATED(glAttachShader, wrap<&host_glAttachShader>())
+    GL_TRANSLATED(glDrawElements, wrap<&host_glDrawElements>())
+    GL_TRANSLATED(glDrawRangeElements, wrap<&host_glDrawRangeElements>())
     GL_TRANSLATED(glBufferSubData, wrap<&host_glBufferSubData>())
     GL_TRANSLATED(glUnmapBuffer, wrap<&host_glUnmapBuffer>())
     GL_TRANSLATED(glBindFramebuffer, wrap<&host_glBindFramebuffer>())

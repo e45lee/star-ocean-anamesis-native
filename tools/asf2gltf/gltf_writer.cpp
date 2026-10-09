@@ -158,37 +158,210 @@ bool read_element(const asf::Meshset& m, const asf::VertexElement& e, size_t v, 
     return true;
 }
 
-// The material's shader graph (the 'stam' +0x1c block: records {u16 size, u16 op, ...}): which
-// texture slot feeds the base colour (op 0x85 samples slot +0xc into register +0xf; the lighting
-// op 0x49's first register argument is the albedo) and which one is a normal map (op 0x85 with
-// mode 0x0c, decoded by op 0x86). Partly understood: docs/notes.md "Materials".
-struct GraphRoles {
-    int base = -1, normal = -1;
-    bool lit = false;  // has the lighting op
-    std::vector<std::pair<int, int>> samples;  // (slot, register)
+// The material's shader graph (the 'stam' +0x1c block, records {u16 size, u16 op, payload from +8}),
+// read for what a static material can carry: where the albedo, the alpha, the normal map and the
+// roughness come from. The meaning of each op was read off the GLSL the game builds from it
+// (SOA_GL_DRAW_DUMP, Seaside Maria's 13 materials; docs/notes.md "Materials"):
+//   0x85 sample: +0 UV set, +4 texture slot, +6 mode (0x0c: a normal map), +7 register
+//   0x02 / 0x2e / 0x03 load constant 5 ("eConstColor_Color_Color<n>") / 0x14 (eALBEDO_CONSTCOLOR) /
+//        0x13 (eConstVector) index +0 into register +1;  0x88 the vertex colour into +0
+//   0x8c +0 == 1: register +7 = component +4 of register +3 (else an arithmetic form, not followed)
+//   0x8a register +7 = register +1 * register +3;  0x8b with a register at +4: the same (the
+//        pareo's vertex colour times its texture; else a function of +1, not followed)
+//   0x49 (GGX), 0x28 (Lambert), 0x32 (Marschner: hair), 0x24 the lighting: +1 albedo, +2 alpha
+//        (the alpha test's); 0x49: +7 the normal, +0xc the roughness (alpha^2 = (r + g) / 2),
+//        +0xf the specular reflectance F0
+//   0x8d the output: +0 colour, +1 alpha (when it isn't the colour register: the lighting's +2)
+struct Src {
+    enum Kind { kNone, kConst, kTex, kOther } kind = kNone;
+    int slot = -1, uv = 0, comp = -1;       // a texture (comp -1: all of it)
+    std::array<float, 4> factor{1, 1, 1, 1};  // times a constant
+    bool vertex_color = false;
 };
-GraphRoles graph_roles(const asf::Material& mat) {
-    GraphRoles r;
-    if (mat.raw.size() < 0x20) return r;
-    uint32_t g = soa::aff::rd32(&mat.raw[0x1c]);
-    std::map<int, int> reg_slot;
-    for (size_t q = g; q + 8 <= mat.raw.size();) {
+struct GraphInfo {
+    bool lit = false;
+    int lighting = 0;  // the lighting op
+    Src albedo, alpha, normal, roughness, f0;
+    std::vector<std::pair<int, int>> uv_of_slot;  // (slot, UV set)
+};
+GraphInfo read_graph(const asf::Material& mat) {
+    GraphInfo r;
+    if (mat.raw.size() < 0x24) return r;
+    uint32_t g = soa::aff::rd32(&mat.raw[0x1c]), end = soa::aff::rd32(&mat.raw[0x20]);
+    auto constant = [&](int id, int index) {
+        Src x;
+        x.kind = Src::kConst;
+        for (const auto& c : mat.constants)
+            if (c.id == id && c.index == index && !c.values.empty()) x.factor = c.values[0];
+        return x;
+    };
+    auto mul = [](Src a, Src b) {
+        if (a.kind == Src::kNone) return b;
+        if (b.kind == Src::kNone) return a;
+        if (a.kind == Src::kTex && b.kind == Src::kTex) {
+            if (b.vertex_color && !a.vertex_color) std::swap(a, b);
+            if (!a.vertex_color) return Src{Src::kOther};
+        }
+        if (a.kind == Src::kOther || b.kind == Src::kOther) return Src{Src::kOther};
+        Src t = a.kind == Src::kTex ? a : b, o = a.kind == Src::kTex ? b : a;
+        if (t.vertex_color && o.kind == Src::kTex) {  // the vertex colour times a texture: glTF's COLOR_0 does it
+            o.vertex_color = true;
+            return o;
+        }
+        for (int i = 0; i < 4; i++) t.factor[i] *= o.factor[i];
+        t.vertex_color |= o.vertex_color;
+        return t;
+    };
+    std::map<int, Src> reg;
+    int out_color = -1, out_alpha = -1, lit_alpha = -1;
+    std::map<int, Src> at_lighting;
+    for (size_t q = g; q + 8 <= mat.raw.size() && q < end;) {
         uint16_t size = soa::aff::rd16(&mat.raw[q]), op = soa::aff::rd16(&mat.raw[q + 2]);
         if (size < 8 || q + size > mat.raw.size()) break;
         const uint8_t* p = &mat.raw[q + 8];
-        if (op == 0x85 && size >= 0x10) {
-            int slot = soa::aff::rd16(p + 4), mode = p[6], reg = p[7];
-            reg_slot[reg] = slot;
-            r.samples.push_back({slot, reg});
-            if (mode == 0x0c) r.normal = slot;
-        } else if (op == 0x49 && size >= 0xc) {
+        size_t n = size - 8;
+        if (op == 0x85 && n >= 8) {
+            Src x;
+            x.kind = Src::kTex;
+            x.uv = p[0];
+            x.slot = soa::aff::rd16(p + 4);
+            reg[p[7]] = x;
+            r.uv_of_slot.push_back({x.slot, x.uv});
+            if (p[6] == 0x0c) r.normal = x;
+        } else if ((op == 0x02 || op == 0x2e || op == 0x03) && n >= 4) {
+            reg[p[1]] = constant(op == 0x02 ? 5 : op == 0x2e ? 0x14 : 0x13, p[0]);
+        } else if (op == 0x88 && n >= 4) {
+            Src x;
+            x.kind = Src::kTex;  // (a "texture" of white; mul() folds it into the other side)
+            x.vertex_color = true;
+            reg[p[0]] = x;
+        } else if (op == 0x8c && n >= 8) {
+            if (p[0] == 1) {
+                Src x = reg.count(p[3]) ? reg[p[3]] : Src{Src::kOther};
+                if (x.kind == Src::kTex) x.comp = p[4];
+                else if (x.kind == Src::kConst) x.factor = {x.factor[p[4] & 3], x.factor[p[4] & 3], x.factor[p[4] & 3], x.factor[p[4] & 3]};
+                reg[p[7]] = x;
+            } else {
+                reg[p[7]] = Src{Src::kOther};
+            }
+        } else if ((op == 0x8a || (op == 0x8b && n >= 8 && p[4] >= 0x80)) && n >= 8) {
+            Src a2 = reg.count(p[1]) ? reg[p[1]] : Src{Src::kOther}, b2 = reg.count(p[3]) ? reg[p[3]] : Src{Src::kOther};
+            reg[p[7]] = mul(a2, b2);
+        } else if (op == 0x8b && n >= 8) {
+            reg[p[7]] = Src{Src::kOther};
+        } else if ((op == 0x49 || op == 0x28 || op == 0x32 || op == 0x24) && n >= 3) {
             r.lit = true;
-            auto it = reg_slot.find(p[1]);
-            if (it != reg_slot.end()) r.base = it->second;
+            r.lighting = op;
+            r.albedo = reg.count(p[1]) ? reg[p[1]] : Src{};
+            lit_alpha = p[2];
+            at_lighting = reg;
+            if (op == 0x49 && n >= 0x10) {
+                if (reg.count(p[0xc])) r.roughness = reg[p[0xc]];
+                if (reg.count(p[0xf])) r.f0 = reg[p[0xf]];
+            }
+        } else if (op == 0x8d && n >= 2) {
+            out_color = p[0];
+            out_alpha = p[1];
         }
         q += size;
     }
+    if (out_alpha >= 0 && out_alpha != out_color) r.alpha = reg.count(out_alpha) ? reg[out_alpha] : Src{};
+    else if (lit_alpha >= 0) r.alpha = at_lighting.count(lit_alpha) ? at_lighting[lit_alpha] : Src{};
+    if (!r.lit && out_color >= 0) r.albedo = reg.count(out_color) ? reg[out_color] : Src{};
+    // a whole vector as the alpha: its w
+    if (r.alpha.kind == Src::kTex && r.alpha.comp < 0) r.alpha.comp = 3;
+    if (r.alpha.kind == Src::kConst) r.alpha.factor = {r.alpha.factor[3], r.alpha.factor[3], r.alpha.factor[3], r.alpha.factor[3]};
     return r;
+}
+
+// Whether the game uploads a texture as sRGB (it then reads its colour channels linearized):
+// see docs/notes.md "Meshes (ASF)" (Xgmi).
+// (Xgmi +0x26: 2 colour, uploaded sRGB; 4 data (normal maps, the hair's shift), linear; the
+// EAC formats have no sRGB form. Checked against the GL formats of Seaside Maria's uploads.)
+bool texture_srgb(const asf::Texture& t) { return t.xgmi[0x26] == 2 && (t.levels.empty() || (t.levels[0].fmt != 50 && t.levels[0].fmt != 51)); }
+
+double srgb_to_linear(double c) { return c <= 0.04045 ? c / 12.92 : std::pow((c + 0.055) / 1.055, 2.4); }
+double linear_to_srgb(double c) { return c <= 0.0031308 ? c * 12.92 : 1.055 * std::pow(c, 1 / 2.4) - 0.055; }
+
+// The game's space is left-handed: its models are the mirror images of what a right-handed reader
+// draws from the same numbers (Seaside Maria's LeftHand came out on her right, her triangles wound
+// clockwise: the faces showed their backs). Everything below the root is mirrored in x once it is
+// written: node translations (x) and rotations ((x, y, z, w) -> (x, -y, -z, w)), positions, normals,
+// tangents (x, and the bitangent sign), the inverse bind matrices (M·IBM·M) and the translation /
+// rotation animation outputs. Scale is unchanged. The triangles keep their order: the game's are
+// clockwise (against their normals) in its space, counter-clockwise once mirrored, as glTF wants.
+void mirror_x(Builder& b, size_t root) {
+    json& doc = b.doc;
+    auto data = [&](size_t acc) -> float* {
+        json& a = doc["accessors"][acc];
+        json& v = doc["bufferViews"][(size_t)a["bufferView"]];
+        return (float*)&b.bin[(size_t)v["byteOffset"] + (size_t)a.value("byteOffset", 0)];
+    };
+    for (size_t i = 0; i < doc["nodes"].size(); i++) {
+        if (i == root) continue;
+        json& n = doc["nodes"][i];
+        if (n.contains("translation")) n["translation"][0] = -(double)n["translation"][0];
+        if (n.contains("rotation")) {
+            n["rotation"][1] = -(double)n["rotation"][1];
+            n["rotation"][2] = -(double)n["rotation"][2];
+        }
+    }
+    std::set<size_t> done;
+    if (doc.contains("meshes"))
+        for (json& mesh : doc["meshes"])
+            for (json& p : mesh["primitives"]) {
+                for (const char* att : {"POSITION", "NORMAL", "TANGENT"}) {
+                    if (!p["attributes"].contains(att)) continue;
+                    size_t ai = p["attributes"][att];
+                    if (!done.insert(ai).second) continue;
+                    json& a = doc["accessors"][ai];
+                    size_t comps = std::string(att) == "TANGENT" ? 4 : 3, n = a["count"];
+                    float* f = data(ai);
+                    for (size_t v = 0; v < n; v++) {
+                        f[v * comps] = -f[v * comps];
+                        if (comps == 4) f[v * comps + 3] = -f[v * comps + 3];
+                    }
+                    if (a.contains("min") && a.contains("max")) {
+                        double lo = a["min"][0], hi = a["max"][0];
+                        a["min"][0] = -hi;
+                        a["max"][0] = -lo;
+                    }
+                }
+            }
+    if (doc.contains("skins"))
+        for (json& sk : doc["skins"]) {
+            size_t ai = sk["inverseBindMatrices"];
+            if (!done.insert(ai).second) continue;
+            float* f = data(ai);
+            size_t n = doc["accessors"][ai]["count"];
+            for (size_t k = 0; k < n; k++)
+                for (int c = 0; c < 4; c++)
+                    for (int r = 0; r < 4; r++)
+                        if ((r == 0) != (c == 0)) f[k * 16 + c * 4 + r] = -f[k * 16 + c * 4 + r];
+        }
+    if (doc.contains("animations"))
+        for (json& an : doc["animations"])
+            for (json& ch : an["channels"]) {
+                std::string path = ch["target"]["path"];
+                if ((size_t)ch["target"]["node"] == root || (path != "translation" && path != "rotation")) continue;
+                size_t ai = an["samplers"][(size_t)ch["sampler"]]["output"];
+                if (!done.insert(ai).second) continue;
+                json& a = doc["accessors"][ai];
+                size_t n = a["count"];
+                float* f = data(ai);
+                for (size_t v = 0; v < n; v++) {
+                    if (path == "translation") f[v * 3] = -f[v * 3];
+                    else f[v * 4 + 1] = -f[v * 4 + 1], f[v * 4 + 2] = -f[v * 4 + 2];
+                }
+                if (a.contains("min") && a.contains("max")) {
+                    std::vector<int> neg = path == "translation" ? std::vector<int>{0} : std::vector<int>{1, 2};
+                    for (int c : neg) {
+                        double lo = a["min"][c], hi = a["max"][c];
+                        a["min"][c] = -hi;
+                        a["max"][c] = -lo;
+                    }
+                }
+            }
 }
 
 int prim_mode(int prim) {
@@ -322,46 +495,203 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         return idx;
     };
 
+    // ---- textures made for a material: the base colour with its alpha, the roughness
+    // (UV set n of the game's shaders is the n-th pair of a meshset's texture coordinates: glTF's TEXCOORD_n)
+    auto uv_pairs = [&](const asf::Meshset& m, size_t v, std::vector<std::array<float, 2>>& out) {
+        out.clear();
+        for (const asf::VertexElement& e : m.elements) {
+            if (e.usage != asf::kTexcoord) continue;
+            float f[4] = {0, 0, 0, 0};
+            int comps = 0;
+            if (!read_element(m, e, v, f, comps)) continue;
+            for (int c = 0; c + 1 < comps || c == 0; c += 2) out.push_back({f[c], c + 1 < comps ? f[c + 1] : 0.0f});
+        }
+    };
+    std::map<std::string, int> baked;
+    auto add_texture = [&](const std::string& name, int w, int h, const Bytes& rgba) {
+        if (doc["samplers"].is_null()) doc["samplers"].push_back({{"magFilter", 9729}, {"minFilter", 9987}, {"wrapS", 10497}, {"wrapT", 10497}});
+        size_t img = b.image_png(name, w, h, rgba);
+        doc["textures"].push_back({{"sampler", 0}, {"source", img}, {"name", name}});
+        return (int)doc["textures"].size() - 1;
+    };
+    auto decode0 = [&](const asf::Texture* t, Bytes& rgba) {
+        std::string e;
+        return t && !t->levels.empty() && asf::decode_texture(s, t->levels[0], rgba, &e);
+    };
+    auto baked_base = [&](const asf::Object& o, size_t mi, const asf::Texture* at, const Src& albedo, const asf::Texture* alt,
+                          const Src& alpha, json& notes) -> int {
+        char key[160];
+        bool cross = at && alt && alpha.uv != albedo.uv;
+        snprintf(key, sizeof key, "%08x/%d/%d|%08x/%d/%d|%s", at ? at->id : 0, albedo.comp, albedo.uv, alt ? alt->id : 0, alpha.comp,
+                 alpha.uv, cross ? (o.name + "/" + std::to_string(mi)).c_str() : "");
+        auto have = baked.find(key);
+        if (have != baked.end()) return have->second;
+        Bytes ca, aa;
+        if (at && !decode0(at, ca)) at = nullptr;
+        if (alt && !decode0(alt, aa)) alt = nullptr;
+        if (!at && !alt) return -1;
+        const asf::TextureLevel& L = (at ? at : alt)->levels[0];
+        int w = L.w, h = L.h;
+        Bytes out((size_t)w * h * 4, 255);
+        if (at) {
+            bool lin = !texture_srgb(*at);
+            for (size_t i = 0; i < (size_t)w * h; i++)
+                for (int c = 0; c < 3; c++) {
+                    uint8_t v = ca[i * 4 + (albedo.comp < 0 ? c : (albedo.comp & 3))];
+                    out[i * 4 + c] = lin ? (uint8_t)std::lround(linear_to_srgb(v / 255.0) * 255) : v;
+                }
+        }
+        if (alt) {
+            const asf::TextureLevel& A = alt->levels[0];
+            int ac = alpha.comp & 3;
+            bool lin_a = texture_srgb(*alt) && ac < 3;  // an sRGB texture's colour channel reads linearized
+            auto sample = [&](float u, float v) {
+                int x = ((int)std::floor(u * A.w) % A.w + A.w) % A.w, y = ((int)std::floor(v * A.h) % A.h + A.h) % A.h;
+                uint8_t c = aa[((size_t)y * A.w + x) * 4 + ac];
+                return lin_a ? (uint8_t)std::lround(srgb_to_linear(c / 255.0) * 255) : c;
+            };
+            if (!cross) {
+                for (int y = 0; y < h; y++)
+                    for (int x = 0; x < w; x++) out[((size_t)y * w + x) * 4 + 3] = sample((x + 0.5f) / w, (y + 0.5f) / h);
+            } else {
+                // the alpha is read through another UV set: drawn into the base colour's UV space,
+                // triangle by triangle, from the meshsets that use this material
+                for (size_t i = 3; i < out.size(); i += 4) out[i] = 0;
+                std::vector<std::array<float, 2>> p0, p1, p2;
+                for (const asf::Meshset& m : o.meshsets) {
+                    if (m.material != (int)mi || m.prim != 0 || m.indices.empty()) continue;
+                    auto index = [&](size_t i) { return m.index32 ? soa::aff::rd32(&m.indices[i * 4]) : (uint32_t)soa::aff::rd16(&m.indices[i * 2]); };
+                    for (size_t t = 0; t + 2 < m.index_count; t += 3) {
+                        uv_pairs(m, index(t), p0);
+                        uv_pairs(m, index(t + 1), p1);
+                        uv_pairs(m, index(t + 2), p2);
+                        size_t need = (size_t)std::max(albedo.uv, alpha.uv);
+                        if (p0.size() <= need || p1.size() <= need || p2.size() <= need) continue;
+                        float x0 = p0[albedo.uv][0] * w, y0 = p0[albedo.uv][1] * h, x1 = p1[albedo.uv][0] * w, y1 = p1[albedo.uv][1] * h,
+                              x2 = p2[albedo.uv][0] * w, y2 = p2[albedo.uv][1] * h;
+                        float area = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
+                        if (std::fabs(area) < 1e-12f) continue;
+                        int xa = (int)std::floor(std::min({x0, x1, x2})) - 1, xb = (int)std::ceil(std::max({x0, x1, x2})) + 1;
+                        int ya = (int)std::floor(std::min({y0, y1, y2})) - 1, yb = (int)std::ceil(std::max({y0, y1, y2})) + 1;
+                        for (int y = ya; y <= yb; y++)
+                            for (int x = xa; x <= xb; x++) {
+                                float px = x + 0.5f, py = y + 0.5f;
+                                float b1 = ((px - x0) * (y2 - y0) - (x2 - x0) * (py - y0)) / area;
+                                float b2 = ((x1 - x0) * (py - y0) - (px - x0) * (y1 - y0)) / area;
+                                float b0 = 1 - b1 - b2;
+                                const float e = -0.02f;  // (a little over the edges, against seams)
+                                if (b0 < e || b1 < e || b2 < e) continue;
+                                float u = b0 * p0[alpha.uv][0] + b1 * p1[alpha.uv][0] + b2 * p2[alpha.uv][0];
+                                float v = b0 * p0[alpha.uv][1] + b1 * p1[alpha.uv][1] + b2 * p2[alpha.uv][1];
+                                int xx = ((x % w) + w) % w, yy = ((y % h) + h) % h;
+                                out[((size_t)yy * w + xx) * 4 + 3] = sample(u, v);
+                            }
+                    }
+                }
+                notes.push_back("the alpha (texture " + hex32(alt->id) + ", UV set " + std::to_string(alpha.uv) +
+                                ") is redrawn into the base colour's UV set " + std::to_string(albedo.uv) + " from this material's triangles");
+            }
+        }
+        std::string name = (at ? hex32(at->id) : std::string("white")) + (alt ? "_alpha_" + hex32(alt->id) : std::string());
+        int t = add_texture(name, w, h, out);
+        baked[key] = t;
+        return t;
+    };
+    auto baked_roughness = [&](const asf::Texture* rt) -> int {
+        std::string key = "rough/" + hex32(rt->id);
+        auto have = baked.find(key);
+        if (have != baked.end()) return have->second;
+        Bytes in;
+        if (!decode0(rt, in)) return -1;
+        const asf::TextureLevel& L = rt->levels[0];
+        Bytes out((size_t)L.w * L.h * 4, 255);
+        for (size_t i = 0; i < (size_t)L.w * L.h; i++) {
+            double a2 = (in[i * 4] + in[i * 4 + 1]) / (2 * 255.0);
+            out[i * 4 + 1] = (uint8_t)std::lround(std::pow(std::max(a2, 0.000225), 0.25) * 255);
+            out[i * 4 + 2] = 0;
+        }
+        int t = add_texture(hex32(rt->id) + "_roughness", L.w, L.h, out);
+        baked[key] = t;
+        return t;
+    };
+
     // ---- objects: meshes, skins, materials
     for (const asf::Object& o : s.objects) {
         json mesh = {{"name", o.name}, {"primitives", json::array()}};
         std::vector<int> mat_index(o.materials.size(), -1);
         for (size_t mi = 0; mi < o.materials.size(); mi++) {
             const asf::Material& m = o.materials[mi];
-            GraphRoles roles = graph_roles(m);
+            GraphInfo gi = read_graph(m);
             json mj = {{"name", o.name + "_" + std::to_string(mi)}};
             json pbr = {{"metallicFactor", 0.0}, {"roughnessFactor", 0.8}};
-            int base_slot = roles.base;
+            const asf::Texture* none = nullptr;
+            auto tex_of = [&](const Src& x) -> const asf::Texture* {
+                if (x.kind != Src::kTex || x.slot < 0 || x.slot >= (int)m.textures.size()) return none;
+                auto it = tex_by_id.find(m.textures[x.slot].id);
+                return it == tex_by_id.end() ? none : it->second;
+            };
+            std::string mode = m.blend ? "BLEND" : m.alpha_test ? "MASK" : "OPAQUE";
+            json notes = json::array();
+            // base colour and alpha
+            const asf::Texture* at = tex_of(gi.albedo);
+            const asf::Texture* alt = mode != "OPAQUE" ? tex_of(gi.alpha) : none;
             std::array<float, 4> factor{1, 1, 1, 1};
-            // an unlit shader's colour: constant 0x14 (eyelashes), else constant 5 index 0 (hair)
-            for (int want : {0x14, 5})
-                for (const auto& c : m.constants)
-                    if (!roles.lit && factor == std::array<float, 4>{1, 1, 1, 1} && c.id == want && c.index == 0 && !c.values.empty()) {
-                        bool unit = true;
-                        for (float v : c.values[0]) unit &= v >= 0 && v <= 1;
-                        if (unit) factor = c.values[0];
-                    }
-            if (base_slot < 0 && !roles.lit && !m.textures.empty() && factor == std::array<float, 4>{1, 1, 1, 1}) base_slot = 0;
-            if (base_slot >= 0 && base_slot < (int)m.textures.size()) {
-                int t = texture_of(m.textures[base_slot].id, false);
+            if (gi.albedo.kind == Src::kTex || gi.albedo.kind == Src::kConst)
+                for (int i = 0; i < 3; i++) factor[i] = gi.albedo.factor[i];
+            if (mode != "OPAQUE" && gi.alpha.kind == Src::kConst) factor[3] = gi.alpha.factor[3];
+            if (mode != "OPAQUE" && gi.alpha.kind == Src::kTex) factor[3] = gi.alpha.factor[gi.alpha.comp & 3];
+            for (float& f : factor) f = std::min(1.0f, std::max(0.0f, f));
+            if (at || alt) {
+                int t = baked_base(o, mi, at, gi.albedo, alt, gi.alpha, notes);
+                if (t >= 0) pbr["baseColorTexture"] = {{"index", t}, {"texCoord", at ? gi.albedo.uv : gi.alpha.uv}};
+            } else if (gi.albedo.kind == Src::kNone && !m.textures.empty() && !gi.lit) {
+                int t = texture_of(m.textures[0].id, false);  // (no graph: the first texture)
                 if (t >= 0) pbr["baseColorTexture"] = {{"index", t}};
             }
-            if (factor != std::array<float, 4>{1, 1, 1, 1}) pbr["baseColorFactor"] = {factor[0], factor[1], factor[2], 1.0};
-            mj["pbrMetallicRoughness"] = pbr;
-            if (roles.normal >= 0 && roles.normal < (int)m.textures.size()) {
-                int t = texture_of(m.textures[roles.normal].id, true);
-                if (t >= 0) mj["normalTexture"] = {{"index", t}};
+            if (factor != std::array<float, 4>{1, 1, 1, 1}) pbr["baseColorFactor"] = {factor[0], factor[1], factor[2], factor[3]};
+            // roughness: the GGX alpha^2 is (r + g) / 2 of the texture; glTF's roughness is alpha^(1/2)
+            if (const asf::Texture* rt = tex_of(gi.roughness)) {
+                int t = baked_roughness(rt);
+                if (t >= 0) {
+                    pbr["metallicRoughnessTexture"] = {{"index", t}, {"texCoord", gi.roughness.uv}};
+                    pbr["roughnessFactor"] = 1.0;
+                }
             }
+            if (m.blend == 1) {
+                // additive (SRC_ALPHA, ONE: the pareo's print, the eyes' highlight): glTF has no additive
+                // mode; the colour goes to the emission and the surface itself is clear (BLEND, alpha 0.5
+                // of the texture's), so it brightens what is behind it instead of covering it
+                if (pbr.contains("baseColorTexture")) {
+                    mj["emissiveTexture"] = pbr["baseColorTexture"];
+                    mj["emissiveFactor"] = {factor[0], factor[1], factor[2]};
+                }
+                pbr["baseColorFactor"] = {0.0, 0.0, 0.0, factor[3] * 0.5};
+            }
+            mj["pbrMetallicRoughness"] = pbr;
+            if (const asf::Texture* nt = tex_of(gi.normal)) {
+                int t = texture_of(nt->id, true);
+                if (t >= 0) mj["normalTexture"] = {{"index", t}, {"texCoord", gi.normal.uv}};
+            }
+            if (mode != "OPAQUE") mj["alphaMode"] = mode;
+            if (mode == "MASK") mj["alphaCutoff"] = m.alpha_ref / 255.0;
+            if (m.double_sided) mj["doubleSided"] = true;
             json slots = json::array();
             for (size_t k = 0; k < m.textures.size(); k++) {
                 const auto& t = m.textures[k];
                 json sj = {{"id", hex32(t.id)}, {"class", std::string((const char*)&t.cls, 4)}, {"wrap", t.wrap}, {"kind", t.slot_kind}};
-                if ((int)k == base_slot) sj["role"] = "baseColor";
-                else if ((int)k == roles.normal) sj["role"] = "normal";
-                else if (tex_by_id.count(t.id)) {
+                auto role = [&](const Src& x) { return x.kind == Src::kTex && x.slot == (int)k; };
+                json roles = json::array();
+                if (role(gi.albedo)) roles.push_back("albedo");
+                if (role(gi.alpha) && mode != "OPAQUE") roles.push_back("alpha");
+                if (role(gi.normal)) roles.push_back("normal");
+                if (role(gi.roughness)) roles.push_back("roughness (GGX alpha^2 = (r + g) / 2)");
+                if (role(gi.f0)) roles.push_back(gi.f0.comp < 0 ? "specular F0 (rgb)" : "specular F0 (one channel)");
+                if (!roles.empty()) sj["roles"] = roles;
+                if (!tex_by_id.count(t.id)) sj["note"] = "not in this file (supplied by the game)";
+                else if (roles.empty()) {
                     int ti = texture_of(t.id, false);
                     if (ti >= 0) sj["texture"] = ti;
-                } else sj["note"] = "not in this file (supplied by the game)";
+                }
                 slots.push_back(sj);
             }
             json consts = json::array();
@@ -370,10 +700,15 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                 for (auto& x : c.values) v.push_back({x[0], x[1], x[2], x[3]});
                 consts.push_back({{"id", c.id}, {"index", c.index}, {"values", v}});
             }
+            static const std::map<int, const char*> kLighting = {{0x49, "GGX (specular F0, roughness, normal map)"}, {0x28, "Lambert"},
+                                                                 {0x32, "Marschner hair (docs/render/hair-shader.md)"}, {0x24, "lashes (0x24)"}};
+            auto lt = kLighting.find(gi.lighting);
+            size_t g0 = m.raw.size() >= 0x24 ? soa::aff::rd32(&m.raw[0x1c]) : 0, g1 = m.raw.size() >= 0x24 ? soa::aff::rd32(&m.raw[0x20]) : 0;
             mj["extras"] = {{"asf_texture_slots", slots}, {"asf_constants", consts}, {"asf_flags", hex32(m.flags)},
-                            {"asf_blend", m.blend}, {"asf_lit_toon_shader", roles.lit},
-                            {"asf_shader_graph", m.raw.size() > 0x20 ? hexbytes(m.raw.data() + soa::aff::rd32(&m.raw[0x1c]),
-                                                                           m.raw.size() - soa::aff::rd32(&m.raw[0x1c])) : ""}};
+                            {"asf_blend", m.blend == 1 ? "additive (SRC_ALPHA, ONE): BLEND here" : m.blend == 2 ? "alpha" : "opaque"},
+                            {"asf_lighting", lt == kLighting.end() ? std::string("none") : std::string(lt->second)},
+                            {"asf_shader_graph", g1 > g0 && g1 <= m.raw.size() ? hexbytes(m.raw.data() + g0, g1 - g0) : ""}};
+            if (!notes.empty()) mj["extras"]["notes"] = notes;
             doc["materials"].push_back(mj);
             mat_index[mi] = (int)doc["materials"].size() - 1;
         }
@@ -445,13 +780,10 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                     break;
                 }
                 case asf::kTexcoord: {
-                    std::string nm = "TEXCOORD_" + std::to_string(sets["uv"]++);
-                    auto p = take(0, 2);
-                    a[nm] = b.accessor(p.data(), nv, kFloat, "VEC2", 2, 34962);
-                    if (comps == 4) {  // (scalars: Blender's importer can't merge a VEC2 custom attribute)
-                        auto z = take(2, 1), w = take(3, 1);
-                        a["_" + nm + "_Z"] = b.accessor(z.data(), nv, kFloat, "SCALAR", 1, 34962);
-                        a["_" + nm + "_W"] = b.accessor(w.data(), nv, kFloat, "SCALAR", 1, 34962);
+                    // each pair of components is a UV set of the game's shaders (xy, zw): one TEXCOORD_n each
+                    for (int c = 0; c < comps || c == 0; c += 2) {
+                        auto p = take(c, 2);
+                        a["TEXCOORD_" + std::to_string(sets["uv"]++)] = b.accessor(p.data(), nv, kFloat, "VEC2", 2, 34962);
                     }
                     break;
                 }
@@ -783,6 +1115,7 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         if (!anim["channels"].empty()) doc["animations"].push_back(anim);
     }
 
+    mirror_x(b, root);
     if (!ext_used.empty()) doc["extensionsUsed"] = std::vector<std::string>(ext_used.begin(), ext_used.end());
     while (b.bin.size() % 4) b.bin.push_back(0);
     std::string base = out_path;

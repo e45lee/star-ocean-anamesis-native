@@ -248,6 +248,7 @@ bool load_texture(const Bytes& d, size_t fia, Scene& s, Texture& t, std::string*
         if (t.levels.empty()) {
             t.id = rd32(&h[q + 0x10]);
             t.cls = rd32(&h[q + 0x14]);
+            memcpy(t.xgmi.data(), &h[q], 0x70);
         }
         TextureLevel l;
         l.fmt = h[q + 0x20];
@@ -264,7 +265,10 @@ bool load_material(const Bytes& d, size_t m, Material& mat) {
     mat.chunk = m;
     int ntex = d[m + 0x18], nconst = d[m + 0x16];
     mat.flags = rd32(&d[m + 0x3c]);
-    mat.blend = d[m + 0x41];
+    mat.blend = d[m + 0x14];
+    mat.double_sided = d[m + 0x15] != 0;
+    mat.alpha_ref = d[m + 0x1b];
+    mat.alpha_test = d[m + 0x40] != 0;
     size_t tex = m + (int32_t)rd32(&d[m + 0x2c]);
     for (int i = 0; i < ntex && tex + (i + 1) * 32 <= d.size(); i++) {
         const uint8_t* r = &d[tex + i * 32];
@@ -292,7 +296,8 @@ bool load_material(const Bytes& d, size_t m, Material& mat) {
         }
         mat.constants.push_back(k);
     }
-    size_t sz = rd32(&d[m + 4]);
+    // the header's +4 size covers the header only: the graph, constants and texture references follow
+    size_t sz = std::max<size_t>(rd32(&d[m + 4]), (size_t)rd32(&d[m + 0x2c]) + (size_t)ntex * 32);
     if (m + sz <= d.size()) mat.raw.assign(d.begin() + m, d.begin() + m + sz);
     return true;
 }

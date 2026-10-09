@@ -102,11 +102,14 @@ void print_info(const soa::asf::Scene& s) {
         for (const Texture& t : o.textures) {
             printf("  texture 0x%08x", t.id);
             for (const TextureLevel& l : t.levels) printf(" [fmt %d %dx%d]", l.fmt, l.w, l.h);
+            printf("\n    xgmi");
+            for (int q = 0x10; q < 0x40; q++) printf(" %02x", t.xgmi[q]);
             printf("\n");
         }
         for (size_t i = 0; i < o.materials.size(); i++) {
             const Material& m = o.materials[i];
-            printf("  material %zu flags 0x%x blend %d:", i, m.flags, m.blend);
+            printf("  material %zu flags 0x%x blend %d%s%s:", i, m.flags, m.blend, m.double_sided ? " double-sided" : "",
+                   m.alpha_test ? (" alpha-test " + std::to_string(m.alpha_ref)).c_str() : "");
             for (const TextureRef& t : m.textures) printf(" tex(0x%08x %.4s wrap %d kind %d)", t.id, (const char*)&t.cls, t.wrap, t.slot_kind);
             for (const ShaderConst& c : m.constants) {
                 printf(" const(0x%x/%d", c.id, c.index);
@@ -114,6 +117,17 @@ void print_info(const soa::asf::Scene& s) {
                 printf(")");
             }
             printf("\n");
+            if (m.raw.size() >= 0x24) {  // the shader graph's records {u16 size, u16 op, ...}
+                size_t g = soa::aff::rd32(&m.raw[0x1c]), gend = soa::aff::rd32(&m.raw[0x20]);
+                for (size_t q = g; q + 4 <= gend && q + 4 <= m.raw.size();) {
+                    uint16_t size = soa::aff::rd16(&m.raw[q]), op = soa::aff::rd16(&m.raw[q + 2]);
+                    if (size < 4 || q + size > m.raw.size()) break;
+                    printf("    op 0x%02x:", op);
+                    for (size_t k = q + 4; k < q + size; k++) printf(" %02x", m.raw[k]);
+                    printf("\n");
+                    q += size;
+                }
+            }
         }
         for (size_t i = 0; i < o.meshsets.size(); i++) {
             const Meshset& m = o.meshsets[i];
@@ -121,6 +135,11 @@ void print_info(const soa::asf::Scene& s) {
                    i, m.material, m.prim, m.vertex_count, m.stride, m.index_count, m.index32 ? " (32-bit)" : "",
                    (unsigned long long)m.asm_bits, m.palette.size(), m.flags);
             if (m.shares >= 0) printf(", draws meshset %d", m.shares);
+            printf("\n    palette:");
+            for (size_t k = 0; k < m.palette.size(); k++) {
+                int b = m.palette[k] < o.bones.size() ? o.bones[m.palette[k]] : -1;
+                printf(" %zu=%s", k, b >= 0 && b < (int)s.nodes.size() ? s.nodes[b].name.c_str() : "?");
+            }
             printf("\n   ");
             for (const VertexElement& e : m.elements) printf(" %s%d@%d:t%d", usage_name(e.usage), e.index, e.offset, e.type);
             printf("\n");
@@ -155,6 +174,55 @@ int check_gl_dump(const soa::asf::Scene& s, const std::string& dir) {
             }
         }
     printf("match %d/%d\n", ok, total);
+    // With SOA_GL_DRAW_DUMP's draws.tsv in the same dir: the draws of this model (an index count
+    // of one of its meshsets, a texture of its own on some unit): the draw's number (draw_N.txt has
+    // its uniforms), program, the texture of each unit by this file's ids, blend / cull / depth write
+    std::ifstream draws(dir + "/draws.tsv");
+    if (draws) {
+        std::map<std::string, std::string> id_of_hash;
+        for (const auto& o : s.objects)
+            for (const auto& t : o.textures) {
+                if (t.levels.empty()) continue;
+                size_t n = 0;
+                const uint8_t* p = s.amf.raw_block(t.levels[0].pixels, &n);
+                if (!p) continue;
+                char h[32], id[16];
+                snprintf(h, sizeof h, "%016llx", (unsigned long long)fnv(p, n));
+                snprintf(id, sizeof id, "0x%08x", t.id);
+                id_of_hash.emplace(h, id);
+            }
+        std::map<long, std::vector<std::string>> by_count;
+        for (const auto& o : s.objects)
+            for (size_t i = 0; i < o.meshsets.size(); i++)
+                by_count[(long)o.meshsets[i].index_count].push_back(o.name + "/" + std::to_string(i));
+        std::string line;
+        while (std::getline(draws, line)) {
+            std::vector<std::string> f;
+            size_t a2 = 0, b2;
+            while ((b2 = line.find('\t', a2)) != std::string::npos) { f.push_back(line.substr(a2, b2 - a2)); a2 = b2 + 1; }
+            f.push_back(line.substr(a2));
+            if (f.size() < 11) continue;
+            auto mc = by_count.find(std::stol(f[4]));
+            if (mc == by_count.end()) continue;
+            std::string units;
+            bool ours = false;
+            size_t p = 0;
+            for (int u = 0; u < 8; u++) {
+                size_t c = f[7].find(',', p);
+                std::string h = f[7].substr(p, c == std::string::npos ? std::string::npos : c - p);
+                auto it = id_of_hash.find(h);
+                if (it != id_of_hash.end()) ours = true;
+                units += " u" + std::to_string(u) + "=" + (it != id_of_hash.end() ? it->second : h == "-" ? "-" : h == "?" ? "?" : "other");
+                if (c == std::string::npos) break;
+                p = c + 1;
+            }
+            if (!ours) continue;
+            std::string who;
+            for (const auto& w : mc->second) who += (who.empty() ? "" : "|") + w;
+            printf("draw %s: %s program %s count %s%s | %s | %s | %s\n", f[0].c_str(), who.c_str(), f[1].c_str(), f[4].c_str(), units.c_str(),
+                   f[8].c_str(), f[9].c_str(), f[10].c_str());
+        }
+    }
     return ok == total ? 0 : 1;
 }
 

@@ -9,7 +9,7 @@ Blender's glTF importer needs numpy: a distribution Blender that runs on the sys
 blender 4.0) finds it through PYTHONPATH=.venv/lib/python3.12/site-packages (the checkout's venv has
 numpy, requirements.txt).
 
---anim plays the named glTF animation (Blender's action of that name) at --frame (scene frames at
+Without --anim: the rest pose. --face NAME layers a facial animation (held) under --anim. --anim plays the named glTF animation (Blender's action of that name) at --frame (scene frames at
 the file's rate; glTF seconds * fps); --frames writes one picture per frame, OUT with _NNN before
 its extension. The camera looks at the model's bounding box (or the node --target) from the --view
 side, portrait by default (the game is a portrait game). --log prints what the importer made
@@ -25,13 +25,14 @@ from mathutils import Vector
 
 def args():
     a = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
-    o = {"anim": None, "frame": None, "frames": None, "view": "front", "size": (540, 960), "engine": "EEVEE",
-         "target": None, "distance": None, "fov": 30.0, "elevation": 5.0, "log": False, "center": None, "hide": [], "follow": None}
+    o = {"face": None, "anim": None, "frame": None, "frames": None, "view": "front", "size": (540, 960), "engine": "EEVEE",
+         "target": None, "distance": None, "fov": 30.0, "elevation": 5.0, "log": False, "center": None, "hide": [], "follow": None, "no_cull": False}
     pos = []
     i = 0
     while i < len(a):
         k = a[i]
         if k == "--anim": o["anim"] = a[i + 1]; i += 2
+        elif k == "--face": o["face"] = a[i + 1]; i += 2
         elif k == "--frame": o["frame"] = float(a[i + 1]); i += 2
         elif k == "--frames": o["frames"] = [float(x) for x in a[i + 1].split(",")]; i += 2
         elif k == "--view": o["view"] = a[i + 1]; i += 2
@@ -44,6 +45,7 @@ def args():
         elif k == "--log": o["log"] = True; i += 1
         elif k == "--center": o["center"] = [float(x) for x in a[i + 1].split(",")]; i += 2
         elif k == "--hide": o["hide"] = a[i + 1].split(","); i += 2
+        elif k == "--no-cull": o["no_cull"] = True; i += 1
         elif k == "--follow": o["follow"] = a[i + 1]; i += 2
         else: pos.append(k); i += 1
     o["in"], o["out"] = pos[0], pos[1]
@@ -81,27 +83,43 @@ def main():
             print(f"LOG action {act.name} frames {act.frame_range[0]:.1f}-{act.frame_range[1]:.1f} fcurves {len(act.fcurves)}")
         for m in bpy.data.materials:
             print(f"LOG material {m.name}")
+    for ob in sc.objects:  # start from the rest pose: no action, every pose bone at identity
+        if ob.animation_data:
+            for tr in ob.animation_data.nla_tracks:
+                tr.mute = True
+            ob.animation_data.action = None
+        if ob.pose:
+            for pb in ob.pose.bones:
+                pb.location = (0, 0, 0)
+                pb.rotation_quaternion = (1, 0, 0, 0)
+                pb.scale = (1, 1, 1)
     if o["anim"]:
         # the importer keeps each glTF animation as an action per object (named "<animation>_<object>",
-        # truncated) on the objects' NLA tracks: make the requested one the active action everywhere
+        # truncated) on the objects' NLA tracks. The requested one plays on its track (held); --face NAME
+        # is the active action, evaluated over it: the facial animation replaces the joints it keys, as
+        # the game's expression layer does
         found = 0
         for ob in sc.objects:
             ad = ob.animation_data
             if not ad:
                 continue
-            pick = None
+            face = None
             for tr in ad.nla_tracks:
+                body = False
                 for st in tr.strips:
                     if st.action and st.action.name.startswith(o["anim"]):
-                        pick = st.action
-                tr.mute = True
-            if pick is None and ad.action and not ad.action.name.startswith(o["anim"]):
-                ad.action = None
-            if pick is not None:
-                ad.action = pick
-                found += 1
+                        body = True
+                        st.extrapolation = "HOLD"
+                    if o["face"] and st.action and st.action.name.startswith(o["face"]):
+                        face = st.action
+                tr.mute = not body
+                found += body
+            ad.action = face
         if not found:
             raise SystemExit(f"no animation {o['anim']}: {sorted(set(a.name for a in bpy.data.actions))[:20]}")
+    if o["no_cull"]:
+        for m in bpy.data.materials:
+            m.use_backface_culling = False
     for ob in sc.objects:  # --hide: objects whose name starts with one of these
         if any(ob.name.startswith(h) for h in o["hide"]):
             ob.hide_render = True
@@ -119,12 +137,20 @@ def main():
     sc.world = world
     world.use_nodes = True
     bg = world.node_tree.nodes.get("Background")
+    # lighting after the game's home scene (cvLightContext0 / cvSHAmbContext of her draws, docs/notes.md
+    # "Materials"): a strong key light from the camera's side and a bright, slightly blue ambient;
+    # no filmic curve (the game's output is albedo * light, clipped)
     if bg:
-        bg.inputs[0].default_value = (0.55, 0.6, 0.68, 1)
+        bg.inputs[0].default_value = (0.62, 0.64, 0.72, 1)
         bg.inputs[1].default_value = 1.0
+    try:
+        sc.view_settings.view_transform = "Standard"
+        sc.view_settings.look = "None"
+    except Exception:
+        pass
     sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", "SUN"))
-    sun.data.energy = 3.0
-    sun.rotation_euler = (math.radians(50), 0, math.radians(30))
+    sun.data.energy = 3.5
+    sun.data.color = (1.0, 0.93, 1.0)
     sc.collection.objects.link(sun)
     cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
     sc.collection.objects.link(cam)
@@ -159,6 +185,9 @@ def main():
         direction = Vector((math.sin(math.radians(az)) * math.cos(el), -math.cos(math.radians(az)) * math.cos(el), math.sin(el)))
         cam.location = c + direction * d
         cam.rotation_euler = (c - cam.location).to_track_quat("-Z", "Y").to_euler()
+        # the key light shines from the camera's side, 25 degrees to the left and 30 above
+        ld = Vector((math.sin(math.radians(az - 25)) * math.cos(el + 0.5), -math.cos(math.radians(az - 25)) * math.cos(el + 0.5), math.sin(el + 0.5)))
+        sun.rotation_euler = (-ld).to_track_quat("-Z", "Y").to_euler()
         out = o["out"]
         if len(frames) > 1:
             base, ext = os.path.splitext(out)

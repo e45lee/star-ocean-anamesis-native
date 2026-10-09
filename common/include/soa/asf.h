@@ -91,6 +91,7 @@ struct Texture {
     uint32_t cls = 0;    // Xgmi +0x14 ('BA1H')
     std::vector<TextureLevel> levels;  // level 0 first
     aff::Auid header;    // the AMF block holding the 'Xgmi' headers
+    std::array<uint8_t, 0x70> xgmi{};  // level 0's 'Xgmi' header
 };
 // A material's texture reference (32 bytes; the material's +0x2c table).
 struct TextureRef {
@@ -111,8 +112,12 @@ struct Material {
     std::vector<TextureRef> textures;
     std::vector<ShaderConst> constants;
     uint32_t flags = 0;  // +0x3c (bit 0/3/8: ..., 4: ...; MaterialList::Activate)
-    uint8_t blend = 0;   // +0x41
-    std::vector<uint8_t> raw;  // the whole chunk (until its constants), for the extras
+    // the draw state (as the game sets it for Seaside Maria's 13 materials, SOA_GL_DRAW_DUMP):
+    uint8_t blend = 0;         // +0x14: 0 opaque, 1 additive (SRC_ALPHA, ONE), 2 alpha (SRC_ALPHA, 1 - SRC_ALPHA; no depth writes)
+    bool double_sided = false; // +0x15: no back-face culling
+    uint8_t alpha_ref = 0;     // +0x1b: the alpha test's threshold / 255 (cfAlphaThreshold)
+    bool alpha_test = false;   // +0x40 (and flags bit 3): fragments under alpha_ref are discarded
+    std::vector<uint8_t> raw;  // the whole chunk: header, shader graph (+0x1c), constants, texture references
 };
 struct Meshset {
     int material = -1;   // index into Object::materials

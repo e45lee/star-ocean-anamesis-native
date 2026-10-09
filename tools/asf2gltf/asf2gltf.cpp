@@ -84,6 +84,12 @@ bool load_input(Source& src, const std::string& arg, Bytes& out, std::string& na
     return soa::aff::decode_game_file(name, raw, out, err);
 }
 
+uint64_t fnv(const uint8_t* p, size_t n) {
+    uint64_t h = 0xcbf29ce484222325ull;
+    for (size_t i = 0; i < n; i++) h = (h ^ p[i]) * 0x100000001b3ull;
+    return h;
+}
+
 void print_info(const soa::asf::Scene& s) {
     using namespace soa::asf;
     for (const Modifier& m : s.modifiers) {
@@ -124,6 +130,11 @@ void print_info(const soa::asf::Scene& s) {
         for (const Texture& t : o.textures) {
             printf("  texture 0x%08x", t.id);
             for (const TextureLevel& l : t.levels) printf(" [fmt %d %dx%d]", l.fmt, l.w, l.h);
+            {
+                size_t n = 0;
+                const uint8_t* px = t.levels.empty() ? nullptr : s.amf.raw_block(t.levels[0].pixels, &n);
+                if (px) printf(" level0 fnv1a64 %016llx", (unsigned long long)fnv(px, n));
+            }
             printf("\n    xgmi");
             for (int q = 0x10; q < 0x40; q++) printf(" %02x", t.xgmi[q]);
             printf("\n");
@@ -169,11 +180,6 @@ void print_info(const soa::asf::Scene& s) {
     }
 }
 
-uint64_t fnv(const uint8_t* p, size_t n) {
-    uint64_t h = 0xcbf29ce484222325ull;
-    for (size_t i = 0; i < n; i++) h = (h ^ p[i]) * 0x100000001b3ull;
-    return h;
-}
 
 // Each meshset's vertex and index bytes against the dump's uploads (DIR/<fnv1a64>.bin): equal hash
 // and equal bytes.

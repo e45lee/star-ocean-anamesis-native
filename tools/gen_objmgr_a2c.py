@@ -4,7 +4,6 @@ transcribed from the ARM64 by a2c.py with its CALL_FALLBACK (guest calls through
 load/store pairs as host CAS). Usage: tools/gen_objmgr_a2c.py port/src/native/engine/gen/objmgr_a2c.cpp"""
 import importlib.util
 import os
-import re
 import sys
 
 import genlib  # (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)

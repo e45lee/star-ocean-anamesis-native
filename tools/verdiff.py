@@ -27,7 +27,6 @@ and fn/<name>.diff (normalised unified diffs of the changed functions).
 import argparse
 import bisect
 import difflib
-import hashlib
 import os
 import re
 import struct
@@ -547,7 +546,7 @@ def canonical(a, b):
     def relabel(off_hex):
         j = int(off_hex, 16) // 4
         return ("%#x" % (inv[j] * 4)) if j in inv else ("'%#x" % (j * 4))
-    kb = [JT.sub(lambda m: "<jt[" + ",".join(relabel(x).lstrip("0x") if False else relabel(x) for x in m.group(1).split(",")) + "]>",
+    kb = [JT.sub(lambda m: "<jt[" + ",".join(relabel(x) for x in m.group(1).split(",")) + "]>",
                  LBL.sub(lambda m: "<L" + relabel(m.group(1)) + ">", l)) for l in kb]
     ka = [JT.sub(lambda m: "<jt[" + ",".join("%#x" % int(x, 16) for x in m.group(1).split(",")) + "]>", l) for l in ka]
     return ka, kb

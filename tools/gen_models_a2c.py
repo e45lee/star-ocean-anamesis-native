@@ -18,7 +18,6 @@ from transcribed bodies go through the dispatch table.
 
 Usage: gen_models_a2c.py <out.cpp> [<insn.cpp>]
 """
-import bisect
 import hashlib
 import importlib.util
 import os

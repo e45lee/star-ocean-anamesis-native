@@ -21,7 +21,6 @@ TBinaryTree<T>::AllocNode as a list of stores) and the symbols of each method:
 
 Usage: .venv/bin/python tools/gen_containers_tables.py > port/src/native/containers/gen/containers_tables.inc
 """
-import bisect
 import re
 import subprocess
 
@@ -96,7 +95,7 @@ def secure_pool_info(sym):
             elif m == "add" and len(ops) == 3:
                 regs[dst] = val(ops[1]) + val(ops[2])
             elif m == "sub" and len(ops) == 4 and ops[3].startswith("lsl"):
-                regs[dst] = (val(ops[2]) << int(ops[3].split("#")[1], 0)) - val(ops[1]) if False else val(ops[1]) - (val(ops[2]) << int(ops[3].split("#")[1], 0))
+                regs[dst] = val(ops[1]) - (val(ops[2]) << int(ops[3].split("#")[1], 0))
             elif m == "mul":
                 regs[dst] = val(ops[1]) * val(ops[2])
             elif dst:

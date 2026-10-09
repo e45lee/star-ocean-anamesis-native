@@ -24,10 +24,8 @@ usage: .venv/bin/python tools/make_test_seed.py [--master data/basmaster-3.7.0.s
 import argparse
 import os
 import sqlite3
-import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-from soa_save.kvs import KVSFile  # noqa: E402
+from soa_save.kvs import KVSFile
 
 NAME = "Tessa"          # made up
 LEVEL = 60

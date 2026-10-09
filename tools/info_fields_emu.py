@@ -5,11 +5,10 @@ Calls to other functions are skipped, except base-class Initialize()s, which are
 
 Usage: tools/info_fields_emu.py Class [Class...]   (e.g. CMissionElementInfo CPlanetInfo)
 """
-import subprocess
 import sys
 
 from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
-from unicorn import UC_ARCH_ARM64, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, UC_MODE_ARM, Uc
+from unicorn import UC_ARCH_ARM64, UC_HOOK_CODE, UC_MODE_ARM, Uc
 from unicorn.arm64_const import (UC_ARM64_REG_CPACR_EL1, UC_ARM64_REG_LR, UC_ARM64_REG_PC, UC_ARM64_REG_SP,
                                  UC_ARM64_REG_X0, UC_ARM64_REG_X1)
 

@@ -80,7 +80,6 @@ def short(d, n=90):
 
 # ----------------------------------------------------------------------------------- groups
 def group_of(cls, meth, name, r):
-    sym = r["symbol"]
     n = name
     if r["class"] in ("(runtime / toolchain)", "(unnamed static functions)") and cls is None:
         if "SortCharaElem" in n:

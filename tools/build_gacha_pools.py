@@ -637,7 +637,7 @@ class Builder:
                 pickup_rows.append((g["id"], ct, cid, s))
             if gt == 2:
                 continue
-            pools, rule = {}, {}
+            pools = {}
             if gt == 0:
                 pu = sorted({cid for ct, cid, _ in p if ct == 2})
                 general5 = self.roles_released(t0, t, lambda b: b["rarity"] == 5 and not b["limited"])

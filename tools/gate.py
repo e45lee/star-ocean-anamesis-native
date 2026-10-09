@@ -30,7 +30,6 @@ stops waiting), and the gate exits 130 without a summary.
 """
 import argparse
 import concurrent.futures
-import json
 import os
 import re
 import shutil
@@ -41,12 +40,10 @@ import tempfile
 import threading
 import time
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "tools"))
-import tests_for  # noqa: E402
+import soaslot  # (control/soaslot.py: the game slot pool)
+import tests_for
 
-sys.path.insert(0, os.path.join(REPO, "control"))
-import soaslot  # noqa: E402  (the game slot pool)
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROCS, PLOCK = [], threading.Lock()
 # Set by an interrupt (Ctrl-C, TERM): no test starts after it, and a test queued for a game slot

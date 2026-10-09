@@ -340,7 +340,7 @@ ja	en	kind	variants	avoid	source	note
 クレセントリカーヴ	Crescent Recurve	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 クレセント・フリップ	Crescent Flip	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 クロ	Kuro	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-クロウザー	Closure	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+クロウザー	Crowzer	name		Closure$	human	the user's decision (en-names 2026-10-08, english.md 7.22): Crowzer (Global has no English; the M2 name pass 2026-10-06 said Closure)
 クロス	Krosse	name	Cross		human	Global's spelling in its official text (Q8; glossary-weak listed the M2 machine name as contradicted)
 クロス	Cross	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 クロスバイヨネット	Cross Bayonet	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
@@ -1187,7 +1187,7 @@ ja	en	kind	variants	avoid	source	note
 ラムダ	Lambda	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ランティス	Lantis	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ランドクラーケン	Land Kraken	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
-ランドグリーズ	Laevateinn	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
+ランドグリーズ	Randgriz	name		Laevateinn	human	the user's decision (en-names 2026-10-08, english.md 7.22): Randgriz, 神剣・ランドグリーズ Divine Sword Randgriz (the M2 name pass 2026-10-06 said Laevateinn, another sword, レーヴァテイン)
 ランビュランス	Levarance	name	Purge		human	Global's spelling in its official text (Q8; glossary-weak listed the M2 machine name as contradicted)
 ランビュランス	Lamburance	name			machine	M2 name pass 2026-10-06: gemma-4-31B-it/qat-UD-Q4_K_XL/names-v1/llama.cpp-b11443/t0
 ランビュランス幹部		speaker			human	demoted (glossary-weak): Global's official English misses 'Purge Higher-Up' in 2 of 3 rows

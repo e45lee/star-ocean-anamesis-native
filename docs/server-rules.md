@@ -1066,6 +1066,16 @@ A pick-up released after its banner opened (but before it closed) is drawn from 
 |---|---|
 | `Gacha(id, hash, n)`: n = 1 is the single draw (`coin`, 1 unit), n = 0 the bulk draw (`bulk_coin`, `bulk_count` units). `CGacha::RequestGacha` passes 1 when the selected button (`CGacha+0x2d4`) is the single one, where the sale variant is `SaleGachaOnce`, and 0 otherwise (`SaleGacha`). The server used to draw every `Gacha` as the bulk one, so 1回ガチャ cost and drew a 10-draw. Test `gacha/stepup-box`. | (b) |
 
+<a id="gacha-surprise"></a>
+### The fake-out (`is_mutation`, the gacha surprise)
+The client's draw can play a fake-out: a unit is shown first below its tier (★5: tier 0 or 1), then the flash `eo100_f07b` with its SE, then the same unit again at its real tier, and the draw's circle tier leaves it out (docs/gacha-presentation.md "What selects it"). The server decides it per `GachaItems` entry with `is_mutation` (`server/src/api/gacha/gacha.cpp` `roll_surprise`).
+
+| Rule | Label |
+|---|---|
+| The client plays the fake-out for a unit with `is_mutation` = true (`CGachaManager::CheckGachaResult`, `Progress_Main` sub-states 9, 0xd, 0xe) and has a debug API for it (`Debug_GachaMutation`, `CGachaMutationTestResultInfo {content_id, content_type, is_mutation}`), so the live server sent it for some draws. | (b) |
+| `master_global.gacha_mutation` = 2: a row the client never reads (its key hash appears nowhere in the code), so a server parameter. | (a) |
+| Its reading: the percent chance per drawn ★5 unit (`master_role.rarity` / `master_item.rarity` 5 or more); other units are never a surprise. Rolled on the server's seeded RNG, one value per ★5 unit only (a draw without one takes no extra value; `--seed-rng` replays stay deterministic). `--gacha-surprise PCT` sets the chance (0..100), 0 turns it off. Tests `gacha/surprise`, replay corpus `gacha-surprise` (`--gacha-surprise 100`). | (d) the meaning of the value and the ★5 restriction |
+
 <a id="gacha-lists"></a>
 ### Step-up and box gacha lists (`server.cpp` `stepup_value`, `box_list_value`, `box_value`)
 No step-up and no box gacha was ever listed on the gacha screen, at any clock and with or without `--enable-events`: the server sent `StepUpGacha`, `BoxGachaList` and `BoxGacha` as **arrays**, and these are `IInfoBaseMap<u64, …>` infos, whose `DeserializeArray` does nothing (docs/ason.md). `CGacha::FirstCreateNormalAndStepup` lists a step-up row only through the `StepUpGacha` map (CParameterManager+0x7408) and `CGacha::AddListBoxSeries` (the イベントガチャ tab) a box only through the `BoxGachaList` map (+0x7278), so both stayed empty.
@@ -1093,7 +1103,8 @@ From the register before R20 (with the area and how to check):
 | Gacha | the pools (server tables `master_gacha_item_*` are missing): reconstructed per gacha | (a)–(d) per rule | 4.5: pick-ups from images / titles / themes, general pools by release date, equal weights within a rank (d) |
 | Gacha | duplicate over the max → `master_role_duplication_item`; chip amount | (c)/(d) | the matching and limit-break steps are (b) |
 | Gacha | box draw without replacement; last box resettable any time | (c)/(d) | |
-| Gacha | gift gacha always granted; `is_mutation` 0 | (d) | |
+| Gacha | gift gacha always granted | (d) | |
+| Gacha | the fake-out (`is_mutation`): `master_global.gacha_mutation` (2) read as the percent chance per drawn ★5 unit; `--gacha-surprise PCT` (docs/server-rules.md#gacha-surprise) | (d) | the client's effect and debug API show the live server sent it; the rate and the ★5 restriction are a reading of the unread master value |
 
 <a id="growth"></a>
 ## Growth
@@ -2181,7 +2192,8 @@ Every (c) / (d) value the player can see, to revisit when evidence turns up: the
 | [gacha](#gacha-register) | Gacha | the pools (server tables `master_gacha_item_*` are missing): reconstructed per gacha | (a)–(d) per rule | 4.5: pick-ups from images / titles / themes, general pools by release date, equal weights within a rank (d) |
 | [gacha](#gacha-register) | Gacha | duplicate over the max → `master_role_duplication_item`; chip amount | (c)/(d) | the matching and limit-break steps are (b) |
 | [gacha](#gacha-register) | Gacha | box draw without replacement; last box resettable any time | (c)/(d) |  |
-| [gacha](#gacha-register) | Gacha | gift gacha always granted; `is_mutation` 0 | (d) |  |
+| [gacha](#gacha-register) | Gacha | gift gacha always granted | (d) |  |
+| [gacha](#gacha-register) | Gacha | the fake-out (`is_mutation`): `master_global.gacha_mutation` (2) read as the percent chance per drawn ★5 unit; `--gacha-surprise PCT` (docs/server-rules.md#gacha-surprise) | (d) | the client's effect and debug API show the live server sent it; the rate and the ★5 restriction are a reading of the unread master value |
 | [growth](#growth-register) |  | NEW badges ([NEW badges](#new-badges)): what is gained from now on is new until viewed; the seed's and an older state's characters and items are not; a stack item is new only when its first stack arrives | (d) |  |
 | [growth](#growth-register) |  | Big success: `*_up_rate` is a percent chance, × `*_bonus_rate` | (d) |  |
 | [growth](#growth-register) |  | FOL campaigns (types 2, 4, 5) and big-success campaigns (6, 7) not applied | (d) |  |

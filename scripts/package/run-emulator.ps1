@@ -7,7 +7,7 @@
 #                            DIR\server.log + server.log.err (default %LOCALAPPDATA%\soa\emulator-370)
 #   --port N                 the game port (default 44300; HTTP: N + 80)
 #   soa-server's options (lib\with-server.ps1): --new-player, --seed FILE, --seed-rng N,
-#     --clock "YYYY-MM-DD HH:MM:SS", --start-coins N, --galaxy-pass, --enable-events,
+#     --clock "YYYY-MM-DD HH:MM:SS", --start-coins N, --gacha-surprise PCT, --galaxy-pass, --enable-events,
 #     --event-keywords W, --restore-tower, --surprise, --stamina-heal-time S, --fail SPEC,
 #     --download PATH, --download-dir DIR, --master FILE, --db FILE, --log-packets DIR,
 #     --campaign-master-db FILE, --campaign-seed N, --english (the English files; with soa-emu's

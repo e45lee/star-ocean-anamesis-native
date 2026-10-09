@@ -28,9 +28,10 @@ master data, (b) client code, (c) outside knowledge, (d) assumption. Earlier not
    tiers 0–1 and the fake-out's starting tier.
 3. **Server: nothing extra is needed for the normal presentation** (b). Rarity, new/duplicate, limit
    breaks and the camera all come from master data plus `duplication`, `LimitBreakCharacter` and
-   `LimitBreakItem`, which the server already sends. Two fields are never sent: `is_bonus` (the client
-   reads it, no visible effect found) and `is_mutation` = true (the fake-out never plays). See
-   [Server implications](#server).
+   `LimitBreakItem`, which the server already sends. `is_bonus` is never sent (the client reads it, no
+   visible effect found); `is_mutation` is set since 2026-10-08 on 2 % of the drawn ★5 units
+   (`master_global.gacha_mutation`, d; `--gacha-surprise PCT`, docs/server-rules.md#gacha-surprise).
+   See [Server implications](#server).
 
 <a id="order"></a>
 ## 1. Order
@@ -195,7 +196,7 @@ What the presentation needs from a draw reply, and what the local server sends
 | `duplication` | 2D mode, NEW badge | 1 for a duplicate | correct |
 | `LimitBreakCharacter` (before/after counts) | `overLimit` + `Grade` count | sent per character, steps assigned in order | correct |
 | `LimitBreakItem` | `OverLimMat` | sent for duplicates beyond the max | correct |
-| `is_mutation` | the fake-out | always false | (d) choice: the fake-out never plays |
+| `is_mutation` | the fake-out | set on a drawn ★5 unit with `master_global.gacha_mutation` (2) % chance; `--gacha-surprise PCT` (0 = off) | (d): the rate and the ★5 restriction (docs/server-rules.md#gacha-surprise) |
 | `is_bonus` | flag, no visible effect found | not sent (false) | harmless; for fidelity send `is_bonus` = true on the bonus draw (d) |
 
 No server bug that changes the presentation was found. Suggestions (no code changed):
@@ -203,7 +204,7 @@ No server bug that changes the presentation was found. Suggestions (no code chan
 1. **`is_bonus`** on the bulk-bonus draw: `result["is_bonus"] = bonus;` next to `is_mutation` in
    `draw_weapon` / `add_drawn_role` (`gacha.cpp`, the `bonus` flag of the draw loop at line ~349). Wire
    fidelity only.
-2. **`is_mutation`** (optional, d): the live server evidently sent it for some ★5 draws (the client
+2. **`is_mutation`** (done 2026-10-08, the reading below; `gacha.cpp` `roll_surprise`): the live server evidently sent it for some ★5 draws (the client
    has a dedicated effect `eo100_f07b`, an SE and the `Debug_GachaMutation` API with
    `CGachaMutationTestResultInfo {content_id, content_type, is_mutation}`); a playable rule would set
    it on a small share of ★5 units, e.g. `master_global.gacha_mutation` (2) read as a percent (d). It

@@ -9,7 +9,7 @@
 #   --port N           the game server's port (default 44310); its HTTP/CDN port is N+80
 #   --server-log       show soa-server's log on the terminal too (it always goes to DIR/server.log)
 #   server options, passed to soa-server (they set the server's rules and state, as soa's own):
-#     --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N,
+#     --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N, --gacha-surprise PCT,
 #     --stamina-heal-time S, --galaxy-pass, --enable-events, --event-keywords L, --restore-tower,
 #     --english, --master FILE, --db FILE, --log-packets DIR, --fail M:CODE[,..], --surprise,
 #     --campaign-master-db FILE, --campaign-seed LABEL

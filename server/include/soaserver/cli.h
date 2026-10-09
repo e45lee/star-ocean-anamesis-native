@@ -72,6 +72,18 @@ inline void add_server_options(CLI::App& app, ServerConfig& c, const std::string
            "stamina_heal_time (180); 0: no regeneration")
         ->type_name("SECS")
         ->group(group);
+    app.add_option_function<std::string>(
+           "--gacha-surprise",
+           [&c](const std::string& v) {
+               uint64_t n = 0;
+               if (!cli::parse_u64(v, 10, &n) || v[0] == '-' || n > 100)
+                   cli::bad_value("--gacha-surprise", "expected a percent 0..100, got \"" + v + "\"");
+               c.gacha_surprise = (int32_t)n;
+           },
+           "the gacha's fake-out (a unit first shown below its tier): the percent chance per drawn 5-star unit; 0 turns it off "
+           "(default master_global.gacha_mutation, 2)")
+        ->type_name("PCT")
+        ->group(group);
     app.add_flag("--galaxy-pass", c.galaxy_pass, "the local player has the Galaxy Pass, renewed when it runs out (+2 deep space ships)")
         ->group(group);
     app.add_flag("--enable-events", c.enable_events,

@@ -6,11 +6,10 @@ data/saves/seed/Game.xml
 1
 --clock
 2026-10-01 12:00:05
---campaign-seed
-mf01_001
 --download-dir
 work/SOA-3.7.0-canonical-data.zip
 --cdn-url
 http://production-game.so-ana.com
+--galaxy-pass
 --gacha-surprise
-0
+100

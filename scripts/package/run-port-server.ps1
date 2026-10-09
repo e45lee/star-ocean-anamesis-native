@@ -11,7 +11,7 @@
 #                            output, normally empty, into DIR\server.out.log)
 #   --port N                 the game server's port (default 44310); its HTTP/CDN port is N+80
 #   server options, passed to soa-server.exe (they set the server's rules and state; lib\with-server.ps1):
-#     --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N,
+#     --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N, --gacha-surprise PCT,
 #     --galaxy-pass, --enable-events, --event-keywords L, --restore-tower, --surprise,
 #     --stamina-heal-time S, --fail SPEC, --download PATH, --download-dir DIR, --master FILE,
 #     --db FILE, --log-packets DIR, --campaign-master-db FILE, --campaign-seed N, --english (the

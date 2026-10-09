@@ -13,7 +13,7 @@
 #     from this save, a 3.7.0 or offline Game.xml), --enable-events (open the events matching
 #     --event-keywords all year), --event-keywords L (default: the summer events), --english (the
 #     English files; with soa-emu's --lang en: the English game, as run-emulator-en.sh does),
-#     --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N, --stamina-heal-time S,
+#     --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N, --gacha-surprise PCT, --stamina-heal-time S,
 #     --galaxy-pass, --restore-tower, --download PATH, --master FILE, --db FILE, --log-packets DIR
 #   any other options go to soa-emu, e.g. --fullscreen (./soa-emu --help)
 set -euo pipefail

@@ -1,4 +1,4 @@
-#include "android/prefs.h"
+#include "soaruntime/android/prefs.h"
 
 #include <soa/base64.h>
 #include <soa/prefs_xml.h>
@@ -6,8 +6,8 @@
 #include <fstream>
 #include <sstream>
 
-#include "core/log.h"
-#include "core/vfs.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/vfs.h"
 
 namespace soa {
 

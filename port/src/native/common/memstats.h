@@ -1,6 +1,6 @@
 #pragma once
 // Memory diagnostics (--memstats / control "memstats"); see memstats.cpp.
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa::native::memstats {
 

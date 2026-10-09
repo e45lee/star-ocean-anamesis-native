@@ -7,7 +7,7 @@
 // reads and writes a parked thread's registers directly (they are plain memory while the JIT is
 // stopped) and guest memory through process_vm_readv / writev (Linux) or Read/WriteProcessMemory
 // (Windows) on its own process: an unmapped address is an error reply, not a crash.
-#include "core/gdbstub.h"
+#include "soaruntime/core/gdbstub.h"
 
 #include <soa/sock.h>  // (Winsock on Windows: first, before <windows.h>)
 
@@ -34,9 +34,9 @@
 
 #include "core/gdb_protocol.h"
 #include "core/crash.h"
-#include "core/thread_record.h"
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/thread_record.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "dynarmic/interface/A64/a64.h"
 
 namespace soa {

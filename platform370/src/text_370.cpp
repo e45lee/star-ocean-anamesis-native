@@ -71,9 +71,9 @@
 #include <soa/env.h>
 #include <soa/line_break.h>
 
-#include "core/cpu.h"
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "internal.h"
 #include "platform370/cocos_layout.h"
 #include "platform370/platform370.h"

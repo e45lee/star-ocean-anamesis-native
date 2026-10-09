@@ -16,7 +16,7 @@
 #include <cstring>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/live_run_both.h"
 #include "native/params/params_layout.h"
 

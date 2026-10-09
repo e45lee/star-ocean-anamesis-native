@@ -9,7 +9,7 @@
 // no current CPU) it is a plain guest_call as well. Integer / pointer arguments only.
 #include <initializer_list>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/live_check.h"
 
 namespace soa::live {

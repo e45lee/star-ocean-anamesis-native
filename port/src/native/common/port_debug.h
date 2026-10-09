@@ -4,7 +4,7 @@
 #pragma once
 #include <string>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa::native::port_debug {
 

@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "native/common/guest_std.h"
 #include "native/common/test.h"
 #include "native/master/master_layout.h"

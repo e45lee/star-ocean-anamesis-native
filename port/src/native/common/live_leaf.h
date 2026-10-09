@@ -19,7 +19,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/abi.h"
+#include "soaruntime/core/abi.h"
 #include "native/common/live_check.h"
 #include "native/common/native.h"
 

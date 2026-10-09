@@ -7,7 +7,7 @@
 #include <random>
 #include <string>
 
-#include "core/thread_record.h"
+#include "soaruntime/core/thread_record.h"
 #include "native/common/guest_std.h"
 #include "native/common/test.h"
 #include "native/particles/particles_check.h"

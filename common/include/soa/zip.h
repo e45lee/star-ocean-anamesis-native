@@ -1,6 +1,6 @@
 #pragma once
 // Read-only ZIP archives (APKs, app bundles and the APKs inside them, the data zips), on minizip-ng
-// (vcpkg.json; target soa_zip, common/CMakeLists.txt). Shared by the runtime (runtime/src/android/zip.h:
+// (vcpkg.json; target soa_zip, common/CMakeLists.txt). Shared by the runtime (runtime/include/soaruntime/android/zip.h:
 // the AAssetManager, the movie player, the programs' library extraction) and anything else that
 // reads a zip (the server's data zips) without depending on the runtime.
 //

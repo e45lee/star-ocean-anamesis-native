@@ -118,7 +118,7 @@ owned by the thread's record and destroyed at its end, `runtime/README.md` "Per-
 `thread_local` object: only trivial ones (pointers, integers, flags) are allowed (T0
 `tools/check_thread_local.py`), and no big `static thread_local` buffer either: glibc carves static TLS
 out of every thread's stack, and 150 KB of them (input's, 2026-10-04) left the game thread too little
-of its host stack for the tower menu (`runtime/src/hle/thread.h` `hle_guest_thread_host_stack`,
+of its host stack for the tower menu (`runtime/include/soaruntime/hle/thread.h` `hle_guest_thread_host_stack`,
 selftest `runtime/guest-thread-host-stack`).
 
 ## What's native now

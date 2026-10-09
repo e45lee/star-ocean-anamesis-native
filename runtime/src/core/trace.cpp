@@ -14,9 +14,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "core/abi.h"
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/abi.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 
 namespace soa {
 namespace {

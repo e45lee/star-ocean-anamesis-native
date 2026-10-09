@@ -6,8 +6,8 @@
 // test params/guest-constants reads the strings back.
 #include <cstring>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/gen/common_addresses.h"
 #include "native/params/gen/params_addresses.h"
 #include "native/params/params_layout.h"

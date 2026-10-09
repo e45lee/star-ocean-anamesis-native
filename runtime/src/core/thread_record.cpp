@@ -1,5 +1,5 @@
 // Per-thread objects with an explicit lifetime (core/thread_record.h).
-#include "core/thread_record.h"
+#include "soaruntime/core/thread_record.h"
 
 #include <pthread.h>
 

@@ -56,7 +56,9 @@ NATIVE_TEST("server/event-now") {
         int64_t x = event_time(m, ServerTime(d)).v;
         char day[16];
         time_t tt = (time_t)x;
-        strftime(day, sizeof day, "%Y-%m-%d", localtime(&tt));
+        struct tm tm;
+        localtime_r(&tt, &tm);
+        strftime(day, sizeof day, "%Y-%m-%d", &tm);
         sqlite3_stmt* st = nullptr;
         sqlite3_prepare_v2(m, "select count(*) from master_event_term where opened_day <= ?1 and ?1 <= closed_day and closed_day < '2022'", -1, &st,
                            nullptr);

@@ -51,9 +51,9 @@
 #include <ctime>
 #include <set>
 
-#include "core/host_mem.h"
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/host_mem.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
 #include "native/common/test.h"

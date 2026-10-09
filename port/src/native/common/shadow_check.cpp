@@ -6,7 +6,7 @@
 #include <cstring>
 #include <ctime>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 
 namespace soa::live {
 

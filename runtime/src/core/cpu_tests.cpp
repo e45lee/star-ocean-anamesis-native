@@ -10,8 +10,8 @@
 #include <cinttypes>
 #include <cstring>
 
-#include "core/cpu.h"
-#include "core/selftest.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/selftest.h"
 
 namespace soa {
 namespace {

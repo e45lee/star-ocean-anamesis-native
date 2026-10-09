@@ -20,11 +20,11 @@
 #include <unordered_map>
 
 #include "core/crash.h"
-#include "core/hle.h"
-#include "core/log.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
 #include "hle/gfx.h"
 #include "core/linux_errno.h"
-#include "hle/thread.h"
+#include "soaruntime/hle/thread.h"
 
 namespace soa {
 namespace {

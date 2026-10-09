@@ -8,8 +8,8 @@
 #include <string>
 #include <vector>
 
-#include "core/abi.h"
-#include "core/loader.h"
+#include "soaruntime/core/abi.h"
+#include "soaruntime/core/loader.h"
 
 namespace soa {
 

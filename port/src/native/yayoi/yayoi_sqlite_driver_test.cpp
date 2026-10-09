@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "native/common/guest_std.h"
 #include "native/common/test.h"
 #include "native/lib_sqlite/lib_sqlite_master.h"

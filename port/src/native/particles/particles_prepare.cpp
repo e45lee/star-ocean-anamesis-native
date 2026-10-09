@@ -8,8 +8,8 @@
 // set, Matrix::InvertLowError (guest code). Prepare takes the emitter's m_simulateLock (the one Simulate takes).
 #include <cstring>
 
-#include "core/loader.h"
-#include "core/thread_record.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/thread_record.h"
 #include "native/common/arm_float.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"

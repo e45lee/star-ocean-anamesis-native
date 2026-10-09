@@ -29,7 +29,7 @@
 namespace soa::glh {
 
 #define GL_ENTRY(name) extern decltype(&::name) name;
-#include "hle/gl_functions.inc"
+#include "soaruntime/hle/gl_functions.inc"
 #undef GL_ENTRY
 
 struct Recorder {

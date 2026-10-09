@@ -10,8 +10,8 @@
 #include <set>
 #include <vector>
 
-#include "core/gdbstub.h"
-#include "core/log.h"
+#include "soaruntime/core/gdbstub.h"
+#include "soaruntime/core/log.h"
 #include "native/common/live_check.h"
 #include "native/common/native_call.h"
 #include "native/common/test.h"

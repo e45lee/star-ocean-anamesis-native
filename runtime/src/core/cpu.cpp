@@ -1,5 +1,5 @@
 #include <soa/env.h>
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -21,11 +21,11 @@
 #include <unordered_map>
 
 #include "core/crash.h"
-#include "core/gdbstub.h"
-#include "core/host_mem.h"
+#include "soaruntime/core/gdbstub.h"
+#include "soaruntime/core/host_mem.h"
 #include "core/linux_errno.h"
-#include "core/log.h"
-#include "core/thread_record.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/thread_record.h"
 #include "dynarmic/interface/A64/a64.h"
 #include "dynarmic/interface/A64/config.h"
 #include "dynarmic/interface/exclusive_monitor.h"

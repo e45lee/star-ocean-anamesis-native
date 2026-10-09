@@ -18,8 +18,8 @@
 #include <initializer_list>
 #include <vector>
 
-#include "core/loader.h"
-#include "core/cpu.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/live_leaf.h"
 #include "native/dynamics/dynamics_layout.h"
 #include "native/math/math_constants.h"

@@ -4,7 +4,7 @@
 #include <cstring>
 #include <vector>
 
-#include "hle/gl_host.h"
+#include "soaruntime/hle/gl_host.h"
 
 namespace soa::native::render {
 

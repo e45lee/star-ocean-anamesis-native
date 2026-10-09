@@ -5,7 +5,7 @@
 
 #include <sqlite3.h>
 
-#include "core/abi.h"
+#include "soaruntime/core/abi.h"
 
 namespace soa::native::lib_sqlite {
 

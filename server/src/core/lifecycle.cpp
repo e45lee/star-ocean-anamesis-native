@@ -24,8 +24,7 @@ void campaign_reply(const Request& r, std::vector<u8>& body) {
     if (campaign::on_response(r.fid, r.method, b)) body.assign(b.begin(), b.end());
 }
 
-// EndMissionTalk(type, mission id, flag, u32): the end of a story mission's scene (agent
-// e6-end2end). (b) 3.7.0's EventScenario::CEventScenario::Exit sends it (CErrorHandlerWrap::Auto,
+// EndMissionTalk(type, mission id, flag, u32): the end of a story mission's scene. (b) 3.7.0's EventScenario::CEventScenario::Exit sends it (CErrorHandlerWrap::Auto,
 // fid 1d00a78c) and CApiNotify::OnEndMissionTalkRes applies the answer (a plain apply, the same
 // body as OnGetPlayMissionRes: @014c0d68, @014cd380). No API answers it: the scene's effect
 // (end_mission_talk), then the GetPlayMission answer with the campaign's data. Both hosts send it

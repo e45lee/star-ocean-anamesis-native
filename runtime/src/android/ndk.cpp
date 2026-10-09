@@ -1,5 +1,5 @@
 // NDK: ALooper, AInputQueue/AInputEvent, AAssetManager, AConfiguration, ANativeWindow, liblog.
-#include "android/ndk.h"
+#include "soaruntime/android/ndk.h"
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -10,9 +10,9 @@
 #include <cstring>
 #include <set>
 
-#include "core/hle.h"
+#include "soaruntime/core/hle.h"
 #include "core/host_fd.h"
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "hle/format.h"
 
 namespace soa {

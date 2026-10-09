@@ -5,7 +5,7 @@
 
 #include <soa/cli.h>
 
-#include "app/cli.h"
+#include "soaruntime/app/cli.h"
 #include "platform370/cli.h"
 #include "soaserver/cli.h"
 

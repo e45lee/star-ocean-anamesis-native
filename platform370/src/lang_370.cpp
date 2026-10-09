@@ -27,10 +27,10 @@
 
 #include <soa/kvs.h>
 
-#include "android/prefs.h"
-#include "core/cpu.h"
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/android/prefs.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "internal.h"
 #include "platform370/platform370.h"
 

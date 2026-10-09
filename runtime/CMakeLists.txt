@@ -9,8 +9,12 @@
 #   soa_codec         common/: Base64 (SharedPreferences values; OpenSSL), PNG (screenshots; stb)
 #
 # Targets:
-#   soaruntime_iface  INTERFACE: include dir (runtime/src, so `#include "core/cpu.h"`), definitions
-#                     and libraries every user of the runtime needs.
+#   soaruntime_iface  INTERFACE: the public include dir (runtime/include, so
+#                     `#include "soaruntime/core/cpu.h"`), definitions and libraries every user of the
+#                     runtime needs. Only the headers under include/soaruntime/ are the runtime's API;
+#                     the ones beside the sources in src/ are private (the runtime's own targets,
+#                     soaruntime_private below, and its tests).
+#   soaruntime_private INTERFACE: src/ as an include dir, for the runtime's own targets only.
 #   soaruntime_objs   OBJECT: the runtime's objects. Link them with $<TARGET_OBJECTS:soaruntime_objs>
 #                     at the FRONT of the executable's sources: link order is static-initializer
 #                     order (soa keeps the order it had before the runtime was a library).
@@ -33,18 +37,21 @@ list(SORT SOA_RUNTIME_SOURCES)
 soa_link_in_init_order(SOA_RUNTIME_SOURCES)  # (MinGW: reversed, so they initialize in this order: cmake/init_order.cmake)
 
 # The runtime must not depend on its users: every quoted #include in runtime/ must name a file in
-# runtime/src (or next to the including file), or dynarmic. Nothing from port/, server/ or
+# runtime/include or runtime/src (or next to the including file), or dynarmic. Nothing from port/, server/ or
 # emulator/. The other includes are common/include's (`#include <soa/env.h>`, the environment rule
 # every program shares; `<soa/zip.h>`, the ZIP reader soa_zip; `<soa/base64.h>`, `<soa/prefs_xml.h>`,
 # `<soa/png.h>`, the formats of soa_codec; `<soa/sock.h>`, the host sockets of soa_compat; `<soa/fonts.h>`,
 # the built-in fonts of soa_fonts), dependencies like dynarmic, not
-# users of the runtime. (Also enforced by the include path, which is runtime/src only, and by
-# soaruntime_tests, which links the whole archive without any port code.)
-soa_check_includes(runtime/ DIRS ${SOA_RUNTIME_DIR}/src ${SOA_RUNTIME_DIR}/tests
-                   ALLOW ${SOA_RUNTIME_DIR}/src ${SOA_REPO_DIR}/common/include EXTRA "^dynarmic/")
+# users of the runtime. (Also enforced by the include path, which is runtime/include and runtime/src
+# only, and by soaruntime_tests, which links the whole archive without any port code.) The runtime's
+# users include only runtime/include (their own soa_check_includes).
+soa_check_includes(runtime/ DIRS ${SOA_RUNTIME_DIR}/src ${SOA_RUNTIME_DIR}/include ${SOA_RUNTIME_DIR}/tests
+                   ALLOW ${SOA_RUNTIME_DIR}/include ${SOA_RUNTIME_DIR}/src ${SOA_REPO_DIR}/common/include EXTRA "^dynarmic/")
 
 add_library(soaruntime_iface INTERFACE)
-target_include_directories(soaruntime_iface INTERFACE ${SOA_RUNTIME_DIR}/src)
+target_include_directories(soaruntime_iface INTERFACE ${SOA_RUNTIME_DIR}/include)
+add_library(soaruntime_private INTERFACE)
+target_include_directories(soaruntime_private INTERFACE ${SOA_RUNTIME_DIR}/src)
 target_compile_definitions(soaruntime_iface INTERFACE _GNU_SOURCE GL_GLEXT_PROTOTYPES EGL_EGLEXT_PROTOTYPES)
 target_link_libraries(soaruntime_iface INTERFACE
   soa_env
@@ -62,7 +69,7 @@ target_link_libraries(soaruntime_iface INTERFACE
 
 add_library(soaruntime_objs OBJECT ${SOA_RUNTIME_SOURCES})
 target_link_libraries(soaruntime_objs PUBLIC soaruntime_iface)
-target_link_libraries(soaruntime_objs PRIVATE soa_guest_code)
+target_link_libraries(soaruntime_objs PRIVATE soa_guest_code soaruntime_private)
 
 add_library(soaruntime STATIC $<TARGET_OBJECTS:soaruntime_objs>)
 target_link_libraries(soaruntime PUBLIC soaruntime_iface)
@@ -70,12 +77,12 @@ target_link_libraries(soaruntime PUBLIC soaruntime_iface)
 file(GLOB SOA_RUNTIME_TEST_SOURCES CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/tests/*.cpp)
 add_executable(soaruntime_tests ${SOA_RUNTIME_TEST_SOURCES})
 target_link_libraries(soaruntime_tests PRIVATE $<LINK_LIBRARY:WHOLE_ARCHIVE,soaruntime>)
-target_link_libraries(soaruntime_tests PRIVATE soa_guest_code)
+target_link_libraries(soaruntime_tests PRIVATE soa_guest_code soaruntime_private)
 
-# The desktop host loop (src/app/host.h), on SDL2 (X11 or Wayland: SDL picks).
+# The desktop host loop (include/soaruntime/app/host.h, src/app/), on SDL2 (X11 or Wayland: SDL picks).
 file(GLOB SOA_RUNTIME_APP_SOURCES CONFIGURE_DEPENDS ${SOA_RUNTIME_DIR}/src/app/*.cpp)
 add_library(soaruntime_app STATIC ${SOA_RUNTIME_APP_SOURCES})
 target_link_libraries(soaruntime_app PUBLIC soaruntime_iface soa::SDL2 PRIVATE Freetype::Freetype soa_codec soa_fonts)
 # Windows: the program exports ANGLE's EGL entry points, so SDL loads EGL from it (src/app/sdl_gl.cpp)
 target_link_options(soaruntime_app INTERFACE $<$<PLATFORM_ID:Windows>:${SOA_RUNTIME_DIR}/src/app/egl_exports_win32.def>)
-target_link_libraries(soaruntime_app PRIVATE soa_guest_code)
+target_link_libraries(soaruntime_app PRIVATE soa_guest_code soaruntime_private)

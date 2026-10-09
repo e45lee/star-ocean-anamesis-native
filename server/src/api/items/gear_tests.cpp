@@ -229,5 +229,22 @@ NATIVE_TEST("items/gear-barney-chance") {
     if (!ran) return;  // no 3.7.0 master or save
 }
 
+// UpdateGearStock: always refused with 11006 (the player's gear_stock is gear_stock_max already;
+// the replay corpora api-sweep and items-party), nothing paid.
+NATIVE_TEST("gear/update-gear-stock-refused") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        u32 code = 0;
+        c.test.on_refuse = [&](u32 e) { code = e; };
+        const int64_t coins = c.st.one("select free_coin + pay_coin from player", {});
+        Value d = mp_decode(call(c, "UpdateGearStock", {}));
+        t.expect_eq(code, 11006u, "refused with kLimitReached");
+        t.expect_eq(c.st.one("select free_coin + pay_coin from player", {}), coins, "no coins taken");
+        const Value* data = d.find("data");
+        t.expect_eq(data && data->find("Player") != nullptr, true, "answers the player state");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
+}
+
 }  // namespace
 }  // namespace soa::server

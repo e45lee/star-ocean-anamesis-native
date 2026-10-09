@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-#include "core/loader.h"
-#include "core/log.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
 #include "native/common/native.h"
 #include "native/common/native_method.h"
 #include "native/hash/hash_layout.h"

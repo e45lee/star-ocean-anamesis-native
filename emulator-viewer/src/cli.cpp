@@ -3,7 +3,7 @@
 
 #include <soa/cli.h>
 
-#include "app/cli.h"
+#include "soaruntime/app/cli.h"
 
 namespace soa::viewer {
 

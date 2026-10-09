@@ -18,7 +18,7 @@
 #include <cstdlib>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/lockstep.h"
 #include "native/common/native.h"
 #include "native/lib_jpeg/lib_jpeg_api.h"

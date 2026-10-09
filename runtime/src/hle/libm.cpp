@@ -1,6 +1,6 @@
 #include <math.h>
 
-#include "core/hle.h"
+#include "soaruntime/core/hle.h"
 
 namespace soa {
 

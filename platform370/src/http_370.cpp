@@ -45,10 +45,10 @@
 #include <memory>
 #include <string>
 
-#include "core/log.h"
-#include "core/thread_record.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/thread_record.h"
 #include "internal.h"
-#include "jni/jvm.h"
+#include "soaruntime/jni/jvm.h"
 #include "platform370/platform370.h"
 #include "soa/sock.h"
 

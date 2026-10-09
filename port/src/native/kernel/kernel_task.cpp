@@ -7,7 +7,7 @@
 // boundary while jobs are left. All under m_barrierCs (a recursive pthread mutex: sync's
 // CriticalSection). MakeTaskList / GetTotalTaskNumber run under the FastCriticalSection m_cs of every
 // manager of the merged ring (guest code still takes those too: Add / Delete / ChangeLevel).
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/native_method.h"
 #include "native/kernel/kernel_check.h"
 #include "native/kernel/kernel_layout.h"

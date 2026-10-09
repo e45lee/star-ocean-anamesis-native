@@ -6,7 +6,7 @@
 // through live::out_call (a live check records them), with the allocator's asserts.
 #include <cstring>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/live_call.h"
 #include "native/libcxx/libcxx_family.h"
 #include "native/libcxx/libcxx_layout.h"

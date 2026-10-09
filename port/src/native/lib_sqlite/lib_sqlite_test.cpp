@@ -20,9 +20,9 @@
 #include <string>
 #include <vector>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "core/paths.h"
-#include "core/vfs.h"
+#include "soaruntime/core/vfs.h"
 #include "native/common/test.h"
 #include "native/lib_sqlite/lib_sqlite.h"
 #include "native/lib_sqlite/lib_sqlite_master.h"

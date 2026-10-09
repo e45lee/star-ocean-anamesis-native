@@ -1,4 +1,4 @@
-#include "core/vfs.h"
+#include "soaruntime/core/vfs.h"
 
 #include <sys/stat.h>
 
@@ -6,8 +6,8 @@
 #include <cstring>
 #include <vector>
 
-#include "core/device.h"
-#include "core/log.h"
+#include "soaruntime/core/device.h"
+#include "soaruntime/core/log.h"
 
 namespace soa {
 

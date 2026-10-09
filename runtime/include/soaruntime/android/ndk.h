@@ -10,8 +10,8 @@
 
 #include <soa/file_tree.h>
 
-#include "android/zip.h"
-#include "core/cpu.h"
+#include "soaruntime/android/zip.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa {
 

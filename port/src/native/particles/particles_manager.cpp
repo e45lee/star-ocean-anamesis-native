@@ -9,7 +9,7 @@
 // back with 1 -> 0 only (a lock another thread changed meanwhile is left alone); m_inFlight is an atomic add.
 #include <cstring>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/arm_float.h"
 #include "native/particles/particles_calls.h"
 

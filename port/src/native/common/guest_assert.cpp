@@ -1,8 +1,8 @@
 // Framework::gDoAssert from natives (guest_assert.h).
 #include "native/common/guest_assert.h"
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/guest_std.h"
 
 namespace soa::native {

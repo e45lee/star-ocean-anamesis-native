@@ -16,7 +16,7 @@
 
 #include <soa/env.h>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/test.h"
 #include "native/hash/hash_layout.h"
 #include "native/params/params_check.h"

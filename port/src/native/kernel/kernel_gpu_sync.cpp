@@ -6,8 +6,8 @@
 // Live check: none. Notify runs the registered handlers (other subsystems' code, real wake-ups) and
 // WaitGPUSync blocks until another thread's Notify: neither can be replayed on a copy. Covered by the
 // differential tests (kernel/gpu-sync-*), which compare the call sequences with the guest's.
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/guest_std.h"
 #include "native/common/native_method.h"
 #include "native/kernel/kernel_layout.h"

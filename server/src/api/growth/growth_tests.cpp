@@ -235,5 +235,44 @@ NATIVE_TEST("growth/equip-auto") {
     t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {12345}, {}, {}}), (u32)ErrorCode::kItemUnusable, "an unknown character: refused");
 }
 
+// EquipAccessory (equip_item, shared with EquipWeapon): an owned accessory goes on, moves from its
+// previous owner; an unknown character or an item not an owned accessory is refused with 10208
+// (the replay corpora api-sweep, growth and items-party refuse it).
+NATIVE_TEST("growth/equip-accessory") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        u32 code = 0;
+        c.test.on_refuse = [&](u32 e) { code = e; };
+        std::vector<u64> chars;
+        c.st.q("select uid from roster order by uid limit 2", {}, [&](const Row& r) { chars.push_back((u64)r.i("uid")); });
+        if (chars.size() < 2) return t.fail("the seed has %zu characters", chars.size());
+        u32 accessory = (u32)c.m.one("select id from master_item where type = 3 order by id limit 1", {});
+        u32 weapon = (u32)c.m.one("select id from master_item where type = 1 order by id limit 1", {});
+        Value items = Value::array(), stocks = Value::array(), added = Value::array();
+        c.grant(1, accessory, 1, items, stocks, added);
+        c.grant(1, weapon, 1, items, stocks, added);
+        if (items.arr.size() != 2) return t.fail("granted %zu items", items.arr.size());
+        const u64 acc_uid = items.arr[0].get_u("id"), weapon_uid = items.arr[1].get_u("id");
+        call(c, "EquipAccessory", {0x7fffffffffffull, acc_uid});
+        t.expect_eq(code, 10208u, "unknown character refused");
+        code = 0;
+        call(c, "EquipAccessory", {chars[0], weapon_uid});
+        t.expect_eq(code, 10208u, "a weapon isn't an accessory");
+        code = 0;
+        call(c, "EquipAccessory", {chars[0], 0x7fffffffffffull});
+        t.expect_eq(code, 10208u, "an item not owned");
+        code = 0;
+        Value d = mp_decode(call(c, "EquipAccessory", {chars[0], acc_uid}));
+        t.expect_eq(code, 0u, "an owned accessory is accepted");
+        t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {chars[0]}), acc_uid, "equipped");
+        const Value* data = d.find("data");
+        t.expect_eq(data && data->find("EquipAccessoryResult") != nullptr, true, "EquipAccessoryResult answered");
+        call(c, "EquipAccessory", {chars[1], acc_uid});
+        t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {chars[1]}), acc_uid, "moved to the second");
+        t.expect_eq(c.st.one("select accessory_uid is null from roster where uid = ?", {chars[0]}), (int64_t)1, "off the first");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
+}
+
 }  // namespace
 }  // namespace soa::server

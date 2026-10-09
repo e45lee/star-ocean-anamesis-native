@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/master/master_element.h"
 #include "native/master/master_guest.h"
 #include "native/params/params_check.h"

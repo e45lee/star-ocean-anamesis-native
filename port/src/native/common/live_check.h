@@ -36,7 +36,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/guest_stub.h"
 
 namespace soa::live {

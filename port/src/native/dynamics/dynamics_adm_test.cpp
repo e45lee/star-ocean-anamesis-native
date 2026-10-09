@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/dynamics/dynamics_layout.h"
 #include "native/dynamics/gen/dynamics_addresses.h"
 #include "native/math/math_test_util.h"

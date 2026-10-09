@@ -22,7 +22,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/live_check.h"
 
 namespace soa::live {

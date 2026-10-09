@@ -29,7 +29,7 @@ second mechanism:
   that still enters the same `FastCriticalSection` inline (other subsystems) and these natives
   exclude each other correctly (`sync/cmutex-contention` mixes them on one mutex).
 - `Aska::Event`, `Aska::CriticalSection`: the bionic pthread mutex / condition variable embedded in
-  the object, through the HLE layer's host calls (`runtime/src/hle/thread.h` `hle_mutex_*`,
+  the object, through the HLE layer's host calls (`runtime/include/soaruntime/hle/thread.h` `hle_mutex_*`,
   `hle_cond_*`): the same host objects in place and the same rules as the guest's pthread imports
   (bionic's static initializers, winpthreads' zero objects, the window thread's sliced wait for
   idle presenting).

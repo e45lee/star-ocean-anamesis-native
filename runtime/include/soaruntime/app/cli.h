@@ -7,7 +7,7 @@
 
 #include <soa/cli.h>
 
-#include "app/host.h"
+#include "soaruntime/app/host.h"
 
 namespace soa::app {
 

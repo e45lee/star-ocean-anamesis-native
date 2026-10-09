@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "core/device.h"
-#include "core/hle.h"
-#include "core/log.h"
+#include "soaruntime/core/device.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
 #include "internal.h"
-#include "jni/jvm.h"
+#include "soaruntime/jni/jvm.h"
 #include "platform370/platform370.h"
 
 #include <soa/local_time.h>

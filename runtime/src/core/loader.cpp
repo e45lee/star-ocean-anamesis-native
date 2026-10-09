@@ -1,4 +1,4 @@
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 
 #include <cxxabi.h>
 #include "core/elf64.h"
@@ -12,9 +12,9 @@
 #include <functional>
 #include <unordered_map>
 
-#include "core/hle.h"
-#include "core/host_mem.h"
-#include "core/log.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/host_mem.h"
+#include "soaruntime/core/log.h"
 
 namespace soa {
 

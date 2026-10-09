@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa::server_port {
 

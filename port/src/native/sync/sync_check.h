@@ -20,7 +20,7 @@
 #include <cstring>
 #include <string>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/shadow_check.h"
 #include "native/sync/sync_layout.h"
 

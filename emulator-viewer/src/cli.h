@@ -1,10 +1,10 @@
 #pragma once
-// soa-viewer's command line (cli.cpp): the runtime programs' shared options (runtime/src/app/cli.h)
+// soa-viewer's command line (cli.cpp): the runtime programs' shared options (runtime/include/soaruntime/app/cli.h)
 // and its own. main.cpp acts on the result.
 #include <string>
 #include <vector>
 
-#include "app/host.h"
+#include "soaruntime/app/host.h"
 
 namespace soa::viewer {
 

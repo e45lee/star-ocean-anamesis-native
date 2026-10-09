@@ -96,6 +96,18 @@ def comments(src):
     return out
 
 
+def comment_blocks(src):
+    """The comments of consecutive lines joined into one text each (whitespace collapsed)."""
+    blocks, last = [], None
+    for line, text in comments(src):
+        if last is not None and line <= last + 1 and blocks:
+            blocks[-1] += " " + text
+        else:
+            blocks.append(text)
+        last = line + text.count("\n")
+    return [re.sub(r"\s+", " ", b) for b in blocks]
+
+
 def code_without_comments(src):
     """The source with comments removed (strings kept): where log format strings live."""
     res, i, n = [], 0, len(src)
@@ -219,7 +231,10 @@ def manifest(root):
                 fm["offsets"] += 1
             for t in TABLE_RE.findall(text):
                 m["tables"][t] += 1
-            fm["agents"] += len(AGENT_RE.findall(text))
+        # an agent mention may wrap onto the next comment line: search each run of comments on
+        # consecutive lines as one text
+        for block in comment_blocks(src):
+            fm["agents"] += len(AGENT_RE.findall(block))
         # links may span a comment line break: search the file's joined comment text
         joined = re.sub(r"\s+", " ", " ".join(t for _, t in comments(src)))
         for kind, title in QUOTED_LINK_RE.findall(joined):

@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/native.h"
 
 namespace soa::native::lib_crypto {

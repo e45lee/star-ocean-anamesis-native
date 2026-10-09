@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "core/abi.h"
+#include "soaruntime/core/abi.h"
 
 namespace soa {
 

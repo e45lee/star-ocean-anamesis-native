@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/particles/particles_layout.h"
 
 namespace soa::native::particles {

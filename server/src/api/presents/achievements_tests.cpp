@@ -92,5 +92,40 @@ NATIVE_TEST("presents/achievement-chain") {
     });
 }
 
+// AchievementReceiveList (no arguments): receives every achieved, unreceived achievement at once
+// (the replay corpus api-sweep calls it with none achieved); a second call has nothing left.
+NATIVE_TEST("presents/achievement-receive-list") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        u32 code = 0;
+        c.test.on_refuse = [&](u32 e) { code = e; };
+        // nothing achieved in the seed: accepted, nothing received
+        Value d = mp_decode(call(c, "AchievementReceiveList", {}));
+        t.expect_eq(code, 0u, "accepted");
+        const Value* data = d.find("data");
+        if (!data) return t.fail("no data");
+        t.expect_eq(data->find("Achievement") != nullptr && data->find("AddPresent") == nullptr, true, "Achievement, no AddPresent");
+        t.expect_eq(data->get_u("IsUpdateAchievement"), (u64)0, "nothing received");
+        // the player-rank achievement ac_ind_rank_01 (rank 110) reached: received, its reward in the box
+        u32 ach = master_id(c, "ac_ind_rank_01", "master_achievement");
+        if (!ach) return t.fail("no ac_ind_rank_01");
+        c.st.q("update player set level = 110", {});
+        const int64_t presents = c.st.one("select count(*) from presents", {});
+        d = mp_decode(call(c, "AchievementReceiveList", {}));
+        data = d.find("data");
+        if (!data) return t.fail("no data");
+        t.expect_eq((u32)c.st.one("select count(*) from achievements where id = ? and received_at is not null", {ach}), 1u, "rank 110 received");
+        t.expect_eq(data->get_u("IsUpdateAchievement"), (u64)1, "IsUpdateAchievement");
+        const Value* added = data->find("AddPresent");
+        t.expect_eq(added && !added->arr.empty(), true, "AddPresent");
+        const int64_t after = c.st.one("select count(*) from presents", {});
+        t.expect_eq(after > presents, true, "rewards in the present box");
+        Value again = mp_decode(call(c, "AchievementReceiveList", {}));
+        t.expect_eq(again.find("data") && again.find("data")->find("AddPresent") == nullptr, true, "nothing left the second time");
+        t.expect_eq(c.st.one("select count(*) from presents", {}), after, "no new rewards");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
+}
+
 }  // namespace
 }  // namespace soa::server

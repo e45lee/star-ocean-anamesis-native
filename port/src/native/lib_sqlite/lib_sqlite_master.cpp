@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 #include "core/paths.h"
-#include "core/vfs.h"
+#include "soaruntime/core/vfs.h"
 
 namespace soa::native::lib_sqlite {
 

@@ -405,7 +405,9 @@ def cmd_ui(a):
     run_batch(a, items, a.out / "ui.jsonl", req, row)
 
 
-STORY_VERSION = "story-v1"
+# story-v1: the speakers as Global / the glossary name them, else in Japanese; story-v2 (en-prefix
+# 2026-10-08, english.md 7.21): else our master row's English (Speakers.name)
+STORY_VERSION = "story-v2"
 STORY_EXTRA = """
 You now translate story dialogue: a numbered block of consecutive lines of one scene, each with its speaker.
 - Translate each numbered line into natural English dialogue in the speaker's voice, keeping the scene's tone; keep the speaker names and every name in the glossary exactly as given.
@@ -417,33 +419,47 @@ STORY_CONTEXT = 4
 
 
 def scenes(src):
-    """[(scene id, [(message_id, speaker code or None)])] in script order, from the download's
-    Script/*.msgp (src.scenario: the download, its zip read in place or a folder)."""
-    from soa_save import script
-    from soa_save.download_tree import DownloadTree
-    out = []
-    tree = DownloadTree.open_or_none(src.scenario)
-    for n in tree.list("Script") if tree else []:
-        if not n.endswith(".msgp"):
-            continue
-        o = script.load(tree.read("Script/" + n), "Script/" + n)
-        lines = []
-        for _sid, cmds in o.get("Script", {}).items():
-            for c in cmds:
-                name = script.command_name(c["command_type"])
-                if name in script.SPEECH:
-                    mid = c.get("command_param0")
-                    who = c.get("command_param6") or c.get("command_param1")
-                    if isinstance(mid, str):
-                        lines.append((mid, who if isinstance(who, str) else None))
-                elif name in script.MENUS:
-                    for k in range(0, 8, 2):
-                        mid = c.get(f"command_param{k}")
-                        if isinstance(mid, str) and mid:
-                            lines.append((mid, "(choice)"))
-        if lines:
-            out.append((n[: -len(".msgp")], lines))
-    return out
+    """[(scene id, [(message_id, speaker code or None)])] in script order (english_core.story_scenes)."""
+    return core.story_scenes(src)
+
+
+class Speakers:
+    """The story's speakers for the engine (english.md 7.21): name(code) is the name a line is sent
+    with: Global's English, else the glossary's for the Japanese name, else our master row's
+    (data/english/master.tsv), else the Japanese. Before 2026-10-08 (story-v1) a speaker without
+    Global or glossary English was sent in Japanese; the engine then wrote its own English for it
+    in front of the line ("Masked Man: ..." for 仮面の男) and the strip, which compared with the
+    Japanese, never matched. strip(en, code) drops a leading "<speaker>: " that names the line's
+    speaker in any form english_text's check knows (english_core.speaker_prefix)."""
+
+    def __init__(self, src, g):
+        import english_text as T
+        self.src, self.g = src, g
+        self.names = T.SpeakerNames(T.Ctx(), g)
+
+    def name(self, code):
+        if not code:
+            return "Narration"
+        if code in ("<player>", "(choice)"):
+            return code
+        for c in (code, code[:-1] + "a"):
+            en = self.src.gl_english(c)
+            if en:
+                return en
+            ja = self.src.jp_rows.get(c)
+            if ja:
+                if ja in self.g:
+                    return self.g[ja]["en"]
+                t = self.names.table.get(c)
+                return core.unesc(t["en"]).replace("\n", " ") if t else ja
+        return code
+
+    def strip(self, en, code, ja=""):
+        if not en:
+            return en
+        who = self.names.line([code]) if code and code != "(choice)" else None
+        pre = core.speaker_prefix(en, (who[0] if who else []) + [self.name(code)], ja, who[1] if who else ())
+        return en[len(pre):].strip() if pre else en
 
 
 def cmd_story(a):
@@ -456,21 +472,8 @@ def cmd_story(a):
     text = {mid: (stem, ja) for stem, mid, ja in src.story()}
     jp_names = src.jp_rows
 
-    def speaker(code):
-        if not code:
-            return "Narration"
-        if code == "<player>":
-            return "<player>"
-        if code == "(choice)":
-            return "(menu choice)"
-        for c in (code, code[:-1] + "a"):
-            en = src.gl_english(c)
-            if en:
-                return en
-            ja = jp_names.get(c)
-            if ja:
-                return g[ja]["en"] if ja in g else ja
-        return code
+    sp = Speakers(src, g)
+    speaker = sp.name
 
     items, seen = [], set()
     for scene, lines in scenes(src):
@@ -517,8 +520,7 @@ def cmd_story(a):
         lines = []
         for n, (m, w) in enumerate(todo, 1):
             en = got.get(n)
-            if en and ":" in en and en.split(":", 1)[0].strip() == speaker(w):
-                en = en.split(":", 1)[1].strip()  # the model repeated the speaker
+            en = sp.strip(en, w, text[m][1])  # the model repeated the speaker (english.md 7.21)
             lines.append({"message_id": m, "file": text[m][0], "ja_sha1": E.sha1(text[m][1]),
                           "ja": text[m][1], "speaker": speaker(w), "mt": en})
         return {"key": k, "scene": scene, "kind": "story", "lines": lines, "raw": txt, "finish": finish,
@@ -596,19 +598,8 @@ def cmd_story_fix(a):
             items.append((f"fix:{m}", (stem, [], (m, None))))
     print(f"[story-fix] {len(items)} lines", flush=True)
 
-    def speaker(code):
-        if not code:
-            return "Narration"
-        if code in ("<player>", "(choice)"):
-            return code
-        for c in (code, code[:-1] + "a"):
-            en = src.gl_english(c)
-            if en:
-                return en
-            ja = src.jp_rows.get(c)
-            if ja:
-                return g[ja]["en"] if ja in g else ja
-        return code
+    sp = Speakers(src, g)
+    speaker = sp.name
 
     def req(p):
         scene, ctx, (m, w) = p
@@ -627,8 +618,7 @@ def cmd_story_fix(a):
         scene, _ctx, (m, w) = p
         got = re.search(r"^\[1\]\s*(.*)$", txt, re.M)
         en = (got.group(1) if got else txt).strip()
-        if en and ":" in en and en.split(":", 1)[0].strip() == speaker(w):
-            en = en.split(":", 1)[1].strip()
+        en = sp.strip(en, w, text[m][1])  # the model repeated the speaker (english.md 7.21)
         return {"key": k, "scene": scene, "kind": "story", "raw": txt, "finish": finish,
                 "lines": [{"message_id": m, "file": text[m][0], "ja_sha1": E.sha1(text[m][1]), "ja": text[m][1],
                            "speaker": speaker(w), "mt": en or None}],
@@ -691,19 +681,8 @@ def cmd_story_retry(a):
             items.append((f"retry:{m}", where.get(m, (text[m][0], [], (m, None)))))
     print(f"[story-retry] {len(items)} lines", flush=True)
 
-    def speaker(code):
-        if not code:
-            return "Narration"
-        if code in ("<player>", "(choice)"):
-            return code
-        for c in (code, code[:-1] + "a"):
-            en = src.gl_english(c)
-            if en:
-                return en
-            ja = src.jp_rows.get(c)
-            if ja:
-                return g[ja]["en"] if ja in g else ja
-        return code
+    sp = Speakers(src, g)
+    speaker = sp.name
 
     def req(p):
         scene, ctx, (m, w) = p
@@ -722,8 +701,7 @@ def cmd_story_retry(a):
         scene, _ctx, (m, w) = p
         got = re.search(r"^\[1\]\s*(.*)$", txt, re.M)
         en = (got.group(1) if got else txt).strip()
-        if en and ":" in en and en.split(":", 1)[0].strip() == speaker(w):
-            en = en.split(":", 1)[1].strip()
+        en = sp.strip(en, w, text[m][1])  # the model repeated the speaker (english.md 7.21)
         return {"key": k, "scene": scene, "kind": "story", "raw": txt, "finish": finish,
                 "lines": [{"message_id": m, "file": text[m][0], "ja_sha1": E.sha1(text[m][1]), "ja": text[m][1],
                            "speaker": speaker(w), "mt": en or None}],

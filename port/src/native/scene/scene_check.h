@@ -24,7 +24,7 @@
 
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/shadow_check.h"
 #include "native/scene/scene_layout.h"
 

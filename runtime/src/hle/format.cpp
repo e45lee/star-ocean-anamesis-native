@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <cwchar>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 
 namespace soa {
 

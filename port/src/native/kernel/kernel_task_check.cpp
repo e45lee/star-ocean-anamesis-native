@@ -13,7 +13,7 @@
 #include <cstring>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/native_method.h"
 #include "native/kernel/kernel_check.h"
 

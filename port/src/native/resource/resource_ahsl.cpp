@@ -4,7 +4,7 @@
 // database's FastCriticalSection (inlined in the guest: sync's Enter / Leave here).
 #include <cstring>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/native_method.h"
 #include "native/resource/resource_check.h"
 #include "native/resource/resource_layout.h"

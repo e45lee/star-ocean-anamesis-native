@@ -236,5 +236,70 @@ NATIVE_TEST("gacha/enable-events") {
     opt.event_keywords = saved.event_keywords;
 }
 
+// The fake-out (is_mutation; gacha.cpp roll_surprise, docs/server-rules.md#gacha-surprise): with
+// --gacha-surprise 100 every drawn ★5 unit is one and no other; with 0 none; at 50 about half of
+// the ★5 units; the default reads master_global.gacha_mutation (2). The field is a bool on every
+// GachaItems entry.
+NATIVE_TEST("gacha/surprise") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    S.set_clock("2021-05-25 12:00:00");
+    const int32_t saved = config().gacha_surprise;
+    const u32 perm = S.id("master_gacha", "gacha_role_0001");
+    // `draws` bulk draws at `percent`: (★5 units, of them surprises, other units that were surprises)
+    struct Counts {
+        u32 five = 0, five_surprise = 0, other_surprise = 0, units = 0;
+        bool shape = true;
+    };
+    auto draw = [&](int32_t percent, int draws) {
+        config().gacha_surprise = percent;
+        Counts c;
+        for (int k = 0; k < draws; k++) {
+            sv.st.q("update player set free_coin = 100000, pay_coin = 0", {});
+            std::vector<u8> out;
+            if (S.call(Request{"Gacha", fids::kGacha, {perm, 0}, {"x"}, {}}, &out) != 0) {
+                t.fail("draw %d refused", k);
+                break;
+            }
+            Value r = mp_decode(out);
+            const Value* items = r.find("data") ? r.find("data")->find("GachaItems") : nullptr;
+            if (!items) {
+                t.fail("no GachaItems");
+                break;
+            }
+            for (const Value& e : items->arr) {
+                const Value* m = e.find("is_mutation");
+                if (!m || m->type != Value::Bool) c.shape = false;
+                const bool surprise = m && m->type == Value::Bool && m->b;
+                const u64 role = e.get_u("master_role_id"), item = e.get_u("master_item_id");
+                const int64_t rarity = role ? sv.m.one("select rarity from master_role where id = ?", {role})
+                                            : sv.m.one("select rarity from master_item where id = ?", {item});
+                c.units++;
+                if (rarity >= 5) c.five++, c.five_surprise += surprise;
+                else c.other_surprise += surprise;
+            }
+        }
+        return c;
+    };
+    Counts all = draw(100, 30);
+    t.expect_eq(all.shape, true, "is_mutation is a bool on every entry");
+    t.expect_eq(all.five > 0, true, "30 bulk draws bring a 5-star unit");
+    t.expect_eq(all.five_surprise, all.five, "100: every 5-star unit a surprise");
+    t.expect_eq(all.other_surprise, 0u, "100: no other unit");
+    Counts none = draw(0, 30);
+    t.expect_eq(none.five_surprise + none.other_surprise, 0u, "0: none");
+    Counts half = draw(50, 120);
+    if (half.five < 20) t.fail("only %u 5-star units in 1200 draws", half.five);
+    else if (half.five_surprise * 10 < half.five * 2 || half.five_surprise * 10 > half.five * 8)
+        t.fail("50: %u of %u 5-star units", half.five_surprise, half.five);
+    t.expect_eq(half.other_surprise, 0u, "50: no other unit");
+    t.expect_eq((u32)sv.m.one("select value from master_global where key = 'gacha_mutation'", {}), 2u, "master_global.gacha_mutation");
+    Counts dflt = draw(-1, 40);
+    t.expect_eq(dflt.other_surprise, 0u, "default: no other unit");
+    if (dflt.five && dflt.five_surprise * 4 > dflt.five + 4) t.fail("default (2%%): %u of %u 5-star units", dflt.five_surprise, dflt.five);
+    config().gacha_surprise = saved;
+}
+
 }  // namespace
 }  // namespace soa::server

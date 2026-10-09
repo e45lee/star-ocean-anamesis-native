@@ -233,7 +233,7 @@ run-port-server{{IF windows}}.cmd{{ELSE}}.sh{{END}}
               --server-log         show the server's log on the terminal too
 {{END}}
               --new-player, --seed FILE, --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS",
-              --start-coins N, --galaxy-pass, --enable-events, --event-keywords L,
+              --start-coins N, --gacha-surprise PCT, --galaxy-pass, --enable-events, --event-keywords L,
               --restore-tower, --download PATH, --master FILE, --log-packets DIR: for soa-server
               any other options go to soa{{EXE}} (e.g. --fullscreen, --apk FILE).
               run-port-server{{IF windows}}.cmd{{ELSE}}.sh{{END}} --help lists them.

@@ -21,6 +21,7 @@
 #include "core/wallet.h"
 #include "master/gacha_pools.h"
 #include "rules/mission_rules.h"
+#include "soaserver/config.h"  // --gacha-surprise
 
 namespace soa::server {
 
@@ -222,6 +223,26 @@ void record_history(ext::Ctx& ctx, const GachaDraw& draw, const Drawn& drawn, in
          k == 0 ? draw.use_free : 0u, k == 0 ? draw.use_pay : 0u});
 }
 
+// The fake-out ("gacha surprise", the result entry's is_mutation; docs/server-rules.md#gacha-surprise,
+// docs/gacha-presentation.md "What selects it"): the unit is shown first at a lower tier, then the
+// flash eo100_f07b and its SE, then the unit again at its real tier.
+//   (b) the client plays it for a unit with is_mutation (CGachaManager::CheckGachaResult,
+//       Progress_Main sub-states 9, 0xd, 0xe) and has a debug API for it (Debug_GachaMutation,
+//       CGachaMutationTestResultInfo {content_id, content_type, is_mutation}), so the live server
+//       sent it for some draws.
+//   (a) master_global.gacha_mutation = 2, a row the client never reads (its key hash is nowhere in
+//       the code): a server parameter.
+//   (d) its reading: the percent chance per drawn ★5 unit (rarity 5 or more: master_role.rarity,
+//       master_item.rarity); other units never. --gacha-surprise PCT replaces it, 0 turns it off.
+//       The roll is the server's seeded RNG, one draw per ★5 unit only (replays stay
+//       deterministic; a draw without a ★5 unit takes no extra RNG value).
+bool roll_surprise(ext::Ctx& ctx, int64_t rarity) {
+    if (rarity < 5) return false;
+    const int32_t option = config().gacha_surprise;
+    const u32 percent = option >= 0 ? (u32)option : std::min<u32>(100, ctx.global_u32("gacha_mutation", 0));
+    return percent && (*ctx.rng)() % 100 < percent;
+}
+
 // 4a. A drawn weapon: a new unique item (AddItem) and the history row; with no room in the
 // inventory it goes to the overflow box (storage::to_one_time_storage; AddOneTimeStorageInfo):
 // (d) then the GachaItems entry has no item (player_item_id 0) and the history row no uid.
@@ -240,7 +261,7 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
     result["master_role_id"] = 0u;
     result["player_character_id"] = 0u;
     result["duplication"] = 0u;
-    result["is_mutation"] = false;
+    result["is_mutation"] = roll_surprise(ctx, ctx.m.one("select rarity from master_item where id = ?", {unit.content_id}));
     draw.items.push(result);
     record_history(ctx, draw, Drawn{std::nullopt, std::nullopt, drawn}, rank, false, k);
 }
@@ -306,7 +327,7 @@ void add_drawn_role(ext::Ctx& ctx, GachaDraw& draw, u32 role, int rank, u32 k, b
     result["master_role_id"] = role;
     result["player_character_id"] = uid.v;
     result["duplication"] = duplicate ? 1u : 0u;
-    result["is_mutation"] = false;
+    result["is_mutation"] = roll_surprise(ctx, ctx.m.one("select rarity from master_role where id = ?", {role}));
     draw.items.push(result);
     if (!duplicate) {
         Value character = Value::object();  // the AddCharacter entry

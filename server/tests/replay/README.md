@@ -27,6 +27,8 @@ What it does not cover: the wire layer's own work (the bridge, the Ninja cipher,
 
 ## The corpora
 
+The corpora that draw gachas with a ★5 unit (`badges`, `compose-points`, `economy`, `hammers`, `items-party`, `seeded`, `storage`) run with `--gacha-surprise 0`: the fake-out's roll (docs/server-rules.md#gacha-surprise, 2 % per ★5 unit by default) takes an RNG value per ★5 unit, which moves every later draw, and their hand-written requests name the units and uids those draws gave. `gacha-surprise` covers the roll.
+
 | Corpus | Source | Requests |
 |---|---|---|
 | `seeded` | tests/diff's `seeded` flow, `emu` target (soa-emu + soa-server `--log-packets`), on 2eaaaf6: title, Login, the mission 1-05 (mf01_001) battle, a 10-draw | 10 |
@@ -58,6 +60,8 @@ What it does not cover: the wire layer's own work (the bridge, the Ninja cipher,
 | `badges` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 6), the `economy` options: Login, a 10-draw of a character gacha (two new characters, new stack items), GetPlayer (`is_new` in Character / StockItem), ClearNewCharacter (a new, a seeded and an unknown uid), ClearNewItem (an unknown uid), ClearNewStackItem (a new and an unknown id), GetPlayer (cleared) | 7 |
 
 | `coins` | hand-written (`req` lines; docs/unimplemented-apis.md part 3 step 7, paid currency), the `economy` options: Login (CoinList on the player load), CoinList, a purchase of the テラ set (CoinDepositCreate, CoinDepositAndroidUpdate: paid and free stones), the same update again (not credited twice), CoinDepositIOSUpdate of an unknown deposit (10208), CoinDepositCreate of a product not sold (10208), the S set through CoinDepositAmazonUpdate, DirectItemShopList (empty), GetPlayer | 11 |
+
+| `gacha-surprise` | hand-written (`req` lines; the gacha's fake-out, docs/server-rules.md#gacha-surprise), the `badges` options plus `--gacha-surprise 100`: Login, six 10-draws of the permanent character gacha gacha_role_0001 and two of the weapon gacha `gacha_weapon_0009`: every drawn ★5 unit has `is_mutation` = true, no other unit; GetPlayer | 10 |
 
 | `english` | hand-written (`req` lines; docs/PLAN-english.md E6, 2026-10-07), the `economy` options plus `--english --english-text server/tests/fixtures/english-fixture.tsv` (a fixture table, not the real one, so the corpus doesn't change with every translation update): Login (the login bonuses' present lines: Present_box_1 and the bonus name in English where the fixture has them, a Japanese name in an English template where not), PresentList, GetGachaRate (the rate headings: English, a stale row and one with other printf conversions left Japanese), GetPlayer | 4 |
 

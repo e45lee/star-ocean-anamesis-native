@@ -49,6 +49,10 @@ struct ServerConfig {
 
     // ---- modules --------------------------------------------------------------------------------
     bool galaxy_pass = false;      // --galaxy-pass (api/shop/subscription.cpp)
+    // --gacha-surprise PCT: the percent chance per drawn ★5 unit of the gacha's fake-out
+    // (is_mutation; api/gacha/gacha.cpp, docs/server-rules.md#gacha-surprise); 0 = off; -1 (the
+    // default) = master_global.gacha_mutation (2).
+    int32_t gacha_surprise = -1;
     bool enable_events = false;    // --enable-events (enable_events.h)
     std::string event_keywords;    // --event-keywords; "" = kDefaultEventKeywords
     bool restore_tower = false;    // --restore-tower (api/tower/tower.cpp)

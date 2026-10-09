@@ -4,8 +4,8 @@
 // header reads what is common to them:
 //   - the chunk walk: every chunk is {u32 tag, u32 size, u32, u32 offset of the next chunk};
 //   - the AMF chunk (' FMA') that ends a file whose bulk data (vertex, index and pixel blocks) is
-//     kept apart from the chunk tree: 'buff' entries (one per data buffer, stored back to back at
-//     the end of the file) and 'addr' entries (a block of a buffer, named by a 16-byte AUID);
+//     kept apart from the chunk tree: 'buff' entries (one per data buffer: its bytes at the entry +
+//     its +0x18) and 'addr' entries (a block of a buffer, named by a 16-byte AUID);
 //   - the block codecs the game's Aska::MappedMemoryManager::TranslateMappedBufferEx applies when a
 //     buffer's type is a compressed one: TriListComp::DecompressTriangleList (types 7..12) and
 //     IdxBufComp::DecompressIndexBuffer (13..18).
@@ -38,8 +38,8 @@ struct Auid {
 };
 inline Auid auid_at(const uint8_t* p) { Auid a; memcpy(a.b, p, 16); return a; }
 
-// One 'buff' entry of the AMF chunk: +0x10 u64 stored size, +0x18 u64 offset (in the authoring
-// tool's layout; not used to find the bytes), +0x20 u32 alignment, +0x2c s16 type
+// One 'buff' entry of the AMF chunk: +0x10 u64 stored size, +0x18 u64 offset of its bytes from the
+// entry, +0x20 u32 alignment, +0x2c s16 type
 // (Aska::MappedTarget: 0 raw; |type| 7..12 triangle lists, 13..18 bit-packed index lists),
 // +0x30 u64 size after decompression.
 struct Buffer {

@@ -605,7 +605,8 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                     continue;
                 }
                 std::string why;
-                if (!soa::aaf::supported(c, &why) && !c.constant()) {
+                bool euler = c.attr >= soa::aaf::kRotateX && c.attr <= soa::aaf::kRotateXYZ;
+                if (!soa::aaf::supported(c, &why) && !c.constant() && !euler) {
                     skipped.push_back({{"target", tg.name}, {"attribute", soa::aaf::attribute_name(c.attr)}, {"why", why}});
                     continue;
                 }
@@ -678,8 +679,34 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                 channel_notes.push_back({{"node", n.name}, {"path", "rotation"}, {"from", std::string(soa::aaf::cp_type_name(c.cp_type)) + " " + soa::aaf::compression_name(c.comp)},
                                          {"interpolation", interp}, {"how", c.constant() ? "constant" : exact ? "keys as they are (slerp = glTF LINEAR)" : "sampled every frame (out-of-range mode)"}});
             }
-            if (!T.rot_other.empty())
-                skipped.push_back({{"target", n.name}, {"attribute", "rotate X/Y/Z/XYZ (Euler)"}, {"why", "Euler rotation tracks: their target layout is not established"}});
+            if (T.rq.empty() && !T.rot_other.empty()) {
+                // Euler tracks: the game's controller returns Quaternion::CreateFromEuler(x, y, z) = Rz Ry Rx
+                // (docs/notes.md); sampled every frame, premultiplied by the joint orient
+                std::vector<float> times, vals;
+                for (float f : frames) {
+                    float e[3] = {0, 0, 0};
+                    for (const auto* c : T.rot_other) {
+                        float v[4] = {0, 0, 0, 0};
+                        if (c->constant()) {
+                            if (c->comp == soa::aaf::kF32)
+                                for (int i = 0; i < 3; i++) v[i] = soa::aff::rdf(&an.file[c->kf + 0xc + i * 4]);
+                        } else {
+                            soa::aaf::evaluate_track(a, *c, f, v);
+                        }
+                        if (c->attr == soa::aaf::kRotateXYZ) for (int i = 0; i < 3; i++) e[i] = v[i];
+                        else e[c->attr - soa::aaf::kRotateX] = v[0];
+                    }
+                    Quat qx{std::sin(e[0] / 2.0), 0, 0, std::cos(e[0] / 2.0)}, qy{0, std::sin(e[1] / 2.0), 0, std::cos(e[1] / 2.0)},
+                        qz{0, 0, std::sin(e[2] / 2.0), std::cos(e[2] / 2.0)};
+                    Quat q = qnorm(qmul(jo, qmul(qz, qmul(qy, qx))));
+                    times.push_back(f);
+                    vals.insert(vals.end(), {(float)q.x, (float)q.y, (float)q.z, (float)q.w});
+                }
+                size_t si = add_sampler(times, vals, 4, "LINEAR");
+                anim["channels"].push_back({{"sampler", si}, {"target", {{"node", ni}, {"path", "rotation"}}}});
+                channel_notes.push_back({{"node", n.name}, {"path", "rotation"}, {"interpolation", "LINEAR"},
+                                         {"how", "Euler angles sampled every frame, as Rz Ry Rx (Quaternion::CreateFromEuler)"}});
+            }
             // translation / scale
             for (int which = 0; which < 2; which++) {
                 auto& comp = which ? T.s : T.t;

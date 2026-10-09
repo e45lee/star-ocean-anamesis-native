@@ -25,6 +25,8 @@ enum CpType : uint8_t {
     kQuaternion = 11, kQuaternionStep = 12, kQuaternionLinear = 13,
 };
 // The controller header's +4 for keyframe controllers: how the keys are stored.
+// (kQuatU48EX on a plain controller, +5 bit 6 set, is _U48EX2: 6-byte keys, u16 then u32; on a
+// frame-sorted one _U48EX: 8-byte keys.)
 enum Compression : uint8_t { kF32 = 0, kU24 = 1, kU16 = 2, kQuatU32EX = 3, kQuatU48EX = 4 };
 // The keyframe header's +6: what is animated (EnumAafDetailAttribute, the factory
 // LocalSetControllerF32_Default_TrRtSc and its siblings).
@@ -82,6 +84,11 @@ bool supported(const Controller& c, std::string* why = nullptr);
 // writes are written: pass the same initial `out` as a comparison's other side. False for an
 // unsupported controller.
 bool evaluate(const Animation& a, const Controller& c, float t, float out[4]);
+
+// The track's own values for the controllers evaluate() leaves out as returning something else:
+// the Euler rotations' angles (x, y, z in radians; the game turns them into
+// Quaternion::CreateFromEuler(x, y, z) = Rz Ry Rx, which this doesn't reproduce bit for bit).
+bool evaluate_track(const Animation& a, const Controller& c, float t, float out[4]);
 
 // A constant controller's value (the +5 bit 7 group: one value, kept at the keyframe header's +8
 // (F32: the floats; U32EX / U48EX: the packed key), read by the game with CalcValueConstant).

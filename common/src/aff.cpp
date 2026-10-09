@@ -14,9 +14,8 @@ std::string Auid::hex() const {
     return s;
 }
 
-// The AMF chunk ends the file. Its entries are chunks too; the data buffers follow it back to back
-// to the end of the AMF chunk, each padded to 16 bytes, in 'buff' order (the decoded SLZ output has
-// no other record of where they start: the 'buff' +0x18 offsets are the authoring tool's layout).
+// The AMF chunk ends the file. Its entries are chunks too; a 'buff' entry's data starts at the
+// entry itself plus its +0x18 (MappedMemoryManager::AttachMappingEx: buff + *(u64*)(buff + 0x18)).
 bool Amf::parse(const Bytes& d, std::string* err) {
     d_ = &d;
     amf_ = SIZE_MAX;
@@ -41,6 +40,7 @@ bool Amf::parse(const Bytes& d, std::string* err) {
             Buffer b;
             b.size = rd64(&d[p + 0x10]);
             b.offset = rd64(&d[p + 0x18]);
+            b.start = p + (size_t)b.offset;
             b.type = (int16_t)rd16(&d[p + 0x2c]);
             b.decoded_size = rd64(&d[p + 0x30]);
             buffers_.push_back(b);
@@ -58,13 +58,8 @@ bool Amf::parse(const Bytes& d, std::string* err) {
         if (next == 0) break;
         p += next;
     }
-    size_t e = end;
-    for (size_t i = buffers_.size(); i-- > 0;) {
-        uint64_t n = (buffers_[i].size + 15) & ~uint64_t(15);
-        if (n > e - (pos + 0x10)) { if (err) *err = "AMF buffers larger than the chunk"; return false; }
-        e -= n;
-        buffers_[i].start = e;
-    }
+    for (const Buffer& b : buffers_)
+        if (b.start + b.size > d.size()) { if (err) *err = "AMF buffer past the end of the file"; return false; }
     return true;
 }
 

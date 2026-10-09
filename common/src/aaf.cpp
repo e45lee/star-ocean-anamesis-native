@@ -371,8 +371,17 @@ void add_loop_quat(float out[4], const float dq[4]) {
 struct Ops {
     int cp, comp;
     const Keys* k;
+    bool u48ex2 = false;  // compression 4 on a plain (not frame-sorted) controller: _U48EX2 keys
     // the value of key i as a slot holds it (decoded for the compressed quaternions)
     void key(uint32_t i, float v[4]) const {
+        if (comp == kQuatU48EX && u48ex2) {  // _U48EX2 (6 bytes: u16, u32), widened as SetControlPoints does
+            uint8_t w[8];
+            const uint8_t* p = k->data + (size_t)i * 6;
+            uint32_t lo = rd16(p), hi = rd32(p + 2);
+            memcpy(w, &lo, 4);
+            memcpy(w + 4, &hi, 4);
+            return u48ex_value(w, v);
+        }
         if (comp == kQuatU48EX) return u48ex_value(k->data + (size_t)i * 8, v);
         if (comp == kQuatU32EX) return u32ex_value(k->data + (size_t)i * 4, v);
         if (comp == kU16 || comp == kU24) {  // SetControlPoints: (float)(int)key / rate per component
@@ -497,10 +506,19 @@ struct Ops {
 
 }  // namespace
 
-bool supported(const Controller& c, std::string* why) {
+namespace {
+bool supported_keys(const Controller& c, std::string* why, bool euler_ok);
+}
+
+bool supported(const Controller& c, std::string* why) { return supported_keys(c, why, false); }
+
+namespace {
+bool supported_keys(const Controller& c, std::string* why, bool euler_ok) {
     auto no = [&](const std::string& s) { if (why) *why = s; return false; };
     if (!c.keyframed()) return no(std::string("not a keyframe controller (") + controller_kind_name(c.kind) + ")");
     if (c.frame_sorted()) return no("frame-sorted controller (TAafFrameSort*)");
+    if (!euler_ok && c.attr >= kRotateX && c.attr <= kRotateXYZ)
+        return no("Euler rotation: the controller returns Quaternion::CreateFromEuler(x, y, z) (Rz Ry Rx; Quaternion::Create's sinf / cosf), not reproduced bit for bit");
     if (c.comp == kQuatU32EX || c.comp == kQuatU48EX) {
         if (c.cp_type != kQuaternionLinear && c.cp_type != kQuaternionStep) return no("compressed quaternion of an unknown kind");
     } else if (c.comp == kU16 || c.comp == kU24) {
@@ -518,11 +536,22 @@ bool supported(const Controller& c, std::string* why) {
     if ((c.pre == 3 || c.post == 3) && components(c.cp_type) == 4) return no("quaternion cycle with offset (Quaternion::Mul)");
     return true;
 }
+bool eval_keys(const Animation& a, const Controller& c, float t, float out[4]);
+}  // namespace
+
+bool evaluate(const Animation& a, const Controller& c, float t, float out[4]) {
+    return supported_keys(c, nullptr, false) && eval_keys(a, c, t, out);
+}
+
+bool evaluate_track(const Animation& a, const Controller& c, float t, float out[4]) {
+    return supported_keys(c, nullptr, true) && eval_keys(a, c, t, out);
+}
+
+namespace {
 
 // TAafNormalController<...>::CalcValueSub(out, t, false): the out-of-range modes, the key search
 // and the type's interpolation.
-bool evaluate(const Animation& a, const Controller& c, float t, float out[4]) {
-    if (!supported(c)) return false;
+bool eval_keys(const Animation& a, const Controller& c, float t, float out[4]) {
     const Bytes& d = *a.file;
     Keys k;
     k.kf = &d[c.kf];
@@ -533,6 +562,7 @@ bool evaluate(const Animation& a, const Controller& c, float t, float out[4]) {
     k.data = k.times + (size_t)k.n * 4;
     k.figure = k.kf[7];
     Ops ops{c.cp_type, c.comp, &k};
+    ops.u48ex2 = !c.frame_sorted();  // (LocalSetControllerQuaternionU48EX: +5 bit 6 -> _U48EX2)
     // compressed quaternions decode a step as the linear class does; constant groups too
     if ((c.comp == kQuatU32EX || c.comp == kQuatU48EX) && c.cp_type == kQuaternionStep) ops.cp = kQuaternionLinear;
     if (k.n == 0 || k.n == 1) {
@@ -618,8 +648,11 @@ bool evaluate(const Animation& a, const Controller& c, float t, float out[4]) {
     return true;
 }
 
+}  // namespace
+
 bool evaluate_constant(const Animation& a, const Controller& c, float out[4]) {
     if (!c.keyframed() || !c.constant()) return false;
+    if (c.attr >= kRotateX && c.attr <= kRotateXYZ) return false;  // (a quaternion: see supported())
     const Bytes& d = *a.file;
     if (c.kf + 0x18 > d.size()) return false;
     Keys k;
@@ -630,6 +663,7 @@ bool evaluate_constant(const Animation& a, const Controller& c, float out[4]) {
     k.data = k.kf + 0xc;  // (+8 a u32 0, then the one value: floats, or a packed key)
     k.figure = k.kf[7];
     Ops ops{c.cp_type, c.comp, &k};
+    ops.u48ex2 = !c.frame_sorted();
     if ((c.comp == kQuatU32EX || c.comp == kQuatU48EX) && c.cp_type == kQuaternionStep) ops.cp = kQuaternionLinear;
     ops.assign(0, out);
     return true;

@@ -236,17 +236,18 @@ Bytes build_asf(std::vector<uint8_t>& vertices, std::vector<uint16_t>& indices) 
     tag(b, amf, " FMA");
     put32(b, amf + 4, (uint32_t)(entries + vb + tb));
     size_t p = amf + 0x10;
-    auto buff = [&](uint64_t size, int16_t type, uint64_t decoded) {
+    auto buff = [&](uint64_t size, int16_t type, uint64_t decoded, size_t data_at) {
         tag(b, p, "ffub");
         put32(b, p + 4, 0x40);
         put32(b, p + 0xc, 0x40);
         put64(b, p + 0x10, size);
+        put64(b, p + 0x18, data_at - p);  // its bytes, from the entry
         put16(b, p + 0x2c, (uint16_t)type);
         put64(b, p + 0x30, decoded);
         p += 0x40;
     };
-    buff(vertices.size(), 0, vertices.size());
-    buff(tri.size(), 0xa, indices.size() * 2);
+    buff(vertices.size(), 0, vertices.size(), amf + entries);
+    buff(tri.size(), 0xa, indices.size() * 2, amf + entries + vb);
     auto addr = [&](const uint8_t* g, uint64_t size, uint64_t off, int16_t buf, uint64_t decoded, bool last) {
         tag(b, p, "rdda");
         put32(b, p + 4, 0x60);

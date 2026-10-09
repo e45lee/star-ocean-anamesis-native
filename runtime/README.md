@@ -363,6 +363,7 @@ used). The programs' own lists: `port/README.md` "Environment" (soa), `emulator/
 | `SOA_GL_HOST_SRGB_ETC2=1` | pass sRGB ETC2 textures to the driver instead of decoding them (default off) |
 | `SOA_GL_BUFFER_DUMP=DIR` | every GL buffer upload (glBufferData, glBufferSubData, write maps at glUnmapBuffer): each distinct content once as `DIR/<fnv1a64>.bin`, one line per upload in `DIR/index.tsv` (`hle/gles.cpp`; `tools/asf2gltf --check-gl-dump`) |
 | `SOA_GL_DRAW_DUMP=DIR` | each distinct draw: program, element buffer, the textures of units 0-7 by the hash of their level-0 upload, blend / cull / depth write (`DIR/draws.tsv`); the uploads (`DIR/textures.tsv`); each program's shader sources (`DIR/program_N.txt`); the draw's uniforms (arrays to 256 elements) at its first time and every 600th (`DIR/draw_N.txt`) (`hle/gles.cpp`; `tools/asf2gltf --check-gl-dump`) |
+| `SOA_GL_DRAW_PROBE=HASH` | with `SOA_GL_DRAW_DUMP`: for draws whose unit 0 texture is that upload, the framebuffer read before and after the draw (every 600th): changed pixels and their box (`DIR/probe_N.txt`), marked in `DIR/probe_N_diff.ppm` (`hle/gles.cpp`) |
 | `SOA_GL_MAP_INVALIDATE=0` | don't add `GL_MAP_INVALIDATE_RANGE_BIT` to the engine's overwrite maps (default on) |
 | `SOA_GL_RELEASE_SHADER_COMPILER=1` | pass `glReleaseShaderCompiler` to the driver (default dropped) |
 | `SOA_DIRECT_CALLS=0` | send host-thunk calls through the JIT (default on: called directly; `core/cpu.cpp`) |

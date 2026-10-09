@@ -52,9 +52,11 @@ struct Controller {
     uint8_t cp_type = 0, attr = 0, pre = 0, post = 0;
     float start = 0, end = 0;
     uint32_t count = 0;
+    std::string morph_target;  // kind 5 (TAafMorphModifierController): +0xc names the blend shape's target object
     bool frame_sorted() const { return !(flags & 0x40); }  // TAafFrameSort* (+5 bit 6 clear)
     bool constant() const { return (flags & 0x80) != 0; }  // the constant group (+5 bit 7)
-    bool keyframed() const { return kf != 0 && kind <= 3; }
+    // keyframes: kinds 0-3, and 5 (a blend-shape weight: a scalar track on the modifier's target)
+    bool keyframed() const { return kf != 0 && (kind <= 3 || kind == 5); }
 };
 struct Target {
     std::string name;       // without "R:"

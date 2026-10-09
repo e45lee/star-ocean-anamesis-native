@@ -143,8 +143,32 @@ struct Object {
     std::vector<Material> materials;
     std::vector<Meshset> meshsets;
 };
+// A modifier ('fdom' chunk, one 'rfdm' record each; AsfHandler::CreateModifier). Kind 1 is a blend
+// shape (MorphModifier / MorphModifierCPU): the base object's first vertices of each meshset become
+// base * (1 - scale * sum(w)) + sum(scale * w * target); a target's vertices are 20-byte records
+// {f16 x, y, z, w; u32 normal 10:10:10 (signed, / 511); u32 tangent 10:10:10:2}, normals are blended
+// from the base's and renormalized. Weights are the records' defaults or an animation's morph
+// controllers (kind 5, on the modifier's name; the header +0xc names the target).
+struct ModifierTarget {
+    int node = -1;          // the target object's node (hidden by the game)
+    float weight = 0;       // default weight
+    std::vector<uint32_t> counts;  // per meshset range: vertex count
+    std::vector<Bytes> data;       // per meshset range: count x 20 bytes
+};
+struct Modifier {
+    std::string name;       // +0x10 (the 'R:' / 'HL:' prefixes as stored)
+    int kind = 0;           // +0x30: 1 blend shape, 2 another (not decoded)
+    int base = -1;          // +0x34: the base object's node
+    float scale = 1;        // +0x38
+    uint32_t method = 0;    // +0x40 (MorphModifierCPU::Attach: the blend kernels' set)
+    std::vector<uint32_t> ranges;  // +0x48 count: per meshset, how many leading vertices change
+    std::vector<ModifierTarget> targets;
+    std::vector<uint8_t> raw;  // the record
+};
+
 struct Scene {
     std::vector<Node> nodes;
+    std::vector<Modifier> modifiers;
     std::vector<Object> objects;
     std::vector<std::string> link_names;  // 'lnbc': names of external nodes (other files)
     aff::Amf amf;

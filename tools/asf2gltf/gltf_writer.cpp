@@ -180,6 +180,7 @@ struct Src {
 };
 struct GraphInfo {
     bool lit = false;
+    bool vertex_color = false;  // op 0x88: the shader reads the vertex colour
     int lighting = 0;  // the lighting op
     Src albedo, alpha, normal, roughness, f0;
     std::vector<std::pair<int, int>> uv_of_slot;  // (slot, UV set)
@@ -231,6 +232,7 @@ GraphInfo read_graph(const asf::Material& mat) {
         } else if ((op == 0x02 || op == 0x2e || op == 0x03) && n >= 4) {
             reg[p[1]] = constant(op == 0x02 ? 5 : op == 0x2e ? 0x14 : 0x13, p[0]);
         } else if (op == 0x88 && n >= 4) {
+            r.vertex_color = true;
             Src x;
             x.kind = Src::kTex;  // (a "texture" of white; mul() folds it into the other side)
             x.vertex_color = true;
@@ -287,7 +289,7 @@ double linear_to_srgb(double c) { return c <= 0.0031308 ? c * 12.92 : 1.055 * st
 // draws from the same numbers (Seaside Maria's LeftHand came out on her right, her triangles wound
 // clockwise: the faces showed their backs). Everything below the root is mirrored in x once it is
 // written: node translations (x) and rotations ((x, y, z, w) -> (x, -y, -z, w)), positions, normals,
-// tangents (x, and the bitangent sign), the inverse bind matrices (M·IBM·M) and the translation /
+// tangents (x, and the bitangent sign; a morph target's deltas too), the inverse bind matrices (M·IBM·M) and the translation /
 // rotation animation outputs. Scale is unchanged. The triangles keep their order: the game's are
 // clockwise (against their normals) in its space, counter-clockwise once mirrored, as glTF wants.
 void mirror_x(Builder& b, size_t root) {
@@ -310,9 +312,13 @@ void mirror_x(Builder& b, size_t root) {
     if (doc.contains("meshes"))
         for (json& mesh : doc["meshes"])
             for (json& p : mesh["primitives"]) {
+                std::vector<json*> sets = {&p["attributes"]};
+                if (p.contains("targets"))
+                    for (json& t : p["targets"]) sets.push_back(&t);
+                for (json* set : sets)
                 for (const char* att : {"POSITION", "NORMAL", "TANGENT"}) {
-                    if (!p["attributes"].contains(att)) continue;
-                    size_t ai = p["attributes"][att];
+                    if (!set->contains(att)) continue;
+                    size_t ai = (*set)[att];
                     if (!done.insert(ai).second) continue;
                     json& a = doc["accessors"][ai];
                     size_t comps = std::string(att) == "TANGENT" ? 4 : 3, n = a["count"];
@@ -657,13 +663,16 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         return t;
     };
 
+    std::map<int, int> mesh_node;  // ASF object node -> the glTF node holding its mesh
     // ---- objects: meshes, skins, materials
     for (const asf::Object& o : s.objects) {
         json mesh = {{"name", o.name}, {"primitives", json::array()}};
         std::vector<int> mat_index(o.materials.size(), -1);
+        std::vector<char> mat_vcolor(o.materials.size(), 0);
         for (size_t mi = 0; mi < o.materials.size(); mi++) {
             const asf::Material& m = o.materials[mi];
             GraphInfo gi = read_graph(m);
+            mat_vcolor[mi] = gi.vertex_color;
             json mj = {{"name", o.name + "_" + std::to_string(mi)}};
             json pbr = {{"metallicFactor", 0.0}, {"roughnessFactor", 0.8}};
             const asf::Texture* none = nullptr;
@@ -760,6 +769,7 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         }
         // geometry, per meshset (a meshset that draws another's geometry reuses its accessors)
         std::vector<json> attrs(o.meshsets.size());
+        std::vector<json> morphs(o.meshsets.size(), json::array());
         std::vector<long> idx_acc(o.meshsets.size(), -1);
         for (size_t k = 0; k < o.meshsets.size(); k++) {
             const asf::Meshset& m = o.meshsets[k];
@@ -834,8 +844,11 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                     break;
                 }
                 case asf::kColor: {
+                    // glTF multiplies the base colour by COLOR_0: only when the material's shader reads
+                    // the vertex colour (op 0x88); else kept as _COLOR_n
                     auto p = take(0, 4);
-                    a["COLOR_" + std::to_string(sets["color"]++)] = b.accessor(p.data(), nv, kFloat, "VEC4", 4, 34962);
+                    bool used = m.material >= 0 && m.material < (int)mat_vcolor.size() && mat_vcolor[m.material];
+                    a[(used ? "COLOR_" : "_COLOR_") + std::to_string(sets["color"]++)] = b.accessor(p.data(), nv, kFloat, "VEC4", 4, 34962);
                     break;
                 }
                 case asf::kBlendWeight: {
@@ -880,6 +893,39 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                 a["WEIGHTS_0"] = b.accessor(w.data(), nv, kFloat, "VEC4", 4, 34962);
             }
             attrs[k] = a;
+            // blend-shape targets (the 'fdom' modifiers on this object): position / normal deltas of the
+            // meshset's leading vertices (MorphModifierCPU: base + sum(w * delta); normals renormalized)
+            for (const asf::Modifier& md : s.modifiers) {
+                if (md.kind != 1 || md.base != o.node) continue;
+                for (const asf::ModifierTarget& t : md.targets) {
+                    std::vector<float> dp(nv * 3, 0.0f), dn(nv * 3, 0.0f);
+                    if (k < t.data.size()) {
+                        size_t c = std::min<size_t>({t.counts[k], nv, t.data[k].size() / 20});
+                        for (size_t v = 0; v < c; v++) {
+                            const uint8_t* q = &t.data[k][v * 20];
+                            for (int i = 0; i < 3; i++) {
+                                uint16_t h = soa::aff::rd16(q + i * 2);
+                                int sg = h >> 15, ex = (h >> 10) & 31, mt = h & 1023;
+                                float f = ex == 0 ? std::ldexp((float)mt, -24) : ex == 31 ? 0.0f : std::ldexp((float)(mt | 1024), ex - 25);
+                                dp[v * 3 + i] = sg ? -f : f;
+                            }
+                            uint32_t nw = soa::aff::rd32(q + 8);
+                            for (int i = 0; i < 3; i++) {
+                                int32_t x = (int32_t)(nw << (22 - 10 * i)) >> 22;
+                                dn[v * 3 + i] = x * 0.0019569471f;
+                            }
+                            if (bake) {  // the deltas are in the object's space, like its vertices
+                                xform(&dp[v * 3], false);
+                                xform(&dn[v * 3], false);
+                            }
+                        }
+                    }
+                    json tj;
+                    tj["POSITION"] = b.accessor(dp.data(), nv, kFloat, "VEC3", 3, 34962, false, true);
+                    tj["NORMAL"] = b.accessor(dn.data(), nv, kFloat, "VEC3", 3, 34962);
+                    morphs[k].push_back(tj);
+                }
+            }
             if (m.index_count && !m.indices.empty())
                 idx_acc[k] = (long)b.accessor(m.indices.data(), m.index_count, m.index32 ? kUInt : kUShort, "SCALAR", 1, 34963);
         }
@@ -892,6 +938,7 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
             if (mode < 0) continue;
             json p = {{"attributes", attrs[g]}, {"mode", mode}};
             if (idx_acc[g] >= 0) p["indices"] = idx_acc[g];
+            if (!morphs[g].empty()) p["targets"] = morphs[g];
             if (m.material >= 0) p["material"] = mat_index[m.material];
             json px = {{"asf_meshset", k}, {"asf_vertex_bits", hex32((uint32_t)(o.meshsets[g].asm_bits >> 32)) + hex32((uint32_t)o.meshsets[g].asm_bits).substr(2)},
                        {"asf_stride", o.meshsets[g].stride}};
@@ -909,13 +956,36 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         // a skinned mesh goes on a node of its own at the scene's root (glTF ignores a skinned mesh
         // node's transforms); the object's node keeps its place in the tree
         json* nodep = &doc["nodes"][o.node];
+        int node_index = o.node;
         if (skinned && !o.bones.empty()) {
             doc["nodes"].push_back({{"name", o.name + " (skinned mesh)"}, {"extras", {{"asf_object_node", o.node}}}});
             doc["scenes"][0]["nodes"].push_back(doc["nodes"].size() - 1);
             nodep = &doc["nodes"].back();
+            node_index = (int)doc["nodes"].size() - 1;
         }
         json& node = *nodep;
         node["mesh"] = mesh_i;
+        mesh_node[o.node] = node_index;
+        {  // the blend shapes: default weights, the targets' names, the modifier's definition
+            json names = json::array(), weights = json::array(), defs = json::array();
+            for (const asf::Modifier& md : s.modifiers) {
+                if (md.kind != 1 || md.base != o.node) continue;
+                json tl = json::array();
+                for (const auto& t : md.targets) {
+                    std::string tn = t.node >= 0 && t.node < (int)s.nodes.size() ? s.nodes[t.node].name : "?";
+                    names.push_back(tn);
+                    weights.push_back(t.weight);
+                    tl.push_back({{"node", tn}, {"weight", t.weight}});
+                }
+                defs.push_back({{"name", md.name}, {"kind", "blend shape (MorphModifierCPU)"}, {"scale", md.scale}, {"method", md.method},
+                                {"targets", tl}, {"ranges", md.ranges}, {"record", hexbytes(md.raw.data(), std::min<size_t>(md.raw.size(), 0x50))}});
+            }
+            if (!names.empty()) {
+                doc["meshes"][mesh_i]["weights"] = weights;
+                doc["meshes"][mesh_i]["extras"]["targetNames"] = names;
+                doc["meshes"][mesh_i]["extras"]["asf_modifiers"] = defs;
+            }
+        }
         if (skinned && !o.bones.empty()) {
             std::vector<float> ibm(o.bones.size() * 16);
             json joints = json::array();
@@ -947,7 +1017,7 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         json anim = {{"name", an.title.empty() ? an.name : an.title}, {"channels", json::array()}, {"samplers", json::array()}};
         json ax = {{"source", an.name}, {"fps", opt.fps}, {"length_frames", a.length}};
         if (!an.role.empty()) ax["role"] = an.role;
-        json channel_notes = json::array(), skipped = json::array(), unmatched = json::array();
+        json channel_notes = json::array(), skipped = json::array(), unmatched = json::array(), constraints = json::array();
         const float fps = opt.fps;
         const float length = a.length > 0 ? a.length : 1.0f;
         auto add_sampler = [&](const std::vector<float>& times, const std::vector<float>& values, int comps,
@@ -967,12 +1037,44 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
             const auto& tg = a.targets[ti];
             for (int ci : tg.controllers) {
                 const auto& c = a.controllers[ci];
+                if (c.kind == 5) continue;  // (the blend-shape weights, below)
                 if (!c.keyframed()) {
                     json k = {{"target", tg.name}, {"controller", soa::aaf::controller_kind_name(c.kind)}};
                     if (c.kind >= 6 && c.kind <= 8 && c.offset + 0x40 <= an.file.size()) {
                         const char* src = (const char*)&an.file[c.offset + 0x20];
                         if (!memcmp(src, "R:", 2)) k["source"] = std::string(src + 2, strnlen(src + 2, 30));
-                        k["not_baked"] = "constraint evaluation not reproduced (docs/notes.md: Animations (AAF) for tools)";
+                    }
+                    if (c.kind == 6 && c.offset + 0x20 <= an.file.size()) {
+                        // the definition, as stored (SOA_aska_constraints; evaluated by a viewer, never baked)
+                        const uint8_t* h = &an.file[c.offset];
+                        json def = {{"target", tg.name}, {"kind", "prs"}};
+                        static const char* kModes[] = {"point", "orient", "scale"};
+                        def["mode"] = h[0x1d] < 3 ? kModes[h[0x1d]] : std::to_string(h[0x1d]);
+                        def["axes"] = h[0x1c];
+                        float off[4];
+                        memcpy(off, h + 0xc, 16);
+                        def["offset"] = {off[0], off[1], off[2], off[3]};
+                        json srcs = json::array();
+                        for (int i = 0; i < h[0x1e] && c.offset + 0x20 + (i + 1) * 0x30 <= an.file.size(); i++) {
+                            const uint8_t* q = h + 0x20 + i * 0x30;
+                            float w;
+                            memcpy(&w, q + 0x2c, 4);
+                            json sj = {{"weight", w}};
+                            if (!memcmp(q, "R:", 2)) {
+                                std::string nm((const char*)q + 2, strnlen((const char*)q + 2, 0x2a));
+                                sj["node"] = nm;
+                                auto ni = node_by_name.find(nm);
+                                if (ni != node_by_name.end()) sj["node_index"] = ni->second;
+                            } else {
+                                sj["unresolved"] = hexbytes(q, 8);  // (an authoring tool's pointer, not a name)
+                            }
+                            srcs.push_back(sj);
+                        }
+                        def["sources"] = srcs;
+                        auto ti = node_by_name.find(tg.name);
+                        if (ti != node_by_name.end()) def["target_index"] = ti->second;
+                        constraints.push_back(def);
+                        continue;
                     }
                     skipped.push_back(k);
                     continue;
@@ -1004,6 +1106,32 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                 }
             }
         }
+        // blend-shape weights (morph controllers, kind 5, on the modifier's name): one "weights" channel
+        // per base mesh, every frame (the targets a track doesn't key keep their default weight)
+        std::map<int, std::vector<std::pair<int, const soa::aaf::Controller*>>> morph_tracks;  // base node -> (target slot, track)
+        for (const auto& tg : a.targets)
+            for (int ci : tg.controllers) {
+                const auto& c = a.controllers[ci];
+                if (c.kind != 5) continue;
+                bool found = false;
+                for (const asf::Modifier& md : s.modifiers) {
+                    std::string mn = md.name.rfind("R:", 0) == 0 ? md.name.substr(2) : md.name;
+                    for (size_t i = 0; i < md.targets.size() && !found; i++) {
+                        int tn = md.targets[i].node;
+                        if (mn == tg.name && tn >= 0 && tn < (int)s.nodes.size() && s.nodes[tn].name == c.morph_target) {
+                            int before = 0;  // the slot among all the blend shapes on the same base
+                            for (const asf::Modifier& m2 : s.modifiers) {
+                                if (&m2 == &md) break;
+                                if (m2.kind == 1 && m2.base == md.base) before += (int)m2.targets.size();
+                            }
+                            morph_tracks[md.base].push_back({before + (int)i, &c});
+                            found = true;
+                        }
+                    }
+                    if (found) break;
+                }
+                if (!found) unmatched.push_back({{"target", tg.name}, {"morph_target", c.morph_target}});
+            }
         auto value_of = [&](const soa::aaf::Controller& c, float f, float out[4]) {
             if (c.constant()) soa::aaf::evaluate_constant(a, c, out);
             else soa::aaf::evaluate(a, c, f, out);
@@ -1011,6 +1139,33 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         std::vector<float> frames;
         for (float f = 0; f <= length + 1e-4f; f += 1.0f) frames.push_back(f);
         if (frames.back() < length) frames.push_back(length);
+        for (auto& [base, list] : morph_tracks) {
+            auto mn = mesh_node.find(base);
+            if (mn == mesh_node.end()) continue;
+            json& mesh = doc["meshes"][(size_t)doc["nodes"][mn->second]["mesh"]];
+            if (!mesh.contains("weights")) continue;
+            std::vector<float> def;
+            for (auto& w : mesh["weights"]) def.push_back(w);
+            std::vector<float> times, vals;
+            for (float f : frames) {
+                std::vector<float> w = def;
+                for (auto& [slot, c] : list) {
+                    float v[4] = {0, 0, 0, 0};
+                    value_of(*c, f, v);
+                    if (slot < (int)w.size()) w[slot] = v[0];
+                }
+                times.push_back(f);
+                vals.insert(vals.end(), w.begin(), w.end());
+            }
+            std::vector<float> secs(times.size());
+            for (size_t i = 0; i < times.size(); i++) secs[i] = times[i] / fps;
+            size_t ti = b.accessor(secs.data(), secs.size(), kFloat, "SCALAR", 1, 0, false, true);
+            size_t vi = b.accessor(vals.data(), vals.size(), kFloat, "SCALAR", 1, 0);
+            anim["samplers"].push_back({{"input", ti}, {"output", vi}, {"interpolation", "LINEAR"}});
+            anim["channels"].push_back({{"sampler", anim["samplers"].size() - 1}, {"target", {{"node", mn->second}, {"path", "weights"}}}});
+            channel_notes.push_back({{"node", s.nodes[base].name}, {"path", "weights"}, {"interpolation", "LINEAR"},
+                                     {"how", "blend-shape weights (morph controllers) sampled every frame"}});
+        }
         for (auto& [ni, T] : tracks) {
             const asf::Node& n = s.nodes[ni];
             bool piv = false;
@@ -1156,6 +1311,11 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         ax["channels"] = channel_notes;
         if (!skipped.empty()) ax["not_exported"] = skipped;
         if (!unmatched.empty()) ax["targets_not_in_model"] = unmatched;
+        if (!constraints.empty() && opt.extensions) {
+            // the animation's constraints (AAF kind 6), as the game's data: not applied to the keys
+            anim["extensions"]["SOA_aska_constraints"] = {{"constraints", constraints}};
+            ext_used.insert("SOA_aska_constraints");
+        }
         for (auto& [k, v] : an.extras.items()) ax[k] = v;
         anim["extras"] = ax;
         if (!anim["channels"].empty()) doc["animations"].push_back(anim);

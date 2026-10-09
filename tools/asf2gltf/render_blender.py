@@ -71,7 +71,9 @@ def bbox(objs):
 def main():
     o = args()
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    bpy.ops.import_scene.gltf(filepath=o["in"])
+    # the armature's rest = the glTF nodes' transforms (not a bind pose guessed from the inverse bind
+    # matrices): a pose bone at identity is then the node's rest, e.g. Maria's Zoption keeps its 0.001 scale
+    bpy.ops.import_scene.gltf(filepath=o["in"], guess_original_bind_pose=False)
     sc = bpy.context.scene
     if o["log"]:
         for ob in sc.objects:

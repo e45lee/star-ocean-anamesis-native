@@ -404,12 +404,78 @@ void draw_dump_draw(GLenum mode, GLsizei count, GLenum type, const void* offset)
     }
     fclose(f);
 }
+// SOA_GL_DRAW_PROBE=<hash> (with SOA_GL_DRAW_DUMP): for draws whose unit 0 texture is that upload
+// (textures.tsv), the bound framebuffer's pixels are read before and after the draw, every 600th
+// time: DIR/probe_<n>.txt counts the changed pixels and their bounding box, DIR/probe_<n>_diff.ppm
+// marks them (white) over the after image. Whether a draw shows on screen at all, without the
+// rest of the frame changing between two runs.
+bool draw_probe_match() {
+    static const char* want = env::env_str("SOA_GL_DRAW_PROBE");
+    DrawDump* d = draw_dump();
+    if (!want || !*want || !d) return false;
+    GLint active = 0, t = 0;
+    s_glGetIntegerv(GL_ACTIVE_TEXTURE, &active);
+    s_glActiveTexture(GL_TEXTURE0);
+    s_glGetIntegerv(GL_TEXTURE_BINDING_2D, &t);
+    s_glActiveTexture((GLenum)active);
+    std::lock_guard lk(d->mu);
+    auto it = d->tex_hash.find(t);
+    return it != d->tex_hash.end() && it->second == want;
+}
+template <typename Draw>
+void draw_probe(Draw draw) {
+    static long seen = 0;
+    static int written = 0;
+    if (!draw_probe_match() || (seen++ % 600) != 0 || written >= 4) {
+        draw();
+        return;
+    }
+    GLint vp[4] = {0, 0, 0, 0}, fb = 0;
+    s_glGetIntegerv(GL_VIEWPORT, vp);
+    s_glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fb);
+    size_t n = (size_t)vp[2] * vp[3] * 4;
+    std::vector<uint8_t> before(n), after(n);
+    s_glReadPixels(vp[0], vp[1], vp[2], vp[3], GL_RGBA, GL_UNSIGNED_BYTE, before.data());
+    draw();
+    s_glReadPixels(vp[0], vp[1], vp[2], vp[3], GL_RGBA, GL_UNSIGNED_BYTE, after.data());
+    long changed = 0;
+    int x0 = vp[2], y0 = vp[3], x1 = -1, y1 = -1;
+    for (int y = 0; y < vp[3]; y++)
+        for (int x = 0; x < vp[2]; x++) {
+            size_t i = ((size_t)y * vp[2] + x) * 4;
+            if (memcmp(&before[i], &after[i], 3) == 0) continue;
+            changed++;
+            x0 = std::min(x0, x), x1 = std::max(x1, x), y0 = std::min(y0, y), y1 = std::max(y1, y);
+            after[i] = after[i + 1] = after[i + 2] = 255;
+        }
+    DrawDump* d = draw_dump();
+    int k = written++;
+    if (FILE* f = fopen((d->dir + "/probe_" + std::to_string(k) + ".txt").c_str(), "w")) {
+        fprintf(f, "framebuffer %d viewport %d %d %d %d\nchanged pixels %ld\nbbox (GL, origin bottom-left) x %d-%d y %d-%d\n", fb, vp[0], vp[1],
+                vp[2], vp[3], changed, x0, x1, y0, y1);
+        fclose(f);
+    }
+    if (FILE* f = fopen((d->dir + "/probe_" + std::to_string(k) + "_diff.ppm").c_str(), "wb")) {
+        fprintf(f, "P6 %d %d 255\n", vp[2], vp[3]);
+        for (int y = vp[3] - 1; y >= 0; y--)
+            for (int x = 0; x < vp[2]; x++) fwrite(&after[((size_t)y * vp[2] + x) * 4], 1, 3, f);
+        fclose(f);
+    }
+}
 void host_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* offset) {
-    if (draw_dump()) draw_dump_draw(mode, count, type, offset);
+    if (draw_dump()) {
+        draw_dump_draw(mode, count, type, offset);
+        draw_probe([&] { s_glDrawElements(mode, count, type, offset); });
+        return;
+    }
     s_glDrawElements(mode, count, type, offset);
 }
 void host_glDrawRangeElements(GLenum mode, GLuint lo, GLuint hi, GLsizei count, GLenum type, const void* offset) {
-    if (draw_dump()) draw_dump_draw(mode, count, type, offset);
+    if (draw_dump()) {
+        draw_dump_draw(mode, count, type, offset);
+        draw_probe([&] { s_glDrawRangeElements(mode, lo, hi, count, type, offset); });
+        return;
+    }
     s_glDrawRangeElements(mode, lo, hi, count, type, offset);
 }
 void host_glBufferData(GLenum target, GLsizeiptr len, const void* data, GLenum usage) {

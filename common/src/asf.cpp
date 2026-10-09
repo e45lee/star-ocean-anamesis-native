@@ -398,6 +398,8 @@ bool load_object(const Bytes& d, size_t oa, Scene& s, Object& o, std::string* er
 
 }  // namespace
 
+void load_modifiers(const Bytes& d, size_t at, Scene& s, std::vector<std::string>* warn);
+
 bool load(const Bytes& d, Scene& s, std::string* err, std::vector<std::string>* warn) {
     s = Scene();
     if (d.size() < 0x40 || !tag_is(d.data(), " FSA")) return fail(err, "not an ASF file"), false;
@@ -410,13 +412,15 @@ bool load(const Bytes& d, Scene& s, std::string* err, std::vector<std::string>* 
     size_t head = arf + rd32(&d[arf + 0xc]);
     if (head + 16 > d.size()) return fail(err, "no file header"), false;
     size_t first = head + rd32(&d[head + 0xc]);
-    size_t tree = SIZE_MAX, names = SIZE_MAX;
+    size_t tree = SIZE_MAX, names = SIZE_MAX, mods = SIZE_MAX;
     aff::walk_chunks(d, first, s.amf.present() ? d.size() : d.size(), [&](size_t p) {
         if (tag_is(&d[p], "_foe") || tag_is(&d[p], " FMA")) return false;
         if (tag_is(&d[p], "eert")) tree = p;
         if (tag_is(&d[p], "lnbc")) names = p;
+        if (tag_is(&d[p], "fdom")) mods = p;
         return true;
     });
+    if (mods != SIZE_MAX) load_modifiers(d, mods, s, warn);
     if (names != SIZE_MAX) {
         uint32_t n = rd32(&d[names + 0x10]);
         for (uint32_t i = 0; i < n && names + 0x20 + (i + 1) * 0x20 <= d.size(); i++)
@@ -438,6 +442,62 @@ bool load(const Bytes& d, Scene& s, std::string* err, std::vector<std::string>* 
         s.objects.push_back(std::move(o));
     }
     return true;
+}
+
+// 'fdom': +0x10 u32 record count, +0x14 u32 count of the {u32 node, u32 1, u32 ?} list at +0x20
+// (the objects involved), +0x18 its size; then the 'rfdm' records (+4 size, +0xc next).
+// A record (AsfHandler::CreateModifier offsets): +0x10 name (32), +0x30 u8 kind, +0x34 u32 base node,
+// +0x38 f32 scale, +0x40 u32 method, +0x44 u32 target count, +0x48 u32 range count, +0x4c u32
+// has target meshsets; from +0x50: targets {u32 node, f32 weight, 8 bytes} x targets, ranges
+// {u32 count, 12 bytes} x ranges, then per target per range {u32 count, u32 offset, 8 bytes, AUID}
+// (MorphModifier::SetTargetMeshSets; the offset is from the record when the AUID is zero).
+void load_modifiers(const Bytes& d, size_t at, Scene& s, std::vector<std::string>* warn) {
+    size_t end = at + rd32(&d[at + 4]);
+    if (end > d.size()) return;
+    size_t p = at + 0x20 + rd32(&d[at + 0x18]);
+    for (uint32_t r = 0; r < rd32(&d[at + 0x10]) && p + 0x50 <= end; r++) {
+        if (!tag_is(&d[p], "rfdm")) break;
+        size_t size = rd32(&d[p + 4]);
+        Modifier m;
+        m.raw.assign(d.begin() + p, d.begin() + std::min(end, p + size));
+        m.name = cstr(&d[p + 0x10], 32);
+        m.kind = d[p + 0x30];
+        m.base = (int)rd32(&d[p + 0x34]);
+        memcpy(&m.scale, &d[p + 0x38], 4);
+        m.method = rd32(&d[p + 0x40]);
+        if (m.kind == 1) {
+            uint32_t nt = rd32(&d[p + 0x44]), nr = rd32(&d[p + 0x48]);
+            bool has = rd32(&d[p + 0x4c]) != 0;
+            size_t q = p + 0x50;
+            for (uint32_t i = 0; i < nt && q + 16 <= end; i++, q += 16) {
+                ModifierTarget t;
+                t.node = (int)rd32(&d[q]);
+                memcpy(&t.weight, &d[q + 4], 4);
+                m.targets.push_back(t);
+            }
+            for (uint32_t i = 0; i < nr && q + 16 <= end; i++, q += 16) m.ranges.push_back(rd32(&d[q]));
+            if (has)
+                for (auto& t : m.targets)
+                    for (uint32_t i = 0; i < nr && q + 0x20 <= end; i++, q += 0x20) {
+                        uint32_t count = rd32(&d[q]), off = rd32(&d[q + 4]);
+                        aff::Auid id = aff::auid_at(&d[q + 0x10]);
+                        Bytes data;
+                        std::string e;
+                        bool zero = true;
+                        for (int k = 0; k < 16; k++) zero &= d[q + 0x10 + k] == 0;
+                        if (zero) {
+                            if (p + off + (size_t)count * 20 <= d.size()) data.assign(d.begin() + p + off, d.begin() + p + off + (size_t)count * 20);
+                        } else if (!s.amf.block(id, data, &e) && warn) {
+                            warn->push_back(m.name + ": target data " + id.hex() + ": " + e);
+                        }
+                        t.counts.push_back(count);
+                        t.data.push_back(std::move(data));
+                    }
+        }
+        s.modifiers.push_back(std::move(m));
+        if (!size) break;
+        p += size;
+    }
 }
 
 bool decode_texture(const Scene& s, const TextureLevel& t, Bytes& rgba, std::string* err) {

@@ -8,6 +8,9 @@
 // recomp_rt.h defines (an opcode it doesn't define fails to compile: nothing is silently wrong).
 //
 // Usage (tools/recomp-proto/build.sh runs it):
+//   recomp_gen [--sweep] [--show-interpret] [--only-ops FILE] MODE ...  (--sweep: the gap sweep;
+//      --show-interpret: list Interpret terminals; --only-ops: emit only functions whose opcodes the
+//      file lists, for size samples)
 //   recomp_gen stats LIB FUNCTIONS.tsv                 every function of the list: blocks, IR
 //                                                      sizes, terminals, the opcode histogram
 //   recomp_gen emit LIB FUNCS.txt OUT.cpp [--locals]   the listed functions as C++ (--locals: the
@@ -49,6 +52,10 @@ using u64 = std::uint64_t;
 // load's address) comes out of the IR as an immediate in [kFakeBase, kFakeBase + size): the
 // emitter prints those as LIB + offset (the real load address at run time).
 static constexpr u64 kFakeBase = 0x7e0000000000ull;
+
+// Options (command-line flags, before the mode)
+static bool g_sweep = false, g_show_interpret = false;
+static std::string g_only_ops;
 
 static std::vector<u8> g_file;
 struct Seg { u64 va, off, filesz; bool x; };
@@ -127,6 +134,8 @@ static std::optional<u32> read_code_at(u64 va) {
 static A64::LocationDescriptor loc(u64 va) { return A64::LocationDescriptor(kFakeBase + va, FP::FPCR{0}); }
 static u64 va_of(const IR::LocationDescriptor& l) { return A64::LocationDescriptor(l).PC() - kFakeBase; }
 
+struct Fn;
+static u64 covered_bytes(const Fn& f);
 // One function: its blocks, translated with block starts as hard stops.
 struct Fn {
     u64 start, size;
@@ -135,7 +144,15 @@ struct Fn {
     std::set<u64> starts;
     bool indirect_jump = false;  // has a BR that isn't a call or a return
     std::string fail;
+    u64 covered_direct = 0;  // bytes the blocks reached by direct control flow cover
 };
+
+static u64 covered_bytes(const Fn& f) {
+    std::set<u64> c;
+    for (auto& [va, b] : f.blocks)
+        for (u64 a = va; a < va_of(b.EndLocation()) && a < f.start + f.size; a += 4) c.insert(a);
+    return 4 * c.size();
+}
 
 static IR::Block translate_block(u64 va, u64 fstart, u64 fend, const std::set<u64>& stops) {
     auto rd = [&](u64 pc) -> std::optional<u32> {
@@ -202,6 +219,25 @@ static void discover(Fn& f) {
         if (f.starts.size() == before) break;
     }
     for (u64 va : f.starts) f.blocks.emplace(va, translate_block(va, f.start, fend, f.starts));
+    f.covered_direct = covered_bytes(f);
+    // --sweep: every 4-aligned address no block covers becomes a block start too (jump-table
+    // case bodies, which a BR's block doesn't lead to; padding after a function's last return)
+    if (g_sweep) {
+        for (int round = 0; round < 64; round++) {
+            std::vector<bool> cov(f.size / 4, false);
+            for (auto& [va, b] : f.blocks)
+                for (u64 a = va; a < va_of(b.EndLocation()) && a < fend; a += 4) cov[(a - f.start) / 4] = true;
+            bool any = false;  // (the start of every uncovered run, each round)
+            for (size_t k = 0; k < cov.size(); k++)
+                if (!cov[k] && (k == 0 || cov[k - 1])) {
+                    f.starts.insert(f.start + 4 * k);
+                    any = true;
+                }
+            if (!any) break;
+            f.blocks.clear();
+            for (u64 va : f.starts) f.blocks.emplace(va, translate_block(va, f.start, fend, f.starts));
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------------- stats mode
@@ -211,7 +247,7 @@ static int stats(const char* fnlist) {
     std::string line;
     std::map<std::string, u64> ophist;
     u64 nf = 0, nblocks = 0, ninsts = 0, nguest = 0, nindirect = 0, ninterp = 0, nfault = 0, ncalls = 0, nicalls = 0;
-    u64 nret = 0, ntail = 0, nfall = 0;
+    u64 nret = 0, ntail = 0, nfall = 0, ncov_direct = 0, ncov = 0;
     std::map<int, u64> exc_hist;
     u64 ncall_direct = 0, ncall_plt_internal = 0, ncall_plt_import = 0;
     std::set<std::string> imports_called;
@@ -225,6 +261,8 @@ static int stats(const char* fnlist) {
         discover(f);
         nf++;
         nguest += f.size / 4;
+        ncov_direct += f.covered_direct;
+        ncov += covered_bytes(f);
         for (auto& [va, b] : f.blocks) {
             nblocks++;
             for (auto& i : b) {
@@ -253,7 +291,10 @@ static int stats(const char* fnlist) {
                     else { ncall_plt_import++; imports_called.insert(p->second); }
                 }
             }
-            if (boost::get<Interpret>(&t)) ninterp++;
+            if (auto* it = boost::get<Interpret>(&t)) {
+                ninterp++;
+                if (g_show_interpret) fprintf(stderr, "interpret 0x%" PRIx64 " in %s\n", va_of(it->next), f.name.c_str());
+            }
             if (auto* l = boost::get<LinkBlock>(&t); l && !call) {
                 u64 s = va_of(l->next);
                 if (s < f.start || s >= f.start + f.size) ntail++;
@@ -262,6 +303,7 @@ static int stats(const char* fnlist) {
         }
         if (nf % 10000 == 0) fprintf(stderr, "  %" PRIu64 " functions\n", nf);
     }
+    printf("bytes_in_functions\t%" PRIu64 "\nbytes_covered_by_direct_flow\t%" PRIu64 "\nbytes_covered_translated\t%" PRIu64 "\n", 4 * nguest, ncov_direct, ncov);
     printf("functions\t%" PRIu64 "\nguest_instructions\t%" PRIu64 "\nblocks\t%" PRIu64 "\nir_instructions\t%" PRIu64 "\n", nf, nguest, nblocks, ninsts);
     printf("direct_calls\t%" PRIu64 "\nindirect_calls\t%" PRIu64 "\nreturns\t%" PRIu64 "\nindirect_jumps\t%" PRIu64 "\ndirect_jumps_out\t%" PRIu64 "\nblocks_with_exception\t%" PRIu64 "\ninterpret_terminals\t%" PRIu64 "\n",
            ncalls, nicalls, nret, nindirect, ntail, nfault, ninterp);
@@ -499,11 +541,11 @@ static int emit(const char* list, const char* out_path, bool locals) {
     for (auto& f : fns) e.funcs.insert(f.start);
     e.o << "// Generated by tools/recomp-proto/recomp_gen.cpp from libSOA.so 3.7.0: do not edit.\n";
     e.o << "#include \"recomp_rt.h\"\nnamespace rc_gen {\nusing namespace rc::types;\n\n";
-    // RECOMP_ONLY_OPS=FILE: leave out the functions that use an opcode the file doesn't list
+    // --only-ops FILE: leave out the functions that use an opcode the file doesn't list
     // (recomp_rt.h's; for size samples of code the prototype's run time doesn't cover yet)
     std::set<std::string> only;
-    if (const char* p = getenv("RECOMP_ONLY_OPS")) {
-        std::ifstream f(p);
+    if (!g_only_ops.empty()) {
+        std::ifstream f(g_only_ops);
         std::string op;
         while (f >> op) only.insert(op);
     }
@@ -527,7 +569,7 @@ static int emit(const char* list, const char* out_path, bool locals) {
         }
         kept.push_back(std::move(f));
     }
-    if (!only.empty()) fprintf(stderr, "kept %zu functions, left out %zu (opcodes not in RECOMP_ONLY_OPS)\n", kept.size(), skipped);
+    if (!only.empty()) fprintf(stderr, "kept %zu functions, left out %zu (opcodes not in --only-ops)\n", kept.size(), skipped);
     fns = std::move(kept);
     for (auto& f : fns) {
         e.fail.clear();
@@ -549,8 +591,17 @@ static int emit(const char* list, const char* out_path, bool locals) {
 }
 
 int main(int argc, char** argv) {
+    std::vector<char*> a{argv[0]};
+    for (int i = 1; i < argc; i++) {
+        if (!strcmp(argv[i], "--sweep")) g_sweep = true;
+        else if (!strcmp(argv[i], "--show-interpret")) g_show_interpret = true;
+        else if (!strcmp(argv[i], "--only-ops") && i + 1 < argc) g_only_ops = argv[++i];
+        else a.push_back(argv[i]);
+    }
+    argc = (int)a.size();
+    argv = a.data();
     if (argc < 4) {
-        fprintf(stderr, "usage: recomp_gen stats LIB FUNCTIONS.tsv | emit LIB FUNCS.txt OUT.cpp\n");
+        fprintf(stderr, "usage: recomp_gen [--sweep] [--show-interpret] [--only-ops FILE] stats LIB FUNCTIONS.tsv | emit LIB FUNCS.txt OUT.cpp [--locals]\n");
         return 2;
     }
     if (!load_elf(argv[2])) {

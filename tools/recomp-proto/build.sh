@@ -4,7 +4,9 @@
 # (time and .o size), build the differential harness and run it against the JIT.
 #
 #   tools/recomp-proto/build.sh [OUT]          (default OUT: work-local scratch /tmp/recomp-proto)
-#   tools/recomp-proto/build.sh OUT stats      also translate every function of the lib (IR stats)
+#   tools/recomp-proto/build.sh OUT stats [FUNCTIONS.tsv]   also translate every function of the lib
+#                                              (IR stats; default list: the profiler's functions.tsv
+#                                              of work/rebase/cov-emu-seeded)
 #
 # Needs a built tree (scripts/build.sh: build/_deps/dynarmic-*, build/runtime/libsoaruntime.a)
 # and work/libSOA-3.7.0.so. Linux only; not part of the CMake build or of any gate.
@@ -25,9 +27,9 @@ echo "== translator"
 $CXX -std=c++20 -O1 $DYN_INC "$here/recomp_gen.cpp" $DYN_LIBS -o "$out/recomp_gen"
 
 if [ "${2:-}" = stats ]; then
-  fns=${RECOMP_FUNCTIONS_TSV:-$repo/work/rebase/cov-emu-seeded/prof/functions.tsv}
+  fns=${3:-$repo/work/rebase/cov-emu-seeded/prof/functions.tsv}
   echo "== stats over $fns"
-  /usr/bin/time -f "%e s, %M KB" "$out/recomp_gen" stats "$LIB" "$fns" > "$out/stats.tsv"
+  /usr/bin/time -f "%e s, %M KB" "$out/recomp_gen" --sweep stats "$LIB" "$fns" > "$out/stats.tsv"
   head -20 "$out/stats.tsv"
 fi
 

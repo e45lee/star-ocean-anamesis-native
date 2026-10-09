@@ -390,6 +390,7 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
     json& doc = b.doc;
     doc["asset"] = {{"version", "2.0"}, {"generator", "asf2gltf (star-ocean-anamnesis-reverse)"}};
     doc["asset"]["extras"] = {{"source", in.source_name}};
+    if (!in.extras.empty()) doc["extras"] = in.extras;
     std::set<std::string> ext_used;
 
     // physics-driven joints: the dynamics chains' records ({u32 node, ...} x count at +0x128)

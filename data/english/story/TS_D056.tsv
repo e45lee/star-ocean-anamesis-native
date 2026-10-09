@@ -1,6 +1,6 @@
 message_id	ja_sha1	en	source	engine	date	editor	note
 D056_010_01	a7661736e52b9f4f0b391ba222a778ea816992e6	Captain, it looks like this\nresupply went well. Reimi and\nthe others who went shopping\nseem to have relieved some\nstress, too.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-D056_010_02	a57f1e4b2241d3a539657bfa396350689da9f7cc	Reimi's Voice: Wow, it looks\ngreat on you! It was definitely\nworth splurging on!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+D056_010_02	a57f1e4b2241d3a539657bfa396350689da9f7cc	Wow, it looks\ngreat on you! It was definitely\nworth splurging on!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		prefix (en-prefix 2026-10-08): removed the engine's speaker prefix "Reimi's Voice: "
 D056_010_04	6f6ac5d6d1493e30b12e320ecc4eedfa8da208c7	They're quite lively, aren't\nthey? I wonder if they found\nsomething nice?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_010_05	60e0e25495dd0b769da004f833d8aa8ed347024d	I wondered what you were\nbuying, but these clothes look\nquite expensive. Are you sure\nyou want me to be the first to\nwear them?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_010_06	46165373f4370609e32999d9bd26763c1d508349	Because you'll look the best in\nit, Nel! Of course, I'll wear it\nlater too, and I'll call everyone\nelse so we can all swap outfits!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
@@ -119,7 +119,7 @@ D056_030_27	5b6af5dddd2a7893f56078f3c48329ed25c8eb3f	The cross-section of the\nc
 D056_030_29	0e5a979640986c6dde97f194482d529403d0bea1	Hm, the man in black...! So\nthat's the scholar.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_030_30	99eb037a1ca48dfc3b48d3621ccc2f5f072b098d	It looks like it... but he's just\nstanding there? Something\nseems off...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_030_31	25ebfc360fe7724d3e6ab59e2a8ace18b13bb2a5	For that matter, how is he fine\nwithout wearing the traditional\nethnic clothing?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-D056_030_32	2335e9fe4ec02987a5792d70b0650e8f9967815d	Scholar in Black: ...O.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+D056_030_32	2335e9fe4ec02987a5792d70b0650e8f9967815d	...O.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		prefix (en-prefix 2026-10-08): removed the engine's speaker prefix "Scholar in Black: "
 D056_030_33	df9f39194ee80727f44d4e22bc9186091ac4213a	...OOOOOOOOOO!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_030_34	734329f00cde63af26458ce92687e43c6d7f1228	Damn it, wh-what is that?! Do\nyou see it, Nel?!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_030_35	44bf3430e27468639b388dbfc80639404a760b0b	I see it! Something glowing has\nappeared above the scholar...!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
@@ -133,7 +133,7 @@ D056_030_42	5f9d40716201efaddc6a7f8fb16b2e9a9f4ee0e3	...Looks like we don't have
 D056_030_43	df9f39194ee80727f44d4e22bc9186091ac4213a	...OOOOOOOOOOO!	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_040_01	d7071b5e57f5fc1d82d64e79ba801bf4d97246e2	...Ooooh...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_040_02	db8b70da6ace2078369c662eaf84e3613aa21b27	Huh? The guy suddenly went\nquiet.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
-D056_040_04	a85f988ec9fdba5fb2fccc3fa11a6fdedc5a0dce	Scholar in Black: Ugh...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
+D056_040_04	a85f988ec9fdba5fb2fccc3fa11a6fdedc5a0dce	Ugh...	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		prefix (en-prefix 2026-10-08): removed the engine's speaker prefix "Scholar in Black: "
 D056_040_05	9f64d7bd1ed7c90cdbe089617d6988c79af2e11b	Oh, the scholar collapsed. And\nthe god... has it vanished?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_040_06	e6bd77dc18427adfecd0e95117cf70915e16c929	What, did the so-called god\njust calm down? Well, it\ncertainly tore things up enough\nfor us.	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		
 D056_040_07	f624186e1e70084f9eb6ebde8c06b65269b82e7b	Heh... Or maybe it lost\nconsciousness because I gave\nthat nuisance of a scholar a\ngood kick?	machine	gemma-4-31B-it/qat-UD-Q4_K_XL/v2+story-v1/llama.cpp-b11443/t0	2026-10-07		

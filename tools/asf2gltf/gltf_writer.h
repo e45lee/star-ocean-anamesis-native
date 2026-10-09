@@ -31,6 +31,7 @@ struct Input {
     const soa::asf::Scene* scene = nullptr;
     std::string source_name;
     std::vector<Anim> anims;
+    nlohmann::ordered_json shaders;  // capture_shaders() (shader_capture.h): SOA_aska_shader, when given
 };
 
 bool write(const Input& in, const Options& opt, const std::string& out_path, std::string* err);

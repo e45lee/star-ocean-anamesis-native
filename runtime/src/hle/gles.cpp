@@ -15,7 +15,9 @@
 #include <GLES2/gl2ext.h>
 #include <GLES3/gl32.h>
 
+#include <algorithm>
 #include <atomic>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -308,6 +310,41 @@ void host_glAttachShader(GLuint prog, GLuint shader) {
     }
     s_glAttachShader(prog, shader);
 }
+// The program's active uniforms and their values now (arrays to 256 elements; floats to 9 digits).
+void dump_uniforms(GLuint prog, const std::string& path) {
+    FILE* f = fopen(path.c_str(), "w");
+    if (!f) return;
+    GLint nu = 0;
+    s_glGetProgramiv(prog, GL_ACTIVE_UNIFORMS, &nu);
+    for (GLint i = 0; i < nu; i++) {
+        char name[256];
+        GLsizei nl = 0;
+        GLint size = 0;
+        GLenum ty = 0;
+        s_glGetActiveUniform(prog, (GLuint)i, sizeof name, &nl, &size, &ty, name);
+        std::string base(name);
+        size_t br = base.find('[');
+        if (br != std::string::npos) base = base.substr(0, br);
+        for (GLint e = 0; e < size && e < 256; e++) {
+            std::string nm = size > 1 ? base + "[" + std::to_string(e) + "]" : std::string(name);
+            GLint loc = s_glGetUniformLocation(prog, nm.c_str());
+            if (loc < 0) continue;
+            if (ty == GL_SAMPLER_2D || ty == GL_SAMPLER_CUBE || ty == GL_INT || ty == GL_SAMPLER_2D_SHADOW || ty == GL_SAMPLER_3D) {
+                GLint v = 0;
+                s_glGetUniformiv(prog, loc, &v);
+                fprintf(f, "%s 0x%x = %d\n", nm.c_str(), ty, v);
+            } else {
+                GLfloat v[16] = {0};
+                s_glGetUniformfv(prog, loc, v);
+                int k = ty == GL_FLOAT ? 1 : ty == GL_FLOAT_VEC2 ? 2 : ty == GL_FLOAT_VEC3 ? 3 : ty == GL_FLOAT_MAT4 ? 16 : 4;
+                fprintf(f, "%s 0x%x =", nm.c_str(), ty);
+                for (int c = 0; c < k; c++) fprintf(f, " %.9g", v[c]);
+                fprintf(f, "\n");
+            }
+        }
+    }
+    fclose(f);
+}
 void draw_dump_draw(GLenum mode, GLsizei count, GLenum type, const void* offset) {
     DrawDump* d = draw_dump();
     if (!d) return;
@@ -329,6 +366,9 @@ void draw_dump_draw(GLenum mode, GLsizei count, GLenum type, const void* offset)
     s_glGetIntegerv(GL_CULL_FACE_MODE, &cullface);
     GLboolean dmask = 0;
     s_glGetBooleanv(GL_DEPTH_WRITEMASK, &dmask);
+    GLint dfunc = 0, front = 0;
+    s_glGetIntegerv(GL_DEPTH_FUNC, &dfunc);
+    s_glGetIntegerv(GL_FRONT_FACE, &front);
     std::lock_guard lk(d->mu);
     std::string units;
     for (int u = 0; u < 8; u++) {
@@ -337,9 +377,9 @@ void draw_dump_draw(GLenum mode, GLsizei count, GLenum type, const void* offset)
         units += units_[u] == 0 ? std::string("-") : it == d->tex_hash.end() ? std::string("?") : it->second;
     }
     char line[1024];
-    snprintf(line, sizeof line, "%d\t%d\t0x%x\t%d\t0x%x\t%lld\t%s\tblend %d 0x%x 0x%x\tcull %d 0x%x\tdepthwrite %d", prog, ebo, mode, count, type,
-             (long long)(intptr_t)offset, units.c_str(), (int)s_glIsEnabled(GL_BLEND), bsrc, bdst, (int)s_glIsEnabled(GL_CULL_FACE), cullface,
-             (int)dmask);
+    snprintf(line, sizeof line, "%d\t%d\t0x%x\t%d\t0x%x\t%lld\t%s\tblend %d 0x%x 0x%x\tcull %d 0x%x front 0x%x\tdepthwrite %d test %d func 0x%x", prog, ebo,
+             mode, count, type, (long long)(intptr_t)offset, units.c_str(), (int)s_glIsEnabled(GL_BLEND), bsrc, bdst, (int)s_glIsEnabled(GL_CULL_FACE),
+             cullface, front, (int)dmask, (int)s_glIsEnabled(GL_DEPTH_TEST), dfunc);
     auto& seen = d->seen[line];  // {number, times drawn}
     if (seen.second++ == 0) {
         seen.first = d->next++;
@@ -370,46 +410,15 @@ void draw_dump_draw(GLenum mode, GLsizei count, GLenum type, const void* offset)
             fclose(f);
         }
     }
-    if (!prog) return;
-    FILE* f = fopen((d->dir + "/draw_" + std::to_string(n) + ".txt").c_str(), "w");
-    if (!f) return;
-    GLint nu = 0;
-    s_glGetProgramiv((GLuint)prog, GL_ACTIVE_UNIFORMS, &nu);
-    for (GLint i = 0; i < nu; i++) {
-        char name[256];
-        GLsizei nl = 0;
-        GLint size = 0;
-        GLenum ty = 0;
-        s_glGetActiveUniform((GLuint)prog, (GLuint)i, sizeof name, &nl, &size, &ty, name);
-        std::string base(name);
-        size_t br = base.find('[');
-        if (br != std::string::npos) base = base.substr(0, br);
-        for (GLint e = 0; e < size && e < 256; e++) {
-            std::string nm = size > 1 ? base + "[" + std::to_string(e) + "]" : std::string(name);
-            GLint loc = s_glGetUniformLocation((GLuint)prog, nm.c_str());
-            if (loc < 0) continue;
-            if (ty == GL_SAMPLER_2D || ty == GL_SAMPLER_CUBE || ty == GL_INT || ty == GL_SAMPLER_2D_SHADOW || ty == GL_SAMPLER_3D) {
-                GLint v = 0;
-                s_glGetUniformiv((GLuint)prog, loc, &v);
-                fprintf(f, "%s 0x%x = %d\n", nm.c_str(), ty, v);
-            } else {
-                GLfloat v[16] = {0};
-                s_glGetUniformfv((GLuint)prog, loc, v);
-                int k = ty == GL_FLOAT ? 1 : ty == GL_FLOAT_VEC2 ? 2 : ty == GL_FLOAT_VEC3 ? 3 : ty == GL_FLOAT_MAT4 ? 16 : 4;
-                fprintf(f, "%s 0x%x =", nm.c_str(), ty);
-                for (int c = 0; c < k; c++) fprintf(f, " %g", v[c]);
-                fprintf(f, "\n");
-            }
-        }
-    }
-    fclose(f);
+    if (prog) dump_uniforms((GLuint)prog, d->dir + "/draw_" + std::to_string(n) + ".txt");
 }
-// SOA_GL_DRAW_PROBE=<hash> (with SOA_GL_DRAW_DUMP): for draws whose unit 0 texture is that upload
-// (textures.tsv), the bound framebuffer's pixels are read before and after the draw, every 600th
-// time: DIR/probe_<n>.txt counts the changed pixels and their bounding box, DIR/probe_<n>_diff.ppm
-// marks them (white) over the after image. Whether a draw shows on screen at all, without the
+// SOA_GL_DRAW_PROBE=<hash>[,<hash>...] (with SOA_GL_DRAW_DUMP): for draws whose unit 0 texture is
+// one of those uploads (textures.tsv), the bound framebuffer's pixels are read before and after the
+// draw, the 300th time and every 600th after (per texture and index count; 16 probes at most; resolved through a
+// float renderbuffer, so a multisampled or HDR target reads too): DIR/probe_<n>.txt counts the changed pixels and their bounding box; probe_<n>_before.ppm /
+// _after.ppm are the framebuffer around the draw, probe_<n>_uniforms.txt the program's uniforms then. Whether a draw shows on screen at all, without the
 // rest of the frame changing between two runs.
-bool draw_probe_match() {
+bool draw_probe_match(std::string* hash) {
     static const char* want = env::env_str("SOA_GL_DRAW_PROBE");
     DrawDump* d = draw_dump();
     if (!want || !*want || !d) return false;
@@ -420,52 +429,158 @@ bool draw_probe_match() {
     s_glActiveTexture((GLenum)active);
     std::lock_guard lk(d->mu);
     auto it = d->tex_hash.find(t);
-    return it != d->tex_hash.end() && it->second == want;
+    if (it == d->tex_hash.end() || strstr(want, it->second.c_str()) == nullptr) return false;  // (one hash or a list)
+    *hash = it->second;
+    return true;
 }
 template <typename Draw>
-void draw_probe(Draw draw) {
-    static long seen = 0;
+void draw_probe(GLsizei count, Draw draw) {
+    static std::unordered_map<std::string, long> seen;  // per index count and texture
     static int written = 0;
-    if (!draw_probe_match() || (seen++ % 600) != 0 || written >= 4) {
+    std::string key;
+    if (!draw_probe_match(&key) || (seen[key + "/" + std::to_string(count)]++ % 600) != 300 || written >= 16) {
         draw();
         return;
     }
     GLint vp[4] = {0, 0, 0, 0}, fb = 0;
     s_glGetIntegerv(GL_VIEWPORT, vp);
-    s_glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fb);
+    s_glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fb);
     size_t n = (size_t)vp[2] * vp[3] * 4;
-    std::vector<uint8_t> before(n), after(n);
-    s_glReadPixels(vp[0], vp[1], vp[2], vp[3], GL_RGBA, GL_UNSIGNED_BYTE, before.data());
+    std::vector<float> beforef(n), afterf(n);
+    // the bound framebuffer is resolved (it may be multisampled) into a float renderbuffer, read as floats
+    auto grab = [&](std::vector<float>& px) {
+        GLint rfb = 0, dfb = 0, rb_old = 0;
+        s_glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &rfb);
+        s_glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &dfb);
+        s_glGetIntegerv(GL_RENDERBUFFER_BINDING, &rb_old);
+        GLuint tfb = 0, trb = 0;
+        s_glGenFramebuffers(1, &tfb);
+        s_glGenRenderbuffers(1, &trb);
+        s_glBindRenderbuffer(GL_RENDERBUFFER, trb);
+        s_glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA32F, vp[0] + vp[2], vp[1] + vp[3]);
+        s_glBindFramebuffer(GL_DRAW_FRAMEBUFFER, tfb);
+        s_glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, trb);
+        s_glBindFramebuffer(GL_READ_FRAMEBUFFER, (GLuint)fb);
+        s_glBlitFramebuffer(vp[0], vp[1], vp[0] + vp[2], vp[1] + vp[3], vp[0], vp[1], vp[0] + vp[2], vp[1] + vp[3], GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        s_glBindFramebuffer(GL_READ_FRAMEBUFFER, tfb);
+        GLint pack = 4;
+        s_glGetIntegerv(GL_PACK_ALIGNMENT, &pack);
+        s_glPixelStorei(GL_PACK_ALIGNMENT, 4);
+        s_glReadPixels(vp[0], vp[1], vp[2], vp[3], GL_RGBA, GL_FLOAT, px.data());
+        s_glPixelStorei(GL_PACK_ALIGNMENT, pack);
+        s_glBindFramebuffer(GL_READ_FRAMEBUFFER, (GLuint)rfb);
+        s_glBindFramebuffer(GL_DRAW_FRAMEBUFFER, (GLuint)dfb);
+        s_glBindRenderbuffer(GL_RENDERBUFFER, (GLuint)rb_old);
+        s_glDeleteFramebuffers(1, &tfb);
+        s_glDeleteRenderbuffers(1, &trb);
+    };
+    grab(beforef);
     draw();
-    s_glReadPixels(vp[0], vp[1], vp[2], vp[3], GL_RGBA, GL_UNSIGNED_BYTE, after.data());
+    grab(afterf);
+    std::vector<uint8_t> before(n), after(n);
+    for (size_t i = 0; i < n; i++) {
+        before[i] = (uint8_t)std::lround(std::min(1.0f, std::max(0.0f, beforef[i])) * 255);
+        after[i] = (uint8_t)std::lround(std::min(1.0f, std::max(0.0f, afterf[i])) * 255);
+    }
     long changed = 0;
     int x0 = vp[2], y0 = vp[3], x1 = -1, y1 = -1;
     for (int y = 0; y < vp[3]; y++)
         for (int x = 0; x < vp[2]; x++) {
             size_t i = ((size_t)y * vp[2] + x) * 4;
-            if (memcmp(&before[i], &after[i], 3) == 0) continue;
+            if (memcmp(&beforef[i], &afterf[i], 12) == 0) continue;
             changed++;
             x0 = std::min(x0, x), x1 = std::max(x1, x), y0 = std::min(y0, y), y1 = std::max(y1, y);
-            after[i] = after[i + 1] = after[i + 2] = 255;
         }
     DrawDump* d = draw_dump();
     int k = written++;
+    GLint prog = 0;
+    s_glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+    if (prog) dump_uniforms((GLuint)prog, d->dir + "/probe_" + std::to_string(k) + "_uniforms.txt");
+    auto ppm = [&](const std::string& name, const std::vector<uint8_t>& px) {
+        if (FILE* f = fopen((d->dir + "/probe_" + std::to_string(k) + name).c_str(), "wb")) {
+            fprintf(f, "P6 %d %d 255\n", vp[2], vp[3]);
+            for (int y = vp[3] - 1; y >= 0; y--)
+                for (int x = 0; x < vp[2]; x++) fwrite(&px[((size_t)y * vp[2] + x) * 4], 1, 3, f);
+            fclose(f);
+        }
+    };
+    ppm("_before.ppm", before);
+    ppm("_after.ppm", after);
+    for (auto [name, px] : {std::pair<const char*, std::vector<float>*>{"_before.f32", &beforef}, {"_after.f32", &afterf}})
+        if (FILE* f = fopen((d->dir + "/probe_" + std::to_string(k) + name).c_str(), "wb")) {  // RGBA floats, bottom row first
+            fwrite(px->data(), 4, px->size(), f);
+            fclose(f);
+        }
+    // the bound 2D textures' level 0 as the GPU holds them (desktop GL's glGetTexImage on the host:
+    // compressed ones decompressed, sRGB ones as stored, depth textures as floats):
+    // probe_<n>_unit<u>.bin + a line each in probe_<n>_units.txt
+    using GetTexImage = void (*)(GLenum, GLint, GLenum, GLenum, void*);
+    static auto get_tex_image = (GetTexImage)eglGetProcAddress("glGetTexImage");
+    if (FILE* lf = fopen((d->dir + "/probe_" + std::to_string(k) + "_units.txt").c_str(), "w")) {
+        GLint active = 0;
+        s_glGetIntegerv(GL_ACTIVE_TEXTURE, &active);
+        for (int un = 0; un < 8; un++) {
+            s_glActiveTexture(GL_TEXTURE0 + un);
+            GLint t = 0, w = 0, h = 0, fmt = 0;
+            s_glGetIntegerv(GL_TEXTURE_BINDING_2D, &t);
+            if (!t) continue;
+            s_glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
+            s_glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
+            s_glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &fmt);
+            if (w <= 0 || h <= 0 || (size_t)w * h > 4096u * 4096u) continue;
+            bool depth = fmt == GL_DEPTH_COMPONENT16 || fmt == GL_DEPTH_COMPONENT24 || fmt == GL_DEPTH_COMPONENT32F ||
+                         fmt == GL_DEPTH24_STENCIL8 || fmt == GL_DEPTH32F_STENCIL8 || fmt == GL_DEPTH_COMPONENT;
+            bool fl = fmt == GL_RGBA16F || fmt == GL_RGBA32F || fmt == GL_R16F || fmt == GL_R32F || fmt == GL_RG16F ||
+                      fmt == GL_RG32F || fmt == GL_R11F_G11F_B10F || fmt == GL_RGB16F;
+            std::vector<uint8_t> px((size_t)w * h * (fl ? 16 : 4));
+            GLint pack = 4;
+            s_glGetIntegerv(GL_PACK_ALIGNMENT, &pack);
+            s_glPixelStorei(GL_PACK_ALIGNMENT, 1);
+            // through a framebuffer (the host context may be GLES, without glGetTexImage); a format that
+            // can't be a colour attachment (the EAC ones) stays empty ("unread")
+            bool read = false;
+            if (!depth) {
+                GLint rfb = 0;
+                s_glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &rfb);
+                GLuint tfb = 0;
+                s_glGenFramebuffers(1, &tfb);
+                s_glBindFramebuffer(GL_READ_FRAMEBUFFER, tfb);
+                s_glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, (GLuint)t, 0);
+                if (s_glCheckFramebufferStatus(GL_READ_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+                    s_glReadPixels(0, 0, w, h, GL_RGBA, fl ? GL_FLOAT : GL_UNSIGNED_BYTE, px.data());
+                    read = true;
+                }
+                s_glBindFramebuffer(GL_READ_FRAMEBUFFER, (GLuint)rfb);
+                s_glDeleteFramebuffers(1, &tfb);
+            }
+            if (!read && get_tex_image) {
+                get_tex_image(GL_TEXTURE_2D, 0, depth ? GL_DEPTH_COMPONENT : GL_RGBA, depth || fl ? GL_FLOAT : GL_UNSIGNED_BYTE, px.data());
+                read = s_glGetError() == GL_NO_ERROR;
+            }
+            s_glPixelStorei(GL_PACK_ALIGNMENT, pack);
+            std::string bin = "probe_" + std::to_string(k) + "_unit" + std::to_string(un) + ".bin";
+            if (FILE* f = fopen((d->dir + "/" + bin).c_str(), "wb")) {
+                fwrite(px.data(), 1, px.size(), f);
+                fclose(f);
+            }
+            auto it = d->tex_hash.find(t);
+            fprintf(lf, "%d\t%d\t%dx%d\t0x%x\t%s\t%s\n", un, t, w, h, fmt, !read ? "unread" : depth ? "depth-f32" : fl ? "rgba-f32" : "rgba8",
+                    it == d->tex_hash.end() ? "?" : it->second.c_str());
+        }
+        s_glActiveTexture((GLenum)active);
+        fclose(lf);
+    }
     if (FILE* f = fopen((d->dir + "/probe_" + std::to_string(k) + ".txt").c_str(), "w")) {
-        fprintf(f, "framebuffer %d viewport %d %d %d %d\nchanged pixels %ld\nbbox (GL, origin bottom-left) x %d-%d y %d-%d\n", fb, vp[0], vp[1],
-                vp[2], vp[3], changed, x0, x1, y0, y1);
+        fprintf(f, "framebuffer %d viewport %d %d %d %d\nprogram %d index count %d\nchanged pixels %ld\nbbox (GL, origin bottom-left) x %d-%d y %d-%d\n", fb,
+                vp[0], vp[1], vp[2], vp[3], prog, count, changed, x0, x1, y0, y1);
         fclose(f);
     }
-    if (FILE* f = fopen((d->dir + "/probe_" + std::to_string(k) + "_diff.ppm").c_str(), "wb")) {
-        fprintf(f, "P6 %d %d 255\n", vp[2], vp[3]);
-        for (int y = vp[3] - 1; y >= 0; y--)
-            for (int x = 0; x < vp[2]; x++) fwrite(&after[((size_t)y * vp[2] + x) * 4], 1, 3, f);
-        fclose(f);
-    }
+
 }
 void host_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* offset) {
     if (draw_dump()) {
         draw_dump_draw(mode, count, type, offset);
-        draw_probe([&] { s_glDrawElements(mode, count, type, offset); });
+        draw_probe(count, [&] { s_glDrawElements(mode, count, type, offset); });
         return;
     }
     s_glDrawElements(mode, count, type, offset);
@@ -473,7 +588,7 @@ void host_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* of
 void host_glDrawRangeElements(GLenum mode, GLuint lo, GLuint hi, GLsizei count, GLenum type, const void* offset) {
     if (draw_dump()) {
         draw_dump_draw(mode, count, type, offset);
-        draw_probe([&] { s_glDrawRangeElements(mode, lo, hi, count, type, offset); });
+        draw_probe(count, [&] { s_glDrawRangeElements(mode, lo, hi, count, type, offset); });
         return;
     }
     s_glDrawRangeElements(mode, lo, hi, count, type, offset);

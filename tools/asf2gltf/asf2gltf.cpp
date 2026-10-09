@@ -16,6 +16,9 @@
 //   --check-gl-dump DIR  compare every meshset's vertex and index bytes with the buffers a run of
 //                the game uploaded (soa with SOA_GL_BUFFER_DUMP=DIR): prints one line per meshset
 //                and "match N/M"; exit 1 unless every meshset matched
+//   --shaders DIR  a capture of the game drawing the model (soa with SOA_GL_DRAW_DUMP=DIR): each
+//                material's own GLSL, uniforms and draw state go into SOA_aska_shader
+//   --raw-out DIR  the meshsets as the game's vertex shaders read them (shader_replay.py)
 #include <soa/aaf.h>
 #include <soa/aff.h>
 #include <soa/asf.h>
@@ -34,6 +37,7 @@
 #include <vector>
 
 #include "gltf_writer.h"
+#include "shader_capture.h"
 
 using soa::aff::Bytes;
 
@@ -306,7 +310,7 @@ bool add_anims(Source& src, const std::string& arg, std::vector<gltf::Anim>& out
 void usage() {
     fprintf(stderr,
             "usage: asf2gltf [--data DIR|ZIP] MODEL [-o OUT.glb] [--gltf] [--aaf ANIM]... [--set FILE] [--fps N] [--no-ext]\n"
-            "                [--info] [--textures DIR] [--check-gl-dump DIR]\n");
+            "                [--info] [--textures DIR] [--check-gl-dump DIR] [--shaders DIR] [--raw-out DIR]\n");
 }
 
 }  // namespace
@@ -314,7 +318,7 @@ void usage() {
 int main(int argc, char** argv) {
     Source src;
     src.data_path = repo_dir_of(argv[0]) + "/work/SOA-3.7.0-canonical-data.zip";
-    std::string model, out, textures_dir, gl_dump, set_file;
+    std::string model, out, textures_dir, gl_dump, set_file, shaders_dir, raw_dir;
     std::vector<std::string> anims;
     bool info = false;
     gltf::Options opt;
@@ -334,6 +338,8 @@ int main(int argc, char** argv) {
         else if (a == "--info") info = true;
         else if (a == "--textures") textures_dir = next();
         else if (a == "--check-gl-dump") gl_dump = next();
+        else if (a == "--shaders") shaders_dir = next();
+        else if (a == "--raw-out") raw_dir = next();
         else if (a == "-h" || a == "--help") { usage(); return 0; }
         else if (!a.empty() && a[0] == '-') { usage(); return 2; }
         else model = a;
@@ -363,10 +369,16 @@ int main(int argc, char** argv) {
     }
     int rc = 0;
     if (!gl_dump.empty()) rc |= check_gl_dump(scene, gl_dump);
+    if (!raw_dir.empty() && !gltf::write_raw_streams(scene, raw_dir, &err)) { fprintf(stderr, "asf2gltf: %s\n", err.c_str()); return 1; }
     if (!out.empty()) {
         gltf::Input in;
         in.scene = &scene;
         in.source_name = name;
+        if (!shaders_dir.empty()) {
+            in.shaders = gltf::capture_shaders(scene, shaders_dir, &err);
+            if (!in.shaders.contains("materials") || in.shaders["materials"].empty())
+                fprintf(stderr, "asf2gltf: warning: %s\n", err.empty() ? "no shaders captured" : err.c_str());
+        }
         for (const std::string& a : anims)
             if (!add_anims(src, a, in.anims, &err)) { fprintf(stderr, "asf2gltf: %s\n", err.c_str()); return 1; }
         if (!set_file.empty()) {

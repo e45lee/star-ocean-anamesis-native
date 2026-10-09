@@ -30,6 +30,8 @@ opencv-python-headless
 zstandard
 # PO files (Poedit, Lokalize, Weblate): tools/english_text.py export-po / import-po, tests/test_english_text.py
 polib
+# headless GL (an EGL context) to replay the game's shaders: tools/asf2gltf/shader_replay.py
+moderngl
 # interactive reverse engineering (README.md "Reverse-engineering tools"); no tracked script imports them
 lief
 keystone-engine

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOA glTF viewer</title>
+<!-- three.js: work/tools/three-0.186.1 (tools/gltf-viewer/fetch-deps.py); the version is pinned there -->
+<script type="importmap">
+{ "imports": {
+    "three": "/work/tools/three-0.186.1/package/build/three.module.js",
+    "three/addons/": "/work/tools/three-0.186.1/package/examples/jsm/"
+} }
+</script>
+<style>
+  :root { --bg: #15171c; --panel: #1e2128; --line: #2e323b; --fg: #e6e6e6; --dim: #9aa0aa; --acc: #6cb6ff; --warn: #ffb86c; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 13px/1.35 system-ui, sans-serif; }
+  #app { display: flex; height: 100%; }
+  #view { flex: 1; position: relative; min-width: 0; }
+  #view canvas { display: block; width: 100%; height: 100%; }
+  #drop { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; font-size: 20px;
+          background: rgba(20, 60, 110, 0.5); pointer-events: none; }
+  #drop.on { display: flex; }
+  #hud { position: absolute; left: 8px; top: 6px; color: var(--dim); pointer-events: none; white-space: pre; font: 12px ui-monospace, monospace; }
+  #line { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); max-width: 90%; padding: 8px 14px;
+          background: rgba(0, 0, 0, 0.6); border: 1px solid var(--line); border-radius: 6px; display: none; white-space: pre-wrap; }
+  #side { width: 340px; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--line); }
+  section { border-bottom: 1px solid var(--line); padding: 8px 10px; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); margin: 0 0 6px; }
+  label { display: inline-flex; align-items: center; gap: 4px; margin: 2px 8px 2px 0; }
+  select, input, button { background: #111318; color: var(--fg); border: 1px solid var(--line); border-radius: 4px; font: inherit; padding: 2px 6px; }
+  button { cursor: pointer; }
+  button.on { border-color: var(--acc); color: var(--acc); }
+  select { max-width: 100%; }
+  .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 3px 0; }
+  .grow { flex: 1; min-width: 0; }
+  #anims { width: 100%; height: 170px; }
+  #timeline { width: 100%; height: 34px; display: block; background: #111318; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; }
+  pre { white-space: pre-wrap; word-break: break-word; font: 11px ui-monospace, monospace; color: #cfd3da; margin: 4px 0; max-height: 260px; overflow: auto; }
+  .dim { color: var(--dim); }
+  .morph { display: grid; grid-template-columns: 1fr 90px; gap: 2px 6px; align-items: center; font-size: 12px; }
+  @media (max-width: 760px) { #app { flex-direction: column; } #side { width: 100%; height: 45%; border-left: 0; border-top: 1px solid var(--line); } }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="view"><div id="hud"></div><div id="line"></div><div id="drop">Drop a .glb</div></div>
+  <div id="side">
+    <section>
+      <h2>Model</h2>
+      <div class="row"><select id="models" class="grow"><option value="">work/models/…</option></select></div>
+      <div class="row"><input id="file" type="file" accept=".glb,.gltf"><span class="dim">or drop a .glb</span></div>
+      <div id="modelinfo" class="dim"></div>
+    </section>
+    <section>
+      <h2>Materials</h2>
+      <div class="row">
+        <label><input type="radio" name="mat" value="game"> the game's shaders</label>
+        <label><input type="radio" name="mat" value="pbr" checked> PBR fallback</label>
+      </div>
+      <div id="matinfo" class="dim"></div>
+    </section>
+    <section>
+      <h2>Animation</h2>
+      <select id="anims" size="9"></select>
+      <div class="row"><span class="dim">face layer</span><select id="face" class="grow"><option value="">none</option></select></div>
+      <div class="row">
+        <button id="play">▶</button><button id="prev">◀|</button><button id="next">|▶</button>
+        <input id="frame" type="number" min="0" step="1" value="0" style="width:70px"><span id="flen" class="dim"></span>
+        <select id="speed"><option>0.25</option><option>0.5</option><option selected>1</option><option>2</option></select>
+        <label><input id="loop" type="checkbox" checked>loop</label>
+      </div>
+      <input id="scrub" type="range" min="0" max="1" step="1" value="0" style="width:100%">
+      <canvas id="timeline" title="effect triggers (orange), sound cues (blue), signals (grey); click to seek"></canvas>
+      <div class="row">
+        <label><input id="constraints" type="checkbox" checked>constraints (SOA_aska_constraints)</label>
+      </div>
+      <pre id="animinfo"></pre>
+    </section>
+    <section>
+      <h2>Home</h2>
+      <div class="row">
+        <button id="home">home behaviour</button><button id="tap">tap</button>
+        <span class="dim">favor</span><input id="favor" type="number" min="0" max="10" value="5" style="width:50px">
+        <label><input id="en" type="checkbox">English</label>
+      </div>
+      <pre id="homeinfo" class="dim"></pre>
+    </section>
+    <section>
+      <h2>Morph targets</h2>
+      <div id="morphs" class="morph"></div>
+    </section>
+    <section>
+      <h2>Display</h2>
+      <div class="row">
+        <label><input id="skeleton" type="checkbox">skeleton</label>
+        <label><input id="physics" type="checkbox">physics joints</label>
+        <label><input id="grid" type="checkbox" checked>grid</label>
+      </div>
+      <div class="row">
+        <button data-cam="front">front</button><button data-cam="three-quarter">¾</button><button data-cam="side">side</button>
+        <button data-cam="back">back</button><button data-cam="face">face</button><button data-cam="home">game home</button>
+      </div>
+      <div id="nodes" class="dim"></div>
+    </section>
+    <section>
+      <h2>File</h2>
+      <pre id="fileinfo"></pre>
+    </section>
+  </div>
+</div>
+<script type="module" src="viewer.js"></script>
+</body>
+</html>

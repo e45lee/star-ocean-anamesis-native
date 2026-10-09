@@ -169,7 +169,9 @@ json capture_shaders(const asf::Scene& s, const std::string& dir, std::string* e
                         } else if (engine_uniform(name)) {
                             bool per_draw = name.rfind("camSkin", 0) == 0 || name.rfind("cm", 0) == 0 || name == "vcvWorldEyePos";
                             e["engine"] = per_draw ? "per draw (the pose and the camera)" : "the scene's lighting (captured)";
-                            if (!per_draw) {
+                            // the scene's values, and of the per-draw ones the model's placement (cmWorld) and the eye
+                            // of the captured draw (a viewer maps its own space to the game's with them)
+                            if (!per_draw || name == "cmWorld" || name == "vcvWorldEyePos") {
                                 json vals = json::array();
                                 int n = e.value("count", 1);
                                 for (int k = 0; k < n; k++) {
@@ -186,7 +188,19 @@ json capture_shaders(const asf::Scene& s, const std::string& dir, std::string* e
                             // eConstColor_Color_Color<n> = constant 5 index n, eALBEDO_CONSTCOLOR = 0x14)
                             auto v = u.find(name);
                             if (v == u.end()) v = u.find(name + "[0]");
-                            if (v != u.end()) e["captured"] = v->second;
+                            if (v != u.end()) {
+                                int n = e.value("count", 1);
+                                if (n > 1) {  // an array: every element (eMARSCHNER_PRECALC0[3], eamUVShiftMatrix[16])
+                                    json vals = json::array();
+                                    for (int k = 0; k < n; k++) {
+                                        auto vk = u.find(name + "[" + std::to_string(k) + "]");
+                                        if (vk != u.end()) vals.push_back(vk->second);
+                                    }
+                                    e["captured"] = vals;
+                                } else {
+                                    e["captured"] = v->second;
+                                }
+                            }
                             json from = json::array();
                             if (v != u.end())
                                 for (const auto& c : m.constants)

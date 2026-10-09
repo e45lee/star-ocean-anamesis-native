@@ -33,6 +33,9 @@ zstandard==0.25.0
 polib==1.2.0
 # headless GL (an EGL context) to replay the game's shaders: tools/asf2gltf/shader_replay.py
 moderngl==5.13.0
+# a headless browser (Chromium, fetched into work/tools/ms-playwright by tools/gltf-viewer/fetch-deps.py) for the
+# gltf-viewer's screenshot test: tests/test_gltf_viewer.py
+playwright==1.63.0
 # interactive reverse engineering (README.md "Reverse-engineering tools"); no tracked script imports them
 lief==1.0.0
 keystone-engine==0.9.2

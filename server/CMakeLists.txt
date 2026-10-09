@@ -42,6 +42,8 @@ target_compile_options(soanet PRIVATE -fno-strict-aliasing)
 target_link_libraries(soanet PRIVATE soa_warnings)
 target_link_libraries(soanet PUBLIC ZLIB::ZLIB OpenSSL::Crypto soa_compat PRIVATE httplib::httplib)
 target_link_libraries(soanet PRIVATE soa_httplib_win)  # (cmake/flags.cmake)
+# nlohmann-json (headers): the bridge's JSON (net/game.cpp parse_bridge_request, bridge_reply_json)
+target_link_libraries(soanet PRIVATE nlohmann_json::nlohmann_json)
 
 # soa-server: the standalone server. app/ is the command line; tests/net and tests/ninja are the
 # wire layer's selftests (tests/ninja/ninja_check.cpp is a separate command-line tool, not built here).

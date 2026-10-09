@@ -222,6 +222,9 @@ NATIVE_TEST("net/cdn-in-memory") {
     // a query and a %-escape are handled as on the wire; a 404
     get(base + "version%2Ebin?x=1", r);
     t.expect_eq(r.status, 200, "escaped target");
+    // decoded once: "%252E" is "%2E", not "." (the tree decoded the HTTP layer's path again)
+    get(base + "version%252Ebin", r);
+    t.expect_eq(r.status, 404, "a double escape isn't decoded twice");
     get(base + "no/such.file", r);
     t.expect_eq(r.status, 404, "404");
     remove_tree(root);

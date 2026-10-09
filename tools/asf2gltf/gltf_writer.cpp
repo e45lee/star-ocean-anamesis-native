@@ -764,6 +764,25 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                             {"asf_lighting", lt == kLighting.end() ? std::string("none") : std::string(lt->second)},
                             {"asf_shader_graph", g1 > g0 && g1 <= m.raw.size() ? hexbytes(m.raw.data() + g0, g1 - g0) : ""}};
             if (!notes.empty()) mj["extras"]["notes"] = notes;
+            if (opt.extensions && in.shaders.contains("materials")) {
+                std::string key = o.name + "/" + std::to_string(mi);
+                if (in.shaders["materials"].contains(key)) {
+                    json ext = in.shaders["materials"][key];
+                    // the slots' textures as stored (decoded, not baked): the shaders' sN
+                    json tl = json::array();
+                    for (const auto& t : m.textures) {
+                        auto it = tex_by_id.find(t.id);
+                        int ti = it == tex_by_id.end() ? -1 : texture_of(t.id, false);
+                        json e = {{"id", hex32(t.id)}};
+                        if (ti >= 0) e["index"] = ti, e["srgb"] = texture_srgb(*it->second);
+                        else e["note"] = "not in this file";
+                        tl.push_back(e);
+                    }
+                    ext["textures"] = tl;
+                    mj["extensions"]["SOA_aska_shader"] = ext;
+                    ext_used.insert("SOA_aska_shader");
+                }
+            }
             doc["materials"].push_back(mj);
             mat_index[mi] = (int)doc["materials"].size() - 1;
         }
@@ -1321,6 +1340,13 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         if (!anim["channels"].empty()) doc["animations"].push_back(anim);
     }
 
+    if (ext_used.count("SOA_aska_shader")) {
+        // the game's GLSL ES 3.00 (game code: the output stays in work/), shared by the materials' passes
+        doc["extensions"]["SOA_aska_shader"] = {
+            {"shaders", in.shaders["shaders"]},
+            {"note", "captured from the game (SOA_GL_DRAW_DUMP); the attributes read the game's raw vertex streams (object space, "
+                     "left-handed, palette indices), not this file's mirrored accessors (docs/notes.md \"glTF export\")"}};
+    }
     mirror_x(b, root);
     if (!ext_used.empty()) doc["extensionsUsed"] = std::vector<std::string>(ext_used.begin(), ext_used.end());
     while (b.bin.size() % 4) b.bin.push_back(0);

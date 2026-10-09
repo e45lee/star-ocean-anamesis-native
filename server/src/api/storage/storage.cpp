@@ -69,12 +69,12 @@ std::vector<ItemUid> distinct(const std::vector<ItemUid>& uids) {
 
 // StorageItem: the items of the equipment storage (CStorageItemInfo: CItemInfo's keys and
 // update_at_time, player_info.cpp item_info_list).
-Value storage_item_list(Ctx& ctx) { return item_info_list(ctx, "where stored_at is not null"); }
+Value storage_item_list(Ctx& ctx) { return item_info_list(ctx, ItemSelection::stored()); }
 
 // One item as an UpdateStorageItem entry: its CItemInfo keys as the item lists send them (and
 // update_at_time while it is stored).
 Value storage_entry(Ctx& ctx, ItemUid uid) {
-    Value list = item_info_list(ctx, "where uid = " + std::to_string(uid.v));
+    Value list = item_info_list(ctx, ItemSelection::one(uid));
     return list.arr.empty() ? Value::object() : list.arr[0];
 }
 

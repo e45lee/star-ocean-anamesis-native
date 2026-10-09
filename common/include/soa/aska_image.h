@@ -71,8 +71,10 @@ void isf_update_sum(Bytes& d, const IsfEntry& e);
 bool isf_repack(const Bytes& d, const std::vector<const Bytes*>& payloads, Bytes& out, std::string* err = nullptr);
 
 // ---- ETC2 / EAC blocks ----------------------------------------------------------------------------
-enum Format : int { kJpeg = 39, kEtc2Rgb8 = 47, kEtc2Rgb8A1 = 48, kEtc2Rgba8 = 49 };
-// Bytes per 4x4 block (8 or 16), 0 for a format that isn't ETC.
+// 50 / 51: EAC RG11 unsigned / signed (two channels, 16-byte blocks: the models' normal maps,
+// GL_COMPRESSED_RG11_EAC by Aska::IPixelFormatGL::GetNativeByAIF); decoded to R and G (B 0, A 255).
+enum Format : int { kJpeg = 39, kEtc2Rgb8 = 47, kEtc2Rgb8A1 = 48, kEtc2Rgba8 = 49, kEacRg11 = 50, kEacRg11Signed = 51 };
+// Bytes per 4x4 block (8 or 16), 0 for a format that isn't ETC / EAC.
 int block_bytes(int fmt);
 // One block into rgba[y * 4 + x][4].
 void decode_block(int fmt, const uint8_t* block, uint8_t rgba[16][4]);

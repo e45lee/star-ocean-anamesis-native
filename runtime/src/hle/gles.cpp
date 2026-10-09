@@ -16,6 +16,8 @@
 #include <GLES3/gl32.h>
 
 #include <atomic>
+#include <cstdint>
+#include <cstdio>
 #include <cstring>
 #include <mutex>
 #include <set>
@@ -178,9 +180,95 @@ bool map_invalidate_on() {
     }();
     return on;
 }
+// SOA_GL_BUFFER_DUMP=<dir> (diagnostic): the bytes of every buffer upload, to compare with a decoder
+// (tools/asf2gltf --check-gl-dump: a model's vertex and index blocks against what the game uploads).
+// Each distinct content goes once to <dir>/<fnv1a64>.bin; <dir>/index.tsv gets one line per upload:
+// sequence, call (data = glBufferData, sub = glBufferSubData, map = a write map at its glUnmapBuffer),
+// target, buffer name, offset, size, hash. Off (no cost but one test) when unset.
+struct BufferDump {
+    std::mutex mu;
+    FILE* index = nullptr;
+    std::string dir;
+    std::set<uint64_t> seen;
+    uint64_t seq = 0;
+    struct Map { GLenum target; GLintptr off; GLsizeiptr len; void* ptr; };
+    std::unordered_map<GLuint, Map> maps;  // by buffer name: the open write maps
+};
+BufferDump* buffer_dump() {
+    static BufferDump* d = [] () -> BufferDump* {
+        const char* dir = env::env_str("SOA_GL_BUFFER_DUMP");
+        if (!dir || !*dir) return nullptr;
+        auto* b = new BufferDump;
+        b->dir = dir;
+        b->index = fopen((b->dir + "/index.tsv").c_str(), "w");
+        if (!b->index) { LOGW("gl", "SOA_GL_BUFFER_DUMP: cannot create %s/index.tsv", dir); delete b; return nullptr; }
+        return b;
+    }();
+    return d;
+}
+GLuint bound_buffer(GLenum target) {
+    GLenum q = 0;
+    switch (target) {
+    case GL_ARRAY_BUFFER: q = GL_ARRAY_BUFFER_BINDING; break;
+    case GL_ELEMENT_ARRAY_BUFFER: q = GL_ELEMENT_ARRAY_BUFFER_BINDING; break;
+    case GL_UNIFORM_BUFFER: q = GL_UNIFORM_BUFFER_BINDING; break;
+    case GL_COPY_WRITE_BUFFER: q = GL_COPY_WRITE_BUFFER_BINDING; break;
+    case GL_PIXEL_UNPACK_BUFFER: q = GL_PIXEL_UNPACK_BUFFER_BINDING; break;
+    default: return 0;
+    }
+    GLint b = 0;
+    s_glGetIntegerv(q, &b);
+    return (GLuint)b;
+}
+void dump_buffer(const char* call, GLenum target, GLuint buf, GLintptr off, GLsizeiptr len, const void* data) {
+    BufferDump* d = buffer_dump();
+    if (!d || !data || len <= 0) return;
+    uint64_t h = 0xcbf29ce484222325ull;
+    for (GLsizeiptr i = 0; i < len; i++) h = (h ^ ((const uint8_t*)data)[i]) * 0x100000001b3ull;
+    std::lock_guard lk(d->mu);
+    if (d->seen.insert(h).second) {
+        char name[32];
+        snprintf(name, sizeof name, "/%016llx.bin", (unsigned long long)h);
+        if (FILE* f = fopen((d->dir + name).c_str(), "wb")) {
+            fwrite(data, 1, (size_t)len, f);
+            fclose(f);
+        }
+    }
+    fprintf(d->index, "%llu\t%s\t0x%x\t%u\t%lld\t%lld\t%016llx\n", (unsigned long long)d->seq++, call, target, buf,
+            (long long)off, (long long)len, (unsigned long long)h);
+    fflush(d->index);
+}
+void host_glBufferData(GLenum target, GLsizeiptr len, const void* data, GLenum usage) {
+    if (buffer_dump()) dump_buffer("data", target, bound_buffer(target), 0, len, data);
+    s_glBufferData(target, len, data, usage);
+}
+void host_glBufferSubData(GLenum target, GLintptr off, GLsizeiptr len, const void* data) {
+    if (buffer_dump()) dump_buffer("sub", target, bound_buffer(target), off, len, data);
+    s_glBufferSubData(target, off, len, data);
+}
+GLboolean host_glUnmapBuffer(GLenum target) {
+    if (BufferDump* d = buffer_dump()) {
+        GLuint buf = bound_buffer(target);
+        BufferDump::Map m{};
+        bool have = false;
+        {
+            std::lock_guard lk(d->mu);
+            auto it = d->maps.find(buf);
+            if (it != d->maps.end()) { m = it->second; have = true; d->maps.erase(it); }
+        }
+        if (have) dump_buffer("map", m.target, buf, m.off, m.len, m.ptr);
+    }
+    return s_glUnmapBuffer(target);
+}
 void* host_glMapBufferRange(GLenum target, GLintptr off, GLsizeiptr len, GLbitfield acc) {
     if (glh::t_map_overwrites && acc == GL_MAP_WRITE_BIT && map_invalidate_on()) acc |= GL_MAP_INVALIDATE_RANGE_BIT;
-    return s_glMapBufferRange(target, off, len, acc);
+    void* p = s_glMapBufferRange(target, off, len, acc);
+    if (BufferDump* d = buffer_dump(); d && p && (acc & GL_MAP_WRITE_BIT)) {
+        GLuint buf = bound_buffer(target);
+        std::lock_guard lk(d->mu);
+        d->maps[buf] = {target, off, len, p};
+    }
+    return p;
 }
 void host_glTexStorage2D(GLenum target, GLsizei levels, GLenum fmt, GLsizei w, GLsizei h) {
     etc2::Format f;
@@ -481,6 +569,9 @@ void register_gles(Hle& h) {
     GL_TRANSLATED(glCompressedTexSubImage2D, wrap<&host_glCompressedTexSubImage2D>())
     GL_TRANSLATED(glTexStorage2D, wrap<&host_glTexStorage2D>())
     GL_TRANSLATED(glMapBufferRange, wrap<&host_glMapBufferRange>())
+    GL_TRANSLATED(glBufferData, wrap<&host_glBufferData>())
+    GL_TRANSLATED(glBufferSubData, wrap<&host_glBufferSubData>())
+    GL_TRANSLATED(glUnmapBuffer, wrap<&host_glUnmapBuffer>())
     GL_TRANSLATED(glBindFramebuffer, wrap<&host_glBindFramebuffer>())
     GL_TRANSLATED(glRenderbufferStorage, wrap<&host_glRenderbufferStorage>())
     GL_TRANSLATED(glViewport, wrap<&host_glViewport>())

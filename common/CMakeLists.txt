@@ -106,6 +106,23 @@ target_link_libraries(soa_codec_tests PRIVATE soa_warnings)
 target_compile_definitions(soa_codec_tests PRIVATE SOA_REPO_DIR="${CMAKE_SOURCE_DIR}")
 target_link_libraries(soa_codec_tests PRIVATE soa_codec soa_compat)
 
+# soa_models: the game's 3D files (docs/notes.md "Models and animation", "Meshes (ASF)"):
+#   include/soa/aff.h  the AFF container's AMF data buffers and the index-list codecs
+#   include/soa/asf.h  ASF scenes: node tree, mesh objects, vertex formats, materials, textures
+#   include/soa/aaf.h  AAF animations: the tracks and their evaluation, bit for bit the game's
+# Users: tools/asf2gltf, tools/aafdump, the port's models/ selftests (the evaluator against the guest).
+# Built with -ffp-contract=off (as the port): the evaluator's float operations must not fuse.
+#   soa_models_tests  its unit tests on synthetic files built by the tests (build/common/soa_models_tests)
+add_library(soa_models STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/aff.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/asf.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/aaf.cpp)
+target_include_directories(soa_models PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_options(soa_models PRIVATE -ffp-contract=off)
+target_link_libraries(soa_models PRIVATE soa_warnings PUBLIC soa_codec)
+
+add_executable(soa_models_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/models_tests.cpp)
+target_compile_options(soa_models_tests PRIVATE -ffp-contract=off)
+target_link_libraries(soa_models_tests PRIVATE soa_models soa_warnings)
+
 # soa_text: the English line breaker (include/soa/line_break.h, src/line_break.cpp): the server's
 # English derivation, platform370's --lang en word wrap and box fit.
 #   soa_text_tests  its unit tests (build/common/soa_text_tests; T0 `line-break`): the shared vectors

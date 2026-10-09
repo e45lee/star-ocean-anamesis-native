@@ -345,6 +345,33 @@ void eac_alpha_block(const uint8_t* b, uint8_t out[16][4]) {
         }
 }
 
+// EAC R11 (one channel of RG11: formats 50 unsigned, 51 signed), to 8 bits (the top 8 of the 11;
+// signed values -1023..1023 mapped to 0..255) in channel `ch`. Khronos spec, "EAC R11": the base
+// is base * 8 + 4 (signed: base * 8), each pixel adds modifier * multiplier * 8 (multiplier 0: the
+// modifier alone), clamped to the 11-bit range.
+void eac_r11_block(const uint8_t* b, uint8_t out[16][4], int ch, bool sign) {
+    int base = sign ? (int)(int8_t)b[0] : b[0], mult = b[1] >> 4, tab = b[1] & 15;
+    if (sign && base == -128) base = -127;
+    uint64_t bits = 0;
+    for (int i = 2; i < 8; i++) bits = bits << 8 | b[i];
+    for (int x = 0; x < 4; x++)
+        for (int y = 0; y < 4; y++) {
+            int i = x * 4 + y;
+            int idx = (int)(bits >> (45 - 3 * i)) & 7;
+            int m = kEacMod[tab][idx];
+            int v;
+            if (sign) {
+                v = base * 8 + (mult ? m * mult * 8 : m);
+                v = v < -1023 ? -1023 : v > 1023 ? 1023 : v;
+                out[y * 4 + x][ch] = (uint8_t)((v + 1023) * 255 / 2046);
+            } else {
+                v = base * 8 + 4 + (mult ? m * mult * 8 : m);
+                v = v < 0 ? 0 : v > 2047 ? 2047 : v;
+                out[y * 4 + x][ch] = (uint8_t)(v >> 3);
+            }
+        }
+}
+
 // ---- the encoders
 // ETC1 (the ETC2 individual / differential modes). For each flip and mode, each sub-block's base
 // colour is searched around its rounded average (each channel -1..+1 quantization steps) with every
@@ -523,9 +550,17 @@ void eac_encode(const uint8_t px[16][4], uint8_t out[8]) {
 
 }  // namespace
 
-int block_bytes(int fmt) { return fmt == kEtc2Rgba8 ? 16 : (fmt == kEtc2Rgb8 || fmt == kEtc2Rgb8A1) ? 8 : 0; }
+int block_bytes(int fmt) {
+    return (fmt == kEtc2Rgba8 || fmt == kEacRg11 || fmt == kEacRg11Signed) ? 16 : (fmt == kEtc2Rgb8 || fmt == kEtc2Rgb8A1) ? 8 : 0;
+}
 
 void decode_block(int fmt, const uint8_t* b, uint8_t rgba[16][4]) {
+    if (fmt == kEacRg11 || fmt == kEacRg11Signed) {
+        eac_r11_block(b, rgba, 0, fmt == kEacRg11Signed);
+        eac_r11_block(b + 8, rgba, 1, fmt == kEacRg11Signed);
+        for (int i = 0; i < 16; i++) rgba[i][2] = 0, rgba[i][3] = 255;
+        return;
+    }
     bool rgba8 = fmt == kEtc2Rgba8;
     etc2_rgb_block(rgba8 ? b + 8 : b, rgba, fmt == kEtc2Rgb8A1);
     if (rgba8) eac_alpha_block(b, rgba);

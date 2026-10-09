@@ -24,14 +24,27 @@ NATIVE_TEST("sync/thread-members") {
     t.expect_eq(t.call("_ZN4Aska6Thread12GetCurrentIDEv", {}), Thread::GetCurrentID(), "GetCurrentID");
 }
 
+// Both sides end in the host's nanosleep (the HLE's thunk; the native's sleep_for), so the test
+// checks the argument conversion (ms / us to a timespec): equal results, and each side sleeps about
+// the requested time. "About" is the host's timer: Linux never wakes early; Windows (winpthreads:
+// whole milliseconds, a wait on the system tick) can wake up to a tick (15.6 ms without
+// timeBeginPeriod) plus the truncated millisecond early (a 3 ms Sleep once took 2356 us there), so
+// the 50 ms cases carry the meaning on Windows: a ms / us mix-up (1000x) stays outside the bounds.
+// The upper bound leaves 2 s for a loaded host.
 NATIVE_TEST("sync/thread-sleep") {
     struct Case {
         const char* sym;
         s32 (*native)(u32);
         u32 arg;
-        int min_us;
+        s64 want_us;
     };
-    for (const Case& k : {Case{"_ZN4Aska6Thread5SleepEj", &Thread::Sleep, 3, 2500}, Case{"_ZN4Aska6Thread6SleepUEj", &Thread::SleepU, 1500, 1200},
+#ifdef _WIN32
+    constexpr s64 kEarlyUs = 16000 + 1000;
+#else
+    constexpr s64 kEarlyUs = 0;
+#endif
+    for (const Case& k : {Case{"_ZN4Aska6Thread5SleepEj", &Thread::Sleep, 3, 3000}, Case{"_ZN4Aska6Thread5SleepEj", &Thread::Sleep, 50, 50000},
+                          Case{"_ZN4Aska6Thread6SleepUEj", &Thread::SleepU, 1500, 1500}, Case{"_ZN4Aska6Thread6SleepUEj", &Thread::SleepU, 50000, 50000},
                           Case{"_ZN4Aska6Thread6SleepUEj", &Thread::SleepU, 0, 0}}) {
         auto t0 = std::chrono::steady_clock::now();
         s32 gr = (s32)t.call(k.sym, {k.arg});
@@ -39,9 +52,12 @@ NATIVE_TEST("sync/thread-sleep") {
         s32 nr = k.native(k.arg);
         auto t2 = std::chrono::steady_clock::now();
         t.expect_eq(gr, nr, k.sym);
-        auto gus = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
-        auto nus = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-        if (gus < k.min_us || nus < k.min_us) t.fail("%s(%u): guest slept %lld us, native %lld us", k.sym, k.arg, (long long)gus, (long long)nus);
+        s64 gus = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+        s64 nus = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        s64 lo = k.want_us - kEarlyUs - k.want_us / 20, hi = k.want_us + 2000000;  // (5%: the clocks' granularity)
+        if (gus < lo || nus < lo || gus > hi || nus > hi)
+            t.fail("%s(%u): guest slept %lld us, native %lld us (expected %lld..%lld)", k.sym, k.arg, (long long)gus, (long long)nus, (long long)lo,
+                   (long long)hi);
     }
 }
 

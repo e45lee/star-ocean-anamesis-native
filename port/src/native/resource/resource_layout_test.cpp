@@ -459,9 +459,13 @@ NATIVE_TEST("resource/layout-ahsl-libl") {
         t.expect_eq((u64)ahsl->m_l1Heap.vtable, vtable_of(t, "_ZTVN4Aska13MemoryManagerE"), "m_l1Heap: a MemoryManager");
         t.expect_eq(ahsl->m_l1Heap.m_heapSize >= 0x2f0000 && ahsl->m_l1Heap.m_heapSize <= 0x300000, true, "m_l1Heap's heap (0x300000)");
         t.expect_eq(ahsl->m_targetConsole, *reinterpret_cast<const s32*>(t.sym("_ZN4Aska5s_eTCE")), "m_targetConsole = s_eTC");
-        s32 f0 = ahsl->m_frame;
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        t.expect_eq(ahsl->m_frame > f0, true, "m_frame advances (Tick per frame)");
+        // The game's frames advance it; under load (or while the game loads) one frame can take far
+        // longer than a fixed wait (a 200 ms one once failed a loaded gate): poll up to 20 s.
+        const volatile s32& frame = ahsl->m_frame;  // (the game's thread writes it)
+        s32 f0 = frame;
+        auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(20);
+        while (frame == f0 && std::chrono::steady_clock::now() < deadline) std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        t.expect_eq(frame != f0, true, "m_frame advances (Tick per frame)");
         // L1: GetNodeCount / GetNodeDirect / GetData against the buckets.
         AHSLDatabaseShaderCache& db = ahsl->m_l1;
         u64 entries = 0, checked = 0;

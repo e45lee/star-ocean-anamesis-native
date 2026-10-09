@@ -16,14 +16,24 @@ using namespace soa::native::resource;
 
 namespace {
 
-// A shader key: byte 2 and the low 3 bits of byte 3 are its size (ShaderKeyUtil::GetShaderKeySize).
+// A shader key's size: byte 2 and the low 3 bits of byte 3 (ShaderKeyUtil::GetShaderKeySize).
+int key_size(const u8* k) { return k[2] | (k[3] & 7) << 8; }
+
+// A shader key: size < 128 in byte 2's low 7 bits; byte 2's top bit is the tag's low bit, and it is
+// also the size's bit 7 (GetShaderKeySize reads the whole byte): a key with it set is 128 bytes
+// longer, and GetData compares that many. Every buffer holds the longest key (an earlier version
+// allocated size + 8 bytes, and both sides read up to 128 bytes past it: on Windows a key at the
+// end of a heap page faulted); a lookup key compared against a shorter stored key with the same
+// tag stays inside the stored key's buffer too.
+constexpr int kKeyBuffer = 0x80 + 0x7f + 8;
 std::vector<u8> make_key(TestContext& t, u8 b0, u8 b1, u8 b2, int size) {
-    std::vector<u8> k(size + 8);
+    std::vector<u8> k(kKeyBuffer);
     for (auto& b : k) b = (u8)t.rand_u64();
     k[0] = b0;
     k[1] = b1;
-    k[2] = (u8)((b2 & 0x80) | (size & 0x7f));  // (sizes < 128 keep byte 2's top bit free for the tag)
-    k[3] = (u8)((k[3] & ~7) | ((size >> 8) & 7));
+    k[2] = (u8)((b2 & 0x80) | (size & 0x7f));
+    k[3] = (u8)(k[3] & ~7);
+    if ((int)k.size() < key_size(k.data()) + 8) t.fail("make_key: key size %d in a %d-byte buffer", key_size(k.data()), (int)k.size());
     return k;
 }
 
@@ -80,7 +90,7 @@ void run_database(TestContext& t, const char* get_sym) {
     // misses: a key's copy with one byte past the tag changed; keys in empty buckets
     for (auto& k : keys) {
         std::vector<u8> m = k;
-        m[4 + t.rand_int(0, (int)(m.size() - 13))] ^= 0x10;
+        m[4 + t.rand_int(0, key_size(m.data()) - 5)] ^= 0x10;  // (a byte GetData compares)
         if (!lookup(m.data())) break;
     }
     for (int i = 0; i < 64; i++) {

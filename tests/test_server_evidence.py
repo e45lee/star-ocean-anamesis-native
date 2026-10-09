@@ -40,6 +40,16 @@ def test_check_exit_codes(tmp_path):
     assert evidence(tmp_path, "--check")[0] == 11
 
 
+def test_agent_mention_wrapped_across_comment_lines(tmp_path):
+    # "(agent" at a line's end and the name on the next comment line is still a mention
+    tree(tmp_path, CLEAN + "// the scene's end (agent\n// e6-end2end) is answered here\n", "coin shop opened\tthe shop\n")
+    rc, out = evidence(tmp_path, "--check")
+    assert rc == 10 and "agent mentions: 1" in out
+    # comments on lines apart are separate texts: "agent" ending one doesn't take the next one's word
+    tree(tmp_path, CLEAN + "int x;  // machine, agent\nint y;\n// done here\n", "coin shop opened\tthe shop\n")
+    assert evidence(tmp_path, "--check")[0] == 0
+
+
 def git(root, *args):
     subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.com"] + list(args), cwd=root, check=True,
                    capture_output=True)

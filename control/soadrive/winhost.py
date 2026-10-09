@@ -10,7 +10,7 @@ interop. What differs from a Linux client:
   - the control channel is TCP (`--control tcp:127.0.0.1:PORT`, runtime/src/app/host.cpp): WSL's
     mirrored networking shares 127.0.0.1 with Windows (the FIFO is Linux-only; a named pipe can't be
     opened from WSL);
-  - its ports (`free_ports`) come from outside WSL's own ephemeral range (ip_local_port_range): in
+  - its ports (proc.free_ports(n, win=True)) come from outside WSL's own ephemeral range (ip_local_port_range): in
     mirrored networking Windows can't bind those (WSAEADDRINUSE);
   - its stdout / stderr come through the interop pipe into the log as on Linux; ending the interop
     process (TERM / KILL of the group) ends the Windows process.
@@ -19,7 +19,6 @@ import errno
 import filecmp
 import hashlib
 import os
-import random
 import shutil
 
 from .proc import REPO
@@ -132,34 +131,6 @@ def local_dir(p):
     return d
 
 
-def free_ports(n, lo=30000, hi=44000):
-    """n ports for a Windows program to listen on: random, below WSL's ephemeral range (mirrored
-    networking reserves that for WSL's sockets), not listened on here. Not tried with a bind: in
-    mirrored networking a port bound and closed in WSL stays refused to Windows for a while
-    (WSAEADDRINUSE), so a caller retries on that instead (a Windows program's listeners don't
-    show here). A control channel takes port 0 instead (control_port)."""
-    try:
-        with open("/proc/sys/net/ipv4/ip_local_port_range") as f:
-            hi = min(hi, int(f.read().split()[0]) - 1)
-    except (OSError, ValueError, IndexError):
-        pass
-    used = set()
-    for t in ("/proc/net/tcp", "/proc/net/tcp6"):
-        try:
-            with open(t) as f:
-                for line in f.readlines()[1:]:
-                    used.add(int(line.split()[1].rsplit(":", 1)[1], 16))
-        except (OSError, ValueError, IndexError):
-            pass
-    out = []
-    while len(out) < n:
-        p = random.randint(lo, hi)
-        if p not in used and p not in out:
-            out.append(p)
-    return out
-
-
-IN_USE = "Only one usage of each socket address"
 
 
 def control_port(log):

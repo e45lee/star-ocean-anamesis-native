@@ -3,7 +3,7 @@
 | File | What |
 |---|---|
 | `growth.cpp` (module `growth`) | the growth APIs, each with its doc block (signature, fid, rules with their labels, refusal codes, answer) |
-| `growth_args.h` | their request arguments by name (`args::BoostCharacterArgs`, ...) |
+| (`../gen/request_args.h`) | their request arguments by name (`args::BoostCharacterArgs`, ...), generated from `../gen/request_args.txt` and the measured wire layouts (`../gen/README.md` "Requests") |
 | `mastery.cpp` (module `mastery`) | マスタリー (師弟): GetMasteryInfo, TrainMastery, ResetMastery; the inheritance (`mastery_inheritance`, `mastery_talent_of`) the roster, the battle status and UpdateAwakenLevel send |
 | `mastery_tests.cpp` | `growth/mastery-pairing`, `growth/mastery-training`, `growth/mastery-awakening`, `growth/change-role` |
 | `growth_tests.cpp` | `growth/equip-auto` (EquipAuto: the weapon of the role's kind, an accessory nobody wears, the skills); `growth/apis`: Boost, LimitBreak (by item and by the screen's row id), Evolution, AddStatus on a scratch server, with refusals (`server/economy-apis` is gone: its login bonus and achievement parts are `daily/login-bonus` and `presents/achievement-chain` since R16, its shop and exchange part `shop/item-shop-and-exchange` in `api/shop/shop_tests.cpp` since R18) |

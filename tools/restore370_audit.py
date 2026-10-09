@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Audit 3.7.0 function bodies that the pre-rebase restore run installed on 3.8.0 symbols (port/src/native/restore/restore370.cpp).
 
 History tool: the restore370 image (3.7.0 bodies on the offline lib) is gone since the 3.7.0
@@ -23,10 +23,8 @@ Usage: tools/restore370_audit.py [--calls] [--emit FILE] SYM...   (SOA_LIB defau
 """
 import argparse
 import os
-import sys
 
 os.environ.setdefault("SOA_LIB", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "work", "libSOA-3.7.0.so"))
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
 from capstone.arm64 import ARM64_OP_IMM, ARM64_OP_MEM  # noqa: E402
 from elfinfo import Lib  # noqa: E402

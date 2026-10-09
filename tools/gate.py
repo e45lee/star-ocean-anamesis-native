@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Runs a tier of the gate tests (tests/tiers.json; tests/TIERS.md).
 
     tools/gate.sh T0                              every commit: build + the fast checks
@@ -9,7 +9,9 @@
     tools/gate.sh TEST...                         these tests by name (e.g. shard:battle session:gacha)
   options: --out DIR (default a fresh /tmp/gate.XXXX), --list (print the plan only), --no-t0,
            --markdown (the table of tests/TIERS.md),
-           --keep (keep the scratch dirs), --jobs N (non-game checks at once, default 4)
+           --keep (keep the scratch dirs), --jobs N (non-game checks at once, default 4),
+           --game-slots N (game slots this gate takes at once, default 4: its game tests share N, and its
+           tests/diff run is held to N too, so several gates share the 15-slot pool; 0: no cap)
 
 The build runs first, alone. Then everything else at once: the checks on --jobs workers, the game
 tests in parallel (each queues for a game slot itself: control/soaslot.py, so the machine is never
@@ -30,7 +32,6 @@ stops waiting), and the gate exits 130 without a summary.
 """
 import argparse
 import concurrent.futures
-import json
 import os
 import re
 import shutil
@@ -41,12 +42,10 @@ import tempfile
 import threading
 import time
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "tools"))
-import tests_for  # noqa: E402
+import soaslot  # (control/soaslot.py: the game slot pool)
+import tests_for
 
-sys.path.insert(0, os.path.join(REPO, "control"))
-import soaslot  # noqa: E402  (the game slot pool)
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROCS, PLOCK = [], threading.Lock()
 # Set by an interrupt (Ctrl-C, TERM): no test starts after it, and a test queued for a game slot
@@ -60,13 +59,15 @@ def slug(name):
     return re.sub(r"[^\w.-]", "-", name)
 
 
-def run_cmd(cmd, out, tmp, limit, log, slot=-1):
+def run_cmd(cmd, out, tmp, limit, log, slot=-1, extra_env=None):
     """Runs cmd under `timeout -k 10 limit`; with a slot (a game test), the slot is the test's:
     passed down (SOA_SLOT_HELD: its scripts don't queue again), so the limit never counts a wait."""
     os.makedirs(out, exist_ok=True)
     os.makedirs(tmp, exist_ok=True)
     cmd = cmd.replace("{out}", out).replace("{tmp}", tmp).replace("{base}", BASE[0])
     env = dict(os.environ, SOA_SLOT_HELD="1") if slot >= 0 else None
+    if extra_env:
+        env = dict(env or os.environ, **extra_env)
     with open(log, "w") as f:
         f.write("$ %s\n" % cmd)
         f.flush()
@@ -79,6 +80,12 @@ def run_cmd(cmd, out, tmp, limit, log, slot=-1):
             PROCS.append(p)
         rc = p.wait()
     return rc
+
+
+# --game-slots: how many game tests this gate runs at once (None: no cap). The pool (control/soaslot.py)
+# is shared by every gate and session; without a cap one gate's queued tests take every freed slot.
+GAME_SEM = [None]
+GAME_SLOTS = [0]
 
 
 def run_test(t, outdir, keep):
@@ -98,9 +105,16 @@ def run_test(t, outdir, keep):
         return cancelled
     # A game test (one client at a time) queues for its slot here, before its clock starts; an
     # interrupt ends the wait (None: no slot, the test doesn't start).
+    sem = GAME_SEM[0] if t.get("game", 0) else None
+    if sem is not None:
+        while not sem.acquire(timeout=1):
+            if CANCEL.is_set():
+                return cancelled
     slot = soaslot.acquire("gate " + t["name"], quiet=True, cancel=CANCEL.is_set) if t.get("game", 0) else -1
     if slot is None or CANCEL.is_set():
         soaslot.release(slot)
+        if sem is not None:
+            sem.release()
         return cancelled
     t0 = time.monotonic()
     # A tests/diff run of its own (the negative control) queues its runs for their slots inside, so
@@ -110,6 +124,8 @@ def run_test(t, outdir, keep):
         rc = run_cmd(t["cmd"], out, tmp, limit, os.path.join(outdir, name + ".log"), slot)
     finally:
         soaslot.release(slot)
+        if sem is not None:
+            sem.release()
     if not keep:
         shutil.rmtree(tmp, ignore_errors=True)
     return {"name": t["name"], "tier": t["tier"], "ok": rc == 0, "rc": rc, "secs": int(time.monotonic() - t0), "est": t["secs"],
@@ -143,7 +159,10 @@ def run_diff(tests, outdir, keep):
     cmd = "%s %s --out %s" % (DIFF_RUN, " ".join(allf), out) + (" --keep" if keep else "")
     # its runs queue for their slots inside (their time limits start after the wait): the run's
     # own limit only catches a hung driver
-    rc = run_cmd(cmd, out, os.path.join(outdir, ".tmp", "tests-diff"), 4 * 3600, os.path.join(outdir, "tests-diff.log"))
+    # --game-slots: the run's clients only take the first N slots of the pool (SOA_SLOTS=N for it)
+    cap = {"SOA_SLOTS": str(min(GAME_SLOTS[0], soaslot.n_slots()))} if GAME_SLOTS[0] > 0 else None
+    rc = run_cmd(cmd, out, os.path.join(outdir, ".tmp", "tests-diff"), 4 * 3600, os.path.join(outdir, "tests-diff.log"),
+                 extra_env=cap)
     wall = int(time.monotonic() - t0)
     lines = open(summary).read().splitlines() if os.path.exists(summary) else []
     verdict = {}
@@ -203,11 +222,15 @@ def main():
     ap.add_argument("--no-t0", action="store_true")
     ap.add_argument("--keep", action="store_true")
     ap.add_argument("--jobs", type=int, default=4)
+    ap.add_argument("--game-slots", type=int, default=4)
     ap.add_argument("--software-gl", action="store_true",
                     help="every game client of this run renders on Mesa's llvmpipe, not the host GPU "
                          "(SOA_SLOT_SOFTWARE_GL=1: control/soaslot.py; docs/testing-software-gl.md)")
     ap.add_argument("--markdown", action="store_true", help="print tests/TIERS.md's table from tests/tiers.json")
     a = ap.parse_args()
+    if a.game_slots > 0:
+        GAME_SEM[0] = threading.Semaphore(a.game_slots)
+        GAME_SLOTS[0] = a.game_slots
     if a.software_gl:
         os.environ["SOA_SLOT_SOFTWARE_GL"] = "1"  # the tests inherit it; the slot pool applies it
     if a.markdown:

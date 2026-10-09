@@ -160,11 +160,11 @@ Value stack_item_info_list(ext::Ctx& ctx) {
 
 // Item: every owned weapon and accessory (CItemInfo), plus the modules' keys (ext::ItemExtra:
 // a weapon's AttachedGearInfoList, api/items/gear.cpp).
-Value item_info_list(ext::Ctx& ctx, const std::string& where) {
+Value item_info_list(ext::Ctx& ctx, ItemSelection which) {
     Value list = Value::array();
     const PlayerId pid = player_id(ctx);
     ext::Sql state{ctx.st.h}, master{ctx.m.h};
-    ctx.st.q("select * from items " + where + " order by uid", {}, [&](const Row& item_row) {
+    auto add = [&](const Row& item_row) {
         Value info = Value::object();
         info["id"] = (u64)item_row.i("uid");
         info["player_id"] = pid.v;
@@ -196,7 +196,10 @@ Value item_info_list(ext::Ctx& ctx, const std::string& where) {
         }
         ext::item_extra(state, master, item_row.id<ItemUid>("uid"), info);  // extension modules' keys (ext::ItemExtra, e.g. attached gear)
         list.push(info);
-    });
+    };
+    if (which.kind == ItemSelection::kOne) ctx.st.q("select * from items where uid = ? order by uid", {which.uid}, add);
+    else if (which.kind == ItemSelection::kStored) ctx.st.q("select * from items where stored_at is not null order by uid", {}, add);
+    else ctx.st.q("select * from items where stored_at is null order by uid", {}, add);
     return list;
 }
 

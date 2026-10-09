@@ -14,9 +14,9 @@ import time
 
 import pytest
 
+import package
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
-import package  # noqa: E402
 
 pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="bash launchers")
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/info/gen/info_classes.h: the client's info classes (InfoBase and every class
 derived from it: CPlayerInfo, CPersonInfo, ..., the response parts) as recovered layouts, and what each
 one's Initialize does, for the info subsystem's natives (port/src/native/info/README.md "Info classes").
@@ -24,10 +24,13 @@ unicorn (tools/uemu.py: the lib with its relocations applied):
 A class whose readings don't agree, or whose Initialize does something else, is left to the guest
 (listed in the output). The output: per class a typed layout (static_asserted), its property table and its
 Initialize steps; the classes in dependency order.
+Beside it, JSON (server/src/api/gen/client_infos.json): the same classes as the wire sees them, each field's
+ASON key and value type in its Initialize's order, the containers' elements and CInfoManager's children (a
+reply's `data` keys), for the server's reply types (tools/gen_server_infos.py; server/src/api/gen/README.md).
 
 Usage:
-  tools/gen_infos.py [--lib PATH] [-o OUT]   # default: the 3.7.0 lib, write OUT
-  tools/gen_infos.py --check FILE            # exit 1 if FILE differs (header line not compared)
+  tools/gen_infos.py [--lib PATH] [-o OUT] [--json JSON]   # default: the 3.7.0 lib, write OUT and JSON
+  tools/gen_infos.py --check FILE [--check-json JSON]      # exit 1 if FILE (header line not compared) or JSON differs
   tools/gen_infos.py --dump CLASS            # print one class's shape and steps (mangled or plain name)
 """
 import argparse
@@ -38,13 +41,13 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
 import genlib  # noqa: E402 (before elfinfo: the default lib)
 
 from unicorn import UC_HOOK_MEM_WRITE  # noqa: E402
 
 REPO = os.path.dirname(HERE)
 DEFAULT_OUT = os.path.join(REPO, "port/src/native/info/gen/info_classes.h")
+DEFAULT_JSON = os.path.join(REPO, "server/src/api/gen/client_infos.json")
 
 STR = "NSt6__ndk112basic_stringIcNS0_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS4_22CSTLStringAllocatorInfEEEEE"
 TYPES = {"j": ("u32", 4), "i": ("s32", 4), "f": ("float", 4), "b": ("bool", 1), "h": ("u8", 1), "m": ("u64", 8)}
@@ -298,6 +301,7 @@ def capture_shapes(X, R):
     """{class: [(where, Shape)]} from every object the lib builds that we can run."""
     E, S = X.E, X.S
     found = {}
+    X.manager_children = {}  # offset -> class of each info CInfoManager's constructor builds (the --json schema)
     X.other_members = {}
     X.sizes = {}  # class -> {(sizeof the lib's code uses, where)}
     # 1. CInfoManager's constructor: every info it keeps
@@ -312,6 +316,7 @@ def capture_shapes(X, R):
         if c and c != MANAGER:
             sh = walk(X, rq, lim, at, c)
             collect(sh, found, "CInfoManager+%#x" % at)
+            X.manager_children[at] = c
             at += sh.size
         else:
             at += 8
@@ -607,7 +612,7 @@ def check_namehash(X, shapes):
 
 def generate(lib_path):
     X = Lib(lib_path)
-    R = Runner(X)
+    R = X.runner = Runner(X)
     # the children each Initialize initializes (the walk's tell of a child from a sibling)
     X.kids = {}
     for m in sorted(X.chain):
@@ -1032,11 +1037,101 @@ def emit(lib_path, X, shapes, inits, unfit, never, unshaped):
     return "\n".join(out)
 
 
+# ---- the wire schema (--json): what the client reads from a reply, for the server's reply types ----
+
+def probe_keys(X, R, m):
+    """[(offset, key)] of the properties m's Initialize names, in its order, whatever else it does (CPlayerInfo's
+    default text): the keys of a class whose Initialize isn't the shape the natives take."""
+    try:
+        evs = run_probe(X, R, m)
+    except Exception:
+        evs = list(R.ev)
+    return [(e[1] - R.PROBE - 0x18, e[2]) for e in evs if e[0] == "name"]
+
+
+def schema(lib_path, X, R, shapes, inits):
+    """The client's reply shapes as data (server/src/api/gen/client_infos.json, read by tools/gen_server_infos.py):
+    per info its fields in its Initialize's order (a property's ASON key and value type; a child's key, its
+    pParseName, and class), per container its element (and a map's key width), and CInfoManager's children (the
+    keys of a reply's `data`) and properties. A property no Initialize names has no key: the client never reads
+    it (left out). An info without a layout has its keys only (types null)."""
+    import json
+    classes = {}
+
+    def container(m, kind):
+        e = container_elem(X, m)
+        c = {"kind": kind}
+        if e[0] == "value":
+            c["value"] = e[1][0]
+        else:
+            c["elem"] = ident(e[-1])
+            if e[0] == "map":
+                c["key"] = "u32" if e[1] == 4 else "u64"
+            # a container whose element is a container (a map of lists: no object of it is built, so
+            # it has no shape): from its template arguments
+            k = X.container(e[-1])
+            if e[-1] not in shapes and k and ident(e[-1]) not in classes:
+                classes[ident(e[-1])] = container(e[-1], k)
+        return c
+    for m in sorted(shapes, key=ident):
+        sh = shapes[m]
+        if sh.kind != "plain":
+            classes[ident(m)] = container(m, sh.kind)
+            continue
+        props = {p[0]: p for p in sh.props}
+        kids = dict(sh.children)
+        if m in inits:
+            steps = [(s[1], s[2] if s[0] == "prop" else None) for s in inits[m] if s[0] in ("prop", "child")]
+        else:
+            keyed = probe_keys(X, R, m)
+            steps = keyed + [(o, None) for o in sorted(kids)]
+            if not keyed:
+                steps = [(p[0], None) for p in sh.props] + steps
+        fields = []
+        for off, key in steps:
+            if off in props:
+                p = props[off]
+                if not key:
+                    continue
+                f = {"key": key, "type": "string" if p[1] == "string" else p[2]}
+                if p[4]:
+                    f["radian"] = True
+                fields.append(f)
+            elif off in kids:
+                key = parse_name(X, kids[off].cls)
+                if key:
+                    fields.append({"key": key, "class": ident(kids[off].cls)})
+        classes[ident(m)] = {"kind": "info", "fields": fields}
+    manager = []
+    for s in inits.get(MANAGER, []):
+        c = X.manager_children.get(s[1]) if s[0] == "child" else None
+        key = parse_name(X, c) if c else None
+        if key:
+            manager.append({"key": key, "class": ident(c)})
+    # an info no object of which is built (no layout: CWorldMapCellInfo, CPartyInfo, ...): its keys from its
+    # Initialize, their value types unknown (null: the server's reply_types.txt must name them)
+    for m in sorted(X.chain):
+        if m in shapes or m == MANAGER or X.container(m) or "_ZN%s10InitializeEv" % m not in X.S:
+            continue
+        keyed = probe_keys(X, R, m)
+        if keyed:
+            classes[ident(m)] = {"kind": "info", "untyped": True, "fields": [{"key": k, "type": None} for _, k in keyed]}
+    classes = dict(sorted(classes.items()))
+    doc = {"generated": "tools/gen_infos.py --json (the info classes' wire schema); do not edit",
+           "lib": genlib.stamp(lib_path), "classes": classes, "manager": manager,
+           # CInfoManager's own properties: the scalar keys of a reply's `data` (Time, PresentBoxCount, ...),
+           # their types unknown (the manager has no layout)
+           "manager_props": [k for _, k in probe_keys(X, R, MANAGER)]}
+    return json.dumps(doc, indent=1, ensure_ascii=False) + "\n"
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--lib", default=genlib.lib_path())
     ap.add_argument("-o", "--out", default=DEFAULT_OUT)
+    ap.add_argument("--json", default=DEFAULT_JSON, help="the wire schema's file (written with OUT)")
     ap.add_argument("--check", metavar="FILE")
+    ap.add_argument("--check-json", metavar="FILE")
     ap.add_argument("--dump", metavar="CLASS")
     a = ap.parse_args()
     X, shapes, inits, unfit, never, unshaped, errors = generate(a.lib)
@@ -1055,15 +1150,27 @@ def main():
     if errors:
         sys.exit("gen_infos: classes that don't fit:\n  " + "\n  ".join(errors[:60]))
     text = emit(a.lib, X, shapes, inits, unfit, never, unshaped)
-    if a.check:
-        have = open(a.check).read().split("\n")
-        if have[2:] != text.split("\n")[2:]:
-            sys.exit("%s differs from the generator's output for %s" % (a.check, a.lib))
+    wire = schema(a.lib, X, X.runner, shapes, inits)
+    if a.check or a.check_json:
+        if a.check:
+            have = open(a.check).read().split("\n")
+            if have[2:] != text.split("\n")[2:]:
+                sys.exit("%s differs from the generator's output for %s" % (a.check, a.lib))
+        if a.check_json:
+            import json
+            have, want = json.load(open(a.check_json)), json.loads(wire)
+            have.pop("lib", None), want.pop("lib", None)
+            if have != want:
+                sys.exit("%s differs from the generator's output for %s" % (a.check_json, a.lib))
         return
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     with open(a.out, "w") as f:
         f.write(text)
-    print("%s written: %d layouts, %d Initialize step lists" % (os.path.relpath(a.out, REPO), len(shapes), len(inits)))
+    os.makedirs(os.path.dirname(a.json), exist_ok=True)
+    with open(a.json, "w", encoding="utf-8") as f:
+        f.write(wire)
+    print("%s written: %d layouts, %d Initialize step lists; %s" % (os.path.relpath(a.out, REPO), len(shapes), len(inits),
+                                                                    os.path.relpath(a.json, REPO)))
 
 
 if __name__ == "__main__":

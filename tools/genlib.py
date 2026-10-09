@@ -15,15 +15,12 @@ and `lambda:<enclosing function>#k.slot`. `local(name)` gives (address, size) in
 """
 import hashlib
 import os
-import sys
 from functools import lru_cache
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 LIB_370 = os.path.join(REPO, "work", "libSOA-3.7.0.so")
 os.environ.setdefault("SOA_LIB", LIB_370)
-if HERE not in sys.path:
-    sys.path.insert(0, HERE)
 
 # sha256 -> version of the builds we know
 KNOWN = {

@@ -1,0 +1,94 @@
+# The prototype's sample: guest functions of hash and math (port/decomp/{hash,math}/symbols.tsv).
+# vaddr size name args
+# args, in AAPCS64 order (integers to x0.., floats to s0..; x8 always points at an output region):
+#   p  a pointer to its own 4 KiB region of random floats (normal values, +-0, inf, NaN, denormals)
+#   s  a pointer to a region of random bytes, NUL-terminated at its end
+#   n  a length 0..256        i  an index 0..2       c  a byte 0..255       K  64
+#   x  a random 64-bit value  f  a random float (the same mix as the regions)
+# hash: leaves
+0x1e859f8 24 _ZN9Framework7CHash32C2Ev p
+0x1e85a80 76 _ZN9Framework7CHash32C2EPKcm p s n
+0x1e85c5c 20 _ZNK9Framework7CHash32eqERKS0_ p p
+0x1e85c70 20 _ZNK9Framework7CHash32eqERKj p p
+0x1e85cac 20 _ZNK9Framework7CHash32ltERKS0_ p p
+0x1e85cc0 20 _ZNK9Framework7CHash32gtERKS0_ p p
+0x1f17d24 76 _ZN4Aska4Utf814GetByteSizeAt_Eh c
+0x1f17d70 232 _ZN4Aska4Utf86ToUcs4EPDiPKcm p s n
+0x1f17e58 188 _ZN4Aska4Utf86ToUcs2EPDsPKcm p s n
+0x1f88328 88 _ZN4Aska4Hash3CRCEPKhmPt s n p
+0x1f88b50 84 _ZN4Aska4Hash3CRCEPKhmPj s n p
+0x1f8b984 1324 _ZN4Aska6detail12SpookyHashV23MixEPKmRmS4_S4_S4_S4_S4_S4_S4_S4_S4_S4_S4_ s p p p p p p p p p p p p
+0x1f8beb0 16 _ZN4Aska6detail12SpookyHashV24InitEmm p x x
+# hash: calls (Mix through the PLT, memcpy / memset / strlen imports)
+0x1f8bec0 680 _ZN4Aska6detail12SpookyHashV26UpdateEPKvm p s n
+0x1e85a10 112 _ZN9Framework7CHash32C2EPKc p s
+0x1f861d8 2124 _ZN4Aska4Hash4SHA1EPKcmPcmS3_m s n p K s n
+0x1f86cc0 2752 _ZN4Aska4Hash3MD5EPKcmPcmS3_m s n p K s n
+# math: leaves
+0x11acee8 700 _ZN4Aska6Matrix3MulEPKS0_S2_ p p p
+0x1e89480 856 _ZN4Aska6Matrix6InvertEv p
+0x20e8d80 844 _ZN4Aska6Matrix14InvertLowErrorEv p
+0x129574c 884 _ZNK4Aska6Matrix14InvertLowErrorEPS0_ p p
+0x1e890f4 424 _ZN4Aska6Matrix7RotateYEf p f
+0x1e89c4c 368 _ZN9Framework7CMatrix11MakeRotateXEf p f
+0x1e89dbc 376 _ZN9Framework7CMatrix11MakeRotateYEf p f
+0x1e89f34 368 _ZN9Framework7CMatrix11MakeRotateZEf p f
+0x1e89838 108 _ZN9Framework7CMatrix10ApplyScaleERKNS_7CVectorE p p
+0x1e8934c 72 _ZNK9Framework7CMatrix13ExtractRotateEv p
+0x1e89a1c 180 _ZNK9Framework7CMatrix10GetInverseEv p
+0x1e893d0 152 _ZN9Framework7CMatrix7InverseEv p
+0x1e89af8 44 _ZN9Framework7CMatrix12MakeIdentityEv p
+0x1e89b64 56 _ZN9Framework7CMatrix14MakeTranslateXEf p f
+0x1f38c08 188 _ZN4Aska6Matrix6CreateEPKNS_10QuaternionE p p
+0x1f38cc4 176 _ZN4Aska6Matrix6CreateEPKNS_10QuaternionEPKNS_6VectorE p p p
+0x1f391cc 700 _ZN4Aska6Matrix11MulFromLeftEPKS0_ p p
+0x1f39140 140 _ZN4Aska6Matrix3MulEPKS0_ p p
+0x1f39a28 440 _ZN4Aska6Matrix23SetRotationByUnitVectorEPKNS_6VectorE p p
+0x1f3a5b8 660 _ZN4Aska6Matrix18RotateByUnitVectorEPKNS_6VectorE p p
+0x1f3a868 228 _ZN4Aska6Matrix9TranslateEPKNS_6VectorE p p
+0x1f3a97c 164 _ZN4Aska6Matrix8MakeClipEffPNS_6VectorES2_ p f f p p
+0x1f3aa20 144 _ZN4Aska6Matrix16MakeClipToScreenEfPNS_6VectorES2_ffff p f p p f f f f
+0x1f3aab0 228 _ZN4Aska6Matrix9MulVectorEPKNS_6VectorE p p
+0x1f3ab94 260 _ZNK4Aska6Matrix9MulVectorEPS0_PKNS_6VectorE p p p
+0x1f3ac98 328 _ZNK4Aska6Matrix11ApplyVectorEPNS_6VectorEPKS1_ p p p
+0x1f3cbb8 176 _ZN4Aska8Matrix346CreateEPKNS_10QuaternionE p p
+0x1f3d428 440 _ZN4Aska8Matrix3423SetRotationByUnitVectorEPKNS_6VectorE p p
+0x1f3dfb8 660 _ZN4Aska8Matrix3418RotateByUnitVectorEPKNS_6VectorE p p
+0x1f3e29c 360 _ZN4Aska8Matrix3414InvertLowErrorEv p
+0x1f3e4b0 196 _ZNK4Aska8Matrix349MulVectorEPS0_PKNS_6VectorE p p p
+0x1f3e574 256 _ZNK4Aska8Matrix3411ApplyVectorEPNS_6VectorEPKS1_ p p p
+0x214ab78 400 _ZN4Aska8Matrix343MulEPKS0_S2_ p p p
+0x1f58e30 448 _ZNK4Aska10Quaternion2LnEPS0_ p p
+0x1f8c4e4 172 _ZN4Aska6Vector11ApplyMatrixEPKNS_6MatrixE p p
+0x1f8c590 120 _ZNK4Aska6Vector11ApplyMatrixEPS0_PKNS_6MatrixE p p p
+0x1f8c7e8 216 _ZN4Aska6Vector15ApplyQuaternionEPKNS_10QuaternionE p p
+0x1f8c8c0 236 _ZNK4Aska6Vector15ApplyQuaternionEPS0_PKNS_10QuaternionE p p p
+0x1f8cd9c 908 _ZNK4Aska6Vector25SquaredDistanceToTriangleEPKS0_S2_S2_PS0_ p p p p p
+0x20ab14c 164 _ZNK4Aska7Segment15SquaredDistanceEPKNS_6VectorEPf p p p
+0x20eb5c0 388 _ZN4Aska6Matrix4LerpEPKS0_S2_f p p p f
+0x2330c7c 676 _ZNK4Aska4AABB15ComputeVerticesEPNS_6VectorEPKS1_ p p p
+0x2331860 496 _ZNK4Aska3Box5Case0EiiiPNS_6VectorEPKS1_PfS5_ p i i i p p p p
+0x2331a50 264 _ZNK4Aska3Box6Case00EiiiPNS_6VectorEPKS1_PfS5_ p i i i p p p p
+0x2331b58 268 _ZNK4Aska3Box7Case000EPNS_6VectorEPf p p p
+0x2331d94 312 _ZNK4Aska3Box15SquaredDistanceEPKNS_6VectorEPfS4_S4_ p p p p p
+0x2331ecc 224 _ZNK4Aska4AABB15SquaredDistanceEPKNS_6VectorEPfS4_ p p p p
+0x2331fac 316 _ZNK4Aska11AABB_MinMax15SquaredDistanceEPKNS_6VectorEPfS4_ p p p p
+0x23320e8 140 _ZNK4Aska11AABB_MinMax12CalcDistanceEPKNS_6VectorE p p
+0x2332214 152 _ZNK4Aska4AABB12CalcDistanceEPKNS_5PlaneE p p
+0x2332318 192 _ZN4Aska4AABB16ClipIntersectionEPKS0_ p p
+0x23323d8 148 _ZNK4Aska4AABB11IsContainedEPKNS_6VectorEf p p f
+0x233246c 460 _ZNK4Aska4AABB20CalcOverlappedStatusEPKNS_6SphereEf p p f
+0x2332638 536 _ZNK4Aska4AABB20CalcOverlappedStatusEPKNS_3BoxEf p p f
+0x2332abc 236 _ZNK4Aska3Box12CalcDistanceEPKNS_5PlaneE p p
+0x2333478 1476 _ZN4Aska3Box13IsIntersectedEPKS0_ p p
+0x2334240 56 _ZN4Aska4AABB10SetCapsuleEPKNS_6VectorES3_f p p p f
+0x2334278 184 _ZN4Aska4AABB6SetBoxEPKNS_3BoxE p p
+0x2334330 48 _ZN4Aska4AABB9SetSphereEPKNS_6SphereE p p
+# math: calls (sqrtf, other math functions through the PLT)
+0x11e0e9c 68 _ZN9Collision4Math21CalcLength_PointPointERKN9Framework7CVectorES4_ p p
+0x1f576d0 408 _ZN4Aska10Quaternion6CreateEPKNS_6MatrixE p p
+0x1f57868 488 _ZN4Aska10Quaternion6CreateEPKNS_6VectorE p p
+0x1f5825c 928 _ZN4Aska10Quaternion5SlerpEPKS0_S2_f p p p f
+0x1f8c9ac 1008 _ZN4Aska6Vector8GetEulerEPKNS_6MatrixE p p
+0x20aa82c 2336 _ZNK4Aska7Segment15SquaredDistanceEPKS0_PfS3_ p p p p
+0x1f3ade0 856 _ZN4Aska6Matrix17SetLookAtMatrixXPEPKNS_6VectorES3_f p p p f

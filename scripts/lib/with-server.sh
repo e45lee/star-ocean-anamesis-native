@@ -72,7 +72,7 @@ ws_server_option() {
       ws_srv_args+=("$1"); ws_taken=1 ;;
     --seed | --download | --download-dir | --master | --db | --log-packets | --campaign-master-db)  # paths
       ws_need "$@"; ws_srv_args+=("$1" "$(ws_abs "$2")"); ws_taken=2 ;;
-    --seed-rng | --clock | --start-coins | --stamina-heal-time | --event-keywords | --fail | --campaign-seed)
+    --seed-rng | --clock | --start-coins | --stamina-heal-time | --gacha-surprise | --event-keywords | --fail | --campaign-seed)
       ws_need "$@"; ws_srv_args+=("$1" "$2"); ws_taken=2 ;;
     *) return 1 ;;
   esac

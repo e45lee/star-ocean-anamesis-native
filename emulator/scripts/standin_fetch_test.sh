@@ -90,7 +90,7 @@ dl=$phone/data/files/download
 elog=$out/emu.log slog=$out/server.log fifo=$out/fifo
 W=729 H=1296
 MAX_RSS_KB=$((6 * 1024 * 1024))
-read -r game_port http_port < <(python3 -c '
+read -r game_port http_port < <("$repo/tools/py" -c '
 import socket
 s = [socket.socket() for _ in range(2)]
 for x in s: x.bind(("127.0.0.1", 0))
@@ -113,7 +113,7 @@ results=() failed=0
 pass() { results+=("PASS  $1"); echo "PASS  $1 ($(( $(date +%s) - t0 ))s)"; }
 miss() { results+=("FAIL  $1"); echo "FAIL  $1"; failed=1; }
 finish() {
-    [ -p "$fifo" ] && kill -0 "${epid:-0}" 2>/dev/null && python3 "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
+    [ -p "$fifo" ] && kill -0 "${epid:-0}" 2>/dev/null && "$repo/tools/py" "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
     if grep -qE "Unhandled SIG|\*\*\* host signal" "$elog" 2>/dev/null; then miss "soa-emu crashed (see $elog)"; fi
     echo "---"
     printf '%s\n' "${results[@]}"
@@ -129,7 +129,7 @@ if [ -n "${EMU_DATA:-}" ]; then
     . "$repo/scripts/shared-phone.sh"
     shared_phone_link "$EMU_DATA" "$phone" > "$out/phone-link.txt" 2>&1 || { miss "phone from EMU_DATA ($(tail -n 1 "$out/phone-link.txt"))"; finish; }
     while read -r rel; do rm -f "$dl/$rel"; done < "$out/standins.txt"
-    if ! python3 - "$dl/version.bin" "$out/standins.txt" > "$out/phone-prep.txt" 2>&1 <<'EOF'
+    if ! "$repo/tools/py" - "$dl/version.bin" "$out/standins.txt" > "$out/phone-prep.txt" 2>&1 <<'EOF'
 import os, sys, msgpack
 path, names = sys.argv[1], set(open(sys.argv[2]).read().split())
 v = msgpack.unpackb(open(path, "rb").read(), raw=False, strict_map_key=False)
@@ -167,7 +167,7 @@ base=http://127.0.0.1:$http_port/download/$rev/Android
 for f in version.bin manifest/etc2/hi/version_latest_Bulk.bin manifest/etc2/hi/version_latest_Individual.bin; do
     curl -sf -o "$out/served/$(basename "$f")" "$base/$f" || { miss "served: GET $f"; finish; }
 done
-if check=$(python3 - "$out/served" "$out/standins.txt" "$standins" "$mode" <<'EOF'
+if check=$("$repo/tools/py" - "$out/served" "$out/standins.txt" "$standins" "$mode" <<'EOF'
 import os, sys, msgpack
 d, names, src, mode = sys.argv[1], open(sys.argv[2]).read().split(), sys.argv[3], sys.argv[4]
 load = lambda f: msgpack.unpackb(open(os.path.join(d, f), "rb").read(), raw=False, strict_map_key=False)["assets"]
@@ -205,7 +205,7 @@ alive() {
     rss=$(ps -o rss= --ppid $epid 2>/dev/null | sort -n | tail -1)
     [ -z "$rss" ] || [ "$rss" -le $MAX_RSS_KB ] || { echo "soa-emu above 6 GB RSS"; return 1; }
 }
-ctl() { python3 "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; }
+ctl() { "$repo/tools/py" "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; }
 in_plog() { grep -q -- "$1" "$out/packets/packets.log" 2>/dev/null; }
 in_elog() { grep -q -- "$1" "$elog" 2>/dev/null; }
 in_slog() { tail -n +$((slog_base + 1)) "$slog" 2>/dev/null | grep -q -- "$1"; }

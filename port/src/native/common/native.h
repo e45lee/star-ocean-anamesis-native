@@ -74,6 +74,29 @@ void list_native_functions(FILE* out);
 // Every registration, in registration order.
 const std::vector<NativeFunction>& registered_natives();
 
+// A host library's table of natives (lib_zlib, lib_zstd, lib_jpeg, lib_vorbis, lib_crypto): each entry
+// replaces the guest's copy of a library function and keeps the trampoline to it in *orig (the lockstep
+// check's guest run).
+struct BoundNative {
+    const char* sym;
+    HostFn fn;
+    u64* orig;
+};
+// Registers every entry, in table order, with the library's note (the file is the caller's: its folder
+// is the natives' subsystem).
+bool register_bound(const BoundNative* table, size_t n, const char* note, const char* file = __builtin_FILE());
+template <size_t N>
+bool register_bound(const BoundNative (&table)[N], const char* note, const char* file = __builtin_FILE()) {
+    return register_bound(table, N, note, file);
+}
+// Points every entry's *orig at sym(its symbol), or 0 when sym is null (the selftests run the guest's
+// copies through them: lib_*_api.h use_originals).
+void bind_originals(const BoundNative* table, size_t n, u64 (*sym)(const char*));
+template <size_t N>
+void bind_originals(const BoundNative (&table)[N], u64 (*sym)(const char*)) {
+    bind_originals(table, N, sym);
+}
+
 }  // namespace soa
 
 #define NATIVE_CONCAT2(a, b) a##b

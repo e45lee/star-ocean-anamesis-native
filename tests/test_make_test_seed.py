@@ -1,15 +1,14 @@
 """tools/make_test_seed.py: the default output is the committed test seed; --extra-roles / --home."""
 import pathlib
 import sqlite3
-import sys
 
 import pytest
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
+import make_test_seed as mts
+from soa_save.kvs import KVSFile
 
-import make_test_seed as mts  # noqa: E402
-from soa_save.kvs import KVSFile  # noqa: E402
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+
 
 MASTER = ROOT / "data/basmaster-3.7.0.sqlite3"
 pytestmark = pytest.mark.skipif(not MASTER.is_file(), reason="needs the 3.7.0 master")

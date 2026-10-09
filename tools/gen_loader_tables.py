@@ -23,15 +23,12 @@ the running game by the param/elements/layout test into parameter_layouts.inc.
 
 Usage: .venv/bin/python tools/gen_loader_tables.py > port/src/native/params/gen/parameter_elements.inc
 """
-import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
-from elfinfo import lib  # noqa: E402
+from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
+import genlib  # (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
+from elfinfo import lib
 
 L = lib()
 md = Cs(CS_ARCH_ARM64, CS_MODE_ARM)
@@ -121,7 +118,6 @@ for name in sorted(dyn):
                  s(p + "aSERKS_"), s(p + "D2Ev"), s(p + "D0Ev"), dtor_vtable(t)))
 
 
-
 def shape(sym):
     """Machine code with call targets, branch targets and GOT/page references normalised: equal
     shapes are the same template code over different types."""
@@ -160,7 +156,6 @@ for name in sorted(dyn):
     m = qm.match(name)
     if m and shape(name) == ref:
         query_map.append((name, m.group(2)[:int(m.group(1))]))
-
 
 
 # CSimpleSqliteConnector<E, S>: per connector, its QueryToMsgPack(mode, key, ...) and

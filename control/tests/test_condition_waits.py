@@ -5,15 +5,12 @@ step that doesn't arrive fails with what was expected and the last phase seen.""
 import os
 import shutil
 import subprocess
-import sys
 
 import pytest
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(HERE))
-from soadrive import screens  # noqa: E402
-from soadrive import waits as common  # noqa: E402
-from soadrive.targets import Abort  # noqa: E402
+from soadrive import screens
+from soadrive import waits as common
+from soadrive.targets import Abort
 
 pytestmark = pytest.mark.skipif(shutil.which("convert") is None or shutil.which("compare") is None,
                                 reason="ImageMagick (convert, compare) not installed")

@@ -11,10 +11,13 @@ SAMPLES = REPO / "samples"
 
 
 def xapk() -> pathlib.Path:
-    found = sorted(APK_DIR.glob("*.xapk"))
-    if not found:
-        raise FileNotFoundError(f"no .xapk in {APK_DIR} (the APKPure download; README 'Game files')")
-    return found[0]
+    """The offline game's package in apk/, here or in the main checkout (a worktree has no untracked
+    files: repo_file's rule)."""
+    for root in dict.fromkeys((REPO, main_checkout(REPO))):
+        found = sorted((pathlib.Path(root) / "apk").glob("*.xapk"))
+        if found:
+            return found[0]
+    raise FileNotFoundError(f"no .xapk in {APK_DIR} or the main checkout's (the APKPure download; README 'Game files')")
 
 
 def main_checkout(repo=REPO) -> pathlib.Path:

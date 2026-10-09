@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """Inventory of what is still guest code, for planning the move off the JIT (docs/history/REMAINING.md).
 
 Usage: remaining.py DIR [DIR...] --native-list FILE [--top N]
@@ -24,10 +24,8 @@ import argparse
 import collections
 import os
 import re
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from profile_report import IDLE_HLE, demangle_all, family_of, fmt_bytes, load_tsv, table  # noqa: E402
+from profile_report import IDLE_HLE, demangle_all, family_of, fmt_bytes, load_tsv, table
 
 TRANSCRIBED = re.compile(r"a2c|transcribed", re.I)
 
@@ -94,18 +92,6 @@ def elf_reader(path):
     return read
 
 
-def need_pyelftools():
-    """pyelftools reads the library: under a python without it, run again with the repo's .venv."""
-    try:
-        import elftools  # noqa: F401
-    except ImportError:
-        venv = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".venv")
-        py = os.path.join(venv, "bin", "python")
-        if not os.path.exists(py) or os.path.realpath(sys.prefix) == os.path.realpath(venv):
-            sys.exit("remaining.py needs pyelftools (pip install -r requirements.txt)")
-        os.execv(py, [py, os.path.abspath(__file__)] + sys.argv[1:])
-
-
 def short_kind(read, va, size):
     """Classifies a function under 8 bytes by its instruction."""
     b = read(va, 4) if read and size >= 4 else None
@@ -138,7 +124,6 @@ def main():
                                                   "work/libSOA-3.7.0.so"),
                     help="libSOA.so, to classify functions under 8 bytes")
     a = ap.parse_args()
-    need_pyelftools()
 
     funcs = [(int(r[0], 16), int(r[1]), r[3]) for r in load_tsv(os.path.join(a.dirs[0], "functions.tsv"))]
     by_name = {n: i for i, (_, _, n) in enumerate(funcs)}
@@ -162,7 +147,7 @@ def main():
             natives[i] = sym
             labels[i] = lab
 
-    executed, first_hit = set(), {}
+    executed = set()
     calls = collections.Counter()
     self_s, incl_s = collections.Counter(), collections.Counter()
     native_self = collections.Counter()

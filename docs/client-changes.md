@@ -98,7 +98,7 @@ This is port plumbing on the port's own `FakeApiCaller` route, not a change to g
 - **Evidence:** `work/decomp/server-missions-err-{ehw,b,cb,g}.resolved.c`; docs/server-rules.md#server-missions, docs/server-rules.md#refusals.
 
 ### `req:Name:args` in the fake server's drive file (port test option; removed)
-- The drive file and its `req:` command went with the drive hook on 2026-10-01 (`port/README.md` "Removed with the natives"); `restore_missions.sh` drives the screens instead. What is left is `fakeapi.cpp`'s `request_by_name`, which still parses `Name:arg1:arg2` (integer arguments passed to the local server as the request's arguments) for the requests the port queues itself (EndMissionTalk's `GetPlayMission`, no arguments). Test tooling, not game behaviour.
+- The drive file and its `req:` command went with the drive hook on 2026-10-01 (`port/README.md` "Removed with the natives"); `restore_missions.sh` drives the screens instead. `fakeapi.cpp`'s `request_by_name` / `queue_request`, which parsed `Name:arg1:arg2` for the requests the port queued itself, lost their last caller in code review CR2 (EndMissionTalk goes through `server::answer`) and were removed in CR10 (P5). Test tooling, not game behaviour.
 
 ## Port-specific code changes
 

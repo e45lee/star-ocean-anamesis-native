@@ -32,13 +32,13 @@ pid=$!
 trap 'kill $pid 2>/dev/null || true' EXIT
 while [ ! -p "$TMP/fifo" ]; do sleep 1; done
 S=$OUT/shots; L=$OUT/log.txt
-c() { python3 $CTL --timeout 400 "$TMP/fifo" "$@"; }
-logw() { python3 $FLOW wait-log "$L" "$1" "${2:-120}"; }
+c() { tools/py $CTL --timeout 400 "$TMP/fifo" "$@"; }
+logw() { tools/py $FLOW wait-log "$L" "$1" "${2:-120}"; }
 fail() { echo "FAIL: $*"; c quit || true; exit 1; }
 # The title (phase 1), TAP TO START -> Login -> the data check (or the download) -> home (phase 4).
 phone370_title "$TMP/fifo" "$L"; c shot:$S/01-title.png
 phone370_login "$TMP/fifo" "$L" "$S"
-python3 $FLOW login-popups "$TMP/fifo" "$L" - - - || fail "the login popups didn't close"
+tools/py $FLOW login-popups "$TMP/fifo" "$L" - - - || fail "the login popups didn't close"
 c wait:3000 shot:$S/02-home.png
 NEW=_ZN9Framework13CDebugWindows15CreateNewWindowEPKcjiijjS2_b
 c wait:500 debugwin:0:0; logw 'CDebugWindows::Initialize'

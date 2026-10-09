@@ -12,7 +12,8 @@
 #include <utility>
 #include <vector>
 
-#include "api/growth/growth_args.h"
+#include "api/gen/reply_types.h"  // the replies' C*Info types
+#include "api/gen/request_args.h"  // the requests' arguments
 #include "api/growth/mastery.h"
 #include "api/player/party_set.h"  // party_set_info
 #include "api/player/roster.h"  // has_growth
@@ -98,49 +99,76 @@ void read_item_cost(const Row& cost_row, int slots, ItemCost& cost) {
 
 // Takes the cost's items from the stock: the response's UseStockItem list ({master_item_id,
 // use_count} each).
-Value take_cost_items(Ctx& ctx, const ItemCost& cost) {
-    Value use = Value::array();
+std::vector<infos::UseStackItemInfo> take_cost_items(Ctx& ctx, const ItemCost& cost) {
+    std::vector<infos::UseStackItemInfo> use;
     for (auto& [item, n] : cost.items) {
         add_stock(ctx, item, -(int64_t)n);
-        Value entry = Value::object();
-        entry["master_item_id"] = item;
-        entry["use_count"] = n;
-        use.push(entry);
+        use.push_back({item, n});
     }
     return use;
 }
 
 // The character's fields as UpdateCharacter (CUpdateCharacterInfo) carries them. The equipped
 // skills (skill1..3) are sent after EquipSkill (`equipped_skills`), else for a character with
-// growth (has_growth: as when they lived in roster_ext, which EquipSkill always wrote).
-Value update_character_info(Ctx& ctx, CharacterUid uid, bool equipped_skills) {
-    Value info = Value::object();
+// growth (has_growth: as when they lived in roster_ext, which EquipSkill always wrote). None when
+// the player has no such character (the callers have checked: then `{}`).
+std::optional<infos::CUpdateCharacterInfo> update_character_info(Ctx& ctx, CharacterUid uid, bool equipped_skills) {
+    std::optional<infos::CUpdateCharacterInfo> found;
     ctx.st.q("select * from roster where uid = ?", {uid}, [&](const Row& roster_row) {
+        infos::CUpdateCharacterInfo& info = found.emplace();
         const RoleId role = roster_row.id<RoleId>("role_id");
-        info["id"] = uid.v;
-        info["player_id"] = ctx.player_id().v;
-        info["master_role_id"] = role.v;
-        info["level"] = (u32)roster_row.i("level");
-        info["exp"] = (u32)roster_row.i("exp");
-        info["weapon_item_id"] = or_zero(roster_row.opt<ItemUid>("weapon_uid"));  // NULL: none
-        for (int k = 1; k <= 3; k++)
-            info["skill" + std::to_string(k) + "_level"] = (u32)roster_row.i(("skill" + std::to_string(k) + "_level").c_str());
+        info.id = uid.v;
+        info.player_id = ctx.player_id().v;
+        info.master_role_id = role.v;
+        info.level = (u32)roster_row.i("level");
+        info.exp = (u32)roster_row.i("exp");
+        info.weapon_item_id = or_zero(roster_row.opt<ItemUid>("weapon_uid"));  // NULL: none
+        info.skill1_level = (u32)roster_row.i("skill1_level");
+        info.skill2_level = (u32)roster_row.i("skill2_level");
+        info.skill3_level = (u32)roster_row.i("skill3_level");
         // the equipped skills (EquipSkill; NULL: none, 0)
-        if (equipped_skills || has_growth(roster_row))
-            for (int k = 1; k <= 3; k++)
-                info["skill" + std::to_string(k)] = or_zero(roster_row.opt<SkillId>(("equip_skill" + std::to_string(k)).c_str()));
+        if (equipped_skills || has_growth(roster_row)) {
+            info.skill1 = or_zero(roster_row.opt<SkillId>("equip_skill1"));
+            info.skill2 = or_zero(roster_row.opt<SkillId>("equip_skill2"));
+            info.skill3 = or_zero(roster_row.opt<SkillId>("equip_skill3"));
+        }
         // (a) the role's rush skill, gauge and weapon kind (master_role)
         ctx.m.q("select * from master_role where id = ?", {role}, [&](const Row& role_row) {
-            info["rush_skill"] = (u32)role_row.i("rush_skill1_id");
-            info["rush_skill_factor_id"] = (u32)role_row.i("rush_skill1_factor_id");
-            info["rush_gauge_max"] = (u32)role_row.f("rush_gauge_max");
-            info["rush_gauge_use"] = (u32)role_row.f("rush_gauge_use");
-            info["weapon_kind"] = (u32)role_row.i("master_weapon_kind_id");
+            info.rush_skill = (u32)role_row.i("rush_skill1_id");
+            info.rush_skill_factor_id = (u32)role_row.i("rush_skill1_factor_id");
+            info.rush_gauge_max = (u32)role_row.f("rush_gauge_max");
+            info.rush_gauge_use = (u32)role_row.f("rush_gauge_use");
+            info.weapon_kind = (u32)role_row.i("master_weapon_kind_id");
         });
-        info["rush_skill_level"] = 1u;  // (d)
-        info["is_new"] = 0u;            // (d) not a new character
+        info.rush_skill_level = 1;  // (d)
+        info.is_new = 0;            // (d) not a new character
     });
-    return info;
+    return found;
+}
+// UpdateCharacter's value: the info, or `{}` without the character.
+Value update_character_value(Ctx& ctx, CharacterUid uid, bool equipped_skills) {
+    std::optional<infos::CUpdateCharacterInfo> info = update_character_info(ctx, uid, equipped_skills);
+    return info ? infos::to_value(*info) : Value::object();
+}
+
+// EquipWeaponResult / EquipAccessoryResult (Result: their info): the characters whose weapon /
+// accessory is now the given item uid (0: none), keyed by their uid, and the item equipped (none: an
+// empty map).
+void set_equipped(infos::CEquipWeaponResultPersonInfo& entry, u64 item_uid) { entry.weapon_item_id = item_uid; }
+void set_equipped(infos::CEquipAccessoryResultPersonInfo& entry, u64 item_uid) { entry.accessory_item_id = item_uid; }
+template <class Result>
+Value equip_result(const std::vector<std::pair<CharacterUid, u64>>& characters, std::optional<ItemUid> item) {
+    Result result;
+    for (const auto& [character_uid, item_uid] : characters) {
+        auto& entry = result.Character[character_uid.v];
+        entry.id = character_uid.v;
+        set_equipped(entry, item_uid);
+    }
+    if (item) result.Item[item->v].id = item->v;
+    return infos::to_value(result);
+}
+Value equip_result(bool weapon, const std::vector<std::pair<CharacterUid, u64>>& characters, std::optional<ItemUid> item) {
+    return weapon ? equip_result<infos::CEquipWeaponResultInfo>(characters, item) : equip_result<infos::CEquipAccessoryResultInfo>(characters, item);
 }
 
 // BoostCharacter(u64 character_uid, u32 master_item_id, u32 count) -> BoostCharacterRes   fid e5a04db6
@@ -193,15 +221,10 @@ std::vector<u8> boost_character(Ctx& ctx, const Request& req) {
     add_fol(ctx, -(int64_t)cost);
     count(ctx, "boost");
     Value data = ctx.base_data();
-    Value result = Value::object(), entry = Value::object();
-    entry["id"] = uid.v;
-    entry["before_level"] = chara.level;
-    entry["before_exp"] = chara.exp;
-    entry["after_level"] = new_level;
-    entry["after_exp"] = new_exp;
-    entry["is_big_success"] = big;
-    result[std::to_string(uid.v)] = entry;
-    data["BoostedCharacterResult"] = result;
+    infos::InfoMap<u64, infos::CBoostCharacterResultInfo> result;
+    result[uid.v] = {
+        .id = uid.v, .before_level = chara.level, .before_exp = chara.exp, .after_level = new_level, .after_exp = new_exp, .is_big_success = big};
+    data["BoostedCharacterResult"] = infos::to_map(result);
     data["StockItem"] = ctx.stock();
     // read by growth_session.sh
     LOGI("server", "BoostCharacter %llx: %u x item %u -> +%u EXP%s, level %u/%u -> %u/%u, FOL -%llu", (unsigned long long)uid.v, n, item, gain,
@@ -275,15 +298,14 @@ std::vector<u8> limit_break_character(Ctx& ctx, const Request& req) {
     ctx.st.q("update roster set limit_break = ? where uid = ?", {chara.limit_break + 1, uid});
     count(ctx, "limit_break");
     Value data = ctx.base_data();
-    Value result = Value::object(), entry = Value::object();
-    entry["id"] = uid.v;
-    entry["master_role_id"] = chara.role_id.v;
-    entry["before_master_role_id"] = chara.role_id.v;
-    entry["after_master_role_id"] = chara.role_id.v;
-    entry["before_limit_break_count"] = chara.limit_break;
-    entry["after_limit_break_count"] = chara.limit_break + 1;
-    result[std::to_string(uid.v)] = entry;
-    data["LimitBreakCharacter"] = result;
+    infos::InfoMap<u64, infos::CLimitBreakInfo> result;
+    result[uid.v] = {.id = uid.v,
+                     .master_role_id = chara.role_id.v,
+                     .before_master_role_id = chara.role_id.v,
+                     .after_master_role_id = chara.role_id.v,
+                     .before_limit_break_count = chara.limit_break,
+                     .after_limit_break_count = chara.limit_break + 1};
+    data["LimitBreakCharacter"] = infos::to_map(result);
     data["StockItem"] = ctx.stock();
     // read by growth_session.sh
     LOGI("server", "%s %llx: limit break %u -> %u (%lld x item %u, FOL -%u)", req.method.c_str(), (unsigned long long)uid.v, chara.limit_break,
@@ -326,7 +348,7 @@ std::vector<u8> evolution_character(Ctx& ctx, const Request& req) {
     for (auto& [item, n] : cost.items)
         if (stock_count(ctx, item) < n) return refuse(ctx, "EvolutionCharacter", "not enough items", ErrorCode::kItemCountError);
     if (fol(ctx) < cost.fol) return refuse(ctx, "EvolutionCharacter", "not enough FOL", ErrorCode::kFolShort);
-    Value use = take_cost_items(ctx, cost);
+    std::vector<infos::UseStackItemInfo> use = take_cost_items(ctx, cost);
     add_fol(ctx, -(int64_t)cost.fol);
     // (b) the evolved character starts again at level 1: CPartyCompositionEvolution's preview shows
     // the evolved form at "LV 1/<new cap>" and, after the result, the client says
@@ -337,16 +359,14 @@ std::vector<u8> evolution_character(Ctx& ctx, const Request& req) {
     u32 next_rarity = (u32)ctx.m.one("select rarity from master_role where id = ?", {next_role});
     count(ctx, "evolution_to_" + std::to_string(next_rarity));
     Value data = ctx.base_data();
-    Value result = Value::object(), character = Value::object();
-    result["use_fol"] = cost.fol;
-    result["UseStockItem"] = use;
-    character["id"] = uid.v;
-    character["before_master_role_id"] = chara.role_id.v;
-    character["after_master_role_id"] = next_role.v;
-    character["level"] = 1u;
-    character["is_rarity_7"] = next_rarity >= 7 ? 1u : 0u;
-    result["UpdatePlayerCharacter"] = character;
-    data["EvolutionResult"] = result;
+    infos::CEvolutionResultInfo result{.use_fol = cost.fol,
+                                       .UseStockItem = std::move(use),
+                                       .UpdatePlayerCharacter = {.id = uid.v,
+                                                                 .before_master_role_id = chara.role_id.v,
+                                                                 .after_master_role_id = next_role.v,
+                                                                 .level = 1,
+                                                                 .is_rarity_7 = next_rarity >= 7 ? 1u : 0u}};
+    data["EvolutionResult"] = infos::to_value(result);
     data["StockItem"] = ctx.stock();
     // read by growth_session.sh
     LOGI("server", "EvolutionCharacter %llx: role %u (rarity %u) -> %u (rarity %u), FOL -%u", (unsigned long long)uid.v, chara.role_id.v,
@@ -382,15 +402,12 @@ std::vector<u8> update_awaken_level(Ctx& ctx, const Request& req) {
     for (auto& [item, n] : cost.items)
         if (stock_count(ctx, item) < n) return refuse(ctx, "UpdateAwakenLevel", "not enough items", ErrorCode::kItemCountError);
     if (fol(ctx) < cost.fol) return refuse(ctx, "UpdateAwakenLevel", "not enough FOL", ErrorCode::kFolShort);
-    Value use = take_cost_items(ctx, cost);
+    std::vector<infos::UseStackItemInfo> use = take_cost_items(ctx, cost);
     add_fol(ctx, -(int64_t)cost.fol);
     ctx.st.q("update roster set awaken = ? where uid = ?", {level, uid});
     Value data = ctx.base_data();
-    Value result = Value::object();
-    result["awaken_level"] = level;
-    result["use_fol"] = cost.fol;
-    result["UseStockItem"] = use;
-    result["UpdateCharacter"] = update_character_info(ctx, uid, false);
+    infos::CAwakenResultInfo result{.awaken_level = level, .use_fol = cost.fol, .UseStockItem = std::move(use)};
+    result.UpdateCharacter = update_character_info(ctx, uid, false).value_or(infos::CUpdateCharacterInfo{});  // (found: checked above)
     // (b) CAwakenResultInfo update_child_id / update_child_mastery_talent_id: the client sets
     // the CPersonInfo mastery_talent_id (+0x7a0) of the character update_child_id to the latter
     // (CApiNotify::OnUpdateAwakenLevelRes @014e2d90): a master's awakening can change the talent its
@@ -398,9 +415,9 @@ std::vector<u8> update_awaken_level(Ctx& ctx, const Request& req) {
     // in the master role's mastery_talent_slot); (d) reported whenever the awakened character
     // has a graduated disciple, else 0 / 0
     std::optional<CharacterUid> child = graduated_disciple_of(ctx, uid);
-    result["update_child_id"] = child ? child->v : 0u;
-    result["update_child_mastery_talent_id"] = child ? mastery_inheritance(ctx, *child).mastery_talent_id : 0u;
-    data["AwakenResult"] = result;
+    result.update_child_id = child ? child->v : 0u;
+    result.update_child_mastery_talent_id = child ? mastery_inheritance(ctx, *child).mastery_talent_id : 0u;
+    data["AwakenResult"] = infos::to_value(result);
     data["StockItem"] = ctx.stock();
     LOGI("server", "UpdateAwakenLevel %llx: awakening %u -> %u, FOL -%u", (unsigned long long)uid.v, chara.awaken_level, level, cost.fol);
     return body(data);
@@ -453,16 +470,26 @@ std::vector<u8> add_status_character(Ctx& ctx, const Request& req) {
     add_fol(ctx, -(int64_t)cost);
     count(ctx, "add_status_" + std::to_string(stat));
     Value data = ctx.base_data();
-    Value result = Value::object();
-    result["player_character_id"] = uid.v;
-    result["player_id"] = ctx.player_id().v;
-    for (int k = 0; k < 7; k++) {
-        result["before_add_" + std::string(kSeedStats[k])] = before[k];
-        result["after_add_" + std::string(kSeedStats[k])] = after[k];
-    }
-    result["use_fol"] = (u32)cost;
-    result["new_fol"] = fol(ctx);
-    data["CharacterAddStatusResult"] = result;
+    // (the stats in kSeedStats' order)
+    infos::CPersonAddStatusResultInfo result{.player_character_id = uid.v,
+                                             .player_id = ctx.player_id().v,
+                                             .before_add_hp = before[0],
+                                             .after_add_hp = after[0],
+                                             .before_add_attack = before[1],
+                                             .after_add_attack = after[1],
+                                             .before_add_intelligence = before[2],
+                                             .after_add_intelligence = after[2],
+                                             .before_add_defence = before[3],
+                                             .after_add_defence = after[3],
+                                             .before_add_hit = before[4],
+                                             .after_add_hit = after[4],
+                                             .before_add_guard = before[5],
+                                             .after_add_guard = after[5],
+                                             .before_add_ap = before[6],
+                                             .after_add_ap = after[6],
+                                             .use_fol = (u32)cost,
+                                             .new_fol = (u32)fol(ctx)};
+    data["CharacterAddStatusResult"] = infos::to_value(result);
     data["StockItem"] = ctx.stock();
     LOGI("server", "AddStatusCharacter %llx: %s %u -> %u (%u seeds, FOL -%llu)", (unsigned long long)uid.v, kSeedStats[stat], before[stat],
          after[stat], n, (unsigned long long)cost);
@@ -500,24 +527,9 @@ std::vector<u8> equip_item(Ctx& ctx, const Request& req) {
     if (previous_owner) ctx.st.q(std::string("update roster set ") + column + " = null where uid = ?", {*previous_owner});
     ctx.st.q(std::string("update roster set ") + column + " = ? where uid = ?", {item, uid});  // none: NULL
     Value data = ctx.base_data();
-    Value result = Value::object(), characters = Value::object(), items = Value::object();
-    const char* key = weapon ? "weapon_item_id" : "accessory_item_id";
-    auto add_character_entry = [&](CharacterUid character_uid, std::optional<ItemUid> item_uid) {
-        Value entry = Value::object();
-        entry["id"] = character_uid.v;
-        entry[key] = or_zero(item_uid);
-        characters[std::to_string(character_uid.v)] = entry;
-    };
-    add_character_entry(uid, item);
-    if (previous_owner) add_character_entry(*previous_owner, std::nullopt);
-    if (item) {
-        Value entry = Value::object();
-        entry["id"] = item->v;
-        items[std::to_string(item->v)] = entry;
-    }
-    result["Character"] = characters;
-    result["Item"] = items;
-    data[weapon ? "EquipWeaponResult" : "EquipAccessoryResult"] = result;
+    std::vector<std::pair<CharacterUid, u64>> characters{{uid, or_zero(item)}};
+    if (previous_owner) characters.emplace_back(*previous_owner, 0);
+    data[weapon ? "EquipWeaponResult" : "EquipAccessoryResult"] = equip_result(weapon, characters, item);
     LOGI("server", "%s %llx: item %llx", req.method.c_str(), (unsigned long long)uid.v, (unsigned long long)or_zero(item));
     return body(data);
 }
@@ -538,7 +550,7 @@ std::vector<u8> equip_skill(Ctx& ctx, const Request& req) {
     ctx.st.q("update roster set equip_skill1 = nullif(?, 0), equip_skill2 = nullif(?, 0), equip_skill3 = nullif(?, 0) where uid = ?",
              {args.skill[0], args.skill[1], args.skill[2], uid});
     Value data = ctx.base_data();
-    data["UpdateCharacter"] = update_character_info(ctx, uid, true);
+    data["UpdateCharacter"] = update_character_value(ctx, uid, true);
     return body(data);
 }
 
@@ -632,9 +644,9 @@ std::vector<u8> equip_auto(Ctx& ctx, const Request& req) {
     std::string picked_log;
     for (bool weapon : {true, false}) {
         std::vector<Candidate> candidates = equip_candidates(ctx, uid, weapon, weapon_kind, steal);
-        Value result = Value::object(), characters = Value::object(), items = Value::object();
+        std::vector<std::pair<CharacterUid, u64>> characters;
+        std::optional<ItemUid> item;
         const char* column = weapon ? "weapon_uid" : "accessory_uid";
-        const char* key = weapon ? "weapon_item_id" : "accessory_item_id";
         const Candidate* best = nullptr;
         for (const Candidate& c : candidates)
             if (!best || c.score > best->score) best = &c;
@@ -644,22 +656,12 @@ std::vector<u8> equip_auto(Ctx& ctx, const Request& req) {
                      [&](const Row& roster_row) { previous_owner = roster_row.id<CharacterUid>("uid"); });
             if (previous_owner) ctx.st.q(std::string("update roster set ") + column + " = null where uid = ?", {*previous_owner});
             ctx.st.q(std::string("update roster set ") + column + " = ? where uid = ?", {best->uid, uid});
-            auto add_character_entry = [&](CharacterUid character_uid, u64 item_uid) {
-                Value entry = Value::object();
-                entry["id"] = character_uid.v;
-                entry[key] = item_uid;
-                characters[std::to_string(character_uid.v)] = entry;
-            };
-            add_character_entry(uid, best->uid.v);
-            if (previous_owner) add_character_entry(*previous_owner, 0);
-            Value entry = Value::object();
-            entry["id"] = best->uid.v;
-            items[std::to_string(best->uid.v)] = entry;
+            characters.emplace_back(uid, best->uid.v);
+            if (previous_owner) characters.emplace_back(*previous_owner, 0);
+            item = best->uid;
             picked_log += std::string(weapon ? " weapon " : " accessory ") + std::to_string(best->uid.v);
         }
-        result["Character"] = characters;
-        result["Item"] = items;
-        data[weapon ? "EquipWeaponResult" : "EquipAccessoryResult"] = result;
+        data[weapon ? "EquipWeaponResult" : "EquipAccessoryResult"] = equip_result(weapon, characters, item);
     }
     if (skills) {
         std::vector<u32> slots(3, 0);
@@ -678,7 +680,7 @@ std::vector<u8> equip_auto(Ctx& ctx, const Request& req) {
     }
     data["SetAssistResultList"] = Value::array();
     Value updated = Value::array();
-    updated.push(update_character_info(ctx, uid, skills));
+    updated.push(update_character_value(ctx, uid, skills));
     data["UpdateCharacterList"] = updated;
     // read by port/scripts/equipment_session.sh
     LOGI("server", "EquipAuto %llx:%s", (unsigned long long)uid.v, picked_log.empty() ? " nothing to equip" : picked_log.c_str());
@@ -720,7 +722,7 @@ std::vector<u8> change_role(Ctx& ctx, const Request& req) {
         "select count(*) from party_member where uid = ? and (skill_id1 is not null or skill_id2 is not null or skill_id3 is not null)", {uid});
     ctx.st.q("update party_member set skill_id1 = null, skill_id2 = null, skill_id3 = null where uid = ?", {uid});
     Value data = ctx.base_data();
-    data["UpdateCharacter"] = update_character_info(ctx, uid, true);
+    data["UpdateCharacter"] = update_character_value(ctx, uid, true);
     if (in_sets) data["PartySet"] = party_set_info(ctx);
     // read by mastery_session.sh
     LOGI("server", "ChangeRole %llx: role %u -> %u", (unsigned long long)uid.v, chara.role_id.v, args.role_id.v);

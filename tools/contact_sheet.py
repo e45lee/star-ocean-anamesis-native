@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Contact sheet: screenshots in a labelled grid, one PNG.
 
   tools/contact_sheet.py [options] ITEM... -o OUT.png

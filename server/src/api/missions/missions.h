@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "core/request_context.h"
-#include "core/rewards.h"  // Drop
+#include "core/rewards.h"  // Grant
 #include "master/master.h"
 #include "soaserver/ext.h"
 
@@ -95,13 +95,13 @@ inline u32 battle_log_u32(ext::Ctx& ctx, const char* name, u32 dflt) { return cu
 inline int64_t battle_evaluation_value(ext::Ctx& ctx, int type) { return current_log(ctx).evaluation(type); }
 
 struct Rolled {
-    std::vector<Drop> drops;
+    std::vector<Grant> drops;
     std::vector<u32> evaluations;  // master_battle_evaluation ids reached
     u32 surprise_lots = 0, campaign_lots = 0, bonus_lots = 0, bonus_extra = 0, eval_lots = 0;
 };
 // (a) master_mission_drop / master_common_drop / master_campaign_drop rows: `lots` lots from the
 // rows `sql` selects with `key`, and (fixed) the is_fix_drop rows (drops.cpp).
-void lottery(ext::Ctx& ctx, const std::string& sql, ext::Arg key, int64_t lots, DropType drop_type, std::vector<Drop>& out, bool fixed = true);
+void lottery(ext::Ctx& ctx, const std::string& sql, ext::Arg key, int64_t lots, DropType drop_type, std::vector<Grant>& out, bool fixed = true);
 // The whole drop roll of a won mission (drops.cpp).
 Rolled roll_drops(ext::Ctx& ctx, u32 mission, const std::string& table = "master_mission", u32 type = 0, u32 area = 0, bool surprise = false,
                   const std::vector<u32>& party_roles = {});

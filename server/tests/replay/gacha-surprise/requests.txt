@@ -1,0 +1,15 @@
+# soa-server replay corpus (server/tests/replay/README.md): gacha-surprise, hand-written for the gacha's
+# fake-out (docs/server-rules.md#gacha-surprise), the `badges` options plus --gacha-surprise 100:
+# Login, six 10-draws of the permanent character gacha gacha_role_0001 and two of the weapon gacha
+# gacha_weapon_0009: every drawn 5-star unit has is_mutation = true, no other unit; GetPlayer.
+# tz: America/Toronto
+req 1 1603641600 Login a01c67ef - - - -
+req 2 1603641610 Gacha a0a1940b 4218244542,0 78 - -
+req 3 1603641615 Gacha a0a1940b 4218244542,0 78 - -
+req 4 1603641620 Gacha a0a1940b 4218244542,0 78 - -
+req 5 1603641625 Gacha a0a1940b 4218244542,0 78 - -
+req 6 1603641630 Gacha a0a1940b 4218244542,0 78 - -
+req 7 1603641635 Gacha a0a1940b 4218244542,0 78 - -
+req 8 1603641640 Gacha a0a1940b 2201696395,0 - - -
+req 9 1603641645 Gacha a0a1940b 2201696395,0 - - -
+req 10 1603641650 GetPlayer 9a056905 - - - -

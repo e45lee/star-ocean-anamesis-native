@@ -980,6 +980,7 @@ public:
     bool EnsureUploaded();
 
     u8 unk_00[0x40];        // 0x00
+    static constexpr int kHandlerSlotUpdate = 0;  // m_handler's vtable: bool Update(GpuResource*)
     void* m_handler;        // 0x40: an object whose vtable slot 0 is bool Update(GpuResource*)
     u64 m_handle;           // 0x48: 0 until uploaded; a buffer's GL name (low 32 bits), a texture's slot in
                             //       RenderDeviceData::m_textureSlots (< 0x400)

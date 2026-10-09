@@ -1,39 +1,40 @@
-# Every third-party module a tracked *.py imports is listed here (tests/test_requirements.py checks).
+# Every third-party module a tracked *.py imports is listed here (tests/test_requirements.py checks),
+# pinned to the versions the gates run on (scripts/setup-venv.sh installs them into .venv).
 # soa_save (ADLD AES, the KVS ChaCha20), tools/check_download.py, docs/multiplayer/prototype/mp_proto.py
-pycryptodome
+pycryptodome==3.23.0
 # soa_save/script.py, tools/server_replay_record.py, tools/check_download.py,
 # tools/compare_tutorial.py, server/tests/ninja/tools/gen_ninja_vectors.py, docs/multiplayer/prototype,
 # control/soadrive/sessions/events.py (the event menu's list), tools/asf2gltf/anim_set.py, the tests
-msgpack
+msgpack==1.2.3
 # tests/, control/tests
-pytest
+pytest==9.1.1
 # ELF reading: tools/elfinfo.py, verdiff.py, rebase_inventory.py, decomp_stamp.py, subsystem.py,
 # gen_containers_tables.py, restore370_audit.py, port/scripts/remaining.py, control/gdbclient.py,
 # server/tests/ninja/tools, port/decomp/bullet/pin
-pyelftools
+pyelftools==0.33
 # AArch64 disassembly: tools/a2c.py, verdiff.py, elfinfo.py, rebase_inventory.py, api_wire.py,
 # gen_*_tables.py, fakeapi_fields.py, info_fields_emu.py, restore370_audit.py, gen_master_elements.py, gen_infos.py
-capstone
+capstone==5.0.9
 # AArch64 emulation: tools/emu.py, tools/info_fields_emu.py, tools/uemu.py (tools/gen_master_elements.py, tools/gen_infos.py),
 # server/tests/ninja/tools/ninja_client.py
-unicorn
+unicorn==2.1.4
 # images: tools/contact_sheet.py (screenshot contact sheets), tools/make_standin_banners.py,
 # tools/gacha_verify.py (contact sheets)
-pillow
+pillow==12.3.0
 # pixels: tools/make_standin_banners.py (the ETC2 encoder), tools/gacha_verify.py
-numpy
+numpy==2.5.3
 # image feature matching (SIFT, FLANN, RANSAC): tools/gacha_verify.py, tests/test_gacha_verify.py
-opencv-python-headless
+opencv-python-headless==5.0.0.93
 # SLZ codec 7 (zstd): soa_save/slz.py (for tools/missing_assets/presence.py,
 # tools/make_standin_banners.py, tools/english_core.py (the font of the English tools),
 # port/decomp/bullet/pin/scan_rb.py)
-zstandard
+zstandard==0.25.0
 # PO files (Poedit, Lokalize, Weblate): tools/english_text.py export-po / import-po, tests/test_english_text.py
-polib
+polib==1.2.0
 # headless GL (an EGL context) to replay the game's shaders: tools/asf2gltf/shader_replay.py
-moderngl
+moderngl==5.13.0
 # interactive reverse engineering (README.md "Reverse-engineering tools"); no tracked script imports them
-lief
-keystone-engine
+lief==1.0.0
+keystone-engine==0.9.2
 # PyGhidra ships with Ghidra (12.1.2 snap); install it from there:
 #   pip install --no-index --find-links /snap/ghidra/current/ghidra/Ghidra/Features/PyGhidra/pypkg/dist pyghidra

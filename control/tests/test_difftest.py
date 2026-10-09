@@ -1,16 +1,11 @@
 """tests/diff's verdicts without a game (pytest): a target without a run, or a comparison without the
 reference run, FAILs instead of comparing nothing; --expect-fail (the negative control) passes only
 on a comparison FAIL with every run passing."""
-import os
-import sys
 import types
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(os.path.dirname(HERE))
-sys.path.insert(0, os.path.join(REPO, "tests", "diff"))
-sys.path.insert(0, os.path.join(REPO, "control"))
-import compare  # noqa: E402
-import difftest  # noqa: E402
+import compare
+import difftest
+
 
 FLOW = types.SimpleNamespace(NAME="fake", SCREENS={})
 

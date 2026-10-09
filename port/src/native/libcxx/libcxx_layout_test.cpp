@@ -12,10 +12,12 @@
 #include <map>
 #include <set>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "native/common/guest_std.h"
 #include "native/common/test.h"
+#include "native/libcxx/libcxx_function.h"
 #include "native/libcxx/libcxx_layout.h"
 
 namespace soa {
@@ -24,9 +26,7 @@ namespace {
 namespace lx = soa::native::libcxx;
 using U32Bool = lx::pair<u32, bool>;
 
-static_assert(sizeof(guest::String) == sizeof(lx::String), "guest_std.h's String is basic_string<char>");
-static_assert(sizeof(guest::StringList) == sizeof(lx::ListString), "guest_std.h's StringList is list<String>");
-static_assert(sizeof(guest::StringList::Node) == sizeof(lx::ListStringNode));
+static_assert(std::is_same_v<guest::String, lx::String>, "guest_std.h's String is basic_string<char>");
 
 // The game's string: basic_string<char, char_traits<char>, Framework::CSTLAllocator<char, CSTLStringAllocatorInf>>.
 constexpr const char* kStrReserve = "_ZNSt6__ndk112basic_stringIcNS_11char_traitsIcEEN9Framework13CSTLAllocatorIcNS3_22CSTLStringAllocatorInfEEEE7reserveEm";
@@ -48,9 +48,7 @@ void check_string(TestContext& t, const lx::String& s, const std::string& want, 
     } else if (s.r.s.head.size >> 1 > 22) {
         t.fail("%s: short size %u", what, s.r.s.head.size >> 1);
     }
-    // the same object as guest_std.h reads it
-    const auto* g = reinterpret_cast<const guest::String*>(&s);
-    if (g->view() != want) t.fail("%s: guest::String reads \"%s\"", what, g->str().c_str());
+    if (s.view() != want) t.fail("%s: view() reads \"%s\"", what, s.str().c_str());
 }
 
 NATIVE_TEST("libcxx/layout-string") {
@@ -105,7 +103,7 @@ NATIVE_TEST("libcxx/layout-vector") {
         g.destroy();
     }
     for (size_t i = 0; i < want.size(); i++) check_string(t, v.begin_[i], want[i], "vector element");
-    for (size_t i = 0; i < want.size(); i++) reinterpret_cast<guest::String*>(&v.begin_[i])->destroy();
+    for (size_t i = 0; i < want.size(); i++) v.begin_[i].destroy();
     guest::stl_free(v.begin_);
 }
 
@@ -129,10 +127,6 @@ NATIVE_TEST("libcxx/layout-list") {
     }
     t.expect_eq(i, want.size(), "nodes from next to the sentinel");
     t.expect_eq((u64)l.prev->next, (u64)l.sentinel(), "the last node's next is the sentinel");
-    // the same list through guest_std.h
-    std::vector<std::string> seen;
-    reinterpret_cast<guest::StringList*>(&l)->for_each([&](const guest::String& s) { seen.push_back(s.str()); });
-    t.expect_eq(seen == want, true, "guest::StringList walk");
     for (auto& w : want) {
         guest::String key;
         key.init(w);
@@ -332,4 +326,32 @@ NATIVE_TEST("libcxx/layout-function") {
 }
 
 }  // namespace
+// libcxx_function.h: std::function's inlined copy and destructor through the callable's vtable: a heap
+// callable (here a __func wrapping an empty function, 0x40 bytes) is cloned onto the heap (slot 2) and the
+// copy freed by slot 5; an empty function stays empty. (The inline form, slots 3 / 4: fakeapi/requests,
+// whose map entries hold the request lambdas inline.)
+NATIVE_TEST("libcxx/function-copy-destroy") {
+#define FUNC "St6__ndk110__function6__funcINS_8functionIFvblEEENS_9allocatorIS4_EEFvbmEE"
+    auto* vt = (const void* const*)(t.sym("_ZTVN" FUNC "E") + 0x10);
+#undef FUNC
+    alignas(16) lx::FuncFunction heap{};
+    heap.vtable = vt;
+    heap.f.f = nullptr;
+    lx::function src{};
+    src.f = reinterpret_cast<lx::function_base*>(&heap);
+    lx::function copy;
+    std::memset(&copy, 0xcd, sizeof copy);
+    lx::function_copy_construct(&copy, src);
+    auto* made = reinterpret_cast<lx::FuncFunction*>(copy.f);
+    if (!made || made == &heap || copy.is_inline()) return t.fail("heap copy: __f_ %p isn't a new heap __func", (void*)made);
+    t.expect_eq((u64)made->vtable, (u64)vt, "heap copy's vtable");
+    lx::function_destroy(&copy);  // slot 5: destroy_deallocate frees it
+
+    lx::function empty{};
+    std::memset(&copy, 0xcd, sizeof copy);
+    lx::function_copy_construct(&copy, empty);
+    t.expect_eq((u64)copy.f, (u64)0, "empty copy");
+    lx::function_destroy(&copy);  // nothing to do
+}
+
 }  // namespace soa

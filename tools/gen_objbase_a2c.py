@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/objbase/gen/objbase_a2c.cpp: the animation / object base layer transcribed by a2c.py.
 
 Framework::CAnimationBlendContainer, Framework::CAnimationModel, CAnimationModelObject,
@@ -22,7 +22,6 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import genlib  # noqa: E402 (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
 _spec = importlib.util.spec_from_file_location('a2c', os.path.join(HERE, 'a2c.py'))
 a2c = importlib.util.module_from_spec(_spec)

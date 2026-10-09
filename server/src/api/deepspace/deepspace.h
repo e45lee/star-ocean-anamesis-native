@@ -13,6 +13,8 @@
 namespace soa::server::deepspace {
 
 using ext::Ctx;
+using ext::Grant;
+using ext::Granted;
 using ext::Row;
 
 // ---- clocks (state.cpp) --------------------------------------------------------------------

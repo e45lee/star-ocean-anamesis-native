@@ -81,4 +81,12 @@ NATIVE_TEST("master/connectors") {
     LOGI("test", "master/connectors: %d queries compared", compared);
 }
 
+// CSqliteTransaction's slots the connector calls (master_layout.h TransactionSlot).
+NATIVE_TEST("master/transaction-slots") {
+    auto* vt = (const u64*)(t.sym("_ZTV18CSqliteTransaction") + 0x10);
+    t.expect_eq(vt[kTransactionPSubstance], t.sym("_ZN18CSqliteTransaction10pSubstanceEv"), "slot 4: pSubstance");
+    t.expect_eq(vt[kTransactionGetDefaultServer], t.sym("_ZNK18CSqliteTransaction16GetDefaultServerEN4Aska5Yayoi6Entity4ModeEPKc"),
+                "slot 5: GetDefaultServer");
+}
+
 }  // namespace soa::native::master

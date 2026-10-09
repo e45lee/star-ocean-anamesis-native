@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """The proof that the movie player on FFmpeg's libraries (runtime/src/frontend/movie_decoder.cpp)
 decodes the game's movies as the ffmpeg program it replaced did.
 
@@ -46,7 +46,6 @@ import sys
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)
 from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../tools/py" "$0" "$@"'
 """Waiting helpers for the scripted sessions (a thin CLI over control/soadrive: milestones.py, popups.py).
 
   flowctl.py wait-screen FIFO SHOT REF [TIMEOUT]
@@ -43,9 +43,8 @@ import re
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from soadrive import fifo, popups, screens  # noqa: E402
-from soadrive.milestones import Failed, LogCursor, tap_until_log  # noqa: E402
+from soadrive import fifo, popups, screens
+from soadrive.milestones import Failed, LogCursor, tap_until_log
 
 MAX_RMSE = float(os.environ.get("FLOW_MAX_RMSE", "0.08"))
 # kept for importers of the old module (the fingerprints live in soadrive/popups.py)

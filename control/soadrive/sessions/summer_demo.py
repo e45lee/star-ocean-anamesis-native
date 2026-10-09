@@ -114,14 +114,11 @@ class Shots:
 def sheet(s, shots, scratch):
     if not shots.by["launch"]:
         return
-    py = os.path.join(REPO, ".venv/bin/python")
-    if not os.path.exists(py):
-        py = sys.executable
     args = []
     for k, title in SECTIONS:
         if shots.by[k]:
             args += ["@" + title] + shots.by[k]
-    r = subprocess.run([py, os.path.join(REPO, "tools/contact_sheet.py"), "--cols", "6", "--tile", "360", "--title",
+    r = subprocess.run([sys.executable, os.path.join(REPO, "tools/contact_sheet.py"), "--cols", "6", "--tile", "360", "--title",
                         "Summer demo: 3.7.0 client in %s + soa-server --enable-events, %s" % (
                             "soa-emu" if s.target == "emu" else "soa", time.strftime("%F"))] + args +
                        ["-o", os.path.join(s.layout.shots, "summer-demonstration-grid.png")], capture_output=True, text=True)

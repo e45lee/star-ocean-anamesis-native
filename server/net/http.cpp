@@ -70,7 +70,7 @@ std::string url_decode(const std::string& s) {
             o += (char)strtoul(s.substr(i + 1, 2).c_str(), nullptr, 16);
             i += 2;
         } else {
-            o += s[i] == '+' ? ' ' : s[i];
+            o += s[i];
         }
     }
     return o;

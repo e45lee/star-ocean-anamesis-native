@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """The native rebuild's queue (port/PLAN.md task 6): guest time per subsystem, and the subsystems' dependency waves.
 
 Usage: rebuild_queue.py NAME=DIR [NAME=DIR...] [--markdown] [--min-edge N] [--native-list FILE | --soa SOA]
@@ -26,8 +26,7 @@ import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from profile_report import IDLE_HLE, demangle_all, family_of, load_tsv  # noqa: E402
+from profile_report import IDLE_HLE, demangle_all, family_of, load_tsv
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

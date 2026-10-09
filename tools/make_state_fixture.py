@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Writes server/tests/fixtures/state-v0.sql, the committed v0 state of PLAN-schema 4.2.
 
     tools/make_state_fixture.py STATE_V0 [--master data/basmaster-3.7.0.sqlite3] [--out server/tests/fixtures/state-v0.sql]

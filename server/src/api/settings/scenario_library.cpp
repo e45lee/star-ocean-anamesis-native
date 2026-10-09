@@ -21,20 +21,14 @@
 #include <string>
 #include <vector>
 
+#include "api/gen/reply_types.h"  // to_array
+#include "api/gen/request_args.h"  // the requests' arguments
 #include "api/settings/settings.h"
 #include "core/log.h"
 #include "core/modules.h"
 #include "soaserver/ext.h"
 
 namespace soa::server {
-
-namespace args {
-// GetScenarioLibraryInfoList(u32 episode_type_id) (b: CScenarioLibrary::RequestListReceiveApi).
-struct GetScenarioLibraryInfoListArgs {
-    u32 episode_type_id = 0;
-    static GetScenarioLibraryInfoListArgs from(const Request& r) { return {r.ints.empty() ? 0u : (u32)r.ints[0]}; }
-};
-}  // namespace args
 
 namespace settings {
 
@@ -77,11 +71,9 @@ std::vector<u32> library_missions(ext::Ctx& ctx, u32 episode_type_id) {
 std::vector<u8> get_scenario_library_info_list(ext::Ctx& ctx, const Request& req) {
     const auto a = args::GetScenarioLibraryInfoListArgs::from(req);
     const std::vector<u32> missions = library_missions(ctx, a.episode_type_id);
-    Value list = Value::array();
-    for (u32 mission : missions) list.push(mission);
     LOGI("server", "GetScenarioLibraryInfoList %u: %zu cleared story missions", a.episode_type_id, missions.size());
     Value data = ctx.base_data();
-    data["WorldMapScenarioLibraryInfoList"] = list;
+    data["WorldMapScenarioLibraryInfoList"] = infos::to_array(missions);  // (CWorldMapScenarioLibraryInfoList: u32 values)
     return ext::body(data);
 }
 

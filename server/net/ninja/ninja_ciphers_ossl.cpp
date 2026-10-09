@@ -1,11 +1,13 @@
-// The ciphers of the sqex library that OpenSSL's libcrypto provides: AES-128, Camellia-128,
-// Blowfish, CAST-128 and SEED (low-level block APIs, deprecated in OpenSSL 3 but exported).
-// Each `*_cbc` reproduces the CBC loop of its client class.
+// The ciphers of the sqex library that OpenSSL's libcrypto provides: AES-128 through EVP (plain
+// CBC), Camellia-128, Blowfish, CAST-128 and SEED through the low-level block APIs (deprecated in
+// OpenSSL 3 but exported; under EVP Blowfish, CAST-128 and SEED are the legacy provider's, and
+// SEED's key schedule here is the client's own, which EVP can't take). Each `*_cbc` reproduces
+// the CBC loop of its client class.
 #define OPENSSL_SUPPRESS_DEPRECATED
-#include <openssl/aes.h>
 #include <openssl/blowfish.h>
 #include <openssl/camellia.h>
 #include <openssl/cast.h>
+#include <openssl/evp.h>
 #include <openssl/seed.h>
 
 #include <cstring>
@@ -17,32 +19,23 @@ namespace {
 
 // AES-128 (class vtable @02a9b018; Encrypt @01227e24, Decrypt @012280a0, block @0123c810 /
 // @0123d4c4, key schedule @0123d35c): plain CBC over bytes; the IV is the four generator words
-// stored little-endian.
+// stored little-endian. OpenSSL's EVP AES-128-CBC, padding off: whole blocks (the envelope's
+// lengths are multiples of 16), in place.
 struct Aes128 : Cipher {
-    AES_KEY ek, dk;
-    explicit Aes128(const uint8_t* key) {
-        AES_set_encrypt_key(key, 128, &ek);
-        AES_set_decrypt_key(key, 128, &dk);
+    uint8_t key[16];
+    explicit Aes128(const uint8_t* k) { memcpy(key, k, 16); }
+    void cbc(const uint32_t* iv, uint8_t* d, size_t n, bool encrypt) const {
+        uint8_t ivb[16];
+        for (int i = 0; i < 4; i++) store_le32(ivb + 4 * i, iv[i]);
+        EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+        int len = 0;
+        bool ok = ctx && EVP_CipherInit_ex(ctx, EVP_aes_128_cbc(), nullptr, key, ivb, encrypt ? 1 : 0) == 1 &&
+                  EVP_CIPHER_CTX_set_padding(ctx, 0) == 1 && EVP_CipherUpdate(ctx, d, &len, d, (int)(n - n % 16)) == 1;
+        EVP_CIPHER_CTX_free(ctx);
+        if (!ok) memset(d, 0, n);  // (OpenSSL failed: no plaintext or ciphertext leaks through; the trailer check fails)
     }
-    void encrypt_cbc(const uint32_t* iv, uint8_t* d, size_t n) const override {
-        uint8_t c[16];
-        for (int i = 0; i < 4; i++) store_le32(c + 4 * i, iv[i]);
-        for (size_t o = 0; o < n; o += 16) {
-            for (int i = 0; i < 16; i++) d[o + i] ^= c[i];
-            AES_encrypt(d + o, d + o, &ek);
-            memcpy(c, d + o, 16);
-        }
-    }
-    void decrypt_cbc(const uint32_t* iv, uint8_t* d, size_t n) const override {
-        uint8_t c[16], nc[16];
-        for (int i = 0; i < 4; i++) store_le32(c + 4 * i, iv[i]);
-        for (size_t o = 0; o < n; o += 16) {
-            memcpy(nc, d + o, 16);
-            AES_decrypt(d + o, d + o, &dk);
-            for (int i = 0; i < 16; i++) d[o + i] ^= c[i];
-            memcpy(c, nc, 16);
-        }
-    }
+    void encrypt_cbc(const uint32_t* iv, uint8_t* d, size_t n) const override { cbc(iv, d, n, true); }
+    void decrypt_cbc(const uint32_t* iv, uint8_t* d, size_t n) const override { cbc(iv, d, n, false); }
 };
 
 

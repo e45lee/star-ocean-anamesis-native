@@ -8,9 +8,13 @@
 #include <algorithm>
 #include <cstring>
 #include <optional>
+#include <set>
+
+#include <nlohmann/json.hpp>
 
 #include "ninja/ninja_ref.h"
 #include "packet_log.h"
+#include "soaserver/fids.h"
 #include "soaserver/log.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/server.h"
@@ -18,9 +22,6 @@
 namespace soa::server::net {
 
 namespace {
-
-constexpr uint32_t kFidStartBridge = 0xd4053e85;
-constexpr uint32_t kFidUpdateSession = 0xea04f3fd;
 
 #define NLOG(level, ...)                                                                  \
     do {                                                                                  \
@@ -44,19 +45,6 @@ struct LiveBackend : Backend {
         return ext::with_live_server([&](ext::Ctx& c) { fn(c.st); });
     }
 };
-
-std::string json_escape(const std::string& s) {
-    std::string o;
-    for (char c : s) {
-        if (c == '"' || c == '\\') o += '\\', o += c;
-        else if ((unsigned char)c < 0x20) {
-            char b[8];
-            snprintf(b, sizeof b, "\\u%04x", c);
-            o += b;
-        } else o += c;
-    }
-    return o;
-}
 
 // The LoginResult body: the server library's Login answer plus a top-level "Player" map, the
 // client's legacy CParameterPlayer (docs/server-rules.md#wire-layer).
@@ -89,27 +77,56 @@ std::vector<uint8_t> login_result_body(const std::vector<uint8_t>& body) {
 
 std::unique_ptr<Backend> live_backend() { return std::make_unique<LiveBackend>(); }
 
-std::string json_string_field(const std::string& json, const std::string& key) {
-    std::string pat = "\"" + key + "\"";
-    size_t p = json.find(pat);
-    if (p == std::string::npos) return "";
-    p = json.find(':', p + pat.size());
-    if (p == std::string::npos) return "";
-    p = json.find_first_not_of(" \t\r\n", p + 1);
-    if (p == std::string::npos) return "";
-    if (json[p] != '"') {  // a bare number
-        size_t e = json.find_first_of(",} \t\r\n", p);
-        return json.substr(p, e == std::string::npos ? std::string::npos : e - p);
-    }
-    std::string o;
-    for (size_t i = p + 1; i < json.size(); i++) {
-        if (json[i] == '"') return o;
-        if (json[i] == '\\' && i + 1 < json.size()) {
-            char c = json[++i];
-            o += c == 'n' ? '\n' : c == 't' ? '\t' : c;
-        } else o += json[i];
-    }
+namespace {
+// A JSON field as text: a string as it is, a number (or true / false) as its JSON text, else "".
+std::string field_text(const nlohmann::json& object, const char* key) {
+    auto it = object.find(key);
+    if (it == object.end()) return "";
+    if (it->is_string()) return it->get<std::string>();
+    if (it->is_number() || it->is_boolean()) return it->dump();
     return "";
+}
+// The body without its trailing NULs (the client sends its printf'd JSON with the NUL).
+std::string without_nuls(const std::string& s) {
+    size_t n = s.size();
+    while (n && s[n - 1] == '\0') n--;
+    return s.substr(0, n);
+}
+}  // namespace
+
+bool parse_bridge_request(const std::string& body, BridgeRequest* out) {
+    *out = BridgeRequest();
+    nlohmann::json j = nlohmann::json::parse(without_nuls(body), nullptr, /*allow_exceptions=*/false);
+    if (!j.is_object()) return false;
+    out->uuid = field_text(j, "UUID");
+    out->device_type = field_text(j, "deviceType");
+    out->token = field_text(j, "nativeToken");
+    return true;
+}
+
+std::string bridge_reply_json(const std::string& session_id, const std::string& key) {
+    nlohmann::ordered_json j;
+    j["nativeSessionId"] = session_id;
+    j["sharedSecurityKey"] = key;
+    return j.dump();
+}
+
+bool parse_bridge_reply(const std::string& json, std::string* session_id, std::string* key) {
+    nlohmann::json j = nlohmann::json::parse(without_nuls(json), nullptr, /*allow_exceptions=*/false);
+    if (!j.is_object()) return false;
+    *session_id = field_text(j, "nativeSessionId");
+    *key = field_text(j, "sharedSecurityKey");
+    return !session_id->empty() && !key->empty();
+}
+
+std::string bridge_request_body(const std::string& uuid, const std::string& token) {
+    nlohmann::ordered_json j;
+    j["UUID"] = uuid;
+    j["deviceType"] = "2";
+    j["nativeToken"] = token;
+    std::string body = j.dump();
+    body.push_back('\0');
+    return body;
 }
 
 // (d) The device table. The real server bound a device UUID to its player at CreatePlayer and
@@ -247,6 +264,10 @@ void GameServer::send(Conn& c, uint32_t fid, uint32_t counter, bool encrypt, con
     std::string alg = "clear";
     if (encrypt) {
         auto s = sessions_.find(c.session);
+        if (s == sessions_.end()) {  // (prune_sessions keeps a bound connection's session: not reached)
+            log("reply " + std::string(fid_name(fid) ? fid_name(fid) : "?") + " dropped: the connection's session is gone");
+            return;
+        }
         const std::string& key = s->second.key;
         uint32_t r2 = (uint32_t)rng_(), salt = (uint32_t)rng_();
         // (d) every reply in AES-128: the client decrypts whichever algorithm the envelope names
@@ -279,50 +300,9 @@ void GameServer::handle_packet(uint64_t id, Conn& c, const Packet& p, std::vecto
         log(head + " unknown FunctionID");
         return refuse(id, c, p.fid, p.counter, kStatusCommError, "unknown FunctionID", out);
     }
-    // ---- the plaintext ----
     std::vector<uint8_t> plain;
-    std::string alg = "clear";
-    if (p.flags & kFlagEncrypted) {
-        auto s = sessions_.find(c.session);
-        if (s == sessions_.end()) {
-            // A reconnect of a logged-in client: the client closes its game
-            // connection after the login and reconnects for the next request with no StartBridge
-            // or UpdateSession. (b) CApiNotify::OnDisconnect / OnError (3.7.0 @014bb314 /
-            // @014bb1fc) keep the bridged flag (+0x4d0) while CApiNotify::LoggedIn holds, and
-            // BeginBridge then sends the request at once, encrypted with the session key. (d) how
-            // the real server found the session of such a connection is unknown: soa-server tries
-            // the keys of its sessions, newest first; the envelope's keyed trailer (ninja kErrMac)
-            // rejects every other key, and the connection is bound to the session that decrypts.
-            std::vector<std::pair<uint64_t, std::string>> order;
-            for (auto& [sid, ss] : sessions_) order.emplace_back(ss.serial, sid);
-            std::sort(order.rbegin(), order.rend());
-            for (auto& [serial, sid] : order) {
-                std::vector<uint8_t> trial;
-                if (ninja::decrypt((const uint8_t*)sessions_[sid].key.data(), p.body.data(), p.body.size(), &trial) != ninja::kOk) continue;
-                c.session = sid;
-                s = sessions_.find(sid);
-                log("conn " + std::to_string(id) + " rebound to session " + sid + " (a reconnect without UpdateSession)");
-                break;
-            }
-        }
-        if (s == sessions_.end()) {
-            log(head + " encrypted, but the connection has no session");
-            return refuse(id, c, p.fid, p.counter, kStatusCommError, "encrypted request before UpdateSession", out);
-        }
-        uint32_t a = 0;
-        int st = ninja::decrypt((const uint8_t*)s->second.key.data(), p.body.data(), p.body.size(), &plain, &a);
-        if (st != ninja::kOk) {
-            log(head + " decrypt failed (" + std::to_string(st) + ")");
-            return refuse(id, c, p.fid, p.counter, kStatusCommError, "envelope refused (" + std::to_string(st) + ")", out);
-        }
-        alg = ninja::alg_name(a) ? ninja::alg_name(a) : "?";
-    } else {
-        if (api->encrypted) {
-            log(head + " sent in the clear but encrypted by the client's serializer");
-            return refuse(id, c, p.fid, p.counter, kStatusCommError, "clear body for an encrypted API", out);
-        }
-        plain = p.body;
-    }
+    std::string alg;
+    if (!plaintext(id, c, p, *api, head, &plain, &alg, out)) return;
     Decoded d;
     std::string err;
     if (!decode_request(*api, plain.data(), plain.size(), &d, &err)) {
@@ -333,33 +313,97 @@ void GameServer::handle_packet(uint64_t id, Conn& c, const Packet& p, std::vecto
     log(request_line(head, alg, plain.size(), d.req.method, d.args));
     log_file(std::to_string(seq) + "-" + api->name + ".bin", plain);
     if (!d.battle_log.empty()) log_file(std::to_string(seq) + "-" + api->name + "-battle_log.msgp", d.battle_log);
+    // the session setup is the wire layer's own; every other request the server library answers
+    if (p.fid == fids::kStartBridge) return start_bridge(id, c, p, *api, out);
+    if (p.fid == fids::kUpdateSession) return update_session(id, c, p, *api, d, out);
+    answer_request(id, c, p, *api, d, seq, out);
+}
 
-    // ---- the session setup (the wire layer's own) ----
-    if (p.fid == kFidStartBridge) {
-        // (d) a nativeToken of 48 hex characters (ResultStart's field holds up to 1023); the
-        // third value is stored by the client in an 8-byte buffer and never read back [unknown]: empty
-        std::string token = random_hex(48);
-        tokens_[token] = id;
-        return send(c, api->reply_fid, p.counter, false, result_start_body(token, opt_.bridge_url, ""), out,
-                    ("token=" + token + " url=" + opt_.bridge_url).c_str());
+// The request's plaintext: an encrypted body decrypted with the connection's session key (a
+// reconnect finds its session first: session_by_key), a clear one as it came. False when it was
+// refused (the ProtocolError is in *out).
+bool GameServer::plaintext(uint64_t id, Conn& c, const Packet& p, const WireApi& api, const std::string& head, std::vector<uint8_t>* plain,
+                           std::string* alg, std::vector<uint8_t>* out) {
+    *alg = "clear";
+    if (!(p.flags & kFlagEncrypted)) {
+        if (api.encrypted) {
+            log(head + " sent in the clear but encrypted by the client's serializer");
+            refuse(id, c, p.fid, p.counter, kStatusCommError, "clear body for an encrypted API", out);
+            return false;
+        }
+        *plain = p.body;
+        return true;
     }
-    if (p.fid == kFidUpdateSession) {
-        const std::string sid = d.req.strs.empty() ? "" : d.req.strs[0];
-        auto s = sessions_.find(sid);
-        if (s == sessions_.end()) return refuse(id, c, p.fid, p.counter, kStatusCommError, "unknown nativeSessionId " + sid, out);
-        c.session = sid;  // this connection now uses the session's key
-        NLOG(Info, "conn %llu: bound to session %s (device %s)", (unsigned long long)id, sid.c_str(), s->second.uuid.c_str());
-        return send(c, api->reply_fid, p.counter, false, {}, out, ("session=" + sid).c_str());
+    auto s = sessions_.find(c.session);
+    if (s == sessions_.end()) s = session_by_key(id, c, p);
+    if (s == sessions_.end()) {
+        log(head + " encrypted, but the connection has no session");
+        refuse(id, c, p.fid, p.counter, kStatusCommError, "encrypted request before UpdateSession", out);
+        return false;
     }
+    uint32_t a = 0;
+    int st = ninja::decrypt((const uint8_t*)s->second.key.data(), p.body.data(), p.body.size(), plain, &a);
+    if (st != ninja::kOk) {
+        log(head + " decrypt failed (" + std::to_string(st) + ")");
+        refuse(id, c, p.fid, p.counter, kStatusCommError, "envelope refused (" + std::to_string(st) + ")", out);
+        return false;
+    }
+    *alg = ninja::alg_name(a) ? ninja::alg_name(a) : "?";
+    return true;
+}
 
-    // ---- an API request: the server library answers ----
+// A reconnect of a logged-in client: the client closes its game connection after the login and
+// reconnects for the next request with no StartBridge or UpdateSession. (b) CApiNotify::OnDisconnect
+// / OnError (3.7.0 @014bb314 / @014bb1fc) keep the bridged flag (+0x4d0) while CApiNotify::LoggedIn
+// holds, and BeginBridge then sends the request at once, encrypted with the session key. (d) how
+// the real server found the session of such a connection is unknown: soa-server tries the keys of
+// its sessions, newest first; the envelope's keyed trailer (ninja kErrMac) rejects every other key,
+// and the connection is bound to the session that decrypts. sessions_.end() when none does.
+std::map<std::string, GameServer::Session>::iterator GameServer::session_by_key(uint64_t id, Conn& c, const Packet& p) {
+    std::vector<std::pair<uint64_t, std::string>> order;
+    for (auto& [sid, ss] : sessions_) order.emplace_back(ss.serial, sid);
+    std::sort(order.rbegin(), order.rend());
+    for (auto& [serial, sid] : order) {
+        std::vector<uint8_t> trial;
+        if (ninja::decrypt((const uint8_t*)sessions_[sid].key.data(), p.body.data(), p.body.size(), &trial) != ninja::kOk) continue;
+        c.session = sid;
+        log("conn " + std::to_string(id) + " rebound to session " + sid + " (a reconnect without UpdateSession)");
+        return sessions_.find(sid);
+    }
+    return sessions_.end();
+}
+
+// StartBridge -> ResultStart: (d) a nativeToken of 48 hex characters (ResultStart's field holds up
+// to 1023); the third value is stored by the client in an 8-byte buffer and never read back
+// [unknown]: empty.
+void GameServer::start_bridge(uint64_t id, Conn& c, const Packet& p, const WireApi& api, std::vector<uint8_t>* out) {
+    std::string token = random_hex(48);
+    tokens_[token] = id;
+    send(c, api.reply_fid, p.counter, false, result_start_body(token, opt_.bridge_url, ""), out,
+         ("token=" + token + " url=" + opt_.bridge_url).c_str());
+}
+
+// UpdateSession(nativeSessionId) -> ResultUpdateSession: the connection uses that session's key.
+void GameServer::update_session(uint64_t id, Conn& c, const Packet& p, const WireApi& api, const Decoded& d, std::vector<uint8_t>* out) {
+    const std::string sid = d.req.strs.empty() ? "" : d.req.strs[0];
+    auto s = sessions_.find(sid);
+    if (s == sessions_.end()) return refuse(id, c, p.fid, p.counter, kStatusCommError, "unknown nativeSessionId " + sid, out);
+    c.session = sid;  // this connection now uses the session's key
+    NLOG(Info, "conn %llu: bound to session %s (device %s)", (unsigned long long)id, sid.c_str(), s->second.uuid.c_str());
+    send(c, api.reply_fid, p.counter, false, {}, out, ("session=" + sid).c_str());
+}
+
+// An API request: the server library answers (Backend::call), the reply goes back in the API's
+// reply packet, or a refusal as a ProtocolError.
+void GameServer::answer_request(uint64_t id, Conn& c, const Packet& p, const WireApi& api, const Decoded& d, uint64_t seq,
+                                std::vector<uint8_t>* out) {
     std::vector<uint8_t> body;
     uint32_t code = backend_.call(d.req, &body);
     if (code == kNotHandled) {
         // (d) the server has no handler (an API the emulator doesn't serve yet): an empty success
         // with data.Time (and what the backend adds to it, the campaign's data), so the client's
         // screen goes on; logged
-        NLOG(Warn, "%s (%s): not implemented by the server; answering data.Time (+ campaign data)", api->name.c_str(), d.req.method.c_str());
+        NLOG(Warn, "%s (%s): not implemented by the server; answering data.Time (+ campaign data)", api.name.c_str(), d.req.method.c_str());
         if (body.empty()) {
             Value data = Value::object();
             data["Time"] = format_time(clock_now());
@@ -372,45 +416,41 @@ void GameServer::handle_packet(uint64_t id, Conn& c, const Packet& p, std::vecto
         auto s = sessions_.find(c.session);
         if (s != sessions_.end()) record_device(s->second, "CreatePlayer");
     }
-    log_file(std::to_string(seq) + "-" + api->reply + ".msgp", body);
+    log_file(std::to_string(seq) + "-" + api.reply + ".msgp", body);
     std::string note = data_keys(body);
-    if (api->reply_kind == ReplyKind::kEmpty) return send(c, api->reply_fid, p.counter, api->reply_encrypted, {}, out, note.c_str());
-    if (api->reply_encrypted && c.session.empty())
+    if (api.reply_kind == ReplyKind::kEmpty) return send(c, api.reply_fid, p.counter, api.reply_encrypted, {}, out, note.c_str());
+    if (api.reply_encrypted && c.session.empty())
         return refuse(id, c, p.fid, p.counter, kStatusCommError, "an encrypted reply without a session", out);
-    if (api->reply_kind == ReplyKind::kFidblob) {
-        // Login / SimpleLogin: the LoginResult also carries the session's player at the top level.
-        std::vector<uint8_t> lr = login_result_body(body);
-        log_file(std::to_string(seq) + "-" + api->reply + "-sent.msgp", lr);
-        send(c, api->reply_fid, p.counter, api->reply_encrypted, reply_body(*api, lr), out, (note + " +Player{Id,Level,Name}").c_str());
-    } else {
-        send(c, api->reply_fid, p.counter, api->reply_encrypted, reply_body(*api, body), out, note.c_str());
-    }
-    if (api->reply_kind == ReplyKind::kFidblob) {
-        // Login / SimpleLogin: the LoginResult is followed by a GetPlayerRes with the same body.
-        // (b) CApiNotify::OnLoginResult (3.7.0 @014be668) applies the body but never ends the
-        // request: no EndRequest, no ErrorHandler::Success, no CAPIWatcher stop (every On<Api>Res
-        // does them, for whichever request is in flight; CApiNotify::ResetErrorCode has no
-        // caller), so after a LoginResult alone CPhase_Login waits until the 60 s API watchdog
-        // fails the login with 1002 (seen with soa-emu). FakeApiCaller::Login, the developers'
-        // stand-in for the server, answers Login through OnGetPlayerRes with
-        // FakeApi/player_get.msgp. (d) that the real server followed its LoginResult with a
-        // GetPlayerRes (an ordinary reply that ends the request) and with this body.
-        const WireApi* gp = api_by_name("GetPlayer");
-        send(c, gp->reply_fid, p.counter, gp->reply_encrypted, reply_body(*gp, body), out, "(ends the login request)");
-    }
+    if (api.reply_kind != ReplyKind::kFidblob)
+        return send(c, api.reply_fid, p.counter, api.reply_encrypted, reply_body(api, body), out, note.c_str());
+    // Login / SimpleLogin: the LoginResult also carries the session's player at the top level.
+    std::vector<uint8_t> lr = login_result_body(body);
+    log_file(std::to_string(seq) + "-" + api.reply + "-sent.msgp", lr);
+    send(c, api.reply_fid, p.counter, api.reply_encrypted, reply_body(api, lr), out, (note + " +Player{Id,Level,Name}").c_str());
+    // Login / SimpleLogin: the LoginResult is followed by a GetPlayerRes with the same body.
+    // (b) CApiNotify::OnLoginResult (3.7.0 @014be668) applies the body but never ends the
+    // request: no EndRequest, no ErrorHandler::Success, no CAPIWatcher stop (every On<Api>Res
+    // does them, for whichever request is in flight; CApiNotify::ResetErrorCode has no
+    // caller), so after a LoginResult alone CPhase_Login waits until the 60 s API watchdog
+    // fails the login with 1002 (seen with soa-emu). FakeApiCaller::Login, the developers'
+    // stand-in for the server, answers Login through OnGetPlayerRes with
+    // FakeApi/player_get.msgp. (d) that the real server followed its LoginResult with a
+    // GetPlayerRes (an ordinary reply that ends the request) and with this body.
+    const WireApi* gp = api_by_name("GetPlayer");
+    send(c, gp->reply_fid, p.counter, gp->reply_encrypted, reply_body(*gp, body), out, "(ends the login request)");
 }
 
 int GameServer::bridge(const std::string& body, std::string* json) {
     // (b) the client posts {"UUID":"%s","deviceType":"%d","nativeToken":"%s"} plus a NUL
-    // (CApiNotify::OnResultStart: SetContent(buf, len + 1))
-    std::string uuid = json_string_field(body, "UUID");
-    std::string dev = json_string_field(body, "deviceType");
-    std::string token = json_string_field(body, "nativeToken");
+    // (CApiNotify::OnResultStart: SetContent(buf, len + 1)); a body that isn't JSON has no token
+    BridgeRequest request;
+    parse_bridge_request(body, &request);
+    const std::string &uuid = request.uuid, &dev = request.device_type, &token = request.token;
     auto t = tokens_.find(token);
     if (token.empty() || t == tokens_.end()) {
         log("bridge: unknown nativeToken \"" + token + "\" (UUID " + uuid + ")");
         NLOG(Warn, "bridge: unknown nativeToken \"%s\"", token.c_str());
-        *json = "{\"error\":\"unknown nativeToken\"}";
+        *json = nlohmann::json{{"error", "unknown nativeToken"}}.dump();
         return 403;
     }
     tokens_.erase(t);
@@ -424,10 +464,38 @@ int GameServer::bridge(const std::string& body, std::string* json) {
     s.device_type = (uint32_t)strtoul(dev.c_str(), nullptr, 10);
     s.serial = ++session_serial_;
     sessions_[sid] = s;
+    prune_sessions(uuid, sid);
     record_device(s, "bridge");
     log("bridge: UUID=" + uuid + " deviceType=" + dev + " token=" + token + " -> session " + sid);
-    *json = "{\"nativeSessionId\":\"" + json_escape(sid) + "\",\"sharedSecurityKey\":\"" + json_escape(s.key) + "\"}";
+    *json = bridge_reply_json(sid, s.key);
     return 200;
+}
+
+// (d) A device's earlier sessions end when it bridges again: the client keeps one session key
+// (its KeyStore) and replaces it at each bridge, so an older session of the same UUID is never used
+// again (before, every session stayed for the server's lifetime, and a reconnect without
+// UpdateSession tried each one's key). A session a connection is still bound to stays until a
+// later bridge finds it unbound. Beyond kMaxSessions the oldest unbound sessions of other devices
+// go too, so a long-running server's trial decryption stays bounded.
+void GameServer::prune_sessions(const std::string& uuid, const std::string& keep) {
+    std::set<std::string> bound_sessions;
+    for (auto& [id, conn] : conns_)
+        if (!conn.session.empty()) bound_sessions.insert(conn.session);
+    size_t pruned = 0;
+    for (auto it = sessions_.begin(); it != sessions_.end();) {
+        if (it->first != keep && it->second.uuid == uuid && !bound_sessions.count(it->first)) {
+            it = sessions_.erase(it);
+            pruned++;
+        } else ++it;
+    }
+    if (sessions_.size() > kMaxSessions) {
+        std::vector<std::pair<uint64_t, std::string>> oldest;
+        for (auto& [sid, ss] : sessions_)
+            if (sid != keep && !bound_sessions.count(sid)) oldest.emplace_back(ss.serial, sid);
+        std::sort(oldest.begin(), oldest.end());
+        for (size_t k = 0; k < oldest.size() && sessions_.size() > kMaxSessions; k++, pruned++) sessions_.erase(oldest[k].second);
+    }
+    if (pruned) log("bridge: " + std::to_string(pruned) + " earlier session(s) ended, " + std::to_string(sessions_.size()) + " kept");
 }
 
 HttpHandler GameServer::bridge_handler() {

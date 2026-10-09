@@ -4,10 +4,10 @@ import subprocess
 import sys
 import time
 
+import soaslot
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 CONTROL = os.path.dirname(HERE)
-sys.path.insert(0, CONTROL)
-import soaslot  # noqa: E402
 
 
 def env(tmp_path, n):

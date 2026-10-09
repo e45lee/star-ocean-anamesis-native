@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Inventory of the local server's state schema (DATA/server.sqlite3), generated from the code.
 
     tools/schema_inventory.py [--state LABEL=DB ...] [--update docs/history/PLAN-schema.md]

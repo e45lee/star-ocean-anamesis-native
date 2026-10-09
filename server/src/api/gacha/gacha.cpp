@@ -15,12 +15,13 @@
 #include "core/log.h"
 #include "core/request_args.h"
 #include "core/response.h"
-#include "core/rewards.h"  // add_character
+#include "core/rewards.h"  // add_character, new_item
 #include "core/server.h"   // next_uid
 #include "core/time.h"     // open_at
 #include "core/wallet.h"
 #include "master/gacha_pools.h"
 #include "rules/mission_rules.h"
+#include "soaserver/config.h"  // --gacha-surprise
 
 namespace soa::server {
 
@@ -29,8 +30,6 @@ using ext::Row;
 
 namespace {
 
-// (a) master content type 1: an item (a weapon, when a gacha draws it: gacha_pools::Unit).
-constexpr u32 kContentTypeItem = 1;
 // gacha_history.rank: the draw's rank as a letter, S (index 0) .. D (4) (d: our column).
 constexpr const char* kRankLetters = "SABCD";
 // (d) GetGachaInData's window for a master row without one: open since the service start / for good.
@@ -224,6 +223,26 @@ void record_history(ext::Ctx& ctx, const GachaDraw& draw, const Drawn& drawn, in
          k == 0 ? draw.use_free : 0u, k == 0 ? draw.use_pay : 0u});
 }
 
+// The fake-out ("gacha surprise", the result entry's is_mutation; docs/server-rules.md#gacha-surprise,
+// docs/gacha-presentation.md "What selects it"): the unit is shown first at a lower tier, then the
+// flash eo100_f07b and its SE, then the unit again at its real tier.
+//   (b) the client plays it for a unit with is_mutation (CGachaManager::CheckGachaResult,
+//       Progress_Main sub-states 9, 0xd, 0xe) and has a debug API for it (Debug_GachaMutation,
+//       CGachaMutationTestResultInfo {content_id, content_type, is_mutation}), so the live server
+//       sent it for some draws.
+//   (a) master_global.gacha_mutation = 2, a row the client never reads (its key hash is nowhere in
+//       the code): a server parameter.
+//   (d) its reading: the percent chance per drawn ★5 unit (rarity 5 or more: master_role.rarity,
+//       master_item.rarity); other units never. --gacha-surprise PCT replaces it, 0 turns it off.
+//       The roll is the server's seeded RNG, one draw per ★5 unit only (replays stay
+//       deterministic; a draw without a ★5 unit takes no extra RNG value).
+bool roll_surprise(ext::Ctx& ctx, int64_t rarity) {
+    if (rarity < 5) return false;
+    const int32_t option = config().gacha_surprise;
+    const u32 percent = option >= 0 ? (u32)option : std::min<u32>(100, ctx.global_u32("gacha_mutation", 0));
+    return percent && (*ctx.rng)() % 100 < percent;
+}
+
 // 4a. A drawn weapon: a new unique item (AddItem) and the history row; with no room in the
 // inventory it goes to the overflow box (storage::to_one_time_storage; AddOneTimeStorageInfo):
 // (d) then the GachaItems entry has no item (player_item_id 0) and the history row no uid.
@@ -232,19 +251,9 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
     if (storage::to_one_time_storage(ctx, storage::EquipSource::kGacha)) {
         storage::add_one_time(ctx, MasterItemId(unit.content_id), 1);
     } else {
-        const ItemUid item_uid = next_item_uid(ctx);
-        drawn = item_uid;
-        u32 item_type = (u32)ctx.m.one("select type from master_item where id = ?", {unit.content_id});
-        ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)",
-                 {item_uid, unit.content_id, item_type, ctx.now()});
-        Value item = Value::object();  // CItemInfo
-        item["id"] = item_uid.v;
-        item["player_id"] = player_id(ctx).v;
-        item["master_item_id"] = unit.content_id;
-        item["item_type"] = item_type;
-        item["boosted_point"] = 0u;
-        item["limit_break_count"] = 0u;
-        draw.new_items.push(item);
+        Value item = new_item(ctx, MasterItemId(unit.content_id), std::nullopt);  // CItemInfo, no content / drop type
+        drawn = ItemUid(item.get_u("id"));
+        draw.new_items.push(std::move(item));
     }
     Value result = Value::object();  // the GachaItems entry
     result["master_item_id"] = unit.content_id;
@@ -252,7 +261,7 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
     result["master_role_id"] = 0u;
     result["player_character_id"] = 0u;
     result["duplication"] = 0u;
-    result["is_mutation"] = false;
+    result["is_mutation"] = roll_surprise(ctx, ctx.m.one("select rarity from master_item where id = ?", {unit.content_id}));
     draw.items.push(result);
     record_history(ctx, draw, Drawn{std::nullopt, std::nullopt, drawn}, rank, false, k);
 }
@@ -318,7 +327,7 @@ void add_drawn_role(ext::Ctx& ctx, GachaDraw& draw, u32 role, int rank, u32 k, b
     result["master_role_id"] = role;
     result["player_character_id"] = uid.v;
     result["duplication"] = duplicate ? 1u : 0u;
-    result["is_mutation"] = false;
+    result["is_mutation"] = roll_surprise(ctx, ctx.m.one("select rarity from master_role where id = ?", {role}));
     draw.items.push(result);
     if (!duplicate) {
         Value character = Value::object();  // the AddCharacter entry
@@ -360,7 +369,8 @@ void draw_units(ext::Ctx& ctx, const Row& gacha_row, GachaDraw& draw) {
         u32 role = 0;
         if (ctx.pools->is_open() && ctx.pools->draw(draw.id, bonus, format_time(ctx.now()), (*ctx.rng)(), (*ctx.rng)(), pool_rank, unit)) {
             rank = pool_rank;
-            if (unit.content_type == kContentTypeItem) {  // a weapon: a new unique item (AddItem)
+            // (a) content type 1: an item (a weapon, when a gacha draws it: gacha_pools::Unit)
+            if (as_content_type(unit.content_type) == ContentType::kItem) {  // a weapon: a new unique item (AddItem)
                 draw_weapon(ctx, draw, unit, rank, k);
                 continue;
             }

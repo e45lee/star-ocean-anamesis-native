@@ -44,10 +44,6 @@ constexpr GearUid kGearUid0{0x7c000000};
 // weapon's factor; the server makes type 1 (d).
 constexpr u32 kGearItem = 0;
 constexpr u32 kFactorGear = 1;
-// The content types this module grants (a: docs/api.md "Content types"; 98 is master_gear_lottery's
-// category_id as a content).
-constexpr u32 kContentGearItem = 15;
-constexpr u32 kContentGearLottery = 98;
 // CAttachedGearInfo.add_param_type of a weapon factor (b: tItemData::SetGearList / SetGearItem).
 constexpr u32 kBonusFactor = 6;
 // A weapon's factor slots, master_item factor1..3 (a), and the gear bonuses add_param1..3 (a).
@@ -203,20 +199,21 @@ void grant_gear(Ctx& ctx, MasterItemId item, u32 num, Value& added) {
 // Hook (ext::add_grant 15): grants `num` gears of the gear item `id` (at least one).
 //   The client refetches the gear (GetGearInfo) when it opens the gear screens (b: CCustomGear::
 //   Setup, CItemPossessionList::Setup), so a grant only changes the state.
-void grant_gear_content(Ctx& ctx, u32 id, u32 num, Value&, Value&, Value&) {
+void grant_gear_content(Ctx& ctx, const Grant& what, Granted&) {
     Value unused = Value::object();
-    grant_gear(ctx, MasterItemId(id), num, unused);
+    grant_gear(ctx, MasterItemId(what.id), what.num, unused);
 }
 // Hook (ext::add_grant 98): `num` draws (at least one) of the gear lottery category `id`
 //   (a: master_gear_lottery.category_id); a category with nothing open logs and grants nothing.
-void grant_gear_lottery(Ctx& ctx, u32 id, u32 num, Value&, Value&, Value&) {
+void grant_gear_lottery(Ctx& ctx, const Grant& what, Granted&) {
+    const u32 num = what.num;
     std::string category;
-    ctx.m.q("select category_id_label from master_gear_lottery where category_id = ? limit 1", {id},
+    ctx.m.q("select category_id_label from master_gear_lottery where category_id = ? limit 1", {what.id},
             [&](const Row& lottery_row) { category = lottery_row.s("category_id_label"); });
     Value unused = Value::object();
     for (u32 k = 0; k < std::max(1u, num); k++)
         if (u32 item = lottery(ctx, category, 0)) grant_gear(ctx, MasterItemId(item), 1, unused);
-        else LOGW("server", "gear lottery %u (%s): nothing open", id, category.c_str());
+        else LOGW("server", "gear lottery %u (%s): nothing open", what.id, category.c_str());
 }
 
 // ---- barney chance (バーニィチャンス) --------------------------------------------------------
@@ -865,8 +862,10 @@ std::vector<u8> generate_gear(Ctx& ctx, const Request& req) {
 void register_gear() {
     using namespace ext;
     add_item_extra(attached_gear_extra);
-    add_grant(kContentGearItem, grant_gear_content);
-    add_grant(kContentGearLottery, grant_gear_lottery);
+    // The content types this module grants (a: docs/api.md "Content types"; 98 is
+    // master_gear_lottery's category_id as a content).
+    add_grant(ContentType::kGear, grant_gear_content);
+    add_grant(ContentType::kGearLottery, grant_gear_lottery);
     add_player_load(load_gear_state);
     add_api({"GetGearInfo"}, get_gear_info);
     add_api({"ClearNewGear"}, clear_new_gear);

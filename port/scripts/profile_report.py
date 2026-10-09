@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """Summarize a SOA_PROFILE / SOA_COVERAGE run for picking porting targets.
 
 Usage: profile_report.py DIR [DIR...] [--soa build/port/soa | --native-list FILE] [--top N]

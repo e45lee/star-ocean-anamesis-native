@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/params/gen/params_instantiations.inc: the property template instantiations of a
 libSOA.so (the params subsystem's natives bind every one; port/src/native/params/README.md).
 
@@ -22,7 +22,6 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
 import genlib  # noqa: E402 (before elfinfo: the default lib)
 
 from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402

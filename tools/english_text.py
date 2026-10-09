@@ -36,6 +36,9 @@ Precedence per message_id (english.md 7.6): human/reviewed > official (Global by
 filters; plus Global token rows rewritten by E3) > memory (exact) / template > machine / agent > Japanese.
 A candidate that fails a check (english.md 7.5) is not served; the next one is tried, and the failure
 is listed by `report`. A table row whose ja_sha1 differs from the current Japanese is stale: not served.
+A machine or agent story line that starts with its own speaker's name and a colon ("Masked Man: ...":
+the game shows the speaker above the window; the speakers come from the download's Script/ files) fails
+the check speaker_prefix (english.md 7.21); `import-mt` removes such a prefix before checking.
 
 Usage:
   tools/english_text.py build [--check]          write master-en.tsv, story-en/ and glossary.tsv (our
@@ -609,10 +612,12 @@ def story_break(font, e):
     return r
 
 
-def story_finish(ctx, glossary, source, en, ja):
+def story_finish(ctx, glossary, source, en, ja, speaker=None):
     """(served English in the two-character \\n encoding, problems, number of lines) of a story
     candidate; `ja` with real newlines. Every line is re-broken at spaces to STORY_BUDGET (Global's
-    breaks were made for a wider window, english.md 6.5)."""
+    breaks were made for a wider window, english.md 6.5). `speaker`: (English names, Japanese
+    names) of the line's speakers (SpeakerNames), for the speaker-prefix check of machine and agent
+    lines (english.md 7.21)."""
     font = ctx.fnt
     e = C.unesc(en)
     if source in HUMAN or source in MACHINE:
@@ -624,6 +629,11 @@ def story_finish(ctx, glossary, source, en, ja):
     bad = [t for t in tags if not C.STORY_TAG.fullmatch(t)]
     if source in MACHINE and C.runaway(ja, e):
         probs["runaway"] = len(e)  # an engine stuck repeating a sound ("CAPTAIIII...", "ka-ka-ka-...")
+    if source in MACHINE and speaker:
+        pre = C.speaker_prefix(e, speaker[0], ja, speaker[1])
+        if pre:
+            # the engine wrote the speaker into the line, which the game shows above it (7.21)
+            probs["speaker_prefix"] = pre
     if bad:
         probs["story_tag"] = bad  # an unknown tag likely crashes ParseMessage (english.md 3.3)
     elif source not in MACHINE and "tags" in probs:
@@ -634,6 +644,53 @@ def story_finish(ctx, glossary, source, en, ja):
         if opens == tags.count("</font>"):
             del probs["tags"]
     return C.esc(e), probs, e.count("\n") + 1
+
+
+class SpeakerNames:
+    """A story line's speakers by name (english.md 7.21): per speaker code (the Script's, and its
+    base form ..._a as the MT runner names it) the English names a line could start with: Global's,
+    the served master row's (Global's by id or memory, else ours in master.tsv), the glossary's
+    English and variants for its Japanese name; and the Japanese names."""
+
+    def __init__(self, ctx, glossary):
+        self.src, self.glossary = ctx.src, glossary
+        self.derived = Derived.of(ctx)
+        self.table = ctx.table()
+        self.cache = {}
+
+    def code(self, code):
+        if code not in self.cache:
+            en, ja = set(), set()
+            for c in dict.fromkeys((code, code[:-1] + "a")):
+                j = self.src.jp_rows.get(c)
+                if j:
+                    ja.add(C.unesc(j))
+                    g = self.glossary.get(j.strip("\u3000 "))
+                    if g:
+                        en.add(g["en"])
+                        en.update(g.get("variants") or ())
+                gl = self.src.gl_english(c)
+                if gl:
+                    en.add(gl)
+                row = self.derived.rows.get(c)
+                if row:
+                    en.update(x[1] for x in row[3] if not x[2])
+                t = self.table.get(c)
+                if t:
+                    en.add(t["en"])
+            self.cache[code] = (sorted(C.unesc(x) for x in en), sorted(ja))
+        return self.cache[code]
+
+    def line(self, codes):
+        """(English names, Japanese names) of a line's speaker codes, or None without any."""
+        en, ja = set(), set()
+        for c in codes or ():
+            if c == "<player>":
+                continue
+            e, j = self.code(c)
+            en.update(e)
+            ja.update(j)
+        return (sorted(en), sorted(ja)) if en else None
 
 
 class StoryDerived:
@@ -664,6 +721,7 @@ class StoryDerived:
                 klass = "neutral"  # language-neutral (……, ！？): served if Global has English, never needed
             self.lines[mid] = (stem, ja, C.sha1(ja), klass, cands)
             self.files[stem].append(mid)
+        self.speakers = src.story_speakers()  # mid -> speaker codes (the Script files)
 
     @staticmethod
     def of(ctx):
@@ -688,6 +746,7 @@ def build_story(ctx, glossary, tables=None):
     s.ours = {}           # the same for our rows (story/TS_*.tsv) that pass
     s.failures, s.stale, s.long = [], [], []
     s.files = {}          # stem -> counts
+    names = SpeakerNames(ctx, glossary)
     for mid, t in sorted(tables.items()):
         if mid not in d.lines:
             s.stale.append((mid, t["source"], t["ja_sha1"], ""))
@@ -708,15 +767,16 @@ def build_story(ctx, glossary, tables=None):
             cands += derived
             if t and t["source"] in MACHINE:
                 cands.append((t["source"], t["en"]))
+            who = names.line(d.speakers.get(mid))
             if t:  # our row, committed whenever it passes (even where a derived line wins)
-                e, probs, _ = story_finish(ctx, row_glossary(glossary, t["note"]), t["source"], t["en"], ja)
+                e, probs, _ = story_finish(ctx, row_glossary(glossary, t["note"]), t["source"], t["en"], ja, who)
                 if not probs:
                     s.ours[mid] = (h, e, t["source"])
             failed = False
             for cand in cands:
                 if len(cand) == 2:
                     source = cand[0]
-                    e, probs, nl = story_finish(ctx, row_glossary(glossary, t["note"]), source, cand[1], ja)
+                    e, probs, nl = story_finish(ctx, row_glossary(glossary, t["note"]), source, cand[1], ja, who)
                 else:
                     source, e, probs, nl = cand
                 if probs:
@@ -874,7 +934,9 @@ def report(ctx, b, out_dir):
                  "files": len(sb.files), f"lines_{STORY_LONG}_or_more": len(sb.long),
                  "budget_px": STORY_BUDGET, "stale_table_rows": len(sb.stale),
                  "table_rows": dict(collections.Counter(t["source"] for t in ctx.story_tables().values())),
-                 "mt_rejected": len(read_tsv(ctx.work / "mt-rejected-story.tsv", REJECT_COLS))}
+                 "mt_rejected": len(read_tsv(ctx.work / "mt-rejected-story.tsv", REJECT_COLS)),
+                 # machine / agent lines that start with their own speaker's name (english.md 7.21)
+                 "speaker_prefix_failing": sum(1 for f in sb.failures if "speaker_prefix" in f["problems"])}
     gloss_warn = []
     for mid, (h, e, source) in sorted(b.out.items()):
         if source in DERIVED and mid in src.jp_rows:
@@ -1081,7 +1143,8 @@ def cmd_set(ctx, a):
     if sl is not None:
         text = a.text.replace("\r\n", "\n").replace("\n", "\\n")
         g = glossary_dict(glossary_rows(ctx))
-        e, probs, _ = story_finish(ctx, row_glossary(g, a.note), a.source, text, sl[1])
+        who = SpeakerNames(ctx, g).line(StoryDerived.of(ctx).speakers.get(a.id))
+        e, probs, _ = story_finish(ctx, row_glossary(g, a.note), a.source, text, sl[1], who)
         if probs and not a.force:
             print(f"{a.id}: {json.dumps(probs, ensure_ascii=False)} (fix the text or pass --force)", file=sys.stderr)
             return 1
@@ -1532,6 +1595,7 @@ def import_mt_story(ctx, a, b, rows, n):
     tables = ctx.story_tables()
     rej_path = ctx.work / "mt-rejected-story.tsv"
     rejected = {r["message_id"]: r for r in read_tsv(rej_path, REJECT_COLS)}
+    names = SpeakerNames(ctx, b.glossary)
     for r in rows:
         engine = engine_name(r)
         for ln in r["lines"]:
@@ -1561,7 +1625,16 @@ def import_mt_story(ctx, a, b, rows, n):
                 if t["ja_sha1"] == h and t["engine"] == engine:
                     n["story kept: same hash, engine and prompt"] += 1
                     continue
-            e, probs, _ = story_finish(ctx, b.glossary, "machine", C.esc(ln["mt"]), ja)
+            # the engine's "<speaker>: " in front of the line (english.md 7.21): the line's speaker by
+            # any name the check knows, or as the checkpoint sent it; what is left the check refuses
+            who = names.line(d.speakers.get(mid))
+            mt = ln["mt"]
+            pre = C.speaker_prefix(mt, (who[0] if who else []) + ([ln["speaker"]] if ln.get("speaker") else []),
+                                   ja, who[1] if who else ())
+            if pre:
+                mt = mt[len(pre):].strip()
+                n["story: speaker prefix removed"] += 1
+            e, probs, _ = story_finish(ctx, b.glossary, "machine", C.esc(mt), ja, who)
             if probs:
                 rejected[mid] = {"message_id": mid, "ja_sha1": h, "engine": engine, "date": r.get("date", ""),
                                  "en": e, "problems": json.dumps(probs, ensure_ascii=False)}

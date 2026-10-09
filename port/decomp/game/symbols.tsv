@@ -1,0 +1,22 @@
+vaddr	ghidra	size	symbol	demangled	topic	status	note
+0x17b2f34	0x18b2f34	136	_ZN6CPhaseC1Ej	CPhase::CPhase(unsigned int)	phase	typed	game_layout.h
+0x17b3138	0x18b3138	2124	_ZN6CPhase6SwitchEj	CPhase::Switch(unsigned int)	phase	typed	game_layout.h
+0x17b3ed8	0x18b3ed8	48	_ZN6CPhase13RequestSwitchEj	CPhase::RequestSwitch(unsigned int)	phase	typed	game_layout.h
+0x17b3ffc	0x18b3ffc	220	_ZN6CPhase8ProgressEv	CPhase::Progress()	phase	typed	game_layout.h; wrapped by the port (common/port_debug.cpp: the control commands)
+0x17b46fc	0x18b46fc	4	_ZN6CPhase5CBase9ToReleaseEv	CPhase::CBase::ToRelease()	phase	typed	game_layout.h
+0x17b4700	0x18b4700	32	_ZN11CPhase_BaseC2Ev	CPhase_Base::CPhase_Base()	phase	typed	game_layout.h
+0x17b4720	0x18b4720	20	_ZN11CPhase_BaseD1Ev	CPhase_Base::~CPhase_Base()	phase	typed	game_layout.h
+0x17b4734	0x18b4734	4	_ZN11CPhase_BaseD0Ev	CPhase_Base::~CPhase_Base()	phase	typed	game_layout.h
+0x17b4738	0x18b4738	4	_ZN6CPhase5CBase10InitializeEv	CPhase::CBase::Initialize()	phase	typed	game_layout.h
+0x17b473c	0x18b473c	4	_ZN6CPhase5CBase7ReleaseEv	CPhase::CBase::Release()	phase	typed	game_layout.h
+0x17b4740	0x18b4740	8	_ZN6CPhase5CBase15IsEnableReleaseEv	CPhase::CBase::IsEnableRelease()	phase	typed	game_layout.h
+0x17b4748	0x18b4748	20	_ZN6CPhase5CBaseD2Ev	CPhase::CBase::~CBase()	phase	typed	game_layout.h
+0x17b475c	0x18b475c	4	_ZN6CPhase5CBaseD0Ev	CPhase::CBase::~CBase()	phase	typed	game_layout.h
+0x17ba9c0	0x18ba9c0	64	_ZN11CPhase_HomeC1Ev	CPhase_Home::CPhase_Home()	phase	typed	game_layout.h
+0x17baa00	0x18baa00	72	_ZN11CPhase_HomeD1Ev	CPhase_Home::~CPhase_Home()	phase	typed	game_layout.h
+0x17baa48	0x18baa48	80	_ZN11CPhase_HomeD0Ev	CPhase_Home::~CPhase_Home()	phase	typed	game_layout.h
+0x17baa98	0x18baa98	4	_ZN11CPhase_Home10InitializeEv	CPhase_Home::Initialize()	phase	typed	game_layout.h
+0x17baa9c	0x18baa9c	4	_ZN11CPhase_Home7ReleaseEv	CPhase_Home::Release()	phase	typed	game_layout.h
+0x17baaa0	0x18baaa0	1008	_ZN11CPhase_Home8ProgressEv	CPhase_Home::Progress()	phase	typed	game_layout.h
+0x17bae90	0x18bae90	16	_ZN11CPhase_Home15IsEnableReleaseEv	CPhase_Home::IsEnableRelease()	phase	typed	game_layout.h
+0x17baea0	0x18baea0	16	_ZN11CPhase_Home7ToCloseEv	CPhase_Home::ToClose()	phase	typed	game_layout.h

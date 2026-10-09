@@ -56,6 +56,15 @@ bool check_native_subsystems(const std::vector<std::string>& names, std::string*
 
 const std::vector<NativeFunction>& registered_natives() { return registry(); }
 
+bool register_bound(const BoundNative* table, size_t n, const char* note, const char* file) {
+    for (size_t i = 0; i < n; i++) register_native_function({table[i].sym, table[i].fn, note, nullptr, table[i].orig}, file);
+    return true;
+}
+
+void bind_originals(const BoundNative* table, size_t n, u64 (*sym)(const char*)) {
+    for (size_t i = 0; i < n; i++) *table[i].orig = sym ? sym(table[i].sym) : 0;
+}
+
 void list_native_functions(FILE* out) {
     for (auto& f : registry()) fprintf(out, "%s\t%s%s\n", f.symbol, f.note ? f.note : "", f.enabled ? " [conditional]" : "");
 }

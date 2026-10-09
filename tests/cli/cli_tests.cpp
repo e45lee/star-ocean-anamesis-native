@@ -304,16 +304,17 @@ int main() {
     // Options added since, to both soa and soa-server (soaserver/cli.h): --english, --english-text
     // (2026-10-07, docs/PLAN-english.md).
     // --stamina-heal-time (2026-10-06, a test switch: tests/diff runs with 0, no stamina regeneration).
-    const V kAddedServer = {"--english", "--english-text", "--stamina-heal-time"};
+    // --gacha-surprise (2026-10-08, docs/server-rules.md#gacha-surprise: the gacha's fake-out rate).
+    const V kAddedServer = {"--english", "--english-text", "--stamina-heal-time", "--gacha-surprise"};
     // soa-server's own: --english-dump (2026-10-07, docs/server-rules.md#english-derive).
-    const V kAddedSoaServer = {"--english", "--english-text", "--stamina-heal-time", "--english-dump"};
+    const V kAddedSoaServer = {"--english", "--english-text", "--stamina-heal-time", "--gacha-surprise", "--english-dump"};
     // Options added since (soa and soa-emu): --lang, --voice-lang (2026-10-07; platform370/include/platform370/cli.h);
     // --no-dst-fix (2026-10-08: the shipped standard-time reading, docs/client-changes.md "Local time: daylight saving").
     const V kAddedLang = {"--lang", "--voice-lang", "--no-dst-fix"};
     // Added to soa: --render-scale (2026-10-07; port/src/core/cli.cpp, the resolution natives); --natives-skip
     // (2026-10-07, code review P1: the natives A/B).
-    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--lang", "--voice-lang", "--render-scale",
-                         "--natives-skip", "--no-dst-fix"};
+    const V kAddedSoa = {"--english", "--english-text", "--stamina-heal-time", "--gacha-surprise", "--lang", "--voice-lang",
+                         "--render-scale", "--natives-skip", "--no-dst-fix"};
 
     // ---- the rows: every option, its value forms, repeats, order, and the error paths ----
     const std::vector<Row> client_common = {

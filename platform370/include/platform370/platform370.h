@@ -11,9 +11,9 @@
 //
 //   platform370::Config cfg; ...;      // from its options
 //   platform370::install(cfg);          // before hle_init() and jni::Vm::get().init()
-//   ... vfs_init, cpu_global_init, hle_init(), jni::Vm::get().init() ...
+//   ... vfs_init, cpu_global_init, hle_init(), jni::Vm::get().init() ...  (app::boot, app/boot.h)
 //   LoadedLib* lib = load_library(path);
-//   platform370::install_patches(*lib); // after load_library, before run_initializers
+//   platform370::install_patches(*lib); // after load_library, before run_initializers (BootConfig::after_load)
 //   ... (a host with natives: install_native_functions(*lib) here; README "Hosts with natives")
 //   run_initializers(*lib);
 //

@@ -10,7 +10,7 @@ The extra dungeon of 3.7.0 ("スフィア211", `CPhase_Mission` with mission typ
 | `sphere211_args.h` | the request arguments by name (`args::Sphere211MissionStartArgs`, ...) |
 | `season.cpp` | the seasons (`pick_season`: the event calendar, the gaps, the repeated last season and its cycles), the client master's moved dates (`client_seasons`, `ClientMaster`), the dive's load and season change (`load_dive`), the achievements' moved windows |
 | `floors.cpp` | the floors (`floor_row`), the playable missions (`mission_playable`, on the one asset gate `core/assets.h`), the cell lottery (`enter_floor`, `lot_mission`), the warp access (`lot_floor_num`), the request's cell (`find_cell`), the sphere stamina |
-| `rewards.cpp` | the treasure boxes: gathered (`add_boxes`), ranked (`lot_ranks`), opened (`open_boxes`); item sets (`grant_content`) |
+| `rewards.cpp` | the treasure boxes: gathered (`add_boxes`), ranked (`lot_ranks`), opened (`open_boxes`); item sets go through `core/rewards.h` `grant_with_item_sets` |
 | `ranking.cpp` | the season ranking: the reward groups (`ranking_group_of`, `client_ranking_groups`, `ClientMaster`), the reward (`ranking_reward`), the local ranking map |
 | `rental.cpp` | the rental slot (`put_rental`, `rental_available`, `record_rental`) and the Sphere 211 rental bonus (`rental_bonus`) |
 | `state.cpp` | the dive state every answer carries (`put_state`: floor, cells and `can_play`, stamina, boxes, departed characters, the season-end result, the rental slot, `Achievement`), the log, the RNG |

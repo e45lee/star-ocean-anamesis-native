@@ -282,3 +282,12 @@ NATIVE_TEST("yayoi/layout-live-network") {
     }
     t.expect_eq(t.call("_ZNK4Aska5Yayoi10Downloader20QueryDownloadElementEj", {(u64)dl, 0xfffffff0u}), (u64)0, "no such download");
 }
+
+// IDriverSetting<SQLiteDriver>'s slot DoOpen calls (kDriverSettingSlotGetDefaultServer), on the game's
+// implementer.
+NATIVE_TEST("yayoi/driver-setting-slots") {
+    auto* vt = (const u64*)(t.sym("_ZTVN18CSqliteTransaction15CDriverSettingsE") + 0x10);
+    t.expect_eq(vt[kDriverSettingSlotGetDefaultServer],
+                t.sym("_ZNK18CSqliteTransaction15CDriverSettings16GetDefaultServerEN4Aska5Yayoi6Entity4ModeEPKc"),
+                "slot 0: CDriverSettings::GetDefaultServer");
+}

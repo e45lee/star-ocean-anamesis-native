@@ -25,7 +25,7 @@ grep -q 'no family "nosuchfamily"' "$out/unknown.log" || fail "--live-check nosu
 
 counts="$out/kernel-counts.txt"
 rm -f "$counts"
-python3 control/soaslot.py run -- timeout -k 10 120 "$soa" --headless --data "$tmp/data" \
+tools/py control/soaslot.py run -- timeout -k 10 120 "$soa" --headless --data "$tmp/data" \
   --live-check "kernel:every=1:out=$counts" --do 10:quit > "$out/log.txt" 2>&1
 rc=$?
 [ "$rc" -eq 0 ] || fail "soa exited $rc ($out/log.txt)"

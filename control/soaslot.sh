@@ -12,11 +12,11 @@
 # One slot per script: the port's session scripts and the emulator's run one client at a time.
 soaslot_take() {
     _ss_lib=${SOASLOT_PY:-control/soaslot.py}
-    [ -n "${SOA_SLOT_SOFTWARE_GL:-}" ] && [ -f "$_ss_lib" ] && eval "$(python3 "$_ss_lib" gl-env)"  # prints nothing when off
+    [ -n "${SOA_SLOT_SOFTWARE_GL:-}" ] && [ -f "$_ss_lib" ] && eval "$("${_ss_lib%/*}/../tools/py" "$_ss_lib" gl-env)"  # prints nothing when off
     [ -n "${SOA_SLOT_HELD:-}" ] && return 0
     [ -f "$_ss_lib" ] || { echo "soaslot: $_ss_lib not found (run from the repo root or set SOASLOT_PY)"; return 1; }
     while :; do
-        _ss_f=$(python3 "$_ss_lib" pick "${1:-game}") || return 0  # pool off
+        _ss_f=$("${_ss_lib%/*}/../tools/py" "$_ss_lib" pick "${1:-game}") || return 0  # pool off
         exec 9<>"$_ss_f"
         if flock -n 9; then
             printf '%s %s %s %s\n' "$$" "$(date +%s)" "${1:-game}" "$PWD" > "$_ss_f"

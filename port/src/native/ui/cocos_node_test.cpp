@@ -97,3 +97,11 @@ NATIVE_TEST("ui/cocos-search-by-name") {
         compare(t, tree, {"lvl0", "lvl49", "lvl25", "lvl50", ""}, "child chain", 60);
     }
 }
+
+// The slots ui/webview_local.cpp calls (cocos_node.h), on the guest's vtables.
+NATIVE_TEST("ui/cocos-slots") {
+    auto* label = (const u64*)(t.sym("_ZTVN9Framework5Cocos11CCocosLabelE") + 0x10);
+    t.expect_eq(label[CCocosNode::kSlotClone], t.sym("_ZNK9Framework5Cocos11CCocosLabel5CloneEPNS0_10CCocosNodeE"), "slot 5: Clone");
+    auto* view = (const u64*)(t.sym("_ZTV8CWebView") + 0x10);
+    t.expect_eq(view[CCocosSceneUnit::kSlotGetCocosScene], t.sym("_ZNK15CCocosSceneUnit13GetCocosSceneEv"), "slot 11: GetCocosScene");
+}

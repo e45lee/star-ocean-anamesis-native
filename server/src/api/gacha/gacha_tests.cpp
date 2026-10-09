@@ -11,6 +11,7 @@
 #include "api/events/enable_events.h"
 #include "api/gacha/gacha.h"
 #include "soaserver/config.h"
+#include "soaserver/fids.h"
 #include "soaserver/events.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
@@ -34,13 +35,13 @@ NATIVE_TEST("gacha/stepup-box") {
     t.expect_eq(chain[0], s1, "step 1 first");
     sv.st.q("update player set free_coin = 100000", {});
     // step 3 before step 1: refused (10403), no coins taken
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s3}, {"x"}, {}}), 10403u, "out of order");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {s3}, {"x"}, {}}), 10403u, "out of order");
     t.expect_eq((u32)sv.st.one("select free_coin from player", {}), 100000u, "no coins taken");
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s1}, {"x"}, {}}), 0u, "step 1");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {s1}, {"x"}, {}}), 0u, "step 1");
     t.expect_eq((u32)sv.st.one("select next_id from stepup where head = ?", {s1}), s2, "at step 2");
     t.expect_eq((u32)sv.st.one("select free_coin from player", {}), 100000u - (u32)sv.m.one("select bulk_coin from master_gacha where id = ?", {s1}),
                 "step 1 price");
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s2}, {"x"}, {}}), 0u, "step 2");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {s2}, {"x"}, {}}), 0u, "step 2");
     t.expect_eq((u32)sv.st.one("select next_id from stepup where head = ?", {s1}), s3, "at step 3");
     // (b) the client's view: a map keyed by step id; the current step open with try_count 0 on
     // it and next = step 4, every other step of the chain closed
@@ -88,38 +89,38 @@ NATIVE_TEST("gacha/stepup-box") {
         u32 perm = S.id("master_gacha", "gacha_role_0001");
         sv.st.q("update player set free_coin = 100000, pay_coin = 0", {});
         std::vector<u8> out;
-        t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {perm, 1}, {"x"}, {}}, &out), 0u, "single draw");
+        t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {perm, 1}, {"x"}, {}}, &out), 0u, "single draw");
         Value r = mp_decode(out);
         const Value* it = r.find("data") ? r.find("data")->find("GachaItems") : nullptr;
         t.expect_eq(it ? (u32)it->arr.size() : 0u, 1u, "one unit");
         t.expect_eq((u32)sv.st.one("select free_coin from player", {}), 100000u - (u32)sv.m.one("select coin from master_gacha where id = ?", {perm}),
                     "the single price");
         out.clear();
-        t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {perm, 0}, {"x"}, {}}, &out), 0u, "bulk draw");
+        t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {perm, 0}, {"x"}, {}}, &out), 0u, "bulk draw");
         r = mp_decode(out);
         it = r.find("data") ? r.find("data")->find("GachaItems") : nullptr;
         t.expect_eq(it ? (u32)it->arr.size() : 0u, (u32)sv.m.one("select bulk_count from master_gacha where id = ?", {perm}), "bulk units");
     }
     // coins short: 20003 紋章石が不足しています (the code the draw's answer opens the coin shop on)
     sv.st.q("update player set free_coin = 0, pay_coin = 0", {});
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s3}, {"x"}, {}}), 20003u, "coins short");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {s3}, {"x"}, {}}), 20003u, "coins short");
     t.expect_eq((u32)sv.st.one("select next_id from stepup where head = ?", {s1}), s3, "still at step 3");
     // box gacha: box_event_gacha_yumenonagisa_003 (50 slots, item_coin_294 x 5 per draw, resettable)
     u32 box = S.id("master_gacha", "box_event_gacha_yumenonagisa_003");
     u32 coin = (u32)sv.m.one("select ticket_item_id from master_gacha where id = ?", {box});
     u32 slots = (u32)sv.m.one("select sum(box_count) from master_box_gacha where master_gacha_id = ?", {box});
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 3}, {}, {}}), 10206u, "no event coins");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {box, 3}, {}, {}}), 10206u, "no event coins");
     sv.st.q(
         "insert into stock (master_item_id, item_type, count) values (?, 9, 100000)"
         " on conflict(master_item_id) do update set item_type = excluded.item_type, count = excluded.count",
         {coin});
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 3}, {}, {}}), 0u, "3 draws");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {box, 3}, {}, {}}), 0u, "3 draws");
     t.expect_eq((u32)sv.st.one("select sum(drawn) from box_slots where gacha_id = ?", {box}), 3u, "3 slots drawn");
     t.expect_eq((u32)sv.st.one("select count from stock where master_item_id = ?", {coin}), 100000u - 15u, "15 coins");
     // the rest in one request: the draws stop at the box's copies (each once); the ∞ box (the
     // series' last) then refills by itself, counted as a reset
     std::vector<u8> out;
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 1000}, {}, {}}, &out), 0u, "the rest");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {box, 1000}, {}, {}}, &out), 0u, "the rest");
     {
         Value r = mp_decode(out);
         const Value* it = r.find("data") ? r.find("data")->find("BoxGachaItems") : nullptr;
@@ -131,8 +132,8 @@ NATIVE_TEST("gacha/stepup-box") {
     }
     t.expect_eq((u32)sv.st.one("select count(*) from box_slots where gacha_id = ?", {box}), 0u, "the ∞ box refilled");
     t.expect_eq((u32)sv.st.one("select reset_count from box_state where gacha_id = ?", {box}), 1u, "refill counted");
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 1}, {}, {}}), 0u, "drawn again");
-    t.expect_eq(S.call(Request{"ResetBoxGacha", 0xc292cf48, {box}, {}, {}}), 0u, "reset");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {box, 1}, {}, {}}), 0u, "drawn again");
+    t.expect_eq(S.call(Request{"ResetBoxGacha", fids::kResetBoxGacha, {box}, {}, {}}), 0u, "reset");
     t.expect_eq((u32)sv.st.one("select count(*) from box_slots where gacha_id = ?", {box}), 0u, "refilled");
     t.expect_eq((u32)sv.st.one("select reset_count from box_state where gacha_id = ?", {box}), 2u, "reset counted");
     // BoxGachaList (b): a map keyed by box id; a series lists its boxes up to the current one,
@@ -156,7 +157,7 @@ NATIVE_TEST("gacha/stepup-box") {
         const Value* su = d->find("StepUpGacha");
         t.expect_eq(su && su->type == Value::Map && !su->map.empty(), true, "step-ups open on 2020-08-10");
     }
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {b1, 1000}, {}, {}}), 0u, "empty box 1");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {b1, 1000}, {}, {}}), 0u, "empty box 1");
     {
         Value l = box_gacha_list_info(ctx, b1);
         const Value *e1 = l.find(std::to_string(b1)), *e2 = l.find(std::to_string(b2));
@@ -233,6 +234,71 @@ NATIVE_TEST("gacha/enable-events") {
     t.expect_eq(listed().size(), off.size(), "an empty keyword list opens nothing");
     opt.enable_events = saved.enable_events;
     opt.event_keywords = saved.event_keywords;
+}
+
+// The fake-out (is_mutation; gacha.cpp roll_surprise, docs/server-rules.md#gacha-surprise): with
+// --gacha-surprise 100 every drawn ★5 unit is one and no other; with 0 none; at 50 about half of
+// the ★5 units; the default reads master_global.gacha_mutation (2). The field is a bool on every
+// GachaItems entry.
+NATIVE_TEST("gacha/surprise") {
+    ScratchServer S(t.rand_u64());
+    if (!S.ok) return;
+    Server& sv = S.sv;
+    S.set_clock("2021-05-25 12:00:00");
+    const int32_t saved = config().gacha_surprise;
+    const u32 perm = S.id("master_gacha", "gacha_role_0001");
+    // `draws` bulk draws at `percent`: (★5 units, of them surprises, other units that were surprises)
+    struct Counts {
+        u32 five = 0, five_surprise = 0, other_surprise = 0, units = 0;
+        bool shape = true;
+    };
+    auto draw = [&](int32_t percent, int draws) {
+        config().gacha_surprise = percent;
+        Counts c;
+        for (int k = 0; k < draws; k++) {
+            sv.st.q("update player set free_coin = 100000, pay_coin = 0", {});
+            std::vector<u8> out;
+            if (S.call(Request{"Gacha", fids::kGacha, {perm, 0}, {"x"}, {}}, &out) != 0) {
+                t.fail("draw %d refused", k);
+                break;
+            }
+            Value r = mp_decode(out);
+            const Value* items = r.find("data") ? r.find("data")->find("GachaItems") : nullptr;
+            if (!items) {
+                t.fail("no GachaItems");
+                break;
+            }
+            for (const Value& e : items->arr) {
+                const Value* m = e.find("is_mutation");
+                if (!m || m->type != Value::Bool) c.shape = false;
+                const bool surprise = m && m->type == Value::Bool && m->b;
+                const u64 role = e.get_u("master_role_id"), item = e.get_u("master_item_id");
+                const int64_t rarity = role ? sv.m.one("select rarity from master_role where id = ?", {role})
+                                            : sv.m.one("select rarity from master_item where id = ?", {item});
+                c.units++;
+                if (rarity >= 5) c.five++, c.five_surprise += surprise;
+                else c.other_surprise += surprise;
+            }
+        }
+        return c;
+    };
+    Counts all = draw(100, 30);
+    t.expect_eq(all.shape, true, "is_mutation is a bool on every entry");
+    t.expect_eq(all.five > 0, true, "30 bulk draws bring a 5-star unit");
+    t.expect_eq(all.five_surprise, all.five, "100: every 5-star unit a surprise");
+    t.expect_eq(all.other_surprise, 0u, "100: no other unit");
+    Counts none = draw(0, 30);
+    t.expect_eq(none.five_surprise + none.other_surprise, 0u, "0: none");
+    Counts half = draw(50, 120);
+    if (half.five < 20) t.fail("only %u 5-star units in 1200 draws", half.five);
+    else if (half.five_surprise * 10 < half.five * 2 || half.five_surprise * 10 > half.five * 8)
+        t.fail("50: %u of %u 5-star units", half.five_surprise, half.five);
+    t.expect_eq(half.other_surprise, 0u, "50: no other unit");
+    t.expect_eq((u32)sv.m.one("select value from master_global where key = 'gacha_mutation'", {}), 2u, "master_global.gacha_mutation");
+    Counts dflt = draw(-1, 40);
+    t.expect_eq(dflt.other_surprise, 0u, "default: no other unit");
+    if (dflt.five && dflt.five_surprise * 4 > dflt.five + 4) t.fail("default (2%%): %u of %u 5-star units", dflt.five_surprise, dflt.five);
+    config().gacha_surprise = saved;
 }
 
 }  // namespace

@@ -55,17 +55,22 @@ headers from there: `#include "core/crash.h"`. A header becomes public by moving
 
 ## Extension points
 
-A host program brings the runtime up in this order. `port/src/main.cpp` and `emulator/src/main.cpp` are the references. A 3.7.0 host also calls `platform370::install(cfg)` before `hle_init()` and `platform370::install_patches(*lib)` after `load_library` (`platform370/README.md` "API").
+A host program brings the runtime up in this order. The desktop hosts (`soa`, `soa-emu`, `soa-viewer`) do it through `app::boot(BootConfig, &error)` (`app/boot.h`, in `soaruntime_app`), with their own steps in its hooks: `after_load` (a 3.7.0 host's `platform370::install_patches(*lib)` and `install_language`, the port's natives) and `add_assets` (the viewer's XAPK archives and asset packs, the port's stand-in overlay). Before it, a host sets `device_config()` and, for 3.7.0, calls `platform370::install(cfg)` (`platform370/README.md` "API"). `boot` returns nullptr with the reason when a step fails (the debugger can't listen, the library isn't a loadable AArch64 library, the download tree or an APK can't be opened); the hosts print it and exit 2.
 
 ```
 host_hooks() = {...}; device_config() = {...};   // what the host provides / the device it emulates
+// app::boot:
 vfs_init({data_dir});
 cpu_global_init();
+gdb_listen(...);       // --gdb, before any guest code runs
 hle_init();            // built-in imports, then the hle_add_registrar() callbacks
 jni::Vm::get().init(); // built-in Java classes, then the add_class_installer() callbacks
-load_library(lib);     // imports are bound here
-asset_manager().add_apk(...) ...;  // the host's APK list
+load_library(lib, &error);  // imports are bound here; nullptr and a reason for a bad file
+after_load(*lib);      // hook: native patches, natives
+install_traces(*lib); profile_init(*lib); app::start_watchdog();   // SOA_TRACE, SOA_PROFILE / SOA_COVERAGE, SOA_WATCHDOG
+asset_manager().set_download_dir(...); add_assets(am); asset_manager().add_apk(...) ...;
 run_initializers(*lib);
+// then:
 app::run(*lib, cfg);    // optional desktop host loop (app/host.h): window, JNI_OnLoad, ANativeActivity_onCreate, main loop
 ```
 

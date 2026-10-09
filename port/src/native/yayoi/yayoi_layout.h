@@ -92,6 +92,12 @@ static_assert(offsetof(QueryParam, m_text) == 0x10);
 static_assert(offsetof(QueryParam, m_length) == 0x18);
 static_assert(sizeof(QueryParam) == 0x28);
 
+// Aska::Yayoi::IDriverSetting<SQLiteDriver>: the driver's settings (SQLiteDriver::m_setting). The game's
+// implementers (CSqliteTransaction::CDriverSettings, ...): _ZTV slot 0 GetDefaultServer(Entity::Mode, char
+// const*) const (the DBAddress for a mode; DoOpen passes no name), 1 GetDBName, 2 GetUserName, 3 GetPassword,
+// 4 GetOption.
+constexpr int kDriverSettingSlotGetDefaultServer = 0;
+
 // Aska::Yayoi::DBAddress: what DoOpen opens (sqlite3_open(m_path)). Only the first word is read.
 class DBAddress {
 public:

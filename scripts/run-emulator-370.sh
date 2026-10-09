@@ -13,7 +13,7 @@
 #     from this save, a 3.7.0 or offline-game Game.xml; default data/saves/seed/Game.xml; an
 #     existing state in --home keeps its player), --enable-events (open the events matching
 #     --event-keywords all year, as the port), --event-keywords L (default: the summer events),
-#     --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N, --stamina-heal-time S,
+#     --seed-rng N, --clock "YYYY-MM-DD HH:MM:SS", --start-coins N, --gacha-surprise PCT, --stamina-heal-time S,
 #     --galaxy-pass, --restore-tower, --english, --master FILE, --db FILE, --log-packets DIR,
 #     --fail M:CODE[,..], --surprise, --campaign-master-db FILE, --campaign-seed LABEL
 #   any other options go to soa-emu, e.g. --fullscreen, --size 729x1296 (soa-emu --help)

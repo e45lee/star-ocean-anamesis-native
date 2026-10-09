@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/containers/gen/containers_a2c.cpp: the Aska array / pool / hash-map templates
 (TDynamicArray<T, A> and its TArrayIterator inserts, Algo::QuickSort over them, TPoolFast<T, b>,
 THashMap<K, V, ...>) transcribed from the ARM64 by a2c.py (CALL_FALLBACK: other calls go to the
@@ -22,8 +22,7 @@ import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before a2c: the default lib is 3.7.0's)
+import genlib  # (before a2c: the default lib is 3.7.0's)
 
 _spec = importlib.util.spec_from_file_location('a2c', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'a2c.py'))
 a2c = importlib.util.module_from_spec(_spec)

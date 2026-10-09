@@ -1,0 +1,81 @@
+# The requests' arguments by name, in the order the wire carries them: one struct per line,
+# METHOD[, METHOD...][ as NAME]: FIELD... (tools/gen_request_args.py's header has the grammar;
+# server/src/api/gen/README.md "Requests"). The generator checks each line against the method's measured
+# layout (server/net/gen/wire_decode.inc). A `#` line before a struct is its comment in request_args.h.
+# A missing argument reads as its default (0; none of them logs).
+
+# ---- growth and mastery (api/growth/) ----
+
+# BoostCharacter(u64 character_uid, u32 master_item_id, u32 count): `count` EXP items.
+BoostCharacter: character_uid:CharacterUid master_item_id count
+
+# LimitBreakCharacter(u64 character_uid, u32 id) and LimitBreakCharacter_Legacy: `id` is a
+# master_character_limit_break row id (what the limit-break screen sends) or a master item id.
+LimitBreakCharacter, LimitBreakCharacter_Legacy: character_uid:CharacterUid row_or_item_id
+
+# EvolutionCharacter(u64 character_uid).
+EvolutionCharacter: character_uid:CharacterUid
+
+# UpdateAwakenLevel(u64 character_uid, u32 awaken_level): the level to reach.
+UpdateAwakenLevel: character_uid:CharacterUid awaken_level
+
+# AddStatusCharacter(u64 character_uid, u32 master_item_id, u32 count): `count` seeds of one kind.
+# (docs/api.md's Request line calls the two u32 "status kind" and "amount"; the server reads a
+# seed item and a count, as the strengthening screen's preview does.)
+AddStatusCharacter: character_uid:CharacterUid master_item_id count
+
+# EquipWeapon / EquipAccessory(u64 character_uid, u64 item_uid): item 0 takes it off.
+EquipWeapon, EquipAccessory as EquipItemArgs: character_uid:CharacterUid item_uid:ItemUid?
+
+# EquipSkill(u64 character_uid, u32 skill1, u32 skill2, u32 skill3): the three equipped skills,
+# kept as the request's 64-bit integers (they are stored as they came).
+EquipSkill: character_uid:CharacterUid skill:u64[3]
+
+# EquipAuto(u64 character_uid): the character the equipment screen's 自動設定 is for (b: a lambda
+# among CPartyEquip's (@01d94a88) waits on EquipAuto's fid; the request has one u64, docs/api.md).
+EquipAuto: character_uid:CharacterUid
+
+# ChangeRole(u64 character_uid, u32 master_role_id) (b: CRoleSelect's request lambda @01c72678:
+# the screen's character, the role chosen).
+ChangeRole: character_uid:CharacterUid role_id:RoleId
+
+# TrainMastery(u64 disciple_uid, u64 master_uid, u8 dojo_no, u32 step_type_id, u8 step, u8 option)
+# (b: the two request lambdas; docs/server-rules.md#mastery):
+#   - pairing (CMasteryTrainingSelect, @01ba2880): (+0x3530 the 弟子 card, +0x800 the 師匠 card,
+#     the dojo index + 1, the pair's master_mastery_step type, 0, 0);
+#   - a training (CMasteryTrainingConfirmationDialog::StartTraining's lambda @01b939e8):
+#     (DojoInfo's disciple, its master, the dialog's first u8 + 1, the DojoInfo's type, the
+#     disciple's cleared trainings + 1 (tCharaData+0x13ec), (the pass medal ? 4 : 1) + the
+#     chosen training's index 0..2).
+TrainMastery: disciple_uid:CharacterUid master_uid:CharacterUid dojo_no step_type_id step option
+
+# ResetMastery(u64, u64): the pair to part (師弟解消). (b) The two callers send it in either order:
+# CMasteryTrainingSelect's lambda @01ba4910 (the 師匠 card +0x800, the 弟子 card +0x3530),
+# CMasteryTrainingAllClearDialog's @01b94244 (its DojoInfo's two characters, master first as
+# CMasteryTop::UpdateList builds it). The handler finds the pair either way.
+ResetMastery: a:CharacterUid b:CharacterUid
+
+# ---- paid currency (api/shop/coins.cpp) ----
+
+# CoinDepositCreate(u8 platform, s32 product, s8 const* user): (b) Progress_Purchase sends
+# platform 1, the CCoinInfo id the player chose and the literal "user_id".
+CoinDepositCreate: platform product ...
+
+# CoinDeposit{Android,IOS,Amazon}Update(u32 trans id, s8 const* receipt, s8 const* signature).
+CoinDepositAndroidUpdate, CoinDepositIOSUpdate, CoinDepositAmazonUpdate as CoinDepositUpdateArgs: trans_id receipt:str signature:str
+
+# ---- settings (api/settings/) ----
+
+# SendGuideInformation(u32 master_guide_information_id) (b: CGuideInformation::Progress sends the
+# shown guide's id when the player follows its link).
+SendGuideInformation: guide_id
+
+# ReadExpirationInfo(CSTLVector<u32> const& ids) (b: CTermInfoUI::Progress, the ids it shows).
+ReadExpirationInfo: ids:u64vec
+
+# UpdateConfig(u32 master_config_id, s8 const* value, u32 type) (b: CSystemSettingMenu's
+# AutoEquipSettingSend and tNotifyData send it; the wire's u32 · char[191] · u32).
+UpdateConfig: master_config_id value:str type
+
+# GetScenarioLibraryInfoList(u32 episode_type_id) (b: CScenarioLibrary::RequestListReceiveApi).
+GetScenarioLibraryInfoList: episode_type_id

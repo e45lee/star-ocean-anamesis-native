@@ -169,17 +169,18 @@ std::vector<u8> ex_item_shop(Ctx& ctx, const Request& req) {
             out = refuse(ctx, "ExItemShop", refusal.why, refusal.code);
             return;
         }
-        Value items = Value::array(), stocks = Value::array(), characters = Value::array();
+        Granted granted;
         u32 free_coins = 0;
-        grant_with_item_sets(ctx, (u32)shop_row.i("content_type"), (u32)shop_row.i("content_id"), (u32)std::max<int64_t>(1, shop_row.i("num")), items,
-                             stocks, characters, &free_coins);
+        grant_with_item_sets(
+            ctx, Grant{as_content_type(shop_row.i("content_type")), (u32)shop_row.i("content_id"), (u32)std::max<int64_t>(1, shop_row.i("num"))},
+            granted, &free_coins);
         Value data = ctx.base_data();
         data["ItemShopInfo"] = item_shop_info(ctx, shop_row, t);
         data["ItemShopInfoList"] = item_shop_list(ctx);
-        ext::add_items(data, items);
+        ext::add_items(data, granted.items);
         data["StockItem"] = ctx.stock();
         LOGI("server", "ExItemShop %u (%s): %u coins, %zu items, %zu stack grants", args.shop_row_id, shop_row.s("id_label").c_str(),
-             (u32)shop_row.i("price"), items.arr.size(), stocks.arr.size());
+             (u32)shop_row.i("price"), granted.items.arr.size(), granted.stocks.arr.size());
         out = body(data);
     });
     if (!found) return refuse(ctx, "ExItemShop", "unknown shop row", ErrorCode::kItemUnusable);
@@ -292,12 +293,14 @@ std::vector<u8> exshop_exchange(Ctx& ctx, const Request& req) {
             u64 pay = (u64)contents_row.i("ex_num") * count;
             add_stock(ctx, ex_item, -(int64_t)pay);
             ctx.st.q("insert into exchange_counts (id, num) values (?, ?) on conflict(id) do update set num = num + excluded.num", {id, count});
-            Value items = Value::array(), stocks = Value::array(), characters = Value::array();
+            Granted granted;
             u32 free_coins = 0;
-            grant_with_item_sets(ctx, (u32)contents_row.i("content_type"), (u32)contents_row.i("content_id"),
-                                 (u32)std::max<int64_t>(1, contents_row.i("num")) * count, items, stocks, characters, &free_coins);
+            grant_with_item_sets(ctx,
+                                 Grant{as_content_type(contents_row.i("content_type")), (u32)contents_row.i("content_id"),
+                                       (u32)std::max<int64_t>(1, contents_row.i("num")) * count},
+                                 granted, &free_coins);
             ext::count(ctx, "exchange", count);
-            Value data = exchange_data(ctx, contents_row, count, free_coins, items, characters);
+            Value data = exchange_data(ctx, contents_row, count, free_coins, granted.items, granted.characters);
             LOGI("server", "ExshopExchange %u (%s) x%u: -%llu of item %u", id, contents_row.s("id_label").c_str(), count, (unsigned long long)pay,
                  ex_item);
             out = body(data);

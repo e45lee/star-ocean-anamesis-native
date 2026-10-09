@@ -1605,6 +1605,84 @@
    ]
   },
   {
+   "name": "CParameterUI",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "unk_000",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 320
+     },
+     "size": 320
+    },
+    {
+     "offset": 320,
+     "name": "m_selectMissionType",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 324,
+     "name": "m_unk144",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 328,
+     "name": "unk_148",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 88
+     },
+     "size": 88
+    },
+    {
+     "offset": 416,
+     "name": "m_selectMissionId",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 420,
+   "align": 4,
+   "methods": [
+    {
+     "ghidra": "0x17fef4c",
+     "symbol": "_ZN12CParameterUI5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x17ffc90",
+     "symbol": "_ZNK12CParameterUI21GetSelectMissionTitleEv",
+     "name": "GetSelectMissionTitle"
+    }
+   ]
+  },
+  {
    "name": "CParameterParser",
    "union": false,
    "fields": [],

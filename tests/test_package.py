@@ -4,13 +4,12 @@ renders for every package without leftover tags."""
 import pathlib
 import shutil
 import sqlite3
-import sys
 
 import pytest
 
+import package
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
-import package  # noqa: E402
 
 TOP = "soa-port-test-linux-x64"
 

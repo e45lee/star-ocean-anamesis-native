@@ -8,7 +8,6 @@ import struct
 from dataclasses import dataclass
 from typing import Optional
 
-from . import ROOT  # noqa: F401  (puts the repo root on sys.path for soa_save)
 from soa_save import adld, slz
 from soa_save.download_tree import DownloadTree
 

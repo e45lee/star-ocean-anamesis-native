@@ -23,7 +23,8 @@ using namespace soa::server::net;
 // make_request: the target split at '?', the path URL-decoded, an absolute-form target's path.
 NATIVE_TEST("net/http-request") {
     HttpRequest a = make_request("GET", "/Android/a%20b+c.bin?x=1", {{"connection", "close"}});
-    t.expect_eq(a.path, std::string("/Android/a b c.bin"), "decoded path ('+' is a space)");
+    t.expect_eq(a.path, std::string("/Android/a b+c.bin"), "decoded path ('+' stays: only a query's form encoding makes it a space)");
+    t.expect_eq(make_request("GET", "/Android/x%2541").path, std::string("/Android/x%41"), "decoded once");
     t.expect_eq(a.query, std::string("x=1"), "query");
     t.expect_eq(*a.header("Connection"), std::string("close"), "header lookup ignores case");
     t.expect_eq(a.version, std::string("HTTP/1.1"), "version");
@@ -134,11 +135,23 @@ NATIVE_TEST("net/gzip-json") {
     t.expect_eq(gunzip("not gzip"), std::string(), "garbage");
     // the client's bridge POST: printf'd JSON plus a NUL (CApiNotify::OnResultStart)
     std::string body = std::string("{\"UUID\":\"3f2a-x\",\"deviceType\":\"2\",\"nativeToken\":\"abc\\\"d\"}") + '\0';
-    t.expect_eq(json_string_field(body, "UUID"), std::string("3f2a-x"), "UUID");
-    t.expect_eq(json_string_field(body, "deviceType"), std::string("2"), "deviceType");
-    t.expect_eq(json_string_field(body, "nativeToken"), std::string("abc\"d"), "escaped quote");
-    t.expect_eq(json_string_field("{\"n\": 12}", "n"), std::string("12"), "bare number");
-    t.expect_eq(json_string_field(body, "missing"), std::string(), "missing");
+    BridgeRequest req;
+    t.expect_eq(parse_bridge_request(body, &req), true, "the client's body with its NUL");
+    t.expect_eq(req.uuid, std::string("3f2a-x"), "UUID");
+    t.expect_eq(req.device_type, std::string("2"), "deviceType");
+    t.expect_eq(req.token, std::string("abc\"d"), "escaped quote");
+    t.expect_eq(parse_bridge_request("{\"deviceType\": 12}", &req) && req.device_type == "12" && req.uuid.empty(), true, "a number; missing fields");
+    // a key's name inside another field's value is not the key (the substring search took it)
+    t.expect_eq(parse_bridge_request("{\"x\":\"UUID\",\"UUID\":\"real\"}", &req) && req.uuid == "real", true, "a key inside a value");
+    // \uXXXX escapes decode (the substring search kept the 'u')
+    t.expect_eq(parse_bridge_request("{\"nativeToken\":\"a\\u0041b\"}", &req) && req.token == "aAb", true, "a \\u escape");
+    t.expect_eq(parse_bridge_request("not json", &req) || !req.token.empty(), false, "not JSON: no fields");
+    // the reply and the client's body round trip through the parsers
+    std::string sid, key;
+    t.expect_eq(parse_bridge_reply(bridge_reply_json("s\"1", "k\\2"), &sid, &key) && sid == "s\"1" && key == "k\\2", true, "reply round trip");
+    t.expect_eq(bridge_reply_json("ab", "cd"), std::string("{\"nativeSessionId\":\"ab\",\"sharedSecurityKey\":\"cd\"}"), "reply bytes");
+    t.expect_eq(parse_bridge_request(bridge_request_body("u\"1", "t2"), &req) && req.uuid == "u\"1" && req.token == "t2" && req.device_type == "2",
+                true, "client body round trip");
 }
 
 }  // namespace

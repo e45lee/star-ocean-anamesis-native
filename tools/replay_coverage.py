@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Which server APIs the replay corpora (server/tests/replay/) cover, and which they don't.
 
     tools/replay_coverage.py [--server build/server/soa-server] [--write]
@@ -23,7 +23,6 @@ import sys
 import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "tools"))
 import server_replay_diff as rd  # noqa: E402
 
 SWEEP = "api-sweep"

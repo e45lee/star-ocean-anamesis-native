@@ -1,0 +1,21 @@
+#!/bin/sh
+# The repository's one Python: .venv's interpreter, with this checkout's code importable (soa_save,
+# control/'s soadrive and modules, tools/, port/scripts/: the .pth scripts/setup-venv.sh writes).
+#
+#   tools/py SCRIPT.py ARGS...     tools/py -m pytest -q tests     tools/py - < script
+#
+# The executable .py files start with a shebang that runs them through this file, and the shell
+# scripts and tests/tiers.json call it, so every Python process of the repository runs on the same
+# interpreter and packages (requirements.txt). A worktree's .venv is a link to the main checkout's;
+# the .pth's paths are relative, so each checkout imports its own code.
+repo=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd) || exit 127
+py=$repo/.venv/bin/python
+if [ ! -x "$py" ]; then
+    echo "tools/py: no Python environment at $repo/.venv: run scripts/setup-venv.sh (README.md \"Setup\")" >&2
+    exit 127
+fi
+for pth in "$repo"/.venv/lib/python3*/site-packages/soa-checkout.pth; do
+    [ -f "$pth" ] && exec "$py" "$@"
+done
+echo "tools/py: $repo/.venv lacks the checkout's import paths (soa-checkout.pth): run scripts/setup-venv.sh (README.md \"Setup\")" >&2
+exit 127

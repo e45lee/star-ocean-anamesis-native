@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """tests/diff: the port against the emulator, flow by flow (tests/diff/README.md).
 
     tests/diff/run.sh [FLOW...] [--target emu,port-server,port-inproc] [--out DIR] [--keep]
@@ -17,13 +17,10 @@ import threading
 import time
 import traceback
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), "control"))
-import compare  # noqa: E402  (tests/diff/compare.py: the report)
-from soadrive import proc, targets  # noqa: E402  (control/soadrive: the driver library)
-from soadrive.targets import soaslot  # noqa: E402
-from soadrive.flows import event, seeded, shard_battle, shard_gacha, shard_login, shard_tutorial, tutorial  # noqa: E402
+import compare  # (tests/diff/compare.py: the report)
+from soadrive import proc, targets  # (control/soadrive: the driver library)
+from soadrive.targets import soaslot
+from soadrive.flows import event, seeded, shard_battle, shard_gacha, shard_login, shard_tutorial, tutorial
 
 # The full flows (the end-of-batch gate: `run.sh` with no flow names) and the shards (short flows
 # for per-change gating: tools/tests_for.py picks them; tests/diff/README.md "Shards").

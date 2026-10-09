@@ -39,7 +39,9 @@ the last one Initialize names is another object's. `NameHash()` is checked to be
 the natives read `m_name`'s hash. The output: per class a typed layout (child members named by the child
 class's `pParseName()`), its property, child and Initialize-step tables, and `INFO_CLASSES`,
 `INFO_CONSTRUCTORS` (30 exported default constructors), `INFO_COPIES` (126), `INFO_INITIALIZERS` (181). T0 `generated` reruns it
-in `--check` mode.
+in `--check` mode. The same run writes the classes' wire schema for the server, `server/src/api/gen/client_infos.json`
+(each field's ASON key and value type, the containers, CInfoManager's children: the server's reply types,
+`server/src/api/gen/README.md`).
 
 `CInfoManager` (an InfoBase whose 226 children are every info the client keeps) has no layout (its other
 members aren't read); its Initialize's steps are taken as they are (three stores to members of another kind, 43

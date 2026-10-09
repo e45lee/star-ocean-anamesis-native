@@ -8,6 +8,7 @@
 
 #include "api/entry/entry.h"
 #include "soaserver/config.h"
+#include "soaserver/fids.h"
 #include "soaserver/ext.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/native_test.h"
@@ -55,7 +56,7 @@ NATIVE_TEST("entry/create-player-references") {
     if (!S.ok) return;
     Server& sv = S.sv;
     sv.st.exec("delete from player; delete from party_member; delete from party_set; delete from titles");
-    t.expect_eq(S.call(Request{"CreatePlayer", 0xe3e463ad, {}, {"Tester", "uuid-test"}, {}}), 0u, "CreatePlayer");
+    t.expect_eq(S.call(Request{"CreatePlayer", fids::kCreatePlayer, {}, {"Tester", "uuid-test"}, {}}), 0u, "CreatePlayer");
     t.expect_eq((u32)sv.st.one("select count(*) from player", {}), 1u, "created (the transaction committed)");
     t.expect_eq((u32)sv.st.one("select count(*) from party_set", {}), 10u, "the party sets 1..party_set_max (10)");
     t.expect_eq((u32)sv.st.one("select count(*) from player p join roster r on r.uid = p.home_uid", {}), 1u, "the home character");

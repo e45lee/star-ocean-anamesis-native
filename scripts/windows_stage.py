@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../tools/py" "$0" "$@"'
 """The Windows stage's whitelist (scripts/windows-stage.list) for scripts/windows-stage.sh: what is
 staged, from where, and what in a stage is not on the list. Standard library only.
 

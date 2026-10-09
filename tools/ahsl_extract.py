@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Decrypt and unpack the AHSL shader disk cache (Shader/AHSLDiskCacheAdd) into GLSL files.
 
 Usage: .venv/bin/python tools/ahsl_extract.py [AHSLDiskCacheAdd] -o OUTDIR [--grep REGEX]
@@ -34,9 +34,8 @@ import re
 import struct
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-from soa_save.adld import decode  # noqa: E402
-from soa_save.download_tree import DEFAULT, DownloadTree, open_member_or_file  # noqa: E402
+from soa_save.adld import decode
+from soa_save.download_tree import DEFAULT, DownloadTree, open_member_or_file
 
 KPHS = 0x5348504B
 NAME = "Shader/AHSLDiskCacheAdd"

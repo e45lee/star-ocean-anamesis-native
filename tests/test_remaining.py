@@ -1,12 +1,11 @@
 """port/scripts/remaining.py's library reader (pyelftools sections) and its <8B classification."""
 import os
-import sys
 
 import pytest
 
+import remaining
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "port", "scripts"))
-import remaining  # noqa: E402
 
 LIB = os.path.join(REPO, "work", "libSOA-3.7.0.so")
 

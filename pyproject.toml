@@ -1,0 +1,26 @@
+# The repository's Python code: tools, drivers and tests, not a distributed package. The environment
+# is .venv, made by scripts/setup-venv.sh (README.md "Setup"): requirements.txt (pinned, each with
+# the files that use it) and soa-checkout.pth, which puts the checkout's code on the path (not
+# `pip install -e .`: the worktrees share .venv by a link; scripts/setup-venv.sh says why).
+# Run Python through tools/py.
+#
+# Importable once set up:
+#   soa_save          the save editor and the game-file codecs (soa_save/)
+#   soadrive          the drivers' library (control/soadrive/), and control/'s soaslot, soactl,
+#                     flowctl, gdbclient
+#   tools/*.py        the RE and maintenance tools (flat modules: `import elfinfo`)
+#   port/scripts/*.py the port's report scripts (`import profile_report`)
+
+[project]
+name = "star-ocean-anamnesis-reverse"
+version = "0"
+description = "Tools, drivers and tests of the STAR OCEAN: anamnesis desktop port"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+# The two suites tests/tiers.json runs (pytest-soa-save, pytest-control); a bare `tools/py -m pytest`
+# runs both.
+testpaths = ["tests", "control/tests"]
+# The same paths as soa-checkout.pth, and the two folders only tests import from: scripts/
+# (windows_stage.py) and tests/diff/ (difftest.py).
+pythonpath = [".", "control", "tools", "port/scripts", "scripts", "tests/diff"]

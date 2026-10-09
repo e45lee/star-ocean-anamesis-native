@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../py" "$0" "$@"'
 """A character's animation set, from the 3.7.0 master data and parameter files, as the JSON
 tools/asf2gltf (--set) reads: which .aaf files belong to the model, in which role (battle idle,
 attacks, skills, home stand / talk motions, facial expressions, the character viewer's motions),

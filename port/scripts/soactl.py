@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 # Moved to control/soactl.py (the control layer shared by soa, soa-emu and soa-viewer).
 # This stub forwards to it for scripts and branches that still use the old path; remove it once
 # nothing does.

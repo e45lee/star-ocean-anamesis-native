@@ -4,7 +4,7 @@
 
 #include "packet_log.h"  // printable
 
-#include <openssl/sha.h>
+#include <openssl/sha.h>  // SHA1(): the one-shot digest, not deprecated in OpenSSL 3 (only SHA1_Init / _Update / _Final are)
 #include <time.h>
 
 #include <cstring>
@@ -178,6 +178,120 @@ namespace {
 
 size_t str_width(const std::string& tok) { return (size_t)strtoul(tok.c_str() + 4, nullptr, 10); }  // "str[N]"
 
+// A request body being read: the bytes, the offset after what was read, the error.
+struct BodyReader {
+    const uint8_t* p;
+    size_t n, o;
+    std::string* err;
+    // Whether k more bytes are there (else the error names `what`).
+    bool need(size_t k, const std::string& what) {
+        if (n - o >= k) return true;
+        *err = what + " runs past the end of the body (" + std::to_string(n) + " bytes)";
+        return false;
+    }
+};
+
+// One layout token: its value into out->req (ints, vecs, the battle log) or `strs` (strings and
+// blobs, in order, before the shims), its text onto out->args. False with *in.err.
+bool decode_token(const WireApi& api, const std::string& t, BodyReader& in, Decoded* out, std::vector<std::string>& strs) {
+    Request& r = out->req;
+    std::string& args = out->args;
+    const uint8_t* p = in.p;
+    size_t& o = in.o;
+    if (t == "u8" || t == "s8") {
+        if (!in.need(1, t)) return false;
+        r.ints.push_back(p[o]);  // zero-extended, as the w register of a FakeApiCaller argument
+        args += std::to_string(p[o]);
+        o += 1;
+    } else if (t == "u32" || t == "s32" || t == "f32") {
+        if (!in.need(4, t)) return false;
+        uint32_t v = le32(p + o);
+        // f32: the IEEE bits (no server method takes a float; soa's capture can't read them either)
+        r.ints.push_back(v);
+        if (t == "f32") {
+            float f;
+            memcpy(&f, &v, 4);
+            args += std::to_string(f);
+        } else {
+            args += t == "s32" ? std::to_string((int32_t)v) : std::to_string(v);
+        }
+        o += 4;
+    } else if (t == "u64") {
+        if (!in.need(8, t)) return false;
+        uint64_t v = le64(p + o);
+        r.ints.push_back(v);
+        args += std::to_string(v);
+        o += 8;
+    } else if (t == "dev") {
+        if (!in.need(4, t)) return false;
+        out->has_device_type = true;
+        out->device_type = le32(p + o);
+        args += "dev=" + std::to_string(out->device_type);
+        o += 4;
+    } else if (t.rfind("str[", 0) == 0) {
+        size_t w = str_width(t);
+        if (!in.need(w, t)) return false;
+        // A fixed-width field: memcpy of N bytes, not zero-padded; the string ends at the
+        // first NUL (docs/api.md "Request body").
+        size_t len = strnlen((const char*)p + o, w);
+        std::string str((const char*)p + o, len);
+        args += printable(str);
+        strs.push_back(str);
+        o += w;
+    } else if (t == "blob") {
+        if (!in.need(4, t)) return false;
+        uint32_t len = le32(p + o);
+        o += 4;
+        if (!in.need(len, "blob")) return false;
+        std::string blob((const char*)p + o, len);
+        o += len;
+        // the battle log (soaserver/battle_log.h): Request::battle_log, not a string argument
+        if (carries_battle_log(api.method)) {
+            out->battle_log.assign(blob.begin(), blob.end());
+            r.battle_log = parse_battle_log(out->battle_log.data(), out->battle_log.size());
+            args += "battle_log[" + std::to_string(len) + "]";
+        } else {
+            strs.push_back(blob);
+            args += len > 64 ? "blob[" + std::to_string(len) + "]" : printable(blob);
+        }
+    } else if (t == "vec64" || t == "vec32") {
+        if (!in.need(4, t)) return false;
+        uint32_t k = le32(p + o);
+        o += 4;
+        size_t es = t == "vec64" ? 8 : 4;
+        if (k > (in.n - o) / es) {
+            *in.err = t + " count " + std::to_string(k) + " runs past the end of the body";
+            return false;
+        }
+        std::vector<uint64_t> v;
+        args += "[";
+        for (uint32_t i = 0; i < k; i++, o += es) {
+            v.push_back(es == 8 ? le64(p + o) : le32(p + o));
+            args += (i ? "," : "") + std::to_string(v.back());
+        }
+        args += "]";
+        r.vecs.push_back(std::move(v));
+    } else {
+        *in.err = "unknown layout token " + t;
+        return false;
+    }
+    return true;
+}
+
+// The per-API shims: the IApiCaller method's arguments where they differ from the wire's.
+void apply_shims(const WireApi& api, Request& r, std::vector<std::string>& strs) {
+    if (api.name == "CreatePlayer") {
+        // wire: char[36] uuid, char[191] name, DeviceType, char[32]; the server's
+        // CreatePlayer(name, uuid) (FakeApiCaller::CreatePlayer(s8 const*, s8 const*))
+        if (strs.size() >= 2) std::swap(strs[0], strs[1]);
+    } else if (api.name == "Login" || api.name == "SimpleLogin") {
+        // IApiCaller::Login() takes no arguments: the device UUID, the push token, the advertising
+        // id and its flag exist only on the wire (they stay in the packet log)
+        strs.clear();
+        r.ints.clear();
+    }
+}
+
 }  // namespace
 
 bool decode_request(const WireApi& api, const uint8_t* p, size_t n, Decoded* out, std::string* err) {
@@ -190,109 +304,17 @@ bool decode_request(const WireApi& api, const uint8_t* p, size_t n, Decoded* out
         return false;
     }
     memcpy(out->header, p, 16);
-    size_t o = 16;
-    auto need = [&](size_t k, const std::string& what) {
-        if (n - o >= k) return true;
-        *err = what + " runs past the end of the body (" + std::to_string(n) + " bytes)";
-        return false;
-    };
-    std::string& args = out->args;
+    BodyReader in{p, n, 16, err};
     std::vector<std::string> blobs_and_strs;  // in order, before the shims
     for (const std::string& t : api.layout) {
-        if (!args.empty()) args += " ";
-        if (t == "u8" || t == "s8") {
-            if (!need(1, t)) return false;
-            r.ints.push_back(p[o]);  // zero-extended, as the w register of a FakeApiCaller argument
-            args += std::to_string(p[o]);
-            o += 1;
-        } else if (t == "u32" || t == "s32" || t == "f32") {
-            if (!need(4, t)) return false;
-            uint32_t v = le32(p + o);
-            // f32: the IEEE bits (no server method takes a float; soa's capture can't read them either)
-            r.ints.push_back(v);
-            if (t == "f32") {
-                float f;
-                memcpy(&f, &v, 4);
-                args += std::to_string(f);
-            } else {
-                args += t == "s32" ? std::to_string((int32_t)v) : std::to_string(v);
-            }
-            o += 4;
-        } else if (t == "u64") {
-            if (!need(8, t)) return false;
-            uint64_t v = le64(p + o);
-            r.ints.push_back(v);
-            args += std::to_string(v);
-            o += 8;
-        } else if (t == "dev") {
-            if (!need(4, t)) return false;
-            out->has_device_type = true;
-            out->device_type = le32(p + o);
-            args += "dev=" + std::to_string(out->device_type);
-            o += 4;
-        } else if (t.rfind("str[", 0) == 0) {
-            size_t w = str_width(t);
-            if (!need(w, t)) return false;
-            // A fixed-width field: memcpy of N bytes, not zero-padded; the string ends at the
-            // first NUL (docs/api.md "Request body").
-            size_t len = strnlen((const char*)p + o, w);
-            std::string s((const char*)p + o, len);
-            args += printable(s);
-            blobs_and_strs.push_back(s);
-            o += w;
-        } else if (t == "blob") {
-            if (!need(4, t)) return false;
-            uint32_t len = le32(p + o);
-            o += 4;
-            if (!need(len, "blob")) return false;
-            std::string s((const char*)p + o, len);
-            o += len;
-            // the battle log (soaserver/battle_log.h): Request::battle_log, not a string argument
-            if (carries_battle_log(api.method)) {
-                out->battle_log.assign(s.begin(), s.end());
-                r.battle_log = parse_battle_log(out->battle_log.data(), out->battle_log.size());
-                args += "battle_log[" + std::to_string(len) + "]";
-            } else {
-                blobs_and_strs.push_back(s);
-                args += len > 64 ? "blob[" + std::to_string(len) + "]" : printable(s);
-            }
-        } else if (t == "vec64" || t == "vec32") {
-            if (!need(4, t)) return false;
-            uint32_t k = le32(p + o);
-            o += 4;
-            size_t es = t == "vec64" ? 8 : 4;
-            if (k > (n - o) / es) {
-                *err = t + " count " + std::to_string(k) + " runs past the end of the body";
-                return false;
-            }
-            std::vector<uint64_t> v;
-            args += "[";
-            for (uint32_t i = 0; i < k; i++, o += es) {
-                v.push_back(es == 8 ? le64(p + o) : le32(p + o));
-                args += (i ? "," : "") + std::to_string(v.back());
-            }
-            args += "]";
-            r.vecs.push_back(std::move(v));
-        } else {
-            *err = "unknown layout token " + t;
-            return false;
-        }
+        if (!out->args.empty()) out->args += " ";
+        if (!decode_token(api, t, in, out, blobs_and_strs)) return false;
     }
-    if (o != n) {
-        *err = "body has " + std::to_string(n - o) + " bytes after the last argument";
+    if (in.o != n) {
+        *err = "body has " + std::to_string(n - in.o) + " bytes after the last argument";
         return false;
     }
-    // ---- per-API shims: the IApiCaller method's arguments where they differ from the wire's ----
-    if (api.name == "CreatePlayer") {
-        // wire: char[36] uuid, char[191] name, DeviceType, char[32]; the server's
-        // CreatePlayer(name, uuid) (FakeApiCaller::CreatePlayer(s8 const*, s8 const*))
-        if (blobs_and_strs.size() >= 2) std::swap(blobs_and_strs[0], blobs_and_strs[1]);
-    } else if (api.name == "Login" || api.name == "SimpleLogin") {
-        // IApiCaller::Login() takes no arguments: the device UUID, the push token, the advertising
-        // id and its flag exist only on the wire (they stay in the packet log)
-        blobs_and_strs.clear();
-        r.ints.clear();
-    }
+    apply_shims(api, r, blobs_and_strs);
     r.strs = std::move(blobs_and_strs);
     return true;
 }

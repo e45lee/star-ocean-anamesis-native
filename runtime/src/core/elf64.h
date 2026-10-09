@@ -61,6 +61,8 @@ typedef struct {
 
 #define ELFMAG "\177ELF"
 #define SELFMAG 4
+#define EI_CLASS 4
+#define ELFCLASS64 2
 #define EM_AARCH64 183
 #define PT_LOAD 1
 #define PT_DYNAMIC 2

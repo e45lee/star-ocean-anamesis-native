@@ -36,6 +36,9 @@ FONT_NAME = "Font/etc2/font.fpk"
 KANA = re.compile("[぀-ヿ一-鿿]")
 # a katakana term inside a longer katakana word is not that term (レイ in マルチプレイ)
 KATA = re.compile("[ァ-ヿ]+")
+# a letter of a katakana word: KATA without the middle dot ・ (U+30FB), which separates words
+# (イヴリーシュ in 歌星イヴリーシュ・獄 is the name; en-prefix 2026-10-08, english.md 7.21)
+KATA_LETTER = re.compile("[ァ-ヺー-ヿ]")
 HIRA = re.compile("[ぁ-ゟ]")
 # printf conversions as the client's callers fill them (docs/english.md 1.1); %% is a literal.
 # No space flag: "50% c..." in prose is not a specifier (docs/english.md 1.4).
@@ -231,6 +234,18 @@ class Sources:
             self._story = out
         return self._story
 
+    def story_speakers(self):
+        """{message_id: [speaker codes]} of the story lines the download's Script/*.msgp speak
+        (story_scenes; a line no script references, or narration, has none); {} without them."""
+        if getattr(self, "_speakers", None) is None:
+            sp = collections.defaultdict(set)
+            for _scene, lines in story_scenes(self):
+                for mid, who in lines:
+                    if who and who != "(choice)":
+                        sp[mid].add(who)
+            self._speakers = {m: sorted(w) for m, w in sp.items()}
+        return self._speakers
+
     def story_official(self, mid, ja):
         en = self.gl_english(mid)
         if en is None:
@@ -245,6 +260,78 @@ class Sources:
         if en is None or unesc(self.gl_ja.get(mid) or "") != ja:
             return None, None
         return rewrite_tokens(en, esc(ja))
+
+
+def story_scenes(src):
+    """[(scene id, [(message_id, speaker code or None)])] in script order, from the download's
+    Script/*.msgp (src.scenario: the download, its zip read in place or a folder); a menu choice's
+    speaker is "(choice)". [] without the Script files."""
+    from soa_save import script
+    from soa_save.download_tree import DownloadTree
+    out = []
+    tree = DownloadTree.open_or_none(src.scenario)
+    for n in tree.list("Script") if tree else []:
+        if not n.endswith(".msgp"):
+            continue
+        o = script.load(tree.read("Script/" + n), "Script/" + n)
+        lines = []
+        for _sid, cmds in o.get("Script", {}).items():
+            for c in cmds:
+                name = script.command_name(c["command_type"])
+                if name in script.SPEECH:
+                    mid = c.get("command_param0")
+                    who = c.get("command_param6") or c.get("command_param1")
+                    if isinstance(mid, str):
+                        lines.append((mid, who if isinstance(who, str) else None))
+                elif name in script.MENUS:
+                    for k in range(0, 8, 2):
+                        mid = c.get(f"command_param{k}")
+                        if isinstance(mid, str) and mid:
+                            lines.append((mid, "(choice)"))
+        if lines:
+            out.append((n[: -len(".msgp")], lines))
+    return out
+
+
+# ---------------------------------------------------------------- the engine's speaker prefixes
+# The story engine was shown each line as "Speaker: Japanese" and sometimes wrote the speaker back
+# into the English ("Masked Man: Tsk..."), although the game shows the speaker above the window
+# (english.md 7.21). speaker_prefix finds such a prefix when it names the line's own speaker.
+
+# words before a name that don't change whose name it is ("Lady Lavarnia", "Master Mastima")
+SPEAKER_TITLES = {"lady", "master", "miss", "mister", "mista", "mr.", "mrs.", "ms.", "sir", "dr.", "doctor",
+                  "professor", "the"}
+SPEAKER_PREFIX = re.compile(r"(?:<font[^<>]*>)?([^:<>]{1,60}?)(?:</font>)?:[ \n]+")
+
+
+def speaker_key(name):
+    """A speaker's name for comparison: tags dropped, NFKC, case-folded, white space as one space,
+    leading titles dropped (SPEAKER_TITLES), the words in sorted order ("McKinley Captain" is
+    "Captain McKinley"). "" for no name."""
+    s = unicodedata.normalize("NFKC", TAG.sub("", unesc(name or ""))).casefold()
+    words = s.split()
+    while len(words) > 1 and words[0] in SPEAKER_TITLES:
+        words = words[1:]
+    return " ".join(sorted(words))
+
+
+def speaker_prefix(en, names, ja="", ja_names=()):
+    """The leading "<speaker>: " of `en` (real newlines; the colon followed by spaces or line
+    breaks) when it names the line's own speaker: its speaker_key is one of `names`' (the speaker's
+    English names: Global's, ours, the glossary's) and some English follows. "" otherwise, and when
+    the Japanese line itself starts with the speaker's name (`ja_names`: a narration line that
+    carries its speaker, <font color=blue>ヴァルカ</font>　…: then the English name is a translation)."""
+    m = SPEAKER_PREFIX.match(en)
+    if not m or not m.end() < len(en):
+        return ""
+    keys = {speaker_key(n) for n in names if n}
+    keys.discard("")
+    if speaker_key(m.group(1)) not in keys:
+        return ""
+    head = TAG.sub("", ja).lstrip(" \u3000\n")
+    if any(n and head.startswith(n.strip(" \u3000")) for n in ja_names):
+        return ""
+    return m.group(0)
 
 
 def story_group(stem):
@@ -451,8 +538,8 @@ def glossary_hits(ja, glossary, terms_sorted=None):
             i = ja.find(t, start)
             if i < 0:
                 break
-            inside = KATA.fullmatch(t) and ((i > 0 and KATA.match(ja[i - 1]))
-                                            or (i + len(t) < len(ja) and KATA.match(ja[i + len(t)])))
+            inside = KATA.fullmatch(t) and ((i > 0 and KATA_LETTER.match(ja[i - 1]))
+                                            or (i + len(t) < len(ja) and KATA_LETTER.match(ja[i + len(t)])))
             if not inside and not any(taken[i:i + len(t)]):
                 for k in range(i, i + len(t)):
                     taken[k] = True

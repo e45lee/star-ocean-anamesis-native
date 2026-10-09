@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """docs/server-rules.md's structure and its generated register (docs/history/PLAN-readability.md R20).
 
     tools/server_rules_doc.py --check     the register is fresh and every section has a stable anchor

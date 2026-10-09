@@ -52,7 +52,7 @@ function WsServerOption([object[]]$argv, [int]$i) {
         '^(--seed|--download|--download-dir|--master|--db|--log-packets|--campaign-master-db)$' {  # paths
             WsNeed $argv $i
             $script:WsSrvArgs += $a; $script:WsSrvArgs += (WsQ (WsFull ([string]$argv[$i + 1]))); return 2 }
-        '^(--seed-rng|--clock|--start-coins|--stamina-heal-time|--event-keywords|--fail|--campaign-seed)$' {
+        '^(--seed-rng|--clock|--start-coins|--stamina-heal-time|--gacha-surprise|--event-keywords|--fail|--campaign-seed)$' {
             WsNeed $argv $i
             $script:WsSrvArgs += $a; $script:WsSrvArgs += (WsQ ([string]$argv[$i + 1])); return 2 }
     }

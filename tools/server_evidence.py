@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """The evidence manifest of the local server's sources (docs/history/PLAN-readability.md section 3).
 
     tools/server_evidence.py [--root DIR] [--json]          print the manifest of DIR/server
@@ -94,6 +94,18 @@ def comments(src):
         else:
             i += 1
     return out
+
+
+def comment_blocks(src):
+    """The comments of consecutive lines joined into one text each (whitespace collapsed)."""
+    blocks, last = [], None
+    for line, text in comments(src):
+        if last is not None and line <= last + 1 and blocks:
+            blocks[-1] += " " + text
+        else:
+            blocks.append(text)
+        last = line + text.count("\n")
+    return [re.sub(r"\s+", " ", b) for b in blocks]
 
 
 def code_without_comments(src):
@@ -219,7 +231,10 @@ def manifest(root):
                 fm["offsets"] += 1
             for t in TABLE_RE.findall(text):
                 m["tables"][t] += 1
-            fm["agents"] += len(AGENT_RE.findall(text))
+        # an agent mention may wrap onto the next comment line: search each run of comments on
+        # consecutive lines as one text
+        for block in comment_blocks(src):
+            fm["agents"] += len(AGENT_RE.findall(block))
         # links may span a comment line break: search the file's joined comment text
         joined = re.sub(r"\s+", " ", " ".join(t for _, t in comments(src)))
         for kind, title in QUOTED_LINK_RE.findall(joined):

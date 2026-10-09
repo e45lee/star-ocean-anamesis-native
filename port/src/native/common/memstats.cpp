@@ -165,14 +165,13 @@ void log(const char* why) {
          (mi.uordblks + mi.hblkhd) >> 20, mi.arena >> 20, mi.hblkhd >> 20, mi.hblks, mi.fordblks >> 20, mi.keepcost >> 20);
 #endif
 
-    // Guest engine heap (docs/notes.md "Engine heap"): the available manager, +0x28 heap size.
+    // Guest engine heap (docs/notes.md "Engine heap"): the available manager's heap size and free bytes.
     static const u64 get_mm = guest::sym("_ZN4Aska6Global25GetAvailableMemoryManagerEv");
     if (get_mm) {
-        u64 mm = guest_call(get_mm, {});
+        auto* mm = reinterpret_cast<native::memory::MemoryManager*>(guest_call(get_mm, {}));
         if (mm) {
-            u64 size = *(u64*)(mm + 0x28);
-            u64 free_b = kCalcFreeSizeCallee.direct() ? (u64)reinterpret_cast<native::memory::MemoryManager*>(mm)->CalcFreeSize(false)
-                                                : guest_call(kCalcFreeSizeCallee.addr(), {mm, 0});
+            u64 size = mm->m_heapSize;
+            u64 free_b = kCalcFreeSizeCallee.direct() ? (u64)mm->CalcFreeSize(false) : guest_call(kCalcFreeSizeCallee.addr(), {(u64)mm, 0});
             LOGI("memstats", "guest heap: %llu MB used of %llu MB (%llu MB free)", (unsigned long long)((size - free_b) >> 20),
                  (unsigned long long)(size >> 20), (unsigned long long)(free_b >> 20));
         }

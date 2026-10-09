@@ -36,8 +36,7 @@ import time
 from . import fifo, gdb, milestones, proc, screens, winhost
 from .proc import REPO
 
-sys.path.insert(0, os.path.join(REPO, "control"))
-import soaslot  # noqa: E402  (control/soaslot.py: the machine-wide game-process slot pool)
+import soaslot  # (control/soaslot.py: the machine-wide game-process slot pool)
 
 # SOA_PACKAGE_DIR: the unpacked release package (README.md "Packaging") whose programs a run tests
 # (scripts/package-verify.sh): they run with that folder as their working directory and get no
@@ -54,7 +53,7 @@ LAUNCHER_PORT = 44310
 # the server options the launcher passes on to soa-server (the others go to soa)
 LAUNCHER_SERVER_FLAGS = {"--new-player", "--galaxy-pass", "--enable-events", "--restore-tower", "--english"}
 LAUNCHER_SERVER_VALUES = {"--seed", "--download", "--download-dir", "--master", "--log-packets", "--seed-rng", "--clock",
-                          "--start-coins", "--event-keywords", "--stamina-heal-time"}
+                          "--start-coins", "--event-keywords", "--stamina-heal-time", "--gacha-surprise"}
 
 
 def package_launcher(win):
@@ -190,8 +189,7 @@ def session_client_save(shared_prefs):
     if os.environ.get("SOA_EPISODE_PACKS", "0") == "1":
         shutil.copyfile(src, dst)
         return
-    py = os.path.join(REPO, ".venv/bin/python")
-    r = subprocess.run([py if os.path.exists(py) else sys.executable, "-m", "soa_save", "set", "--type", "u32", src,
+    r = subprocess.run([sys.executable, "-m", "soa_save", "set", "--type", "u32", src,
                         "BAS:DownloadEpisodeFlag", "0", "-o", dst], cwd=REPO, capture_output=True, text=True)
     if r.returncode != 0:
         raise Abort("installing the client save: " + (r.stdout + r.stderr).strip()[-300:])
@@ -432,8 +430,6 @@ class Run:
             "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H), "--render-size", "window",
             "--control", self.fifo]
         if cfg.gdb:
-            if not gdb.available():
-                raise Abort("a GDB stub was asked for, but control/gdbclient.py (the runtime's --gdb) isn't in this checkout")
             # port 0: the client logs the one it took (Run.gdb reads it). WSL's mirrored networking
             # shares 127.0.0.1 with Windows, not ::1.
             self.gdb_host = "127.0.0.1" if self.win else cfg.loopback
@@ -464,7 +460,7 @@ class Run:
                 argv = [self.launcher]
             argv += client + cfg.client_args + launcher_server_args(srv + pkt)
             if port_in_use(LAUNCHER_PORT) or port_in_use(LAUNCHER_PORT + 80):
-                gp = (winhost.free_ports if self.win else proc.free_ports)(1)[0]
+                gp = proc.free_ports(1, self.win)[0]
                 self.note("the launcher's port %d is taken: --port %d" % (LAUNCHER_PORT, gp))
                 argv += ["--port", str(gp)]
             self.client = proc.Proc(os.path.basename(self.launcher), argv, self.client_log, env=env, limit=cfg.limit,
@@ -485,7 +481,7 @@ class Run:
                                     limit=cfg.limit, env=env, slot_fd=self.slot, cwd=cwd)
         else:
             for attempt in range(4):
-                gp, hp = (winhost.free_ports if self.win else proc.free_ports)(2)
+                gp, hp = proc.free_ports(2, self.win)
                 lo = cfg.loopback
                 self.server = proc.Proc("soa-server", [server_binary, "--listen", gdb.host_port(lo, gp),
                                                        "--http", gdb.host_port(lo, hp), "--data", wp(os.path.dirname(self.state_db))] +
@@ -500,10 +496,10 @@ class Run:
                 if self.grep(self.server_log, r"^soa-server: ready"):
                     break
                 self.server.stop()
-                # a Windows soa-server whose ports Windows refused (winhost.free_ports): other ports
-                if not (self.win and self.grep(self.server_log, re.escape(winhost.IN_USE))) or attempt == 3:
+                # a port taken between free_ports and the bind (proc.free_ports): other ports
+                if not proc.addr_in_use(self.server_log) or attempt == 3:
                     raise Abort("soa-server didn't start (see %s)" % self.server_log)
-                self.note("soa-server: ports %d/%d in use on Windows; trying others" % (gp, hp))
+                self.note("soa-server: ports %d/%d in use; trying others" % (gp, hp))
             self.client = proc.Proc(os.path.basename(binary), [binary] + client + cfg.client_args +
                                     ["--server", gdb.host_port(cfg.loopback, gp), "--http", gdb.host_port(cfg.loopback, hp)],
                                     self.client_log, env=env,
@@ -751,8 +747,9 @@ class Run:
         return False
 
     def keep_shot(self, name, src):
+        """src (a screenshot; None when none was taken: a dead client) kept as the shot `name`."""
         dst = self.layout.shot_path(name)
-        if os.path.exists(src):
+        if src and os.path.exists(src):
             shutil.copyfile(src, dst)
             self.shot_names.append(name)
         return dst

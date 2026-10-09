@@ -200,6 +200,18 @@ def test_glossary_waiver(font):
     assert T.row_glossary(g, "a note without a waiver") is g and T.row_glossary(g, "") is g
 
 
+def test_glossary_middle_dot():
+    """・ separates katakana words: a term beside it is a word of its own (歌星イヴリーシュ・獄 names
+    イヴリーシュ; the check missed it while ・ counted as katakana: en-prefix, english.md 7.21); a term
+    inside a longer katakana run still isn't one (レイ in マルチプレイ)."""
+    g = {"イヴリーシュ": {"en": "Evelysse", "variants": [], "kind": "name", "source": "human"},
+         "レイ": {"en": "Ray", "variants": [], "kind": "skill", "source": "official"}}
+    assert C.glossary_hits("歌星イヴリーシュ・獄", g) == ["イヴリーシュ"]
+    assert C.glossary_hits("レイ・紋", g) == ["レイ"]
+    assert C.glossary_hits("マルチプレイ", g) == []
+    assert C.glossary_misses("歌星イヴリーシュ・獄", "Songstar Evreesh (Hell)", g) == [["イヴリーシュ", "Evelysse"]]
+
+
 # ---------------------------------------------------------------- E3
 
 def test_e3_rewrites():
@@ -788,3 +800,74 @@ def test_neutral_rows_take_the_memory(built):
     hits = {src.jp_rows[m]: e for m, (_, e, _) in rows.items()}
     assert hits["ＡＴＫ＋２０％"] == "ATK +20%"
     assert hits["ｍｏｔ"] == "mot"
+
+
+# ---------------------------------------------------------------- the engine's speaker prefixes (english.md 7.21)
+
+def test_speaker_prefix():
+    """A leading "<speaker>: " counts when it names the line's own speaker: case, tags, titles (Lady,
+    Master, ...) and word order don't matter; a sentence's colon, another character or a prefix with
+    nothing after it don't count, nor a name the Japanese line itself starts with."""
+    names = ["Masked Man", "Captain McKinley", "Lavarnia"]
+    sp = C.speaker_prefix
+    assert sp("Masked Man: Tsk...", names) == "Masked Man: "
+    assert sp("masked man:\nTsk...", names) == "masked man:\n"
+    assert sp("McKinley Captain: Gah!?", names) == "McKinley Captain: "
+    assert sp("Lady Lavarnia: ...What?", names) == "Lady Lavarnia: "
+    assert sp("<font color=blue>Lavarnia</font>: Hm.", names) == "<font color=blue>Lavarnia</font>: "
+    assert sp("Let me guess: you're lost.", names) == ""
+    assert sp("Tika: Yeah.", names) == ""
+    assert sp("Masked Man:", names) == "" and sp("Masked Man: Tsk", []) == ""
+    # a narration line that carries its speaker in the Japanese keeps the name in its English
+    ja = "<font color=blue>ラヴァーニア</font>\u3000ふん。"
+    assert sp("<font color=blue>Lavarnia</font>: Hmph.", names, ja, ["ラヴァーニア"]) == ""
+    assert C.speaker_key("The Elder's Granddaughter") == C.speaker_key("elder's  granddaughter")
+
+
+def test_story_speaker_prefix_check():
+    """story_finish fails a machine or agent line that starts with its speaker's name; other sources
+    and lines without the prefix pass."""
+    ctx = T.Ctx()
+    who = (["Masked Man"], ["仮面の男\u3000"])
+    ja = "チッ……面倒だな……。"
+    for source in ("machine", "agent"):
+        _, probs, _ = T.story_finish(ctx, None, source, "Masked Man: Tsk... what a pain...", ja, who)
+        assert probs == {"speaker_prefix": "Masked Man: "}
+        assert T.story_finish(ctx, None, source, "Tsk... what a pain...", ja, who)[1] == {}
+        assert T.story_finish(ctx, None, source, "Masked Man: Tsk...", ja, None)[1] == {}
+    for source in ("official", "human"):
+        assert "speaker_prefix" not in T.story_finish(ctx, None, source, "Masked Man: Tsk...", ja, who)[1]
+
+
+def test_committed_story_has_no_speaker_prefix(built):
+    """No committed machine or agent story line starts with its own speaker's name (en-prefix removed
+    756); the speakers come from the download's Script files."""
+    ctx = T.Ctx()
+    s = T.build_story(ctx, built.glossary)
+    if s is None:
+        pytest.skip("no Scenario files (work/SOA-3.7.0-canonical-data.zip)")
+    assert len(s.derived.speakers) > 10000
+    assert [f["message_id"] for f in s.failures if "speaker_prefix" in f["problems"]] == []
+
+
+def test_story_import_strips_speaker_prefix(data, scenario, tmp_path):
+    """import-mt drops the engine's "<speaker>: " (the name the checkpoint sent the line with)."""
+    scen, _ = scenario
+    ck = tmp_path / "story.jsonl"
+    ck.write_text(story_ck([sline("9999_t_01", "テストの行です。", "Coro: This is a test line.")]) + "\n")
+    assert srun(data, scen, "import-mt", str(ck)) == 0
+    t = {r["message_id"]: r for r in T.read_tsv(data / "story/TS_1999.tsv", T.TABLE_COLS)}
+    assert t["9999_t_01"]["en"] == "This is a test line."
+
+
+def test_mt_runner_strips_speaker():
+    """english_mt_run's Speakers.strip: the engine's prefix in any form of the speaker's name."""
+    import english_mt_run as R
+    src, g = R.load_glossary()
+    sp = R.Speakers(src, g)
+    code = next(w for _, lines in R.scenes(src) for m, w in lines if m == "2026_170_06")
+    if not code:
+        pytest.skip("no Script files")
+    assert sp.name(code) == "Masked Man"  # was sent as 仮面の男 (story-v1)
+    assert sp.strip("Masked Man: Tsk... what a pain...", code) == "Tsk... what a pain..."
+    assert sp.strip("Let me guess: fine.", code) == "Let me guess: fine."

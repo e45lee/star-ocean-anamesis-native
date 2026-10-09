@@ -17,7 +17,6 @@ Env: SOA_PHONE (scripts/shared-phone.sh), SEED_RNG, WATCH=1. Ends with "PASS tow
 "FAIL tower_session (N)" (exit 1).
 Targets: port-inproc (--restore-tower's client changes are the port's)."""
 import os
-import re
 import sqlite3
 
 from .. import popups

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Per-subsystem scaffolding for the native rebuild (port/PLAN.md task 6; port/src/native/README.md
 "Per-subsystem workflow").
 
@@ -42,15 +42,15 @@ import subprocess
 import sys
 import tempfile
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "port", "scripts"))
-from profile_report import qualified_name, split_qualified  # noqa: E402
+from profile_report import qualified_name, split_qualified
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 SYMBOLS_COLUMNS = ["vaddr", "ghidra", "size", "symbol", "demangled", "topic", "status", "note"]
 STATUSES = {"decompiled", "typed", "native", "tested", "skip"}
-# Folders of src/native/ that predate the scaffolding (not subsystems of the rebuild).
-LEGACY = {"api", "common", "restore", "ui"}
+# Folders of src/native/ that predate the scaffolding (not subsystems of the rebuild). `api` was one until
+# code review CR10 (P5) scaffolded it for FakeApiCaller's layout.
+LEGACY = {"common", "restore", "ui"}
 
 
 def paths(root, s):

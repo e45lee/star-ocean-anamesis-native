@@ -107,3 +107,14 @@ def test_the_check_sees_function_level_imports(tmp_path):
     p.write_text("import os\ndef f():\n    import msgpack\n    from PIL import Image\n    from . import sibling\n")
     rel = os.path.relpath(p, REPO)
     assert imports_of(rel) == {"os", "msgpack", "PIL"}
+
+
+def test_requirements_are_pinned():
+    """Every requirement names its exact version (==), so every checkout's .venv runs the same code."""
+    unpinned = []
+    with open(os.path.join(REPO, "requirements.txt")) as f:
+        for line in f:
+            line = line.split("#", 1)[0].strip()
+            if line and not line.startswith("-") and not re.fullmatch(r"[A-Za-z0-9_.\-\[\]]+==[A-Za-z0-9_.+]+", line):
+                unpinned.append(line)
+    assert not unpinned, "not pinned with ==: " + ", ".join(unpinned)

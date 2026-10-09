@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Writes server/tests/fixtures/test-seed.xml: a synthetic seed save for the local server's tests.
 
 The runtime seed (soa's and soa-server's default) is the committed, sanitized real 3.7.0 save data/saves/seed/Game.xml,
@@ -24,10 +24,8 @@ usage: .venv/bin/python tools/make_test_seed.py [--master data/basmaster-3.7.0.s
 import argparse
 import os
 import sqlite3
-import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-from soa_save.kvs import KVSFile  # noqa: E402
+from soa_save.kvs import KVSFile
 
 NAME = "Tessa"          # made up
 LEVEL = 60

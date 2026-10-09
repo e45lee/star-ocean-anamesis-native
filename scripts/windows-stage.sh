@@ -75,7 +75,7 @@ if [ "$clean" = 1 ]; then
   exit 0
 fi
 cd "$repo"
-lister=(python3 scripts/windows_stage.py)
+lister=("$repo/tools/py" scripts/windows_stage.py)
 opts=()
 [ "$phone" = 1 ] && opts+=(--phone)
 [ "$viewer" = 1 ] && opts+=(--viewer)

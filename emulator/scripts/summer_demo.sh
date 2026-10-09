@@ -11,4 +11,4 @@
 # Prints PASS / FAIL per milestone and a final PASS (exit 0) or FAIL (exit 1); OUT/milestones.txt.
 # The session is control/soadrive/sessions/summer_demo.py (its doc: the steps and the outputs):
 # `control/run.py summer-demo --help`.
-exec python3 "$(dirname "$0")/../../control/run.py" summer-demo "$@"
+exec "$(dirname "$0")/../../tools/py" "$(dirname "$0")/../../control/run.py" summer-demo "$@"

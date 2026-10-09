@@ -62,9 +62,6 @@ its use needs) and register it in ``beyond.ROW_KINDS`` (one row = one item) or, 
 append a ``ContentKind`` in ``beyond.collect_beyond``. The renderer and the counts pick it up.
 """
 import os
-import sys
 
 #: The repository root (tools/missing_assets/ is two levels below it).
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)

@@ -97,3 +97,5 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x16f8558	0x17f8558	20	_ZNK16CParameterPlayer10pParameterEv	CParameterPlayer::pParameter() const	concrete	typed	
 0x16f856c	0x17f856c	176	_ZN16CParameterPlayer16CopyForMultiplayEPN4Aska5Yayoi12MultiplayRPC16PlayerDetailInfoE	CParameterPlayer::CopyForMultiplay(Aska::Yayoi::MultiplayRPC::PlayerDetailInfo*)	concrete	typed	
 0x16f861c	0x17f861c	8	_ZN16CParameterPlayer10InitializeEv	CParameterPlayer::Initialize()	concrete	typed	
+0x16fef4c	0x17fef4c	544	_ZN12CParameterUI5ResetEv	CParameterUI::Reset()	parameter_ui	typed	params_layout.h CParameterUI (partial)
+0x16ffc90	0x17ffc90	880	_ZNK12CParameterUI21GetSelectMissionTitleEv	CParameterUI::GetSelectMissionTitle() const	parameter_ui	typed	params_layout.h CParameterUI (partial)

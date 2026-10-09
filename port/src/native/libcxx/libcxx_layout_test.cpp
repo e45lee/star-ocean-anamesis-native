@@ -17,6 +17,7 @@
 
 #include "native/common/guest_std.h"
 #include "native/common/test.h"
+#include "native/libcxx/libcxx_function.h"
 #include "native/libcxx/libcxx_layout.h"
 
 namespace soa {
@@ -325,4 +326,32 @@ NATIVE_TEST("libcxx/layout-function") {
 }
 
 }  // namespace
+// libcxx_function.h: std::function's inlined copy and destructor through the callable's vtable: a heap
+// callable (here a __func wrapping an empty function, 0x40 bytes) is cloned onto the heap (slot 2) and the
+// copy freed by slot 5; an empty function stays empty. (The inline form, slots 3 / 4: fakeapi/requests,
+// whose map entries hold the request lambdas inline.)
+NATIVE_TEST("libcxx/function-copy-destroy") {
+#define FUNC "St6__ndk110__function6__funcINS_8functionIFvblEEENS_9allocatorIS4_EEFvbmEE"
+    auto* vt = (const void* const*)(t.sym("_ZTVN" FUNC "E") + 0x10);
+#undef FUNC
+    alignas(16) lx::FuncFunction heap{};
+    heap.vtable = vt;
+    heap.f.f = nullptr;
+    lx::function src{};
+    src.f = reinterpret_cast<lx::function_base*>(&heap);
+    lx::function copy;
+    std::memset(&copy, 0xcd, sizeof copy);
+    lx::function_copy_construct(&copy, src);
+    auto* made = reinterpret_cast<lx::FuncFunction*>(copy.f);
+    if (!made || made == &heap || copy.is_inline()) return t.fail("heap copy: __f_ %p isn't a new heap __func", (void*)made);
+    t.expect_eq((u64)made->vtable, (u64)vt, "heap copy's vtable");
+    lx::function_destroy(&copy);  // slot 5: destroy_deallocate frees it
+
+    lx::function empty{};
+    std::memset(&copy, 0xcd, sizeof copy);
+    lx::function_copy_construct(&copy, empty);
+    t.expect_eq((u64)copy.f, (u64)0, "empty copy");
+    lx::function_destroy(&copy);  // nothing to do
+}
+
 }  // namespace soa

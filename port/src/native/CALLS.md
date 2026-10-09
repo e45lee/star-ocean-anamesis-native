@@ -1,7 +1,7 @@
 # Calls from natives: to other natives and to the guest
 
 Every guest call a native makes (`guest_call`, `guest_invoke`, `guest_call_raw`, and `live::out_call`,
-which is a `guest_call` outside a check), classified (2026-10-08, main at 76aba2f with Wave A's last pieces; tests and `*_test*` files left out).
+which is a `guest_call` outside a check), classified (2026-10-08, main at 76aba2f with Wave A's last pieces; tests and `*_test*` files left out; code review CR10 moved fakeapi's four std::function copy / destroy calls into `libcxx/libcxx_function.cpp`).
 A call to an installed native through `guest_call` already skips the JIT (`direct_thunk`: about 10 ns,
 the arguments marshalled through a `Cpu`); a native whose callee is a native of the port calls it as
 C++ instead, through `NativeCallee` (`common/native_call.h`), described below.
@@ -19,7 +19,7 @@ C++ instead, through `NativeCallee` (`common/native_call.h`), described below.
 
 | Subsystem | (a) | (b) | (c) | (d) | (e) | (h) |
 |---|---|---|---|---|---|---|
-| api | 1 | 11 | 1 | 0 | 38 | 0 |
+| api | 1 | 7 | 1 | 0 | 38 | 0 |
 | audio | 13 | 10 | 0 | 1 (not converted) | 18 | 0 |
 | common | 1 | 2 | 0 | 3 | 9 | 5 |
 | containers | 0 | 1 | 0 | 0 | 4 | 0 |
@@ -35,7 +35,7 @@ C++ instead, through `NativeCallee` (`common/native_call.h`), described below.
 | lib_vorbis | 29 | 0 | 0 | 0 | 0 | 0 |
 | lib_zlib | 3 | 0 | 0 | 0 | 0 | 0 |
 | lib_zstd | 5 | 0 | 0 | 0 | 0 | 0 |
-| libcxx | 0 | 1 | 0 | 2 | 1 | 0 |
+| libcxx | 0 | 5 | 0 | 2 | 1 | 0 |
 | master | 20 | 1 | 0 | 5 (+7 through `call`) | 5 | 3 |
 | memory | 12 | 7 | 0 | 0 | 4 | 0 |
 | params | 8 | 4 | 0 | 5 | 6 | 0 |

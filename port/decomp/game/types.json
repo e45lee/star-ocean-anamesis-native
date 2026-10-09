@@ -1,0 +1,261 @@
+{
+ "subsystem": "game",
+ "generated_by": "tools/subsystem.py export-types game",
+ "header": "port/src/native/game/game_layout.h",
+ "structs": [
+  {
+   "name": "CBase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    }
+   ],
+   "size": 8,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x18b46fc",
+     "symbol": "_ZN6CPhase5CBase9ToReleaseEv",
+     "name": "ToRelease"
+    },
+    {
+     "ghidra": "0x18b4738",
+     "symbol": "_ZN6CPhase5CBase10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x18b473c",
+     "symbol": "_ZN6CPhase5CBase7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x18b4740",
+     "symbol": "_ZN6CPhase5CBase15IsEnableReleaseEv",
+     "name": "IsEnableRelease"
+    },
+    {
+     "ghidra": "0x18b4748",
+     "symbol": "_ZN6CPhase5CBaseD2Ev",
+     "name": "~CBase"
+    },
+    {
+     "ghidra": "0x18b475c",
+     "symbol": "_ZN6CPhase5CBaseD0Ev",
+     "name": "~CBase"
+    }
+   ]
+  },
+  {
+   "name": "CPhase_Base",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "CBase"
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_step",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 12,
+     "name": "m_wait",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 16,
+     "name": "unk_10",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 20,
+     "name": "m_commonUiId",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 24,
+     "name": "unk_18",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 32,
+     "name": "m_nextPhase",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 36,
+     "name": "m_screenUiId",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    }
+   ],
+   "size": 40,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x18b4700",
+     "symbol": "_ZN11CPhase_BaseC2Ev",
+     "name": "CPhase_Base"
+    },
+    {
+     "ghidra": "0x18b4720",
+     "symbol": "_ZN11CPhase_BaseD1Ev",
+     "name": "~CPhase_Base"
+    },
+    {
+     "ghidra": "0x18b4734",
+     "symbol": "_ZN11CPhase_BaseD0Ev",
+     "name": "~CPhase_Base"
+    }
+   ]
+  },
+  {
+   "name": "CPhase",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::CFiberUnit",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 56,
+     "name": "m_present",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 60,
+     "name": "m_previous",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 64,
+     "name": "m_request",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 68,
+     "name": "unk_44",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 72,
+     "name": "m_pPresentSubstance",
+     "type": {
+      "kind": "ptr",
+      "to": "CBase"
+     },
+     "size": 8
+    }
+   ],
+   "size": 80,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x18b2f34",
+     "symbol": "_ZN6CPhaseC1Ej",
+     "name": "CPhase"
+    },
+    {
+     "ghidra": "0x18b3138",
+     "symbol": "_ZN6CPhase6SwitchEj",
+     "name": "Switch"
+    },
+    {
+     "ghidra": "0x18b3ed8",
+     "symbol": "_ZN6CPhase13RequestSwitchEj",
+     "name": "RequestSwitch"
+    },
+    {
+     "ghidra": "0x18b3ffc",
+     "symbol": "_ZN6CPhase8ProgressEv",
+     "name": "Progress"
+    }
+   ]
+  }
+ ]
+}

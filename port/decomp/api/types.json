@@ -2,5 +2,1144 @@
  "subsystem": "api",
  "generated_by": "tools/subsystem.py export-types api",
  "header": "port/src/native/api/api_layout.h",
- "structs": []
+ "structs": [
+  {
+   "name": "CApiNotify",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "unk_08",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 16,
+     "name": "m_function10",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::function",
+      "size": 48
+     },
+     "size": 48
+    },
+    {
+     "offset": 64,
+     "name": "unk_40",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 1232
+     },
+     "size": 1232
+    },
+    {
+     "offset": 1296,
+     "name": "m_fid",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 1300,
+     "name": "m_errorCode",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": true
+     },
+     "size": 4
+    },
+    {
+     "offset": 1304,
+     "name": "m_pending",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 1305,
+     "name": "unk_519",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 1312,
+   "align": 16,
+   "methods": [
+    {
+     "ghidra": "0x14baafc",
+     "symbol": "_ZN10CApiNotifyC2EP10IApiCaller",
+     "name": "CApiNotify"
+    },
+    {
+     "ghidra": "0x14bafe8",
+     "symbol": "_ZN10CApiNotify15OnProtocolErrorEN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDENS0_6StatusE",
+     "name": "OnProtocolError"
+    }
+   ]
+  },
+  {
+   "name": "Info",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "m_fid",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 4,
+     "name": "m_state",
+     "type": {
+      "kind": "int",
+      "size": 4,
+      "signed": false
+     },
+     "size": 4
+    },
+    {
+     "offset": 8,
+     "name": "m_name",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::basic_string<char>",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 32,
+     "name": "m_fn",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::function",
+      "size": 48
+     },
+     "size": 48
+    }
+   ],
+   "size": 80,
+   "align": 16,
+   "methods": [
+    {
+     "ghidra": "0x158b3b0",
+     "symbol": "_ZN13FakeApiCaller4InfoC2EN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDERKNSt6__ndk112basic_stringIcNS6_11char_traitsIcEEN9Framework13CSTLAllocatorIcNSA_22CSTLStringAllocatorInfEEEEENS6_8functionIFNS1_6StatusEPaRjEEE",
+     "name": "Info"
+    }
+   ]
+  },
+  {
+   "name": "FakeApiCaller",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "vtable",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 8,
+     "name": "m_fiber",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::kernel::CFiberUnit",
+      "size": 56
+     },
+     "size": 56
+    },
+    {
+     "offset": 64,
+     "name": "m_infos",
+     "type": {
+      "kind": "bytes",
+      "ctype": "soa::native::libcxx::tree<soa::native::libcxx::pair<unsigned int, Info> >",
+      "size": 24
+     },
+     "size": 24
+    },
+    {
+     "offset": 88,
+     "name": "unk_58",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 8
+     },
+     "size": 8
+    },
+    {
+     "offset": 96,
+     "name": "m_notify",
+     "type": {
+      "kind": "struct",
+      "name": "CApiNotify"
+     },
+     "size": 1312
+    }
+   ],
+   "size": 1408,
+   "align": 16,
+   "methods": [
+    {
+     "ghidra": "0x158ac38",
+     "symbol": "_ZN13FakeApiCallerC1Ev",
+     "name": "FakeApiCaller"
+    },
+    {
+     "ghidra": "0x158ad14",
+     "symbol": "_ZN13FakeApiCallerD2Ev",
+     "name": "~FakeApiCaller"
+    },
+    {
+     "ghidra": "0x158adf8",
+     "symbol": "_ZN13FakeApiCallerD0Ev",
+     "name": "~FakeApiCaller"
+    },
+    {
+     "ghidra": "0x158aef8",
+     "symbol": "_ZN13FakeApiCaller10InitializeEv",
+     "name": "Initialize"
+    },
+    {
+     "ghidra": "0x158af04",
+     "symbol": "_ZN13FakeApiCaller7ReleaseEv",
+     "name": "Release"
+    },
+    {
+     "ghidra": "0x158af28",
+     "symbol": "_ZN13FakeApiCaller8ProgressEv",
+     "name": "Progress"
+    },
+    {
+     "ghidra": "0x158b0f0",
+     "symbol": "_ZNK13FakeApiCaller12IsRequestingEN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDE",
+     "name": "IsRequesting"
+    },
+    {
+     "ghidra": "0x158b178",
+     "symbol": "_ZN13FakeApiCaller12AddLocalFileEN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDEPKcNSt6__ndk18functionIFNS0_6StatusEPaRjEEE",
+     "name": "AddLocalFile"
+    },
+    {
+     "ghidra": "0x158b4f8",
+     "symbol": "_ZN13FakeApiCaller5LoginEv",
+     "name": "Login"
+    },
+    {
+     "ghidra": "0x158b578",
+     "symbol": "_ZN13FakeApiCaller11SimpleLoginEv",
+     "name": "SimpleLogin"
+    },
+    {
+     "ghidra": "0x158b5f8",
+     "symbol": "_ZN13FakeApiCaller12CreatePlayerEPKaS1_",
+     "name": "CreatePlayer"
+    },
+    {
+     "ghidra": "0x158b678",
+     "symbol": "_ZN13FakeApiCaller9GetPlayerEv",
+     "name": "GetPlayer"
+    },
+    {
+     "ghidra": "0x158b6f8",
+     "symbol": "_ZN13FakeApiCaller14GetPlayMissionEv",
+     "name": "GetPlayMission"
+    },
+    {
+     "ghidra": "0x158b778",
+     "symbol": "_ZN13FakeApiCaller12SearchPlayerEPKa",
+     "name": "SearchPlayer"
+    },
+    {
+     "ghidra": "0x158b7f8",
+     "symbol": "_ZN13FakeApiCaller16UpdatePlayerNameEPKa",
+     "name": "UpdatePlayerName"
+    },
+    {
+     "ghidra": "0x158b878",
+     "symbol": "_ZN13FakeApiCaller19UpdateKiyakuVersionEPKa",
+     "name": "UpdateKiyakuVersion"
+    },
+    {
+     "ghidra": "0x158b8f8",
+     "symbol": "_ZN13FakeApiCaller12MissionStartEjjjmjmj",
+     "name": "MissionStart"
+    },
+    {
+     "ghidra": "0x158b978",
+     "symbol": "_ZN13FakeApiCaller14MissionRestartEv",
+     "name": "MissionRestart"
+    },
+    {
+     "ghidra": "0x158b9f8",
+     "symbol": "_ZN13FakeApiCaller19MultiMissionRestartEv",
+     "name": "MultiMissionRestart"
+    },
+    {
+     "ghidra": "0x158ba78",
+     "symbol": "_ZN13FakeApiCaller20TrainingMissionStartEjjm",
+     "name": "TrainingMissionStart"
+    },
+    {
+     "ghidra": "0x158baf8",
+     "symbol": "_ZN13FakeApiCaller10MissionEndEjj",
+     "name": "MissionEnd"
+    },
+    {
+     "ghidra": "0x158bb78",
+     "symbol": "_ZN13FakeApiCaller11MissionTalkEjjjh",
+     "name": "MissionTalk"
+    },
+    {
+     "ghidra": "0x158bbf8",
+     "symbol": "_ZN13FakeApiCaller13MissionFailedEjj",
+     "name": "MissionFailed"
+    },
+    {
+     "ghidra": "0x158bc78",
+     "symbol": "_ZN13FakeApiCaller14BoostCharacterEmjj",
+     "name": "BoostCharacter"
+    },
+    {
+     "ghidra": "0x158bcf8",
+     "symbol": "_ZN13FakeApiCaller18EvolutionCharacterEm",
+     "name": "EvolutionCharacter"
+    },
+    {
+     "ghidra": "0x158bd78",
+     "symbol": "_ZN13FakeApiCaller19LimitBreakCharacterEmj",
+     "name": "LimitBreakCharacter"
+    },
+    {
+     "ghidra": "0x158bdf8",
+     "symbol": "_ZN13FakeApiCaller26LimitBreakCharacter_LegacyEmj",
+     "name": "LimitBreakCharacter_Legacy"
+    },
+    {
+     "ghidra": "0x158be78",
+     "symbol": "_ZN13FakeApiCaller18AddStatusCharacterEmjj",
+     "name": "AddStatusCharacter"
+    },
+    {
+     "ghidra": "0x158bef8",
+     "symbol": "_ZN13FakeApiCaller11ItemComposeEmjz",
+     "name": "ItemCompose"
+    },
+    {
+     "ghidra": "0x158bf94",
+     "symbol": "_ZN13FakeApiCaller16ItemComposeArrayEmRKN9Framework10CSTLVectorImEE",
+     "name": "ItemComposeArray"
+    },
+    {
+     "ghidra": "0x158c014",
+     "symbol": "_ZN13FakeApiCaller11ItemGradeUpEmjz",
+     "name": "ItemGradeUp"
+    },
+    {
+     "ghidra": "0x158c0b0",
+     "symbol": "_ZN13FakeApiCaller16ItemGradeUpArrayEmRKN9Framework10CSTLVectorImEE",
+     "name": "ItemGradeUpArray"
+    },
+    {
+     "ghidra": "0x158c130",
+     "symbol": "_ZN13FakeApiCaller11UpdatePartyEjmmm",
+     "name": "UpdateParty"
+    },
+    {
+     "ghidra": "0x158c1b0",
+     "symbol": "_ZN13FakeApiCaller13UpdateSupportEm",
+     "name": "UpdateSupport"
+    },
+    {
+     "ghidra": "0x158c230",
+     "symbol": "_ZN13FakeApiCaller11EquipWeaponEmm",
+     "name": "EquipWeapon"
+    },
+    {
+     "ghidra": "0x158c2b0",
+     "symbol": "_ZN13FakeApiCaller14EquipAccessoryEmm",
+     "name": "EquipAccessory"
+    },
+    {
+     "ghidra": "0x158c330",
+     "symbol": "_ZN13FakeApiCaller10EquipSkillEmjjj",
+     "name": "EquipSkill"
+    },
+    {
+     "ghidra": "0x158c3b0",
+     "symbol": "_ZN13FakeApiCaller9EquipAutoEm",
+     "name": "EquipAuto"
+    },
+    {
+     "ghidra": "0x158c430",
+     "symbol": "_ZN13FakeApiCaller10GetPresentEmz",
+     "name": "GetPresent"
+    },
+    {
+     "ghidra": "0x158c4cc",
+     "symbol": "_ZN13FakeApiCaller15GetPresentArrayERKN9Framework10CSTLVectorImEE",
+     "name": "GetPresentArray"
+    },
+    {
+     "ghidra": "0x158c54c",
+     "symbol": "_ZN13FakeApiCaller11PresentListEv",
+     "name": "PresentList"
+    },
+    {
+     "ghidra": "0x158c5cc",
+     "symbol": "_ZN13FakeApiCaller8LockItemEjz",
+     "name": "LockItem"
+    },
+    {
+     "ghidra": "0x158c668",
+     "symbol": "_ZN13FakeApiCaller13LockItemArrayERKN9Framework10CSTLVectorImEE",
+     "name": "LockItemArray"
+    },
+    {
+     "ghidra": "0x158c6e8",
+     "symbol": "_ZN13FakeApiCaller10UnlockItemEjz",
+     "name": "UnlockItem"
+    },
+    {
+     "ghidra": "0x158c784",
+     "symbol": "_ZN13FakeApiCaller15UnlockItemArrayERKN9Framework10CSTLVectorImEE",
+     "name": "UnlockItemArray"
+    },
+    {
+     "ghidra": "0x158c804",
+     "symbol": "_ZN13FakeApiCaller12ClearNewItemERKN9Framework10CSTLVectorImEE",
+     "name": "ClearNewItem"
+    },
+    {
+     "ghidra": "0x158c884",
+     "symbol": "_ZN13FakeApiCaller17ClearNewStackItemERKN9Framework10CSTLVectorIjEE",
+     "name": "ClearNewStackItem"
+    },
+    {
+     "ghidra": "0x158c904",
+     "symbol": "_ZN13FakeApiCaller17ClearNewCharacterERKN9Framework10CSTLVectorImEE",
+     "name": "ClearNewCharacter"
+    },
+    {
+     "ghidra": "0x158c984",
+     "symbol": "_ZN13FakeApiCaller8SellItemEjz",
+     "name": "SellItem"
+    },
+    {
+     "ghidra": "0x158ca20",
+     "symbol": "_ZN13FakeApiCaller13SellItemArrayERKN9Framework10CSTLVectorImEE",
+     "name": "SellItemArray"
+    },
+    {
+     "ghidra": "0x158caa0",
+     "symbol": "_ZN13FakeApiCaller13SellStackItemEjj",
+     "name": "SellStackItem"
+    },
+    {
+     "ghidra": "0x158cb20",
+     "symbol": "_ZN13FakeApiCaller11UseHealItemEjj",
+     "name": "UseHealItem"
+    },
+    {
+     "ghidra": "0x158cba0",
+     "symbol": "_ZN13FakeApiCaller15UpdateItemStockEv",
+     "name": "UpdateItemStock"
+    },
+    {
+     "ghidra": "0x158cc20",
+     "symbol": "_ZN13FakeApiCaller14ExshopExchangeEjj",
+     "name": "ExshopExchange"
+    },
+    {
+     "ghidra": "0x158cca0",
+     "symbol": "_ZN13FakeApiCaller18ExshopExchangeListEv",
+     "name": "ExshopExchangeList"
+    },
+    {
+     "ghidra": "0x158cd20",
+     "symbol": "_ZN13FakeApiCaller10ExItemShopEj",
+     "name": "ExItemShop"
+    },
+    {
+     "ghidra": "0x158cda0",
+     "symbol": "_ZN13FakeApiCaller15MaterialComposeEjj",
+     "name": "MaterialCompose"
+    },
+    {
+     "ghidra": "0x158ce20",
+     "symbol": "_ZN13FakeApiCaller11StaminaHealEv",
+     "name": "StaminaHeal"
+    },
+    {
+     "ghidra": "0x158cea0",
+     "symbol": "_ZN13FakeApiCaller15UpdateFollowMaxEv",
+     "name": "UpdateFollowMax"
+    },
+    {
+     "ghidra": "0x158cf20",
+     "symbol": "_ZN13FakeApiCaller9GachaOnceEjPKa",
+     "name": "GachaOnce"
+    },
+    {
+     "ghidra": "0x158cfa0",
+     "symbol": "_ZN13FakeApiCaller5GachaEjPKaj",
+     "name": "Gacha"
+    },
+    {
+     "ghidra": "0x158d020",
+     "symbol": "_ZN13FakeApiCaller11GachaTicketEjjPKa",
+     "name": "GachaTicket"
+    },
+    {
+     "ghidra": "0x158d0a0",
+     "symbol": "_ZN13FakeApiCaller8BoxGachaEjj",
+     "name": "BoxGacha"
+    },
+    {
+     "ghidra": "0x158d120",
+     "symbol": "_ZN13FakeApiCaller13ResetBoxGachaEj",
+     "name": "ResetBoxGacha"
+    },
+    {
+     "ghidra": "0x158d1a0",
+     "symbol": "_ZN13FakeApiCaller11GetBoxGachaEv",
+     "name": "GetBoxGacha"
+    },
+    {
+     "ghidra": "0x158d220",
+     "symbol": "_ZN13FakeApiCaller13SaleGachaOnceEjPKa",
+     "name": "SaleGachaOnce"
+    },
+    {
+     "ghidra": "0x158d2a0",
+     "symbol": "_ZN13FakeApiCaller9SaleGachaEjPKa",
+     "name": "SaleGacha"
+    },
+    {
+     "ghidra": "0x158d320",
+     "symbol": "_ZN13FakeApiCaller12GetGachaRateEjPKa",
+     "name": "GetGachaRate"
+    },
+    {
+     "ghidra": "0x158d3a0",
+     "symbol": "_ZN13FakeApiCaller10FollowListEv",
+     "name": "FollowList"
+    },
+    {
+     "ghidra": "0x158d420",
+     "symbol": "_ZN13FakeApiCaller9FollowAddEj",
+     "name": "FollowAdd"
+    },
+    {
+     "ghidra": "0x158d4a0",
+     "symbol": "_ZN13FakeApiCaller12FollowRemoveEj",
+     "name": "FollowRemove"
+    },
+    {
+     "ghidra": "0x158d520",
+     "symbol": "_ZN13FakeApiCaller9BlacklistEv",
+     "name": "Blacklist"
+    },
+    {
+     "ghidra": "0x158d5a0",
+     "symbol": "_ZN13FakeApiCaller12BlacklistAddEj",
+     "name": "BlacklistAdd"
+    },
+    {
+     "ghidra": "0x158d620",
+     "symbol": "_ZN13FakeApiCaller15BlacklistRemoveEj",
+     "name": "BlacklistRemove"
+    },
+    {
+     "ghidra": "0x158d6a0",
+     "symbol": "_ZN13FakeApiCaller14NeighborRegistEff",
+     "name": "NeighborRegist"
+    },
+    {
+     "ghidra": "0x158d720",
+     "symbol": "_ZN13FakeApiCaller12NeighborListEff",
+     "name": "NeighborList"
+    },
+    {
+     "ghidra": "0x158d7a0",
+     "symbol": "_ZN13FakeApiCaller14LocationRegistEff",
+     "name": "LocationRegist"
+    },
+    {
+     "ghidra": "0x158d820",
+     "symbol": "_ZN13FakeApiCaller21AchievementActiveListEj",
+     "name": "AchievementActiveList"
+    },
+    {
+     "ghidra": "0x158d8a0",
+     "symbol": "_ZN13FakeApiCaller18AchievementReceiveEm",
+     "name": "AchievementReceive"
+    },
+    {
+     "ghidra": "0x158d920",
+     "symbol": "_ZN13FakeApiCaller22AchievementListReceiveERKN9Framework10CSTLVectorImEE",
+     "name": "AchievementListReceive"
+    },
+    {
+     "ghidra": "0x158d92c",
+     "symbol": "_ZN13FakeApiCaller22AchievementReceiveListEv",
+     "name": "AchievementReceiveList"
+    },
+    {
+     "ghidra": "0x158d9ac",
+     "symbol": "_ZN13FakeApiCaller10UpdateHomeEm",
+     "name": "UpdateHome"
+    },
+    {
+     "ghidra": "0x158da2c",
+     "symbol": "_ZN13FakeApiCaller14UpdateTutorialEm",
+     "name": "UpdateTutorial"
+    },
+    {
+     "ghidra": "0x158daac",
+     "symbol": "_ZN13FakeApiCaller12NoLoginStartEPKa",
+     "name": "NoLoginStart"
+    },
+    {
+     "ghidra": "0x158db2c",
+     "symbol": "_ZN13FakeApiCaller13GetServerTimeEv",
+     "name": "GetServerTime"
+    },
+    {
+     "ghidra": "0x158dbac",
+     "symbol": "_ZN13FakeApiCaller16CbtCertificationEPKa",
+     "name": "CbtCertification"
+    },
+    {
+     "ghidra": "0x158dc2c",
+     "symbol": "_ZN13FakeApiCaller12SetStampSlotERKN9Framework10CSTLVectorIjEE",
+     "name": "SetStampSlot"
+    },
+    {
+     "ghidra": "0x158dcac",
+     "symbol": "_ZN13FakeApiCaller8SetTitleEj",
+     "name": "SetTitle"
+    },
+    {
+     "ghidra": "0x158dd2c",
+     "symbol": "_ZN13FakeApiCaller17UpdateAwakenLevelEmj",
+     "name": "UpdateAwakenLevel"
+    },
+    {
+     "ghidra": "0x158ddac",
+     "symbol": "_ZN13FakeApiCaller21DeepSpaceMissionStartEjjRKN9Framework10CSTLVectorImEE",
+     "name": "DeepSpaceMissionStart"
+    },
+    {
+     "ghidra": "0x158de2c",
+     "symbol": "_ZN13FakeApiCaller19DeepSpaceMissionEndEj",
+     "name": "DeepSpaceMissionEnd"
+    },
+    {
+     "ghidra": "0x158deac",
+     "symbol": "_ZN13FakeApiCaller22DeepSpaceMissionEndNowEj",
+     "name": "DeepSpaceMissionEndNow"
+    },
+    {
+     "ghidra": "0x158df2c",
+     "symbol": "_ZN13FakeApiCaller25DeepSpaceAutoMemberSelectEjj",
+     "name": "DeepSpaceAutoMemberSelect"
+    },
+    {
+     "ghidra": "0x158dfac",
+     "symbol": "_ZN13FakeApiCaller12SendErrorLogEPKa",
+     "name": "SendErrorLog"
+    },
+    {
+     "ghidra": "0x158e02c",
+     "symbol": "_ZN13FakeApiCaller12UseFavorItemEjjj",
+     "name": "UseFavorItem"
+    },
+    {
+     "ghidra": "0x158e0ac",
+     "symbol": "_ZN13FakeApiCaller18StaminaHealByFavorEv",
+     "name": "StaminaHealByFavor"
+    },
+    {
+     "ghidra": "0x158e12c",
+     "symbol": "_ZN13FakeApiCaller16UpdateFavorByTapEj",
+     "name": "UpdateFavorByTap"
+    },
+    {
+     "ghidra": "0x158e1ac",
+     "symbol": "_ZN13FakeApiCaller14GetMasteryInfoEv",
+     "name": "GetMasteryInfo"
+    },
+    {
+     "ghidra": "0x158e22c",
+     "symbol": "_ZN13FakeApiCaller12TrainMasteryEmmhjhh",
+     "name": "TrainMastery"
+    },
+    {
+     "ghidra": "0x158e2ac",
+     "symbol": "_ZN13FakeApiCaller12ResetMasteryEmm",
+     "name": "ResetMastery"
+    },
+    {
+     "ghidra": "0x158e32c",
+     "symbol": "_ZN13FakeApiCaller11GetDecoInfoEv",
+     "name": "GetDecoInfo"
+    },
+    {
+     "ghidra": "0x158e3ac",
+     "symbol": "_ZN13FakeApiCaller18FavoriteDecoObjectERKN9Framework10CSTLVectorIjEE",
+     "name": "FavoriteDecoObject"
+    },
+    {
+     "ghidra": "0x158e42c",
+     "symbol": "_ZN13FakeApiCaller20UnFavoriteDecoObjectERKN9Framework10CSTLVectorIjEE",
+     "name": "UnFavoriteDecoObject"
+    },
+    {
+     "ghidra": "0x158e4ac",
+     "symbol": "_ZN13FakeApiCaller16SetCharacterDecoEv",
+     "name": "SetCharacterDeco"
+    },
+    {
+     "ghidra": "0x158e52c",
+     "symbol": "_ZN13FakeApiCaller5ResetEv",
+     "name": "Reset"
+    },
+    {
+     "ghidra": "0x158e530",
+     "symbol": "_ZN13FakeApiCaller11ResetBRIDGEEv",
+     "name": "ResetBRIDGE"
+    },
+    {
+     "ghidra": "0x158e534",
+     "symbol": "_ZN13FakeApiCaller8SetRetryEb",
+     "name": "SetRetry"
+    },
+    {
+     "ghidra": "0x158e538",
+     "symbol": "_ZN13FakeApiCaller11BeginBridgeENSt6__ndk18functionIFvRN4Aska6StatusEEEE",
+     "name": "BeginBridge"
+    },
+    {
+     "ghidra": "0x158e544",
+     "symbol": "_ZN13FakeApiCaller9EndBridgeEv",
+     "name": "EndBridge"
+    },
+    {
+     "ghidra": "0x158e550",
+     "symbol": "_ZN13FakeApiCaller17GetBirthYearMonthEv",
+     "name": "GetBirthYearMonth"
+    },
+    {
+     "ghidra": "0x158e55c",
+     "symbol": "_ZN13FakeApiCaller20UpdateBirthYearMonthEth",
+     "name": "UpdateBirthYearMonth"
+    },
+    {
+     "ghidra": "0x158e590",
+     "symbol": "_ZN13FakeApiCaller14GetStorageInfoEv",
+     "name": "GetStorageInfo"
+    },
+    {
+     "ghidra": "0x158e598",
+     "symbol": "_ZN13FakeApiCaller21GetOneTimeStorageInfoEv",
+     "name": "GetOneTimeStorageInfo"
+    },
+    {
+     "ghidra": "0x158e5a0",
+     "symbol": "_ZN13FakeApiCaller11DepositItemERKN9Framework10CSTLVectorImEE",
+     "name": "DepositItem"
+    },
+    {
+     "ghidra": "0x158e5a8",
+     "symbol": "_ZN13FakeApiCaller23WithdrawItemFromStorageERKN9Framework10CSTLVectorImEE",
+     "name": "WithdrawItemFromStorage"
+    },
+    {
+     "ghidra": "0x158e5b0",
+     "symbol": "_ZN13FakeApiCaller30WithdrawItemFromOneTimeStorageEjj",
+     "name": "WithdrawItemFromOneTimeStorage"
+    },
+    {
+     "ghidra": "0x158e5b8",
+     "symbol": "_ZN13FakeApiCaller34BulkWithdrawItemFromOneTimeStorageERKN9Framework10CSTLVectorIjEES4_",
+     "name": "BulkWithdrawItemFromOneTimeStorage"
+    },
+    {
+     "ghidra": "0x158e5c0",
+     "symbol": "_ZN13FakeApiCaller20SellItemsFromStorageERKN9Framework10CSTLVectorImEE",
+     "name": "SellItemsFromStorage"
+    },
+    {
+     "ghidra": "0x158e5c8",
+     "symbol": "_ZN13FakeApiCaller26ClearNewOneTimeStorageItemERKN9Framework10CSTLVectorIjEE",
+     "name": "ClearNewOneTimeStorageItem"
+    },
+    {
+     "ghidra": "0x158e5d0",
+     "symbol": "_ZN13FakeApiCaller15LockStorageItemERKN9Framework10CSTLVectorImEE",
+     "name": "LockStorageItem"
+    },
+    {
+     "ghidra": "0x158e5d8",
+     "symbol": "_ZN13FakeApiCaller17UnlockStorageItemERKN9Framework10CSTLVectorImEE",
+     "name": "UnlockStorageItem"
+    },
+    {
+     "ghidra": "0x158e5e0",
+     "symbol": "_ZN13FakeApiCaller11GetGearInfoEv",
+     "name": "GetGearInfo"
+    },
+    {
+     "ghidra": "0x158e5e8",
+     "symbol": "_ZN13FakeApiCaller10AttachGearEmmj",
+     "name": "AttachGear"
+    },
+    {
+     "ghidra": "0x158e5f0",
+     "symbol": "_ZN13FakeApiCaller12ClearNewGearERKN9Framework10CSTLVectorImEE",
+     "name": "ClearNewGear"
+    },
+    {
+     "ghidra": "0x158e5f8",
+     "symbol": "_ZN13FakeApiCaller8SellGearERKN9Framework10CSTLVectorImEE",
+     "name": "SellGear"
+    },
+    {
+     "ghidra": "0x158e600",
+     "symbol": "_ZN13FakeApiCaller10RemoveGearEm",
+     "name": "RemoveGear"
+    },
+    {
+     "ghidra": "0x158e608",
+     "symbol": "_ZN13FakeApiCaller12GenerateGearEmjRKN9Framework10CSTLVectorImEE",
+     "name": "GenerateGear"
+    },
+    {
+     "ghidra": "0x158e610",
+     "symbol": "_ZN13FakeApiCaller15UpdateGearStockEv",
+     "name": "UpdateGearStock"
+    },
+    {
+     "ghidra": "0x158e618",
+     "symbol": "_ZN13FakeApiCaller12UpdateConfigEjPKaj",
+     "name": "UpdateConfig"
+    },
+    {
+     "ghidra": "0x158e620",
+     "symbol": "_ZN13FakeApiCaller9GetConfigEv",
+     "name": "GetConfig"
+    },
+    {
+     "ghidra": "0x158e628",
+     "symbol": "_ZN13FakeApiCaller11ResetConfigEv",
+     "name": "ResetConfig"
+    },
+    {
+     "ghidra": "0x158e630",
+     "symbol": "_ZN13FakeApiCaller14GetGachaInDataEv",
+     "name": "GetGachaInData"
+    },
+    {
+     "ghidra": "0x158e638",
+     "symbol": "_ZN13FakeApiCaller15MissionContinueEb",
+     "name": "MissionContinue"
+    },
+    {
+     "ghidra": "0x158e648",
+     "symbol": "_ZN13FakeApiCaller11MissionLoseEv",
+     "name": "MissionLose"
+    },
+    {
+     "ghidra": "0x158e658",
+     "symbol": "_ZN13FakeApiCaller16GetWorldBossInfoEj",
+     "name": "GetWorldBossInfo"
+    },
+    {
+     "ghidra": "0x158e660",
+     "symbol": "_ZN13FakeApiCaller19GetWorldMapInfoListEj",
+     "name": "GetWorldMapInfoList"
+    },
+    {
+     "ghidra": "0x158e668",
+     "symbol": "_ZN13FakeApiCaller26GetScenarioLibraryInfoListEj",
+     "name": "GetScenarioLibraryInfoList"
+    },
+    {
+     "ghidra": "0x158e670",
+     "symbol": "_ZN13FakeApiCaller19DeepSpaceActiveListEv",
+     "name": "DeepSpaceActiveList"
+    },
+    {
+     "ghidra": "0x158e678",
+     "symbol": "_ZN13FakeApiCaller10ChangeRoleEmj",
+     "name": "ChangeRole"
+    },
+    {
+     "ghidra": "0x158e680",
+     "symbol": "_ZN13FakeApiCaller16InheritAccessoryEmm",
+     "name": "InheritAccessory"
+    },
+    {
+     "ghidra": "0x158e68c",
+     "symbol": "_ZN13FakeApiCaller8CoinListEv",
+     "name": "CoinList"
+    },
+    {
+     "ghidra": "0x158e694",
+     "symbol": "_ZN13FakeApiCaller17CoinDepositCreateEhiPKc",
+     "name": "CoinDepositCreate"
+    },
+    {
+     "ghidra": "0x158e69c",
+     "symbol": "_ZN13FakeApiCaller20CoinDepositIOSUpdateEjPKcS1_",
+     "name": "CoinDepositIOSUpdate"
+    },
+    {
+     "ghidra": "0x158e6a8",
+     "symbol": "_ZN13FakeApiCaller24CoinDepositAndroidUpdateEjPKcS1_",
+     "name": "CoinDepositAndroidUpdate"
+    },
+    {
+     "ghidra": "0x158e6b4",
+     "symbol": "_ZN13FakeApiCaller23CoinDepositAmazonUpdateEjPKcS1_",
+     "name": "CoinDepositAmazonUpdate"
+    },
+    {
+     "ghidra": "0x158e6c0",
+     "symbol": "_ZN13FakeApiCaller12ItemShopListEv",
+     "name": "ItemShopList"
+    },
+    {
+     "ghidra": "0x158e6cc",
+     "symbol": "_ZN13FakeApiCaller18DirectItemShopListEv",
+     "name": "DirectItemShopList"
+    },
+    {
+     "ghidra": "0x158e6e0",
+     "symbol": "_ZN13FakeApiCaller20Home3DAnd2DSwitchingEh",
+     "name": "Home3DAnd2DSwitching"
+    },
+    {
+     "ghidra": "0x158e6ec",
+     "symbol": "_ZN13FakeApiCaller12ChangeMascotEj",
+     "name": "ChangeMascot"
+    },
+    {
+     "ghidra": "0x158e700",
+     "symbol": "_ZN13FakeApiCaller20SendGuideInformationEj",
+     "name": "SendGuideInformation"
+    },
+    {
+     "ghidra": "0x158e708",
+     "symbol": "_ZN13FakeApiCaller18ReadExpirationInfoERKN9Framework10CSTLVectorIjEE",
+     "name": "ReadExpirationInfo"
+    },
+    {
+     "ghidra": "0x158e72c",
+     "symbol": "_ZN13FakeApiCaller15ReturnSphere211Ev",
+     "name": "ReturnSphere211"
+    },
+    {
+     "ghidra": "0x158e734",
+     "symbol": "_ZN13FakeApiCaller20Sphere211StaminaHealEv",
+     "name": "Sphere211StaminaHeal"
+    },
+    {
+     "ghidra": "0x158e73c",
+     "symbol": "_ZN13FakeApiCaller22Sphere211UseRerollItemEv",
+     "name": "Sphere211UseRerollItem"
+    },
+    {
+     "ghidra": "0x158e744",
+     "symbol": "_ZN13FakeApiCaller19Sphere211FloorClearEj",
+     "name": "Sphere211FloorClear"
+    },
+    {
+     "ghidra": "0x158e74c",
+     "symbol": "_ZN13FakeApiCaller22Sphere211SelectedFloorEj",
+     "name": "Sphere211SelectedFloor"
+    },
+    {
+     "ghidra": "0x158e804",
+     "symbol": "_ZN13FakeApiCaller22Debug_GradeUpCharacterEv",
+     "name": "Debug_GradeUpCharacter"
+    },
+    {
+     "ghidra": "0x158e80c",
+     "symbol": "_ZN13FakeApiCaller13Debug_GetCoinEj",
+     "name": "Debug_GetCoin"
+    },
+    {
+     "ghidra": "0x158e814",
+     "symbol": "_ZN13FakeApiCaller12Debug_GetFolEj",
+     "name": "Debug_GetFol"
+    },
+    {
+     "ghidra": "0x158e81c",
+     "symbol": "_ZN13FakeApiCaller18Debug_GetCharacterEv",
+     "name": "Debug_GetCharacter"
+    },
+    {
+     "ghidra": "0x158e824",
+     "symbol": "_ZN13FakeApiCaller13Debug_GetItemEv",
+     "name": "Debug_GetItem"
+    },
+    {
+     "ghidra": "0x158e82c",
+     "symbol": "_ZN13FakeApiCaller17Debug_OpenMissionEv",
+     "name": "Debug_OpenMission"
+    },
+    {
+     "ghidra": "0x158e834",
+     "symbol": "_ZN13FakeApiCaller18Debug_DeletePlayerEv",
+     "name": "Debug_DeletePlayer"
+    },
+    {
+     "ghidra": "0x158e83c",
+     "symbol": "_ZN13FakeApiCaller14Debug_TowerMaxEv",
+     "name": "Debug_TowerMax"
+    },
+    {
+     "ghidra": "0x158e844",
+     "symbol": "_ZN13FakeApiCaller21Debug_DeepMissionDropEjjjRKN9Framework10CSTLVectorImEE",
+     "name": "Debug_DeepMissionDrop"
+    },
+    {
+     "ghidra": "0x158e84c",
+     "symbol": "_ZN13FakeApiCaller15Debug_DeepBonusEjj",
+     "name": "Debug_DeepBonus"
+    },
+    {
+     "ghidra": "0x158e854",
+     "symbol": "_ZN13FakeApiCaller26Debug_DeepBonusRareMissionEjjjRKN9Framework10CSTLVectorImEE",
+     "name": "Debug_DeepBonusRareMission"
+    },
+    {
+     "ghidra": "0x158e85c",
+     "symbol": "_ZN13FakeApiCaller10Debug_GearEmjRKN9Framework10CSTLVectorImEEjj",
+     "name": "Debug_Gear"
+    },
+    {
+     "ghidra": "0x158e864",
+     "symbol": "_ZN13FakeApiCaller14Debug_GearDropEjj",
+     "name": "Debug_GearDrop"
+    },
+    {
+     "ghidra": "0x158e86c",
+     "symbol": "_ZN13FakeApiCaller18Debug_BarneyChanceEj",
+     "name": "Debug_BarneyChance"
+    },
+    {
+     "ghidra": "0x158e874",
+     "symbol": "_ZN13FakeApiCaller21Debug_FavorLoginBonusEj",
+     "name": "Debug_FavorLoginBonus"
+    },
+    {
+     "ghidra": "0x158e87c",
+     "symbol": "_ZN13FakeApiCaller26Debug_Sphere211TreasureBoxEjjj",
+     "name": "Debug_Sphere211TreasureBox"
+    },
+    {
+     "ghidra": "0x158e884",
+     "symbol": "_ZN13FakeApiCaller26Debug_Sphere211LotFloorNumEjj",
+     "name": "Debug_Sphere211LotFloorNum"
+    },
+    {
+     "ghidra": "0x158e8b4",
+     "symbol": "_ZN13FakeApiCaller13GetApiWatcherEv",
+     "name": "GetApiWatcher"
+    },
+    {
+     "ghidra": "0x158e8bc",
+     "symbol": "_ZN13FakeApiCaller13DeleteWatcherEv",
+     "name": "DeleteWatcher"
+    },
+    {
+     "ghidra": "0x158e8c0",
+     "symbol": "_ZN13FakeApiCaller12GetApiNotifyEv",
+     "name": "GetApiNotify"
+    },
+    {
+     "ghidra": "0x158e8c8",
+     "symbol": "_ZNK13FakeApiCaller8LoggedInEv",
+     "name": "LoggedIn"
+    },
+    {
+     "ghidra": "0x158e8d0",
+     "symbol": "_ZNK13FakeApiCaller9IsSuccessEN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDE",
+     "name": "IsSuccess"
+    },
+    {
+     "ghidra": "0x158e8d8",
+     "symbol": "_ZNK13FakeApiCaller9IsFailureEN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDE",
+     "name": "IsFailure"
+    },
+    {
+     "ghidra": "0x158e8e0",
+     "symbol": "_ZNK13FakeApiCaller9ErrorCodeEN4Aska5Yayoi7GameRPC12GameProtocol10FunctionIDE",
+     "name": "ErrorCode"
+    },
+    {
+     "ghidra": "0x158e8e8",
+     "symbol": "_ZN13FakeApiCaller20SetSharedSecurityKeyEPKa",
+     "name": "SetSharedSecurityKey"
+    },
+    {
+     "ghidra": "0x158e8ec",
+     "symbol": "_ZN13FakeApiCaller13UpdateSessionEPKa",
+     "name": "UpdateSession"
+    }
+   ]
+  }
+ ]
 }

@@ -34,11 +34,13 @@
 #include "native/common/guest_assert.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
+#include "native/common/native_method.h"
 #include "native/api/gen/api_addresses.h"
 #include "native/common/gen/common_addresses.h"
 #include "native/data_formats/data_formats_layout.h"
 #include "native/info/info_layout.h"
 #include "native/libcxx/libcxx_function.h"
+#include "native/resource/resource_layout.h"
 #include "soaserver/api_campaign.h"
 #include "soa/chash32.h"
 #include "soaserver/events.h"
@@ -457,9 +459,9 @@ void dump_schema(const char* path) {
         dump_schema_info(f, dict, info, 0);
     }
     fprintf(f, "# CParameterManager+0x600 (map or array under its own key)\n");
-    dump_schema_info(f, dict, &pm->m_infoManager.base, 0);
+    dump_schema_info(f, dict, &pm->m_infoManager, 0);
     fprintf(f, "# CParameterManager+0xf70: child infos by name hash\n");
-    pm->m_infoManager.m_infosByHash.for_each(
+    pm->m_infoManagerChild950.m_children.for_each(
         [&](info::PropertyNode* n) { dump_schema_info(f, dict, static_cast<info::InfoBase*>(n->value.second), 0); });
     // Array element classes (InfoBaseArray<T> registers no properties of its own): a fresh
     // element, constructed and initialised, with its property offsets.
@@ -1534,6 +1536,19 @@ NATIVE_TEST("fakeapi/lifetime") {
             t.fail("%s:\n  guest:%s\n  native:%s", cs.dtor, a.c_str(), b.c_str());
         }
     }
+}
+
+}  // namespace soa::native::fakeapi
+
+namespace soa::native::fakeapi {
+
+// The vtable slots this file calls on the game's objects, on the guest's vtables.
+NATIVE_TEST("fakeapi/slots") {
+    auto* el = (const u64*)(t.sym("_ZTVN9Framework16CResourceElementE") + 0x10);
+    t.expect_eq(el[resource::CResourceElement::kSlotPImage], t.sym("_ZNK9Framework16CResourceElement6pImageEv"), "CResourceElement slot 10: pImage");
+    auto* kernel = (const u64*)(t.sym("_ZTVN9Framework12CFiberKernelE") + 0x10);
+    t.expect_eq(kernel[kernel::CFiberUnit::kSlotCreateSubFiber], t.sym("_ZN9Framework12CFiberKernel14CreateSubFiberEPNS_10CFiberUnitE"),
+                "CFiberKernel slot 9: CreateSubFiber");
 }
 
 }  // namespace soa::native::fakeapi

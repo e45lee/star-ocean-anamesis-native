@@ -80,9 +80,8 @@ die() { echo "FAIL: $*"; exit 1; }
 [ -x "$emu" ] || die "$emu not built (scripts/build.sh --target soa-emu)"
 [ -x "$srv" ] || die "$srv not built (cmake --build build --target soa-server)"
 command -v convert > /dev/null || die "ImageMagick's convert is needed (screen checks)"
-py=$repo/.venv/bin/python
-[ -x "$py" ] && "$py" -c 'import PIL' 2>/dev/null || py=python3
-"$py" -c 'import PIL' 2>/dev/null || die "Pillow is needed for the contact sheet (.venv/bin/pip install -r requirements.txt)"
+py=$repo/tools/py
+"$py" -c 'import PIL' || die "Pillow is needed for the contact sheet (scripts/setup-venv.sh)"
 
 # Repo files: here, else in the main checkout work/ links to (a git worktree lacks untracked files).
 . "$repo/scripts/lib/checkout.sh"  # repo_file DIR REL: here, else in the main checkout (a worktree)
@@ -123,7 +122,7 @@ fi
 mkdir -p "$phone"
 elog=$scratch/emu.log slog=$scratch/server.log plog=$scratch/packets/packets.log fifo=$scratch/fifo
 MAX_RSS_KB=$((6 * 1024 * 1024))
-read -r game_port http_port < <(python3 -c '
+read -r game_port http_port < <("$repo/tools/py" -c '
 import socket
 s = [socket.socket() for _ in range(2)]
 for x in s: x.bind(("127.0.0.1", 0))
@@ -167,9 +166,9 @@ epid=$!
 results=() failed=0
 pass() { results+=("PASS  $1 ($(( $(date +%s) - t0 ))s)"); echo "PASS  $1 ($(( $(date +%s) - t0 ))s)"; }
 miss() { results+=("FAIL  $1"); echo "FAIL  $1"; failed=1; }
-state() { python3 "$repo/tools/server_state.py" "$scratch/server/server.sqlite3" --db "$master" > "$out/state-$1.txt" 2>&1; }
+state() { "$repo/tools/py" "$repo/tools/server_state.py" "$scratch/server/server.sqlite3" --db "$master" > "$out/state-$1.txt" 2>&1; }
 # roster NAME: the server's roster (uid, role label, level, limit break) -> OUT/roster-NAME.txt
-roster() { python3 - "$scratch/server/server.sqlite3" "$master" > "$out/roster-$1.txt" 2>&1 <<'EOF'
+roster() { "$repo/tools/py" - "$scratch/server/server.sqlite3" "$master" > "$out/roster-$1.txt" 2>&1 <<'EOF'
 import sqlite3, sys
 st = sqlite3.connect("file:%s?mode=ro" % sys.argv[1], uri=True)
 m = sqlite3.connect("file:%s?mode=ro" % sys.argv[2], uri=True)
@@ -183,7 +182,7 @@ EOF
 finish() {
     [ $finished = 1 ] && return
     finished=1
-    python3 "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
+    "$repo/tools/py" "$soactl" --timeout 10 "$fifo" quit > /dev/null 2>&1
     state end
     if grep -qE "Unhandled SIG|\*\*\* host signal" "$elog" 2>/dev/null; then miss "soa-emu crashed (see $out/emu.log)"; fi
     sheet
@@ -199,7 +198,7 @@ alive() {
     rss=$(ps -o rss= --ppid $epid 2>/dev/null | sort -n | tail -1)
     [ -z "$rss" ] || [ "$rss" -le $MAX_RSS_KB ] || { echo "soa-emu above 6 GB RSS"; return 1; }
 }
-ctl() { python3 "$soactl" --timeout 120 "$fifo" "$@" > /dev/null 2>&1; }
+ctl() { "$repo/tools/py" "$soactl" --timeout 120 "$fifo" "$@" > /dev/null 2>&1; }
 # wait_for NAME SECONDS CMD...: polls CMD; PASS / FAIL for NAME.
 wait_for() {
     local name=$1 limit=$2; shift 2
@@ -277,7 +276,7 @@ sheet() {
 mean() { convert "$1" -colorspace gray -format '%[fx:mean]' info: 2>/dev/null; }
 # The gacha's master id.
 gacha_label=gacha_pickup_role_0283
-gacha_id=$(python3 - "$master" "$gacha_label" <<'EOF'
+gacha_id=$("$repo/tools/py" - "$master" "$gacha_label" <<'EOF'
 import sqlite3, sys
 r = sqlite3.connect(sys.argv[1]).execute("select id from master_gacha where id_label = ?", (sys.argv[2],)).fetchone()
 print(r[0] if r else "")
@@ -342,7 +341,7 @@ nn=$((n + 1)) nb=$((n + 2)) nh=$((n + 3))
 f_notice=$(printf '%s/%02d-notice-board.png' "$out" $nn)
 f_bonus=$(printf '%s/%02d-login-bonus.png' "$out" $nb)
 f_home=$(printf '%s/%02d-home.png' "$out" $nh)
-if python3 "$flowctl" login-popups "$fifo" "$elog" "$f_notice" "$f_bonus" "$f_home" > "$scratch/popups.txt" 2>&1; then
+if "$repo/tools/py" "$flowctl" login-popups "$fifo" "$elog" "$f_notice" "$f_bonus" "$f_home" > "$scratch/popups.txt" 2>&1; then
     pass "login popups closed ($(tail -n 1 "$scratch/popups.txt"))"
 else
     miss "login popups ($(tail -n 1 "$scratch/popups.txt"))"; finish
@@ -428,7 +427,7 @@ while [ $pull -lt "$max_pulls" ]; do
     ctl tap:540:945 wait:2500          # 10連ガチャ
     # The confirmation must be up before 決定 (515:800): that spot is on the rotating pick-up panels,
     # where a tap opens 2B's / 9S's / A2's character detail (a 10連ガチャ tap lost while the panels turn).
-    python3 "$flowctl" gacha-confirm "$fifo" "$scratch/confirm-probe.png" > "$scratch/confirm.txt" 2>&1 \
+    "$repo/tools/py" "$flowctl" gacha-confirm "$fifo" "$scratch/confirm-probe.png" > "$scratch/confirm.txt" 2>&1 \
         || { miss "pull $pull: the draw confirmation ($(tail -n 1 "$scratch/confirm.txt"))"; finish; }
     [ $pull = 1 ] && shot draw-confirm
     tap_until "pull $pull: 10連ガチャ -> 決定 -> Gacha -> GachaRes" 60 515:800 more_than "< GachaRes" "$k" || finish

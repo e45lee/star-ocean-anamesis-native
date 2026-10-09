@@ -26,4 +26,4 @@ target=
 if [ "${1:-}" = --target ]; then target="--target $2"; shift 2; fi
 if [ "${1:-}" = --new-player ]; then session=newplayer; shift; fi
 # shellcheck disable=SC2086
-exec python3 "$(dirname "$0")/../../control/run.py" $target $session "$@"
+exec "$(dirname "$0")/../../tools/py" "$(dirname "$0")/../../control/run.py" $target $session "$@"

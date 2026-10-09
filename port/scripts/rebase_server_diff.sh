@@ -48,7 +48,7 @@ for c in emu soa; do
 done
 [ $rc = 0 ] || { echo "FAIL"; exit 1; }
 echo "== packets: soa-emu vs soa --server"
-python3 "$repo/tools/compare_packets.py" --labels soa-emu soa "$out/emu-run/packets/packets.log" "$out/soa-run/packets/packets.log" \
+"$repo/tools/py" "$repo/tools/compare_packets.py" --labels soa-emu soa "$out/emu-run/packets/packets.log" "$out/soa-run/packets/packets.log" \
     --client-logs "$out/emu-run/emu.log" "$out/soa-run/emu.log" | tee "$out/compare.txt"
 grep -q '^PASS' "$out/compare.txt" && { echo "PASS (out: $out)"; exit 0; }
 echo "FAIL (out: $out)"; exit 1

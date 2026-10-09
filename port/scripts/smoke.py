@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """End-to-end regression run of the port on the 3.7.0 client (the in-process server).
 
 Usage: smoke.py SOA OUT_DIR [BASELINE_DIR] [extra soa args...]
@@ -84,7 +84,6 @@ def main():
     # and the client save.
     # (phone370_client_save: the committed save with no episode pack on its books.)
     # The machine-wide game slot pool (control/soaslot.py): queued here; soa inherits the slot.
-    sys.path.insert(0, os.path.join(REPO, "control"))
     import soaslot
     slot = soaslot.acquire("smoke")
     subprocess.run(["sh", "-c", '. port/scripts/phone370.sh && phone370_prepare "$1" && phone370_client_save "$1/data/shared_prefs"', "sh", data],
@@ -129,7 +128,7 @@ def main():
     results = []
     try:
         # The title: its phase-1 log line first (the boot takes a while under the JIT).
-        ok, msg = sh('python3 control/flowctl.py wait-log "$2" "port_debug: phase 1 " 300', 330)
+        ok, msg = sh('tools/py control/flowctl.py wait-log "$2" "port_debug: phase 1 " 300', 330)
         if not ok:
             failures.append("no title (phase 1): " + msg.splitlines()[-1] if msg else "no title")
         for name, delay, action in ([] if failures else STEPS):
@@ -171,7 +170,7 @@ def main():
                 # notice board and the LOGIN BONUS popup.
                 ok, msg = sh('phone370_login "$1" "$2"', 900)
                 if ok:
-                    ok, msg = sh('python3 control/flowctl.py login-popups "$1" "$2" - - -', 300)
+                    ok, msg = sh('tools/py control/flowctl.py login-popups "$1" "$2" - - -', 300)
                 print(("ok   " if ok else "FAIL ") + "login: " + (msg.splitlines()[-1] if msg else ""), flush=True)
                 if not ok:
                     failures.append("login: " + msg)

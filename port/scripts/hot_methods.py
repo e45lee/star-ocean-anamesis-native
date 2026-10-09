@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """The hot methods of one subsystem, by class, with their callers (port/PLAN.md task 6).
 
 Usage: hot_methods.py SUBSYSTEM NAME=DIR [NAME=DIR...] [--top N] [--callers K] [--markdown]

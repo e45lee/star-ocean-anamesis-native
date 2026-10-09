@@ -14,7 +14,7 @@ repo=$(cd "$here/../../.." && pwd)
 srv=${SOA_SERVER:-$repo/build/server/soa-server}
 master=${MASTER:-$repo/data/basmaster-3.7.0.sqlite3}
 tmp=$(mktemp -d)
-read -r port hport < <(python3 -c '
+read -r port hport < <("$repo/tools/py" -c '
 import socket
 s = [socket.socket() for _ in range(2)]
 for x in s: x.bind(("127.0.0.1", 0))

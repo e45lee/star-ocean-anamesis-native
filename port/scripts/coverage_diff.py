@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../../tools/py" "$0" "$@"'
 """Rank the guest families a flow executes that baseline runs don't.
 
 Usage: coverage_diff.py FLOW_DIR [BASE_DIR...] [--top N]

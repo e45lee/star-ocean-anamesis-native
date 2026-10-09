@@ -38,7 +38,7 @@ start_viewer() {
     SOASLOT_PY="$repo/control/soaslot.py"; . "$repo/control/soaslot.sh"; soaslot_take soa-viewer
     if [[ $bin == *.exe ]]; then
         win=1
-        local py=(python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); from soadrive import winhost as w; print(eval(sys.argv[2]))' "$repo/control")
+        local py=("$repo/tools/py" -c 'import sys; from soadrive import winhost as w; print(eval(sys.argv[1]))')
         bin=$("${py[@]}" "w.staged_binary('$bin')") || { echo "FAIL: $bin not staged"; exit 1; }
         ls "${SOA_WIN_STAGE:-/mnt/c/soa-win}"/apk/*.xapk > /dev/null 2>&1 || [ -d "${SOA_WIN_STAGE:-/mnt/c/soa-win}/work/extracted/xapk" ] ||
             { echo "FAIL: the XAPK isn't staged (scripts/windows-stage.sh --viewer)"; exit 1; }
@@ -81,8 +81,8 @@ alive() {
     [ -z "$rss" ] || [ "$rss" -le $MAX_RSS_KB ] || { echo "soa-viewer above 6 GB RSS"; return 1; }
 }
 ctl() {
-    if [ "$win" = 1 ]; then python3 "$soactl" --timeout 60 --windows-paths "$fifo" "$@" > /dev/null 2>&1
-    else python3 "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; fi
+    if [ "$win" = 1 ]; then "$repo/tools/py" "$soactl" --timeout 60 --windows-paths "$fifo" "$@" > /dev/null 2>&1
+    else "$repo/tools/py" "$soactl" --timeout 60 "$fifo" "$@" > /dev/null 2>&1; fi
 }
 in_log() { grep -q -- "$1" "$log" 2>/dev/null; }
 pass() { results+=("PASS  $1 ($(elapsed)s)"); echo "PASS  $1 ($(elapsed)s)"; }

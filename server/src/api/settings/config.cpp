@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "api/gen/reply_types.h"  // the replies' C*Info types
+#include "api/gen/request_args.h"  // the requests' arguments
 #include "api/settings/settings.h"
 #include "core/errors.h"
 #include "core/log.h"
@@ -34,19 +35,6 @@
 #include "soa/chash32.h"
 
 namespace soa::server {
-
-namespace args {
-// UpdateConfig(u32 master_config_id, s8 const* value, u32 type) (b: CSystemSettingMenu's
-// AutoEquipSettingSend and tNotifyData send it; the wire's u32 · char[191] · u32).
-struct UpdateConfigArgs {
-    u32 master_config_id = 0;
-    std::string value;
-    u32 type = 0;
-    static UpdateConfigArgs from(const Request& r) {
-        return {r.ints.size() > 0 ? (u32)r.ints[0] : 0u, r.strs.empty() ? std::string() : r.strs[0], r.ints.size() > 1 ? (u32)r.ints[1] : 0u};
-    }
-};
-}  // namespace args
 
 namespace settings {
 

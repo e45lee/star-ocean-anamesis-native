@@ -82,6 +82,24 @@ bool load_input(Source& src, const std::string& arg, Bytes& out, std::string& na
 
 void print_info(const soa::asf::Scene& s) {
     using namespace soa::asf;
+    for (const Modifier& m : s.modifiers) {
+        printf("modifier %s kind %d base node %d (%s) scale %g method %u ranges", m.name.c_str(), m.kind, m.base,
+               m.base >= 0 && m.base < (int)s.nodes.size() ? s.nodes[m.base].name.c_str() : "?", m.scale, m.method);
+        for (uint32_t r : m.ranges) printf(" %u", r);
+        printf("\n");
+        for (const ModifierTarget& t : m.targets) {
+            printf("  target node %d (%s) weight %g:", t.node, t.node >= 0 && t.node < (int)s.nodes.size() ? s.nodes[t.node].name.c_str() : "?", t.weight);
+            for (size_t k = 0; k < t.counts.size(); k++) printf(" %u vertices (%zu bytes)", t.counts[k], t.data[k].size());
+            printf("\n");
+            if (!t.data.empty() && t.data[0].size() >= 60)
+                for (int v = 0; v < 3; v++) {
+                    const uint8_t* q = &t.data[0][v * 20];
+                    printf("    v%d:", v);
+                    for (int k = 0; k < 20; k++) printf(" %02x", q[k]);
+                    printf("\n");
+                }
+        }
+    }
     printf("nodes %zu, objects %zu, link names %zu, AMF buffers %zu, blocks %zu\n", s.nodes.size(), s.objects.size(),
            s.link_names.size(), s.amf.buffers().size(), s.amf.blocks().size());
     for (const Node& n : s.nodes) {
@@ -191,10 +209,20 @@ int check_gl_dump(const soa::asf::Scene& s, const std::string& dir) {
                 snprintf(id, sizeof id, "0x%08x", t.id);
                 id_of_hash.emplace(h, id);
             }
-        std::map<long, std::vector<std::string>> by_count;
+        struct Cand { std::string name; std::set<std::string> tex; };  // a meshset and its material's texture ids
+        std::map<long, std::vector<Cand>> by_count;
         for (const auto& o : s.objects)
-            for (size_t i = 0; i < o.meshsets.size(); i++)
-                by_count[(long)o.meshsets[i].index_count].push_back(o.name + "/" + std::to_string(i));
+            for (size_t i = 0; i < o.meshsets.size(); i++) {
+                Cand c{o.name + "/" + std::to_string(i), {}};
+                int mi = o.meshsets[i].material;
+                if (mi >= 0 && mi < (int)o.materials.size())
+                    for (const auto& t : o.materials[mi].textures) {
+                        char id[16];
+                        snprintf(id, sizeof id, "0x%08x", t.id);
+                        c.tex.insert(id);
+                    }
+                by_count[(long)o.meshsets[i].index_count].push_back(c);
+            }
         std::string line;
         while (std::getline(draws, line)) {
             std::vector<std::string> f;
@@ -206,19 +234,34 @@ int check_gl_dump(const soa::asf::Scene& s, const std::string& dir) {
             if (mc == by_count.end()) continue;
             std::string units;
             bool ours = false;
+            std::set<std::string> drawn;
             size_t p = 0;
             for (int u = 0; u < 8; u++) {
                 size_t c = f[7].find(',', p);
                 std::string h = f[7].substr(p, c == std::string::npos ? std::string::npos : c - p);
                 auto it = id_of_hash.find(h);
-                if (it != id_of_hash.end()) ours = true;
+                if (it != id_of_hash.end()) ours = true, drawn.insert(it->second);
                 units += " u" + std::to_string(u) + "=" + (it != id_of_hash.end() ? it->second : h == "-" ? "-" : h == "?" ? "?" : "other");
                 if (c == std::string::npos) break;
                 p = c + 1;
             }
             if (!ours) continue;
+            // among the meshsets with this index count, those whose material uses the most of the bound textures
+            // (the shadow / depth passes bind none of them: all candidates are listed)
             std::string who;
-            for (const auto& w : mc->second) who += (who.empty() ? "" : "|") + w;
+            size_t best = 0;
+            for (const auto& w : mc->second) {
+                size_t uses = 0;
+                for (const auto& t : drawn) uses += w.tex.count(t);
+                best = std::max(best, uses);
+            }
+            for (const auto& w : mc->second) {
+                size_t uses = 0;
+                for (const auto& t : drawn) uses += w.tex.count(t);
+                if (best && uses == best) who += (who.empty() ? "" : "|") + w.name;
+            }
+            if (who.empty())
+                for (const auto& w : mc->second) who += (who.empty() ? "" : "|") + w.name;
             printf("draw %s: %s program %s count %s%s | %s | %s | %s\n", f[0].c_str(), who.c_str(), f[1].c_str(), f[4].c_str(), units.c_str(),
                    f[8].c_str(), f[9].c_str(), f[10].c_str());
         }

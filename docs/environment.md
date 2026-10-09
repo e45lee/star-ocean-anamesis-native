@@ -72,7 +72,7 @@ Diagnostics and test switches, by library (the programs that link it read them):
 
 **The runtime** (soa, soa-emu, soa-viewer): `SOA_TRACE`, `SOA_COVERAGE`, `SOA_PROFILE`,
 `SOA_PROFILE_HZ` (10..10000), `SOA_PROFILE_HOST`, `SOA_WATCHDOG` (0..86400 s), `SOA_AUDIO_DUMP`,
-`SOA_TRACE_RT`, `SOA_OFFSCREEN_PRESENT`, `SOA_GL_HOST_SRGB_ETC2`, `SOA_GL_MAP_INVALIDATE`, `SOA_GL_BUFFER_DUMP`, `SOA_GL_DRAW_DUMP`,
+`SOA_TRACE_RT`, `SOA_OFFSCREEN_PRESENT`, `SOA_GL_HOST_SRGB_ETC2`, `SOA_GL_MAP_INVALIDATE`, `SOA_GL_BUFFER_DUMP`, `SOA_GL_DRAW_DUMP`, `SOA_GL_DRAW_PROBE`,
 `SOA_GL_RELEASE_SHADER_COMPILER`, `SOA_DIRECT_CALLS`, `SOA_FAULT_LOG` (Windows). Documented in
 [`runtime/README.md`](../runtime/README.md) "Environment", linked from the three programs' READMEs.
 

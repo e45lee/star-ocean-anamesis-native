@@ -162,7 +162,12 @@ bool load(const Bytes& d, Animation& a, std::string* err) {
             k.comp = d[c + 4];
             k.flags = d[c + 5];
             uint16_t kfo = rd16(&d[c + 6]);
-            if (kfo && k.kind <= 3 && c + kfo + 0x18 <= d.size()) {
+            if (k.kind == 5 && c + 0x2c <= d.size()) {
+                const char* nm = (const char*)&d[c + 0xc];
+                k.morph_target = std::string(nm, strnlen(nm, 0x20));
+                if (k.morph_target.rfind("R:", 0) == 0) k.morph_target = k.morph_target.substr(2);
+            }
+            if (kfo && (k.kind <= 3 || k.kind == 5) && c + kfo + 0x18 <= d.size()) {
                 k.kf = c + kfo;
                 k.cp_type = d[k.kf + 5];
                 k.attr = d[k.kf + 6];

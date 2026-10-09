@@ -60,3 +60,35 @@ CConfigInfo: master_config_id value type
 
 # The birth month (Birth).
 CBirthInfo: year month
+
+# ---- paid currency (api/shop/coins.cpp) ----
+
+# A coin-shop product (CoinList, by its id).
+CCoinInfo: id product_id coin free_coin yen order_id icon_id name name_label title_label description_label opened_at closed_at bought_at limit_count limit_num interval_day bonus_type bonus_id bonus_id_label is_once sale_type starter_limit_day is_view_closed_at
+
+# CoinDepositCreate's pending purchase.
+CCoinDepositInfo: deposit_trans_id
+
+# The coin shop's result after a purchase.
+CPurchasedItemInfo: bonus_type name_label title_label
+
+# ---- the story campaign's lists (api/campaign/lists.cpp) ----
+
+# ActiveMissionList: the planets, their areas, the areas' missions (each map by the id).
+CPlanetInfo: area_ct is_new is_last_play
+CAreaInfo: mission_ct is_new is_last_play is_start_bighunt
+CMissionElementInfo: id is_new is_clear is_last_play
+CActiveMissionListInfo: Planet Area Mission
+
+# ActiveWorldMapMissionList: the world maps, their cells (each an empty CWorldMapCellInfo), the cells'
+# missions.
+CWorldMapInfo: area_ct is_new is_last_play opened_at closed_at
+CWorldMapCellInfo:
+CWorldMapMissionElementInfo: id is_new is_clear is_last_play mission_group_id difficulty mission_type scenario_library_id
+CActiveWorldMapMissionListInfo: WorldMap WorldMapCellList WorldMapMission
+
+# ---- storage (api/storage/storage.cpp; items/items.cpp's SellItem sends the same) ----
+
+# A sale's result: the FOL, a stack item sold and its count left (StockItem: {id: {master_item_id,
+# use_count}}), the items sold.
+CSellResultInfo: total_fol master_item_id num item_ids StockItem:UseStackItemInfo UpdateGearList

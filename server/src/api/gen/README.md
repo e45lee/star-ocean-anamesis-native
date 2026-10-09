@@ -8,7 +8,7 @@ integer by its value, so a field's C++ width doesn't change the bytes.
 
 | File | What | Made by |
 |---|---|---|
-| `client_infos.json` | the client's info classes as the wire sees them: per class its fields in its Initialize's order (the ASON key, the property's value type), its children (an info, `InfoBaseArray<T>`, `IInfoBaseMap<K, T>`, `InfoBaseValueArray<T>`), and CInfoManager's children (the keys of a reply's `data`) | `tools/gen_infos.py` (from the 3.7.0 lib under unicorn; it writes `port/src/native/info/gen/info_classes.h` in the same run) |
+| `client_infos.json` | the client's info classes as the wire sees them: per class its fields in its Initialize's order (the ASON key, the property's value type), its children (an info, `InfoBaseArray<T>`, `IInfoBaseMap<K, T>`, `InfoBaseValueArray<T>`, a container of containers), and CInfoManager's children and own properties (the keys of a reply's `data`). An info the generator has no layout for (no object of it is built: CWorldMapCellInfo, CPartyInfo, ...) has its keys only, `type` null: reply_types.txt names the type sent | `tools/gen_infos.py` (from the 3.7.0 lib under unicorn; it writes `port/src/native/info/gen/info_classes.h` in the same run) |
 | `reply_types.txt` | what the server sends of each class: the keys in wire order, which are optional (`?`), a type sent other than the client's (`:u64`, `:bool`), keys the client's class doesn't read (`+id:u64`), a second shape of a class (`CStackItemInfo as UseStackItemInfo`) | by hand, from today's replies (`tools/reply_shapes.py`) |
 | `reply_types.h`, `reply_types.cpp` | the structs and their `to_value` | `tools/gen_server_infos.py` |
 
@@ -46,3 +46,6 @@ do the core's shared builders that other modules extend (`CPlayerInfo`, the `Ite
 | growth (`api/growth/growth.cpp`) | CBoostCharacterResultInfo, CLimitBreakInfo, CEvolutionResultInfo (+ CUpdatePlayerCharacter, UseStackItemInfo), CAwakenResultInfo, CUpdateCharacterInfo, CPersonAddStatusResultInfo, CEquipWeaponResultInfo / CEquipAccessoryResultInfo (and their person and item infos) |
 | mastery (`api/growth/mastery.cpp`) | CPlayerCharacterMasteryInfo, CUpdateCharacterMasteryInfo, CMasteryRewardInfo, UpdateStackItemInfo (UpdateStockItem, sent as an array: the client's CUpdateStackItemInfoList is a map) |
 | settings (`api/settings/`) | CConfigInfo, CBirthInfo, the value lists WorldMapScenarioLibraryInfoList and GuideInformationInfoList |
+| paid currency (`api/shop/coins.cpp`) | CCoinInfo (CoinList), CCoinDepositInfo, CPurchasedItemInfo |
+| story campaign lists (`api/campaign/lists.cpp`) | CActiveMissionListInfo (CPlanetInfo, CAreaInfo, CMissionElementInfo), CActiveWorldMapMissionListInfo (CWorldMapInfo, CWorldMapCellInfo, CWorldMapMissionElementInfo): maps of maps and of lists |
+| storage (`api/storage/storage.cpp`) | CSellResultInfo, UpdateStorageLockList (u32 values) |

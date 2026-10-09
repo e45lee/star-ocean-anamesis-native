@@ -1054,22 +1054,30 @@ def schema(lib_path, X, R, shapes, inits):
     """The client's reply shapes as data (server/src/api/gen/client_infos.json, read by tools/gen_server_infos.py):
     per info its fields in its Initialize's order (a property's ASON key and value type; a child's key, its
     pParseName, and class), per container its element (and a map's key width), and CInfoManager's children (the
-    keys of a reply's `data`). A property no Initialize names has no key: the client never reads it (left out)."""
+    keys of a reply's `data`) and properties. A property no Initialize names has no key: the client never reads
+    it (left out). An info without a layout has its keys only (types null)."""
     import json
-    names = {m: ident(m) for m in shapes}
     classes = {}
+
+    def container(m, kind):
+        e = container_elem(X, m)
+        c = {"kind": kind}
+        if e[0] == "value":
+            c["value"] = e[1][0]
+        else:
+            c["elem"] = ident(e[-1])
+            if e[0] == "map":
+                c["key"] = "u32" if e[1] == 4 else "u64"
+            # a container whose element is a container (a map of lists: no object of it is built, so
+            # it has no shape): from its template arguments
+            k = X.container(e[-1])
+            if e[-1] not in shapes and k and ident(e[-1]) not in classes:
+                classes[ident(e[-1])] = container(e[-1], k)
+        return c
     for m in sorted(shapes, key=ident):
         sh = shapes[m]
         if sh.kind != "plain":
-            e = container_elem(X, m)
-            c = {"kind": sh.kind}
-            if e[0] == "value":
-                c["value"] = e[1][0]
-            else:
-                c["elem"] = names.get(e[-1], ident(e[-1]))
-                if e[0] == "map":
-                    c["key"] = "u32" if e[1] == 4 else "u64"
-            classes[ident(m)] = c
+            classes[ident(m)] = container(m, sh.kind)
             continue
         props = {p[0]: p for p in sh.props}
         kids = dict(sh.children)
@@ -1101,8 +1109,20 @@ def schema(lib_path, X, R, shapes, inits):
         key = parse_name(X, c) if c else None
         if key:
             manager.append({"key": key, "class": ident(c)})
+    # an info no object of which is built (no layout: CWorldMapCellInfo, CPartyInfo, ...): its keys from its
+    # Initialize, their value types unknown (null: the server's reply_types.txt must name them)
+    for m in sorted(X.chain):
+        if m in shapes or m == MANAGER or X.container(m) or "_ZN%s10InitializeEv" % m not in X.S:
+            continue
+        keyed = probe_keys(X, R, m)
+        if keyed:
+            classes[ident(m)] = {"kind": "info", "untyped": True, "fields": [{"key": k, "type": None} for _, k in keyed]}
+    classes = dict(sorted(classes.items()))
     doc = {"generated": "tools/gen_infos.py --json (the info classes' wire schema); do not edit",
-           "lib": genlib.stamp(lib_path), "classes": classes, "manager": manager}
+           "lib": genlib.stamp(lib_path), "classes": classes, "manager": manager,
+           # CInfoManager's own properties: the scalar keys of a reply's `data` (Time, PresentBoxCount, ...),
+           # their types unknown (the manager has no layout)
+           "manager_props": [k for _, k in probe_keys(X, R, MANAGER)]}
     return json.dumps(doc, indent=1, ensure_ascii=False) + "\n"
 
 

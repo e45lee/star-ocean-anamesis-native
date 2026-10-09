@@ -71,6 +71,7 @@ class Field:
         self.extra, self.key, self.optional = m.group(1) == "+", m.group(2), m.group(3) == "?"
         ty, self.as_array = m.group(4), m.group(5) == "[]"
         self.name = ident(self.key)
+        self.schema = schema
         client = {f["key"]: f for f in schema["classes"][cls]["fields"]}
         f = client.get(self.key)
         self.note = ""
@@ -83,20 +84,22 @@ class Field:
             f = {"key": self.key}
         elif not f:
             raise Fail("%s.%s: not a field of the client's class (mark a key it doesn't read +KEY:TYPE)" % (cls, self.key))
-        self.child = None  # (container kind, client class, key type or value type)
-        if "class" in f:
-            c = schema["classes"][f["class"]]
-            self.child = (c["kind"], f["class"], c.get("key") or c.get("value"))
-            if c["kind"] == "valarray":
-                self.scalar, self.elem = CLIENT[c["value"]], None
-            else:
-                self.elem = ty or (c["elem"] if c["kind"] in ("array", "map") else f["class"])
-                self.scalar = None
-            if self.as_array and c["kind"] != "map":
-                raise Fail("%s.%s: [] on a %s" % (cls, self.key, c["kind"]))
+        self.child = f.get("class")  # the client's child class (an info or a container)
+        self.elem = None  # the struct of the innermost info element (a child's)
+        if self.child:
+            if self.as_array and schema["classes"][self.child]["kind"] != "map":
+                raise Fail("%s.%s: [] on a %s" % (cls, self.key, schema["classes"][self.child]["kind"]))
+            if ty in SCALARS:
+                raise Fail("%s.%s: %s for a child" % (cls, self.key, ty))
+            inner = self.innermost(self.child)
+            if inner is None and ty:
+                raise Fail("%s.%s: a struct for a value list" % (cls, self.key))
+            self.elem = ty or inner
+            self.scalar = None
         elif ty in SCALARS or not ty:
-            self.elem = None
-            want = CLIENT[f["type"]] if "type" in f else None
+            if "type" in f and f["type"] is None and not ty:
+                raise Fail("%s.%s: the client's class has no layout: name the type sent (:TYPE)" % (cls, self.key))
+            want = CLIENT[f["type"]] if f.get("type") else None
             self.scalar = ty or want
             if want and self.scalar != want:
                 if self.scalar not in TAKES[want]:
@@ -105,27 +108,51 @@ class Field:
         else:
             if not self.extra:
                 raise Fail("%s.%s: %s for a scalar" % (cls, self.key, ty))
-            self.elem, self.scalar = ty, None
-            self.child = ("info", None, None) if not self.as_array else ("array", None, None)
+            self.elem, self.scalar = ty, None  # an info the client doesn't read here
+            self.extra_kind = "array" if self.as_array else "info"
+
+    def innermost(self, c):
+        """The info class at the bottom of container c (c itself for an info), None for a value list."""
+        k = self.schema["classes"].get(c)
+        if k is None:
+            raise Fail("%s: the client's class %s isn't in client_infos.json" % (self.key, c))
+        if k["kind"] == "info":
+            return c
+        if k["kind"] == "valarray":
+            return None
+        return self.innermost(k["elem"])
+
+    def container_cpp(self, c, structs, outer=True):
+        k = self.schema["classes"][c]
+        if k["kind"] == "info":
+            if self.elem not in structs:
+                raise Fail("%s: no struct %s in reply_types.txt" % (self.key, self.elem))
+            return self.elem
+        if k["kind"] == "valarray":
+            return "std::vector<%s>" % SCALARS[CLIENT[k["value"]]]
+        inner = self.container_cpp(k["elem"], structs, False)
+        if k["kind"] == "array" or (outer and self.as_array):
+            return "std::vector<%s>" % inner
+        return "InfoMap<%s, %s>" % (k["key"], inner)
 
     def cpp(self, structs):
-        if self.scalar and not self.child:
+        if self.child:
+            t = self.container_cpp(self.child, structs)
+        elif self.scalar:
             t = SCALARS[self.scalar]
-        elif self.child[0] == "valarray":
-            t = "std::vector<%s>" % SCALARS[self.scalar]
         else:
             if self.elem not in structs:
                 raise Fail("%s: no struct %s in reply_types.txt" % (self.key, self.elem))
-            if self.child[0] == "info":
-                t = self.elem
-            elif self.child[0] == "array" or self.as_array:
-                t = "std::vector<%s>" % self.elem
-            else:
-                t = "InfoMap<%s, %s>" % (self.child[2], self.elem)
+            t = "std::vector<%s>" % self.elem if self.extra_kind == "array" else self.elem
         return "std::optional<%s>" % t if self.optional else t
 
+    def put(self, src):
+        """The statement that sends the value `src`."""
+        conv = "to_array" if self.as_array else "to_value"
+        return 'o["%s"] = %s(%s);' % (self.key, conv, src)
+
     def default(self):
-        if self.optional or self.child or self.scalar == "str":
+        if self.optional or self.child or self.scalar in (None, "str"):
             return ""
         return " = false" if self.scalar == "bool" else " = 0"
 
@@ -214,18 +241,10 @@ def emit(schema, structs, order):
         h.append("};")
         h.append("Value to_value(const %s& v);" % s)
         h.append("")
-        c.append("Value to_value(const %s& v) {" % s)
+        c.append("Value to_value(const %s&%s) {" % (s, " v" if fields else ""))
         c.append("    Value o = Value::object();")
         for f in fields:
-            src = "*v.%s" % f.name if f.optional else "v.%s" % f.name
-            if f.scalar and not f.child:
-                put = 'o["%s"] = %s;' % (f.key, "(unsigned)" + src if f.scalar == "u8" else src)
-            elif f.child[0] == "valarray" or f.child[0] == "array" or f.as_array:
-                put = 'o["%s"] = to_array(%s);' % (f.key, src)
-            elif f.child[0] == "map":
-                put = 'o["%s"] = to_map(%s);' % (f.key, src)
-            else:
-                put = 'o["%s"] = to_value(%s);' % (f.key, src)
+            put = f.put("*v.%s" % f.name if f.optional else "v.%s" % f.name)
             c.append(("    if (v.%s) %s" % (f.name, put)) if f.optional else "    " + put)
         c.append("    return o;")
         c.append("}")

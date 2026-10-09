@@ -281,6 +281,11 @@
     }
    ]
   },
+  "CAreaInfoCategoryList": {
+   "kind": "map",
+   "elem": "CAreaInfo",
+   "key": "u64"
+  },
   "CAreaInfoCategoryListList": {
    "kind": "map",
    "elem": "CAreaInfoCategoryList",
@@ -428,6 +433,120 @@
    "kind": "map",
    "elem": "CBattleEvaluationResultInfo",
    "key": "u64"
+  },
+  "CBattleLogInfo": {
+   "kind": "info",
+   "untyped": true,
+   "fields": [
+    {
+     "key": "is_defeat",
+     "type": null
+    },
+    {
+     "key": "damage_total",
+     "type": null
+    },
+    {
+     "key": "damage_total_party",
+     "type": null
+    },
+    {
+     "key": "hit_max",
+     "type": null
+    },
+    {
+     "key": "hit_total",
+     "type": null
+    },
+    {
+     "key": "rush_cooperate",
+     "type": null
+    },
+    {
+     "key": "rush_count",
+     "type": null
+    },
+    {
+     "key": "battle_result",
+     "type": null
+    },
+    {
+     "key": "continue_count",
+     "type": null
+    },
+    {
+     "key": "mission_type",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_stun",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_freeze",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_poison",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_paralysis",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_seal",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_curse",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_fog",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_burn",
+     "type": null
+    },
+    {
+     "key": "abnormal_count_debuff",
+     "type": null
+    },
+    {
+     "key": "mission_time",
+     "type": null
+    },
+    {
+     "key": "mission_total_time",
+     "type": null
+    },
+    {
+     "key": "assist_cutin_count",
+     "type": null
+    },
+    {
+     "key": "order_count_all",
+     "type": null
+    },
+    {
+     "key": "order_count_invincible",
+     "type": null
+    },
+    {
+     "key": "order_count_bunker",
+     "type": null
+    },
+    {
+     "key": "order_count_heat_up",
+     "type": null
+    },
+    {
+     "key": "autoplay",
+     "type": null
+    }
+   ]
   },
   "CBattleParameterInfo": {
    "kind": "info",
@@ -801,6 +920,24 @@
    "kind": "array",
    "elem": "CCharacterDecoObjectInfo"
   },
+  "CCharacterDecoSendInfo": {
+   "kind": "info",
+   "untyped": true,
+   "fields": [
+    {
+     "key": "character_id",
+     "type": null
+    },
+    {
+     "key": "hair_id",
+     "type": null
+    },
+    {
+     "key": "pose_id",
+     "type": null
+    }
+   ]
+  },
   "CCheckInInfo": {
    "kind": "info",
    "fields": [
@@ -1098,6 +1235,10 @@
    "elem": "CDebugBonusInfo",
    "key": "u64"
   },
+  "CDebugDropContentInfoList": {
+   "kind": "array",
+   "elem": "CDropContentInfo"
+  },
   "CDebugDropContentInfoMap": {
    "kind": "map",
    "elem": "CDebugDropContentInfoList",
@@ -1168,6 +1309,10 @@
      "type": "float"
     }
    ]
+  },
+  "CDebugSphere211CommonDropIdList": {
+   "kind": "valarray",
+   "value": "u32"
   },
   "CDebugSphere211CommonDropInfoList": {
    "kind": "map",
@@ -1267,6 +1412,11 @@
      "type": "float"
     }
    ]
+  },
+  "CDeepSpaceBonusApplyInfoList": {
+   "kind": "map",
+   "elem": "CDeepSpaceBonusApplyInfo",
+   "key": "u64"
   },
   "CDeepSpaceCharacterInfo": {
    "kind": "info",
@@ -1782,6 +1932,11 @@
     }
    ]
   },
+  "CExchangeShopExCountInfoCategory": {
+   "kind": "map",
+   "elem": "CExchangeShopExCountInfo",
+   "key": "u64"
+  },
   "CExchangeShopExCountInfoCategoryMap": {
    "kind": "map",
    "elem": "CExchangeShopExCountInfoCategory",
@@ -2172,6 +2327,10 @@
      "type": "string"
     }
    ]
+  },
+  "CFooterBadgeInfoList": {
+   "kind": "array",
+   "elem": "CFooterBadgeInfo"
   },
   "CFooterBadgeInfoMap": {
    "kind": "map",
@@ -3198,6 +3357,10 @@
    "elem": "CMissionInfoList",
    "key": "u64"
   },
+  "CMissionInfoList": {
+   "kind": "array",
+   "elem": "CMissionElementInfo"
+  },
   "CMissionParameterInfo": {
    "kind": "info",
    "fields": [
@@ -3504,6 +3667,28 @@
    "kind": "map",
    "elem": "CPartialMaintenanceInfo",
    "key": "u64"
+  },
+  "CPartyInfo": {
+   "kind": "info",
+   "untyped": true,
+   "fields": [
+    {
+     "key": "party_id",
+     "type": null
+    },
+    {
+     "key": "player_character_id1",
+     "type": null
+    },
+    {
+     "key": "player_character_id2",
+     "type": null
+    },
+    {
+     "key": "player_character_id3",
+     "type": null
+    }
+   ]
   },
   "CPartyUpdateInfo": {
    "kind": "info",
@@ -4810,6 +4995,10 @@
     }
    ]
   },
+  "CSkillInfoArray": {
+   "kind": "array",
+   "elem": "CSkillInfo"
+  },
   "CSkillInfoMap": {
    "kind": "map",
    "elem": "CSkillInfoArray",
@@ -5021,6 +5210,10 @@
    "kind": "map",
    "elem": "CMissionInfoList",
    "key": "u64"
+  },
+  "CUniverseBoardIdList": {
+   "kind": "valarray",
+   "value": "u32"
   },
   "CUniverseBoardList": {
    "kind": "map",
@@ -5491,9 +5684,36 @@
    "elem": "CWorldBossPlayerInfo",
    "key": "u64"
   },
+  "CWorldMapCellInfo": {
+   "kind": "info",
+   "untyped": true,
+   "fields": [
+    {
+     "key": "mission_ct",
+     "type": null
+    },
+    {
+     "key": "is_new",
+     "type": null
+    },
+    {
+     "key": "is_last_play",
+     "type": null
+    },
+    {
+     "key": "is_start_bighunt",
+     "type": null
+    }
+   ]
+  },
   "CWorldMapCellInfoCategoryList": {
    "kind": "map",
    "elem": "CWorldMapCellInfoList",
+   "key": "u64"
+  },
+  "CWorldMapCellInfoList": {
+   "kind": "map",
+   "elem": "CWorldMapCellInfo",
    "key": "u64"
   },
   "CWorldMapInfo": {
@@ -5585,6 +5805,10 @@
    "kind": "map",
    "elem": "CWorldMapMissionInfoList",
    "key": "u64"
+  },
+  "CWorldMapMissionInfoList": {
+   "kind": "array",
+   "elem": "CWorldMapMissionElementInfo"
   },
   "CWorldMapScenarioLibraryInfoList": {
    "kind": "valarray",
@@ -5764,6 +5988,10 @@
     }
    ]
   },
+  "EventRankingInfoList": {
+   "kind": "array",
+   "elem": "EventRankingInfo"
+  },
   "EventRankingInfoListMap": {
    "kind": "map",
    "elem": "EventRankingInfoList",
@@ -5782,6 +6010,10 @@
    "kind": "map",
    "elem": "EventRankingPlayerInfo",
    "key": "u64"
+  },
+  "EventRankingTopInfoList": {
+   "kind": "array",
+   "elem": "EventRankingInfo"
   },
   "EventRankingTopInfoListMap": {
    "kind": "map",
@@ -6296,6 +6528,10 @@
     }
    ]
   },
+  "Sphere211TreasureResultInfoList": {
+   "kind": "array",
+   "elem": "Sphere211TreasureResultInfo"
+  },
   "Sphere211TreasureResultInfoMap": {
    "kind": "map",
    "elem": "Sphere211TreasureResultInfoList",
@@ -6594,6 +6830,18 @@
    ]
   },
   "UpdatedEventRankingIdList": {
+   "kind": "valarray",
+   "value": "u32"
+  },
+  "_CAttachedGearInfoList": {
+   "kind": "array",
+   "elem": "CAttachedGearInfo"
+  },
+  "_CExpirationInfoList": {
+   "kind": "array",
+   "elem": "CExpirationInfo"
+  },
+  "_PickupCharaterChipResultInfoList": {
    "kind": "valarray",
    "value": "u32"
   }
@@ -7499,5 +7747,50 @@
    "key": "CInformationSiteInfo",
    "class": "CInformationSiteInfo"
   }
+ ],
+ "manager_props": [
+  "ReceiveAchievementId",
+  "IsUpdateAchievement",
+  "AddFollow",
+  "AddBlacklist",
+  "RemoveBlacklist",
+  "PresentBoxCount",
+  "NumDecoObject",
+  "master_mission_id",
+  "master_event_mission_id",
+  "master_tower_mission_id",
+  "Sphere211CurrentId",
+  "Sphere211NeedsReset",
+  "MainteAnnounce",
+  "MainteMode",
+  "ClearPlanetId",
+  "AssetPath",
+  "MasterPath",
+  "LobbyPath",
+  "LobbyProxyPath",
+  "LobbyProxyPort",
+  "BattleProxyPath",
+  "BattleProxyPort",
+  "r_ver",
+  "a_ver",
+  "DebugTime",
+  "Time",
+  "MaintenanceMessage",
+  "IsLoginBonus",
+  "GameID",
+  "RentalBonus",
+  "RentalCount",
+  "Sphere211RentalBonus",
+  "Sphere211RentalCount",
+  "IsJudgment",
+  "JudgmentUrl",
+  "IsReview",
+  "start_bigHunt_area_id",
+  "RemainingEventDropBonusCountByFavor",
+  "RemainingUpdateFavorCountByTap",
+  "IsHealedByFavor",
+  "is_mission_continue",
+  "LatestEpisodeVersion",
+  "subscription_hitory_total_count"
  ]
 }

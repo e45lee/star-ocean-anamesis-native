@@ -239,4 +239,136 @@ struct CBirthInfo {
 };
 Value to_value(const CBirthInfo& v);
 
+// A coin-shop product (CoinList, by its id).
+// CCoinInfo: the keys in the order sent.
+struct CCoinInfo {
+    u32 id = 0;
+    std::string product_id;
+    u32 coin = 0;
+    u32 free_coin = 0;
+    u32 yen = 0;
+    u32 order_id = 0;
+    u32 icon_id = 0;
+    std::string name;
+    std::string name_label;
+    std::string title_label;
+    std::string description_label;
+    std::string opened_at;
+    std::string closed_at;
+    std::string bought_at;
+    u32 limit_count = 0;
+    u32 limit_num = 0;
+    u32 interval_day = 0;
+    u32 bonus_type = 0;
+    u32 bonus_id = 0;
+    std::string bonus_id_label;
+    bool is_once = false;
+    u32 sale_type = 0;
+    u32 starter_limit_day = 0;
+    bool is_view_closed_at = false;
+};
+Value to_value(const CCoinInfo& v);
+
+// CoinDepositCreate's pending purchase.
+// CCoinDepositInfo: the keys in the order sent.
+struct CCoinDepositInfo {
+    u32 deposit_trans_id = 0;
+};
+Value to_value(const CCoinDepositInfo& v);
+
+// The coin shop's result after a purchase.
+// CPurchasedItemInfo: the keys in the order sent.
+struct CPurchasedItemInfo {
+    u32 bonus_type = 0;
+    std::string name_label;
+    std::string title_label;
+};
+Value to_value(const CPurchasedItemInfo& v);
+
+// ActiveMissionList: the planets, their areas, the areas' missions (each map by the id).
+// CPlanetInfo: the keys in the order sent.
+struct CPlanetInfo {
+    u32 area_ct = 0;
+    bool is_new = false;
+    bool is_last_play = false;
+};
+Value to_value(const CPlanetInfo& v);
+
+// CAreaInfo: the keys in the order sent.
+struct CAreaInfo {
+    u32 mission_ct = 0;
+    bool is_new = false;
+    bool is_last_play = false;
+    bool is_start_bighunt = false;
+};
+Value to_value(const CAreaInfo& v);
+
+// CMissionElementInfo: the keys in the order sent.
+struct CMissionElementInfo {
+    u32 id = 0;
+    bool is_new = false;
+    bool is_clear = false;
+    bool is_last_play = false;
+};
+Value to_value(const CMissionElementInfo& v);
+
+// CActiveMissionListInfo: the keys in the order sent.
+struct CActiveMissionListInfo {
+    InfoMap<u64, CPlanetInfo> Planet;
+    InfoMap<u64, InfoMap<u64, CAreaInfo>> Area;
+    InfoMap<u64, std::vector<CMissionElementInfo>> Mission;
+};
+Value to_value(const CActiveMissionListInfo& v);
+
+// ActiveWorldMapMissionList: the world maps, their cells (each an empty CWorldMapCellInfo), the cells'
+// missions.
+// CWorldMapInfo: the keys in the order sent.
+struct CWorldMapInfo {
+    u32 area_ct = 0;
+    bool is_new = false;
+    bool is_last_play = false;
+    std::string opened_at;
+    std::string closed_at;
+};
+Value to_value(const CWorldMapInfo& v);
+
+// CWorldMapCellInfo: the keys in the order sent. The client's keys not sent: mission_ct, is_new, is_last_play, is_start_bighunt.
+struct CWorldMapCellInfo {
+};
+Value to_value(const CWorldMapCellInfo& v);
+
+// CWorldMapMissionElementInfo: the keys in the order sent.
+struct CWorldMapMissionElementInfo {
+    u32 id = 0;
+    bool is_new = false;
+    bool is_clear = false;
+    bool is_last_play = false;
+    u32 mission_group_id = 0;
+    u32 difficulty = 0;
+    u32 mission_type = 0;
+    u32 scenario_library_id = 0;
+};
+Value to_value(const CWorldMapMissionElementInfo& v);
+
+// CActiveWorldMapMissionListInfo: the keys in the order sent.
+struct CActiveWorldMapMissionListInfo {
+    InfoMap<u64, CWorldMapInfo> WorldMap;
+    InfoMap<u64, InfoMap<u64, CWorldMapCellInfo>> WorldMapCellList;
+    InfoMap<u64, std::vector<CWorldMapMissionElementInfo>> WorldMapMission;
+};
+Value to_value(const CActiveWorldMapMissionListInfo& v);
+
+// A sale's result: the FOL, a stack item sold and its count left (StockItem: {id: {master_item_id,
+// use_count}}), the items sold.
+// CSellResultInfo: the keys in the order sent.
+struct CSellResultInfo {
+    u32 total_fol = 0;
+    u32 master_item_id = 0;
+    u32 num = 0;
+    std::vector<u64> item_ids;
+    InfoMap<u64, UseStackItemInfo> StockItem;
+    std::vector<u64> UpdateGearList;
+};
+Value to_value(const CSellResultInfo& v);
+
 }  // namespace soa::server::infos

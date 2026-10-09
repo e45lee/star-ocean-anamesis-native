@@ -39,6 +39,11 @@ inline Value to_value(s32 v) { return Value(v); }
 inline Value to_value(double v) { return Value(v); }
 inline Value to_value(const std::string& v) { return Value(v); }
 
+template <class T>
+Value to_value(const std::vector<T>& v);
+template <class K, class T>
+Value to_value(const InfoMap<K, T>& m);
+
 // A list (InfoBaseArray<T>, InfoBaseValueArray<T>): an array of its elements' values.
 template <class T>
 Value to_array(const std::vector<T>& v) {
@@ -59,6 +64,16 @@ Value to_map(const InfoMap<K, T>& m) {
     Value o = Value::object();
     for (const auto& [k, e] : m) o[std::to_string(k)] = to_value(e);
     return o;
+}
+
+// to_value of a container: a list's array, a map's map (a container of containers nests them).
+template <class T>
+Value to_value(const std::vector<T>& v) {
+    return to_array(v);
+}
+template <class K, class T>
+Value to_value(const InfoMap<K, T>& m) {
+    return to_map(m);
 }
 
 }  // namespace soa::server::infos

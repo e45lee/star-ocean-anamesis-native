@@ -2,4 +2,4 @@
 # reply types.
 net/ninja/*
 net/gen/*
-api/gen/*
+src/api/gen/*

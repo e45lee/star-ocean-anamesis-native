@@ -5,212 +5,336 @@ namespace soa::server::infos {
 
 Value to_value(const UseStackItemInfo& v) {
     Value o = Value::object();
-    o["master_item_id"] = v.master_item_id;
-    o["use_count"] = v.use_count;
+    o["master_item_id"] = to_value(v.master_item_id);
+    o["use_count"] = to_value(v.use_count);
     return o;
 }
 
 Value to_value(const CBoostCharacterResultInfo& v) {
     Value o = Value::object();
-    o["id"] = v.id;
-    o["before_level"] = v.before_level;
-    o["before_exp"] = v.before_exp;
-    o["after_level"] = v.after_level;
-    o["after_exp"] = v.after_exp;
-    o["is_big_success"] = v.is_big_success;
+    o["id"] = to_value(v.id);
+    o["before_level"] = to_value(v.before_level);
+    o["before_exp"] = to_value(v.before_exp);
+    o["after_level"] = to_value(v.after_level);
+    o["after_exp"] = to_value(v.after_exp);
+    o["is_big_success"] = to_value(v.is_big_success);
     return o;
 }
 
 Value to_value(const CLimitBreakInfo& v) {
     Value o = Value::object();
-    o["id"] = v.id;
-    o["master_role_id"] = v.master_role_id;
-    o["before_master_role_id"] = v.before_master_role_id;
-    o["after_master_role_id"] = v.after_master_role_id;
-    o["before_limit_break_count"] = v.before_limit_break_count;
-    o["after_limit_break_count"] = v.after_limit_break_count;
+    o["id"] = to_value(v.id);
+    o["master_role_id"] = to_value(v.master_role_id);
+    o["before_master_role_id"] = to_value(v.before_master_role_id);
+    o["after_master_role_id"] = to_value(v.after_master_role_id);
+    o["before_limit_break_count"] = to_value(v.before_limit_break_count);
+    o["after_limit_break_count"] = to_value(v.after_limit_break_count);
     return o;
 }
 
 Value to_value(const CUpdatePlayerCharacter& v) {
     Value o = Value::object();
-    o["id"] = v.id;
-    o["before_master_role_id"] = v.before_master_role_id;
-    o["after_master_role_id"] = v.after_master_role_id;
-    o["level"] = v.level;
-    o["is_rarity_7"] = v.is_rarity_7;
+    o["id"] = to_value(v.id);
+    o["before_master_role_id"] = to_value(v.before_master_role_id);
+    o["after_master_role_id"] = to_value(v.after_master_role_id);
+    o["level"] = to_value(v.level);
+    o["is_rarity_7"] = to_value(v.is_rarity_7);
     return o;
 }
 
 Value to_value(const CEvolutionResultInfo& v) {
     Value o = Value::object();
-    o["use_fol"] = v.use_fol;
-    o["UseStockItem"] = to_array(v.UseStockItem);
+    o["use_fol"] = to_value(v.use_fol);
+    o["UseStockItem"] = to_value(v.UseStockItem);
     o["UpdatePlayerCharacter"] = to_value(v.UpdatePlayerCharacter);
     return o;
 }
 
 Value to_value(const CUpdateCharacterInfo& v) {
     Value o = Value::object();
-    o["id"] = v.id;
-    o["player_id"] = v.player_id;
-    o["master_role_id"] = v.master_role_id;
-    o["level"] = v.level;
-    o["exp"] = v.exp;
-    o["weapon_item_id"] = v.weapon_item_id;
-    o["skill1_level"] = v.skill1_level;
-    o["skill2_level"] = v.skill2_level;
-    o["skill3_level"] = v.skill3_level;
-    if (v.skill1) o["skill1"] = *v.skill1;
-    if (v.skill2) o["skill2"] = *v.skill2;
-    if (v.skill3) o["skill3"] = *v.skill3;
-    if (v.rush_skill) o["rush_skill"] = *v.rush_skill;
-    if (v.rush_skill_factor_id) o["rush_skill_factor_id"] = *v.rush_skill_factor_id;
-    if (v.rush_gauge_max) o["rush_gauge_max"] = *v.rush_gauge_max;
-    if (v.rush_gauge_use) o["rush_gauge_use"] = *v.rush_gauge_use;
-    if (v.weapon_kind) o["weapon_kind"] = *v.weapon_kind;
-    o["rush_skill_level"] = v.rush_skill_level;
-    o["is_new"] = v.is_new;
+    o["id"] = to_value(v.id);
+    o["player_id"] = to_value(v.player_id);
+    o["master_role_id"] = to_value(v.master_role_id);
+    o["level"] = to_value(v.level);
+    o["exp"] = to_value(v.exp);
+    o["weapon_item_id"] = to_value(v.weapon_item_id);
+    o["skill1_level"] = to_value(v.skill1_level);
+    o["skill2_level"] = to_value(v.skill2_level);
+    o["skill3_level"] = to_value(v.skill3_level);
+    if (v.skill1) o["skill1"] = to_value(*v.skill1);
+    if (v.skill2) o["skill2"] = to_value(*v.skill2);
+    if (v.skill3) o["skill3"] = to_value(*v.skill3);
+    if (v.rush_skill) o["rush_skill"] = to_value(*v.rush_skill);
+    if (v.rush_skill_factor_id) o["rush_skill_factor_id"] = to_value(*v.rush_skill_factor_id);
+    if (v.rush_gauge_max) o["rush_gauge_max"] = to_value(*v.rush_gauge_max);
+    if (v.rush_gauge_use) o["rush_gauge_use"] = to_value(*v.rush_gauge_use);
+    if (v.weapon_kind) o["weapon_kind"] = to_value(*v.weapon_kind);
+    o["rush_skill_level"] = to_value(v.rush_skill_level);
+    o["is_new"] = to_value(v.is_new);
     return o;
 }
 
 Value to_value(const CAwakenResultInfo& v) {
     Value o = Value::object();
-    o["awaken_level"] = v.awaken_level;
-    o["use_fol"] = v.use_fol;
-    o["UseStockItem"] = to_array(v.UseStockItem);
+    o["awaken_level"] = to_value(v.awaken_level);
+    o["use_fol"] = to_value(v.use_fol);
+    o["UseStockItem"] = to_value(v.UseStockItem);
     o["UpdateCharacter"] = to_value(v.UpdateCharacter);
-    o["update_child_id"] = v.update_child_id;
-    o["update_child_mastery_talent_id"] = v.update_child_mastery_talent_id;
+    o["update_child_id"] = to_value(v.update_child_id);
+    o["update_child_mastery_talent_id"] = to_value(v.update_child_mastery_talent_id);
     return o;
 }
 
 Value to_value(const CPersonAddStatusResultInfo& v) {
     Value o = Value::object();
-    o["player_character_id"] = v.player_character_id;
-    o["player_id"] = v.player_id;
-    o["before_add_hp"] = v.before_add_hp;
-    o["after_add_hp"] = v.after_add_hp;
-    o["before_add_attack"] = v.before_add_attack;
-    o["after_add_attack"] = v.after_add_attack;
-    o["before_add_intelligence"] = v.before_add_intelligence;
-    o["after_add_intelligence"] = v.after_add_intelligence;
-    o["before_add_defence"] = v.before_add_defence;
-    o["after_add_defence"] = v.after_add_defence;
-    o["before_add_hit"] = v.before_add_hit;
-    o["after_add_hit"] = v.after_add_hit;
-    o["before_add_guard"] = v.before_add_guard;
-    o["after_add_guard"] = v.after_add_guard;
-    o["before_add_ap"] = v.before_add_ap;
-    o["after_add_ap"] = v.after_add_ap;
-    o["use_fol"] = v.use_fol;
-    o["new_fol"] = v.new_fol;
+    o["player_character_id"] = to_value(v.player_character_id);
+    o["player_id"] = to_value(v.player_id);
+    o["before_add_hp"] = to_value(v.before_add_hp);
+    o["after_add_hp"] = to_value(v.after_add_hp);
+    o["before_add_attack"] = to_value(v.before_add_attack);
+    o["after_add_attack"] = to_value(v.after_add_attack);
+    o["before_add_intelligence"] = to_value(v.before_add_intelligence);
+    o["after_add_intelligence"] = to_value(v.after_add_intelligence);
+    o["before_add_defence"] = to_value(v.before_add_defence);
+    o["after_add_defence"] = to_value(v.after_add_defence);
+    o["before_add_hit"] = to_value(v.before_add_hit);
+    o["after_add_hit"] = to_value(v.after_add_hit);
+    o["before_add_guard"] = to_value(v.before_add_guard);
+    o["after_add_guard"] = to_value(v.after_add_guard);
+    o["before_add_ap"] = to_value(v.before_add_ap);
+    o["after_add_ap"] = to_value(v.after_add_ap);
+    o["use_fol"] = to_value(v.use_fol);
+    o["new_fol"] = to_value(v.new_fol);
     return o;
 }
 
 Value to_value(const CEquipWeaponResultPersonInfo& v) {
     Value o = Value::object();
-    o["id"] = v.id;
-    o["weapon_item_id"] = v.weapon_item_id;
+    o["id"] = to_value(v.id);
+    o["weapon_item_id"] = to_value(v.weapon_item_id);
     return o;
 }
 
 Value to_value(const CEquipWeaponResultItemInfo& v) {
     Value o = Value::object();
-    o["id"] = v.id;
+    o["id"] = to_value(v.id);
     return o;
 }
 
 Value to_value(const CEquipWeaponResultInfo& v) {
     Value o = Value::object();
-    o["Character"] = to_map(v.Character);
-    o["Item"] = to_map(v.Item);
+    o["Character"] = to_value(v.Character);
+    o["Item"] = to_value(v.Item);
     return o;
 }
 
 Value to_value(const CEquipAccessoryResultPersonInfo& v) {
     Value o = Value::object();
-    o["id"] = v.id;
-    o["accessory_item_id"] = v.accessory_item_id;
+    o["id"] = to_value(v.id);
+    o["accessory_item_id"] = to_value(v.accessory_item_id);
     return o;
 }
 
 Value to_value(const CEquipAccessoryResultItemInfo& v) {
     Value o = Value::object();
-    o["id"] = v.id;
+    o["id"] = to_value(v.id);
     return o;
 }
 
 Value to_value(const CEquipAccessoryResultInfo& v) {
     Value o = Value::object();
-    o["Character"] = to_map(v.Character);
-    o["Item"] = to_map(v.Item);
+    o["Character"] = to_value(v.Character);
+    o["Item"] = to_value(v.Item);
     return o;
 }
 
 Value to_value(const CPlayerCharacterMasteryInfo& v) {
     Value o = Value::object();
-    o["character_id"] = v.character_id;
-    o["player_id"] = v.player_id;
-    o["parent_character_id"] = v.parent_character_id;
-    o["dojo_no"] = v.dojo_no;
-    o["master_mastery_step_type_id"] = v.master_mastery_step_type_id;
-    o["master_mastery_step_1_option_no"] = v.master_mastery_step_1_option_no;
-    o["master_mastery_step_2_option_no"] = v.master_mastery_step_2_option_no;
-    o["master_mastery_step_3_option_no"] = v.master_mastery_step_3_option_no;
-    o["master_mastery_step_4_option_no"] = v.master_mastery_step_4_option_no;
-    o["master_mastery_step_5_option_no"] = v.master_mastery_step_5_option_no;
-    o["created_at"] = v.created_at;
-    o["updated_at"] = v.updated_at;
+    o["character_id"] = to_value(v.character_id);
+    o["player_id"] = to_value(v.player_id);
+    o["parent_character_id"] = to_value(v.parent_character_id);
+    o["dojo_no"] = to_value(v.dojo_no);
+    o["master_mastery_step_type_id"] = to_value(v.master_mastery_step_type_id);
+    o["master_mastery_step_1_option_no"] = to_value(v.master_mastery_step_1_option_no);
+    o["master_mastery_step_2_option_no"] = to_value(v.master_mastery_step_2_option_no);
+    o["master_mastery_step_3_option_no"] = to_value(v.master_mastery_step_3_option_no);
+    o["master_mastery_step_4_option_no"] = to_value(v.master_mastery_step_4_option_no);
+    o["master_mastery_step_5_option_no"] = to_value(v.master_mastery_step_5_option_no);
+    o["created_at"] = to_value(v.created_at);
+    o["updated_at"] = to_value(v.updated_at);
     return o;
 }
 
 Value to_value(const CUpdateCharacterMasteryInfo& v) {
     Value o = Value::object();
-    o["character_id"] = v.character_id;
-    o["player_id"] = v.player_id;
-    o["parent_character_id"] = v.parent_character_id;
-    o["dojo_no"] = v.dojo_no;
-    o["master_mastery_step_type_id"] = v.master_mastery_step_type_id;
-    o["master_mastery_step_1_option_no"] = v.master_mastery_step_1_option_no;
-    o["master_mastery_step_2_option_no"] = v.master_mastery_step_2_option_no;
-    o["master_mastery_step_3_option_no"] = v.master_mastery_step_3_option_no;
-    o["master_mastery_step_4_option_no"] = v.master_mastery_step_4_option_no;
-    o["master_mastery_step_5_option_no"] = v.master_mastery_step_5_option_no;
-    o["created_at"] = v.created_at;
-    o["updated_at"] = v.updated_at;
-    o["mastery_talent_id"] = v.mastery_talent_id;
-    o["parent_master_role_id"] = v.parent_master_role_id;
+    o["character_id"] = to_value(v.character_id);
+    o["player_id"] = to_value(v.player_id);
+    o["parent_character_id"] = to_value(v.parent_character_id);
+    o["dojo_no"] = to_value(v.dojo_no);
+    o["master_mastery_step_type_id"] = to_value(v.master_mastery_step_type_id);
+    o["master_mastery_step_1_option_no"] = to_value(v.master_mastery_step_1_option_no);
+    o["master_mastery_step_2_option_no"] = to_value(v.master_mastery_step_2_option_no);
+    o["master_mastery_step_3_option_no"] = to_value(v.master_mastery_step_3_option_no);
+    o["master_mastery_step_4_option_no"] = to_value(v.master_mastery_step_4_option_no);
+    o["master_mastery_step_5_option_no"] = to_value(v.master_mastery_step_5_option_no);
+    o["created_at"] = to_value(v.created_at);
+    o["updated_at"] = to_value(v.updated_at);
+    o["mastery_talent_id"] = to_value(v.mastery_talent_id);
+    o["parent_master_role_id"] = to_value(v.parent_master_role_id);
     return o;
 }
 
 Value to_value(const CMasteryRewardInfo& v) {
     Value o = Value::object();
-    o["master_item_id"] = v.master_item_id;
-    o["num"] = v.num;
+    o["master_item_id"] = to_value(v.master_item_id);
+    o["num"] = to_value(v.num);
     return o;
 }
 
 Value to_value(const UpdateStackItemInfo& v) {
     Value o = Value::object();
-    o["id"] = v.id;
-    o["master_item_id"] = v.master_item_id;
-    o["num"] = v.num;
+    o["id"] = to_value(v.id);
+    o["master_item_id"] = to_value(v.master_item_id);
+    o["num"] = to_value(v.num);
     return o;
 }
 
 Value to_value(const CConfigInfo& v) {
     Value o = Value::object();
-    o["master_config_id"] = v.master_config_id;
-    o["value"] = v.value;
-    o["type"] = v.type;
+    o["master_config_id"] = to_value(v.master_config_id);
+    o["value"] = to_value(v.value);
+    o["type"] = to_value(v.type);
     return o;
 }
 
 Value to_value(const CBirthInfo& v) {
     Value o = Value::object();
-    o["year"] = v.year;
-    o["month"] = v.month;
+    o["year"] = to_value(v.year);
+    o["month"] = to_value(v.month);
+    return o;
+}
+
+Value to_value(const CCoinInfo& v) {
+    Value o = Value::object();
+    o["id"] = to_value(v.id);
+    o["product_id"] = to_value(v.product_id);
+    o["coin"] = to_value(v.coin);
+    o["free_coin"] = to_value(v.free_coin);
+    o["yen"] = to_value(v.yen);
+    o["order_id"] = to_value(v.order_id);
+    o["icon_id"] = to_value(v.icon_id);
+    o["name"] = to_value(v.name);
+    o["name_label"] = to_value(v.name_label);
+    o["title_label"] = to_value(v.title_label);
+    o["description_label"] = to_value(v.description_label);
+    o["opened_at"] = to_value(v.opened_at);
+    o["closed_at"] = to_value(v.closed_at);
+    o["bought_at"] = to_value(v.bought_at);
+    o["limit_count"] = to_value(v.limit_count);
+    o["limit_num"] = to_value(v.limit_num);
+    o["interval_day"] = to_value(v.interval_day);
+    o["bonus_type"] = to_value(v.bonus_type);
+    o["bonus_id"] = to_value(v.bonus_id);
+    o["bonus_id_label"] = to_value(v.bonus_id_label);
+    o["is_once"] = to_value(v.is_once);
+    o["sale_type"] = to_value(v.sale_type);
+    o["starter_limit_day"] = to_value(v.starter_limit_day);
+    o["is_view_closed_at"] = to_value(v.is_view_closed_at);
+    return o;
+}
+
+Value to_value(const CCoinDepositInfo& v) {
+    Value o = Value::object();
+    o["deposit_trans_id"] = to_value(v.deposit_trans_id);
+    return o;
+}
+
+Value to_value(const CPurchasedItemInfo& v) {
+    Value o = Value::object();
+    o["bonus_type"] = to_value(v.bonus_type);
+    o["name_label"] = to_value(v.name_label);
+    o["title_label"] = to_value(v.title_label);
+    return o;
+}
+
+Value to_value(const CPlanetInfo& v) {
+    Value o = Value::object();
+    o["area_ct"] = to_value(v.area_ct);
+    o["is_new"] = to_value(v.is_new);
+    o["is_last_play"] = to_value(v.is_last_play);
+    return o;
+}
+
+Value to_value(const CAreaInfo& v) {
+    Value o = Value::object();
+    o["mission_ct"] = to_value(v.mission_ct);
+    o["is_new"] = to_value(v.is_new);
+    o["is_last_play"] = to_value(v.is_last_play);
+    o["is_start_bighunt"] = to_value(v.is_start_bighunt);
+    return o;
+}
+
+Value to_value(const CMissionElementInfo& v) {
+    Value o = Value::object();
+    o["id"] = to_value(v.id);
+    o["is_new"] = to_value(v.is_new);
+    o["is_clear"] = to_value(v.is_clear);
+    o["is_last_play"] = to_value(v.is_last_play);
+    return o;
+}
+
+Value to_value(const CActiveMissionListInfo& v) {
+    Value o = Value::object();
+    o["Planet"] = to_value(v.Planet);
+    o["Area"] = to_value(v.Area);
+    o["Mission"] = to_value(v.Mission);
+    return o;
+}
+
+Value to_value(const CWorldMapInfo& v) {
+    Value o = Value::object();
+    o["area_ct"] = to_value(v.area_ct);
+    o["is_new"] = to_value(v.is_new);
+    o["is_last_play"] = to_value(v.is_last_play);
+    o["opened_at"] = to_value(v.opened_at);
+    o["closed_at"] = to_value(v.closed_at);
+    return o;
+}
+
+Value to_value(const CWorldMapCellInfo&) {
+    Value o = Value::object();
+    return o;
+}
+
+Value to_value(const CWorldMapMissionElementInfo& v) {
+    Value o = Value::object();
+    o["id"] = to_value(v.id);
+    o["is_new"] = to_value(v.is_new);
+    o["is_clear"] = to_value(v.is_clear);
+    o["is_last_play"] = to_value(v.is_last_play);
+    o["mission_group_id"] = to_value(v.mission_group_id);
+    o["difficulty"] = to_value(v.difficulty);
+    o["mission_type"] = to_value(v.mission_type);
+    o["scenario_library_id"] = to_value(v.scenario_library_id);
+    return o;
+}
+
+Value to_value(const CActiveWorldMapMissionListInfo& v) {
+    Value o = Value::object();
+    o["WorldMap"] = to_value(v.WorldMap);
+    o["WorldMapCellList"] = to_value(v.WorldMapCellList);
+    o["WorldMapMission"] = to_value(v.WorldMapMission);
+    return o;
+}
+
+Value to_value(const CSellResultInfo& v) {
+    Value o = Value::object();
+    o["total_fol"] = to_value(v.total_fol);
+    o["master_item_id"] = to_value(v.master_item_id);
+    o["num"] = to_value(v.num);
+    o["item_ids"] = to_value(v.item_ids);
+    o["StockItem"] = to_value(v.StockItem);
+    o["UpdateGearList"] = to_value(v.UpdateGearList);
     return o;
 }
 

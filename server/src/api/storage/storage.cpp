@@ -21,6 +21,7 @@
 
 #include <set>
 
+#include "api/gen/reply_types.h"  // the replies' C*Info types
 #include "api/items/items.h"            // item_equipped, stored_item_sale_fol
 #include "api/player/player_info.h"     // item_info_list
 #include "core/errors.h"
@@ -178,24 +179,19 @@ std::vector<u8> sell_items_from_storage(Ctx& ctx, const Request& req) {
             return refusef(ctx, "SellItemsFromStorage", ErrorCode::kLockedItem, "item %llu is locked", (unsigned long long)uid.v);
     }
     u64 total = 0;
-    Value updated = Value::object(), ids = Value::array();
+    Value updated = Value::object();
+    infos::CSellResultInfo result;  // as SellItem's (no stack item, no gear)
     for (ItemUid uid : uids) {
         updated[std::to_string(uid.v)] = storage_entry(ctx, uid);
         total += stored_item_sale_fol(ctx, uid);
         ctx.st.q("delete from items where uid = ?", {uid});  // its gear goes with it (ON DELETE CASCADE)
-        ids.push(uid.v);
+        result.item_ids.push_back(uid.v);
     }
     add_fol(ctx, (int64_t)total);
     Value data = ctx.base_data();
     data["UpdateStorageItem"] = updated;
-    Value result = Value::object();  // CSellResultInfo, as SellItem's
-    result["total_fol"] = (u32)total;
-    result["master_item_id"] = 0u;
-    result["num"] = 0u;
-    result["item_ids"] = ids;
-    result["StockItem"] = Value::object();
-    result["UpdateGearList"] = Value::array();
-    data["SellResult"] = result;
+    result.total_fol = (u32)total;
+    data["SellResult"] = infos::to_value(result);
     LOGI("server", "SellItemsFromStorage: +%llu FOL (%zu items)", (unsigned long long)total, uids.size());
     return body(data);
 }
@@ -211,15 +207,15 @@ std::vector<u8> sell_items_from_storage(Ctx& ctx, const Request& req) {
 // Answers: the player state and UpdateStorageLockList [uid] of the stored items it changed.
 std::vector<u8> lock_storage_item(Ctx& ctx, const Request& req) {
     const bool on = req.method == "LockStorageItem";
-    Value changed = Value::array();
+    std::vector<u32> changed;  // (CUpdateStorageLockList: u32 values)
     for (ItemUid uid : distinct(StorageItemsArgs::from(req).uids)) {
         if (!is_stored(ctx, uid)) continue;
         ctx.st.q("update items set locked = ? where uid = ?", {on ? 1 : 0, uid});
-        changed.push((u32)uid.v);
+        changed.push_back((u32)uid.v);
     }
     Value data = ctx.base_data();
-    data["UpdateStorageLockList"] = changed;
-    LOGI("server", "%s: %zu stored items", req.method.c_str(), changed.arr.size());
+    data["UpdateStorageLockList"] = infos::to_array(changed);
+    LOGI("server", "%s: %zu stored items", req.method.c_str(), changed.size());
     return body(data);
 }
 

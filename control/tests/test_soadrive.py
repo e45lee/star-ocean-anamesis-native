@@ -7,11 +7,11 @@ import sys
 import threading
 import time
 
+from soadrive import fifo, milestones, proc, ui370
+from soadrive.milestones import LogCursor, tap_until_log
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 CONTROL = os.path.dirname(HERE)
-sys.path.insert(0, CONTROL)
-from soadrive import fifo, milestones, proc, ui370  # noqa: E402
-from soadrive.milestones import LogCursor, tap_until_log  # noqa: E402
 
 
 def test_repo_root():
@@ -292,12 +292,12 @@ def test_quit_after_an_eof_isnt_lost(tmp_path):
 def _stop_a_driver(tmp_path, busy):
     """A driver (proc.exit_on_signals) with a client in its own process group gets TERM while its
     main thread runs `busy`: it exits 143 and the client is gone."""
-    script = ("import sys, threading, time; sys.path.insert(0, %r)\n"
+    script = ("import sys, threading, time\n"
               "from soadrive import proc\n"
               "proc.exit_on_signals()\n"
               "p = proc.Proc('fake-client', ['sleep', '100'], %r, limit=120)\n"
               "print(p.pid, flush=True)\n"
-              "%s\n") % (CONTROL, str(tmp_path / "client.log"), busy)
+              "%s\n") % (str(tmp_path / "client.log"), busy)
     d = subprocess.Popen([sys.executable, "-c", script], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     pid = int(d.stdout.readline())
     # drain the driver's output so a busy printer never blocks on a full pipe
@@ -342,7 +342,6 @@ def test_a_driver_stopped_while_starting_clients_still_exits(tmp_path):
 
 
 def test_the_gate_labels_host_gpu_failures(tmp_path):
-    sys.path.insert(0, os.path.join(proc.REPO, "tools"))
     import gate
     log = tmp_path / "t.log"
     log.write_text("FAIL: a step (the client is gone: host GPU (D3D12: Removing Device); a host problem, not the game's: rerun)\n")
@@ -386,7 +385,6 @@ def test_gacha_confirm_retries(tmp_path, monkeypatch):
 def _state_db(path, orphan):
     """A state DB at this build's schema version with one declared foreign key (and an orphan row)."""
     import sqlite3
-    sys.path.insert(0, os.path.join(proc.REPO, "tools"))
     import schema_inventory
     con = sqlite3.connect(str(path))
     con.executescript("create table p (id integer primary key); create table c (pid integer references p(id));"

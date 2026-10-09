@@ -19,11 +19,9 @@ Example:
 A thin CLI over control/soadrive/fifo.py (the driver library).
 """
 import argparse
-import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from soadrive import fifo  # noqa: E402
+from soadrive import fifo
 
 
 def main():

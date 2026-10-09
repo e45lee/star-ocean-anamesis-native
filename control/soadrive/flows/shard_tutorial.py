@@ -18,15 +18,12 @@ stats) and is compared like any flow (packets, server state, screens). A stage e
 """
 import os
 import sqlite3
-import sys
 import time
 
 from .. import prepared, screens, ui370
-from ..proc import REPO
 from . import launch, tutorial
 
-sys.path.insert(0, os.path.join(REPO, "tools"))
-import compare_tutorial  # noqa: E402  (tools/compare_tutorial.py: the milestone list and checks)
+import compare_tutorial  # (tools/compare_tutorial.py: the milestone list and checks)
 
 # After the corpus's requests (12:00-12:18 of the recording day): the server clock starts later.
 CLOCK = "2026-10-01 12:30:05"

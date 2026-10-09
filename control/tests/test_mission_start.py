@@ -5,15 +5,14 @@ signature regions blacked out) and whose taps move between them as the game's do
 決定 must never be tapped on the party screen."""
 import os
 import shutil
-import sys
 
 import pytest
 
+from soadrive import popups, ui370
+from soadrive.flows import mission
+from soadrive.targets import Abort
+
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(HERE))
-from soadrive import popups, ui370  # noqa: E402
-from soadrive.flows import mission  # noqa: E402
-from soadrive.targets import Abort  # noqa: E402
 
 FIX = os.path.join(HERE, "fixtures", "mission-start")
 

@@ -21,7 +21,6 @@ Env: SEED_RNG (default 605), SOA_PHONE (scripts/shared-phone.sh), WATCH=1.
 Targets: port-inproc (the phase lines, the in-process server's state)."""
 import re
 
-from ..flows import mission
 from . import _sphere, common
 
 TARGETS = ("port-inproc",)

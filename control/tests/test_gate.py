@@ -8,12 +8,9 @@ import time
 
 import pytest
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(os.path.dirname(HERE))
-sys.path.insert(0, os.path.join(REPO, "tools"))
-sys.path.insert(0, os.path.join(REPO, "control"))
-import gate  # noqa: E402
-import soaslot  # noqa: E402
+import gate
+import soaslot
+
 
 SHARD = {"name": "shard:login", "tier": "T1", "secs": 100, "kind": "shard", "game": 3, "cmd": "tests/diff/run.sh login --out {out}"}
 

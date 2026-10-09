@@ -16,9 +16,9 @@ import sys
 
 import pytest
 
+import gdbclient
+
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, os.path.join(REPO, "control"))
-import gdbclient  # noqa: E402
 
 GDBINIT = os.path.join(REPO, "control", "gdbinit-soa")
 DEMO = os.environ.get("SOA_GDB_DEMO") or os.path.join(REPO, "build", "runtime", "soaruntime_tests")

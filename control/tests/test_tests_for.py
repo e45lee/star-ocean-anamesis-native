@@ -1,10 +1,6 @@
 """tools/tests_for.py's path rules on the committed tests/impact.json (pytest; no game, no build)."""
-import os
-import sys
 
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, os.path.join(REPO, "tools"))
-import tests_for  # noqa: E402
+import tests_for
 
 
 def names(*paths):

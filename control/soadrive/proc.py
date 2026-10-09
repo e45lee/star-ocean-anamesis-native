@@ -5,7 +5,6 @@ import random
 import signal
 import socket
 import subprocess
-import sys
 import threading
 import time
 
@@ -19,8 +18,6 @@ LIVE, LIVE_LOCK = set(), threading.Lock()
 def repo_file(rel):
     """REPO/rel, else the main checkout's (a worktree lacks untracked files; soa_save.paths.repo_file).
     Empty files don't count. None when neither exists."""
-    if REPO not in sys.path:
-        sys.path.insert(0, REPO)
     from soa_save.paths import repo_file as _repo_file
 
     p = _repo_file(rel, REPO)

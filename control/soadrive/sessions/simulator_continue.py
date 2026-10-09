@@ -17,7 +17,6 @@ Usage: port/scripts/simulator_continue_session.sh <soa> <out-dir> <scratch-dir> 
 Env: SOA_PHONE (scripts/shared-phone.sh), SEED_RNG, WATCH=1.
 Targets: port-inproc (default), port-server (the server's lines are read from soa-server's log; the
 `mission:` shortcut and the phase lines are the client's, so both have them)."""
-import os
 import sqlite3
 
 from .. import popups

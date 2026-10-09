@@ -43,9 +43,8 @@ import re
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from soadrive import fifo, popups, screens  # noqa: E402
-from soadrive.milestones import Failed, LogCursor, tap_until_log  # noqa: E402
+from soadrive import fifo, popups, screens
+from soadrive.milestones import Failed, LogCursor, tap_until_log
 
 MAX_RMSE = float(os.environ.get("FLOW_MAX_RMSE", "0.08"))
 # kept for importers of the old module (the fingerprints live in soadrive/popups.py)

@@ -18,16 +18,13 @@ soadrive/targets.py Run.state_check): a violation fails the session.
 """
 import argparse
 import importlib
-import os
 import pkgutil
 import signal
 import sys
 import traceback
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
-import soaslot  # noqa: E402
-from soadrive import sessions, targets  # noqa: E402
+import soaslot
+from soadrive import sessions, targets
 
 
 def session_names():

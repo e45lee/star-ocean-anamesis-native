@@ -36,8 +36,7 @@ import time
 from . import fifo, gdb, milestones, proc, screens, winhost
 from .proc import REPO
 
-sys.path.insert(0, os.path.join(REPO, "control"))
-import soaslot  # noqa: E402  (control/soaslot.py: the machine-wide game-process slot pool)
+import soaslot  # (control/soaslot.py: the machine-wide game-process slot pool)
 
 # SOA_PACKAGE_DIR: the unpacked release package (README.md "Packaging") whose programs a run tests
 # (scripts/package-verify.sh): they run with that folder as their working directory and get no

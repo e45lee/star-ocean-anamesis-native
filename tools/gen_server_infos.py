@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate the server's reply types: server/src/api/gen/reply_types.{h,cpp}, one plain C++ struct per client
 info class the server sends (CBoostCharacterResultInfo, CLimitBreakInfo, ...) and its `to_value` (the
 msgpack::Value map the handler puts into its reply), from two inputs (server/src/api/gen/README.md):

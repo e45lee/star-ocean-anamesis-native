@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/hash/hash_family.h"
 #include "native/hash/hash_layout.h"
 

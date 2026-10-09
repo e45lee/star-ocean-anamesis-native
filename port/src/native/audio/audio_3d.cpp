@@ -8,8 +8,8 @@
 #include <cstring>
 #include <string>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/audio/audio_check.h"
 #include "native/audio/audio_layout.h"
 #include "native/common/arm_float.h"

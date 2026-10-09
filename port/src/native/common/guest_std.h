@@ -9,7 +9,7 @@
 #include <string>
 #include <string_view>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 
 namespace soa::guest {
 

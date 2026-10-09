@@ -17,8 +17,8 @@
 #include <initializer_list>
 #include <mutex>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/test.h"
 
 namespace soa::native::render::testutil {

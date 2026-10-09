@@ -2,8 +2,8 @@
 // The guest functions and constants the info natives call or pass on (internal to the subsystem).
 #include <initializer_list>
 
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/info/info_layout.h"
 
 namespace soa::native::info::g {

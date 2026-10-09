@@ -11,9 +11,9 @@
 // (NATIVE_PORT_FUNCTION_IF), so the selftest (no natives) and --natives none see the shipped values.
 #include "native/ui/ui_utility.h"
 
-#include "core/abi.h"
-#include "core/cpu.h"
-#include "core/log.h"
+#include "soaruntime/core/abi.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/log.h"
 #include "core/options.h"
 #include "native/common/native.h"
 #include "native/common/test.h"

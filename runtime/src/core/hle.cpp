@@ -1,11 +1,11 @@
-#include "core/hle.h"
+#include "soaruntime/core/hle.h"
 
 #include <cstdarg>
 #include <cstring>
 #include <mutex>
 #include <vector>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 
 namespace soa {
 

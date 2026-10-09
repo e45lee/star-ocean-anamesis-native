@@ -11,16 +11,16 @@
 #include <filesystem>
 #include <string>
 
-#include "core/cpu.h"
-#include "core/device.h"
-#include "core/hle.h"
-#include "core/log.h"
-#include "core/selftest.h"
-#include "core/vfs.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/device.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/selftest.h"
+#include "soaruntime/core/vfs.h"
 #include "crash_test.h"
 #include "gdbstub_test.h"
 #include "jni/jni_names.h"
-#include "jni/jvm.h"
+#include "soaruntime/jni/jvm.h"
 
 using namespace soa;
 

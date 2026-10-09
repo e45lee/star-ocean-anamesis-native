@@ -13,13 +13,13 @@
 #include <thread>
 #include <vector>
 
-#include "android/ndk.h"
-#include "android/platform.h"
+#include "soaruntime/android/ndk.h"
+#include "soaruntime/android/platform.h"
 #include "core/crash.h"
-#include "core/thread_record.h"
-#include "core/log.h"
-#include "core/vfs.h"
-#include "frontend/movie_decoder.h"
+#include "soaruntime/core/thread_record.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/vfs.h"
+#include "soaruntime/frontend/movie_decoder.h"
 
 namespace soa {
 

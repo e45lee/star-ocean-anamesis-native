@@ -31,15 +31,15 @@
 #include <string>
 #include <unordered_map>
 
-#include "core/device.h"
+#include "soaruntime/core/device.h"
 #include "core/crash.h"
-#include "core/thread_record.h"
-#include "core/hle.h"
+#include "soaruntime/core/thread_record.h"
+#include "soaruntime/core/hle.h"
 #include "core/host_fd.h"
-#include "core/host_mem.h"
+#include "soaruntime/core/host_mem.h"
 #include "core/linux_errno.h"
-#include "core/log.h"
-#include "core/vfs.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/vfs.h"
 #include "hle/format.h"
 #include "hle/host_file.h"
 

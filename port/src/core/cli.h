@@ -1,12 +1,12 @@
 #pragma once
 // soa's command line (cli.cpp): the client options (the runtime programs' shared ones,
-// runtime/src/app/cli.h; the 3.7.0 phone's, platform370/cli.h; soa's own) and the server options
+// runtime/include/soaruntime/app/cli.h; the 3.7.0 phone's, platform370/cli.h; soa's own) and the server options
 // (soaserver/cli.h, soa-server's). Run options go into RunOptions (core/options.h); main() acts on
 // the rest.
 #include <string>
 #include <vector>
 
-#include "app/host.h"
+#include "soaruntime/app/host.h"
 #include "core/options.h"
 #include "platform370/platform370.h"
 

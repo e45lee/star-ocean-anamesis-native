@@ -3,7 +3,7 @@
 #include <cstring>
 #include <vector>
 
-#include "core/cpu.h"
+#include "soaruntime/core/cpu.h"
 #include "native/common/arm_float.h"
 #include "native/common/test.h"
 #include "native/kernel/kernel_layout.h"

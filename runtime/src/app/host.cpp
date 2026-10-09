@@ -27,26 +27,26 @@
 #include <string>
 #include <thread>
 
-#include "app/host.h"
-#include "app/page_overlay.h"
+#include "soaruntime/app/host.h"
+#include "soaruntime/app/page_overlay.h"
 #include "app/sdl_gl.h"
 #include "app/text_overlay.h"
-#include "android/ndk.h"
-#include "android/platform.h"
+#include "soaruntime/android/ndk.h"
+#include "soaruntime/android/platform.h"
 #include "core/crash.h"
-#include "core/thread_record.h"
-#include "core/cpu.h"
-#include "core/hle.h"
-#include "core/loader.h"
-#include "core/log.h"
-#include "core/profile.h"
-#include "core/vfs.h"
+#include "soaruntime/core/thread_record.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/loader.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/profile.h"
+#include "soaruntime/core/vfs.h"
 #include "frontend/movie.h"
 #include "frontend/text_entry.h"
 #include "frontend/touch_script.h"
 #include "hle/audio.h"
 #include "hle/gfx.h"
-#include "jni/jvm.h"
+#include "soaruntime/jni/jvm.h"
 
 using namespace soa;
 namespace sdlgl = soa::app::sdlgl;
@@ -807,7 +807,7 @@ void activity_cb(CallbackSlot s, std::initializer_list<u64> extra = {}) {
 }  // namespace
 
 void app::install_host_hooks() {
-    // The runtime's calls into this frontend (runtime/src/android/platform.h).
+    // The runtime's calls into this frontend (runtime/include/soaruntime/android/platform.h).
     host_hooks().start_audio = host_start_audio;
     host_hooks().start_text_input = host_start_text_input;
     host_hooks().play_movie = host_play_movie;

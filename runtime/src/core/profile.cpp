@@ -28,8 +28,8 @@
 // Stacks come from the leaf PC, LR (for leaf functions) and the frame-pointer chain, and continue
 // across nested guest_call levels (host code calling back into the guest).
 #include "core/crash.h"
-#include "core/thread_record.h"
-#include "core/profile.h"
+#include "soaruntime/core/thread_record.h"
+#include "soaruntime/core/profile.h"
 
 #include "core/elf64.h"
 #include <pthread.h>
@@ -59,8 +59,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "core/host_mem.h"
-#include "core/log.h"
+#include "soaruntime/core/host_mem.h"
+#include "soaruntime/core/log.h"
 #include "dynarmic/interface/A64/a64.h"
 
 namespace soa {

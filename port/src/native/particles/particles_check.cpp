@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 
-#include "core/thread_record.h"
+#include "soaruntime/core/thread_record.h"
 #include "native/common/guest_std.h"
 #include "native/common/native_method.h"
 

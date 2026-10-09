@@ -16,7 +16,7 @@
 // FastCriticalSection users of other subsystems), so the guest layout is the state: the natives keep
 // every field where the guest keeps it and change it the way the guest does (README.md "Design").
 // The host objects behind the bionic pthread / semaphore objects embedded here are the HLE layer's
-// (runtime/src/hle/thread.h): glibc / winpthreads mutexes and condition variables in place, host
+// (runtime/include/soaruntime/hle/thread.h): glibc / winpthreads mutexes and condition variables in place, host
 // semaphores in the HLE's side table keyed by the guest sem_t's address.
 //
 // Members a guest method declares `void` but whose x0 the guest leaves defined by a tail call

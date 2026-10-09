@@ -23,7 +23,7 @@ control/soactl.py /tmp/viewer.fifo tap:364:1000 wait:3000 shot:/tmp/viewer.png
 
 `scripts/run-viewer-380.sh` (README.md "Running") checks the game files (the XAPK in `apk/`, read in place, else the unpacked `work/extracted/xapk`), starts `soa-viewer` and stops it on exit or Ctrl-C; it starts no server, since the viewer needs none ("Network"). `--home DIR` moves the data; other options go to `soa-viewer`.
 
-`soa-viewer --help` lists the options (CLI11, `src/cli.cpp`; the ones it shares with `soa` are defined once: `runtime/src/app/cli.h`, `common/include/soa/cli.h`). A value-taking option given twice: the last one wins (`--apk`, `--shot`, `--do` collect); an error prints one line and exits 2.
+`soa-viewer --help` lists the options (CLI11, `src/cli.cpp`; the ones it shares with `soa` are defined once: `runtime/include/soaruntime/app/cli.h`, `common/include/soa/cli.h`). A value-taking option given twice: the last one wins (`--apk`, `--shot`, `--do` collect); an error prints one line and exits 2.
 
 | Option | Meaning |
 |---|---|

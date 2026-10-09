@@ -12,6 +12,8 @@ Whatever differs between hosts is set by the host through the extension points b
 
 ## What's in it
 
+Each source folder `src/X/` keeps its public headers in `include/soaruntime/X/` (below, "Public and private headers").
+
 | Folder | Contents |
 |---|---|
 | `src/core/` | ELF loader (`loader.h`: the game library), the dynarmic JIT CPU and guest calls (`cpu.h`, `abi.h`), the HLE registry (`hle.h`), the guest filesystem view (`vfs.h`), the emulated device (`device.h`), logging (`log.h`), crash reports (`crash.h`), tracing (`SOA_TRACE`), profiling (`SOA_PROFILE` / `SOA_COVERAGE`), the runtime self-test registry (`selftest.h`) |
@@ -22,7 +24,16 @@ Whatever differs between hosts is set by the host through the extension points b
 | `src/app/` | The desktop host loop (`app/host.h`): the SDL2 window and its GLES contexts (`app/sdl_gl.h`; X11 or Wayland), presentation and screenshots, mouse and keyboard input, text entry and its on-screen box (`app/text_overlay.h`; below, "Text entry"), the audio device and its null sink, the control commands (`--do`, `--shot`, `--control` FIFO), the `ANativeActivity` bring-up (`JNI_OnLoad`, `onCreate`, the start-up callbacks) and the main loop. Moved from `port/src/main.cpp`; a separate target because it links SDL2 |
 | `tests/` | `soaruntime_tests`: the extension points, exercised without a game |
 
-Includes are written from `src/`: `#include "core/cpu.h"`. The include path of a runtime user is `runtime/src` (target `soaruntime_iface`).
+**Public and private headers.** The runtime's API, the headers its users include, is
+`include/soaruntime/`, in the same folders as the sources: `#include "soaruntime/core/cpu.h"`,
+`"soaruntime/jni/jvm.h"`, `"soaruntime/app/host.h"`. The include path of a runtime user is
+`runtime/include` (target `soaruntime_iface`), so a header the runtime keeps beside its sources in
+`src/` (`core/crash.h`, `hle/gfx.h`, `jni/jni_names.h`, ...) can't be included from outside, and no
+user's own folder (the port's `core/`, the server's) can shadow a runtime header. The runtime's own
+targets and its tests also have `runtime/src` (`soaruntime_private`) and include their private
+headers from there: `#include "core/crash.h"`. A header becomes public by moving it to
+`include/soaruntime/` (with every header it includes); each user's `soa_check_includes` allows
+`runtime/include` only.
 
 ## Building and linking
 
@@ -30,15 +41,16 @@ Includes are written from `src/`: `#include "core/cpu.h"`. The include path of a
 
 | Target | Use |
 |---|---|
-| `soaruntime_iface` | INTERFACE: include dir, compile definitions, libraries |
+| `soaruntime_iface` | INTERFACE: the public include dir (`runtime/include`), compile definitions, libraries |
+| `soaruntime_private` | INTERFACE: `runtime/src` as an include dir, for the runtime's own targets (`soaruntime_objs`, `soaruntime_app`, `soaruntime_tests`) |
 | `soaruntime_objs` | OBJECT: the runtime's objects. The port links them **first**: link order is static-initializer order, and `soa` keeps the order it had before the split (`port/CMakeLists.txt`) |
 | `soaruntime` | STATIC archive of the same objects. Link it whole (`$<LINK_LIBRARY:WHOLE_ARCHIVE,soaruntime>`): a plain static link drops objects nothing references, such as the self-registering `RUNTIME_TEST`s |
 | `soaruntime_tests` | The extension-point tests. They link `soaruntime` alone, so a runtime that needed port code would fail to link |
 | `soaruntime_app` | STATIC: the desktop host loop (`src/app/`), with SDL2. Not part of `soaruntime`. `soa` and `soa-emu` link it as a plain library: it has no self-registering objects |
 
 **The runtime must not include anything from `port/`, `server/`, `emulator/` or `platform370/`.** This is enforced three ways:
-1. **Configure time:** `runtime/CMakeLists.txt` checks that every quoted `#include` in `runtime/` names a file in `runtime/src` (or next to the including file), or dynarmic.
-2. **Compile time:** the runtime's include path is `runtime/src` only.
+1. **Configure time:** `runtime/CMakeLists.txt` checks that every quoted `#include` in `runtime/` names a file in `runtime/include` or `runtime/src` (or next to the including file), or dynarmic.
+2. **Compile time:** the runtime's include path is `runtime/include` and `runtime/src` only.
 3. **Link time:** `soaruntime_tests` links the whole archive without the port.
 
 ## Extension points

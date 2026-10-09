@@ -25,14 +25,14 @@
 #include <unordered_map>
 #include <vector>
 
-#include "android/ndk.h"
-#include "core/hle.h"
-#include "core/log.h"
-#include "core/thread_record.h"
+#include "soaruntime/android/ndk.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/log.h"
+#include "soaruntime/core/thread_record.h"
 #include "hle/egl_state.h"
 #include "hle/etc2.h"
 #include "hle/gfx.h"
-#include "hle/gl_host.h"
+#include "soaruntime/hle/gl_host.h"
 
 namespace soa {
 
@@ -40,13 +40,13 @@ namespace soa {
 // GLES: every entry point goes through a function pointer from eglGetProcAddress.
 
 #define GL_ENTRY(name) static decltype(&::name) s_##name = nullptr;
-#include "hle/gl_functions.inc"
+#include "soaruntime/hle/gl_functions.inc"
 #undef GL_ENTRY
 
 // Entry points for native code (hle/gl_host.h): the same functions the guest thunks call.
 namespace glh {
 #define GL_ENTRY(name) decltype(&::name) name = nullptr;
-#include "hle/gl_functions.inc"
+#include "soaruntime/hle/gl_functions.inc"
 #undef GL_ENTRY
 thread_local Recorder* t_rec = nullptr;
 thread_local bool t_map_overwrites = false;
@@ -558,7 +558,7 @@ void register_gles(Hle& h) {
     s_##name = (decltype(s_##name))eglGetProcAddress(#name);           \
     glh::name = s_##name;                                              \
     h.fn(#name, &gl_thunk<&s_##name>);
-#include "hle/gl_functions.inc"
+#include "soaruntime/hle/gl_functions.inc"
 #undef GL_ENTRY
     // Translated entry points: the guest thunk and glh:: (native code) share the host_ function.
 #define GL_TRANSLATED(name, thunk)          \

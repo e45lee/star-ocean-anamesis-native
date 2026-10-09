@@ -2,8 +2,8 @@
 // The guest functions and constants the master natives call or pass on (internal to the subsystem):
 // the STL allocator (memory), operator delete, the assert. Calls go through live::out_call (a live
 // check records them); every address is the 3.7.0 lib's.
-#include "core/cpu.h"
-#include "core/loader.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/loader.h"
 #include "native/master/master_layout.h"
 
 namespace soa::native::master::g {

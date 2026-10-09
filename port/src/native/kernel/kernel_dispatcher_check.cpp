@@ -22,8 +22,8 @@
 #include <cstring>
 #include <new>
 
-#include "core/cpu.h"
-#include "hle/thread.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/hle/thread.h"
 #include "native/common/guest_std.h"
 #include "native/common/native_method.h"
 #include "native/kernel/kernel_check.h"

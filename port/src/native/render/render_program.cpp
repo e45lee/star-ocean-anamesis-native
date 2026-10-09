@@ -12,9 +12,9 @@
 // program fields, SetShaderProgramUniform recorded as a marker (t_mark_callees).
 #include <cstring>
 
-#include "core/cpu.h"
-#include "core/hle.h"
-#include "hle/gl_host.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/hle/gl_host.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
 #include "native/hash/hash_layout.h"

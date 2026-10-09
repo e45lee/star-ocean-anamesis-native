@@ -9,7 +9,7 @@
 #include <map>
 #include <mutex>
 
-#include "core/log.h"
+#include "soaruntime/core/log.h"
 #include "net/packet_log.h"  // the line formats soa-server's log has
 #include "net/wire.h"
 #include "soaserver/msgpack.h"

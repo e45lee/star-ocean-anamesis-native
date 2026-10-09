@@ -7,7 +7,7 @@
 // a live check of the calling native records them).
 #include <cstring>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/live_call.h"
 #include "native/containers/containers_family.h"
 #include "native/containers/containers_layout.h"

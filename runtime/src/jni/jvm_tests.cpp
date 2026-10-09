@@ -25,12 +25,12 @@
 #include <thread>
 #include <vector>
 
-#include "core/cpu.h"
-#include "core/selftest.h"
-#include "core/thread_record.h"
-#include "core/vfs.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/selftest.h"
+#include "soaruntime/core/thread_record.h"
+#include "soaruntime/core/vfs.h"
 #include "jni/jni_names.h"
-#include "jni/jvm.h"
+#include "soaruntime/jni/jvm.h"
 
 namespace soa::jni {
 namespace {

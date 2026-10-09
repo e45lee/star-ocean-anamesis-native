@@ -1,10 +1,10 @@
 #pragma once
-// soa-emu's command line (cli.cpp): the runtime programs' shared options (runtime/src/app/cli.h),
+// soa-emu's command line (cli.cpp): the runtime programs' shared options (runtime/include/soaruntime/app/cli.h),
 // the 3.7.0 phone's (platform370/cli.h) and its own. main.cpp acts on the result.
 #include <string>
 #include <vector>
 
-#include "app/host.h"
+#include "soaruntime/app/host.h"
 #include "platform370/platform370.h"
 
 namespace soa::emu {

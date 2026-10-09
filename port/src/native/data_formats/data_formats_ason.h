@@ -4,7 +4,7 @@
 // regions of an ASON's bump allocator.
 #include <cstring>
 
-#include "core/loader.h"
+#include "soaruntime/core/loader.h"
 #include "native/common/live_call.h"
 #include "native/data_formats/data_formats_family.h"
 #include "native/data_formats/data_formats_layout.h"

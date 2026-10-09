@@ -61,7 +61,7 @@
      "covers": "every generated source built into the programs is fresh against the 3.7.0 lib (each generator's --check: the natives' address tables port/src/native/*/gen/*_addresses.h, api/gen/fakeapi_tables.inc, params/gen/params_instantiations.inc, master/gen/master_elements.h, info/gen/info_classes.h, api/gen/wire_table.inc, server/net/gen/wire_decode.inc)"},
     {"name": "thread-local", "tier": "T0", "secs": 3, "kind": "check", "game": 0,
      "cmd": "tools/check_thread_local.py",
-     "covers": "no non-trivial thread_local in our code (a destructor or a dynamic initializer, read from the built objects; cpp-httplib's allowed), and no program but soa-server references __cxa_thread_atexit (per-thread state: runtime/src/core/thread_record.h)"},
+     "covers": "no non-trivial thread_local in our code (a destructor or a dynamic initializer, read from the built objects; cpp-httplib's allowed), and no program but soa-server references __cxa_thread_atexit (per-thread state: runtime/include/soaruntime/core/thread_record.h)"},
     {"name": "pytest-control", "tier": "T0", "secs": 50, "kind": "check", "game": 0,
      "cmd": ".venv/bin/python -m pytest -q control/tests",
      "covers": "the slot pool, the driver library control/soadrive (log cursor, FIFO, resend rules) and tools/tests_for.py's path rules (no game)"},

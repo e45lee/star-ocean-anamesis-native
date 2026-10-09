@@ -20,10 +20,10 @@
 #include <string>
 #include <thread>
 
-#include "core/cpu.h"
-#include "core/hle.h"
-#include "core/selftest.h"
-#include "core/thread_record.h"
+#include "soaruntime/core/cpu.h"
+#include "soaruntime/core/hle.h"
+#include "soaruntime/core/selftest.h"
+#include "soaruntime/core/thread_record.h"
 
 namespace soa {
 namespace {

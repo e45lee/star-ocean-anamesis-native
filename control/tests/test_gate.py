@@ -31,7 +31,7 @@ def fresh_gate():
 def fake_driver(monkeypatch, rc, summary=None):
     """run_cmd standing in for tests/diff/run.sh: writes `summary` (if any) as this run's summary.txt
     and exits rc."""
-    def run_cmd(cmd, out, tmp, limit, log, slot=-1):
+    def run_cmd(cmd, out, tmp, limit, log, slot=-1, extra_env=None):
         os.makedirs(out, exist_ok=True)
         open(log, "w").write("$ %s\n" % cmd)
         if summary is not None:
@@ -134,7 +134,7 @@ def test_a_lone_tests_diff_run_gets_the_long_limit(tmp_path, monkeypatch):
     (it was killed at 600 s after waiting 556 s for a slot)."""
     limits = {}
 
-    def run_cmd(cmd, out, tmp, limit, log, slot=-1):
+    def run_cmd(cmd, out, tmp, limit, log, slot=-1, extra_env=None):
         limits[cmd] = limit
         return 0
     monkeypatch.setattr(gate, "run_cmd", run_cmd)

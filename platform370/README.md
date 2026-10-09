@@ -104,7 +104,7 @@ cmake --build build -j8 --target soaplatform370   # -> build/platform370/libsoap
 
 ## Hosts with natives (the port, P1)
 
-`soa-emu` installs no natives. A host that does (`soa`: `install_native_functions`, the `FakeApiCaller` hooks) brings the runtime up in this order:
+`soa-emu` installs no natives. A host that does (`soa`: `install_native_functions`, the `FakeApiCaller` hooks) brings the runtime up in this order (both through `app::boot`, runtime/README.md; the three calls after `load_library` are its `after_load` hook):
 
 ```
 platform370::install(cfg);              // before hle_init / Vm::init

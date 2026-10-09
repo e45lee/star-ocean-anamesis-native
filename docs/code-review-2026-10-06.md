@@ -372,11 +372,18 @@ traces/profile/watchdog, download dir, APKs, initializers, `app::run`.
 **Fix:** `app::boot(BootConfig&)`, with hooks after HLE, after load (platform370 patches, natives) and
 before init.
 
+(CR10, 2026-10-08: `app::boot(BootConfig, &error)` in `runtime/include/soaruntime/app/boot.h`, used by all three
+hosts, with hooks `after_load` and `add_assets`; a failed step (gdb, the library, the download tree, an
+APK) returns the reason and the host exits 2. The viewer's `set_download_dir` result had already been
+checked since the review.)
+
 <a id="r6"></a>
 #### R6. Library code that ends the process (L–M, S, risk L)
 
 - `runtime/src/core/loader.cpp:94-206` calls `fatal()` (`abort()`) on a bad or non-AArch64 ELF. A wrong
   `--lib` therefore dumps core instead of reporting an error. Return an error instead.
+  (CR10, 2026-10-08: `load_library(path, &error)` returns nullptr and the reason, with bounds checks on
+  the headers and tables; test `loader/rejects-bad-files`.)
 - `app/host.cpp:1042`: `app::run` ends with `_exit(0)`, so no host can run shutdown code after the loop.
   The in-process server relies on SQLite having committed already. Return an exit code, or add an
   `on_quit` hook.

@@ -8,13 +8,13 @@
 // callbacks) and the main loop.
 //
 // Built as the separate target `soaruntime_app` (it links SDL2; the rest of the runtime
-// doesn't). Used by the port (port/src/main.cpp) and the 3.7.0 emulator (emulator/src/main.cpp).
+// doesn't). Used by soa (port/src/main.cpp), soa-emu (emulator/src/main.cpp) and soa-viewer
+// (emulator-viewer/src/main.cpp).
 //
-// Order (port/src/main.cpp is the reference):
+// Order:
 //   app::install_host_hooks();              // host_hooks(): audio, text input, movies
-//   ... vfs_init, cpu_global_init, hle_init, Vm::init, load_library, assets, run_initializers ...
-//   app::start_watchdog();                  // optional: SOA_WATCHDOG
-//   return app::run(*lib, cfg);             // window, activity, main loop; never returns
+//   LoadedLib* lib = app::boot(boot, &err); // the runtime's bring-up (app/boot.h; starts the watchdog)
+//   app::run(*lib, cfg);                    // window, activity, main loop; never returns
 #include <functional>
 #include <string>
 #include <vector>

@@ -10,18 +10,17 @@ import zipfile
 
 import pytest
 
+from missing_assets import rules
+from missing_assets.associate import RULE_AMBIGUOUS, RULE_BONUS, RULE_RELEASE, Association, associate
+from missing_assets.beyond import REASON_SHORT_WINDOW, REASON_TEST_NAME, unreleased_reason
+from missing_assets.guess import Guesser, name_pattern
+from missing_assets.model import ContentGroup, ContentItem, ContentKind, GachaRow
+from missing_assets.names import Names
+from missing_assets.presence import Presence, Source, image_info, logical_name
+from missing_assets.render import Anchors, merge_bg, missing_paths_text, render_document
+from soa_save import adld
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
-sys.path.insert(0, str(ROOT))
-from missing_assets import rules  # noqa: E402
-from missing_assets.associate import RULE_AMBIGUOUS, RULE_BONUS, RULE_RELEASE, Association, associate  # noqa: E402
-from missing_assets.beyond import REASON_SHORT_WINDOW, REASON_TEST_NAME, unreleased_reason  # noqa: E402
-from missing_assets.guess import Guesser, name_pattern  # noqa: E402
-from missing_assets.model import ContentGroup, ContentItem, ContentKind, GachaRow  # noqa: E402
-from missing_assets.names import Names  # noqa: E402
-from missing_assets.presence import Presence, Source, image_info, logical_name  # noqa: E402
-from missing_assets.render import Anchors, merge_bg, missing_paths_text, render_document  # noqa: E402
-from soa_save import adld  # noqa: E402
 
 
 # ---------------------------------------------------------------- fixtures

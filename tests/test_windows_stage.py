@@ -3,13 +3,12 @@ names only listed files, never .claude/ (worktrees), build/ or an unlisted work/
 extras are found and pruned (run/ and the .exe side copies kept)."""
 import os
 import subprocess
-import sys
 
 import pytest
 
+import windows_stage as ws
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "scripts"))
-import windows_stage as ws  # noqa: E402
 
 LIST = """\
 port/CMakeLists.txt          # marker

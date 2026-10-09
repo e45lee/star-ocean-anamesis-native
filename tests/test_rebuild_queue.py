@@ -6,11 +6,8 @@ called from a native is "[native]A;guest", an original body a native runs under 
 (NATIVE_FUNCTION_ORIG) is "[native]A;A", a native's host wait ends in "[hle]native_wait".
 """
 import os
-import sys
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "port", "scripts"))
-import rebuild_queue  # noqa: E402
+import rebuild_queue
 
 SIGNAL = "_ZN4Aska7SLVoice11AudioSignalEm"          # audio (Aska::SLVoice)
 AUDIO_RUN = "_ZN4Aska11SoundObject8AudioRunEv"     # audio (Aska::SoundObject)

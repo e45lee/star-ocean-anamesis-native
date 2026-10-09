@@ -1,16 +1,13 @@
 """tools/gacha_verify.py on a tiny synthetic image pair: an "illustration" (texture with alpha) is
 scaled, moved and pasted onto a noisy "banner"; the matcher must find it with the right scale and
 must not report an unrelated illustration. No game files are used."""
-import os
-import sys
 
 import pytest
 
+import gacha_verify as gv
+
 np = pytest.importorskip("numpy")
 cv2 = pytest.importorskip("cv2")
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
-import gacha_verify as gv  # noqa: E402
 
 
 def texture(seed, h=320, w=240):

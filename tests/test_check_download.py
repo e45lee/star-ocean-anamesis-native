@@ -3,17 +3,13 @@ manifests, one XOR-ADLD member, one plain (e = 0) member and a bundle entry (fla
 import hashlib
 import pathlib
 import struct
-import sys
 
 import msgpack
 import pytest
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
-sys.path.insert(0, str(ROOT))
-import check_download  # noqa: E402
-from soa_save import adld  # noqa: E402
-from soa_save.adld import chash32, decode  # noqa: E402
+import check_download
+from soa_save import adld
+from soa_save.adld import chash32, decode
 
 VERSION_ID = "0123456789abcdef0123456789abcdef"
 XOR_NAME, PLAIN_NAME = "Image/etc2/test_a.aif", "Sound/test_b.aac"

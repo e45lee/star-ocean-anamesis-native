@@ -1,15 +1,11 @@
 """tools/global_voice_files.py on a tiny synthetic Global master, JP master and download tree."""
 import datetime
-import pathlib
 import sqlite3
-import sys
 
 import pytest
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
 
-import global_voice_files as gv  # noqa: E402
+import global_voice_files as gv
 
 
 def make_gl(path):

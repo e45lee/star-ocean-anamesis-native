@@ -1,11 +1,7 @@
 """tools/check_env_access.py, the T0 lint that keeps environment access in soa/env.h: calls are
 found, comments and string literals aren't."""
-import os
-import sys
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "tools"))
-import check_env_access as cea  # noqa: E402
+import check_env_access as cea
 
 
 def found(src):

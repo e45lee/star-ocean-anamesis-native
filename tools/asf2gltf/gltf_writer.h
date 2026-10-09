@@ -15,7 +15,7 @@ namespace gltf {
 struct Options {
     bool separate = false;   // .gltf + .bin instead of .glb
     float fps = 60.0f;       // the game's frames per second (glTF time = frame / fps)
-    bool extensions = true;  // KHR_animation_pointer / KHR_node_visibility / KHR_texture_transform;
+    bool extensions = true;  // KHR_animation_pointer / KHR_node_visibility / KHR_texture_transform, SOA_aska_*;
                              // false (--no-ext): baked or dropped for plain viewers
 };
 

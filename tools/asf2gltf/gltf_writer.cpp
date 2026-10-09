@@ -1017,7 +1017,7 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         json anim = {{"name", an.title.empty() ? an.name : an.title}, {"channels", json::array()}, {"samplers", json::array()}};
         json ax = {{"source", an.name}, {"fps", opt.fps}, {"length_frames", a.length}};
         if (!an.role.empty()) ax["role"] = an.role;
-        json channel_notes = json::array(), skipped = json::array(), unmatched = json::array();
+        json channel_notes = json::array(), skipped = json::array(), unmatched = json::array(), constraints = json::array();
         const float fps = opt.fps;
         const float length = a.length > 0 ? a.length : 1.0f;
         auto add_sampler = [&](const std::vector<float>& times, const std::vector<float>& values, int comps,
@@ -1043,7 +1043,38 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                     if (c.kind >= 6 && c.kind <= 8 && c.offset + 0x40 <= an.file.size()) {
                         const char* src = (const char*)&an.file[c.offset + 0x20];
                         if (!memcmp(src, "R:", 2)) k["source"] = std::string(src + 2, strnlen(src + 2, 30));
-                        k["not_baked"] = "constraint evaluation not reproduced (docs/notes.md: Animations (AAF) for tools)";
+                    }
+                    if (c.kind == 6 && c.offset + 0x20 <= an.file.size()) {
+                        // the definition, as stored (SOA_aska_constraints; evaluated by a viewer, never baked)
+                        const uint8_t* h = &an.file[c.offset];
+                        json def = {{"target", tg.name}, {"kind", "prs"}};
+                        static const char* kModes[] = {"point", "orient", "scale"};
+                        def["mode"] = h[0x1d] < 3 ? kModes[h[0x1d]] : std::to_string(h[0x1d]);
+                        def["axes"] = h[0x1c];
+                        float off[4];
+                        memcpy(off, h + 0xc, 16);
+                        def["offset"] = {off[0], off[1], off[2], off[3]};
+                        json srcs = json::array();
+                        for (int i = 0; i < h[0x1e] && c.offset + 0x20 + (i + 1) * 0x30 <= an.file.size(); i++) {
+                            const uint8_t* q = h + 0x20 + i * 0x30;
+                            float w;
+                            memcpy(&w, q + 0x2c, 4);
+                            json sj = {{"weight", w}};
+                            if (!memcmp(q, "R:", 2)) {
+                                std::string nm((const char*)q + 2, strnlen((const char*)q + 2, 0x2a));
+                                sj["node"] = nm;
+                                auto ni = node_by_name.find(nm);
+                                if (ni != node_by_name.end()) sj["node_index"] = ni->second;
+                            } else {
+                                sj["unresolved"] = hexbytes(q, 8);  // (an authoring tool's pointer, not a name)
+                            }
+                            srcs.push_back(sj);
+                        }
+                        def["sources"] = srcs;
+                        auto ti = node_by_name.find(tg.name);
+                        if (ti != node_by_name.end()) def["target_index"] = ti->second;
+                        constraints.push_back(def);
+                        continue;
                     }
                     skipped.push_back(k);
                     continue;
@@ -1280,6 +1311,11 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         ax["channels"] = channel_notes;
         if (!skipped.empty()) ax["not_exported"] = skipped;
         if (!unmatched.empty()) ax["targets_not_in_model"] = unmatched;
+        if (!constraints.empty() && opt.extensions) {
+            // the animation's constraints (AAF kind 6), as the game's data: not applied to the keys
+            anim["extensions"]["SOA_aska_constraints"] = {{"constraints", constraints}};
+            ext_used.insert("SOA_aska_constraints");
+        }
         for (auto& [k, v] : an.extras.items()) ax[k] = v;
         anim["extras"] = ax;
         if (!anim["channels"].empty()) doc["animations"].push_back(anim);

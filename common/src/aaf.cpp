@@ -415,13 +415,71 @@ struct Ops {
         int stride = cp == kNormal ? 3 : cp == kVector ? 9 : components(cp);
         return k->data + (size_t)i * stride * 4;
     }
+    // float j of a Hermite key i (value, in, out per component): F32 as stored, U16 / U24 as
+    // SetControlPoints widens them ((float)(int)q / rate)
+    float f(uint32_t i, int j) const {
+        int stride = cp == kNormal ? 3 : cp == kVector ? 9 : 12;
+        size_t at = (size_t)i * stride + j;
+        if (comp == kU16) return (float)(int16_t)rd16(k->data + at * 2) / figure_rate(k->figure, false);
+        if (comp == kU24) {
+            const uint8_t* q = k->data + at * 3;
+            return (float)((int32_t)((uint32_t)q[0] << 24 | (uint32_t)q[1] << 16 | (uint32_t)q[2] << 8) >> 8) / figure_rate(k->figure, true);
+        }
+        return rdf(k->data + at * 4);
+    }
     // a slot's value into out (the hold paths)
+    // key i's value (a Hermite key holds value, in, out per component)
+    void value(uint32_t i, float v[4]) const {
+        if (cp == kNormal || cp == kVector || cp == kVector4) {
+            for (int c = 0; c < 4; c++) v[c] = c < components(cp) ? f(i, c) : 0.0f;
+        } else {
+            key(i, v);
+        }
+    }
     void assign(uint32_t i, float out[4]) const {
         float v[4];
-        key(i, v);
+        value(i, v);
         int n = components(cp);
         for (int c = 0; c < n; c++) out[c] = v[c];
         if (n == 3) out[3] = 1.0f;
+    }
+    // linear extrapolation (pre / post mode 1): TAafController<...>::CalcValueByLinearAt{Pre,Post}OutOfRange
+    // with the first / last interval cached (CalcValueSub), its length L (0: 1). Hermite types: the
+    // end key + ((t - its time) / L) * its out (pre) / in (post) tangent (@020ab494, @020ab4cc). The
+    // _Linear types keep a quirk: the base is the interval's first key, the slope divided by L twice:
+    // v0 + (((t - t) / L) * (v1 - v0)) / L, t = the first key's time (pre) or the last's (post)
+    // (@020adbec, @020adc34).
+    bool extrap(bool post, float t, float out[4]) const {
+        uint32_t last = k->n - 1, a = post ? last - 1 : 0, b = a + 1;
+        float ta = k->time(a), tb = k->time(b);
+        float len = tb - ta;
+        if (len == 0.0f) len = 1.0f;
+        float te = post ? tb : ta;
+        switch (cp) {
+        case kNormal: {
+            uint32_t e = post ? b : a;
+            out[0] = f(e, 0) + ((t - te) / len) * f(e, post ? 1 : 2);
+            return true;
+        }
+        case kVector: {
+            uint32_t e = post ? b : a;
+            for (int i = 0; i < 3; i++) out[i] = f(e, i) + ((t - te) / len) * f(e, (post ? 3 : 6) + i);
+            out[3] = 1.0f;
+            return true;
+        }
+        case kNormalLinear:
+        case kVectorLinear: {
+            float va[4], vb[4];
+            key(a, va);
+            key(b, vb);
+            int n = cp == kNormalLinear ? 1 : 3;
+            for (int i = 0; i < n; i++) out[i] = va[i] + (((t - te) / len) * (vb[i] - va[i])) / len;
+            if (n == 3) out[3] = 1.0f;
+            return true;
+        }
+        default:
+            return false;
+        }
     }
     // the interval [i, i + 1] at frame w
     void interp(uint32_t i, float w, float out[4]) const {
@@ -438,7 +496,8 @@ struct Ops {
             float h1 = (s * s) * (3.0f - (s + s));
             float h2 = sm1 * (s * sm1);
             float h3 = (s * s) * sm1;
-            out[0] = h3 * rdf(n + 4) + (rdf(c + 8) * h2 + (rdf(n) * h1 + rdf(c) * h0));
+            out[0] = h3 * f(i + 1, 1) + (f(i, 2) * h2 + (f(i + 1, 0) * h1 + f(i, 0) * h0));
+            (void)c, (void)n;
             return;
         }
         case kNormalStep:
@@ -463,13 +522,34 @@ struct Ops {
             float h1 = (s * s) * (3.0f - (s + s));
             float h2 = sm1 * (s * sm1);
             float h0 = sm1 * (sm1 * (s + s + 1.0f));
-            float x = h1 * rdf(n) + rdf(c) * h0 + h2 * rdf(c + 24) + h3 * rdf(n + 12);
-            float y = h1 * rdf(n + 4) + rdf(c + 4) * h0 + h2 * rdf(c + 28) + h3 * rdf(n + 16);
-            float z = rdf(c + 8) * h0 + h1 * rdf(n + 8) + h2 * rdf(c + 32) + h3 * rdf(n + 20);
+            float x = h1 * f(i + 1, 0) + f(i, 0) * h0 + h2 * f(i, 6) + h3 * f(i + 1, 3);
+            float y = h1 * f(i + 1, 1) + f(i, 1) * h0 + h2 * f(i, 7) + h3 * f(i + 1, 4);
+            float z = f(i, 2) * h0 + h1 * f(i + 1, 2) + h2 * f(i, 8) + h3 * f(i + 1, 5);
+            (void)c, (void)n;
             out[3] = 1.0f;
             out[0] = x;
             out[1] = y;
             out[2] = z;
+            return;
+        }
+        case kVector4: {
+            // (@020c9144..@020c9210: x = ((h1 n0 + c0 h0) + h2 c.out0) + h3 n.in0, each component)
+            float s = (w - t0) / len, sm1 = s + -1.0f;
+            float h3 = (s * s) * sm1;
+            float h1 = (s * s) * (3.0f - (s + s));
+            float h2 = sm1 * (s * sm1);
+            float h0 = sm1 * (sm1 * (s + s + 1.0f));
+            float r[4];
+            for (int c = 0; c < 4; c++) r[c] = ((h1 * f(i + 1, c) + f(i, c) * h0) + h2 * f(i, 8 + c)) + h3 * f(i + 1, 4 + c);
+            for (int c = 0; c < 4; c++) out[c] = r[c];
+            return;
+        }
+        case kVector4Linear: {
+            float c[4], n[4];
+            key(i, c);
+            key(i + 1, n);
+            float f4 = (w - t0) * (1.0f / len);
+            for (int q = 0; q < 4; q++) out[q] = c[q] + f4 * (n[q] - c[q]);
             return;
         }
         case kVectorLinear: {
@@ -495,11 +575,15 @@ struct Ops {
     // the cycle-offset term: k * (last - first)
     void add_loop(float f, float out[4]) const {
         float first[4], last[4];
-        key(0, first);
-        key(k->n - 1, last);
+        value(0, first);
+        value(k->n - 1, last);
         int n = components(cp);
         if (n == 1) {
             out[0] = out[0] + f * (last[0] - first[0]);
+        } else if (cp == kVector4 || cp == kVector4Step || cp == kVector4Linear) {
+            // (@020c9220: w gains f * the last key's w, not the difference: the game's quirk)
+            for (int c = 0; c < 3; c++) out[c] = f * (last[c] - first[c]) + out[c];
+            out[3] = f * last[3] + out[3];
         } else if (n == 3) {
             for (int c = 0; c < 3; c++) out[c] = f * (last[c] - first[c]) + out[c];
         } else {
@@ -527,18 +611,22 @@ bool supported_keys(const Controller& c, std::string* why, bool euler_ok) {
     if (c.comp == kQuatU32EX || c.comp == kQuatU48EX) {
         if (c.cp_type != kQuaternionLinear && c.cp_type != kQuaternionStep) return no("compressed quaternion of an unknown kind");
     } else if (c.comp == kU16 || c.comp == kU24) {
-        bool ok = c.cp_type == kNormalStep || c.cp_type == kNormalLinear || c.cp_type == kVectorStep || c.cp_type == kVectorLinear;
+        bool ok = c.cp_type == kNormal || c.cp_type == kVector || c.cp_type == kNormalStep || c.cp_type == kNormalLinear ||
+                  c.cp_type == kVectorStep || c.cp_type == kVectorLinear || c.cp_type == kVector4 || c.cp_type == kVector4Step ||
+                  c.cp_type == kVector4Linear;
         if (!ok) return no(std::string(compression_name(c.comp)) + " " + cp_type_name(c.cp_type) + " (not reached by the proof yet)");
     } else if (c.comp != kF32) {
         return no(std::string("compressed keys (") + compression_name(c.comp) + ")");
     }
     switch (c.cp_type) {
     case kNormal: case kNormalStep: case kNormalLinear: case kVector: case kVectorStep: case kVectorLinear:
-    case kQuaternionStep: case kQuaternionLinear: break;
+    case kVector4: case kVector4Step: case kVector4Linear: case kQuaternionStep: case kQuaternionLinear: break;
     default: return no(std::string("control point type ") + cp_type_name(c.cp_type));
     }
-    if (c.pre == 1 || c.post == 1) return no("linear extrapolation (CalcValueByLinearAt*OutOfRange)");
-    if ((c.pre == 3 || c.post == 3) && components(c.cp_type) == 4) return no("quaternion cycle with offset (Quaternion::Mul)");
+    if ((c.pre == 1 || c.post == 1) && c.cp_type != kNormal && c.cp_type != kVector && c.cp_type != kNormalLinear && c.cp_type != kVectorLinear)
+        return no("linear extrapolation of this type (CalcValueByLinearAt*OutOfRange)");
+    if ((c.pre == 3 || c.post == 3) && (c.cp_type == kQuaternion || c.cp_type == kQuaternionStep || c.cp_type == kQuaternionLinear))
+        return no("quaternion cycle with offset (Quaternion::Mul)");
     return true;
 }
 bool eval_keys(const Animation& a, const Controller& c, float t, float out[4]);
@@ -586,6 +674,10 @@ bool eval_keys(const Animation& a, const Controller& c, float t, float out[4]) {
         case 2:
             if (len == 0.0f) w = 0.0f;
             else w = t - len * (float)fcvtzs((t - s0) / len);
+            // before the range (the pre side) the guest wraps into the last period: observed on the
+            // live proof (Vector4_Linear U24, t -2.5 .. 1 over [1, 8]: the values of t + 7), though the
+            // decompile reads a truncation
+            if (t < s0 && w < s0) w += len;
             break;
         case 3: {
             float kk = 0.0f;
@@ -619,6 +711,7 @@ bool eval_keys(const Animation& a, const Controller& c, float t, float out[4]) {
         }
         where = s0 < w ? kSearch : kFirst;
     };
+    if (k.n >= 2 && ((t > s1 && c.post == 1) || (t <= s1 && t < s0 && c.pre == 1))) return ops.extrap(t > s1, t, out);
     if (t <= s1) {
         if (s0 <= t) {
             where = kPathA;

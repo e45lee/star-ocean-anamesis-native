@@ -265,7 +265,12 @@ int main(int argc, char** argv) {
     hle_init();
     auto& vm = jni::Vm::get();
     vm.init();
-    LoadedLib* lib = load_library(lib_path);
+    std::string lib_error;
+    LoadedLib* lib = load_library(lib_path, &lib_error);
+    if (!lib) {  // a wrong --lib: an error, not an abort (core/loader.h)
+        fprintf(stderr, "soa: can't load the game library: %s\n", lib_error.c_str());
+        return 2;
+    }
     // platform370's native patch (service_stop_day), before any native hook.
     switch (platform370::install_patches(*lib)) {
         case platform370::PatchStatus::Hooked: break;

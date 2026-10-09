@@ -145,7 +145,12 @@ int main(int argc, char** argv) {
     }
     hle_init();             // + platform370: fmod, the clock, the network redirect
     jni::Vm::get().init();  // + platform370: the 3.7.0 Java answers, the HTTP client
-    LoadedLib* lib = load_library(lib_path);
+    std::string lib_error;
+    LoadedLib* lib = load_library(lib_path, &lib_error);
+    if (!lib) {  // a wrong --lib: an error, not an abort (core/loader.h)
+        fprintf(stderr, "soa-emu: can't load the game library: %s\n", lib_error.c_str());
+        return 2;
+    }
     // platform370's native patch: before any guest code runs.
     if (platform370::install_patches(*lib) == platform370::PatchStatus::Disabled)
         LOGI("emu", "--no-patch: no native patches; the client's service-end check is live%s",

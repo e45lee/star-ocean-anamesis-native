@@ -265,7 +265,12 @@ int main(int argc, char** argv) {
     }
     hle_init();             // + net_offline.cpp
     jni::Vm::get().init();  // the runtime's Java side, incl. playcore (jni/java_playcore.cpp)
-    LoadedLib* lib = load_library(lib_path);
+    std::string lib_error;
+    LoadedLib* lib = load_library(lib_path, &lib_error);
+    if (!lib) {  // a wrong --lib: an error, not an abort (core/loader.h)
+        fprintf(stderr, "soa-viewer: can't load the game library: %s\n", lib_error.c_str());
+        return 2;
+    }
     install_traces(*lib);   // SOA_TRACE
     profile_init(*lib);     // SOA_COVERAGE / SOA_PROFILE
     app::start_watchdog();  // SOA_WATCHDOG

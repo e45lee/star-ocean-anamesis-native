@@ -8,6 +8,8 @@
 
 #include <algorithm>
 #include <cinttypes>
+#include <cstdarg>
+#include <cstdio>
 #include <cstring>
 #include <functional>
 #include <unordered_map>
@@ -89,33 +91,85 @@ std::string describe_guest_addr(u64 addr) {
     return out;
 }
 
-static LoadedLib* load_image(const std::string& path) {
-    hostmem::MappedFile mf;
-    if (!hostmem::map_file(path, &mf)) fatal("cannot map %s", path.c_str());
-    const u8* file = mf.data;
-    const u64 file_size = mf.size;
+namespace {
 
+// What load_image holds until the image is good: the file mapping and the image's memory are
+// released on every failure, so a bad --lib is an error the host reports, not a leak or an abort.
+struct ImageLoad {
+    const std::string& path;
+    std::string* error;
+    hostmem::MappedFile mf;
+    void* mem = nullptr;
+    u64 mem_size = 0;
+    LoadedLib* lib = nullptr;
+
+    ~ImageLoad() {
+        if (mf.data) hostmem::unmap_file(mf);
+        if (lib) delete lib;  // still set only on failure
+        if (mem) hostmem::unmap(mem, mem_size);
+    }
+    LoadedLib* fail(const char* fmt, ...) __attribute__((format(printf, 2, 3))) {
+        char buf[512];
+        va_list ap;
+        va_start(ap, fmt);
+        vsnprintf(buf, sizeof buf, fmt, ap);
+        va_end(ap);
+        std::string msg = path + ": " + buf;
+        LOGE("loader", "%s", msg.c_str());
+        if (error) *error = msg;
+        return nullptr;
+    }
+};
+
+// [off, off + len) inside a buffer of `size` bytes, without overflow.
+bool in_range(u64 off, u64 len, u64 size) { return off <= size && len <= size - off; }
+
+}  // namespace
+
+static LoadedLib* load_image(const std::string& path, std::string* error) {
+    ImageLoad L{path, error};
+    if (!hostmem::map_file(path, &L.mf)) return L.fail("cannot open or map the file");
+    const u8* file = L.mf.data;
+    const u64 file_size = L.mf.size;
+
+    if (file_size < sizeof(Elf64_Ehdr)) return L.fail("not an ELF file (%" PRIu64 " bytes)", file_size);
     auto* eh = (const Elf64_Ehdr*)file;
-    if (memcmp(eh->e_ident, ELFMAG, SELFMAG) != 0 || eh->e_machine != EM_AARCH64) fatal("%s: not an AArch64 ELF", path.c_str());
+    if (memcmp(eh->e_ident, ELFMAG, SELFMAG) != 0) return L.fail("not an ELF file");
+    if (eh->e_ident[EI_CLASS] != ELFCLASS64 || eh->e_machine != EM_AARCH64)
+        return L.fail("not an AArch64 (64-bit ARM) ELF (machine %u): the game's libSOA.so is lib/arm64-v8a's", (unsigned)eh->e_machine);
+    if (eh->e_phentsize != sizeof(Elf64_Phdr) || !in_range(eh->e_phoff, (u64)eh->e_phnum * sizeof(Elf64_Phdr), file_size))
+        return L.fail("truncated: the program headers are outside the file");
     auto* ph = (const Elf64_Phdr*)(file + eh->e_phoff);
 
     u64 max_va = 0;
-    for (int i = 0; i < eh->e_phnum; i++)
-        if (ph[i].p_type == PT_LOAD) max_va = std::max<u64>(max_va, ph[i].p_vaddr + ph[i].p_memsz);
+    for (int i = 0; i < eh->e_phnum; i++) {
+        if (ph[i].p_type != PT_LOAD) continue;
+        if (!in_range(ph[i].p_offset, ph[i].p_filesz, file_size)) return L.fail("truncated: segment %d is outside the file", i);
+        if (ph[i].p_filesz > ph[i].p_memsz || ph[i].p_vaddr + ph[i].p_memsz < ph[i].p_vaddr || ph[i].p_vaddr + ph[i].p_memsz > (1ull << 40))
+            return L.fail("segment %d has a bad size or address", i);
+        max_va = std::max<u64>(max_va, ph[i].p_vaddr + ph[i].p_memsz);
+    }
+    if (!max_va) return L.fail("no loadable segment");
     max_va = (max_va + 0xffff) & ~0xffffull;
 
-    void* mem = hostmem::map_rw(max_va);
-    if (!mem) fatal("mapping %" PRIu64 " bytes for the image failed", max_va);
-    u64 base = (u64)mem;
+    L.mem = hostmem::map_rw(max_va);
+    if (!L.mem) return L.fail("mapping %" PRIu64 " bytes for the image failed", max_va);
+    L.mem_size = max_va;
+    u64 base = (u64)L.mem;
 
-    auto* lib = new LoadedLib();
+    auto* lib = L.lib = new LoadedLib();
     lib->path = path;
     lib->base = base;
     lib->size = max_va;
     const Elf64_Dyn* dyn = nullptr;
+    u64 dyn_size = 0;
     for (int i = 0; i < eh->e_phnum; i++) {
         if (ph[i].p_type == PT_LOAD) memcpy((void*)(base + ph[i].p_vaddr), file + ph[i].p_offset, ph[i].p_filesz);
-        if (ph[i].p_type == PT_DYNAMIC) dyn = (const Elf64_Dyn*)(base + ph[i].p_vaddr);
+        if (ph[i].p_type == PT_DYNAMIC) {
+            if (!in_range(ph[i].p_vaddr, ph[i].p_memsz, max_va)) return L.fail("PT_DYNAMIC is outside the image");
+            dyn = (const Elf64_Dyn*)(base + ph[i].p_vaddr);
+            dyn_size = ph[i].p_memsz;
+        }
         if (ph[i].p_type == PT_GNU_EH_FRAME) lib->eh_frame_hdr = base + ph[i].p_vaddr;
         if (ph[i].p_type == PT_LOAD && ph[i].p_offset == 0) lib->phdr = base + ph[i].p_vaddr + eh->e_phoff;
     }
@@ -131,27 +185,43 @@ static LoadedLib* load_image(const std::string& path) {
                                                      strnlen((const char*)file + strs.sh_offset + sh[i].sh_name, strs.sh_size - sh[i].sh_name)),
                                          base + sh[i].sh_addr, sh[i].sh_size});
     }
-    if (!dyn) fatal("no PT_DYNAMIC");
+    if (!dyn) return L.fail("no PT_DYNAMIC: not a shared library");
 
     const Elf64_Sym* symtab = nullptr;
     const char* strtab = nullptr;
     const Elf64_Rela *rela = nullptr, *jmprel = nullptr;
     u64 relasz = 0, jmprelsz = 0, init_array = 0, init_arraysz = 0, nsyms = 0;
-    for (const Elf64_Dyn* d = dyn; d->d_tag != DT_NULL; d++) {
+    u64 symtab_off = 0, strtab_off = 0, rela_off = 0, jmprel_off = 0, init_array_off = 0;
+    bool dyn_end = false;
+    for (u64 k = 0; k < dyn_size / sizeof(Elf64_Dyn); k++) {
+        const Elf64_Dyn* d = dyn + k;
+        if (d->d_tag == DT_NULL) {
+            dyn_end = true;
+            break;
+        }
+        const u64 v = d->d_un.d_val;
         switch (d->d_tag) {
-        case DT_SYMTAB: symtab = (const Elf64_Sym*)(base + d->d_un.d_ptr); break;
-        case DT_STRTAB: strtab = (const char*)(base + d->d_un.d_ptr); break;
-        case DT_RELA: rela = (const Elf64_Rela*)(base + d->d_un.d_ptr); break;
-        case DT_RELASZ: relasz = d->d_un.d_val; break;
-        case DT_JMPREL: jmprel = (const Elf64_Rela*)(base + d->d_un.d_ptr); break;
-        case DT_PLTRELSZ: jmprelsz = d->d_un.d_val; break;
-        case DT_INIT_ARRAY: init_array = base + d->d_un.d_ptr; break;
-        case DT_INIT_ARRAYSZ: init_arraysz = d->d_un.d_val; break;
-        case DT_INIT: lib->init_fn = base + d->d_un.d_ptr; break;
-        case DT_HASH: nsyms = ((const u32*)(base + d->d_un.d_ptr))[1]; break;
+        case DT_SYMTAB: symtab_off = v; symtab = (const Elf64_Sym*)(base + v); break;
+        case DT_STRTAB: strtab_off = v; strtab = (const char*)(base + v); break;
+        case DT_RELA: rela_off = v; rela = (const Elf64_Rela*)(base + v); break;
+        case DT_RELASZ: relasz = v; break;
+        case DT_JMPREL: jmprel_off = v; jmprel = (const Elf64_Rela*)(base + v); break;
+        case DT_PLTRELSZ: jmprelsz = v; break;
+        case DT_INIT_ARRAY: init_array_off = v; init_array = base + v; break;
+        case DT_INIT_ARRAYSZ: init_arraysz = v; break;
+        case DT_INIT: lib->init_fn = base + v; break;
+        case DT_HASH:
+            if (!in_range(v, 8, max_va)) return L.fail("DT_HASH is outside the image");
+            nsyms = ((const u32*)(base + v))[1];
+            break;
         }
     }
-    if (!symtab || !strtab || !nsyms) fatal("missing dynamic symbol info");
+    if (!dyn_end) return L.fail("PT_DYNAMIC has no DT_NULL end");
+    if (!symtab || !strtab || !nsyms) return L.fail("missing dynamic symbol info (DT_SYMTAB, DT_STRTAB, DT_HASH)");
+    if (!in_range(symtab_off, nsyms * sizeof(Elf64_Sym), max_va) || strtab_off >= max_va ||
+        (rela && !in_range(rela_off, relasz, max_va)) || (jmprel && !in_range(jmprel_off, jmprelsz, max_va)) ||
+        (init_array && !in_range(init_array_off, init_arraysz, max_va)))
+        return L.fail("a dynamic table is outside the image");
 
     // Exports
     lib->exports.reserve(nsyms);
@@ -192,38 +262,44 @@ static LoadedLib* load_image(const std::string& path) {
         return v;
     };
 
-    auto apply = [&](const Elf64_Rela* r, u64 sz) {
+    // Returns the first unsupported relocation type, or 0.
+    auto apply = [&](const Elf64_Rela* r, u64 sz) -> u32 {
         for (u64 k = 0; k < sz / sizeof(Elf64_Rela); k++) {
-            u64* where = (u64*)(base + r[k].r_offset);
             u32 type = ELF64_R_TYPE(r[k].r_info);
             u32 si = ELF64_R_SYM(r[k].r_info);
+            if (type != R_AARCH64_NONE && !in_range(r[k].r_offset, 8, max_va)) return type;
+            u64* where = (u64*)(base + r[k].r_offset);
             switch (type) {
             case R_AARCH64_RELATIVE: *where = base + r[k].r_addend; break;
             case R_AARCH64_ABS64:
             case R_AARCH64_GLOB_DAT:
-            case R_AARCH64_JUMP_SLOT: *where = resolve(si) + r[k].r_addend; break;
+            case R_AARCH64_JUMP_SLOT:
+                if (si >= nsyms) return type;
+                *where = resolve(si) + r[k].r_addend;
+                break;
             case R_AARCH64_NONE: break;
-            default: fatal("unsupported relocation type %u", type);
+            default: return type;
             }
         }
+        return 0;
     };
-    apply(rela, relasz);
-    apply(jmprel, jmprelsz);
+    if (u32 t = apply(rela, relasz)) return L.fail("unsupported or bad relocation (type %u)", t);
+    if (u32 t = apply(jmprel, jmprelsz)) return L.fail("unsupported or bad relocation (type %u)", t);
     if (missing) LOGW("loader", "%d imports have no HLE implementation (they abort if called)", missing);
 
     for (u64 i = 0; i < init_arraysz / 8; i++) {
         u64 f = ((u64*)init_array)[i];
         if (f && f != ~0ull) lib->init_array.push_back(f);
     }
-    hostmem::unmap_file(mf);
     LOGI("loader", "loaded %s at 0x%" PRIx64 " (%" PRIu64 " KiB, %zu init functions)", path.c_str(), base, max_va / 1024, lib->init_array.size());
     g_libs.push_back(lib);
+    L.lib = nullptr, L.mem = nullptr;  // the image is the program's now
     return lib;
 }
 
-LoadedLib* load_library(const std::string& path) {
-    LoadedLib* lib = load_image(path);
-    if (!g_main) g_main = lib;
+LoadedLib* load_library(const std::string& path, std::string* error) {
+    LoadedLib* lib = load_image(path, error);
+    if (lib && !g_main) g_main = lib;
     return lib;
 }
 

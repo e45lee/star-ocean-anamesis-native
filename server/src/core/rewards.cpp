@@ -26,7 +26,7 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
             // (b) a unit the inventory has no room for goes to the overflow box
             // (storage::to_one_time_storage, docs/server-rules.md#storage)
             if (storage::to_one_time_storage(ctx, d.source)) storage::add_one_time(ctx, MasterItemId(d.id), 1);
-            else items.push(new_item(ctx, MasterItemId(d.id), d.type, d.drop_type));
+            else items.push(new_item(ctx, MasterItemId(d.id), ItemSource{d.type, d.drop_type}));
         }
     } else if (d.type == 2) {
         Added a = add_character(ctx, RoleId(d.id));
@@ -64,7 +64,7 @@ void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& cha
     }
 }
 
-Value new_item(ext::Ctx& ctx, MasterItemId id, u32 content_type, u32 drop_type) {
+Value new_item(ext::Ctx& ctx, MasterItemId id, std::optional<ItemSource> source) {
     const ItemUid uid = next_item_uid(ctx);
     u32 itype = (u32)ctx.m.one("select type from master_item where id = ?", {id});
     ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {uid, id, itype, ctx.now()});
@@ -73,8 +73,10 @@ Value new_item(ext::Ctx& ctx, MasterItemId id, u32 content_type, u32 drop_type) 
     e["player_id"] = player_id(ctx).v;
     e["master_item_id"] = id.v;
     e["item_type"] = itype;
-    e["content_type"] = content_type;
-    e["drop_type"] = drop_type;
+    if (source) {
+        e["content_type"] = source->content_type;
+        e["drop_type"] = source->drop_type;
+    }
     e["boosted_point"] = 0u;
     e["limit_break_count"] = 0u;
     return e;
@@ -138,19 +140,34 @@ Added add_character(ext::Ctx& ctx, RoleId role) {
     return a;
 }
 
-// (a) content type 99 is a master_item_set id (docs/api.md "Content types"): its rows, in
-// order_id order, each `num` times the set's count. Shared by the shop, the exchange and the event
-// ranking rewards (R18: their copies were one function each).
-void grant_with_item_sets(ext::Ctx& ctx, u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& chars, u32* free_coins) {
+namespace {
+// (d) How deep item sets may nest: in 3.7.0's master_item_set a set holds at most a set that
+// holds a set (184028475 -> 2482068609 -> 1244723512); a set that (directly or not) contains
+// itself would recurse for ever, so beyond this depth the set is logged and not granted.
+constexpr int kMaxItemSetDepth = 8;
+
+void grant_item_set_level(ext::Ctx& ctx, u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& chars, u32* free_coins, int depth) {
     if (type == kContentTypeItemSet) {
+        if (depth >= kMaxItemSetDepth) {
+            LOGW("server", "item set %u nested deeper than %d sets (a set containing itself?): not granted", id, kMaxItemSetDepth);
+            return;
+        }
         ctx.m.q("select content_type, content_id, num from master_item_set where item_set_id = ? order by order_id", {id}, [&](const Row& set_row) {
-            grant_with_item_sets(ctx, (u32)set_row.i("content_type"), (u32)set_row.i("content_id"), (u32)set_row.i("num") * num, items, stocks, chars,
-                                 free_coins);
+            grant_item_set_level(ctx, (u32)set_row.i("content_type"), (u32)set_row.i("content_id"), (u32)set_row.i("num") * num, items, stocks, chars,
+                                 free_coins, depth + 1);
         });
         return;
     }
     if (type == kContentTypeFreeCoin && free_coins) *free_coins += num;
     ctx.grant(type, id, num, items, stocks, chars);
+}
+}  // namespace
+
+// (a) content type 99 is a master_item_set id (docs/api.md "Content types"): its rows, in
+// order_id order, each `num` times the set's count. Shared by the shop, the exchange, the event
+// ranking rewards (R18: their copies were one function each) and Sphere 211's ranking reward.
+void grant_with_item_sets(ext::Ctx& ctx, u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& chars, u32* free_coins) {
+    grant_item_set_level(ctx, type, id, num, items, stocks, chars, free_coins, 0);
 }
 
 }  // namespace soa::server

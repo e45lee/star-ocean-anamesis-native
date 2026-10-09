@@ -13,21 +13,10 @@
 namespace soa::server::sphere211 {
 
 namespace {
-constexpr u32 kContentItemSet = 99;  // (a) docs/api.md "Content types": a master_item_set
 // A box's rank, 0 = S .. 4 = D (the s..d columns of master_sphere211_treasure /
 // master_sphere211_treasure_contents); the client keys them the other way round (b).
 constexpr u32 kRankD = 4;
 }  // namespace
-
-void grant_content(Ctx& ctx, u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& characters) {
-    if (type == kContentItemSet) {
-        ctx.m.q("select content_type, content_id, num from master_item_set where item_set_id = ? order by order_id", {id}, [&](const Row& set_row) {
-            grant_content(ctx, (u32)set_row.i("content_type"), (u32)set_row.i("content_id"), (u32)set_row.i("num") * num, items, stocks, characters);
-        });
-        return;
-    }
-    ctx.grant(type, id, num, items, stocks, characters);
-}
 
 // Treasure boxes ("T data"): `count` more boxes gathered on `floor`, unopened. Their ranks are
 // lotted when they are analysed (ReturnSphere211).

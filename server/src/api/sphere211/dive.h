@@ -76,8 +76,6 @@ u32 stamina_max(Ctx& ctx);
 void tick_stamina(Ctx& ctx);
 
 // ---- treasure boxes (rewards.cpp) -------------------------------------------------------------
-// Grants a content, expanding (a) item sets (content type 99).
-void grant_content(Ctx& ctx, u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& characters);
 void add_boxes(Ctx& ctx, const Floor& floor, u32 count);
 void lot_ranks(Ctx& ctx, const Season& season);
 // Opens the dive's boxes into the player's items; `result` (when given) gets

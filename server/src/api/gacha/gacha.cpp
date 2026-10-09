@@ -15,7 +15,7 @@
 #include "core/log.h"
 #include "core/request_args.h"
 #include "core/response.h"
-#include "core/rewards.h"  // add_character
+#include "core/rewards.h"  // add_character, new_item
 #include "core/server.h"   // next_uid
 #include "core/time.h"     // open_at
 #include "core/wallet.h"
@@ -232,19 +232,9 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
     if (storage::to_one_time_storage(ctx, storage::EquipSource::kGacha)) {
         storage::add_one_time(ctx, MasterItemId(unit.content_id), 1);
     } else {
-        const ItemUid item_uid = next_item_uid(ctx);
-        drawn = item_uid;
-        u32 item_type = (u32)ctx.m.one("select type from master_item where id = ?", {unit.content_id});
-        ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)",
-                 {item_uid, unit.content_id, item_type, ctx.now()});
-        Value item = Value::object();  // CItemInfo
-        item["id"] = item_uid.v;
-        item["player_id"] = player_id(ctx).v;
-        item["master_item_id"] = unit.content_id;
-        item["item_type"] = item_type;
-        item["boosted_point"] = 0u;
-        item["limit_break_count"] = 0u;
-        draw.new_items.push(item);
+        Value item = new_item(ctx, MasterItemId(unit.content_id), std::nullopt);  // CItemInfo, no content / drop type
+        drawn = ItemUid(item.get_u("id"));
+        draw.new_items.push(std::move(item));
     }
     Value result = Value::object();  // the GachaItems entry
     result["master_item_id"] = unit.content_id;

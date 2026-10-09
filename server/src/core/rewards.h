@@ -2,6 +2,8 @@
 // Rewards (port code, not guest behaviour): granting a content (a drop, a present, a draw) and
 // adding a character (a duplicate raises the owned one's limit break); core/rewards.cpp. The
 // modules grant through ext::Ctx::grant, which is grant() with drop type 0.
+#include <optional>
+
 #include "api/storage/storage.h"  // EquipSource
 #include "soaserver/ext.h"
 
@@ -31,9 +33,14 @@ struct Added {
 // `stocks` (StockItem) and `chars` (AddCharacter). Equipment the inventory has no room for goes to
 // the overflow box instead (storage::to_one_time_storage; not in `items`).
 void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& chars);
+// Where a new item came from, for its AddItem entry (CItemInfo's content_type / drop_type).
+struct ItemSource {
+    u32 content_type = 0, drop_type = 0;
+};
 // A new owned weapon or accessory `id` in the inventory (an `items` row, whatever the inventory
-// holds) and its AddItem entry (CItemInfo, with the content and drop types).
-Value new_item(ext::Ctx& ctx, MasterItemId id, u32 content_type, u32 drop_type);
+// holds) and its CItemInfo entry: an AddItem entry carries the content and drop types (`source`);
+// the gacha's new_items entries (AddItem of a draw) carry neither (std::nullopt).
+Value new_item(ext::Ctx& ctx, MasterItemId id, std::optional<ItemSource> source);
 // Grants a content as ext::Ctx::grant does (drop type 0), expanding item sets (content type 99:
 // the master_item_set rows, recursively). `free_coins`, when given, adds up the free coins
 // (content type 4) granted, sets included.

@@ -11,6 +11,7 @@
 #include "api/player/player_info.h"  // base_data, stack_item_info_list
 #include "core/log.h"
 #include "core/request_args.h"
+#include "core/wallet.h"  // add_fol
 
 namespace soa::server {
 
@@ -106,8 +107,8 @@ void player_exp(ext::Ctx& ctx, MissionEnd& end) {
     auto next_exp = ctx.player_next();
     u32 exp_after = 0;
     std::tie(end.level_after, exp_after) = rules::add_exp(end.level_before, exp_before, end.player_exp, next_exp, ctx.player_level_max());
-    ctx.st.q("update player set level = ?, exp = ?, fol = min(fol + ?, ?) where 1",
-             {end.level_after, exp_after, end.fol, ctx.global_u32("item_fol_max_num", 4200000000u)});
+    ctx.st.q("update player set level = ?, exp = ? where 1", {end.level_after, exp_after});
+    wallet::add_fol(ctx.st.h, ctx.m.h, end.fol);  // (a) capped at master_global item_fol_max_num
     if (end.level_after > end.level_before) {  // (c) a rank-up adds the new maximum to the current stamina (スタミナが加算されます)
         tick_stamina(ctx);
         ctx.st.q("update player set stamina = stamina + ?, stamina_at = ?", {ctx.stamina_max(end.level_after), ctx.now()});

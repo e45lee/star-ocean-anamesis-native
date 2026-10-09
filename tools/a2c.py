@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """ARM64 -> C++ transcriber for the Aska math port.
 
 Translates one guest function (by mangled symbol or 0xaddr:size) instruction by instruction into

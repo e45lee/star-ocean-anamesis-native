@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/render/gen/render_a2c.cpp: render-pipeline functions transcribed by a2c.py.
 
 Covers the parts of the render pipeline that are long, FP-heavy or lock-heavy (post-processing

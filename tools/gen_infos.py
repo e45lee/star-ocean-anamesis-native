@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/info/gen/info_classes.h: the client's info classes (InfoBase and every class
 derived from it: CPlayerInfo, CPersonInfo, ..., the response parts) as recovered layouts, and what each
 one's Initialize does, for the info subsystem's natives (port/src/native/info/README.md "Info classes").

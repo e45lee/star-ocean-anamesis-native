@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """List the voice files the Global (English) master names, and which characters they belong to.
 
   .venv/bin/python tools/global_voice_files.py [--gl data/basmaster-gl.sqlite3]

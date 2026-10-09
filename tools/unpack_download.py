@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Unpack a 3.7.0 download archive and verify it is complete.
 
 Extracts a zip of the game's download tree (the one the client fetches after login: version.bin,

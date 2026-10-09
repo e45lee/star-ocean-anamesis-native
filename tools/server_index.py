@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates server/API-INDEX.md, the local server's "where is X" index (docs/history/PLAN-readability.md 2.6).
 
     tools/server_index.py [--server BIN] [--out server/API-INDEX.md]

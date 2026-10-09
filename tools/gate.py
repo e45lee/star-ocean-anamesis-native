@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Runs a tier of the gate tests (tests/tiers.json; tests/TIERS.md).
 
     tools/gate.sh T0                              every commit: build + the fast checks

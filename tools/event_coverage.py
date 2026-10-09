@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Asset coverage of the master DB's events, Sphere 211, tower and banners against asset sources.
 
 Usage: event_coverage.py --db MASTER.sqlite3 --src PATH [--src PATH ...] [--json OUT] [--md OUT] [--quiet]

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Writes server/tests/fixtures/test-seed.xml: a synthetic seed save for the local server's tests.
 
 The runtime seed (soa's and soa-server's default) is the committed, sanitized real 3.7.0 save data/saves/seed/Game.xml,

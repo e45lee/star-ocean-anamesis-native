@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates server/src/core/errors.h: the client error codes the local server refuses with.
 
     tools/gen_error_codes.py [--master DB] [--check]

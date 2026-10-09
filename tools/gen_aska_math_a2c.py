@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/engine/math/gen/aska_math_a2c.cpp from the ARM64 code via a2c.py."""
 import importlib.util
 import os

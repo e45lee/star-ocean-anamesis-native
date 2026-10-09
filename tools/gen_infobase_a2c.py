@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/params/gen/infobase_a2c.cpp: the InfoBase container templates transcribed by a2c.py.
 
 The response-parsing containers are one template each, instantiated per element class:

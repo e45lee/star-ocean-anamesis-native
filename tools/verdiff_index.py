@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Index table of docs/history/libsoa-3.7.0-vs-3.8.0.md: every function tools/verdiff.py found changed,
 with its subsystem group, a one-line summary and how the port handles it.
 History tool (the port runs 3.7.0 only).

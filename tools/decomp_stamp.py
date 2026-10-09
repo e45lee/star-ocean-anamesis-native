@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Files a resolved Ghidra decompile (tools/decomp.sh / decomp_at.sh) into a subsystem's decompile store.
 
 Usage (called by tools/decomp.sh / decomp_at.sh --into; not usually by hand):

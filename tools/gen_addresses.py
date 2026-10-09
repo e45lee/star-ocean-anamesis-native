@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """The natives' guest addresses: one generated, stamped table per subsystem, from the lib.
 
     tools/gen_addresses.py [--lib LIB] [SUBSYS...]     write port/src/native/<s>/gen/<s>_addresses.h

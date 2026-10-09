@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """The local server's doc-comment coverage (docs/history/PLAN-readability.md 2.5 and R19), for
 tools/check_server_docs.sh:
 

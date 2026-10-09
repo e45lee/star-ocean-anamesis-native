@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/arena/gen/arena_a2c.cpp: the arena / effect / collision layer transcribed by a2c.py.
 
 CArena (the battle / home / gacha scene driver), CArenaEffectManager / CArenaEffectModel,

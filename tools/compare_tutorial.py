@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Tutorial parity: the new-player tutorial flow of the port (soa, a fresh data dir) and
 of the 3.7.0 emulator (soa-emu + soa-server), checked against one milestone list and compared.
 

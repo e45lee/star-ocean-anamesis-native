@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/ui/cocos/gen/cocos_guireader_a2c.cpp: the layout reader (CCocosGuiReader::CreateTree
 and its Read_* family) and CCocosTimelineAnimation Play / GetHandle / MakeKeyFrameLinks, transcribed
 from the ARM64 by a2c.py (CALL_FALLBACK: node constructors, factories, AddKeyFrame, ASON and string

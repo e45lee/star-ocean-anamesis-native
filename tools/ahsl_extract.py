@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Decrypt and unpack the AHSL shader disk cache (Shader/AHSLDiskCacheAdd) into GLSL files.
 
 Usage: .venv/bin/python tools/ahsl_extract.py [AHSLDiskCacheAdd] -o OUTDIR [--grep REGEX]

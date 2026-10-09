@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/containers/gen/containers_a2c.cpp: the Aska array / pool / hash-map templates
 (TDynamicArray<T, A> and its TArrayIterator inserts, Algo::QuickSort over them, TPoolFast<T, b>,
 THashMap<K, V, ...>) transcribed from the ARM64 by a2c.py (CALL_FALLBACK: other calls go to the

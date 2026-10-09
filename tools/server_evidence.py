@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """The evidence manifest of the local server's sources (docs/history/PLAN-readability.md section 3).
 
     tools/server_evidence.py [--root DIR] [--json]          print the manifest of DIR/server

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Which server APIs the replay corpora (server/tests/replay/) cover, and which they don't.
 
     tools/replay_coverage.py [--server build/server/soa-server] [--write]

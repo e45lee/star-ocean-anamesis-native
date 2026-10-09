@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Checks the reconstructed gacha pick-ups (data/gacha_pools.sqlite3) against the banner images.
 
 Every character banner of STAR OCEAN: anamnesis is composited from the characters' own illustrations

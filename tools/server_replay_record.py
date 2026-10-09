@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Records a replay corpus (server/tests/replay/README.md) from a soa-server packet log.
 
     tools/server_replay_record.py PACKETS_DIR CORPUS_DIR --options "ARGS" [--tz ZONE] [--note TEXT]
@@ -65,16 +65,7 @@ def reply_time(path):
 def personal_ids():
     """The BAS:PlayerID of untracked personal saves on this machine (never printed)."""
     ids = set()
-    sys.path.insert(0, REPO)
-    try:
-        from soa_save.kvs import KVSFile  # noqa: E402
-    except Exception:
-        # soa_save needs pycryptodome: ask the repo's .venv (the ids stay in this pipe)
-        py = os.path.join(REPO, ".venv/bin/python")
-        if os.path.exists(py) and os.path.realpath(sys.prefix) != os.path.realpath(os.path.join(REPO, ".venv")):
-            r = subprocess.run([py, os.path.abspath(__file__), "--personal-ids"], capture_output=True, text=True)
-            return set(r.stdout.split()) if r.returncode == 0 else ids
-        return ids
+    from soa_save.kvs import KVSFile  # (never skipped: without it the check would pass every id)
     from soa_save.paths import main_checkout  # (a worktree: also its main checkout)
 
     for root in dict.fromkeys((REPO, str(main_checkout(REPO)))):
@@ -198,9 +189,6 @@ def main():
     ap.add_argument("--note", default="", help="a line for the header (where the recording came from)")
     ap.add_argument("--sweep", action="store_true")
     ap.add_argument("--server", default=os.path.join(REPO, "build/server/soa-server"))
-    if sys.argv[1:] == ["--personal-ids"]:  # (internal: personal_ids() through the .venv)
-        sys.stdout.write("\n".join(personal_ids()))
-        return
     a = ap.parse_args()
     os.environ["TZ"] = a.tz
     time.tzset()

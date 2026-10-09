@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/master/gen/master_elements.h: the master tables' element classes (the T of
 CMasterParameterBaseSqlite_Simple<T> / _Category<T>, 166 in 3.7.0) as recovered layouts, one row per
 property, for the master subsystem's natives (port/src/native/master/README.md "Elements").

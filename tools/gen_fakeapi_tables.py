@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/api/gen/fakeapi_tables.inc from a libSOA.so (FakeApiCaller).
 
 The port's FakeApiCaller (port/src/native/api/fakeapi.cpp) needs, per request method, the

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/ui/screen/gen/screen_a2c.cpp: large screen / game-flow functions transcribed by a2c.py.
 
 The per-frame state machines of the home screen, its 3D model view (touch / pinch input, talk

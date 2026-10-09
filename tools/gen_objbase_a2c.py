@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/objbase/gen/objbase_a2c.cpp: the animation / object base layer transcribed by a2c.py.
 
 Framework::CAnimationBlendContainer, Framework::CAnimationModel, CAnimationModelObject,

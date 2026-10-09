@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Audit 3.7.0 function bodies that the pre-rebase restore run installed on 3.8.0 symbols (port/src/native/restore/restore370.cpp).
 
 History tool: the restore370 image (3.7.0 bodies on the offline lib) is gone since the 3.7.0

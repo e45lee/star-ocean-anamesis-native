@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Per-subsystem scaffolding for the native rebuild (port/PLAN.md task 6; port/src/native/README.md
 "Per-subsystem workflow").
 

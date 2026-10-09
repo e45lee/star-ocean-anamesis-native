@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/dynamics/gen/dynamics_a2c.cpp: the Aska dynamics family transcribed by a2c.py.
 
 Covers the articulated dynamics (hair / cloth / accessory bones): ArticulatedDynamicsManager{,Base},

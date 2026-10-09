@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Reconstructs the per-gacha draw pools of STAR OCEAN: anamnesis (3.7.0).
 
 The live server drew from tables named by `master_gacha.table_name` (`master_gacha_item_*`),

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/params/gen/params_instantiations.inc: the property template instantiations of a
 libSOA.so (the params subsystem's natives bind every one; port/src/native/params/README.md).
 

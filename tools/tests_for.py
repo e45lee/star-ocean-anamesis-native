@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Which tests to run for a change: the test-impact map.
 
     tools/tests_for.py [PATH...]                  the tests for these changed paths

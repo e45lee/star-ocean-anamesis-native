@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/engine/gen/objmgr_a2c.cpp: ObjectManager culling and painting-list builders
 transcribed from the ARM64 by a2c.py with its CALL_FALLBACK (guest calls through a2c_call) and EXCLUSIVE (exclusive
 load/store pairs as host CAS). Usage: tools/gen_objmgr_a2c.py port/src/native/engine/gen/objmgr_a2c.cpp"""

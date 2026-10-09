@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 r"""Generate port/src/native/particles/gen/particles_instantiations.inc: the ParticleEmitter<FeatureList<...>>
 template instantiations of a libSOA.so whose Simulate(float) the particles subsystem binds
 (port/src/native/particles/README.md).

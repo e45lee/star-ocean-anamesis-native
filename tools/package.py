@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Release packages of the desktop port, the 3.7.0 emulator and the offline viewer (README.md "Packaging").
 
   scripts/package.sh [--linux] [--windows] [--out DIR] [--no-build] [--version V]

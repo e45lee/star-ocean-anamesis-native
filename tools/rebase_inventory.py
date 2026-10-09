@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Inventory for rebasing the port from the 3.8.0 offline libSOA.so onto 3.7.0 (docs/history/PLAN-rebase-370.md, P0).
 
 History tool once the rebase's inventory moved to docs/history/ (P4); the port runs 3.7.0 only.
@@ -40,16 +40,7 @@ import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-try:
-    import capstone  # noqa: F401
-    import elftools  # noqa: F401
-except ImportError:  # re-run under the repository's venv (capstone, pyelftools)
-    venv = os.path.join(REPO, ".venv", "bin", "python")
-    if os.path.exists(venv) and os.path.realpath(sys.prefix) != os.path.realpath(os.path.join(REPO, ".venv")):
-        os.execv(venv, [venv] + sys.argv)
-    raise
-sys.path.insert(0, os.path.join(REPO, "tools"))
-import verdiff  # noqa: E402
+import verdiff
 
 LIB380 = os.path.join(REPO, "work/extracted/config.arm64_v8a/lib/arm64-v8a/libSOA.so")
 LIB370 = os.path.join(REPO, "work/libSOA-3.7.0.so")

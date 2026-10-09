@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Fails on environment access outside common/include/soa/env.h (docs/environment.md, AGENTS.md
 "Settings are command-line flags").
 

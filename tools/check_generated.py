@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Fails when a generated source is stale against the 3.7.0 lib (T0 `generated`).
 
     tools/check_generated.py [--lib LIB]

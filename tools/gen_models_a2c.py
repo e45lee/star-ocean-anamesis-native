@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/models/gen/models_a2c.cpp: the model / animation object layer transcribed by a2c.py.
 
 Every function in FUNCS (plus every other instantiation whose machine code is identical, see

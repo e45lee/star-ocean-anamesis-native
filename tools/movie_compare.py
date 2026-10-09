@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """The proof that the movie player on FFmpeg's libraries (runtime/src/frontend/movie_decoder.cpp)
 decodes the game's movies as the ffmpeg program it replaced did.
 

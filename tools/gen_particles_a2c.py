@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/particles/gen/particles_a2c.cpp: the particle simulation (Aska::ParticleEmitter<>,
 ParticleObject<>, IParticleEmitter / IParticleObject, the ParticleEmitter*Unit property blocks,
 the rest of ParticleManager, ParticleMakeMatrix) transcribed by a2c.py.

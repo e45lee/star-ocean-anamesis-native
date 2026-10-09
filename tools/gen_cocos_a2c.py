@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/py" "$0" "$@"'
 """Generates port/src/native/ui/cocos/gen/cocos_a2c.cpp: Framework::Cocos functions transcribed from the ARM64
 by a2c.py (CALL_FALLBACK: other calls go to the guest through objmgr's a2c_call, i.e. straight to
 native replacements where they exist). Unnamed functions are named as tools/genlib.py does

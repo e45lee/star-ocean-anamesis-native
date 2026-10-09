@@ -518,12 +518,40 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         std::string e;
         return t && !t->levels.empty() && asf::decode_texture(s, t->levels[0], rgba, &e);
     };
+    // The specular colour F0 (a texture's rgb, uploaded sRGB) as glTF's metalness: metals have a black
+    // albedo and a bright F0 (Maria's chains, pendant, hair ornaments: F0 ~0.3); dielectrics ~0.01-0.04
+    struct F0Map {
+        Bytes px;
+        int w = 0, h = 0;
+        bool srgb = true;
+        bool ok() const { return w > 0; }
+        // (metalness, linear F0 rgb) at UV (u, v)
+        double at(double u, double v, double f[3]) const {
+            int x = ((int)std::floor(u * w) % w + w) % w, y = ((int)std::floor(v * h) % h + h) % h;
+            double mx = 0;
+            for (int c = 0; c < 3; c++) {
+                double raw = px[((size_t)y * w + x) * 4 + c] / 255.0;
+                f[c] = srgb ? srgb_to_linear(raw) : raw;
+                mx = std::max(mx, f[c]);
+            }
+            return std::min(1.0, std::max(0.0, (mx - 0.06) / (0.2 - 0.06)));
+        }
+    };
+    auto f0_map = [&](const asf::Texture* ft) {
+        F0Map f;
+        if (ft && decode0(ft, f.px)) {
+            f.w = ft->levels[0].w;
+            f.h = ft->levels[0].h;
+            f.srgb = texture_srgb(*ft);
+        }
+        return f;
+    };
     auto baked_base = [&](const asf::Object& o, size_t mi, const asf::Texture* at, const Src& albedo, const asf::Texture* alt,
-                          const Src& alpha, json& notes) -> int {
-        char key[160];
+                          const Src& alpha, const asf::Texture* ft, json& notes) -> int {
+        char key[200];
         bool cross = at && alt && alpha.uv != albedo.uv;
-        snprintf(key, sizeof key, "%08x/%d/%d|%08x/%d/%d|%s", at ? at->id : 0, albedo.comp, albedo.uv, alt ? alt->id : 0, alpha.comp,
-                 alpha.uv, cross ? (o.name + "/" + std::to_string(mi)).c_str() : "");
+        snprintf(key, sizeof key, "%08x/%d/%d|%08x/%d/%d|%08x|%s", at ? at->id : 0, albedo.comp, albedo.uv, alt ? alt->id : 0, alpha.comp,
+                 alpha.uv, ft ? ft->id : 0, cross ? (o.name + "/" + std::to_string(mi)).c_str() : "");
         auto have = baked.find(key);
         if (have != baked.end()) return have->second;
         Bytes ca, aa;
@@ -540,6 +568,17 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                     uint8_t v = ca[i * 4 + (albedo.comp < 0 ? c : (albedo.comp & 3))];
                     out[i * 4 + c] = lin ? (uint8_t)std::lround(linear_to_srgb(v / 255.0) * 255) : v;
                 }
+            F0Map f0 = f0_map(ft);
+            if (f0.ok()) {  // metals: their colour is their F0
+                for (int y = 0; y < h; y++)
+                    for (int x = 0; x < w; x++) {
+                        double f[3], m = f0.at((x + 0.5) / w, (y + 0.5) / h, f);
+                        if (m <= 0) continue;
+                        uint8_t* q = &out[((size_t)y * w + x) * 4];
+                        for (int c = 0; c < 3; c++)
+                            q[c] = (uint8_t)std::lround(linear_to_srgb(srgb_to_linear(q[c] / 255.0) * (1 - m) + std::min(1.0, f[c] * 2.5) * m) * 255);
+                    }
+            }
         }
         if (alt) {
             const asf::TextureLevel& A = alt->levels[0];
@@ -592,25 +631,28 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                                 ") is redrawn into the base colour's UV set " + std::to_string(albedo.uv) + " from this material's triangles");
             }
         }
-        std::string name = (at ? hex32(at->id) : std::string("white")) + (alt ? "_alpha_" + hex32(alt->id) : std::string());
+        std::string name = (at ? hex32(at->id) : std::string("white")) + (alt ? "_alpha_" + hex32(alt->id) : std::string()) +
+                           (ft ? "_metal_" + hex32(ft->id) : std::string());
         int t = add_texture(name, w, h, out);
         baked[key] = t;
         return t;
     };
-    auto baked_roughness = [&](const asf::Texture* rt) -> int {
-        std::string key = "rough/" + hex32(rt->id);
+    auto baked_roughness = [&](const asf::Texture* rt, const asf::Texture* ft) -> int {
+        std::string key = "rough/" + hex32(rt->id) + "/" + (ft ? hex32(ft->id) : std::string());
         auto have = baked.find(key);
         if (have != baked.end()) return have->second;
         Bytes in;
         if (!decode0(rt, in)) return -1;
         const asf::TextureLevel& L = rt->levels[0];
         Bytes out((size_t)L.w * L.h * 4, 255);
+        F0Map f0 = f0_map(ft);
         for (size_t i = 0; i < (size_t)L.w * L.h; i++) {
             double a2 = (in[i * 4] + in[i * 4 + 1]) / (2 * 255.0);
             out[i * 4 + 1] = (uint8_t)std::lround(std::pow(std::max(a2, 0.000225), 0.25) * 255);
-            out[i * 4 + 2] = 0;
+            double f[3];
+            out[i * 4 + 2] = f0.ok() ? (uint8_t)std::lround(f0.at((i % L.w + 0.5) / L.w, (i / L.w + 0.5) / L.h, f) * 255) : 0;
         }
-        int t = add_texture(hex32(rt->id) + "_roughness", L.w, L.h, out);
+        int t = add_texture(hex32(rt->id) + "_roughness" + (ft ? "_metal_" + hex32(ft->id) : std::string()), L.w, L.h, out);
         baked[key] = t;
         return t;
     };
@@ -641,8 +683,10 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
             if (mode != "OPAQUE" && gi.alpha.kind == Src::kConst) factor[3] = gi.alpha.factor[3];
             if (mode != "OPAQUE" && gi.alpha.kind == Src::kTex) factor[3] = gi.alpha.factor[gi.alpha.comp & 3];
             for (float& f : factor) f = std::min(1.0f, std::max(0.0f, f));
+            // the specular colour as metalness, when it is a whole texture read through the same UV set
+            const asf::Texture* ft = gi.f0.comp < 0 && gi.f0.uv == gi.albedo.uv ? tex_of(gi.f0) : none;
             if (at || alt) {
-                int t = baked_base(o, mi, at, gi.albedo, alt, gi.alpha, notes);
+                int t = baked_base(o, mi, at, gi.albedo, alt, gi.alpha, ft, notes);
                 if (t >= 0) pbr["baseColorTexture"] = {{"index", t}, {"texCoord", at ? gi.albedo.uv : gi.alpha.uv}};
             } else if (gi.albedo.kind == Src::kNone && !m.textures.empty() && !gi.lit) {
                 int t = texture_of(m.textures[0].id, false);  // (no graph: the first texture)
@@ -651,10 +695,12 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
             if (factor != std::array<float, 4>{1, 1, 1, 1}) pbr["baseColorFactor"] = {factor[0], factor[1], factor[2], factor[3]};
             // roughness: the GGX alpha^2 is (r + g) / 2 of the texture; glTF's roughness is alpha^(1/2)
             if (const asf::Texture* rt = tex_of(gi.roughness)) {
-                int t = baked_roughness(rt);
+                const asf::Texture* fr = gi.roughness.uv == gi.albedo.uv ? ft : none;
+                int t = baked_roughness(rt, fr);
                 if (t >= 0) {
                     pbr["metallicRoughnessTexture"] = {{"index", t}, {"texCoord", gi.roughness.uv}};
                     pbr["roughnessFactor"] = 1.0;
+                    if (fr) pbr["metallicFactor"] = 1.0;
                 }
             }
             if (m.blend == 1) {

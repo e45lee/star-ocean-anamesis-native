@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 
+#include "api/gen/reply_types.h"  // to_array
 #include "api/settings/settings.h"
 #include "core/log.h"
 #include "core/modules.h"
@@ -77,11 +78,9 @@ std::vector<u32> library_missions(ext::Ctx& ctx, u32 episode_type_id) {
 std::vector<u8> get_scenario_library_info_list(ext::Ctx& ctx, const Request& req) {
     const auto a = args::GetScenarioLibraryInfoListArgs::from(req);
     const std::vector<u32> missions = library_missions(ctx, a.episode_type_id);
-    Value list = Value::array();
-    for (u32 mission : missions) list.push(mission);
     LOGI("server", "GetScenarioLibraryInfoList %u: %zu cleared story missions", a.episode_type_id, missions.size());
     Value data = ctx.base_data();
-    data["WorldMapScenarioLibraryInfoList"] = list;
+    data["WorldMapScenarioLibraryInfoList"] = infos::to_array(missions);  // (CWorldMapScenarioLibraryInfoList: u32 values)
     return ext::body(data);
 }
 

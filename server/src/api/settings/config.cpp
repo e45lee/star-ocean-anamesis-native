@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include "api/gen/reply_types.h"  // the replies' C*Info types
 #include "api/settings/settings.h"
 #include "core/errors.h"
 #include "core/log.h"
@@ -54,18 +55,12 @@ namespace {
 using ext::Row;
 
 // One CConfigInfo.
-Value config_info(u32 master_config_id, const std::string& value, u32 type) {
-    Value info = Value::object();
-    info["master_config_id"] = master_config_id;
-    info["value"] = value;
-    info["type"] = type;
-    return info;
-}
+infos::CConfigInfo config_info(u32 master_config_id, const std::string& value, u32 type) { return {master_config_id, value, type}; }
 
 // ConfigInfoList: every master_config row (a), with the player's value and type where the player
 // changed it (the table `config`), else the master's default (a: master_config.value / type).
 Value config_info_list(ext::Ctx& ctx) {
-    Value list = Value::array();
+    std::vector<infos::CConfigInfo> list;
     ctx.m.q("select id, value, type from master_config order by id", {}, [&](const Row& master_row) {
         const u32 id = (u32)master_row.i("id");
         std::string value = master_row.s("value");
@@ -74,9 +69,9 @@ Value config_info_list(ext::Ctx& ctx) {
             value = own.s("value");
             type = (u32)own.i("type");
         });
-        list.push(config_info(id, value, type));
+        list.push_back(config_info(id, value, type));
     });
-    return list;
+    return infos::to_array(list);
 }
 
 bool is_config(ext::Ctx& ctx, u32 master_config_id) { return ctx.m.one("select count(*) from master_config where id = ?", {master_config_id}) > 0; }
@@ -131,7 +126,7 @@ std::vector<u8> update_config(ext::Ctx& ctx, const Request& req) {
         {a.master_config_id, a.value, a.type});
     LOGI("server", "UpdateConfig %u: \"%s\" (type %u)", a.master_config_id, a.value.c_str(), a.type);
     Value data = ctx.base_data();
-    data["ConfigInfo"] = config_info(a.master_config_id, a.value, a.type);
+    data["ConfigInfo"] = infos::to_value(config_info(a.master_config_id, a.value, a.type));
     return ext::body(data);
 }
 

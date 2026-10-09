@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../py" "$0" "$@"'
 """Replay one of the game's draws with the shaders an asf2gltf .glb carries (SOA_aska_shader) and
 compare it with the game's own framebuffer: the proof that the extension holds what the game draws.
 

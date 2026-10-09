@@ -70,7 +70,7 @@ def test_roster_english_names():
     assert m.role(game.get_u32("player_home_pc_roleid"))["name_en"] == "Summer Maria"
 
 
-def _no_xapk():
+def _no_xapk():  # 380-ok: the offline game's package
     try:
         paths.xapk()  # 380-ok: soa_save edits the offline build
         return False
@@ -78,7 +78,7 @@ def _no_xapk():
         return True
 
 
-@pytest.mark.skipif(_no_xapk(), reason="needs the offline game's package in apk/ (untracked; here or in the main checkout)")
+@pytest.mark.skipif(_no_xapk(), reason="needs the offline game's package in apk/ (untracked; here or in the main checkout)")  # 380-ok
 def test_unlock_all_keeps_existing(tmp_path):
     from soa_save.roster import roster, unlock_all
     game = KVSFile.load(ROOT / SEED)

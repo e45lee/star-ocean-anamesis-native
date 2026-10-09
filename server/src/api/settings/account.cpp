@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include "api/gen/reply_types.h"  // the replies' C*Info types
 #include "api/settings/settings.h"
 #include "core/errors.h"
 #include "core/log.h"
@@ -75,12 +76,7 @@ namespace {
 
 using ext::Row;
 
-Value birth_info(u32 year, u32 month) {
-    Value birth = Value::object();
-    birth["year"] = year;
-    birth["month"] = month;
-    return birth;
-}
+Value birth_info(u32 year, u32 month) { return infos::to_value(infos::CBirthInfo{year, month}); }
 
 // GetBirthYearMonth() -> GetBirthYearMonthRes                                   fid 59a48d41
 // API: docs/api.md#getbirthyearmonth
@@ -163,7 +159,7 @@ std::vector<u8> send_guide_information(ext::Ctx& ctx, const Request& req) {
         LOGW("server", "SendGuideInformation: %u isn't a master_guide_information id", a.guide_id);
     LOGI("server", "SendGuideInformation %u (no guides are shown; nothing stored)", a.guide_id);
     Value data = ctx.base_data();
-    data["GuideInformationInfoList"] = Value::array();
+    data["GuideInformationInfoList"] = infos::to_array(std::vector<u32>{});  // (CGuideInformationInfoList: guide ids)
     return ext::body(data);
 }
 

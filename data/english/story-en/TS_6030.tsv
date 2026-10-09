@@ -24,7 +24,7 @@ message_id	ja_sha1	en	source
 6031_010_24	90d1915c5b2c206478fdff445d93a5de4cc7f47a	To be precise, Valka's father\nonce set foot on Planet Raza.	machine
 6031_010_25	6578de931a0342504cf0b4d7a7aa92b94eb90865	However, he never visited the\nAzurite system.	machine
 6031_010_26	126cec461fe0379cdf326da45160108057116dc3	This makes no sense.	machine
-6031_010_27	c334cc22da784f4aa1617820528745914237f7eb	When Valka's father... Bacchus\nD-79, met my father-in-law,\nKlaus Barktain,	machine
+6031_010_27	c334cc22da784f4aa1617820528745914237f7eb	When Valka's father... Bacchus\nD-79, met my father-in-law,\nKlaus Bachtein,	machine
 6031_010_28	50f01f1836dbc5e7edbe125b534bd20b6fd015bd	Planet Raza was located in a place\ncalled the Solar System, at the far\nedge of a galaxy much further than the\nAzurite system.	machine
 6031_010_29	6007a070a187993a2a232a94bbc34607308d6ace	The Solar System... Captain...\nCoro, that means...	machine
 6031_010_31	52452f11b4e677bf1dabb17586de4f3a5ff6dca7	Back when it was in the Solar\nSystem... the people living on\nPlanet Raza called their world\nthis.	machine
@@ -62,18 +62,18 @@ message_id	ja_sha1	en	source
 6031_010_64	c06e44f5741168b3da969299f5bec88d3bd89033	I've heard that your father...\nand your comrades... regretted\nit from the bottom of their\nhearts.	machine
 6031_010_65	80686bbfe6516599d58bd0f7401a461644805ca6	It was not the fault of your\nfather and the others, Valka.	machine
 6031_010_66	91e5b23deab0eb70b45a7fc2fadf8d29bc2de275	The responsibility lies entirely with my\nstepmother, who could not discipline\nherself, and my stepfather, who failed\nto stop her.	machine
-6031_010_67	abce16bdc2d869e55ac68df31868e2960c4611f4	Your stepmother's name was...\n<font color=yellow>Mira Baktain</font>, was it not?	machine
+6031_010_67	abce16bdc2d869e55ac68df31868e2960c4611f4	Your stepmother's name was...\n<font color=yellow>Milla Bachtein</font>, was it not?	machine
 6031_010_68	703e6fdd8543b47f7bae228deb776570ddd9694e	...It is a complete coincidence\nthat my name is "Kevin." My\nbiological parents gave me this\nname.	machine
 6031_010_69	81e163100da9d032319263dc3006084524e9ab01	And then... shortly after the\nday the world changed... that\nday of tragedy...	machine
 6031_010_70	7acd695e0633057151da45c0ac92f25060acf4e4	I met my foster parents.	machine
 6031_030_01	adb463ba5bdc494f7d8cc1fd9af2f4f4e4d66125	Bacchus D-79, Edge Maverick,\nReimi Saionji,	machine
-6031_030_02	20b937ef782f94a79f25ebfb6fc02b9ace166c37	Phase Cipher Beres, Rimuru\nRemuri Fai,	machine
+6031_030_02	20b937ef782f94a79f25ebfb6fc02b9ace166c37	Faize Sheifa Beleth, Lymle\nLemuri Phi,	agent
 6031_030_03	43b5b48a7a960d23cc23ec9797d3a04121d25dcc	and Merikuru Shamlot.	machine
 6031_030_04	91f518c31c8baf1d6565ee9c0966111208dfb7e2	My foster father always said\nthey were the most radiant\npeople in this world.	machine
 6031_030_05	c230c4c20cd5e8c953ff22765693fc13ade8fd82	When they arrived, "our Earth"\nin the year 1957 AD was on\nthe brink of a global energy\ncrisis.	machine
 6031_030_06	39b1188bb147024454e8ee7084cad9a65fb15ab4	In the midst of that, my foster\nmother rashly reached out for\nan unknown energy brought\nfrom "their Earth."	machine
 6031_030_07	38c1c7fc7962b2db2bed90dfc38b0b56bf9cc423	My father claimed to have\nconfirmed the complete\nannihilation of the other... no,\nyour Earth.	machine
-6031_030_08	4e5bdb401548a50b6f7115226695ee9cf2ddd572	How could Mrs. Mira and\nDoctor Klaus have survived?	machine
+6031_030_08	4e5bdb401548a50b6f7115226695ee9cf2ddd572	How could Mrs. Milla and\nDoctor Klaus have survived?	machine
 6031_030_09	3ef9c37bf901586eb3d973fb497e99558a913d59	...Earth had not been\nannihilated. It had been warped\nto the Azurite system.	machine
 6031_030_10	1eb07e4bf582c85d3ca16656dbb5b898db0c1892	Warped...?	machine
 6031_030_11	40847c9cfe72f56035d6cd5b166da4bd4eb2ce12	As for why that happened...\neven now, I do not know for\ncertain.	machine
@@ -166,12 +166,12 @@ message_id	ja_sha1	en	source
 6031_040_49	52c0aabdadfe78d8935167339c89e71587524b8e	I cannot.	machine
 6031_040_50	8796c419c5c202d0a58ba89202f138cfdd47e7df	Besides, even if the current Raza and\nOber people heard what I've said, it\nwould only cause some unrest and lead\nthem to reconsider their roots.	machine
 6031_040_51	2fc6222b8f1108387de13198ffdf749281e57723	But the Lazuli Stone is\ndifferent. That... can clearly\nchange the future.	machine
-6031_040_52	5483dabd6b16a9d68ccf34ea48dd3ad3c13a00fb	Master Mastima: ...Are you\nreferring to the power of Event\nExtraction?	machine
+6031_040_52	5483dabd6b16a9d68ccf34ea48dd3ad3c13a00fb	...Are you referring to the\npower of Event Extraction?	machine
 6031_040_53	a0c3d8869b23665f9ffe184488549b95abfb02a9	...!!	machine
 6031_040_54	6b96efecd7b3786b39381e7c06f8cb2d07195028	Master Mastima?	machine
 6031_040_55	a6d4b9c3b36b45e27dc97de8c9adf95801990ad6	Event Extraction? What are\nyou talking about?	machine
-6031_040_56	dfb7ca7998e609d5408b88dba02a9668d28b9c29	Master Mastima: As I said\nbefore, projecting images of\nthe past is merely a secondary\neffect of that stone gate.	machine
-6031_040_57	72dc48a71baf20d5d0fe724a2a9de168817591b4	Master Mastima: It was\ncreated for a different\npurpose.	machine
+6031_040_56	dfb7ca7998e609d5408b88dba02a9668d28b9c29	As I said before, projecting\nimages of the past is merely a\nsecondary effect of that stone\ngate.	machine
+6031_040_57	72dc48a71baf20d5d0fe724a2a9de168817591b4	It was created for a different\npurpose.	machine
 6031_050_01	1ed965ad29b48f81f8fcac564a191cb371900d84	Wait! Why would you do such a\nthing...?!	machine
 6031_050_02	a01f7e33bb1cbc54be1533c5c6b23773d8ee2719	There are some circumstances.\nI've simply looked over the\nresearch materials regarding\nthat gate.	machine
 6031_050_03	0c333642ba89d53e4df2c0c95738acb683eed127	The Lazuli Stone... the primary\nfunction of the Urza System is\nthe "Extraction of Specific\nTemporal Events."	machine

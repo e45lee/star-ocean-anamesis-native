@@ -46,9 +46,6 @@ namespace {
 
 using ext::Row;
 
-// (a) docs/api.md "Content types": master_achievement.content_type 13 is a master_title id.
-constexpr u32 kContentTypeTitle = 13;
-
 bool is_title(ext::Ctx& ctx, TitleId title) { return title.v && ctx.m.one("select count(*) from master_title where id = ?", {title}) > 0; }
 
 bool owns_title(ext::Ctx& ctx, TitleId title) { return ctx.st.one("select count(*) from titles where id = ?", {title}) > 0; }
@@ -89,8 +86,8 @@ void set_player_title(Value& data, std::optional<TitleId> title) {
 //       logged and skipped.
 //   (d) The title joins the owned list; a title owned already changes nothing.
 // Adds: the id to the request's titles_added, which report_added_titles answers.
-void grant_title(ext::Ctx& ctx, u32 content_id, u32, Value&, Value&, Value&) {
-    const TitleId title(content_id);
+void grant_title(ext::Ctx& ctx, const ext::Grant& what, ext::Granted&) {
+    const TitleId title(what.id);
     if (!is_title(ctx, title)) {
         LOGW("server", "title %u: not in master_title", title.v);
         return;
@@ -203,14 +200,14 @@ NATIVE_TEST("player/titles") {
         set_req.ints = {ach_title};
         (*handler)(ctx, set_req);
         t.expect_eq((u32)ctx.st.one("select title_id from player", {}), first, "unowned title refused");
-        const ext::GrantFn* grant = ext::find_grant(kContentTypeTitle);
+        const ext::GrantFn* grant = ext::find_grant(ContentType::kTitle);
         if (!grant) {
             t.fail("content type 13 has no grant");
             return;
         }
-        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
-        (*grant)(ctx, ach_title, 1, items, stocks, chars);
-        (*grant)(ctx, ach_title, 1, items, stocks, chars);  // twice: owned once
+        ext::Granted granted;
+        (*grant)(ctx, ext::Grant{ContentType::kTitle, ach_title, 1}, granted);
+        (*grant)(ctx, ext::Grant{ContentType::kTitle, ach_title, 1}, granted);  // twice: owned once
         t.expect_eq(ctx.st.one("select count(*) from titles where id = ?", {ach_title}), (int64_t)1, "title owned");
         Request present_req;
         present_req.method = "GetPresent";
@@ -259,7 +256,8 @@ void new_player_titles(ext::Ctx& ctx) {
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
 // "The module registry and its order").
 void register_title() {
-    ext::add_grant(kContentTypeTitle, grant_title);
+    // (a) docs/api.md "Content types": master_achievement.content_type 13 is a master_title id.
+    ext::add_grant(ContentType::kTitle, grant_title);
     ext::add_player_load(load_titles);
     ext::add_api({"SetTitle"}, set_title);
     ext::add_response_hook(report_added_titles);

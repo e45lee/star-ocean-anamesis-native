@@ -33,6 +33,7 @@
 #include "core/log.h"
 #include "core/modules.h"
 #include "core/response.h"
+#include "soaserver/fids.h"
 #include "core/wallet.h"
 #include "rules/mission_rules.h"  // campaign_active, continue_campaign_applies, continue_price
 
@@ -43,9 +44,6 @@ namespace {
 
 using ext::refuse;
 
-// The core MissionStart / MissionEnd / MissionFailed requests a Sphere 211 battle runs through
-// (their fids: docs/api.md).
-constexpr u32 kFidMissionStart = 0xb7c62bc2, kFidMissionEnd = 0x8312a64c, kFidMissionFailed = 0x479604f6;
 constexpr u32 kMissionTypeEvent = 1;  // (b) MissionStart's mission type of a master_event_mission
 constexpr u32 kMissionTypeSphere211 = 5;  // (b) the client's mission type of a Sphere 211 battle (CParameterUI+0x140)
 constexpr u32 kAutoMembers = 4;       // (b) the party screen's four slots
@@ -208,7 +206,7 @@ std::vector<u8> sphere211_mission_start(Ctx& ctx, const Request& req) {
     if (!ex.empty() && !ex_sortie)
         LOGI("server", "Sphere211MissionStart: EX sorties used up (%u of %u): a plain sortie, everyone departs", revive_count, revive_max);
     // 3. the core battle
-    Request core{"MissionStart", kFidMissionStart, {kMissionTypeEvent, mission_id, 0, 0, 0, 0, 0}, {}, {}};
+    Request core{"MissionStart", fids::kMissionStart, {kMissionTypeEvent, mission_id, 0, 0, 0, 0, 0}, {}, {}};
     Value data = ctx.core_mission(core, &override_);
     if (data.type != Value::Map) return refuse(ctx, method, "core MissionStart refused", ErrorCode::kItemUnusable);
     // 4. the dive
@@ -262,7 +260,7 @@ std::vector<u8> sphere211_mission_end(Ctx& ctx, const Request& req) {
         LOGW("server", "Sphere211MissionEnd: no such cell, not answered");
         return {};
     }
-    Request core{"MissionEnd", kFidMissionEnd, {mission_id, 0}, {}, {}};
+    Request core{"MissionEnd", fids::kMissionEnd, {mission_id, 0}, {}, {}};
     Value data = ctx.core_mission(core, nullptr);
     if (data.type != Value::Map) data = ctx.base_data();
     u32 level = (u32)ctx.st.one("select floor_level from sphere where id = 1", {});
@@ -304,7 +302,7 @@ std::vector<u8> sphere211_mission_end(Ctx& ctx, const Request& req) {
 // The battle lost or given up (Sphere211MissionFailed, and Sphere211MissionContinue's decline):
 // the core MissionFailed ends the play record, the clear streak resets, no cell is playing.
 void end_failed_battle(Ctx& ctx) {
-    Request core{"MissionFailed", kFidMissionFailed, {kMissionTypeEvent, 0}, {}, {}};
+    Request core{"MissionFailed", fids::kMissionFailed, {kMissionTypeEvent, 0}, {}, {}};
     ctx.core_mission(core, nullptr);
     ctx.st.q("update sphere set streak = 0", {});
     ctx.st.q("update sphere_cell set playing = 0", {});
@@ -419,12 +417,12 @@ std::vector<u8> sphere211_floor_clear(Ctx& ctx, const Request& req) {
     u32 level = (u32)ctx.st.one("select floor_level from sphere where id = 1", {});
     Floor floor = floor_row(ctx, season, level);
     Value data = ctx.base_data();
-    Value items = Value::array(), stocks = Value::array(), characters = Value::array();
+    Granted granted;
     Value result = Value::object();
     ctx.m.q("select * from master_sphere211_floor_clear_present where clear_present_group_id = ? and level <= ? order by level desc limit 1",
             {season.clear_present_group, level}, [&](const Row& present_row) {
                 u32 type = (u32)present_row.i("content_type"), id = (u32)present_row.i("content_id"), num = (u32)present_row.i("num");
-                ctx.grant(type, id, num, items, stocks, characters);
+                ctx.grant(Grant{as_content_type(type), id, num}, granted);
                 result["clear_present_id"] = id;
                 result["clear_present_content_type"] = type;
                 result["clear_present_num"] = num;
@@ -446,7 +444,7 @@ std::vector<u8> sphere211_floor_clear(Ctx& ctx, const Request& req) {
                               {ctx.st.one("select asset_group from sphere where id = 1", {})});
     ctx.st.q("update sphere set clear_asset = ?, lot_floor_num = ?", {goal ? goal : 1u, lot_floor_num(ctx, total)});
     ctx.st.q("update sphere set best_floor = max(best_floor, ?)", {level});
-    if (!stocks.arr.empty()) data["StockItem"] = ctx.stock();
+    if (!granted.stocks.arr.empty()) data["StockItem"] = ctx.stock();
     put_state(ctx, season, data);
     LOGI("server", "Sphere211FloorClear(%u): floor %u cleared, %u boxes, next-floor lot %u", goal, level, floor.floor_clear_treasure_num,
          (u32)ctx.st.one("select lot_floor_num from sphere where id = 1", {}));
@@ -527,7 +525,8 @@ std::vector<u8> sphere211_stamina_heal(Ctx& ctx, const Request&) {
 std::vector<u8> return_sphere211(Ctx& ctx, const Request&) {
     Season season = load_dive(ctx);
     Value data = ctx.base_data();
-    Value items = Value::array(), stocks = Value::array(), characters = Value::array(), result = Value::object();
+    Granted granted;
+    Value result = Value::object();
     u32 floor = (u32)ctx.st.one("select floor_level from sphere where id = 1", {});
     lot_ranks(ctx, season);
     Value lots = Value::object();
@@ -537,7 +536,7 @@ std::vector<u8> return_sphere211(Ctx& ctx, const Request&) {
         lots[std::to_string(key)] = info;
     }
     data["Sphere211TreasureResultLotInfoMap"] = lots;
-    open_boxes(ctx, season, &items, &stocks, &characters, &result);
+    open_boxes(ctx, season, &granted, &result);
     u32 back = (u32)ctx.st.one("select count(*) from sphere_departed", {});
     ctx.st.exec("delete from sphere_departed");
     // (a) "※使用可能回数は帰還することで回復します" (uimsg_sphere211_mission_start_with_deity); (b)
@@ -545,8 +544,8 @@ std::vector<u8> return_sphere211(Ctx& ctx, const Request&) {
     ctx.st.q("update sphere set streak = 0, revive_count = 0", {});
     data["Sphere211TreasureResultInfoMap"] = result;
     data["StockItem"] = ctx.stock();
-    if (!items.arr.empty()) data["Item"] = ctx.items();
-    if (!characters.arr.empty()) data["Character"] = ctx.roster();
+    if (!granted.items.arr.empty()) data["Item"] = ctx.items();
+    if (!granted.characters.arr.empty()) data["Character"] = ctx.roster();
     put_state(ctx, season, data);
     LOGI("server", "ReturnSphere211: %u characters back, floor %u", back, floor);
     return ext::body(data);

@@ -8,6 +8,7 @@
 
 #include "api/sphere211/dive.h"
 #include "core/log.h"
+#include "core/rewards.h"  // grant_with_item_sets: (a) content type 99 item sets expanded
 
 namespace soa::server::sphere211 {
 
@@ -47,13 +48,15 @@ void client_ranking_groups(ext::Sql& db, ServerTime, EventTime) {
 // 追加されました" (the dialog has no present-box step).
 void ranking_reward(Ctx& ctx, u32 season_id, u32 rank) {
     u32 group = ranking_group_of(ctx.m, season_id);
-    Value items = Value::array(), stocks = Value::array(), characters = Value::array();
+    Granted granted;
     ctx.m.q(
         "select content_type, content_id, num, id_label from master_sphere211_ranking_reward where ranking_reward_group_id = ? and "
         "required_ranking >= ? order by required_ranking limit 1",
         {group, rank}, [&](const Row& reward_row) {
-            grant_content(ctx, (u32)reward_row.i("content_type"), (u32)reward_row.i("content_id"), (u32)std::max<int64_t>(1, reward_row.i("num")),
-                          items, stocks, characters);
+            grant_with_item_sets(
+                ctx,
+                Grant{as_content_type(reward_row.i("content_type")), (u32)reward_row.i("content_id"), (u32)std::max<int64_t>(1, reward_row.i("num"))},
+                granted);
             LOGI("server", "Sphere211: season %u ranking reward for rank %u: %s", season_id, rank, reward_row.s("id_label").c_str());
         });
 }

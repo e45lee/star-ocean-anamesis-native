@@ -16,6 +16,7 @@
 
 #include "core/log.h"
 #include "core/time.h"
+#include "core/wallet.h"  // stock_count, take_stock
 #include "master/master.h"
 #include "soaserver/sql.h"
 
@@ -286,10 +287,10 @@ void use_item(sqlite3* st, sqlite3* m, ServerTime now, u32 master_item_id, u32 c
                      points_per_item = (u32)effect_row.i("favor_up_point");
              });
     // (d) the count is capped by the stack held; the stack is debited
-    u32 have = (u32)Sql{st}.one("select count from stock where master_item_id = ?", {master_item_id});
+    u32 have = wallet::stock_count(st, master_item_id);
     count = std::min(count, have);
     Gain gain = add_points(st, m, now, same_role_id, points_per_item * count);
-    if (count) Sql{st}.q("update stock set count = count - ? where master_item_id = ?", {count, master_item_id});
+    if (count) wallet::take_stock(st, master_item_id, count);
     Value result = Value::object();
     result["same_role_id"] = same_role_id.v;
     result["favor_level"] = gain.ok ? gain.level_after : 1u;

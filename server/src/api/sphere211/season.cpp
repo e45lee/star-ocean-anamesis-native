@@ -131,7 +131,7 @@ Season load_dive(Ctx& ctx) {
     u32 dive_cycle = (u32)ctx.st.one("select cycle from sphere where id = 1", {});
     if (dive_season != season.id || dive_cycle != season.cycle) {
         Season old = season_by_id(ctx, dive_season);
-        if (old.id) open_boxes(ctx, old, nullptr, nullptr, nullptr, nullptr);
+        if (old.id) open_boxes(ctx, old, nullptr, nullptr);
         u32 best = (u32)ctx.st.one("select ifnull(max(floor_level), 0) from sphere_rank where season_id = ?", {dive_season});
         u32 boxes = (u32)ctx.st.one("select treasure_total from sphere where id = 1", {});
         u32 wins = (u32)ctx.st.one("select season_wins from sphere where id = 1", {});

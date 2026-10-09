@@ -90,9 +90,11 @@ Tiers, tests and commands: [tests/TIERS.md](tests/TIERS.md) (generated from `tes
 tools/gate.sh T0                     # every commit (~1.5 min): build, unit tests, port selftest, replays, doc/format/schema/no-offline-ref checks, pytest
 tools/gate.sh T1 --git-diff main     # per change, before reporting: T0 + what tools/tests_for.py picks
 tools/tests_for.py --git-diff main   # what T1 would run, and why
-tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 min, incl. win:* if build-win/ exists)
+tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 min)
 ```
 
+- A gate takes at most 4 game slots at once by default (`--game-slots N`; its tests/diff run is held to N too),
+  so several gates share the 15-slot pool; raise it only when the pool is idle.
 - Run the cheapest tests that prove the change; T3 only when asked. Items marked KNOWN in
   `tests/tiers.json` don't fail the gate.
 - Server changes: add a replay corpus line (`server/tests/replay/`, see its `COVERAGE.md`) rather
@@ -102,7 +104,9 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
 - A selftest must pass in the full `--selftest` run, not only filtered: restrict stub sessions
   (`StubSession::only`), don't compare uninitialised bytes or state other threads write, and fix
   isolation instead of re-running a test that fails only in the suite.
-- Windows tests (`win:*`): use your own stage, never the shared one:
+- Windows tests (`win:*`, tier T3): run them only when the change touches Windows-relevant code
+  (`common/win32/`, `_WIN32` / MinGW-specific code, the runtime's / platform370's platform layers, the build,
+  Windows packaging and launchers, `scripts/windows-*`, a file a Windows program newly reads). Use your own stage, never the shared one:
   `scripts/windows-stage.sh --phone --viewer /mnt/c/soa-win-<name>` once, then
   `SOA_WIN_STAGE=/mnt/c/soa-win-<name>`; delete it when done. A stage holds only the whitelist
   `scripts/windows-stage.list` (a file a program or selftest newly reads on Windows goes there;
@@ -188,6 +192,12 @@ tools/gate.sh T2 --out DIR           # per batch / before merging a batch (~25 m
   function; `tools/gen_addresses.py` writes `gen/<s>_addresses.h`, T0 `generated` checks it), never a
   typed vaddr. A native regression: `soa --natives route` (only the port's own hooks) and
   `--natives-skip SUBSYS` narrow it down (port/src/native/README.md "Which natives run").
+- **Natives call natives as natives**, not through `guest_call`.
+  - Within a family that is always installed together: a typed C++ member call.
+  - Across subsystems: a `NativeCallee` (`port/src/native/common/native_call.h`). It calls the native directly and
+    falls back to `guest_call` under `--natives route` / `--natives-skip`, `--selftest`, live checks and `--gdb`.
+  - `guest_call` stays only for a hook's own original, dynamic vtable dispatch, and targets that are still guest code.
+  - Classify new call sites in [CALLS.md](port/src/native/CALLS.md).
 - Check `soa --list-native` before porting a symbol, and look in `port/src/native/common/` for an
   existing helper (`git merge main` first) before adding one.
 

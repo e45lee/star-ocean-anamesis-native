@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 
+#include "api/gen/reply_types.h"  // the replies' C*Info types
 #include "core/errors.h"
 #include "core/log.h"
 #include "core/modules.h"
@@ -156,40 +157,26 @@ std::string store_product_id(u32 id) {
 //   (d) yen = the paid stones (the descriptions' paid counts are the Japanese store's price points,
 //   120 .. 10,000); (d) icon 1 for the two smallest sets, 2 for the next two, 3 above; (d) no
 //   product has a limit, a window or a bonus.
-Value coin_info(const Product& p) {
-    Value info = Value::object();
-    info["id"] = p.id;
-    info["product_id"] = store_product_id(p.id);
-    info["coin"] = p.paid;
-    info["free_coin"] = p.bonus;
-    info["yen"] = p.paid;
-    info["order_id"] = p.id;
-    info["icon_id"] = p.id <= 2 ? 1u : p.id <= 4 ? 2u : 3u;
-    info["name"] = std::string("");
-    info["name_label"] = p.name_label;
-    info["title_label"] = p.title_label;
-    info["description_label"] = p.description_label;
-    info["opened_at"] = std::string("");
-    info["closed_at"] = std::string("");
-    info["bought_at"] = std::string("");
-    info["limit_count"] = 0u;
-    info["limit_num"] = 0u;
-    info["interval_day"] = 0u;
-    info["bonus_type"] = 0u;
-    info["bonus_id"] = 0u;
-    info["bonus_id_label"] = std::string("");
-    info["is_once"] = false;
-    info["sale_type"] = 0u;
-    info["starter_limit_day"] = 0u;
-    info["is_view_closed_at"] = false;
+infos::CCoinInfo coin_info(const Product& p) {
+    infos::CCoinInfo info;  // (the rest "", 0, false: no window, limit or bonus)
+    info.id = p.id;
+    info.product_id = store_product_id(p.id);
+    info.coin = p.paid;
+    info.free_coin = p.bonus;
+    info.yen = p.paid;
+    info.order_id = p.id;
+    info.icon_id = p.id <= 2 ? 1u : p.id <= 4 ? 2u : 3u;
+    info.name_label = p.name_label;
+    info.title_label = p.title_label;
+    info.description_label = p.description_label;
     return info;
 }
 
 // CoinList: {id: CCoinInfo} (a number map, InfoBaseNumberMap<CCoinInfo>; a map key is the id).
 Value coin_list(Ctx& ctx) {
-    Value list = Value::object();
-    for (const Product& p : products(ctx)) list[std::to_string(p.id)] = coin_info(p);
-    return list;
+    infos::InfoMap<u64, infos::CCoinInfo> list;
+    for (const Product& p : products(ctx)) list[p.id] = coin_info(p);
+    return infos::to_map(list);
 }
 
 // CoinList() -> CoinListRes                                                fid d859bb89
@@ -222,9 +209,7 @@ std::vector<u8> coin_deposit_create(Ctx& ctx, const Request& req) {
     u32 trans = (u32)ctx.st.one("select max(trans_id) from coin_deposit", {});
     LOGI("server", "CoinDepositCreate: product %u (platform %u): deposit %u pending", a.product, a.platform, trans);
     Value data = ctx.base_data();
-    Value deposit = Value::object();
-    deposit["deposit_trans_id"] = trans;
-    data["CoinDeposit"] = deposit;
+    data["CoinDeposit"] = infos::to_value(infos::CCoinDepositInfo{trans});
     return body(data);
 }
 
@@ -269,11 +254,8 @@ std::vector<u8> coin_deposit_update(Ctx& ctx, const Request& req) {
         LOGI("server", "%s: deposit %u was completed already; nothing credited", method, a.trans_id);
     }
     Value data = ctx.base_data();
-    Value purchased = Value::object();
-    purchased["bonus_type"] = 0u;
-    purchased["name_label"] = p->name_label;
-    purchased["title_label"] = p->title_label;
-    data["PurchasedItemInfo"] = purchased;
+    data["PurchasedItemInfo"] =
+        infos::to_value(infos::CPurchasedItemInfo{.bonus_type = 0, .name_label = p->name_label, .title_label = p->title_label});
     data["CoinList"] = coin_list(ctx);
     return body(data);
 }

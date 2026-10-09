@@ -559,9 +559,9 @@ message_id	ja_sha1	en	source
 6043_230_05	92c5068e75341293997057301cc23dfbf04543b8	What is the matter? Why\nhesitate now that you have\ncome this far?	machine
 6043_230_06	ae8b478a59a018ec5484b9739dca87fbc4287959	...That voice!	machine
 6043_230_07	33918fc5a1ece6dde1849d2639bd8b613a3af3a2	I have been waiting for you to\narrive, enduring the sheer\nboredom of it. Come, do not\nhold back.	machine
-6043_230_08	bc6dec1c3bebf3b6225370978c3dde37483801f0	Lady Welch: What nerve! It's\nonly polite to accept an\ninvitation when it's offered!\nHere I come!	machine
+6043_230_08	bc6dec1c3bebf3b6225370978c3dde37483801f0	What nerve! It's only polite to\naccept an invitation when it's\noffered! Here I come!	machine
 6043_230_09	900cf9799e9591ec179b49c6a9bb1ace6bdd0cd4	W-wait, Lady Welch!!	machine
-6043_230_10	1214982e77d45ed0d0aed332ba8002e7ccab624e	Lady Welch: Take this!!	machine
+6043_230_10	1214982e77d45ed0d0aed332ba8002e7ccab624e	Take this!!	machine
 6043_230_11	8428c6fd7ee280828d69d62fa1a0aab84dd15414	...Good grief, how uncouth.	machine
 6043_230_12	e01cd7a9d8643615310af5fd73bdfa78a9ba36e9	Charging in!	machine
 6043_230_14	a2a75d90fe95f0f87a2f679549924afc73e698ff	Yeah! You're telling me the\ngreat Commander of Ober is\nactually here, huh!?	machine
@@ -641,23 +641,23 @@ message_id	ja_sha1	en	source
 6043_230_93	93c238995d01507ef8c65af1162dc2e8e7954b6e	This... this course...!! This is\nbad! Send an emergency\ntransmission to the battleship\nIsabel on all channels, now!	machine
 6043_230_94	4b32dea2a5dc7d7b51eb92408fb426da01e60329	All five Phantom ships are\nheading straight for the Isabel!!	machine
 6043_230_95	413ee2a19d03af7c8767d8f5da7cb3676f76a7d6	Nooooooo!	machine
-6043_240_01	7e42411dbfc66ef199637959375c7de5db5e344a	Isabel Ship Controller: Emergency\ntransmission from the Overman! Five\nPhantom ships are approaching this\nvessel...	machine
-6043_240_02	07092d92842befa731e816ed5245e452d29e51d7	Isabel Ship Controller: Distance\n1200! Visual confirmation―they\nare all McKinley-class!	machine
+6043_240_01	7e42411dbfc66ef199637959375c7de5db5e344a	Emergency transmission from\nthe Overman! Five Phantom\nships are approaching this\nvessel...	machine
+6043_240_02	07092d92842befa731e816ed5245e452d29e51d7	Distance 1200! Visual\nconfirmation―they are all\nMcKinley-class!	machine
 6043_240_03	b0dbd463d7630f136f965024854bafde2c37dbdd	They have quite a presence for\nghosts. Five McKinleys, huh?	machine
 6043_240_04	3ded1590a5728235a0c26367a5f7fbb568c14a30	It wouldn't be wise to take\nthem head-on. Prepare the\nemergency warp and evasion\nprograms.	machine
 6043_240_05	3d33e70357fd7330333628339692e43dc6e58672	I don't believe we've done anything to\nattract the attention of the Phantom or\nOber fleets, but I wonder if Heath and\nthe others ran into some trouble.	machine
 6043_240_06	45a059dae09cb7ada5fafb26fae5a7db19fccdf7	If they did, they'll be punished\nlater, but this is far too\nsudden.	machine
 6043_240_07	8f2b67dd7ccf131a4061808583082e72f171ccee	It's more likely that the Isabel was\ntargeted by someone from the very\nbeginning for some reason... I don't like\nthe sound of that.	machine
-6043_240_08	50cf03b2a218ee51249996f1ddd230095a05a2d1	Isabel Ship Controller: All\nhands, brace for impact!!	machine
+6043_240_08	50cf03b2a218ee51249996f1ddd230095a05a2d1	All hands, brace for impact!!	machine
 6043_240_09	d4023edad1de4a376dbbc179a4d8391a81276469	What? Ahhh!?	machine
-6043_240_10	3f85dcc551394b23da21619872160f942a201752	Isabel Ship Controller: Hit on\nthe port side! They've pierced\nright through the shields and\nthe defensive armor!	machine
+6043_240_10	3f85dcc551394b23da21619872160f942a201752	Hit on the port side! They've\npierced right through the\nshields and the defensive\narmor!	machine
 6043_240_11	77f50f59146f8b10929ec902f237d293cdb69d06	No...! This must be some\nmistake! A long-range attack\nfrom 1200 units shouldn't have\nthis much power...!	machine
-6043_240_12	f3c2f4c12a54a115a5a1166f2283e431095d7623	Isabel Ship Controller: Next\nshot optically locked! Here it\ncomes!!	machine
-6043_240_13	8c8e82ceaf96f1f1888eb235b5efe6ea8f5732b1	Isabel Ship Controller: It's completely\nexceeding the specs of a\nMcKinley-class! They look the same, but\nthe performance is on a whole different\nlevel!	machine
-6043_240_14	4a9ae752556d8ceba4b5a0e615d6c43366daf83d	Isabel Ship Controller: Another\nshot incoming!	machine
+6043_240_12	f3c2f4c12a54a115a5a1166f2283e431095d7623	Next shot optically locked!\nHere it comes!!	machine
+6043_240_13	8c8e82ceaf96f1f1888eb235b5efe6ea8f5732b1	It's completely exceeding the specs of\na McKinley-class! They look the same,\nbut the performance is on a whole\ndifferent level!	machine
+6043_240_14	4a9ae752556d8ceba4b5a0e615d6c43366daf83d	Another shot incoming!	machine
 6043_240_15	92453f5b37aead28e9bea6b5261f73d759b2cd12	What on earth... are these\nthings...?	machine
 6043_240_16	cf4ba05b60649aa7ae099d19696e190ab5c40704	All hands, abandon ship!\nAbandon ship! Prioritize your\nown survival above all else!!	machine
-6043_240_17	7beb84b23a59bc741cd3f40e59dc5a85fdafc8cd	Isabel Ship Controller: Order to\nabandon ship! Order to\nabandon ship!!	machine
+6043_240_17	7beb84b23a59bc741cd3f40e59dc5a85fdafc8cd	Order to abandon ship! Order\nto abandon ship!!	machine
 6043_240_18	bae7869d54db0f43db917be0f6162ba99527c461	Dammit... why is this\nhappening... Heath...!!	machine
 6043_250_01	39df413566fa3562fdd5410f0f03ce2cb993d468	Stop it! I said stop it!!	machine
 6043_250_02	c630949f98431f7d81a047b0032e86ee75da274c	It's too late to stop now. Once we bring\ndown their mothership, I'll have the\nentire fleet advance straight toward\nthe home world of Raza.	machine
@@ -685,7 +685,7 @@ message_id	ja_sha1	en	source
 6043_250_27	3940afe95dabc2385df291125d094cb0add1aa17	Well, Captain? Was it worth\nexperimenting on Gerel?	machine
 6043_250_28	b15d795604f1b4f8ca874d0bd15745eef23475d3	Not a warp...? A summoning\nspell.	agent
 6043_250_29	02c7397d2881f77337c2969ef43d13c01f20dc53	Go! We've stolen his trump\ncard!	machine
-6043_250_30	ef4bbbac8efb799d9f73b2ea9cfac632d8dd5feb	Mista Heath: You've gotta be\nkidding me!!	machine
+6043_250_30	ef4bbbac8efb799d9f73b2ea9cfac632d8dd5feb	You've gotta be kidding me!!	machine
 6043_250_31	9e21f15282fed240f216ea3695ef326eae9e41a6	Guh!!	machine
 6043_250_32	b8fbba2faa45c1fd5f0c0b7dab50c61b9e7e3967	Prepare to dieeeeeee!!	machine
 6043_250_33	f95ac63fea61dbf9a2de36edd371f9f19af71fda	Evelysse! Get over here,\nquickly!	machine
@@ -694,7 +694,7 @@ message_id	ja_sha1	en	source
 6043_250_36	78b009d6f103742d8b8205d929b2b5cdd4263e0c	...I'm sorry, I...!	machine
 6043_250_37	4e9c9ea319408f66205040af480e643c2d654ec2	Evelysse!! What has come over\nyou! What is making you do\nthis!!	machine
 6043_250_38	1a5ba7fa876e9fc951f14a703c8506a978cbd4ea	Hm, this is bad! Mista Heath!\nGet away!!	machine
-6043_250_39	01a55a6bc45e8ca7cb6656b6259a1cd4d8d0c209	Mista Heath: What!!	machine
+6043_250_39	01a55a6bc45e8ca7cb6656b6259a1cd4d8d0c209	What!!	machine
 6043_250_40	232a7209c1fcad5bc592fd933f2e3ebe01af3eeb	Dammit! The vibrations\nsuddenly intensified! Don't tell\nme the whole ship is...!	machine
 6043_250_41	bcd0ffde488486b92a4b0978a934f606226ea29e	It looks that way! We have about 10\nminutes before we sink! Mista Heath,\nCaptain, everyone evacuate! At this\nrate, even if we defeat Asmodeus, we\nwon't be able to escape!	machine
 6043_250_42	a1eecfffdf75f4b83cc0455b5c1f12049011cd07	Dammit! What the hell is he\nthinking?! Is he insane?!	machine

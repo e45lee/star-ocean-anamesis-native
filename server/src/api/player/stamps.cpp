@@ -50,9 +50,6 @@ namespace {
 
 using ext::Row;
 
-// (a) docs/api.md "Content types": content type 12 is a master_stamp id (master_achievement,
-// master_login_bonus_contents, master_exchange_shop_contents).
-constexpr u32 kContentTypeStamp = 12;
 // (b) four stamps per palette page (CStampSelect::Setup / UpdateSelectStamp @01e65010).
 constexpr u32 kSlotsPerPage = 4;
 
@@ -117,8 +114,8 @@ Value stamp_slot_info(ext::Ctx& ctx) {
 //       master_stamp is logged and skipped.
 //   (d) The stamp joins the owned list; a stamp owned already changes nothing.
 // Adds: the id to the request's stamps_added, which report_added_stamps answers.
-void grant_stamp(ext::Ctx& ctx, u32 content_id, u32, Value&, Value&, Value&) {
-    const StampId stamp(content_id);
+void grant_stamp(ext::Ctx& ctx, const ext::Grant& what, ext::Granted&) {
+    const StampId stamp(what.id);
     if (!is_stamp(ctx, stamp)) {
         LOGW("server", "stamp %u: not in master_stamp", stamp.v);
         return;
@@ -211,7 +208,9 @@ bool report_added_stamps(ext::Ctx& ctx, const Request&, Value& data) {
 // The module's registrations, in their order (src/core/modules.cpp calls this; server/ARCHITECTURE.md
 // "The module registry and its order").
 void register_stamp() {
-    ext::add_grant(kContentTypeStamp, grant_stamp);
+    // (a) docs/api.md "Content types": content type 12 is a master_stamp id (master_achievement,
+    // master_login_bonus_contents, master_exchange_shop_contents).
+    ext::add_grant(ContentType::kStamp, grant_stamp);
     ext::add_player_load(load_stamps);
     ext::add_api({"SetStampSlot"}, set_stamp_slot);
     ext::add_response_hook(report_added_stamps);

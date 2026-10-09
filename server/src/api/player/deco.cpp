@@ -38,9 +38,6 @@ namespace soa::server {
 namespace {
 using namespace ext;
 
-constexpr u32 kContentDecoObject = 17;  // (a) docs/api.md "Content types": de01head_049a
-constexpr u32 kContentDecoHair = 18;    // (a) deco_hair_010101
-
 // The owned decorations as CDecoObjectInfo, in the order acquired.
 Value deco_list(Ctx& ctx) {
     Value list = Value::array();
@@ -80,7 +77,7 @@ bool owns_deco(Ctx& ctx, u32 master_deco_id) { return ctx.st.one("select count(*
 //   nothing (FavoriteDecoObject names decorations by master id, so the client keeps one each).
 //   The client asks for the list (GetDecoInfo) when the menu opens, and NumDecoObject comes with
 //   every response (deco_count_key), so a grant only changes the state.
-void grant_deco_content(Ctx& ctx, u32 id, u32, Value&, Value&, Value&) { grant_deco(ctx, id); }
+void grant_deco_content(Ctx& ctx, const Grant& what, Granted&) { grant_deco(ctx, what.id); }
 
 // OnResponse hook (every response).
 // Rules: docs/server-rules.md#deco
@@ -232,8 +229,8 @@ void register_deco() {
     add_api({"GetDecoInfo"}, get_deco_info);
     add_api({"SetCharacterDeco"}, set_character_deco);
     add_api({"FavoriteDecoObject", "UnFavoriteDecoObject"}, favorite_deco_object);
-    add_grant(kContentDecoObject, grant_deco_content);
-    add_grant(kContentDecoHair, grant_deco_content);
+    add_grant(ContentType::kDecoObject, grant_deco_content);  // (a) docs/api.md "Content types" 17: de01head_049a
+    add_grant(ContentType::kDecoHair, grant_deco_content);    // (a) 18: deco_hair_010101
     add_response_hook(deco_count_key);
 }
 

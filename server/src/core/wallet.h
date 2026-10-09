@@ -47,5 +47,8 @@ void add_fol(sqlite3* st, sqlite3* m, int64_t delta);
 u32 stock_count(sqlite3* st, u32 item);
 // Adds (or takes) stack items: never below 0, (a) capped at master_global item_stock_max_num.
 void add_stock(sqlite3* st, sqlite3* m, u32 item, int64_t delta);
+// Takes `n` stack items the player has (a use: the favor items): never below 0, no cap applied
+// (add_stock's cap would also lower a count already above it).
+void take_stock(sqlite3* st, u32 item, u32 n);
 
 }  // namespace soa::server::wallet

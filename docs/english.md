@@ -1596,7 +1596,7 @@ Agent `en-terms`, 2026-10-08. The user settled the six term splits of 7.16 ("ter
 
 **Japanese in notes.** `labels.tsv` holds no Japanese (7.14; its one term note says "Enhance for Strengthen"). The term and waiver notes of `master.tsv` and `story/` name the Japanese term (`進化 Augment`, `glossary-waive: 進化 (…)`), as en-followup's notes already did: game words, not texts; about 590 master and 25 story notes hold some Japanese.
 
-**Found on the way, not fixed:** `TS_6060`'s machine lines `6062_115_41` to `_46` and `_49` hold shifted or doubled English (`_42` says `_41`'s line, `_44` repeats `_43`, `_49` repeats `_48`): a chunk the engine misaligned; `_42` has a waiver so the check passes, the lines want a retranslation.
+**Found on the way, not fixed:** `TS_6060`'s machine lines `6062_115_41` to `_46` and `_49` hold shifted or doubled English (`_42` says `_41`'s line, `_44` repeats `_43`, `_49` repeats `_48`): a chunk the engine misaligned; `_42` has a waiver so the check passes, the lines want a retranslation. **Done in [7.21](#721-the-engines-speaker-prefixes-the-middle-dot-in-the-glossary-match)** (hand-aligned agent rows).
 
 **リーシュ is Evelysse (decided 2026-10-08).** Agent `en-evelysse`. The user chose Global's name **Evelysse** for リーシュ (cp0002, the guide) everywhere in our rows, replacing "Eve" (the en-followup glossary row, from Global) and the last "Leash"/"Evreesh"/"Livriesh" (the M2 name pass). Global itself is mixed: of its usable English rows whose Japanese has リーシュ, 128 say "Eve" and 32 "Evelysse" (its name rows `cp0002_*_prmsg_03`, `cp0002_b01a_message`, Winter Evelysse; but the home talk lines, the speaker pairs リーシュ＆コロ "Eve & Coro", アーヤ＆リーシュ "Aya & Eve", 新妻リーシュ / 花嫁イヴリーシュ "Bride Eve" and the mission title `6-10 Eve's Speculation`). Global's official, memory and template rows are not changed (7.9), so the game shows both names; a `human` override of Global's "Eve" rows is the user's to decide.
 
@@ -1622,7 +1622,7 @@ The official speaker rows `cp0002_ta03a` (Eve & Coro), `_ta50a` (Bride Eve), `_t
 
 **Shot** (`work/english/evelysse/`, local): the campaign's story mc01_030 (`--lang en`), line `1010_030_06` (Global's official text) under the speaker name **Evelysse** (`cp0002_ta01a`, our row; it said Eve).
 
-**Found on the way, not fixed:** the glossary's term match treats ・ as katakana (`KATA`), so イヴリーシュ in 歌星イヴリーシュ・獄 counts as inside a longer word and isn't checked (the 4 Evreesh rows passed that way). About 745 machine story lines start with a speaker prefix the engine added ("Masked Man: …", "Yamato: …") although the line's Japanese has none; they want a clean-up pass.
+**Found on the way, not fixed:** the glossary's term match treats ・ as katakana (`KATA`), so イヴリーシュ in 歌星イヴリーシュ・獄 counts as inside a longer word and isn't checked (the 4 Evreesh rows passed that way). About 745 machine story lines start with a speaker prefix the engine added ("Masked Man: …", "Yamato: …") although the line's Japanese has none; they want a clean-up pass. **Both done in [7.21](#721-the-engines-speaker-prefixes-the-middle-dot-in-the-glossary-match).**
 
 ### 7.19 The character bio pages; Global's credits and near matches
 
@@ -1740,6 +1740,59 @@ The per-row decisions (`work/english/bio/q7-word-changed-decisions.tsv`, local: 
 Found, not changed: `cp0002_ta01a` (the speaker name リーシュ) is the machine's "Eve"; Global names the character Evelysse (イヴリーシュ). A name for a person to choose. **Decided (the user, 2026-10-08): Evelysse** ([7.18](#718-the-term-splits-decided-2026-10-08)); the row now says Evelysse.
 
 **4. Profiles' paragraphs restored.** 247 machine profiles (`*_prmsg_06*`) had run the Japanese paragraphs together (the MT import re-broke each text as one paragraph, 7.10). Their English sentences were aligned with the Japanese paragraphs (by meaning, sentence by sentence; every break at a sentence end, the text checked unchanged but for white space), and each paragraph re-broken at the import's budget (the widest Japanese line, at least 200 px), joined by a blank line as the Japanese. No word changed: the rows stay `machine` (engine and date kept) with the note `paragraphs (en-bio2 2026-10-08, english.md 7.20): the Japanese paragraph breaks restored, no rewording`. E.g. Reimi of the Phoenix Bow (`cp0402_b06a_prmsg_06`): three paragraphs as the Japanese. The 248th, `cn0008_b01a_prmsg_06`, took Global's English (3 above). The profile box shrinks a long text to fit (7.19); Reimi's three paragraphs fit readably (`work/english/bio2/bio2-profile-reimi.png`, local).
+
+### 7.21 The engine's speaker prefixes; the middle dot in the glossary match
+
+Agent `en-prefix`, 2026-10-08. The user's decision: **remove the speaker prefixes the MT engine added** to machine story lines ("Masked Man: Tsk...", "Yamato: …", "Evelysse's Residual Will: …"); the game shows the speaker above the message window. With it, two findings of 7.18 (the ・ in the glossary match, `TS_6060`'s shifted lines) and en-evelysse's `D026_020_08`.
+
+**Why the engine wrote them, and why the strip missed.** The story runner (`english_mt_run.py story`, `story-fix`, `story-retry`) sends each line as `[N] Speaker: Japanese`. A speaker without Global or glossary English (most generic ones: 仮面の男, マッキンリー艦艦長, 審査委員長) was sent **in Japanese**; the engine translated the name itself and often wrote it back in front of the line, and the runner's strip compared that English prefix with the Japanese name, so it never matched. Where the name was English the engine still varied its form (Lady Lavarnia, Master Mastima, McKinley Captain, `<font color=blue>Valka</font>`). Fixed three ways:
+
+- the runner (`Speakers`): a speaker is now sent with our master row's English when Global and the glossary have none (prompt `story-v2`), and `strip` drops a leading `<speaker>: ` that names the line's speaker in any form the check knows;
+- `import-mt` (story) removes such a prefix before checking (the line's speaker by any known name, or the name the checkpoint sent);
+- **a check** (`speaker_prefix`, hard for `machine` and `agent` story lines; `english_core.speaker_prefix`, `english_text.SpeakerNames`): a line starting with its own speaker's name and a colon (followed by a space or a line break) fails, so it is never served and `set` refuses it. The speaker comes from the download's `Script/*.msgp` (`english_core.story_scenes`, `Sources.story_speakers`: the speech commands' speaker codes); its names are Global's, the served master row's and the glossary's for the Japanese name; compared with tags dropped, NFKC, case-folded, titles dropped (Lady, Master, Miss, Mista, Sir, Dr., Professor, The, …) and the words in any order. Not flagged: a sentence's colon ("Let me guess: …"), another character, or a narration line whose Japanese itself starts with the name (`<font color=blue>ヴァルカ</font>　…`, its English `<font color=blue>Valka</font>: …` is a translation). `report`: `story.speaker_prefix_failing` (0), the lines in `story-failing.tsv`. Tests: `test_speaker_prefix`, `test_story_speaker_prefix_check`, `test_committed_story_has_no_speaker_prefix`, `test_story_import_strips_speaker_prefix`, `test_mt_runner_strips_speaker`. The C++ builder needs no change: the check only decides which committed rows `story-en/` holds (pre-checked, as the glossary).
+
+**Removed: 756 lines** (750 `machine`, 6 `agent`; the rows keep their source, engine and date, note `prefix (en-prefix 2026-10-08): removed the engine's speaker prefix "<X>: "`; the rest of the line byte-identical, the build re-breaks it): 610 by the speaker's own name in one of the forms above, 6 by the name the line was sent with (`???` for ？？？, `AI-056`), and 140 where the prefix is the engine's own rendering of the Japanese speaker name, reviewed by hand:
+
+| Japanese speaker (served name) | The engine's prefix |
+|---|---|
+| 審査委員長 (Chief Judge) | Head Judge (13) |
+| ナスモドキ (Pseudo-Eggplant) | Nasumodoki (11) |
+| ラーザ軍　管制統括 / 士官 / 司令 (Raza's Army …) | Raza Army Control (10), Officer (6), Commander (2) |
+| ＧＮＧ４８メンバー (GNG48 Members) | GNG48 Member (10) |
+| 観客 (Spectators) | Audience (9) |
+| イザベル艦　管制官 (Isabel's Ship Controller) | Isabel Ship Controller (8) |
+| リーシュの残留思念 (Evelysse's Residual Thoughts) | Evelysse's Residual Will (7), Evelysse's Afterimage (1) |
+| ベルダ (Verda) | Dr. Belda (7) |
+| マウンテン・フジ (Mount Fuji) | Mountain Fuji (5) |
+| 壱与 (Iyo) | Ichiyo (5) |
+| 国の若者 (Youth of the nation) | Young Man (3), Youth (2) |
+| ミリー (Millie), リュカ (Luca), 偽レナ (Fake Rena), ユーイン (Euwin) | Miri (4), Lyca (3), Fake Lena (2), Ewin (2) |
+| 屋台の店主 (Stall Shopkeeper) | Shopkeeper (3), Stall Owner (1) |
+| ギディオン, Fildel_now / Fildel_past (no master name) | Gideon (3), Fidel_now (3), Fidel_past (3) |
+| 街の男性 / 街の長老 / 街の人々 (Town Man, Town Elder, Townspeople) | Townman (2), Village Elder (1), Villagers (1) |
+| リーシュ＆ベルダ, レコロ＆ヴァルカ, レコロ＆コロ | Leesh & Verda (2), Rekoro & Valca (2), Rekoro & Koro (1) |
+| 老人の娘 (Old Man's Daughter), 身分ある男性 (Noble Man), マッキンリー艦艦長 (Captain McKinley) | Elder's Daughter (2), Nobleman (1), McKinley (1) |
+| 宿の息子ルシオ, クロノス兵, 道具屋アーノン, アキュラ隊員 | Lucio, Chronos Soldier, Arnon, Accura Crew (1 each) |
+
+**Kept** (not the engine's addition): 94 narration lines whose Japanese carries the speaker's name (`<font color=blue>カーリン</font>　…`, EP2's log scenes) and `D026_010_40` ("Frost: <font color=yellow>Frost</font>. Why?": the Japanese starts with the name フロスト, the speaker is the Boy).
+
+**Listed for review, not changed (37):** a sentence's colon, not a speaker: `2067_270_08` ("Targets: …), `2083_110_20`, `2104_260_13`, `6011_050_16` ("Destination: …), `6013_190_22`, `6013_190_71`, `6013_210_46`, `6013_270_28`, `6043_250_85`, `6052_015_08`, `6064_220_25`, `C129_010_09`; **another character** than the Script's speaker: `2014_090_08` (Tika for Coro), `6011_030_14`, `6011_030_17` (Rekoro for Coro), `6033_100_34` (Karlyn for Heath), `2025_140_19` (Karlyn, where the game shows ??? before she is named); **no speaker in the Script** (narration lines, or lines no script references), the engine named one: `2015_190_02` (Verda), `2066_240_14`..`_16` (Valka), `_18`, `_19` (Tika), `_23`, `_24` (Henri), `3051_015_22`..`_33` (12 lines: Coro, Welch, Basel). The per-line list with the speakers and the Japanese: `work/english/prefix/prefix-lines.tsv` (local).
+
+**Shot** (`work/english/prefix/`, local; the kimono event's story `mc99_553` at 2020-05-29, `--lang en`): `before-D056_010_02.png` "Reimi's Voice: Wow, it looks great on you! …" under the speaker Reimi's Voice; `after-D056_010_02.png` "Wow, it looks great on you! It was definitely worth splurging on!".
+
+**The middle dot ・ in the glossary match.** `glossary_hits` skips a katakana term inside a longer katakana word (レイ in マルチプレイ); its letter class `[ァ-ヿ]` included ・ (U+30FB), so a term beside a ・ counted as inside a word: イヴリーシュ in 歌星イヴリーシュ・獄, and every skill variant (フェアリーライト・福), list of names and full name (エリス・ジェランド) went unchecked. The neighbour test now uses `KATA_LETTER` (`[ァ-ヺー-ヿ]`, without ・); the term set of the glossary (line 388's `KATA`) is unchanged (`glossary.tsv` unchanged; test `test_glossary_middle_dot`). It newly flagged **282 rows** (271 master, 11 story), handled as 7.18 did, per term:
+
+- **The term swapped** (row source kept, note `term (en-prefix 2026-10-08, english.md 7.21): <term> <English>`; a master row with the import's greedy breaks re-broken at its budget): 224 rows (216 master, 8 story), the engine's rendering → the glossary's: Fairy Light → Faerie Light (22), Cynard / P-Scynerd / P-Scyner Chip → (P.) Cygnard Chip (21), Gravity Shell → Gravitational Sphere, Shiny Lancer → Radiant Lancer, Earth Grave → Earth Glaive, Spread Ray → Dispersion Ray, Escape Blow → Contingency Plan, Tri-Zapper / Try Zapper → Threefold Blast, Berda / Belda → Verda, Albert → Albel, Koro → Coro, Ground Radar → Ground Raider, Lock Rain → Stone Rain, Wounds → Woons, Vulca → Valka, Souffle Rocchetti → Peppita Rossetti, Eilmat → Arumat, Ronikis → Ronyx, Mr./Ms. <player> / Mr. Fayt → Mista, Barktain / Baktain → Bachtein, Mira → Milla, Lacour → Lacuer, Lena → Rena, Dawn → Dorne, Steve → Stephen, Emerson → Emmerson, Connection → Self-Mastery (a talent's variant), Prism Platinum / Prism Crystal → Ra. Platinum Prism / Rainbow Crystal, and about 60 skill names of one or two rows (Bloody Mary → Frankenrobbie, Wide Laser → Broad Laser, Earthquake → Tremblor, …). Per row: `work/english/prefix/glossary-dot-rows.tsv` (local).
+- **`agent` rows (17)** where a swap can't fix the text: 8 seed / factor rows where the engine split a skill name into three things ("the effects of Gravity, Shell, and AF", "Impulse, Force, and AF": now "the effect of Gravitational Sphere AF"); full names Global spells (エリス・ジェランド ×3 Erys Jerand, ヨシュア・ジェランド Ioshua Jerand: Global's サラ・ジェランド Sarah Jerand; アドレー・ラーズバード Adray Lasbard: Global's Clair Lasbard; `6031_030_02` フェイズ・シッファー・ベレス、リムル・レムリ・ファイ: Global's Faize Sheifa Beleth, Lymle Lemuri Phi); 羅刹刃・ダサイクル "Diabolic Whirl: Dacycle" (the engine's "Revised Diabolic Whirl" is 羅刹刃・改); the two Guide captions where メリクル・ミラージュ・パヴィヌ are three people (Meracle, Mirage and Pavine), not "Merikuru Mirage Pavine".
+- **Waived** (`glossary-waive: <term> (why)`, the text unchanged; 42 rows, 39 master, 3 story, one of them (`E023_030_44`) also swapped): the term's other sense or part of another name: グロース in a skill's name (9: Global writes フェアリーライト・グロース "Enraging Faerie Light"; the engine's "Growth" is for a person to review), レイ (6: Rena's spell Ray, not the enemy skill Laser Beams), 真・アルマロステストミッション (6: 真・アルマロス, Global's Armaros Manifest, + テストミッション), ジャッジメント (4), プレス (2; プレス・法 / ・愛 swapped: Crush Law, Crush Love) / ボム / スフィア / ミサイル / クラッカー / ロック / モチツキ / フェイズ / スピキュール in other names (ハイヤード・プレス, クルーティ・ボム, テイル・スフィア and スフィア・スタミナ, バックキック・ミサイル, ウェルチ・クラッカー, オン・ザ・ロック, モチツキ・アームズ, ワイルド・ブラッド・フェイズ, a pun), スグレイブ (十字ア－スグレイブ: the Japanese misspells アース); **for review**: クロウザー (2, `E023_030_44`, `_47`: the glossary's machine name "Closure", the lines say Crowzer) and ランドグリーズ (2: the glossary's machine name "Laevateinn" is a guess, Landgrís is another Valkyrie; the rows keep the engine's "La Gungnir" / "Landgriz").
+
+**`TS_6060` (`6062_115_41`..`_46`, `_49`): hand-aligned `agent` rows**, not an MT redo (deterministic, reviewable, no GPU slot): the chunk was shifted by one line, so the engine's own English moved to its line (`_41` ← `_42`'s, `_44` ← `_45`'s, `_45` ← `_46`'s; `_41`'s old "…It brings back memories" matches no Japanese line), and the three lines the engine dropped written from the Japanese (`_42` "But deep in my mind, the feeling always remained that I wanted to cherish the proper evolution of planets and of the universe, natural evolution, above all else." with its 進化 waiver, natural sense; `_46`; `_49` "The "Earth" I had kept searching for and finally found... had become something I must never lay a hand on."). Editor en-prefix, the notes name the old text; for a person's review.
+
+**`D026_020_08`** (Peppita): ふーたん is her nickname for Frost ("Fu-tan", as `D026_030_38`, `_050_28`, `_060_25`), not an address to Evelysse: "But Fu-tan's wandered off somewhere, you know?" (`agent`, was "But, Evelysse. Frost is gone.").
+
+**Checked:** `english_text.py build` and `report`: 0 failing candidates, story 21,663 of 21,663 lines (machine 16,941, agent 97; 391 lines of 5+ window lines, was 404), `speaker_prefix_failing` 0, the glossary check 0 misses; `check_english_official.py` 0 violations (master 28,844 ok, story 5,037 ok); `tests/test_english_derive.py` byte-identical. Two more single-line master rows are wider than the screen (a longer skill name, `wider-than-screen.tsv`, informational).
+
+**Found, not fixed:** name variants inside the remaining text (the engine's "Ewin Laxter" in `2092_110_09` and other lines for Euwin, "Leesh"), not flagged where the glossary term is matched elsewhere in the row.
 
 ## 8. English UI art
 
@@ -1891,6 +1944,7 @@ A row with a reason is listed (`token-gaps.tsv`); it may still get memory (4).
 | glyphs | any code point other than `\n`/`\t` not in `adv` | all |
 | global_token | `GL_MARKUP` matches `e` | all |
 | glossary | a glossary term of `jn` whose English is not used (`glossary_misses`) | machine, human, reviewed only (pre-checked: the committed rows already passed) |
+| speaker_prefix | story only: `e` starts with the line's own speaker's name and a colon (`english_core.speaker_prefix`, the speakers of the download's `Script/` files; 7.21) | machine, agent only (pre-checked: the committed rows already passed) |
 
 Width is never a check for the master (reported only).
 

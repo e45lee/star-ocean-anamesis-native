@@ -5,11 +5,13 @@
 #include <ctime>
 
 #include "soaserver/native_test.h"
+#include "soaserver/fids.h"
 #include "soaserver/ext.h"
 #include "rules/growth_rules.h"
 #include "core/time.h"
 #include "core/errors.h"
 #include "soaserver/msgpack.h"
+#include "testing/reply_shape.h"
 #include "testing/scratch.h"
 
 namespace soa::server {
@@ -117,7 +119,12 @@ NATIVE_TEST("growth/apis") {
                         if (e.i(id.c_str())) add_stock(c, (u32)e.i(id.c_str()), e.i(num.c_str()));
                     }
                 });
-            call(c, "EvolutionCharacter", {euid});
+            const std::vector<u8> evolved = call(c, "EvolutionCharacter", {euid});
+            // (no replay corpus evolves a character: the reply's shape pinned here)
+            t.expect_eq(data_shape(evolved, "EvolutionResult"),
+                        std::string("{use_fol:u UseStockItem:[{master_item_id:u use_count:u}] UpdatePlayerCharacter:{id:u "
+                                    "before_master_role_id:u after_master_role_id:u level:u is_rarity_7:u}}"),
+                        "EvolutionResult's shape");
             u32 after = (u32)c.st.one("select role_id from roster where uid = ?", {euid});
             t.expect_eq((u32)c.m.one("select rarity from master_role where id = ?", {after}), 6u, "evolved to rarity 6");
             // (b) back to level 1 (uimsg_next_strongth: the client's text says the level restarts)
@@ -198,7 +205,7 @@ NATIVE_TEST("growth/equip-auto") {
     c.st.q("update roster set accessory_uid = ? where uid = ?", {a_strong, other_chara});
     c.st.q("update roster set equip_skill1 = null, equip_skill2 = null, equip_skill3 = null where uid = ?", {uid});
     std::vector<u8> out;
-    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {uid}, {}, {}}, &out), 0u, "EquipAuto");
+    t.expect_eq(S.call({"EquipAuto", fids::kEquipAuto, {uid}, {}, {}}, &out), 0u, "EquipAuto");
     t.expect_eq((u64)c.st.one("select weapon_uid from roster where uid = ?", {uid}), w_strong, "the strongest weapon of the role's kind");
     t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {uid}), a_weak, "an accessory nobody wears");
     t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {other_chara}), a_strong, "the other character keeps its own");
@@ -229,10 +236,49 @@ NATIVE_TEST("growth/equip-auto") {
     });
     t.expect_eq(slots == open, true, "the empty slots took the open skills");
     // a second call changes nothing (already the best; the skills stay)
-    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {uid}, {}, {}}), 0u, "again");
+    t.expect_eq(S.call({"EquipAuto", fids::kEquipAuto, {uid}, {}, {}}), 0u, "again");
     t.expect_eq((u64)c.st.one("select weapon_uid from roster where uid = ?", {uid}), w_strong, "the same weapon");
     (void)w_weak;
-    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {12345}, {}, {}}), (u32)ErrorCode::kItemUnusable, "an unknown character: refused");
+    t.expect_eq(S.call({"EquipAuto", fids::kEquipAuto, {12345}, {}, {}}), (u32)ErrorCode::kItemUnusable, "an unknown character: refused");
+}
+
+// EquipAccessory (equip_item, shared with EquipWeapon): an owned accessory goes on, moves from its
+// previous owner; an unknown character or an item not an owned accessory is refused with 10208
+// (the replay corpora api-sweep, growth and items-party refuse it).
+NATIVE_TEST("growth/equip-accessory") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        u32 code = 0;
+        c.test.on_refuse = [&](u32 e) { code = e; };
+        std::vector<u64> chars;
+        c.st.q("select uid from roster order by uid limit 2", {}, [&](const Row& r) { chars.push_back((u64)r.i("uid")); });
+        if (chars.size() < 2) return t.fail("the seed has %zu characters", chars.size());
+        u32 accessory = (u32)c.m.one("select id from master_item where type = 3 order by id limit 1", {});
+        u32 weapon = (u32)c.m.one("select id from master_item where type = 1 order by id limit 1", {});
+        Value items = Value::array(), stocks = Value::array(), added = Value::array();
+        c.grant(1, accessory, 1, items, stocks, added);
+        c.grant(1, weapon, 1, items, stocks, added);
+        if (items.arr.size() != 2) return t.fail("granted %zu items", items.arr.size());
+        const u64 acc_uid = items.arr[0].get_u("id"), weapon_uid = items.arr[1].get_u("id");
+        call(c, "EquipAccessory", {0x7fffffffffffull, acc_uid});
+        t.expect_eq(code, 10208u, "unknown character refused");
+        code = 0;
+        call(c, "EquipAccessory", {chars[0], weapon_uid});
+        t.expect_eq(code, 10208u, "a weapon isn't an accessory");
+        code = 0;
+        call(c, "EquipAccessory", {chars[0], 0x7fffffffffffull});
+        t.expect_eq(code, 10208u, "an item not owned");
+        code = 0;
+        Value d = mp_decode(call(c, "EquipAccessory", {chars[0], acc_uid}));
+        t.expect_eq(code, 0u, "an owned accessory is accepted");
+        t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {chars[0]}), acc_uid, "equipped");
+        const Value* data = d.find("data");
+        t.expect_eq(data && data->find("EquipAccessoryResult") != nullptr, true, "EquipAccessoryResult answered");
+        call(c, "EquipAccessory", {chars[1], acc_uid});
+        t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {chars[1]}), acc_uid, "moved to the second");
+        t.expect_eq(c.st.one("select accessory_uid is null from roster where uid = ?", {chars[0]}), (int64_t)1, "off the first");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
 }
 
 }  // namespace

@@ -49,6 +49,17 @@ bool mark_callee(const char* name, std::initializer_list<u64> args);
 // recorded runs use (render_draw.cpp).
 void establish_program(RenderDeviceData* d);
 
+// The draw natives' calls of UpdateShaderProgram, LastMinuteDrawCommands_Textures and
+// SetShaderProgramUniform (render_draw.cpp): what the call through the guest entry runs when nothing
+// marks or checks it, called as C++ (native/common/native_call.h: installed, no live check), else
+// through the entry (the hooks above, the native's check, a --selftest test hook).
+void call_update_shader_program(RenderDeviceData* d);
+void call_textures(RenderDeviceData* d, OglStateSet0* ss, RenderDeviceGL* device);
+void call_set_shader_program_uniform(RenderDeviceData* d, void* value);
+// UpdateShaderProgram's HostFn without its marker and check: the native when the program is ready,
+// else the guest original (render_program.cpp).
+void update_shader_program_unchecked(RenderDeviceData* d);
+
 // What a RenderThread request native saw and did (render_thread.cpp records it while t_rtobs is set;
 // render_thread_check.cpp replays the original from `pre` and compares with `post`).
 struct RenderThreadObservation {

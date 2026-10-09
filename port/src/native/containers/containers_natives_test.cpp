@@ -9,6 +9,7 @@
 #include "native/common/test.h"
 #include "native/containers/containers_layout.h"
 #include "native/containers/containers_object_container.h"
+#include "native/containers/containers_string_utility.h"
 #include "native/libcxx/libcxx_layout.h"
 
 namespace soa::native::containers {
@@ -74,10 +75,6 @@ NATIVE_TEST("containers/object-container") {
 }  // namespace
 
 void tom_quick_sort(bool descend, void** a, s32 lo, s32 hi, const void* ctx);
-libcxx::basic_string<char>* stl_replace_self(libcxx::basic_string<char>* s, const libcxx::basic_string<char>& from, const libcxx::basic_string<char>& to,
-                                             bool* replaced);
-void stl_replace(libcxx::basic_string<char>* out, const libcxx::basic_string<char>& src, const libcxx::basic_string<char>& from,
-                 const libcxx::basic_string<char>& to, bool* replaced);
 
 namespace {
 

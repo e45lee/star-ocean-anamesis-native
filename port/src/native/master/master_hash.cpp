@@ -8,6 +8,7 @@
 #include "native/master/gen/master_addresses.h"
 #include "native/master/master_family.h"
 #include "native/master/master_guest.h"
+#include "native/memory/memory_callees.h"
 
 namespace soa::native::master {
 
@@ -19,8 +20,10 @@ u64 fcvtpu(float f) {
 }
 
 void* U32Map::alloc_block(u64 n) {
-    static const u64 f = g::sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj");
-    void* p = (void*)live::out_call(family(), f, {n, g::at(g::kUnorderedMapH), 0x1c});
+    using memory::kStlAllocateCallee;
+    void* p = kStlAllocateCallee.direct()
+                  ? memory::CAssignedMemoryManagerForSTLAllocator::Allocate(n, (const char*)g::at(g::kUnorderedMapH), 0x1c)
+                  : (void*)live::out_call(family(), kStlAllocateCallee.addr(), {n, g::at(g::kUnorderedMapH), 0x1c});
     if (!p) g::Assert(native::kStrStlAllocatorH, 0xbe, native::kStrAllocatedMemoryIsNull);
     return p;
 }

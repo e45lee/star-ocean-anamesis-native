@@ -11,6 +11,7 @@
 #include "native/libcxx/libcxx_family.h"
 #include "native/libcxx/libcxx_layout.h"
 #include "native/libcxx/libcxx_string.h"
+#include "native/memory/memory_callees.h"
 #include "native/common/gen/common_addresses.h"
 
 namespace soa::native::libcxx {
@@ -27,14 +28,16 @@ void do_assert(u32 line, u64 msg) {
     live::out_call(family(), fn, {guest(kStrStlAllocatorH), line, guest(msg)});
 }
 char* allocate(u64 bytes) {
-    static const u64 fn = main_lib()->sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator8AllocateEmPKcj");
-    auto* p = (char*)live::out_call(family(), fn, {bytes, guest(kStrStlStringH), 0x1c});
+    using memory::kStlAllocateCallee;
+    auto* p = kStlAllocateCallee.direct()
+                  ? (char*)memory::CAssignedMemoryManagerForSTLAllocator::Allocate(bytes, (const char*)guest(kStrStlStringH), 0x1c)
+                  : (char*)live::out_call(family(), kStlAllocateCallee.addr(), {bytes, guest(kStrStlStringH), 0x1c});
     if (!p) do_assert(0xbe, kStrAllocatedMemoryIsNull);
     return p;
 }
 void deallocate(char* p) {
-    static const u64 fn = main_lib()->sym("_ZN9Framework37CAssignedMemoryManagerForSTLAllocator4FreeEPv");
-    live::out_call(family(), fn, {(u64)p});
+    if (memory::kStlFreeCallee.direct()) return memory::CAssignedMemoryManagerForSTLAllocator::Free(p);
+    live::out_call(family(), memory::kStlFreeCallee.addr(), {(u64)p});
 }
 
 char* mutable_data(Str* s) { return s->is_long() ? s->r.l.data : (char*)&s->r.s.data[0]; }

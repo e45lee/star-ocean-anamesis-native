@@ -13,6 +13,7 @@
 #include "native/common/arm_float.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
+#include "native/common/native_call.h"
 #include "native/particles/particles_check.h"
 
 namespace soa::native::particles {
@@ -66,14 +67,17 @@ u64 vcall(const void* obj, int slot, u64 a1) {
         return (u64)&static_cast<const HierarchicalObject*>(obj)->m_hoc.m_world;
     return guest_call(fn, {(u64)obj, a1});
 }
-// (through their guest entries: the natives' hooks, so a live check sees these calls too; ~10 ns)
+// The natives as C++ (native_call.h); through their guest entries (the hooks) with a live check on, so the
+// check sees (and stubs) these calls.
+NativeCallee kTraverse{"particles", "_ZN4Aska16IParticleEmitter23PrepareMatricesTraverseEv"};
+NativeCallee kMatrices{"particles", "_ZN4Aska16IParticleEmitter15PrepareMatricesEv"};
 void traverse(IParticleEmitter* e) {
-    static const u64 f = guest::sym("_ZN4Aska16IParticleEmitter23PrepareMatricesTraverseEv");
-    guest_call(f, {(u64)e});
+    if (kTraverse.direct()) return e->PrepareMatricesTraverse();
+    guest_call(kTraverse.addr(), {(u64)e});
 }
 void matrices(IParticleEmitter* e) {
-    static const u64 f = guest::sym("_ZN4Aska16IParticleEmitter15PrepareMatricesEv");
-    guest_call(f, {(u64)e});
+    if (kMatrices.direct()) return e->PrepareMatrices();
+    guest_call(kMatrices.addr(), {(u64)e});
 }
 u64 malloc_(u64 n) {
     static const u64 f = guest::sym("_ZN4Aska15ParticleManager6MallocEm");

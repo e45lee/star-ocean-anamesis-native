@@ -16,6 +16,7 @@
 #include "core/thread_record.h"
 #include "native/common/guest_std.h"
 #include "native/common/native.h"
+#include "native/common/native_call.h"
 #include "native/particles/particles_check.h"
 
 namespace soa::native::particles {
@@ -36,7 +37,12 @@ T value(u64 vaddr) {
 // ---- the real callees (particles_calls.h) ----
 
 namespace calls {
-void fill_matrix(IParticleEmitter* e, MatrixContext* m) { guest_call(sym_fill_matrix(), {(u64)e, (u64)m}); }
+// FillMatrixContext: particles' native as C++ (native_call.h), through its guest entry with a live check on
+NativeCallee kFillMatrix{"particles", "_ZN4Aska16IParticleEmitter17FillMatrixContextEPNS0_13MatrixContextE"};
+void fill_matrix(IParticleEmitter* e, MatrixContext* m) {
+    if (kFillMatrix.direct()) return e->FillMatrixContext(m);
+    guest_call(sym_fill_matrix(), {(u64)e, (u64)m});
+}
 void affect(u64 fn, IParticleEmitter* e, MathVector* pos, MatrixContext* m, float dt) { guest_invoke<void>(fn, (u64)e, (u64)pos, (u64)m, dt); }
 u32 random(u32 n) { return guest_invoke<u32>(sym_random(), n); }
 void emit(u64 fn, IParticleEmitter* e, s32 n, EmitContext* ctx, const MatrixContext* m) {

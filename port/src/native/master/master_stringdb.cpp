@@ -7,12 +7,15 @@
 #include <cstring>
 
 #include "native/common/native.h"
+#include "native/common/native_call.h"
+#include "native/containers/containers_string_utility.h"
 #include "native/hash/hash_layout.h"
 #include "native/libcxx/libcxx_string.h"
 #include "native/master/gen/master_addresses.h"
 #include "native/master/master_guest.h"
 #include "native/master/master_simple.h"
 #include "native/params/params_check.h"
+#include "native/params/params_property.h"
 
 namespace soa::native::master {
 
@@ -36,13 +39,17 @@ String short_string(const char* s) {
     return r;
 }
 
+// containers' and params' natives, called as C++ when installed (native_call.h).
+NativeCallee kReplaceCallee{"containers", kReplace};
+NativeCallee kCryptCallee{"params", kCrypt32};
+
 Fn* g_native_fn = nullptr;  // GetNativeString's live-check slot
 Fn* g_get_fn = nullptr;     // Get's
 
 }  // namespace
 
 void StringDB::GetNativeString(String* out, const char* id, bool* found) {
-    static const u64 format = g::sym(kFormat), crypt = g::sym(kCrypt32);
+    static const u64 format = g::sym(kFormat), crypt = kCryptCallee.addr();
     String key{};
     u64 args[3] = {g::at(g::kFmtLangId), g::at(g::kLangJa), (u64)id};
     guest_call_raw(format, args, 3, nullptr, 0, (u64)&key);
@@ -53,7 +60,10 @@ void StringDB::GetNativeString(String* out, const char* id, bool* found) {
     if (p.ptr) {
         if (found) *found = true;
         std::memset(out, 0, sizeof *out);
-        guest_call(crypt, {(u64)out, (u64)(p.ptr + 0xa8)});  // text_value (CParameterPropertyString<32> at +0x80)
+        const auto* text = reinterpret_cast<const String*>(p.ptr + 0xa8);  // text_value (CParameterPropertyString<32> at +0x80)
+        static const params::CryptStringFn crypt_native = params::KnownCryptString(kCrypt32);  // (its HostFn's body)
+        if (kCryptCallee.direct() && crypt_native) crypt_native(*out, *text);
+        else guest_call(crypt, {(u64)out, (u64)text});
         if (p.ctrl) p.ctrl->__release_shared();
         return;
     }
@@ -78,11 +88,12 @@ void StringDB::GetNativeString(String* out, const char* id, bool* found) {
 }
 
 void StringDB::Get(String* out, const char* id, bool* found) {
-    static const u64 replace = g::sym(kReplace);
+    static const u64 replace = kReplaceCallee.addr();
     GetNativeString(out, id, found);
     String from = short_string("\\n"), to = short_string("\n"), res{};
     u64 args[4] = {(u64)out, (u64)&from, (u64)&to, 0};
-    guest_call_raw(replace, args, 4, nullptr, 0, (u64)&res);
+    if (kReplaceCallee.direct()) containers::stl_replace(&res, *out, from, to, nullptr);
+    else guest_call_raw(replace, args, 4, nullptr, 0, (u64)&res);
     // *out = std::move(res): cleared, its storage released (reserve(0)), then the words taken
     if (out->is_long()) {
         out->r.l.data[0] = 0;

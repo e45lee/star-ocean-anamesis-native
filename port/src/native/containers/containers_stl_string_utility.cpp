@@ -6,6 +6,7 @@
 
 #include "native/common/live_leaf.h"
 #include "native/containers/containers_family.h"
+#include "native/containers/containers_string_utility.h"
 #include "native/libcxx/libcxx_layout.h"
 #include "native/libcxx/libcxx_string.h"
 
@@ -66,7 +67,7 @@ LEAF_HOSTFN(family(), UTIL_SYM("7ReplaceERKS8_SB_SB_Pb"), &Replace_, 0, live::kV
             {live::out(8, sizeof(String)), live::out(3, 1)});
 #undef UTIL_SYM
 
-// (for the test)
+// (containers_string_utility.h)
 String* stl_replace_self(String* s, const String& from, const String& to, bool* replaced) { return CSTLStringUtility::ReplaceSelf(s, from, to, replaced); }
 void stl_replace(String* out, const String& src, const String& from, const String& to, bool* replaced) {
     CSTLStringUtility::Replace(out, src, from, to, replaced);

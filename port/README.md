@@ -138,6 +138,7 @@ soa's own:
 | `SOA_SELFTEST_START_FILE=F` | `--selftest` waits until file F exists instead (drive the game to a scene through `--control` first) |
 | `SOA_SELFTEST_SKIP=a,b` | tests left out by exact name (`port/scripts/selftest_resilient.sh` sets it after a crash) |
 | `SOA_SELFTEST_REPEAT=N` | run each matching test N times (1..10000), the port's and the server library's |
+| `SOA_AAF_EVAL_DUMP=DIR` | the live selftest `anim/aaf-eval-dump` records the guest's keyframe values there (`DIR/<n>.aafeval`), for `tools/aafdump --verify DIR` (docs/notes.md "Animations (AAF) for tools") |
 | `SOA_TEST_HOOKS_SKIP=sym,..\|all` | test hooks (`NATIVE_TEST_HOOK`) not installed, to find one that breaks the boot |
 | `SOA_PARAMS_CORPUS=DIR` | the params self-tests also replay the recorded corpus in DIR (`native/params/README.md` "Tests") |
 | `SOA_YAYOI_TEST_TRACE=1` | the yayoi SQLite self-tests print each log line as they make it |

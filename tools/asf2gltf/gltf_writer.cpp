@@ -1,11 +1,11 @@
 // asf2gltf's glTF writer (gltf_writer.h). The mapping from the game's scene (docs/notes.md "Meshes
 // (ASF)", "glTF export") in short:
 //   nodes      every ASF node, in file order, under one extra root that scales centimetres to
-//              metres; joints: T(pos) * R(joint orient (x) rotation) * S (Aska::MatrixCalcFunc),
+//              metres and turns the model (which faces -Z) to glTF's +Z; joints: T(pos) * R(joint orient (x) rotation) * S (Aska::MatrixCalcFunc),
 //              other nodes: T(pos + offset + R(A - S.B)) * R * S with the pivot terms A (+0xd0),
 //              B (+0xe0) (HierarchicalObjectContainer::MakeMatrix)
 //   meshes     one per mesh object, one primitive per meshset; attributes converted to floats
-//              (positions' w and a fourth texture component kept as _POSITION_W / _TEXCOORDn_ZW)
+//              (positions' w and the third and fourth texture components kept as _POSITION_W, _TEXCOORD_n_Z / _W)
 //   skins      one per mesh object: its bone list ('lpnb'), inverse bind matrices from the joints
 //   materials  metallic-roughness approximations of the game's toon shaders: the base colour
 //              texture and normal map found in the material's shader graph, the rest in extras
@@ -17,7 +17,9 @@
 
 #include <nlohmann/json.hpp>
 
+#include <array>
 #include <cmath>
+#include <functional>
 #include <cstdio>
 #include <fstream>
 #include <map>
@@ -43,6 +45,16 @@ std::string hexbytes(const uint8_t* p, size_t n) {
     char b[4];
     for (size_t i = 0; i < n; i++) snprintf(b, sizeof b, "%02x", p[i]), s += b;
     return s;
+}
+
+using Mat4 = std::array<double, 16>;  // row-major, column vectors (translation in column 3)
+Mat4 identity4() { return {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}; }
+Mat4 mul4(const Mat4& a, const Mat4& b) {
+    Mat4 r{};
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            for (int k = 0; k < 4; k++) r[i * 4 + j] += a[i * 4 + k] * b[k * 4 + j];
+    return r;
 }
 
 struct Quat {
@@ -101,8 +113,7 @@ struct Builder {
         return doc["accessors"].size() - 1;
     }
     size_t image_png(const std::string& name, int w, int h, const Bytes& rgba) {
-        std::vector<uint8_t> png;
-        soa::png_encode(w, h, 4, rgba.data(), png);
+        std::string png = soa::png_encode(w, h, 4, rgba.data());
         size_t v = view(png.data(), png.size());
         doc["images"].push_back({{"name", name}, {"mimeType", "image/png"}, {"bufferView", v}});
         return doc["images"].size() - 1;
@@ -203,13 +214,13 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
 
     // physics-driven joints: the dynamics chains' records ({u32 node, ...} x count at +0x128)
     std::map<int, std::string> physics;
-    for (const asf::Node& n : s.nodes) {
-        if (n.kind != asf::kDynamicsChain || n.chunk_size < 0x130) continue;
-        // (records are read from the scene file through the node's chunk: the node keeps none)
-    }
+    for (const asf::Node& n : s.nodes)
+        for (int j : n.chain)
+            if (j >= 0 && j < (int)s.nodes.size()) physics[j] = n.name;
 
     // ---- nodes
     size_t root = s.nodes.size();
+    std::vector<Mat4> local(s.nodes.size(), identity4());
     std::vector<std::vector<int>> kids(s.nodes.size());
     for (const asf::Node& n : s.nodes)
         if (n.parent >= 0 && n.parent < (int)s.nodes.size() && n.parent != n.index) kids[n.parent].push_back(n.index);
@@ -230,6 +241,21 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
             for (int i = 0; i < 3; i++) t[i] += rv[i];
         }
         r = qnorm(r);
+        {
+            double R[3][3], e[3];
+            for (int c = 0; c < 3; c++) {
+                double u[3] = {c == 0 ? 1.0 : 0.0, c == 1 ? 1.0 : 0.0, c == 2 ? 1.0 : 0.0};
+                qrot(r, u, e);
+                for (int i = 0; i < 3; i++) R[i][c] = e[i] * n.scale[c];
+            }
+            Mat4& L = local[n.index];
+            for (int i = 0; i < 3; i++) {
+                for (int c = 0; c < 3; c++) L[i * 4 + c] = R[i][c];
+                L[i * 4 + 3] = t[i];
+            }
+            L[12] = L[13] = L[14] = 0;
+            L[15] = 1;
+        }
         if (t[0] || t[1] || t[2]) j["translation"] = {t[0], t[1], t[2]};
         if (r.x || r.y || r.z || r.w != 1) j["rotation"] = {r.x, r.y, r.z, r.w};
         if (n.scale[0] != 1 || n.scale[1] != 1 || n.scale[2] != 1) j["scale"] = {n.scale[0], n.scale[1], n.scale[2]};
@@ -241,14 +267,26 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         for (int i = 0; i < 3; i++) piv |= n.pivot[1][i] != 0 || n.pivot[2][i] != 0 || n.pos_offset[i] != 0;
         if (piv) x["pivots_baked"] = true;
         auto ph = physics.find(n.index);
-        if (ph != physics.end()) x["physics_driven"] = ph->second;
+        if (ph != physics.end())
+            x["physics_driven"] = "physics-driven at run time (dynamics chain " + ph->second + "): keeps its rest pose here";
         j["extras"] = x;
         doc["nodes"].push_back(j);
     }
-    json rootj = {{"name", "asf2gltf_root (cm to m)"}, {"scale", {0.01, 0.01, 0.01}}, {"children", json::array()}};
+    // the rest pose's world matrices (a skinned mesh's vertices are in its object node's space: they
+    // are moved to the model's, where the inverse bind matrices are)
+    std::vector<Mat4> world(s.nodes.size());
+    std::vector<char> done(s.nodes.size(), 0);
+    std::function<const Mat4&(int)> world_of = [&](int i) -> const Mat4& {
+        if (done[i]) return world[i];
+        done[i] = 1;
+        const asf::Node& n = s.nodes[i];
+        world[i] = (n.parent >= 0 && n.parent < (int)s.nodes.size() && n.parent != i) ? mul4(world_of(n.parent), local[i]) : local[i];
+        return world[i];
+    };
+    json rootj = {{"name", "asf2gltf_root (cm to m, faces +Z)"}, {"rotation", {0, 1, 0, 0}}, {"scale", {0.01, 0.01, 0.01}}, {"children", json::array()}};
     for (const asf::Node& n : s.nodes)
         if (n.parent < 0 || n.parent == n.index || n.parent >= (int)s.nodes.size()) rootj["children"].push_back(n.index);
-    rootj["extras"] = {{"note", "the game's units are centimetres; this node scales them to metres"}};
+    rootj["extras"] = {{"note", "the game's units are centimetres and its models face -Z; this node scales them to metres and turns them to face +Z (glTF's front)"}};
     doc["nodes"].push_back(rootj);
     doc["scenes"] = {{{"name", in.source_name}, {"nodes", {root}}}};
     doc["scene"] = 0;
@@ -295,7 +333,11 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
             int base_slot = roles.base;
             std::array<float, 4> factor{1, 1, 1, 1};
             for (const auto& c : m.constants)
-                if (!roles.lit && c.id == 5 && c.index == 0 && !c.values.empty()) factor = c.values[0];
+                if (!roles.lit && c.id == 5 && c.index == 0 && !c.values.empty()) {
+                    bool unit = true;
+                    for (float v : c.values[0]) unit &= v >= 0 && v <= 1;
+                    if (unit) factor = c.values[0];
+                }
             if (base_slot < 0 && !roles.lit && !m.textures.empty() && factor == std::array<float, 4>{1, 1, 1, 1}) base_slot = 0;
             if (base_slot >= 0 && base_slot < (int)m.textures.size()) {
                 int t = texture_of(m.textures[base_slot].id, false);
@@ -342,6 +384,16 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
             if (m.vertices.size() < nv * m.stride || nv == 0) continue;
             json a;
             std::map<std::string, int> sets;
+            bool bake = !o.bones.empty() && o.node >= 0;
+            if (bake) {
+                bake = false;
+                for (const asf::VertexElement& e : m.elements) bake |= e.usage == asf::kBlendIndex;
+            }
+            const Mat4& W = world_of(o.node >= 0 ? o.node : 0);
+            auto xform = [&](float* q, bool point) {
+                double v[3] = {q[0], q[1], q[2]};
+                for (int i = 0; i < 3; i++) q[i] = (float)(W[i * 4] * v[0] + W[i * 4 + 1] * v[1] + W[i * 4 + 2] * v[2] + (point ? W[i * 4 + 3] : 0));
+            };
             for (const asf::VertexElement& e : m.elements) {
                 std::vector<float> f(nv * 4);
                 int comps = 0;
@@ -357,6 +409,8 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                 switch (e.usage) {
                 case asf::kPosition: {
                     auto p = take(0, 3);
+                    if (bake)
+                        for (size_t v = 0; v < nv; v++) xform(&p[v * 3], true);
                     a["POSITION"] = b.accessor(p.data(), nv, kFloat, "VEC3", 3, 34962, false, true);
                     if (comps == 4) {
                         auto w = take(3, 1);
@@ -368,6 +422,7 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                     auto p = take(0, 3);
                     for (size_t v = 0; v < nv; v++) {
                         float* q = &p[v * 3];
+                        if (bake) xform(q, false);
                         float l = std::sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2]);
                         if (l > 0) q[0] /= l, q[1] /= l, q[2] /= l; else q[2] = 1;
                     }
@@ -378,6 +433,7 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                     auto p = take(0, 4);
                     for (size_t v = 0; v < nv; v++) {
                         float* q = &p[v * 4];
+                        if (bake) xform(q, false);
                         float l = std::sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2]);
                         if (l > 0) q[0] /= l, q[1] /= l, q[2] /= l; else q[0] = 1;
                         q[3] = q[3] < 0 ? -1.0f : 1.0f;
@@ -389,9 +445,10 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                     std::string nm = "TEXCOORD_" + std::to_string(sets["uv"]++);
                     auto p = take(0, 2);
                     a[nm] = b.accessor(p.data(), nv, kFloat, "VEC2", 2, 34962);
-                    if (comps == 4) {
-                        auto z = take(2, 2);
-                        a["_" + nm + "_ZW"] = b.accessor(z.data(), nv, kFloat, "VEC2", 2, 34962);
+                    if (comps == 4) {  // (scalars: Blender's importer can't merge a VEC2 custom attribute)
+                        auto z = take(2, 1), w = take(3, 1);
+                        a["_" + nm + "_Z"] = b.accessor(z.data(), nv, kFloat, "SCALAR", 1, 34962);
+                        a["_" + nm + "_W"] = b.accessor(w.data(), nv, kFloat, "SCALAR", 1, 34962);
                     }
                     break;
                 }
@@ -425,6 +482,17 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
                 }
             }
             if (!a.contains("POSITION")) continue;
+            // a joint with weight 0 is set to 0 (the glTF validator's rule; it has no effect)
+            if (a.contains("JOINTS_0") && a.contains("WEIGHTS_0")) {
+                json& ja = doc["accessors"][(size_t)a["JOINTS_0"]];
+                json& wa = doc["accessors"][(size_t)a["WEIGHTS_0"]];
+                json& jv = doc["bufferViews"][(size_t)ja["bufferView"]];
+                json& wv = doc["bufferViews"][(size_t)wa["bufferView"]];
+                uint16_t* jp = (uint16_t*)&b.bin[(size_t)jv["byteOffset"]];
+                const float* wp = (const float*)&b.bin[(size_t)wv["byteOffset"]];
+                for (size_t i = 0; i < nv * 4; i++)
+                    if (wp[i] == 0) jp[i] = 0;
+            }
             if (a.contains("JOINTS_0") && !a.contains("WEIGHTS_0")) {
                 std::vector<float> w(nv * 4, 0.0f);
                 for (size_t v = 0; v < nv; v++) w[v * 4] = 1;
@@ -457,7 +525,15 @@ bool write(const Input& in, const Options& opt, const std::string& out_path, std
         if (mesh["primitives"].empty()) continue;
         doc["meshes"].push_back(mesh);
         size_t mesh_i = doc["meshes"].size() - 1;
-        json& node = doc["nodes"][o.node];
+        // a skinned mesh goes on a node of its own at the scene's root (glTF ignores a skinned mesh
+        // node's transforms); the object's node keeps its place in the tree
+        json* nodep = &doc["nodes"][o.node];
+        if (skinned && !o.bones.empty()) {
+            doc["nodes"].push_back({{"name", o.name + " (skinned mesh)"}, {"extras", {{"asf_object_node", o.node}}}});
+            doc["scenes"][0]["nodes"].push_back(doc["nodes"].size() - 1);
+            nodep = &doc["nodes"].back();
+        }
+        json& node = *nodep;
         node["mesh"] = mesh_i;
         if (skinned && !o.bones.empty()) {
             std::vector<float> ibm(o.bones.size() * 16);

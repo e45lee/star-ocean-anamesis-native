@@ -77,6 +77,8 @@ struct Node {
     std::array<float, 4> joint_orient{0, 0, 0, 1};  // +0x140 (quaternion x, y, z, w)
     size_t chunk = 0, chunk_size = 0;
     int object = -1;        // kObject: index into Scene::objects
+    std::vector<int> chain; // kDynamicsChain: the joints it drives (+0x11a u16 count, +0x128 the
+                            // offset of 0x30-byte records whose first u32 is a node index)
 };
 
 // A texture embedded in an object (' FIA' chunk; its images, 'Xgmi', are blocks of the AMF buffer).

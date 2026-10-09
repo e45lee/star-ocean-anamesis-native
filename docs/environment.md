@@ -77,7 +77,7 @@ Diagnostics and test switches, by library (the programs that link it read them):
 [`runtime/README.md`](../runtime/README.md) "Environment", linked from the three programs' READMEs.
 
 **soa's own** (`port/src`): `SOA_SELFTEST_DELAY` (0..3600 s), `SOA_SELFTEST_START_FILE`,
-`SOA_SELFTEST_SKIP`, `SOA_SELFTEST_REPEAT` (1..10000), `SOA_TEST_HOOKS_SKIP`,
+`SOA_SELFTEST_SKIP`, `SOA_SELFTEST_REPEAT` (1..10000), `SOA_AAF_EVAL_DUMP`, `SOA_TEST_HOOKS_SKIP`,
 `SOA_STUB_TRACE`, `SOA_WIRE_DUMP`, `SOA_PARAMS_CORPUS`, `SOA_YAYOI_TEST_TRACE`. Documented in [`port/README.md`](../port/README.md) "Environment".
 
 **platform370** (soa, soa-emu; `--lang en` only): `SOA_TEST_TALK_IDS`, `SOA_TEST_STORY_TEXTS`, documented in [`port/README.md`](../port/README.md) "Environment".

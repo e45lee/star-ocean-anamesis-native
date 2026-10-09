@@ -217,6 +217,12 @@ bool load_tree(const Bytes& d, size_t t, Scene& s, std::string* err) {
             }
             n.chunk = p;
             n.chunk_size = size;
+            if (kind == kDynamicsChain && size >= 0x130) {
+                int count = rd16(&d[p + 0x11a]);
+                size_t r = p + rd32(&d[p + 0x128]);
+                for (int i = 0; i < count && r + (size_t)(i + 1) * 0x30 <= p + size; i++)
+                    n.chain.push_back((int)rd32(&d[r + (size_t)i * 0x30]));
+            }
             s.nodes.push_back(n);
         }
         if (size == 0) break;

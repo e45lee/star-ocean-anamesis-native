@@ -19,6 +19,7 @@
 #   build/platform370/libsoaplatform370.a  the 3.7.0 platform layer soa-emu and soa link (platform370/README.md)
 #   build/tools/aif2png/aif2png     the AIF -> PNG converter (tools/aif2png)
 #   build/tools/asf2gltf/asf2gltf   the ASF / AAF -> glTF converter (tools/asf2gltf)
+#   build/tools/aafdump/aafdump     the AAF inspector and evaluator (tools/aafdump)
 #   build/tools/movie_check/movie_check  the movie player's decoder on one movie (tools/movie_compare.py)
 #   build/webview/soa-webview-render  renders an HTML page to a PNG with the web view's renderer (docs/webview.md)
 #
@@ -141,6 +142,7 @@ endif()
 if(SOA_BUILD_TOOLS)
   add_subdirectory(tools/aif2png)  # aif2png: links soa::jpeg9
   add_subdirectory(tools/asf2gltf)  # asf2gltf: models and animations as glTF (soa_models, nlohmann-json)
+  add_subdirectory(tools/aafdump)  # aafdump: animations in text, their values, the proof against the game (soa_models)
   if(SOA_BUILD_SERVER)
     add_subdirectory(tools/english_art)  # english-art: the English UI art without a server (links libsoaserver)
   endif()

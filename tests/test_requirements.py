@@ -27,8 +27,9 @@ PACKAGE_OF = {
 }
 
 # Not pip requirements: PyGhidra ships with the Ghidra install (requirements.txt says how to install
-# it), and ghidra / java / jpype exist only inside a PyGhidra session.
-NOT_PIP = {"pyghidra", "ghidra", "java", "jpype"}
+# it), and ghidra / java / jpype exist only inside a PyGhidra session; bpy / mathutils are Blender's
+# own modules (tools/asf2gltf/render_blender.py runs inside `blender -b -P`).
+NOT_PIP = {"pyghidra", "ghidra", "java", "jpype", "bpy", "mathutils"}
 
 
 def norm(name):

@@ -27,8 +27,7 @@ import os
 import sys
 import zipfile
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import check_download  # noqa: E402
+import check_download
 
 ZONE_SUFFIX = ":Zone.Identifier"
 

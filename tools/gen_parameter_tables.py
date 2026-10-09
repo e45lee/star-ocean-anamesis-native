@@ -22,15 +22,11 @@ C++ side can register one handler per instance:
 
 Usage: .venv/bin/python tools/gen_parameter_tables.py > port/src/native/params/gen/parameter_tables.inc
 """
-import os
 import re
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
-from elfinfo import lib  # noqa: E402
+from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
+import genlib  # (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
+from elfinfo import lib
 
 L = lib()
 md = Cs(CS_ARCH_ARM64, CS_MODE_ARM)
@@ -104,7 +100,6 @@ section("SIMPLE_DESERIALIZE_THUNK", ['SIMPLE_DESERIALIZE_THUNK("%s")' % n for n 
 section("SIMPLE_RELEASE", ['SIMPLE_RELEASE("%s")' % n for n, _ in instances("Simple", "16ReleaseParameterEPKc")])
 section("SIMPLE_INSERT_QUERY_CACHE", ['SIMPLE_INSERT_QUERY_CACHE("%s")' % n for n, _ in instances(
     "Simple", "20InsertCustomizeCacheEjRKNSt6__ndk110shared_ptrIS0_EE")])
-
 
 
 def category_by_name():

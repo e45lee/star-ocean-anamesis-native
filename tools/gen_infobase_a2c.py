@@ -30,7 +30,6 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import genlib  # noqa: E402 (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
 _spec = importlib.util.spec_from_file_location('a2c', os.path.join(HERE, 'a2c.py'))
 a2c = importlib.util.module_from_spec(_spec)

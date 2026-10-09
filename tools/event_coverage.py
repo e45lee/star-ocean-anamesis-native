@@ -16,8 +16,7 @@ DB and the sources, so rerun it whenever more assets are downloaded:
 """
 import argparse, collections, io, json, os, re, sqlite3, sys, zipfile
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from soa_save.download_tree import DownloadTree  # noqa: E402
+from soa_save.download_tree import DownloadTree
 
 
 def norm(p):

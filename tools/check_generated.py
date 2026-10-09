@@ -25,9 +25,7 @@ import tempfile
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
-import genlib  # noqa: E402
+import genlib
 
 REPO = genlib.REPO
 APK = os.path.join(REPO, "apk", "STAR+OCEAN+-anamnesis-_3.7.0_APKPure.apk")

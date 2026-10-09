@@ -30,7 +30,6 @@ import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GHIDRA_BASE = 0x100000
 SYMBOLS_COLUMNS = ["vaddr", "ghidra", "size", "symbol", "demangled", "topic", "status", "note"]

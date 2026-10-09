@@ -22,17 +22,13 @@ TBinaryTree<T>::AllocNode as a list of stores) and the symbols of each method:
 Usage: .venv/bin/python tools/gen_containers_tables.py > port/src/native/containers/gen/containers_tables.inc
 """
 import bisect
-import os
 import re
 import subprocess
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
-from elftools.elf.relocation import RelocationSection  # noqa: E402
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
-from elfinfo import lib  # noqa: E402
+from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
+from elftools.elf.relocation import RelocationSection
+import genlib  # (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
+from elfinfo import lib
 
 L = lib()
 md = Cs(CS_ARCH_ARM64, CS_MODE_ARM)

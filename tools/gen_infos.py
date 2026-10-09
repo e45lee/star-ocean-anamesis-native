@@ -38,7 +38,6 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
 import genlib  # noqa: E402 (before elfinfo: the default lib)
 
 from unicorn import UC_HOOK_MEM_WRITE  # noqa: E402

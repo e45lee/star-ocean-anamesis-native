@@ -9,8 +9,7 @@ import importlib.util
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before a2c: the default lib is 3.7.0's)
+import genlib  # (before a2c: the default lib is 3.7.0's)
 
 _spec = importlib.util.spec_from_file_location('a2c', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'a2c.py'))
 a2c = importlib.util.module_from_spec(_spec)

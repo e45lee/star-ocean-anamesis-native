@@ -1,12 +1,9 @@
 """Run individual libSOA.so functions under unicorn (arm64) for cross-checking."""
-import os
-import sys
 
 from unicorn import UC_ARCH_ARM64, UC_MODE_ARM, Uc
 from unicorn.arm64_const import UC_ARM64_REG_LR, UC_ARM64_REG_SP, UC_ARM64_REG_X0, UC_ARM64_REG_CPACR_EL1
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from elfinfo import lib  # noqa: E402
+from elfinfo import lib
 
 STACK, HEAP, STOP = 0x7F000000, 0x60000000, 0x7FFFF000
 

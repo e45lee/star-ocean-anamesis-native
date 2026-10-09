@@ -44,13 +44,11 @@ import re
 import struct
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
-import genlib  # noqa: E402 (the default lib is 3.7.0's)
+import genlib  # (the default lib is 3.7.0's)
 
-from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
-from capstone.arm64 import ARM64_INS_ADD, ARM64_INS_ADR, ARM64_INS_ADRP, ARM64_OP_IMM, ARM64_OP_MEM, ARM64_OP_REG  # noqa: E402
-from elftools.elf.elffile import ELFFile  # noqa: E402
+from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
+from capstone.arm64 import ARM64_INS_ADD, ARM64_INS_ADR, ARM64_INS_ADRP, ARM64_OP_IMM, ARM64_OP_MEM, ARM64_OP_REG
+from elftools.elf.elffile import ELFFile
 
 REPO = genlib.REPO
 NATIVE = os.path.join(REPO, "port", "src", "native")

@@ -7,8 +7,7 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
+import genlib  # (before a2c / elfinfo: the default lib is 3.7.0's; tools/genlib.py)
 _spec = importlib.util.spec_from_file_location('a2c', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'a2c.py'))
 a2c = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(a2c)

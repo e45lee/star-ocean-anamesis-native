@@ -23,10 +23,8 @@ Usage: tools/restore370_audit.py [--calls] [--emit FILE] SYM...   (SOA_LIB defau
 """
 import argparse
 import os
-import sys
 
 os.environ.setdefault("SOA_LIB", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "work", "libSOA-3.7.0.so"))
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
 from capstone.arm64 import ARM64_OP_IMM, ARM64_OP_MEM  # noqa: E402
 from elfinfo import Lib  # noqa: E402

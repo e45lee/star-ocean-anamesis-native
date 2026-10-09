@@ -5,7 +5,6 @@ Calls to other functions are skipped, except base-class Initialize()s, which are
 
 Usage: tools/info_fields_emu.py Class [Class...]   (e.g. CMissionElementInfo CPlanetInfo)
 """
-import os
 import subprocess
 import sys
 
@@ -14,8 +13,7 @@ from unicorn import UC_ARCH_ARM64, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, UC_MODE_A
 from unicorn.arm64_const import (UC_ARM64_REG_CPACR_EL1, UC_ARM64_REG_LR, UC_ARM64_REG_PC, UC_ARM64_REG_SP,
                                  UC_ARM64_REG_X0, UC_ARM64_REG_X1)
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from elfinfo import lib  # noqa: E402
+from elfinfo import lib
 
 L = lib()
 md = Cs(CS_ARCH_ARM64, CS_MODE_ARM)

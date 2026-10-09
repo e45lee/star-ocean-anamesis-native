@@ -22,7 +22,6 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
 import genlib  # noqa: E402 (before elfinfo: the default lib)
 
 from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402

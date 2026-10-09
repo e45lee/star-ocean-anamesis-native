@@ -9,14 +9,12 @@ port/fakeapi/schema.txt for the live tree).
 Usage: tools/fakeapi_fields.py [class-regex]
 """
 import bisect
-import os
 import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
-from elfinfo import lib  # noqa: E402
+from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
+from elfinfo import lib
 
 L = lib()
 md = Cs(CS_ARCH_ARM64, CS_MODE_ARM)

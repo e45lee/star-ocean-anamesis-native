@@ -2,13 +2,11 @@
 
 Usage: callers.py <mangled-symbol>...
 """
-import os
 import struct
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from elfinfo import lib  # noqa: E402
+from elfinfo import lib
 
 L = lib()
 text = L.elf.get_section_by_name(".text")

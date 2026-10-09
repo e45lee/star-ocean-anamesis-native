@@ -22,7 +22,6 @@ import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO, "tools"))
 import server_index as si  # noqa: E402
 
 LABEL_RE = re.compile(r"\(([abcd])\)|\(([abcd]):|[;,] ([abcd]):")  # as tools/server_evidence.py

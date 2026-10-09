@@ -34,11 +34,9 @@ import datetime
 import os
 import re
 import sqlite3
-import sys
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)
 from soa_save.download_tree import DEFAULT, DownloadTree  # noqa: E402
 
 JA = re.compile(r"[぀-ヿ㐀-鿿ｦ-ﾟ]")

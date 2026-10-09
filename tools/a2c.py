@@ -8,16 +8,14 @@ missed. Constant loads through ADRP are folded into literals read from the ELF.
 
 Usage: a2c.py <sym|0xaddr:size> <c-function-name> [--args 'x0,x1,s0,...']
 """
-import os
 import re
 import struct
 import functools
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
-from elfinfo import lib  # noqa: E402
+from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
+from elfinfo import lib
 
 L = lib()
 md = Cs(CS_ARCH_ARM64, CS_MODE_ARM)
@@ -86,7 +84,6 @@ def adrp_flow(insns_d, writes, targets, start, size):
                 state_in[s2] = new
                 work.append(s2)
     return {a: state_in[index[a]] for a in targets if a in index and state_in[index[a]] is not None}
-
 
 
 syms = {}

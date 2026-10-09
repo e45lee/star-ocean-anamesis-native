@@ -784,8 +784,6 @@ def report(m, b, res, out_db):
 
 def default_master():
     """data/basmaster-3.7.0.sqlite3 (untracked), here or in the main checkout of a git worktree."""
-    if ROOT not in sys.path:
-        sys.path.insert(0, ROOT)
     from soa_save.paths import master_db
 
     db = master_db()

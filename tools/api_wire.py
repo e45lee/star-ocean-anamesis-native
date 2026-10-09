@@ -32,11 +32,10 @@ import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import genlib  # noqa: E402 (before elfinfo: the default lib is 3.7.0's; tools/genlib.py)
-from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs  # noqa: E402
-from capstone.arm64 import ARM64_OP_IMM, ARM64_OP_MEM, ARM64_OP_REG  # noqa: E402
-from elfinfo import lib  # noqa: E402
+import genlib  # (before elfinfo: the default lib is 3.7.0's; tools/genlib.py)
+from capstone import CS_ARCH_ARM64, CS_MODE_ARM, Cs
+from capstone.arm64 import ARM64_OP_IMM, ARM64_OP_MEM, ARM64_OP_REG
+from elfinfo import lib
 
 PREFIX = "_ZN4Aska5Yayoi7GameRPC18GameProtocoledData"
 # Requests whose reply is not simply <Name>Res.

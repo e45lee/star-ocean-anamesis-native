@@ -5,6 +5,7 @@ tutorial's scenes, its battle ms00_001, the mission-menu step, home and the home
 tests/tutorial_milestones.txt (tools/compare_tutorial.py check) on every target."""
 import os
 import subprocess
+import sys
 import time
 
 from .. import screens, ui370, waits
@@ -157,7 +158,7 @@ def run(s):
     s.check("no communication-error ProtocolError", not s.in_packets(r"< ProtocolError .*status=1[0-9]{3}\b"))
     # tests/tutorial_milestones.txt: the requests in order and the battle party's stats (the
     # MissionEnd battle log in packets/; every target writes it).
-    r = subprocess.run(["python3", os.path.join(REPO, "tools/compare_tutorial.py"), "check", "emu", s.dir, "--name", PLAYER],
+    r = subprocess.run([sys.executable, os.path.join(REPO, "tools/compare_tutorial.py"), "check", "emu", s.dir, "--name", PLAYER],
                        capture_output=True, text=True)
     with open(os.path.join(s.dir, "tutorial-milestones.txt"), "w") as f:
         f.write(r.stdout + r.stderr)

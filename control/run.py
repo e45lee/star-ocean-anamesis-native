@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../tools/py" "$0" "$@"'
 """Runs a named session (control/soadrive/sessions/<name>.py) against a target.
 
     control/run.py [--target emu|port-server|port-inproc] SESSION [the session's arguments...]

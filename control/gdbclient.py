@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../tools/py" "$0" "$@"'
 """A small client for the runtime's GDB stub (`--gdb HOST:PORT` on soa / soa-emu / soa-viewer;
 runtime/README.md "Debugging the guest with gdb"), for tests and scripts that read guest state at a
 milestone without a gdb process.

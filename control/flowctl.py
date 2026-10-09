@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../tools/py" "$0" "$@"'
 """Waiting helpers for the scripted sessions (a thin CLI over control/soadrive: milestones.py, popups.py).
 
   flowctl.py wait-screen FIFO SHOT REF [TIMEOUT]

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c 'exec "${0%/*}/../tools/py" "$0" "$@"'
 """The machine-wide game-process slot pool: every game client (soa, soa-emu, soa-viewer) started by a
 test or session script takes a slot first, so parallel agents queue instead of overloading the
 machine (clients at 2-9 fps make milestones time out: false failures).

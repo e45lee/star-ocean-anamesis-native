@@ -190,8 +190,7 @@ def session_client_save(shared_prefs):
     if os.environ.get("SOA_EPISODE_PACKS", "0") == "1":
         shutil.copyfile(src, dst)
         return
-    py = os.path.join(REPO, ".venv/bin/python")
-    r = subprocess.run([py if os.path.exists(py) else sys.executable, "-m", "soa_save", "set", "--type", "u32", src,
+    r = subprocess.run([sys.executable, "-m", "soa_save", "set", "--type", "u32", src,
                         "BAS:DownloadEpisodeFlag", "0", "-o", dst], cwd=REPO, capture_output=True, text=True)
     if r.returncode != 0:
         raise Abort("installing the client save: " + (r.stdout + r.stderr).strip()[-300:])
@@ -432,8 +431,6 @@ class Run:
             "--windowed" if cfg.windowed else "--headless", "--size", "%dx%d" % (W, H), "--render-size", "window",
             "--control", self.fifo]
         if cfg.gdb:
-            if not gdb.available():
-                raise Abort("a GDB stub was asked for, but control/gdbclient.py (the runtime's --gdb) isn't in this checkout")
             # port 0: the client logs the one it took (Run.gdb reads it). WSL's mirrored networking
             # shares 127.0.0.1 with Windows, not ::1.
             self.gdb_host = "127.0.0.1" if self.win else cfg.loopback

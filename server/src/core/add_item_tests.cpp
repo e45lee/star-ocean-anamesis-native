@@ -39,7 +39,7 @@ NATIVE_TEST("server/add-item-map") {
         ctx.st.exec("begin");
         const u32 weapon = (u32)ctx.m.one("select id from master_item where type = 1 order by id limit 1", {});
         Value d = Value::object();
-        ext::add_drop(ctx, d, 1, weapon, 2, 0);
+        ext::add_drop(ctx, d, ext::Grant{ContentType::kItem, weapon, 2, 0});
         const Value* a = d.find("AddItem");
         t.expect_eq(a && a->type == Value::Map ? a->map.size() : (size_t)0, (size_t)2, "two weapons in the AddItem map");
         if (a && a->type == Value::Map)

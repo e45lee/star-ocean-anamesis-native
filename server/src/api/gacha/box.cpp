@@ -191,7 +191,8 @@ BoxTicket box_ticket(ext::Ctx& ctx, u32 gacha) {
 
 // What the draws granted: grant()'s lists and BoxGachaItems.
 struct BoxDraws {
-    Value results = Value::array(), items = Value::array(), stocks = Value::array(), characters = Value::array();
+    Value results = Value::array();
+    Granted granted;
 };
 
 // `count` draws without replacement (rules box_pick over the copies left), each slot's content
@@ -205,7 +206,7 @@ BoxDraws draw_slots(ext::Ctx& ctx, u32 gacha, std::vector<BoxSlot>& slots, std::
         BoxSlot& slot = slots[i];
         ctx.st.q("insert into box_slots (gacha_id, slot_id, drawn) values (?,?,1) on conflict(gacha_id, slot_id) do update set drawn = drawn + 1",
                  {gacha, slot.id});
-        grant(ctx, Drop{slot.content_type, slot.content_id, slot.num, 0, storage::EquipSource::kGacha}, draws.items, draws.stocks, draws.characters);
+        grant(ctx, Grant{as_content_type(slot.content_type), slot.content_id, slot.num, 0}, draws.granted, storage::EquipSource::kGacha);
         // (b) CBoxGachaResultInfo {id, master_box_gacha_id, content_id, content_type, num,
         // duplication} (its Initialize; the result list shows "×num"); id = the draw's index (d)
         Value result = Value::object();
@@ -275,11 +276,11 @@ std::vector<u8> box_gacha(ext::Ctx& ctx, const Request& req) {
     Value slots_info = box_gacha_info(ctx, id);  // this box's slots, and the next box's once it moved on
     data["UpdateBoxGachaList"] = box_gacha_list_info(ctx, id, &slots_info);
     data["UpdateBoxGacha"] = slots_info;
-    ext::add_items(data, draws.items);
+    ext::add_items(data, draws.granted.items);
     data["StockItem"] = stack_item_info_list(ctx);
-    if (!draws.characters.arr.empty()) {
+    if (!draws.granted.characters.arr.empty()) {
         Value add_character = Value::object();
-        for (auto& character : draws.characters.arr) add_character[std::to_string(character.get_u("id"))] = character;
+        for (auto& character : draws.granted.characters.arr) add_character[std::to_string(character.get_u("id"))] = character;
         data["AddCharacter"] = add_character;
     }
     LOGI("server", "BoxGacha %u: %u draws, %u tickets, %u left", id, count, ticket.per_draw * count, total_left - count);

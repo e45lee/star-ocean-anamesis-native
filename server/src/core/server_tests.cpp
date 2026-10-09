@@ -16,6 +16,7 @@
 #include "core/ids.h"
 #include "state/kvs.h"
 #include "soaserver/native_test.h"
+#include "soaserver/fids.h"
 #include "testing/scratch.h"
 
 namespace soa::server {
@@ -60,8 +61,8 @@ NATIVE_TEST("server/session-invariants") {
           [&](const Row& r) { allowed.insert((u32)r.i("content_id")); });
     mm->q("select content_id from master_common_drop where common_drop_id = (select common_drop_id from master_mission where id = ?)", {mission},
           [&](const Row& r) { allowed.insert((u32)r.i("content_id")); });
-    Request ms{"MissionStart", 0xb7c62bc2, {0, mission, 0, 0, 0, 0, 0}, {}, {}};
-    Request me{"MissionEnd", 0x8312a64c, {mission, 0}, {}, {}};
+    Request ms{"MissionStart", fids::kMissionStart, {0, mission, 0, 0, 0, 0, 0}, {}, {}};
+    Request me{"MissionEnd", fids::kMissionEnd, {mission, 0}, {}, {}};
     sv.st.exec("begin");
     for (int k = 0; k < 80; k++) {
         // a start with too little stamina is refused (10004) and changes nothing; refill then
@@ -97,7 +98,7 @@ NATIVE_TEST("server/session-invariants") {
     for (int k = 0; k < 3; k++) {
         u32 c0 = (u32)sv.st.one("select free_coin from player", {});
         u32 n0 = (u32)sv.st.one("select count(*) from roster", {}), h0 = (u32)sv.st.one("select count(*) from gacha_history", {});
-        Request gr{"SaleGacha", 0xb164b4c5, {g}, {"x"}, {}};
+        Request gr{"SaleGacha", fids::kSaleGacha, {g}, {"x"}, {}};
         if (gacha(ctx, gr).empty()) return t.fail("SaleGacha");
         u32 c1 = (u32)sv.st.one("select free_coin from player", {});
         u32 h1 = (u32)sv.st.one("select count(*) from gacha_history", {});

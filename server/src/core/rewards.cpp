@@ -17,54 +17,55 @@ using ext::Row;
 // Grants a content (drop, present, gacha). Content types (a, by example from the master rows
 // using them; docs/api.md "Content types"): 1 unique item (weapon / accessory), 2 character,
 // 3 FOL, 4 free coin, 5..10 and 16 stack items (materials, tickets, event coins, heal items,
-// favor items). (d) Other types (gear 15, gear lottery 98, item sets 99, stamps, titles,
-// deco) aren't granted yet and are logged.
-void grant(ext::Ctx& ctx, const Drop& d, Value& items, Value& stocks, Value& chars) {
+// favor items). The other types are the modules' (ext::add_grant: gear 15, gear lottery 98, the
+// premium pass 11, stamps 12, titles 13, deco 17 / 18, passes 20); (d) a type nobody grants
+// (item sets 99 outside grant_with_item_sets) is logged and not granted.
+void grant(ext::Ctx& ctx, const Grant& what, Granted& granted, storage::EquipSource source) {
     const PlayerId pid = player_id(ctx);
-    if (d.type == 1) {
-        for (u32 k = 0; k < d.num; k++) {
+    if (what.type == ContentType::kItem) {
+        for (u32 k = 0; k < what.num; k++) {
             // (b) a unit the inventory has no room for goes to the overflow box
             // (storage::to_one_time_storage, docs/server-rules.md#storage)
-            if (storage::to_one_time_storage(ctx, d.source)) storage::add_one_time(ctx, MasterItemId(d.id), 1);
-            else items.push(new_item(ctx, MasterItemId(d.id), d.type, d.drop_type));
+            if (storage::to_one_time_storage(ctx, source)) storage::add_one_time(ctx, MasterItemId(what.id), 1);
+            else granted.items.push(new_item(ctx, MasterItemId(what.id), ItemSource{what.type, what.drop_type}));
         }
-    } else if (d.type == 2) {
-        Added a = add_character(ctx, RoleId(d.id));
+    } else if (what.type == ContentType::kCharacter) {
+        Added a = add_character(ctx, RoleId(what.id));
         if (!a.dup && a.uid.v) {
             Value e = Value::object();
             e["id"] = a.uid.v;
-            e["master_role_id"] = d.id;
-            e["drop_type"] = d.drop_type;
+            e["master_role_id"] = what.id;
+            e["drop_type"] = what.drop_type;
             e["is_new"] = 1u;  // the NEW badge until ClearNewCharacter (docs/server-rules.md#new-badges)
-            chars.push(e);
+            granted.characters.push(e);
         }
-    } else if (d.type == 3) {  // (a) master_global item_fol_max_num caps FOL
-        wallet::add_fol(ctx.st.h, ctx.m.h, d.num);
-    } else if (d.type == 4) {
-        wallet::add_free_coins(ctx.st.h, d.num);
-    } else if (!((d.type >= 5 && d.type <= 10) || d.type == 16)) {
+    } else if (what.type == ContentType::kFol) {  // (a) master_global item_fol_max_num caps FOL
+        wallet::add_fol(ctx.st.h, ctx.m.h, what.num);
+    } else if (what.type == ContentType::kFreeCoin) {
+        wallet::add_free_coins(ctx.st.h, what.num);
+    } else if (!is_stack_item(what.type)) {
         // content types an extension module grants (ext::Grant, e.g. gear 15 / 98 in api/items/gear.cpp)
-        if (const ext::GrantFn* g = ext::find_grant(d.type)) {
-            (*g)(ctx, d.id, d.num, items, stocks, chars);
+        if (const ext::GrantFn* g = ext::find_grant(what.type)) {
+            (*g)(ctx, what, granted);
             return;
         }
-        LOGW("server", "content type %u (id %u x%u) not granted yet", d.type, d.id, d.num);
+        LOGW("server", "content type %u (id %u x%u) not granted yet", to_u32(what.type), what.id, what.num);
     } else {
-        u32 itype = (u32)ctx.m.one("select type from master_item where id = ?", {d.id});
-        ext::add_stock(ctx, d.id, d.num);  // (a) capped at master_global item_stock_max_num
+        u32 itype = (u32)ctx.m.one("select type from master_item where id = ?", {what.id});
+        ext::add_stock(ctx, what.id, what.num);  // (a) capped at master_global item_stock_max_num
         Value e = Value::object();
-        e["id"] = d.id;
+        e["id"] = what.id;
         e["player_id"] = pid.v;
-        e["master_item_id"] = d.id;
+        e["master_item_id"] = what.id;
         e["item_type"] = itype;
-        e["use_count"] = (u32)ctx.st.one("select count from stock where master_item_id = ?", {d.id});
-        e["num"] = d.num;
-        e["drop_type"] = d.drop_type;
-        stocks.push(e);
+        e["use_count"] = (u32)ctx.st.one("select count from stock where master_item_id = ?", {what.id});
+        e["num"] = what.num;
+        e["drop_type"] = what.drop_type;
+        granted.stocks.push(e);
     }
 }
 
-Value new_item(ext::Ctx& ctx, MasterItemId id, u32 content_type, u32 drop_type) {
+Value new_item(ext::Ctx& ctx, MasterItemId id, std::optional<ItemSource> source) {
     const ItemUid uid = next_item_uid(ctx);
     u32 itype = (u32)ctx.m.one("select type from master_item where id = ?", {id});
     ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)", {uid, id, itype, ctx.now()});
@@ -73,8 +74,10 @@ Value new_item(ext::Ctx& ctx, MasterItemId id, u32 content_type, u32 drop_type) 
     e["player_id"] = player_id(ctx).v;
     e["master_item_id"] = id.v;
     e["item_type"] = itype;
-    e["content_type"] = content_type;
-    e["drop_type"] = drop_type;
+    if (source) {
+        e["content_type"] = to_u32(source->content_type);
+        e["drop_type"] = source->drop_type;
+    }
     e["boosted_point"] = 0u;
     e["limit_break_count"] = 0u;
     return e;
@@ -138,19 +141,35 @@ Added add_character(ext::Ctx& ctx, RoleId role) {
     return a;
 }
 
-// (a) content type 99 is a master_item_set id (docs/api.md "Content types"): its rows, in
-// order_id order, each `num` times the set's count. Shared by the shop, the exchange and the event
-// ranking rewards (R18: their copies were one function each).
-void grant_with_item_sets(ext::Ctx& ctx, u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& chars, u32* free_coins) {
-    if (type == kContentTypeItemSet) {
-        ctx.m.q("select content_type, content_id, num from master_item_set where item_set_id = ? order by order_id", {id}, [&](const Row& set_row) {
-            grant_with_item_sets(ctx, (u32)set_row.i("content_type"), (u32)set_row.i("content_id"), (u32)set_row.i("num") * num, items, stocks, chars,
-                                 free_coins);
-        });
+namespace {
+// (d) How deep item sets may nest: in 3.7.0's master_item_set a set holds at most a set that
+// holds a set (184028475 -> 2482068609 -> 1244723512); a set that (directly or not) contains
+// itself would recurse for ever, so beyond this depth the set is logged and not granted.
+constexpr int kMaxItemSetDepth = 8;
+
+void grant_item_set_level(ext::Ctx& ctx, const Grant& what, Granted& granted, u32* free_coins, int depth) {
+    if (what.type == ContentType::kItemSet) {
+        if (depth >= kMaxItemSetDepth) {
+            LOGW("server", "item set %u nested deeper than %d sets (a set containing itself?): not granted", what.id, kMaxItemSetDepth);
+            return;
+        }
+        ctx.m.q("select content_type, content_id, num from master_item_set where item_set_id = ? order by order_id", {what.id},
+                [&](const Row& set_row) {
+                    const Grant member{as_content_type(set_row.i("content_type")), (u32)set_row.i("content_id"), (u32)set_row.i("num") * what.num, 0};
+                    grant_item_set_level(ctx, member, granted, free_coins, depth + 1);
+                });
         return;
     }
-    if (type == kContentTypeFreeCoin && free_coins) *free_coins += num;
-    ctx.grant(type, id, num, items, stocks, chars);
+    if (what.type == ContentType::kFreeCoin && free_coins) *free_coins += what.num;
+    ctx.grant(Grant{what.type, what.id, what.num, 0}, granted);
+}
+}  // namespace
+
+// (a) content type 99 is a master_item_set id (docs/api.md "Content types"): its rows, in
+// order_id order, each `num` times the set's count. Shared by the shop, the exchange, the event
+// ranking rewards (R18: their copies were one function each) and Sphere 211's ranking reward.
+void grant_with_item_sets(ext::Ctx& ctx, const Grant& what, Granted& granted, u32* free_coins) {
+    grant_item_set_level(ctx, what, granted, free_coins, 0);
 }
 
 }  // namespace soa::server

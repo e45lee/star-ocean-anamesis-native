@@ -15,7 +15,7 @@
 #include "core/log.h"
 #include "core/request_args.h"
 #include "core/response.h"
-#include "core/rewards.h"  // add_character
+#include "core/rewards.h"  // add_character, new_item
 #include "core/server.h"   // next_uid
 #include "core/time.h"     // open_at
 #include "core/wallet.h"
@@ -29,8 +29,6 @@ using ext::Row;
 
 namespace {
 
-// (a) master content type 1: an item (a weapon, when a gacha draws it: gacha_pools::Unit).
-constexpr u32 kContentTypeItem = 1;
 // gacha_history.rank: the draw's rank as a letter, S (index 0) .. D (4) (d: our column).
 constexpr const char* kRankLetters = "SABCD";
 // (d) GetGachaInData's window for a master row without one: open since the service start / for good.
@@ -232,19 +230,9 @@ void draw_weapon(ext::Ctx& ctx, GachaDraw& draw, const gacha_pools::Unit& unit, 
     if (storage::to_one_time_storage(ctx, storage::EquipSource::kGacha)) {
         storage::add_one_time(ctx, MasterItemId(unit.content_id), 1);
     } else {
-        const ItemUid item_uid = next_item_uid(ctx);
-        drawn = item_uid;
-        u32 item_type = (u32)ctx.m.one("select type from master_item where id = ?", {unit.content_id});
-        ctx.st.q("insert into items (uid, master_item_id, item_type, created_at) values (?,?,?,?)",
-                 {item_uid, unit.content_id, item_type, ctx.now()});
-        Value item = Value::object();  // CItemInfo
-        item["id"] = item_uid.v;
-        item["player_id"] = player_id(ctx).v;
-        item["master_item_id"] = unit.content_id;
-        item["item_type"] = item_type;
-        item["boosted_point"] = 0u;
-        item["limit_break_count"] = 0u;
-        draw.new_items.push(item);
+        Value item = new_item(ctx, MasterItemId(unit.content_id), std::nullopt);  // CItemInfo, no content / drop type
+        drawn = ItemUid(item.get_u("id"));
+        draw.new_items.push(std::move(item));
     }
     Value result = Value::object();  // the GachaItems entry
     result["master_item_id"] = unit.content_id;
@@ -360,7 +348,8 @@ void draw_units(ext::Ctx& ctx, const Row& gacha_row, GachaDraw& draw) {
         u32 role = 0;
         if (ctx.pools->is_open() && ctx.pools->draw(draw.id, bonus, format_time(ctx.now()), (*ctx.rng)(), (*ctx.rng)(), pool_rank, unit)) {
             rank = pool_rank;
-            if (unit.content_type == kContentTypeItem) {  // a weapon: a new unique item (AddItem)
+            // (a) content type 1: an item (a weapon, when a gacha draws it: gacha_pools::Unit)
+            if (as_content_type(unit.content_type) == ContentType::kItem) {  // a weapon: a new unique item (AddItem)
                 draw_weapon(ctx, draw, unit, rank, k);
                 continue;
             }

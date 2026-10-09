@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+#include "soaserver/content_type.h"
 #include "soaserver/ids.h"
 #include "soaserver/server.h"
 #include "soaserver/sql.h"
@@ -53,6 +54,19 @@ struct MissionOverride {
     bool free_stamina = false;       // no AP stamina, ticket or vanish item taken
     u32 overwrite_enemy_level = 0;   // MissionParameter.overwrite_enemy_level
     u32 add_enemy_level = 0;         // MissionParameter.add_enemy_level
+};
+
+// One content to grant (docs/history/PLAN-readability.md 2.3): its content type, master id and
+// count, and for a MissionEnd drop its Common::MissionDropType (api/missions/missions.h DropType;
+// 0 elsewhere).
+struct Grant {
+    ContentType type = ContentType::kNone;
+    u32 id = 0, num = 0, drop_type = 0;
+};
+// What grants added, for the answer: AddItem entries (CItemInfo), StockItem entries
+// (CStackItemInfo) and AddCharacter entries, in grant order.
+struct Granted {
+    Value items = Value::array(), stocks = Value::array(), characters = Value::array();
 };
 
 // What every handler, core or module, gets for one request: the two DBs, the RNG, the request's
@@ -91,7 +105,10 @@ struct Ctx {
     u32 global_u32(const char* key, u32 dflt);
     std::vector<u32> player_next();                // per-level next EXP of the player rank
     u32 player_level_max();                        // the player rank cap
-    // Grants one content (the core's grant(): items, characters, FOL, coins, stack items).
+    // Grants one content (the core's grant(): items, characters, FOL, coins, stack items; the
+    // modules' Grant hooks for the other types) and adds what it granted to `granted`.
+    void grant(const Grant& what, Granted& granted);
+    // The same with the three lists apart and the master row's raw type (the unit tests' form).
     void grant(u32 type, u32 id, u32 num, Value& items, Value& stocks, Value& chars);
     // Runs the core MissionStart / MissionEnd / MissionFailed (by r.method) with `ov` applied and
     // returns its response's data (Nil when the core refused it or doesn't know the mission).
@@ -135,10 +152,10 @@ void add_player_load(PlayerLoadFn fn, const char* file = __builtin_FILE(), int l
 using ResponseFn = std::function<bool(Ctx&, const Request&, Value& data)>;
 void add_response_hook(ResponseFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 // `ext::add_grant(type, fn)`: grants a content type the core's grant() doesn't handle itself
-// (e.g. gear 15, gear lottery 98); fn adds what it granted to the response lists it is given.
+// (e.g. gear 15, gear lottery 98); fn adds what it granted to `granted`.
 // One module per content type (a second one is a registration error).
-using GrantFn = std::function<void(Ctx&, u32 id, u32 num, Value& items, Value& stocks, Value& chars)>;
-void add_grant(u32 content_type, GrantFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
+using GrantFn = std::function<void(Ctx&, const Grant& what, Granted& granted)>;
+void add_grant(ContentType type, GrantFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
 // `ext::add_item_extra(fn)`: adds keys to each owned item (CItemInfo) the core lists in `Item`
 // (e.g. its attached gear); st / m are the state and master DBs.
 using ItemExtraFn = std::function<void(Sql& st, Sql& m, ItemUid uid, Value& item)>;
@@ -171,9 +188,9 @@ void add_mission_start_extra(MissionStartFn fn, const char* file = __builtin_FIL
 // to `data` (add_drops below keeps DropList / StockItem / AddItem consistent).
 using MissionResultFn = std::function<void(Ctx&, const MissionInfo&, Value& data)>;
 void add_mission_result_extra(MissionResultFn fn, const char* file = __builtin_FILE(), int line = __builtin_LINE());
-// Grants `type` / `id` x `num` as a MissionEnd drop of `drop_type` (Common::MissionDropType, see
+// Grants `what` as a MissionEnd drop of what.drop_type (Common::MissionDropType, see
 // src/api/missions/drops.cpp roll_drops) and lists it in data's DropList, AddItem / AddCharacter and StockItem.
-void add_drop(Ctx& c, Value& data, u32 type, u32 id, u32 num, u32 drop_type);
+void add_drop(Ctx& c, Value& data, const Grant& what);
 void mission_start_extra(Ctx& c, const MissionInfo& mi, Value& param, Value& data);
 void mission_result_extra(Ctx& c, const MissionInfo& mi, Value& data);
 
@@ -206,7 +223,7 @@ std::map<std::string, std::string> api_sources();
 void player_load(Ctx& c, const Request& r, Value& data);
 bool has_response_hooks();
 bool on_response(Ctx& c, const Request& r, Value& data);  // true: data changed
-const GrantFn* find_grant(u32 content_type);
+const GrantFn* find_grant(ContentType type);
 void item_extra(Sql& st, Sql& m, ItemUid uid, Value& item);
 void client_master(sqlite3* db, ServerTime now, EventTime event_now);
 

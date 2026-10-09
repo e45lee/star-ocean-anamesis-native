@@ -347,7 +347,7 @@ struct Expedition {
     u32 level_before = 0, level_after = 0;
     Value characters_exp = Value::object();  // add_characters_exp
     Value content_map = Value::object();     // CContentInfoMap
-    Value added_items = Value::array();      // AddItem
+    Granted granted;                         // what the drops added (AddItem: granted.items)
     size_t lots = 0;
     std::string rare_label;  // the id_label of a rare mission offered, "" when none
 };
@@ -405,16 +405,15 @@ void grant_character_exp(Ctx& ctx, const Ship& ship, Expedition& done) {
 // The drops (rewards.cpp roll_rewards), granted, and their CDropContentInfo entries.
 void grant_drops(Ctx& ctx, const Ship& ship, Expedition& done, double& rare_mission_mul) {
     Rewards rewards = roll_rewards(ctx, ship.mission_id, ship.ship_id);
-    Value stocks = Value::array(), characters = Value::array();
     u32 n = 0;
     for (auto& lot : rewards.lots) {
-        ctx.grant(lot.type, lot.id, lot.num, done.added_items, stocks, characters);
+        ctx.grant(Grant{as_content_type(lot.type), lot.id, lot.num}, done.granted);
         Value info = Value::object();
         info["content_id"] = lot.id;
         info["content_type"] = lot.type;
         info["num"] = lot.num;
         info["is_new"] = false;                                 // (d)
-        info["master_item_id"] = lot.type == 2 ? 0u : lot.id;  // (d) none for a character (content type 2)
+        info["master_item_id"] = as_content_type(lot.type) == ContentType::kCharacter ? 0u : lot.id;  // (d) none for a character (content type 2)
         info["bonus_category"] = (u32)lot.category;
         info["is_rare_bonus"] = lot.rare;
         info["is_add_bonus"] = lot.add;
@@ -513,7 +512,7 @@ std::vector<u8> deep_space_mission_end(Ctx& ctx, const Request& req) {
     data["DeepSpaceAreaList"] = area_list(ctx, t);
     data["add_characters_exp"] = done.characters_exp;
     data["CContentInfoMap"] = done.content_map;
-    ext::add_items(data, done.added_items);
+    ext::add_items(data, done.granted.items);
     data["StockItem"] = ctx.stock();
     LOGI("server",
          "%s ship %u (area %u mission %u): player exp +%u (level %u -> %u), fol +%u, characters +%u exp x%zu, area exp +%u, "

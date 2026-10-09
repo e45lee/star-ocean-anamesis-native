@@ -329,12 +329,12 @@ void time_bonus(Ctx& ctx, const MissionInfo& mission, Value& data) {
     int64_t type = ctx.m.one("select time_bonus_type_id from master_event_mission where id = ?", {mission.mission}, 0);
     if (!type) return;
     Value list = Value::array();
-    Value items = Value::array(), stocks = Value::array(), characters = Value::array();
+    Granted granted;
     ctx.m.q("select * from master_time_bonus where type_id = ? order by order_id", {type}, [&](const Row& bonus_row) {
         if ((u64)mission.mission_time > (u64)bonus_row.i("time") * 1000) return;
         u32 content_type = (u32)bonus_row.i("content_type"), id = (u32)bonus_row.i("content_id");
         u32 num = (u32)std::max<int64_t>(1, bonus_row.i("content_num"));
-        ctx.grant(content_type, id, num, items, stocks, characters);
+        ctx.grant(Grant{as_content_type(content_type), id, num}, granted);
         Value entry = Value::object();
         entry["id"] = id;
         entry["content_type"] = content_type;
@@ -343,7 +343,7 @@ void time_bonus(Ctx& ctx, const MissionInfo& mission, Value& data) {
     });
     if (list.arr.empty()) return;
     data["WorldBossMissionTimeBonusDropItemInfoList"] = list;
-    ext::add_items(data, items);
+    ext::add_items(data, granted.items);
     data["StockItem"] = ctx.stock();
     LOGI("server", "MissionEnd mission %u: %zu time bonuses (%u ms)", mission.mission, list.arr.size(), mission.mission_time);
 }

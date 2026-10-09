@@ -6,9 +6,6 @@
 
 namespace soa::server::subscription {
 
-// (a) content type 20: a pass (docs/api.md "Content types").
-constexpr u32 kContentTypePass = 20;
-
 // Grants `days` of the master_subscription_plan `plan` at `t`: (d) extends a running plan, else
 // runs from `t`.
 void grant_plan(ext::Ctx& ctx, u32 plan, u32 days, ServerTime t);

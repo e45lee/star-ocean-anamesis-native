@@ -65,5 +65,9 @@ void add_stock(sqlite3* st, sqlite3* m, u32 item, int64_t delta) {
     db.q("insert into stock (master_item_id, item_type, count) values (?,?,0) on conflict(master_item_id) do nothing", {item, type});
     db.q("update stock set count = max(0, min(count + ?, ?)) where master_item_id = ?", {delta, cap, item});
 }
+void take_stock(sqlite3* st, u32 item, u32 n) {
+    Sql db{st};
+    db.q("update stock set count = max(0, count - ?) where master_item_id = ?", {n, item});
+}
 
 }  // namespace soa::server::wallet

@@ -6,6 +6,7 @@
 #include <random>
 
 #include "soaserver/native_test.h"
+#include "soaserver/fids.h"
 #include "soaserver/ext.h"
 #include "soaserver/msgpack.h"
 #include "core/errors.h"
@@ -377,16 +378,17 @@ NATIVE_TEST("items/inherit-accessory") {
     add_fol(c, 10000000);
     const u32 fol0 = fol(c);
     c.st.q("update items set limit_break = 2 where uid = ?", {lost});
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {plain_base, lost}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {plain_base, lost}, {}, {}}), (u32)ErrorCode::kItemUnusable,
                 "(a) max_inheritance_num 0: refused");
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, base}, {}, {}}), (u32)ErrorCode::kItemUnusable, "the base itself: refused");
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, base2}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, base}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+                "the base itself: refused");
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, base2}, {}, {}}), (u32)ErrorCode::kItemUnusable,
                 "(b) another inheritance accessory: refused");
     c.st.q("update items set locked = 1 where uid = ?", {lost});
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, lost}, {}, {}}), (u32)ErrorCode::kLockedItem, "a locked one: refused");
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, lost}, {}, {}}), (u32)ErrorCode::kLockedItem, "a locked one: refused");
     c.st.q("update items set locked = 0 where uid = ?", {lost});
     std::vector<u8> out;
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, lost}, {}, {}}, &out), 0u, "inherited");
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, lost}, {}, {}}, &out), 0u, "inherited");
     Value d = out.empty() ? Value() : mp_decode(out);
     const Value* data = d.find("data");
     const Value* r = data ? data->find("InheritResultInfo") : nullptr;
@@ -412,10 +414,11 @@ NATIVE_TEST("items/inherit-accessory") {
     t.expect_eq(info ? info->get_u("inherited_master_item_limit_break_count") : 0, (u64)2, "and its limit break");
     t.expect_eq(inherit_info(items, other) == nullptr, true, "other items carry none");
     t.expect_eq(counter(c, "accessory_inherit"), (int64_t)1, "counted (achievement type 58)");
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, other}, {}, {}}), (u32)ErrorCode::kItemUnusable, "(b) a second inheritance: refused");
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, other}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+                "(b) a second inheritance: refused");
     t.expect_eq((u32)c.st.one("select count(*) from items where uid = ?", {other}), 1u, "nothing taken");
     // UpdateItemStock: Player.item_stock is item_stock_max already
-    t.expect_eq(S.call({"UpdateItemStock", 0xcf39cc5c, {}, {}, {}}), (u32)ErrorCode::kLimitReached, "UpdateItemStock refused at the max");
+    t.expect_eq(S.call({"UpdateItemStock", fids::kUpdateItemStock, {}, {}, {}}), (u32)ErrorCode::kLimitReached, "UpdateItemStock refused at the max");
 }
 
 // ItemGradeUpArray and MaterialCompose's refusals (the replay corpora api-sweep and items-party

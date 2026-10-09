@@ -16,12 +16,13 @@ using ext::Row;
 // (a) master_mission_drop / master_common_drop / master_campaign_drop rows; (d) lot
 // semantics: each lot picks one row by rate_weigh; rows with is_fix_drop always drop;
 // (a)+(d) host_bonus rows only drop for a multiplayer host, so never here.
-void lottery(ext::Ctx& ctx, const std::string& sql, Arg key, int64_t lots, DropType drop_type, std::vector<Drop>& out, bool fixed) {
-    std::vector<Drop> rows;
+void lottery(ext::Ctx& ctx, const std::string& sql, Arg key, int64_t lots, DropType drop_type, std::vector<Grant>& out, bool fixed) {
+    std::vector<Grant> rows;
     std::vector<u32> weights;
     ctx.m.q(sql, {key}, [&](const Row& drop_row) {
         if (!drop_row.null("host_bonus") && drop_row.i("host_bonus")) return;
-        Drop drop{(u32)drop_row.i("content_type"), (u32)drop_row.i("content_id"), (u32)std::max<int64_t>(1, drop_row.i("num")), (u32)drop_type};
+        Grant drop{as_content_type(drop_row.i("content_type")), (u32)drop_row.i("content_id"), (u32)std::max<int64_t>(1, drop_row.i("num")),
+                   (u32)drop_type};
         if (!drop_row.null("is_fix_drop") && drop_row.i("is_fix_drop")) {
             if (fixed) out.push_back(drop);
         } else if (drop_row.i("rate_weigh") > 0) {
@@ -73,9 +74,9 @@ std::vector<Campaign> drop_campaigns(ext::Ctx& ctx, const std::string& table, u3
 // extra_bonus_num x the extra content, (a) capped by master_global max_character_bonus /
 // max_character_extra_bonus ((d) per party). Sets rolled.bonus_lots / bonus_extra; returns the
 // extra content.
-Drop character_bonus(ext::Ctx& ctx, u32 mission, u32 area, const std::vector<u32>& party_roles, Rolled& rolled) {
+Grant character_bonus(ext::Ctx& ctx, u32 mission, u32 area, const std::vector<u32>& party_roles, Rolled& rolled) {
     std::vector<std::pair<u32, u32>> matches;  // bonus_count, extra_bonus_num
-    Drop extra{0, 0, 0, 0};
+    Grant extra;
     std::string now = format_time(ctx.now());
     for (u32 role : party_roles) {
         // (master_role has no NULL role_category_id in 3.7.0, so the NULL-as-0 read and the default agree)
@@ -87,7 +88,7 @@ Drop character_bonus(ext::Ctx& ctx, u32 mission, u32 area, const std::vector<u32
             {category, mission, area, now, now}, [&](const Row& bonus_row) {
                 matches.emplace_back((u32)bonus_row.i("bonus_count"), (u32)bonus_row.i("extra_bonus_num"));
                 if (bonus_row.i("extra_bonus_content_id"))
-                    extra = Drop{(u32)bonus_row.i("extra_bonus_content_type"), (u32)bonus_row.i("extra_bonus_content_id"), 0, 0};
+                    extra = Grant{as_content_type(bonus_row.i("extra_bonus_content_type")), (u32)bonus_row.i("extra_bonus_content_id"), 0, 0};
             });
     }
     auto capped = mission_rules::character_bonus(matches, ctx.global_u32("max_character_bonus", 2), ctx.global_u32("max_character_extra_bonus", 2));
@@ -128,11 +129,11 @@ void evaluation_drops(ext::Ctx& ctx, int64_t evaluation_group_id, Rolled& rolled
 // bonus extra, surprise, common, evaluation.
 Rolled roll_drops(ext::Ctx& ctx, u32 mission, const std::string& table, u32 type, u32 area, bool surprise, const std::vector<u32>& party_roles) {
     Rolled rolled;
-    std::vector<Drop>& out = rolled.drops;
+    std::vector<Grant>& out = rolled.drops;
     const LotCounts counts = lot_counts(ctx, table, mission);
     const std::vector<Campaign> campaigns = drop_campaigns(ctx, table, type, area);
     for (const Campaign& campaign : campaigns) rolled.campaign_lots += campaign.extra_lots;
-    const Drop extra = character_bonus(ctx, mission, area, party_roles, rolled);
+    const Grant extra = character_bonus(ctx, mission, area, party_roles, rolled);
     const std::string normal = "select * from master_mission_drop where master_mission_id = ? and ifnull(is_surprise_enemy, 0) = 0";
     lottery(ctx, normal, mission, counts.lots, DropType::kPlain, out);
     // (a) extra lots (campaign, character bonus) draw from the same rows; (d) without fixed rows
@@ -141,7 +142,7 @@ Rolled roll_drops(ext::Ctx& ctx, u32 mission, const std::string& table, u32 type
     if (rolled.bonus_lots) lottery(ctx, normal, mission, rolled.bonus_lots, DropType::kCharacterBonus, out, false);
     for (const Campaign& campaign : campaigns)
         lottery(ctx, "select * from master_campaign_drop where master_campaign_id = ?", campaign.id, 1, DropType::kPlain, out);
-    if (rolled.bonus_extra) out.push_back(Drop{extra.type, extra.id, rolled.bonus_extra, (u32)DropType::kCharacterBonus});
+    if (rolled.bonus_extra) out.push_back(Grant{extra.type, extra.id, rolled.bonus_extra, (u32)DropType::kCharacterBonus});
     // (a) the surprise enemy's lot_surprise_drop_count lots from its is_surprise_enemy rows
     if (surprise) {
         rolled.surprise_lots = (u32)counts.surprise_lots;

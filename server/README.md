@@ -254,7 +254,8 @@ build/server/soa-server [--listen 127.0.0.1:44300] [--http 127.0.0.1:44380] [--d
 **The decoder.** `tools/api_wire.py --gen-decoder server/net/gen/wire_decode.inc` (needs `work/`'s
 lib) writes the table: per request its measured layout (`docs/api-wire.txt`), the server method
 (the serializer's name except `UpdateName` -> `UpdatePlayerName`), whether it is encrypted, and its
-reply (fid, encrypted, body kind). Arguments map positionally: integers (u8 ... u64; f32 as its bits)
+reply (fid, encrypted, body kind); `--gen-fids server/include/soaserver/fids.h` the FunctionIDs the
+library and net/ name (`fids::kMissionStart`; no hand-copied fid). Arguments map positionally: integers (u8 ... u64; f32 as its bits)
 -> `ints`, `str[N]` (up to the first NUL) and blobs -> `strs`, vectors -> `vecs`. The shims
 (`wire.cpp`): the battle log of MissionEnd / MissionFailed / Sphere211MissionEnd /
 Sphere211MissionFailed becomes `Request::battle_log` (`soaserver/battle_log.h`'s parser, the one

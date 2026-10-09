@@ -74,19 +74,13 @@ std::string content_type(const std::string& name) {
     return "application/octet-stream";
 }
 
-// "a/b/../c" and friends are refused; "%xx" decoded.
+// "a/b/../c" and friends are refused. The path is decoded already (lookup's contract: the HTTP
+// layer decodes it once), so a "%" here is a "%".
 bool clean_path(std::string path, std::string& out) {
     size_t q = path.find_first_of("?#");
     if (q != std::string::npos) path.resize(q);
-    std::string decoded;
-    for (size_t i = 0; i < path.size(); i++) {
-        if (path[i] == '%' && i + 2 < path.size() && isxdigit((unsigned char)path[i + 1]) && isxdigit((unsigned char)path[i + 2])) {
-            decoded += (char)strtol(path.substr(i + 1, 2).c_str(), nullptr, 16);
-            i += 2;
-        } else decoded += path[i];
-    }
     std::string clean;
-    std::stringstream ss(decoded);
+    std::stringstream ss(path);
     std::string seg;
     while (std::getline(ss, seg, '/')) {
         if (seg.empty() || seg == ".") continue;

@@ -1,0 +1,38 @@
+# What the server sends of the client's info classes: one struct per line, CLASS[ as NAME]: FIELD...
+# (tools/gen_server_infos.py's header has the grammar; server/src/api/gen/README.md the workflow). The keys
+# are in the order today's replies send them (tools/reply_shapes.py measures the replay corpora); a
+# `#` line before a struct is its comment in reply_types.h.
+
+# ---- growth (api/growth/growth.cpp) ----
+
+# A stack item a growth step used (AwakenResult / EvolutionResult UseStockItem).
+CStackItemInfo as UseStackItemInfo: master_item_id use_count
+
+# BoostCharacter's BoostedCharacterResult entry (by the character's uid).
+CBoostCharacterResultInfo: id before_level before_exp after_level after_exp is_big_success
+
+# LimitBreakCharacter's entry (by the character's uid); also the gacha's duplicates.
+CLimitBreakInfo: id master_role_id before_master_role_id after_master_role_id before_limit_break_count after_limit_break_count
+
+# EvolutionResult's evolved character (its uid as the u64 it is).
+CUpdatePlayerCharacter: id:u64 before_master_role_id after_master_role_id level is_rarity_7
+
+CEvolutionResultInfo: use_fol UseStockItem:UseStackItemInfo UpdatePlayerCharacter
+
+# A character's fields after a growth step (UpdateCharacter): the equipped skills only after EquipSkill or
+# for a character with growth; the rush keys from its master_role row.
+CUpdateCharacterInfo: id player_id master_role_id level exp weapon_item_id skill1_level skill2_level skill3_level skill1? skill2? skill3? rush_skill? rush_skill_factor_id? rush_gauge_max? rush_gauge_use? weapon_kind? rush_skill_level is_new
+
+# UpdateAwakenLevel's AwakenResult (update_child_id: the graduated disciple's uid, sent as the u64 it is).
+CAwakenResultInfo: awaken_level use_fol UseStockItem:UseStackItemInfo UpdateCharacter update_child_id:u64 update_child_mastery_talent_id
+
+CPersonAddStatusResultInfo: player_character_id player_id before_add_hp after_add_hp before_add_attack after_add_attack before_add_intelligence after_add_intelligence before_add_defence after_add_defence before_add_hit after_add_hit before_add_guard after_add_guard before_add_ap after_add_ap use_fol new_fol
+
+# EquipWeapon / EquipAccessory / EquipAuto: the characters whose weapon / accessory changed, the item
+# equipped (its uid as `id`, a key the client's item info doesn't read: it takes the map's key).
+CEquipWeaponResultPersonInfo: id weapon_item_id
+CEquipWeaponResultItemInfo: +id:u64
+CEquipWeaponResultInfo: Character Item
+CEquipAccessoryResultPersonInfo: id accessory_item_id
+CEquipAccessoryResultItemInfo: +id:u64
+CEquipAccessoryResultInfo: Character Item

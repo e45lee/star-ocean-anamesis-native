@@ -58,7 +58,7 @@
      "covers": "no getenv / setenv / putenv (or the Windows spellings) in our C/C++ outside soa/env.h and the few files that implement the environment (tools/check_env_access.py ALLOWED): switches are read through env::env_str / env_on / env_int, run state lives in RunOptions (docs/environment.md)"},
     {"name": "generated", "tier": "T0", "secs": 15, "kind": "check", "game": 0,
      "cmd": ".venv/bin/python tools/check_generated.py",
-     "covers": "every generated source built into the programs is fresh against the 3.7.0 lib (each generator's --check: the natives' address tables port/src/native/*/gen/*_addresses.h, api/gen/fakeapi_tables.inc, params/gen/params_instantiations.inc, master/gen/master_elements.h, info/gen/info_classes.h, api/gen/wire_table.inc, server/net/gen/wire_decode.inc)"},
+     "covers": "every generated source built into the programs is fresh against the 3.7.0 lib (each generator's --check: the natives' address tables port/src/native/*/gen/*_addresses.h, api/gen/fakeapi_tables.inc, params/gen/params_instantiations.inc, master/gen/master_elements.h, info/gen/info_classes.h and server/src/api/gen/client_infos.json, server/src/api/gen/reply_types.{h,cpp}, api/gen/wire_table.inc, server/net/gen/wire_decode.inc)"},
     {"name": "thread-local", "tier": "T0", "secs": 3, "kind": "check", "game": 0,
      "cmd": "tools/check_thread_local.py",
      "covers": "no non-trivial thread_local in our code (a destructor or a dynamic initializer, read from the built objects; cpp-httplib's allowed), and no program but soa-server references __cxa_thread_atexit (per-thread state: runtime/src/core/thread_record.h)"},

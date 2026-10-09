@@ -13,4 +13,9 @@ inline constexpr std::uint64_t kInvalidHandle = 0x2c00518;  // _ZN9Framework6CSo
 inline constexpr std::uint64_t kPlayingElementsCallbackVtbl = 0x2aab048;  // .data.rel.ro, used by _ZN9Framework13CSoundManager12PostProgressEv; the vtable (its slots at + 0x10) of the ICallback PostProgress hands FunctorAllPlayingElements
 inline constexpr std::uint64_t kDeleteCountdownExtra = 0x26dbad0;  // f32 {200.0}, .rodata, used by _ZN4Aska7SLVoice18SetDeleteCountdownEv; added to the countdown while SoundManager::m_signalExtra is set
 inline constexpr std::uint64_t kOggPcmScale = 0x28d311c;  // f32 {32767.0}, .rodata, used by _ZN4Aska7AskaOGG13Decode_PcmoutEj; the float sample -> s16 scale (32767.0)
+inline constexpr std::uint64_t kEmitterEpsilon = 0x26e519c;  // f32 {9.999999974752427e-07}, .rodata, used by _ZN4Aska12AudioEmitter7ComputeEv; 1e-6: a direction shorter than this has no angle
+inline constexpr std::uint64_t kEmitterTwoPi = 0x26edb34;  // f32 {6.2831854820251465}, .rodata, used by _ZN4Aska12AudioEmitter7ComputeEv; 2 pi: the angle's range
+inline constexpr std::uint64_t kEmitterSilentDb = 0x2865bf8;  // f32 {-96.0}, .rodata, used by _ZN4Aska12AudioEmitter7ComputeEv; -96 dB: silence
+inline constexpr std::uint64_t kEmitterDbScale = 0x26edb4c;  // f32 {0.05000000074505806}, .rodata, used by _ZN4Aska12AudioEmitter7ComputeEv; 1 / 20 (dB -> the power of 10)
+inline constexpr std::uint64_t kEmitterVolumeScale = 0x26e3fd8;  // f32 {1.399999976158142}, .rodata, used by _ZN4Aska12AudioEmitter7ComputeEv; 1.4: the 3D sounds' gain
 }  // namespace soa::native::audio

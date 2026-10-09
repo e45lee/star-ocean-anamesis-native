@@ -164,6 +164,38 @@ static_assert(offsetof(AudioListener, m_position) == 0x100);
 static_assert(offsetof(AudioListener, m_orientation) == 0x110);
 static_assert(sizeof(AudioListener) == 0x120);
 
+// Aska::AudioEmitter: a 3D sound source (SEControlObject + 0x200), guest size 0x128 (the constructor: the
+// base's fields, 10.0 / 800.0 at +0xf0 / +0xf4, the speaker gains from a table, 1.0 at +0x110, no curve).
+// Compute (SoundProcessSync, per emitter with a node, after the listener's): the gains of the six speaker
+// slots (index 3 unused: the speakers' layout leaves it out) from the source's place relative to the
+// listener: a "far" share panned between the two speakers whose angles bracket the source's (around the
+// listener's up axis), a "near" share spread over five by inverse distance, both scaled by the two
+// attenuation curves and the master volume (port/decomp/audio/mixer.c; the order of operations from the
+// disassembly, where Ghidra's decompile reorders products).
+class AudioEmitter {
+public:
+    static constexpr int kSpeakers = 6;
+    static constexpr int kSlotCurveValue = 15;  // the curves' vtable + 0x78: float GetValue(float) const
+
+    void Compute();  // _ZN4Aska12AudioEmitter7ComputeEv
+
+    Audio3DObject base;          // 0x000: vtable _ZTVN4Aska12AudioEmitterE + 0x10
+    float m_unk0f0;              // 0x0f0: 10.0 at construction (not read by Compute)
+    float m_distanceScale;       // 0x0f4: 800.0 at construction: the emitter's curve's distance unit
+    float m_gains[kSpeakers];    // 0x0f8: Compute's output
+    float m_rangeScale;          // 0x110: 1.0
+    u8 unk_114[4];               // 0x114
+    void* m_curve;               // 0x118: the emitter's attenuation curve (TFastQuadraticCurve<N>: vtable slot 15)
+    u8 m_computed;               // 0x120: set by Compute
+    u8 unk_121[7];               // 0x121
+};
+static_assert(offsetof(AudioEmitter, m_distanceScale) == 0xf4);
+static_assert(offsetof(AudioEmitter, m_gains) == 0xf8);
+static_assert(offsetof(AudioEmitter, m_rangeScale) == 0x110);
+static_assert(offsetof(AudioEmitter, m_curve) == 0x118);
+static_assert(offsetof(AudioEmitter, m_computed) == 0x120);
+static_assert(sizeof(AudioEmitter) == 0x128);
+
 // ---- The sound objects (port/decomp/audio/sound_manager.c) -------------------------------------------
 //
 // Aska::TList<T>: an intrusive list whose sentinel is a T (the T's m_prev / m_next at +0x08 / +0x10), then
@@ -573,7 +605,21 @@ public:
     u8 unk_0f0[0x1d8];           // 0x0f0: the control-object lists (+0xf0, +0x118), the 8 auxiliary slots
     TList<SoundHandle> m_handles;     // 0x2c8: guarded by m_handleCs
     FastCriticalSection m_handleCs;   // 0x2f8
-    u8 unk_388[0x690];           // 0x388: the 3D engine (+0x390), the mixer (+0x6c8), the devices and effectors
+    u8 unk_388[0x18];            // 0x388: the 3D engine (+0x390: its vtable, then the listener)
+    AudioListener m_listener;    // 0x3a0: Audio3DEngine's (SoundProcessSync computes it when it has a node)
+    u8 unk_4c0[0x150];           // 0x4c0: the emitter list (+0x4c0), ...
+    float m_volumeDb;            // 0x610: the 3D sounds' master volume (dB: 10^(dB / 20) * 1.4 above -96)
+    u8 unk_614[4];               // 0x614
+    float m_listenerRange;       // 0x618: the listener's curve's distance unit
+    float m_speakerAngles[AudioEmitter::kSpeakers];  // 0x61c: each speaker's angle (radians around the up axis; index 3 unused)
+    u8 unk_634[0xc];             // 0x634
+    Vector m_speakers[AudioEmitter::kSpeakers];      // 0x640: each speaker's place (index 3 unused)
+    float m_innerRadius;         // 0x6a0: closer than this: all "near"
+    float m_outerRadius;         // 0x6a4: farther: all "far"
+    float m_distanceUnit;        // 0x6a8
+    u8 unk_6ac[4];               // 0x6ac
+    void* m_listenerCurve;       // 0x6b0: the listener's attenuation curve (vtable slot 15)
+    u8 unk_6b8[0x360];           // 0x6b8: the mixer (+0x6c8), the devices and effectors
     TList<SoundCommand> m_commands;   // 0xa18: guarded by m_commandCs
     u8 unk_ad0[0x130];           // 0xad0: TList<SoundPass>, TList<AudioInterface>
     TList<SoundObject> m_deleting;    // 0xc00: the objects waiting to go back to the pool; guarded by m_deletingCs
@@ -589,6 +635,14 @@ public:
 static_assert(offsetof(SoundManager, m_signalTime) == 0x38);
 static_assert(offsetof(SoundManager, m_audioSignal) == 0x40);
 static_assert(offsetof(SoundManager, m_soundServer) == 0xe8);
+static_assert(offsetof(SoundManager, m_listener) == 0x3a0);
+static_assert(offsetof(SoundManager, m_listener.m_position) == 0x4a0);
+static_assert(offsetof(SoundManager, m_volumeDb) == 0x610);
+static_assert(offsetof(SoundManager, m_speakerAngles) == 0x61c);
+static_assert(offsetof(SoundManager, m_speakers) == 0x640);
+static_assert(offsetof(SoundManager, m_innerRadius) == 0x6a0);
+static_assert(offsetof(SoundManager, m_listenerCurve) == 0x6b0);
+static_assert(offsetof(SoundManager, m_commands) == 0xa18);
 static_assert(offsetof(SoundManager, m_handles) == 0x2c8);
 static_assert(offsetof(SoundManager, m_handles.m_sentinel) == 0x2d0);
 static_assert(offsetof(SoundManager, m_handles.m_count) == 0x2f0);

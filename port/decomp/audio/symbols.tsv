@@ -290,7 +290,7 @@ vaddr	ghidra	size	symbol	demangled	topic	status	note
 0x1f69cb4	0x2069cb4	112	_ZN4Aska12AudioEmitterC1Ev	Aska::AudioEmitter::AudioEmitter()	mixer	decompiled	
 0x1f69d24	0x2069d24	20	_ZN4Aska12AudioEmitterD1Ev	Aska::AudioEmitter::~AudioEmitter()	mixer	decompiled	
 0x1f69d38	0x2069d38	40	_ZN4Aska12AudioEmitterD0Ev	Aska::AudioEmitter::~AudioEmitter()	mixer	decompiled	
-0x1f69d60	0x2069d60	1952	_ZN4Aska12AudioEmitter7ComputeEv	Aska::AudioEmitter::Compute()	mixer	decompiled	
+0x1f69d60	0x2069d60	1952	_ZN4Aska12AudioEmitter7ComputeEv	Aska::AudioEmitter::Compute()	mixer	tested	
 0x1f6a500	0x206a500	20	_ZN4Aska13Audio3DObjectD2Ev	Aska::Audio3DObject::~Audio3DObject()	mixer	decompiled	
 0x1f6a514	0x206a514	40	_ZN4Aska13Audio3DObjectD0Ev	Aska::Audio3DObject::~Audio3DObject()	mixer	decompiled	
 0x1f6a53c	0x206a53c	124	_ZN4Aska10Sequencer2C2Ev	Aska::Sequencer2::Sequencer2()	sound_manager	decompiled	

@@ -464,6 +464,132 @@
    ]
   },
   {
+   "name": "AudioEmitter",
+   "union": false,
+   "fields": [
+    {
+     "offset": 0,
+     "name": "base",
+     "type": {
+      "kind": "struct",
+      "name": "Audio3DObject"
+     },
+     "size": 240
+    },
+    {
+     "offset": 240,
+     "name": "m_unk0f0",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 244,
+     "name": "m_distanceScale",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 248,
+     "name": "m_gains",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 272,
+     "name": "m_rangeScale",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 276,
+     "name": "unk_114",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 280,
+     "name": "m_curve",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 288,
+     "name": "m_computed",
+     "type": {
+      "kind": "int",
+      "size": 1,
+      "signed": false
+     },
+     "size": 1
+    },
+    {
+     "offset": 289,
+     "name": "unk_121",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 7
+     },
+     "size": 7
+    }
+   ],
+   "size": 296,
+   "align": 8,
+   "methods": [
+    {
+     "ghidra": "0x2069cb4",
+     "symbol": "_ZN4Aska12AudioEmitterC1Ev",
+     "name": "AudioEmitter"
+    },
+    {
+     "ghidra": "0x2069d24",
+     "symbol": "_ZN4Aska12AudioEmitterD1Ev",
+     "name": "~AudioEmitter"
+    },
+    {
+     "ghidra": "0x2069d38",
+     "symbol": "_ZN4Aska12AudioEmitterD0Ev",
+     "name": "~AudioEmitter"
+    },
+    {
+     "ghidra": "0x2069d60",
+     "symbol": "_ZN4Aska12AudioEmitter7ComputeEv",
+     "name": "Compute"
+    }
+   ]
+  },
+  {
    "name": "AudioMessage",
    "union": false,
    "fields": [
@@ -2817,9 +2943,168 @@
        "size": 1,
        "signed": false
       },
-      "count": 1680
+      "count": 24
      },
-     "size": 1680
+     "size": 24
+    },
+    {
+     "offset": 928,
+     "name": "m_listener",
+     "type": {
+      "kind": "struct",
+      "name": "AudioListener"
+     },
+     "size": 288
+    },
+    {
+     "offset": 1216,
+     "name": "unk_4c0",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 336
+     },
+     "size": 336
+    },
+    {
+     "offset": 1552,
+     "name": "m_volumeDb",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1556,
+     "name": "unk_614",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1560,
+     "name": "m_listenerRange",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1564,
+     "name": "m_speakerAngles",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "float",
+       "size": 4
+      },
+      "count": 6
+     },
+     "size": 24
+    },
+    {
+     "offset": 1588,
+     "name": "unk_634",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 12
+     },
+     "size": 12
+    },
+    {
+     "offset": 1600,
+     "name": "m_speakers",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "bytes",
+       "ctype": "Vector"
+      },
+      "count": 6
+     },
+     "size": 96
+    },
+    {
+     "offset": 1696,
+     "name": "m_innerRadius",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1700,
+     "name": "m_outerRadius",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1704,
+     "name": "m_distanceUnit",
+     "type": {
+      "kind": "float",
+      "size": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1708,
+     "name": "unk_6ac",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 4
+     },
+     "size": 4
+    },
+    {
+     "offset": 1712,
+     "name": "m_listenerCurve",
+     "type": {
+      "kind": "ptr",
+      "to": null
+     },
+     "size": 8
+    },
+    {
+     "offset": 1720,
+     "name": "unk_6b8",
+     "type": {
+      "kind": "array",
+      "of": {
+       "kind": "int",
+       "size": 1,
+       "signed": false
+      },
+      "count": 864
+     },
+     "size": 864
     },
     {
      "offset": 2584,

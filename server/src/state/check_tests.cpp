@@ -6,6 +6,7 @@
 #include "state/check.h"
 #include "state/state.h"
 #include "soaserver/native_test.h"
+#include "soaserver/fids.h"
 #include "testing/scratch.h"
 
 namespace soa::server {
@@ -37,11 +38,11 @@ NATIVE_TEST("server/schema-integrity") {
     sv.st.q("update player set free_coin = 100000", {});
     u32 mission = S.id("master_mission", "mf01_001");
     u32 gacha = S.id("master_gacha", "gacha_pickup_role_1011");
-    t.expect_eq(S.call(Request{"Login", 0xa01c67ef, {}, {}, {}}), 0u, "Login");
-    t.expect_eq(S.call(Request{"MissionStart", 0xb7c62bc2, {0, mission, 0, 0, 0, 0, 0}, {}, {}}), 0u, "MissionStart");
-    t.expect_eq(S.call(Request{"MissionEnd", 0x8312a64c, {mission, 0}, {}, {}}), 0u, "MissionEnd");
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {gacha}, {"x"}, {}}), 0u, "Gacha");
-    t.expect_eq(S.call(Request{"GetPlayer", 0x9a056905, {}, {}, {}}), 0u, "GetPlayer");
+    t.expect_eq(S.call(Request{"Login", fids::kLogin, {}, {}, {}}), 0u, "Login");
+    t.expect_eq(S.call(Request{"MissionStart", fids::kMissionStart, {0, mission, 0, 0, 0, 0, 0}, {}, {}}), 0u, "MissionStart");
+    t.expect_eq(S.call(Request{"MissionEnd", fids::kMissionEnd, {mission, 0}, {}, {}}), 0u, "MissionEnd");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {gacha}, {"x"}, {}}), 0u, "Gacha");
+    t.expect_eq(S.call(Request{"GetPlayer", fids::kGetPlayer, {}, {}, {}}), 0u, "GetPlayer");
     t.expect_eq((u32)sv.st.one("select count(*) from gacha_history", {}) > 0, true, "the draw is recorded");
     t.expect_eq((u32)sv.st.one("select count(*) from mission", {}) > 0, true, "the mission is recorded");
 

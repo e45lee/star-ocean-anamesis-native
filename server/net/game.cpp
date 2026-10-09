@@ -11,6 +11,7 @@
 
 #include "ninja/ninja_ref.h"
 #include "packet_log.h"
+#include "soaserver/fids.h"
 #include "soaserver/log.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/server.h"
@@ -18,9 +19,6 @@
 namespace soa::server::net {
 
 namespace {
-
-constexpr uint32_t kFidStartBridge = 0xd4053e85;
-constexpr uint32_t kFidUpdateSession = 0xea04f3fd;
 
 #define NLOG(level, ...)                                                                  \
     do {                                                                                  \
@@ -335,7 +333,7 @@ void GameServer::handle_packet(uint64_t id, Conn& c, const Packet& p, std::vecto
     if (!d.battle_log.empty()) log_file(std::to_string(seq) + "-" + api->name + "-battle_log.msgp", d.battle_log);
 
     // ---- the session setup (the wire layer's own) ----
-    if (p.fid == kFidStartBridge) {
+    if (p.fid == fids::kStartBridge) {
         // (d) a nativeToken of 48 hex characters (ResultStart's field holds up to 1023); the
         // third value is stored by the client in an 8-byte buffer and never read back [unknown]: empty
         std::string token = random_hex(48);
@@ -343,7 +341,7 @@ void GameServer::handle_packet(uint64_t id, Conn& c, const Packet& p, std::vecto
         return send(c, api->reply_fid, p.counter, false, result_start_body(token, opt_.bridge_url, ""), out,
                     ("token=" + token + " url=" + opt_.bridge_url).c_str());
     }
-    if (p.fid == kFidUpdateSession) {
+    if (p.fid == fids::kUpdateSession) {
         const std::string sid = d.req.strs.empty() ? "" : d.req.strs[0];
         auto s = sessions_.find(sid);
         if (s == sessions_.end()) return refuse(id, c, p.fid, p.counter, kStatusCommError, "unknown nativeSessionId " + sid, out);

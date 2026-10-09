@@ -8,6 +8,7 @@
 #include "api/campaign/campaign.h"
 #include "core/errors.h"
 #include "soaserver/config.h"
+#include "soaserver/fids.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
 
@@ -112,9 +113,8 @@ NATIVE_TEST("campaign/splice") {
 
 namespace {
 
-constexpr u32 kFidMissionStart = 0xb7c62bc2, kFidMissionEnd = 0x8312a64c, kFidMissionTalk = 0x816dc8b4;
-Request start_req(u32 mission) { return Request{"MissionStart", kFidMissionStart, {0, mission, 0, 0, 0, 0, 0}, {}, {}}; }
-Request end_req(u32 mission) { return Request{"MissionEnd", kFidMissionEnd, {mission, 0}, {}, {}}; }
+Request start_req(u32 mission) { return Request{"MissionStart", fids::kMissionStart, {0, mission, 0, 0, 0, 0, 0}, {}, {}}; }
+Request end_req(u32 mission) { return Request{"MissionEnd", fids::kMissionEnd, {mission, 0}, {}, {}}; }
 
 // A scratch server as the live one (server::answer, ext::with_live_server), with the server
 // switched on, for the length of a test; restores both.
@@ -155,7 +155,7 @@ NATIVE_TEST("campaign/clear-in-the-request") {
     t.expect_eq(s.call(end_req(battle)), 0u, "MissionEnd");
     t.expect_eq(s.sv.st.one("select count(*) from campaign_clear where mission_id = ?", {battle}), (int64_t)1, "the battle's clear recorded");
     t.expect_eq(s.sv.st.one("select mission_id from campaign_last where id = 1", {}), (int64_t)battle, "as the last play");
-    t.expect_eq(s.call(Request{"MissionTalk", kFidMissionTalk, {0, talk, 0, 0}, {}, {}}), 0u, "MissionTalk");
+    t.expect_eq(s.call(Request{"MissionTalk", fids::kMissionTalk, {0, talk, 0, 0}, {}, {}}), 0u, "MissionTalk");
     t.expect_eq(s.sv.st.one("select count(*) from campaign_clear where mission_id = ?", {talk}), (int64_t)1, "the scene's clear recorded");
 }
 

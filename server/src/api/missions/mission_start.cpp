@@ -15,6 +15,7 @@
 #include "core/log.h"
 #include "core/request_args.h"
 #include "core/response.h"
+#include "soaserver/fids.h"
 #include "core/time.h"  // day_start
 #include "rules/mission_rules.h"
 #include "soa/chash32.h"
@@ -544,7 +545,7 @@ std::vector<u8> mission_start(ext::Ctx& ctx, const Request& req) { return start_
 std::vector<u8> training_mission_start(ext::Ctx& ctx, const Request& req) {
     const auto training = args::TrainingMissionStartArgs::from(req);
     Request as_start{"MissionStart",
-                     0xb7c62bc2,
+                     fids::kMissionStart,
                      {(u64)MissionType::kTraining, training.mission, training.helper_index_plus_1, training.own_helper_uid, 0, 0, 0},
                      {},
                      {}};

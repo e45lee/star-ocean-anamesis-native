@@ -12,6 +12,7 @@
 #include "api/social/rental.h"
 #include "core/errors.h"
 #include "soaserver/config.h"
+#include "soaserver/fids.h"
 #include "soaserver/msgpack.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
@@ -47,7 +48,7 @@ NATIVE_TEST("missions/surprise-campaign-evaluation") {
     auto R0 = roll_drops(ctx, m3, "master_mission", 0, 0, false, {});
     t.expect_eq(R0.surprise_lots, 0u, "no surprise, no surprise lots");
     // the roll at MissionStart: ~10.25 % of the starts of mf01_003 meet the surprise enemy
-    Request ms{"MissionStart", 0xb7c62bc2, {0, m3, 0, 0, 0, 0, 0}, {}, {}};
+    Request ms{"MissionStart", fids::kMissionStart, {0, m3, 0, 0, 0, 0, 0}, {}, {}};
     int surprises = 0;
     for (int k = 0; k < 400; k++) {
         sv.st.q("update player set stamina = 200", {});
@@ -97,8 +98,8 @@ NATIVE_TEST("missions/unlock-refusal") {
     RequestContext rc = sv.new_request();  // for the handlers called directly
     ext::Ctx ctx = sv.make_ctx(rc);
     u32 m1 = S.id("master_mission", "mf01_001");
-    Request ms{"MissionStart", 0xb7c62bc2, {0, m1, 0, 0, 0, 0, 0}, {}, {}};
-    Request me{"MissionEnd", 0x8312a64c, {m1, 0}, {}, {}};
+    Request ms{"MissionStart", fids::kMissionStart, {0, m1, 0, 0, 0, 0, 0}, {}, {}};
+    Request me{"MissionEnd", fids::kMissionEnd, {m1, 0}, {}, {}};
     // stamina short: refused with 10004, nothing changes (stamina, play record, play count)
     sv.st.q("update player set stamina = 1, stamina_at = ?", {clock_now()});
     std::vector<u8> out;
@@ -131,18 +132,18 @@ NATIVE_TEST("missions/end-unknown-mission") {
     const u32 kNotHandled = 0xffffffffu;
     auto recorded = [&] { return (u32)sv.st.one("select count(*) from mission", {}); };
     u32 before = recorded();
-    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {}, {}, {}}), kNotHandled, "no argument, no play: not answered");
+    t.expect_eq(S.call({"MissionEnd", fids::kMissionEnd, {}, {}, {}}), kNotHandled, "no argument, no play: not answered");
     t.expect_eq((u32)sv.st.one("select count(*) from mission where mission_id = 0", {}), 0u, "mission 0 not recorded");
-    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {12345, 0}, {}, {}}), kNotHandled, "an unknown id: not answered");
+    t.expect_eq(S.call({"MissionEnd", fids::kMissionEnd, {12345, 0}, {}, {}}), kNotHandled, "an unknown id: not answered");
     t.expect_eq(recorded(), before, "nothing recorded");
     // a known mission ends as before, also when its start was refused (no play: the request's id)
     u32 m1 = S.id("master_mission", "mf01_001");
-    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {m1, 0}, {}, {}}), 0u, "a known mission without a play: answered");
+    t.expect_eq(S.call({"MissionEnd", fids::kMissionEnd, {m1, 0}, {}, {}}), 0u, "a known mission without a play: answered");
     t.expect_eq((u32)sv.st.one("select clear_count from mission where mission_id = ?", {m1}), 1u, "cleared");
     // with a play, no argument ends the play's mission
     sv.st.q("update player set stamina = 100", {});
-    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m1, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
-    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {}, {}, {}}), 0u, "no argument: the play's mission");
+    t.expect_eq(S.call({"MissionStart", fids::kMissionStart, {0, m1, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
+    t.expect_eq(S.call({"MissionEnd", fids::kMissionEnd, {}, {}, {}}), 0u, "no argument: the play's mission");
     t.expect_eq((u32)sv.st.one("select clear_count from mission where mission_id = ?", {m1}), 2u, "the play's mission cleared");
 }
 
@@ -156,7 +157,7 @@ NATIVE_TEST("missions/play-record") {
     Server& sv = S.sv;
     u32 m3 = S.id("master_mission", "mf01_003");
     sv.st.q("update player set stamina = 200", {});
-    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m3, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
+    t.expect_eq(S.call({"MissionStart", fids::kMissionStart, {0, m3, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
     t.expect_eq((u32)sv.st.one("select count(*) from play", {}), 1u, "one play");
     t.expect_eq((u32)sv.st.one("select mission_id from play", {}), m3, "its mission");
     const u32 members = (u32)sv.st.one("select count(*) from play_member", {});
@@ -168,19 +169,19 @@ NATIVE_TEST("missions/play-record") {
         "slots 0..n-1");
     // a surprise roll, then the battle is lost
     sv.st.q("update play set surprise = 1", {});
-    t.expect_eq(S.call({"MissionFailed", 0x479604f6, {0, m3}, {}, {}}), 0u, "MissionFailed");
+    t.expect_eq(S.call({"MissionFailed", fids::kMissionFailed, {0, m3}, {}, {}}), 0u, "MissionFailed");
     t.expect_eq((u32)sv.st.one("select count(*) from play", {}), 0u, "the play ended");
     t.expect_eq((u32)sv.st.one("select count(*) from play_member", {}), 0u, "its members with it");
     // a MissionEnd naming the mission, with no play: no party gets EXP, nothing stale is read
     std::vector<u8> out;
-    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {m3, 0}, {}, {}}, &out), 0u, "MissionEnd without a play");
+    t.expect_eq(S.call({"MissionEnd", fids::kMissionEnd, {m3, 0}, {}, {}}, &out), 0u, "MissionEnd without a play");
     Value d = out.empty() ? Value() : mp_decode(out);
     const Value* data = d.find("data");
     const Value* result = data ? data->find("MissionResultCharacter") : nullptr;
     t.expect_eq(result && result->type == Value::Map ? result->map.size() : (size_t)99, (size_t)0, "no party: no character EXP");
     // the tutorial battle's NPC party: npc_uid, no roster reference
     u32 tutorial = S.id("master_mission", "ms00_001");
-    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, tutorial, 0, 0, 0, 0, 0}, {}, {}}), 0u, "the tutorial battle");
+    t.expect_eq(S.call({"MissionStart", fids::kMissionStart, {0, tutorial, 0, 0, 0, 0, 0}, {}, {}}), 0u, "the tutorial battle");
     const u32 npcs = (u32)sv.m.one("select count(*) from master_mission_npc where master_mission_id = ?", {tutorial});
     t.expect_eq((u32)sv.st.one("select count(*) from play_member where uid is null and npc_uid between 2130706433 and 2130706687", {}), npcs,
                 "the mission NPCs as npc_uid");
@@ -205,35 +206,35 @@ NATIVE_TEST("missions/continue") {
     const u32 price = (u32)std::stoul("0" + text_of(sv.m, "select value from master_global where key = 'continue_use_coin'"));
     t.expect_eq(price, 100u, "(a) continue_use_coin");
     std::vector<u8> out;
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), (u32)ErrorCode::kInvalidOperation, "nothing in progress: refused");
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {0}, {}, {}}, &out), 0u, "a decline without a play: answered");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {1}, {}, {}}), (u32)ErrorCode::kInvalidOperation, "nothing in progress: refused");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {0}, {}, {}}, &out), 0u, "a decline without a play: answered");
     t.expect_eq(continued(out), 0, "declined");
     // a story mission (is_continue 1)
     u32 m3 = S.id("master_mission", "mf01_003");
     t.expect_eq((u32)sv.m.one("select is_continue from master_mission where id = ?", {m3}), 1u, "(a) mf01_003 continues");
     sv.st.q("update player set stamina = 200, free_coin = 1000, pay_coin = 0", {});
-    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m3, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
+    t.expect_eq(S.call({"MissionStart", fids::kMissionStart, {0, m3, 0, 0, 0, 0, 0}, {}, {}}), 0u, "start");
     const std::string play_before = text_of(sv.st, "select mission_id || ',' || party_id || ',' || stamina_cost || ',' || surprise from play");
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {0}, {}, {}}, &out), 0u, "いいえ");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {0}, {}, {}}, &out), 0u, "いいえ");
     t.expect_eq(continued(out), 0, "not continued");
     t.expect_eq(coins(), 1000u, "a decline costs nothing");
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}, &out), 0u, "はい");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {1}, {}, {}}, &out), 0u, "はい");
     t.expect_eq(continued(out), 1, "continued");
     t.expect_eq(coins(), 900u, "continue_use_coin taken");
     t.expect_eq(text_of(sv.st, "select mission_id || ',' || party_id || ',' || stamina_cost || ',' || surprise from play"), play_before,
                 "the play stays open, unchanged");
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {5}, {}, {}}), 0u, "any non-zero continues");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {5}, {}, {}}), 0u, "any non-zero continues");
     t.expect_eq(coins(), 800u, "and pays again");
     sv.st.q("update player set free_coin = 99", {});
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), (u32)ErrorCode::kCoinsShort, "coins short: refused");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {1}, {}, {}}), (u32)ErrorCode::kCoinsShort, "coins short: refused");
     t.expect_eq(coins(), 99u, "nothing taken");
     sv.st.q("update player set free_coin = 60, pay_coin = 40", {});
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), 0u, "free and paid together");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {1}, {}, {}}), 0u, "free and paid together");
     t.expect_eq(sv.st.one("select free_coin + pay_coin from player", {}), (int64_t)0, "free first, then paid");
     // (a)+(b) Campaign2021_spring_Continue (model 99, 2021-03-25 .. 04-15, x0.5): every type
     S.set_clock("2021-04-01 12:00:00");
     sv.st.q("update player set free_coin = 1000, pay_coin = 0", {});
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), 0u, "during the spring campaign");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {1}, {}, {}}), 0u, "during the spring campaign");
     t.expect_eq(coins(), 950u, "half price");
     // an event mission in event_2020_max_04 during Campaign2020_2021_newyear_Continue_007 (its
     // area only), and one in another area
@@ -247,19 +248,19 @@ NATIVE_TEST("missions/continue") {
         {});
     if (!in_area || !other) return t.fail("no event missions for the area test");
     sv.st.q("update play set mission_id = ?, mission_type = 1", {in_area});
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), 0u, "an event mission in the campaign's area");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {1}, {}, {}}), 0u, "an event mission in the campaign's area");
     t.expect_eq(coins(), 900u, "half price");
     sv.st.q("update play set mission_id = ?, mission_type = 1", {other});
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), 0u, "another area");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {1}, {}, {}}), 0u, "another area");
     // (Campaign2020_2021_newyear_Continue_001 is the story missions' (model 0), not the events')
     t.expect_eq(coins(), 800u, "full price");
     // (a) a tower mission: is_continue 0
     const u32 tower = (u32)sv.m.one("select id from master_tower_mission order by id limit 1", {});
     sv.st.q("update play set mission_id = ?, mission_type = 2", {tower});
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {1}, {}, {}}), (u32)ErrorCode::kInvalidOperation, "is_continue 0: refused");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {1}, {}, {}}), (u32)ErrorCode::kInvalidOperation, "is_continue 0: refused");
     t.expect_eq(coins(), 800u, "nothing taken");
     // MissionLose (no 3.7.0 caller): ends the play as MissionFailed
-    t.expect_eq(S.call({"MissionLose", 0x863bb1ec, {}, {}, {}}), 0u, "MissionLose");
+    t.expect_eq(S.call({"MissionLose", fids::kMissionLose, {}, {}, {}}), 0u, "MissionLose");
     t.expect_eq((u32)sv.st.one("select count(*) from play", {}), 0u, "the play ended");
 }
 
@@ -276,7 +277,7 @@ NATIVE_TEST("missions/training-start") {
     sv.st.q("update player set stamina = 7", {});
     const u32 party = (u32)sv.st.one("select ifnull(party_id, 1) from player", {});
     std::vector<u8> out;
-    t.expect_eq(S.call({"TrainingMissionStart", 0x0a16fd90, {sim, 1, 0}, {}, {}}, &out), 0u, "started");
+    t.expect_eq(S.call({"TrainingMissionStart", fids::kTrainingMissionStart, {sim, 1, 0}, {}, {}}, &out), 0u, "started");
     Value d = out.empty() ? Value() : mp_decode(out);
     const Value* data = d.find("data");
     const Value* mp = data ? data->find("MissionParameter") : nullptr;
@@ -300,14 +301,14 @@ NATIVE_TEST("missions/training-start") {
     t.expect_eq((u32)sv.st.one("select count(*) from play", {}), 0u, "no play record");
     t.expect_eq((u32)sv.st.one("select count(*) from mission where mission_id = ?", {sim}), 0u, "no play count");
     std::vector<u8> pm;
-    t.expect_eq(S.call({"GetPlayMission", 0x7c1b7a1b, {}, {}, {}}, &pm), 0u, "GetPlayMission");
+    t.expect_eq(S.call({"GetPlayMission", fids::kGetPlayMission, {}, {}, {}}, &pm), 0u, "GetPlayMission");
     Value p = pm.empty() ? Value() : mp_decode(pm);
     const Value* pdata = p.find("data");
     const Value* play = pdata ? pdata->find("PlayMission") : nullptr;
     t.expect_eq(play ? play->get_u("is_play") : 9, (u64)0, "nothing to resume");
     // a lost simulator battle: OpenContinue declines by itself (is_continue 0): answered
-    t.expect_eq(S.call({"MissionContinue", 0x755cba3d, {0}, {}, {}}), 0u, "the automatic decline");
-    t.expect_eq(S.call({"TrainingMissionStart", 0x0a16fd90, {12345, 1, 0}, {}, {}}) != 0, true, "an unknown mission isn't answered");
+    t.expect_eq(S.call({"MissionContinue", fids::kMissionContinue, {0}, {}, {}}), 0u, "the automatic decline");
+    t.expect_eq(S.call({"TrainingMissionStart", fids::kTrainingMissionStart, {12345, 1, 0}, {}, {}}) != 0, true, "an unknown mission isn't answered");
 }
 
 // MissionRestart replays the recorded helper (PLAN-schema S7; before, it sent the play's party id
@@ -332,14 +333,14 @@ NATIVE_TEST("missions/restart-helper") {
             for (const Value& member : pc->arr) ids.push_back(member.get_u("id"));
         return ids;
     };
-    const Request restart{"MissionRestart", 0x1f96f310, {}, {}, {}};
+    const Request restart{"MissionRestart", fids::kMissionRestart, {}, {}, {}};
     // an own character outside the party as the helper
     const u64 own = (u64)sv.st.one(
         "select uid from roster where uid not in (select uid from party_member where uid is not null and party_id = (select party_id from player)) "
         "order by uid limit 1",
         {});
     std::vector<u8> out;
-    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m1, 1, own, 0, 0, 0}, {}, {}}, &out), 0u, "start with an own helper");
+    t.expect_eq(S.call({"MissionStart", fids::kMissionStart, {0, m1, 1, own, 0, 0, 0}, {}, {}}, &out), 0u, "start with an own helper");
     Value started = battle(out);
     t.expect_eq(started.get_u("rental_sub_character_id"), own, "the own helper");
     t.expect_eq((u32)sv.st.one("select helper_kind from play", {}), (u32)HelperKind::kOwn, "recorded: kind own");
@@ -348,12 +349,12 @@ NATIVE_TEST("missions/restart-helper") {
     Value restarted = battle(out);
     t.expect_eq(restarted.get_u("rental_sub_character_id"), own, "the restart keeps the own helper");
     t.expect_eq(members(restarted), members(started), "the same members");
-    t.expect_eq(S.call({"MissionEnd", 0x8312a64c, {m1, 0}, {}, {}}), 0u, "MissionEnd");
+    t.expect_eq(S.call({"MissionEnd", fids::kMissionEnd, {m1, 0}, {}, {}}), 0u, "MissionEnd");
     // a rental clone as member 4
     const u64 rental = rental::id_of(CharacterUid(own));
     const int64_t rentals = sv.st.one("select ifnull(sum(count), 0) from follow_rental", {});
     out.clear();
-    t.expect_eq(S.call({"MissionStart", 0xb7c62bc2, {0, m1, 1, 0, 0, rental, 0}, {}, {}}, &out), 0u, "start with a rental clone");
+    t.expect_eq(S.call({"MissionStart", fids::kMissionStart, {0, m1, 1, 0, 0, rental, 0}, {}, {}}, &out), 0u, "start with a rental clone");
     started = battle(out);
     t.expect_eq(members(started).size(), (size_t)4, "four members");
     t.expect_eq(members(started).back(), rental, "the clone is member 4");
@@ -369,7 +370,7 @@ NATIVE_TEST("missions/restart-helper") {
     sv.st.q("update player set party_id = ?", {set == 1 ? 2u : 1u});
     t.expect_eq(S.call(restart), 0u, "MissionRestart after the current set changed");
     t.expect_eq((u32)sv.st.one("select party_id from play", {}), set, "the play's set");
-    t.expect_eq(S.call({"MissionFailed", 0x479604f6, {}, {}, {}}), 0u, "MissionFailed");
+    t.expect_eq(S.call({"MissionFailed", fids::kMissionFailed, {}, {}, {}}), 0u, "MissionFailed");
     t.expect_eq(S.call(restart), 0xffffffffu, "nothing in progress: not handled");
 }
 

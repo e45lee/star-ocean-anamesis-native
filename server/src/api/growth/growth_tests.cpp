@@ -5,6 +5,7 @@
 #include <ctime>
 
 #include "soaserver/native_test.h"
+#include "soaserver/fids.h"
 #include "soaserver/ext.h"
 #include "rules/growth_rules.h"
 #include "core/time.h"
@@ -198,7 +199,7 @@ NATIVE_TEST("growth/equip-auto") {
     c.st.q("update roster set accessory_uid = ? where uid = ?", {a_strong, other_chara});
     c.st.q("update roster set equip_skill1 = null, equip_skill2 = null, equip_skill3 = null where uid = ?", {uid});
     std::vector<u8> out;
-    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {uid}, {}, {}}, &out), 0u, "EquipAuto");
+    t.expect_eq(S.call({"EquipAuto", fids::kEquipAuto, {uid}, {}, {}}, &out), 0u, "EquipAuto");
     t.expect_eq((u64)c.st.one("select weapon_uid from roster where uid = ?", {uid}), w_strong, "the strongest weapon of the role's kind");
     t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {uid}), a_weak, "an accessory nobody wears");
     t.expect_eq((u64)c.st.one("select accessory_uid from roster where uid = ?", {other_chara}), a_strong, "the other character keeps its own");
@@ -229,10 +230,10 @@ NATIVE_TEST("growth/equip-auto") {
     });
     t.expect_eq(slots == open, true, "the empty slots took the open skills");
     // a second call changes nothing (already the best; the skills stay)
-    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {uid}, {}, {}}), 0u, "again");
+    t.expect_eq(S.call({"EquipAuto", fids::kEquipAuto, {uid}, {}, {}}), 0u, "again");
     t.expect_eq((u64)c.st.one("select weapon_uid from roster where uid = ?", {uid}), w_strong, "the same weapon");
     (void)w_weak;
-    t.expect_eq(S.call({"EquipAuto", 0x7827ff6a, {12345}, {}, {}}), (u32)ErrorCode::kItemUnusable, "an unknown character: refused");
+    t.expect_eq(S.call({"EquipAuto", fids::kEquipAuto, {12345}, {}, {}}), (u32)ErrorCode::kItemUnusable, "an unknown character: refused");
 }
 
 // EquipAccessory (equip_item, shared with EquipWeapon): an owned accessory goes on, moves from its

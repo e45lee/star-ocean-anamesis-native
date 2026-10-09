@@ -11,6 +11,7 @@
 #include "api/events/enable_events.h"
 #include "api/gacha/gacha.h"
 #include "soaserver/config.h"
+#include "soaserver/fids.h"
 #include "soaserver/events.h"
 #include "soaserver/native_test.h"
 #include "testing/scratch.h"
@@ -34,13 +35,13 @@ NATIVE_TEST("gacha/stepup-box") {
     t.expect_eq(chain[0], s1, "step 1 first");
     sv.st.q("update player set free_coin = 100000", {});
     // step 3 before step 1: refused (10403), no coins taken
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s3}, {"x"}, {}}), 10403u, "out of order");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {s3}, {"x"}, {}}), 10403u, "out of order");
     t.expect_eq((u32)sv.st.one("select free_coin from player", {}), 100000u, "no coins taken");
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s1}, {"x"}, {}}), 0u, "step 1");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {s1}, {"x"}, {}}), 0u, "step 1");
     t.expect_eq((u32)sv.st.one("select next_id from stepup where head = ?", {s1}), s2, "at step 2");
     t.expect_eq((u32)sv.st.one("select free_coin from player", {}), 100000u - (u32)sv.m.one("select bulk_coin from master_gacha where id = ?", {s1}),
                 "step 1 price");
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s2}, {"x"}, {}}), 0u, "step 2");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {s2}, {"x"}, {}}), 0u, "step 2");
     t.expect_eq((u32)sv.st.one("select next_id from stepup where head = ?", {s1}), s3, "at step 3");
     // (b) the client's view: a map keyed by step id; the current step open with try_count 0 on
     // it and next = step 4, every other step of the chain closed
@@ -88,38 +89,38 @@ NATIVE_TEST("gacha/stepup-box") {
         u32 perm = S.id("master_gacha", "gacha_role_0001");
         sv.st.q("update player set free_coin = 100000, pay_coin = 0", {});
         std::vector<u8> out;
-        t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {perm, 1}, {"x"}, {}}, &out), 0u, "single draw");
+        t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {perm, 1}, {"x"}, {}}, &out), 0u, "single draw");
         Value r = mp_decode(out);
         const Value* it = r.find("data") ? r.find("data")->find("GachaItems") : nullptr;
         t.expect_eq(it ? (u32)it->arr.size() : 0u, 1u, "one unit");
         t.expect_eq((u32)sv.st.one("select free_coin from player", {}), 100000u - (u32)sv.m.one("select coin from master_gacha where id = ?", {perm}),
                     "the single price");
         out.clear();
-        t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {perm, 0}, {"x"}, {}}, &out), 0u, "bulk draw");
+        t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {perm, 0}, {"x"}, {}}, &out), 0u, "bulk draw");
         r = mp_decode(out);
         it = r.find("data") ? r.find("data")->find("GachaItems") : nullptr;
         t.expect_eq(it ? (u32)it->arr.size() : 0u, (u32)sv.m.one("select bulk_count from master_gacha where id = ?", {perm}), "bulk units");
     }
     // coins short: 20003 紋章石が不足しています (the code the draw's answer opens the coin shop on)
     sv.st.q("update player set free_coin = 0, pay_coin = 0", {});
-    t.expect_eq(S.call(Request{"Gacha", 0xa0a1940b, {s3}, {"x"}, {}}), 20003u, "coins short");
+    t.expect_eq(S.call(Request{"Gacha", fids::kGacha, {s3}, {"x"}, {}}), 20003u, "coins short");
     t.expect_eq((u32)sv.st.one("select next_id from stepup where head = ?", {s1}), s3, "still at step 3");
     // box gacha: box_event_gacha_yumenonagisa_003 (50 slots, item_coin_294 x 5 per draw, resettable)
     u32 box = S.id("master_gacha", "box_event_gacha_yumenonagisa_003");
     u32 coin = (u32)sv.m.one("select ticket_item_id from master_gacha where id = ?", {box});
     u32 slots = (u32)sv.m.one("select sum(box_count) from master_box_gacha where master_gacha_id = ?", {box});
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 3}, {}, {}}), 10206u, "no event coins");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {box, 3}, {}, {}}), 10206u, "no event coins");
     sv.st.q(
         "insert into stock (master_item_id, item_type, count) values (?, 9, 100000)"
         " on conflict(master_item_id) do update set item_type = excluded.item_type, count = excluded.count",
         {coin});
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 3}, {}, {}}), 0u, "3 draws");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {box, 3}, {}, {}}), 0u, "3 draws");
     t.expect_eq((u32)sv.st.one("select sum(drawn) from box_slots where gacha_id = ?", {box}), 3u, "3 slots drawn");
     t.expect_eq((u32)sv.st.one("select count from stock where master_item_id = ?", {coin}), 100000u - 15u, "15 coins");
     // the rest in one request: the draws stop at the box's copies (each once); the ∞ box (the
     // series' last) then refills by itself, counted as a reset
     std::vector<u8> out;
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 1000}, {}, {}}, &out), 0u, "the rest");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {box, 1000}, {}, {}}, &out), 0u, "the rest");
     {
         Value r = mp_decode(out);
         const Value* it = r.find("data") ? r.find("data")->find("BoxGachaItems") : nullptr;
@@ -131,8 +132,8 @@ NATIVE_TEST("gacha/stepup-box") {
     }
     t.expect_eq((u32)sv.st.one("select count(*) from box_slots where gacha_id = ?", {box}), 0u, "the ∞ box refilled");
     t.expect_eq((u32)sv.st.one("select reset_count from box_state where gacha_id = ?", {box}), 1u, "refill counted");
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {box, 1}, {}, {}}), 0u, "drawn again");
-    t.expect_eq(S.call(Request{"ResetBoxGacha", 0xc292cf48, {box}, {}, {}}), 0u, "reset");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {box, 1}, {}, {}}), 0u, "drawn again");
+    t.expect_eq(S.call(Request{"ResetBoxGacha", fids::kResetBoxGacha, {box}, {}, {}}), 0u, "reset");
     t.expect_eq((u32)sv.st.one("select count(*) from box_slots where gacha_id = ?", {box}), 0u, "refilled");
     t.expect_eq((u32)sv.st.one("select reset_count from box_state where gacha_id = ?", {box}), 2u, "reset counted");
     // BoxGachaList (b): a map keyed by box id; a series lists its boxes up to the current one,
@@ -156,7 +157,7 @@ NATIVE_TEST("gacha/stepup-box") {
         const Value* su = d->find("StepUpGacha");
         t.expect_eq(su && su->type == Value::Map && !su->map.empty(), true, "step-ups open on 2020-08-10");
     }
-    t.expect_eq(S.call(Request{"BoxGacha", 0x5be25d4b, {b1, 1000}, {}, {}}), 0u, "empty box 1");
+    t.expect_eq(S.call(Request{"BoxGacha", fids::kBoxGacha, {b1, 1000}, {}, {}}), 0u, "empty box 1");
     {
         Value l = box_gacha_list_info(ctx, b1);
         const Value *e1 = l.find(std::to_string(b1)), *e2 = l.find(std::to_string(b2));

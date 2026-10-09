@@ -11,8 +11,8 @@ parallel, against the same lib:
   - tools/gen_particles_instantiations.py --check port/src/native/particles/gen/particles_instantiations.inc
   - tools/gen_master_elements.py --check     port/src/native/master/gen/master_elements.h
   - tools/gen_infos.py --check                port/src/native/info/gen/info_classes.h
-  - tools/api_wire.py --check                 port/src/native/api/gen/wire_table.inc and
-                                              server/net/gen/wire_decode.inc
+  - tools/api_wire.py --check                 port/src/native/api/gen/wire_table.inc,
+                                              server/net/gen/wire_decode.inc and server/include/soaserver/fids.h
 The lib: --lib, else work/libSOA-3.7.0.so, else lib/arm64-v8a/libSOA.so extracted from the 3.7.0 APK
 in apk/ (a temporary copy). It must be the build the files are stamped with (genlib.KNOWN 3.7.0). A new
 generator of a built file belongs in GENERATORS (and in port/src/native/README.md "Generated tables").

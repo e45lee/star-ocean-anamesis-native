@@ -7,13 +7,12 @@
 #include "core/log.h"
 #include "soaserver/api_campaign.h"
 #include "soaserver/events.h"
+#include "soaserver/fids.h"
 #include "soaserver/server.h"
 
 namespace soa::server {
 
 namespace {
-
-constexpr u32 kFidGetPlayMission = 0x7c1b7a1b;
 
 // The story campaign's additions to an answer (soa-server's wire route): ActiveMissionList on every
 // reply, the campaign's Player / ActiveWorldMapMissionList on the mission replies, the party
@@ -34,7 +33,7 @@ void campaign_reply(const Request& r, std::vector<u8>& body) {
 bool answer_end_mission_talk(const Request& r, Reply& reply) {
     u32 mission = r.ints.size() > 1 ? (u32)r.ints[1] : 0;
     if (mission) end_mission_talk(mission);
-    Request gp{"GetPlayMission", kFidGetPlayMission, {}, {}, {}};
+    Request gp{"GetPlayMission", fids::kGetPlayMission, {}, {}, {}};
     submit(gp);
     reply.body.clear();
     if (!handle(gp.fid, reply.body)) return false;

@@ -44,10 +44,12 @@ or from the lib itself; *estimated* numbers are extrapolations from them.
   and return addresses keep holding **guest addresses**, which the dispatch table (3) maps to host
   functions. The guest's code bytes stay mapped too (read-only data the game reads in a few places;
   nobody executes them).
-- **The register file** (x0-x30, sp, nzcv, v0-v31, tpidr) is a per-thread struct laid out like
-  dynarmic's `A64JitState`, so `Cpu`'s pointers (`st_`, `vec_`) can point at it: every
-  `HostFn(Cpu&)` (natives, HLE thunks), `guest_call`, `NATIVE_METHOD` and the GDB stub's register
-  view work unchanged.
+- **The register file** (x0-x30, sp, nzcv, v0-v31, tpidr) is a per-thread struct whose registers
+  are laid out like dynarmic's `A64JitState` (`reg[31], sp, pc`, then `vec[64]`), so `Cpu`'s
+  pointers (`st_`, `vec_`) can point at it: every `HostFn(Cpu&)` (natives, HLE thunks),
+  `guest_call`, `NATIVE_METHOD` and the GDB stub's register view work unchanged. The flags differ:
+  `A64JitState::cpsr_nzcv` is in x86 flag order (`NZCV::FromX64`), the recompiled code keeps AArch64
+  order, so `Cpu`'s `nzcv_` users (the GDB stub's `cpsr`) get an accessor that converts per engine.
 - **HLE is unchanged:** imports are resolved at load time exactly as now; a call to an import's PLT
   stub becomes a direct call of its host function.
 
@@ -55,7 +57,11 @@ or from the lib itself; *estimated* numbers are extrapolations from them.
 
 1. **Transition:** `soa --engine jit|recomp|mixed` (default `jit` until P3). `mixed` runs the
    recompiled functions that exist and enters the JIT for any address without one (the dispatch
-   table's miss path), so a partial translation is usable from day one.
+   table's miss path), so a partial translation is usable from day one. In `mixed`, **every
+   recompiled function's guest entry is hooked** (`SVC; RET`, as a native's is today), so JIT code
+   that reaches it (a caller still under the JIT, a vtable call) runs the recompiled function and
+   not the original bytes; otherwise the "no JIT entry" counter of P2 could never reach 0 and the
+   recomp-vs-JIT checks would compare the JIT with itself.
 2. **After P3:** `recomp` is the default; the JIT stays as a **debug-only reference** (`--engine
    jit`, the differential tests' second opinion) for one or two batches.
 3. **P4:** dynarmic leaves the runtime. Its *frontend* (decoder + IR, a host library) stays a
@@ -82,12 +88,13 @@ or from the lib itself; *estimated* numbers are extrapolations from them.
 ### What it costs
 
 - **A translator to write and keep** (~250 IR opcodes' semantics in C++; 121 done in the prototype).
-- **Build size and time** (*estimated*, 5): ~20 M lines of generated C++, ~85 MB of x86-64
-  `.text` at `-O1`, ~40-65 CPU-minutes per full compile; a few minutes on this machine's 32 cores.
+- **Build size and time** (*estimated*, 5): ~22 M lines of generated C++, ~95 MB of x86-64
+  `.text` at `-O1`, ~45-70 CPU-minutes per full compile; a few minutes on this machine's 32 cores.
 - **Exactness work** in the corners the JIT got for free: exceptions/unwinding (2.5), indirect
   jumps (2.4), the exclusive monitor (2.3).
-- **Binary distribution:** the generated code is a translation of the game's code; it must never
-  be committed or packaged where game files may not go (8, question 1).
+- **Binary distribution:** the generated code is a translation of the game's code, and so is a
+  `soa` binary compiled from it: under the hard rule "release packages never contain game files"
+  it can't ship as today's packages do (8, question 1, the first decision this plan needs).
 
 ## 2. The translator
 
@@ -99,8 +106,14 @@ constant propagation, dead code), and prints the IR as C++**, one inline functio
 hand-written header (`recomp_rt.h`). Reasons, all measured on this lib:
 
 - **Decoding is already proven:** the JIT runs this decoder on the game today. Translating all
-  103,939 functions found **no** instruction it can't decode (0 `UnallocatedEncoding`, 0
-  `Interpret` terminals; 419 `BRK`s, the game's traps), in 18 s on one core.
+  103,939 functions found **no** instruction it can't decode (0 `UnallocatedEncoding`; 419 `BRK`s,
+  the game's traps), in 18 s on one core. Coverage of that pass: the blocks reachable by direct
+  control flow from each entry cover **88.4%** of the functions' 22.63 MB (jump-table case bodies
+  aren't followed, since a `BR` block names no successor); with a gap sweep (every uncovered address
+  inside a function becomes a block start, `RECOMP_SWEEP=1`) **96.7%**, still with no undecodable
+  instruction; the only `Interpret` terminals (128) are zero padding inside two functions' bounds, and
+  the rest of the uncovered 3.3% is padding of that kind. The production translator recovers jump
+  tables (2.4) and keeps the sweep as the backstop.
 - **The reference is the same semantics:** the JIT and the recompiled code start from the same IR,
   so a mismatch is a bug in one opcode's C++ (or in the x64 backend), never a decoding difference.
   Flags, extends, shifts and conditions arrive as explicit IR (`GetNZCVFromOp`, `ConditionalSelect`)
@@ -130,7 +143,8 @@ hand-written header (`recomp_rt.h`). Reasons, all measured on this lib:
   Ghidra's function boundaries (`port/decomp/*/symbols.tsv`, the project), and `.eh_frame` FDEs.
 - **Blocks:** from each entry, recursive descent over dynarmic's block terminals inside the
   function's bounds; a block stops at the next known block start, so no code is duplicated.
-  *Measured:* 1,168,582 blocks, 13.0 M IR instructions after the passes (2.3 per guest instruction).
+  *Measured* (with the gap sweep): 1,243,895 blocks, 14.4 M IR instructions after the passes (2.6
+  per covered guest instruction); without it 1,168,582 blocks and 13.0 M.
 - **Ghidra's (or our) mistakes degrade to tail calls, never to miscompiles:** a direct branch out
   of a function's bounds becomes "call the dispatch entry for that address, then return"; falling
   off the end of a function becomes the same for the next address. A function entry nobody found
@@ -314,8 +328,9 @@ The random sample is 4,000 functions drawn from all 103,939 (seed 7) minus the 2
 opcode the prototype doesn't implement yet (mostly vector code), so it leans slightly towards
 integer code.
 
-*Estimated* for the whole lib (22.63 MB in functions, 34.5x the random sample):
-**~20 M lines of C++, ~85 MB of `.text` at `-O1`, ~41 CPU-minutes at `-O1`, ~63 at `-O2`** (about
+*Estimated* for the whole lib (22.63 MB in functions, 34.5x the random sample; the sample was
+translated without the gap sweep, which adds 10% IR over the lib, so the figures are scaled by 1.1):
+**~22 M lines of C++, ~95 MB of `.text` at `-O1`, ~45 CPU-minutes at `-O1`, ~70 at `-O2`** (about
 2-4 minutes on 32 cores when split into a few hundred translation units; the compiler needs ~1.8 GB
 per 570k-line unit, so units of ~50k lines). Tables (dispatch, line tables) add a few MB.
 
@@ -368,7 +383,7 @@ per 570k-line unit, so units of ~50k lines). Tables (dispatch, line tables) add 
 
 | Phase | Content | Exit criteria | Estimate (agent-days) | Parallelism |
 |---|---|---|---|---|
-| **P0** | The translator as a real tool (`tools/recomp/`, from the prototype): all ~250 opcodes in `recomp_rt.h`, jump-table recovery, PLT resolution, exclusives, TPIDR; the opcode-level tests; CMake target generating `build/recomp/` for a chosen function list | All opcodes implemented; the opcode tests at 0 mismatches against the JIT; hash and math (plus 2-3 more leaf subsystems) pass their NATIVE_TESTs with recompiled originals | 6-10 | 2-3 agents (opcode families: integer/flags, scalar FP, vector, memory/atomics) |
+| **P0** | The translator as a real tool (`tools/recomp/`, from the prototype): all ~250 opcodes in `recomp_rt.h`, jump-table recovery (plus the gap sweep), PLT resolution, exclusives, TPIDR; the opcode-level tests; CMake target generating `build/recomp/` for a chosen function list; question 1 decided | All opcodes implemented; every byte of every function covered by a block or known padding; the opcode tests at 0 mismatches against the JIT; hash and math (plus 2-3 more leaf subsystems) pass their NATIVE_TESTs with recompiled originals | 6-10 | 2-3 agents (opcode families: integer/flags, scalar FP, vector, memory/atomics) |
 | **P1** | `--engine mixed`: the runtime's dispatch table, `St` shared with `Cpu`, guest threads starting in recompiled code, the JIT on a dispatch miss; translate the login flow's executed functions | `rebase_inproc_session` PASS with `--engine mixed` and those functions recompiled; recomp-vs-JIT live checks at 0 over login; profiler and crash reports map host PCs to guest functions | 8-12 | 3 agents (runtime dispatch + threads; profiler/crash/GDB; translator fixes) |
 | **P2** | All 103,939 functions translated; per-function generated tests (sharded); exceptions (2.5); the four flows, `tests/diff/`, Windows | Every session in T1/T2 passes with `--engine recomp` and **no** JIT entry in a run (a counter that must stay 0); generated tests at 0 mismatches; Windows stage passes | 10-15 | 4-5 agents (test generator; exceptions; flows; Windows; build splitting) |
 | **P3** | `recomp` the default; JIT `--engine jit` debug-only; the GDB stub on recomp (entry breakpoints, debug translation) | A batch of normal work (T2 twice) green on recomp; release packages built with recomp | 4-6 | 2 agents |
@@ -386,7 +401,7 @@ calendar time, P0-P1 being the critical path.
 | Missing function entries (computed jumps into code Ghidra and our discovery didn't find) | The dispatch-miss log in P1-P2 (with the JIT as fallback) feeds the function list; after P4 a miss is a fatal error with the address |
 | Exceptions turn out to be thrown and caught through game frames | 2.5's resume mechanism; the 395 landing-pad functions are known |
 | Atomics: a guest spin loop with LDXR/STXR relying on the monitor clearing on context switch | Value-based CAS (as the JIT); WFE/SEV as host yields |
-| Generated code distributed by mistake | It's under `build/` only; `tools/package.py`'s scan gains a rule for the generated sources |
+| Generated code distributed by mistake | It's under `build/` only; `tools/package.py`'s scan gains a rule for the generated sources and for a binary that contains them (question 1) |
 
 ### What happens to the hand-porting waves
 
@@ -405,20 +420,30 @@ calendar time, P0-P1 being the critical path.
 
 ## 8. Open questions for the user
 
-1. **Generated code in git or generated at build?** Recommended: at build (18 s to translate,
+1. **Release packages and the game-files rule.** A `soa` built from recompiled code contains the
+   game's code in another form, which the packaging allow-list and scan (`tools/package.py`) can't
+   see. Options: (a) **ship the translator, not the translation**: the release contains the runtime,
+   the natives and the translator; the user's install (first run, or an install script) translates
+   their own `libSOA.so` and compiles it (needs a C++ compiler on the user's machine and minutes of
+   CPU: heavy on Windows), or links a cached build of it; (b) keep releases on the JIT (`--engine jit`
+   stays in the release build) and use recomp only for development and the user's own builds;
+   (c) treat the translation like the master DB exception (`data/basmaster-gl.sqlite3`), an explicit
+   user decision. This decides what P3-P4 deliver (whether dynarmic can leave the release build at
+   all), so it comes first.
+2. **Generated code in git or generated at build?** Recommended: at build (18 s to translate,
    minutes to compile, reproducible from the APK in git, and no translation of the game's code in the
-   repository). Committing it would make diffs reviewable but adds ~20 M lines per translator change.
-2. **The JIT's future:** delete dynarmic after P4, or keep `--engine jit` as a debug-only reference
+   repository). Committing it would make diffs reviewable but adds ~22 M lines per translator change.
+3. **The JIT's future:** delete dynarmic after P4, or keep `--engine jit` as a debug-only reference
    (it costs a dependency and the code that drives it)?
-3. **Build budget:** is ~40-60 CPU-minutes for a clean build (plus the same for the Windows cross
+4. **Build budget:** is ~45-70 CPU-minutes for a clean build (plus the same for the Windows cross
    build) acceptable, with incremental builds untouched by native work? Or should cold code be
    built once into a cached library (a vcpkg-like binary cache keyed by the lib's and translator's
    hashes)?
-4. **`soa-emu`:** keep it on the JIT forever as the unmodified reference client (recommended: it's
+5. **`soa-emu`:** keep it on the JIT forever as the unmodified reference client (recommended: it's
    what `tests/diff/` compares against), or move it to recomp too?
-5. **Waves:** pause new Wave B/C subsystems (beyond what's in flight) until P1's measurement, as
+6. **Waves:** pause new Wave B/C subsystems (beyond what's in flight) until P1's measurement, as
    recommended in 7?
-6. **Release packages:** recomp binaries are ~85-100 MB larger; fine?
+7. **Binary size:** recomp binaries are ~95-110 MB larger (if 1 allows shipping them at all); fine?
 
 ## The prototype (`tools/recomp-proto/`, kept)
 
@@ -427,17 +452,20 @@ Linux-only, not part of the CMake build or of any gate: `tools/recomp-proto/buil
 
 | File | What |
 |---|---|
-| `recomp_gen.cpp` | the translator: dynarmic's `A64::Translate` per block, its IR passes, C++ out; `stats` mode over the whole lib; `emit [--locals]` for a function list; `RECOMP_ONLY_OPS=FILE` for size samples |
+| `recomp_gen.cpp` | the translator: dynarmic's `A64::Translate` per block, its IR passes, C++ out; `stats` mode over the whole lib; `emit [--locals]` for a function list; `RECOMP_ONLY_OPS=FILE` for size samples, `RECOMP_SWEEP=1` the gap sweep (2.1) |
 | `recomp_rt.h` | the register file and 121 opcodes' semantics (FPCR 0, AArch64 NaN rules, dynarmic's FPToFixed) |
 | `harness.cpp` | loads the lib with the runtime (no natives), runs each function under the JIT and recompiled on the same random inputs, compares registers and memory; then times both |
 | `functions.txt` | the 83 sample functions (17 hash, 66 math; 69 leaves, 14 with calls to imports or each other) and their argument kinds |
 
 ### Facts measured
 
-- **Whole lib, `stats` mode** (18 s, 77 MB): 103,939 functions, 5,657,381 instructions, 1,168,582
-  blocks, 13,044,962 IR instructions; 250 distinct opcodes; 0 undecodable; calls: 296,689 direct
-  (264,042 via the PLT to the lib's own functions, 21,981 to 376 imports, 10,666 straight), 44,858
-  indirect; 85,661 returns; 7,332 indirect jumps; 25,496 direct branches leaving a function; 419 BRK.
+- **Whole lib, `stats` mode** (18 s, 77 MB; direct control flow from each entry, covering 88.4%
+  of the 22.63 MB): 103,939 functions, 1,168,582 blocks, 13,044,962 IR instructions; 250 distinct
+  opcodes; 0 undecodable; calls: 296,689 direct (264,042 via the PLT to the lib's own functions,
+  21,981 to 376 imports, 10,666 straight), 44,858 indirect; 85,661 returns; 7,332 indirect jumps;
+  25,496 direct branches leaving a function; 419 BRK. With `RECOMP_SWEEP=1` (96.7% covered):
+  1,243,895 blocks, 14,370,250 IR instructions, 251 opcodes, 310,972 direct and 47,293 indirect
+  calls, 7,524 indirect jumps, 128 `Interpret` terminals (zero padding).
 - **Correctness:** 83 functions, 166,000 runs, 0 mismatches (both emit modes); 11,296 calls fell
   back to the JIT (imports: `memcpy`, `memset`, `strlen`, `sqrtf` through their PLT stubs).
   Injected bugs: 4 of 5 found (above). One harness bug found and fixed on the way (the JIT's vector

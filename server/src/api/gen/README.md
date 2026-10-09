@@ -49,3 +49,21 @@ do the core's shared builders that other modules extend (`CPlayerInfo`, the `Ite
 | paid currency (`api/shop/coins.cpp`) | CCoinInfo (CoinList), CCoinDepositInfo, CPurchasedItemInfo |
 | story campaign lists (`api/campaign/lists.cpp`) | CActiveMissionListInfo (CPlanetInfo, CAreaInfo, CMissionElementInfo), CActiveWorldMapMissionListInfo (CWorldMapInfo, CWorldMapCellInfo, CWorldMapMissionElementInfo): maps of maps and of lists |
 | storage (`api/storage/storage.cpp`) | CSellResultInfo, UpdateStorageLockList (u32 values) |
+
+## Requests
+
+`request_args.txt` names each method's arguments in the order the wire carries them, with the types
+the handlers read them as: an id type (`character_uid:CharacterUid`), optional (`item_uid:ItemUid?`:
+0 is none), an array (`skill:u64[3]`), a default when the request is short (`=1`), an argument skipped
+(`-`), or the rest left unread (`...`). `tools/gen_request_args.py` writes `request_args.h`: one
+`args::<Method>Args` struct per line and its `from(const Request&)`. It checks every line against the
+method's measured layout (`server/net/gen/wire_decode.inc`, from `docs/api-wire.txt`): the integers,
+strings and vectors the decoder puts into `Request::ints` / `strs` / `vecs` must match in number and
+kind. The comments (the client's callers and their evidence) are in the spec and are copied into the
+header.
+
+Converted: growth and mastery (the former `api/growth/growth_args.h`). Not yet: `core/request_args.h`
+(the core's), and the modules' own `*Args`. Some of those have logic the grammar doesn't express:
+CreatePlayer's default name, UpdateBirthYearMonth's parsed text, AchievementReceive's and the item
+APIs' vector conversions. Those stay hand-written, beside a generated struct for their positional part
+where that helps.

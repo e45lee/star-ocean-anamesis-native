@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "api/gen/reply_types.h"  // the replies' C*Info types
-#include "api/growth/growth_args.h"
+#include "api/gen/request_args.h"  // the requests' arguments
 #include "api/growth/mastery.h"
 #include "api/player/party_set.h"  // party_set_info
 #include "api/player/roster.h"  // has_growth

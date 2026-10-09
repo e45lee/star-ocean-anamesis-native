@@ -13,6 +13,7 @@ parallel, against the same lib:
   - tools/gen_infos.py --check                port/src/native/info/gen/info_classes.h and
                                               server/src/api/gen/client_infos.json
   - tools/gen_server_infos.py --check         server/src/api/gen/reply_types.{h,cpp} (from that JSON)
+  - tools/gen_request_args.py --check         server/src/api/gen/request_args.h (from wire_decode.inc)
   - tools/api_wire.py --check                 port/src/native/api/gen/wire_table.inc and
                                               server/net/gen/wire_decode.inc
 The lib: --lib, else work/libSOA-3.7.0.so, else lib/arm64-v8a/libSOA.so extracted from the 3.7.0 APK
@@ -43,6 +44,7 @@ GENERATORS = [
     ["tools/gen_master_elements.py", "--check", "port/src/native/master/gen/master_elements.h"],
     ["tools/gen_infos.py", "--check", "port/src/native/info/gen/info_classes.h", "--check-json", "server/src/api/gen/client_infos.json"],
     ["tools/gen_server_infos.py", "--check"],
+    ["tools/gen_request_args.py", "--check"],
     ["tools/api_wire.py", "--check"],
 ]
 

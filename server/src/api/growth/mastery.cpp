@@ -27,7 +27,7 @@
 #include <vector>
 
 #include "api/gen/reply_types.h"  // the replies' C*Info types
-#include "api/growth/growth_args.h"
+#include "api/gen/request_args.h"  // the requests' arguments
 #include "api/player/player_info.h"
 #include "core/errors.h"
 #include "core/log.h"

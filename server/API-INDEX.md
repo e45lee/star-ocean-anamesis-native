@@ -279,7 +279,7 @@ Each module registers from its `register_<module>()` function, and `server/src/c
 | #limit-break | `server/src/api/growth/growth.cpp` |
 | #login-bonus | `server/src/api/daily/login_bonus.cpp` |
 | #login-bonus-modules | `server/src/api/daily/login_bonus.cpp` |
-| #mastery | `server/src/api/growth/growth.cpp`, `server/src/api/growth/growth_args.h`, `server/src/api/growth/mastery.cpp`, `server/src/api/growth/mastery.h`, `server/src/api/growth/mastery_tests.cpp` |
+| #mastery | `server/src/api/gen/request_args.h`, `server/src/api/growth/growth.cpp`, `server/src/api/growth/mastery.cpp`, `server/src/api/growth/mastery.h`, `server/src/api/growth/mastery_tests.cpp` |
 | #mission-end | `server/src/api/missions/mission_end.cpp` |
 | #mission-end-drops | `server/src/api/missions/mission_end.cpp`, `server/src/api/missions/missions.h` |
 | #mission-start | `server/src/api/missions/mission_start.cpp` |

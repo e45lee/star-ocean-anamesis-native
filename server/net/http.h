@@ -76,7 +76,8 @@ HttpHandler static_files(std::string dir);
 std::string gzip(const std::string& data);
 std::string gunzip(const std::string& data);
 
-// URL-decodes %XX and '+'.
+// Percent-decodes a URL path (%XX). A '+' stays a '+': only a query's form encoding makes it a
+// space (RFC 3986), and the path is decoded here once (make_request), not again by its handlers.
 std::string url_decode(const std::string& s);
 
 }  // namespace soa::server::net

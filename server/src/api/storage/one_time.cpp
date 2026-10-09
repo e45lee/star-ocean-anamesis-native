@@ -159,7 +159,7 @@ std::vector<u8> withdraw_from_one_time_storage(Ctx& ctx, const Request& req) {
         updated[std::to_string(id.v)] = one_time_entry(ctx, id, left, is_new, updated_at);
         // (d) the new items' content type is a unique item's (1) and their drop type 0, as a present's
         for (u32 k = 0; k < take; k++) {
-            added.push(new_item(ctx, id, 1, 0));
+            added.push(new_item(ctx, id, ItemSource{ContentType::kItem, 0}));
         }
     }
     Value data = ctx.base_data();

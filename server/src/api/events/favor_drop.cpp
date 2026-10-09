@@ -90,7 +90,7 @@ void favor_result(Ctx& ctx, const MissionInfo& mission, Value& data) {
             u64 pick = (*ctx.rng)() % sum;
             for (const DropRow& drop : drop_rows) {
                 if (pick < drop.weight) {
-                    add_drop(ctx, data, drop.type, drop.id, drop.num, kDropTypeFavorEvent);
+                    add_drop(ctx, data, Grant{as_content_type(drop.type), drop.id, drop.num, kDropTypeFavorEvent});
                     break;
                 }
                 pick -= drop.weight;

@@ -8,6 +8,7 @@
 
 #include "core/errors.h"
 #include "soaserver/native_test.h"
+#include "soaserver/fids.h"
 #include "testing/scratch.h"
 
 namespace soa::server {
@@ -27,13 +28,13 @@ NATIVE_TEST("server/sql-failure-refuses-the-request") {
     if (!mission) return t.fail("no mc01_030 in the master");
     fail_on(s, "cr2_mission_update", "update on mission");
     std::vector<u8> out;
-    u32 code = s.call(Request{"MissionTalk", 0x816dc8b4, {0, mission, 0, 0}, {}, {}}, &out);
+    u32 code = s.call(Request{"MissionTalk", fids::kMissionTalk, {0, mission, 0, 0}, {}, {}}, &out);
     t.expect_eq(code, (u32)ErrorCode::kItemUnusable, "refused with the generic 10208");
     t.expect_eq(s.sv.st.one("select count(*) from mission where mission_id = ?", {mission}), (int64_t)0, "the insert before it rolled back");
     t.expect_eq(out.empty(), false, "answered (the player state)");
     // The next request starts clean: the failure didn't leave a transaction open.
     s.sv.st.exec("drop trigger cr2_mission_update");
-    t.expect_eq(s.call(Request{"MissionTalk", 0x816dc8b4, {0, mission, 0, 0}, {}, {}}), 0u, "accepted once the statement works");
+    t.expect_eq(s.call(Request{"MissionTalk", fids::kMissionTalk, {0, mission, 0, 0}, {}, {}}), 0u, "accepted once the statement works");
     t.expect_eq(s.sv.st.one("select cleared from mission where mission_id = ?", {mission}), (int64_t)1, "and committed");
 }
 
@@ -67,7 +68,7 @@ NATIVE_TEST("server/corrupt-uid-counter-refuses") {
     s.sv.st.q("update player set free_coin = 100000", {});
     s.sv.st.q("update meta set value = 'not a number' where key = 'next_item_uid'", {});
     const int64_t items = s.sv.st.one("select count(*) from items", {});
-    u32 code = s.call(Request{"Gacha", 0xa0a1940b, {gacha, 0}, {}, {}});
+    u32 code = s.call(Request{"Gacha", fids::kGacha, {gacha, 0}, {}, {}});
     t.expect_eq(code, (u32)ErrorCode::kItemUnusable, "refused with the generic 10208");
     t.expect_eq((u32)s.sv.st.one("select free_coin from player", {}), 100000u, "no coins taken");
     t.expect_eq(s.sv.st.one("select count(*) from items", {}), items, "no item added");

@@ -9,6 +9,7 @@
 #include "api/missions/missions.h"  // play_state, start_mission
 #include "core/log.h"
 #include "soaserver/config.h"
+#include "soaserver/fids.h"
 #include "soaserver/native_test.h"
 #include "soaserver/ext.h"
 #include "soaserver/server.h"
@@ -56,7 +57,9 @@ NATIVE_TEST("server/event-now") {
         int64_t x = event_time(m, ServerTime(d)).v;
         char day[16];
         time_t tt = (time_t)x;
-        strftime(day, sizeof day, "%Y-%m-%d", localtime(&tt));
+        struct tm tm;
+        localtime_r(&tt, &tm);
+        strftime(day, sizeof day, "%Y-%m-%d", &tm);
         sqlite3_stmt* st = nullptr;
         sqlite3_prepare_v2(m, "select count(*) from master_event_term where opened_day <= ?1 and ?1 <= closed_day and closed_day < '2022'", -1, &st,
                            nullptr);
@@ -93,8 +96,8 @@ NATIVE_TEST("server/handlers-use-the-test-clock") {
         u32 talk = (u32)c.m.one("select id from master_mission where id_label = 'mc01_030'", {});
         u32 battle = (u32)c.m.one("select id from master_mission where id_label = 'mf01_001'", {});
         c.st.exec("begin");
-        play_state(c, Request{"MissionTalk", 0x816dc8b4, {0, talk, 0, 0}, {}, {}});
-        start_mission(c, Request{"MissionStart", 0xb7c62bc2, {0, battle, 0, 0, 0, 0, 0}, {}, {}}, nullptr, false);
+        play_state(c, Request{"MissionTalk", fids::kMissionTalk, {0, talk, 0, 0}, {}, {}});
+        start_mission(c, Request{"MissionStart", fids::kMissionStart, {0, battle, 0, 0, 0, 0, 0}, {}, {}}, nullptr, false);
         c.st.exec("commit");
         t.expect_eq(c.st.one("select first_clear_at from mission where mission_id = ?", {talk}), at, "MissionTalk's first clear");
         t.expect_eq(c.st.one("select started_at from play where id = 1", {}), at, "MissionStart's play");

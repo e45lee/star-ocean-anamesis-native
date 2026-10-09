@@ -9,6 +9,7 @@
 #include "master/master.h"
 #include "soaserver/ext.h"
 #include "soaserver/native_test.h"
+#include "testing/reply_shape.h"
 
 namespace soa::server {
 namespace {
@@ -210,6 +211,9 @@ NATIVE_TEST("growth/mastery-training") {
         b = call(c, "TrainMastery", {k.disciple, k.master, 1, k.type_id, 5, 3});
         t.expect_eq(code, 0u, "step 5 accepted");
         Value gift = data_of(b, "MasteryRewardInfo");
+        // (no replay corpus reaches 皆伝: the reply's shapes pinned here)
+        t.expect_eq(data_shape(b, "MasteryRewardInfo"), std::string("{master_item_id:u num:u}"), "MasteryRewardInfo's shape");
+        t.expect_eq(data_shape(b, "UpdateStockItem"), std::string("[{id:u master_item_id:u num:u}]"), "UpdateStockItem's shape (an array)");
         t.expect_eq(field(gift, "master_item_id"), (u64)reward, "the 皆伝 gift (a: master_global)");
         t.expect_eq(field(gift, "num"), (u64)reward_num, "the gift's count");
         t.expect_eq(stock_count(c, reward), r0 + reward_num - (reward == item ? num : 0), "the gift in the stock");

@@ -510,13 +510,13 @@ message_id	ja_sha1	en	source
 2074_210_01	9345abcf4918f76fb1fa135e900c11893abcdf57	Hold it! Stop right there!	machine
 2074_210_02	4008e80a61ece4fff603780188ea9c3224a052b8	You lot must be the force\nattacking Baschen! I won't let\nyou push further into Conroy!	machine
 2074_210_03	3bfd47672b5ad6a612eb02503189ebcdf9c6de9f	If you're determined to go,\nyou'll have to defeat me first!	machine
-2074_210_05	cd318349aa21bd45f3dc0bac3d15005147394a86	Ewin: Get through me first! I am\nEwin Laxter, son of the\nRakstar family, lords of\nCarlone!	machine
+2074_210_05	cd318349aa21bd45f3dc0bac3d15005147394a86	Get through me first! I am Ewin\nLaxter, son of the Rakstar\nfamily, lords of Carlone!	machine
 2074_210_06	cfd258316d8cc2023f4691f59276982b75f8bf3d	Big brother Euwin is so cool!	machine
-2074_210_07	c227b4bc8ec7b75eefb56ed1fe55386235818f5e	Rekoro & Valca: ...Is he, really?	machine
+2074_210_07	c227b4bc8ec7b75eefb56ed1fe55386235818f5e	...Is he, really?	machine
 2074_210_08	c2e64442a0580a908f4ea0e19fe70229497d68c9	And for that matter, this girl is\nthe one General Ricardo Franz\nis paying 100,000 phor to find!	machine
 2074_210_09	5e6107081b42070062ffe2bbb483ea9a4f1b17b4	If you keep invading Conroy,\nGeneral Ricardo won't just\nstand by and watch!!	machine
 2074_210_10	26a1a19f97077c699951cb1d6b57281325d1f8c8	Big brother Euwin is so cool!	machine
-2074_210_11	d0ce3325e3bb3c80cac7e1132d397525dc02954a	Rekoro & Valca: I'm not so sure\nabout that...	machine
+2074_210_11	d0ce3325e3bb3c80cac7e1132d397525dc02954a	I'm not so sure about that...	machine
 2074_210_12	2be4fbb436b9d62b85dc4cf66cdd0af6dc16a9e3	Couldn't he have handled that...\nI don't know, a bit better?	machine
 2074_210_13	692777cfe2c234c4c4919076f45535be80252f23	He's got spirit, and that's what\nmatters.	machine
 2074_210_14	507590d0517677014a962252e5fef3e3d5f2d053	What happened to his usual seasoned\ntraveler vibe, or his knack for\nnegotiation and manipulation? Why is\nhe acting like that?	machine
@@ -524,8 +524,8 @@ message_id	ja_sha1	en	source
 2074_210_16	90e72bfe7e5e39546a076acec3a547a7e00e178a	If Welch were here, she'd tease\nhim for his wooden acting for\nthe rest of his life... *Sigh*.	machine
 2074_210_17	45ef059155584e6526409db50aaec32604683e61	All units, halt!	machine
 2074_210_18	cecfb7c8cb15b93f9eea28508c2112be9f81e47e	I don't quite get what's going on, but if\nthey really are connected to the\nRakstar family or Ricardo Franz, we\ncan't let them go! Capture them alive!	machine
-2074_210_19	c2f1dfe5ea810add6b202ea247fef9cf0c15b0ee	Baschen Soldier: Y-yes,\nma'am...!	machine
-2074_210_20	49975879fa17f5e580432ed66f7a5a76d3d34ec7	Beast Witch: Uh, anyway,\nattack!	machine
+2074_210_19	c2f1dfe5ea810add6b202ea247fef9cf0c15b0ee	Y-yes, ma'am...!	machine
+2074_210_20	49975879fa17f5e580432ed66f7a5a76d3d34ec7	Uh, anyway, attack!	machine
 2074_210_21	415bc79d88b4cccaee4f87ccde24370cb72f8d19	Waaaaagh! Come and get\nsome! Hyaaaaah!!	machine
 2074_210_22	8b375ef31b558b4a2e1e6a1da8810cb58aa8a4fc	He's certainly full of energy.	machine
 2074_210_23	0d32360872b592287a1b30ca144f50fdc4f88c8a	Honestly...	machine
@@ -617,62 +617,62 @@ message_id	ja_sha1	en	source
 2074_240_19	130cbbabd6fcab0a27be8b339bef7e1287e11a85	<font color=blue>Henri</font> Grrr... If worst comes to\nworst, we still have the\nteleportation containment.	machine
 2074_240_20	5697506e21bebc80cae6f91d5351382a7f7eb350	Neither Valka nor I have received any\nspecial communication from the\ncaptains. Waiting until the last possible\nmoment shouldn't be a problem...	machine
 2074_240_21	825a43f5654b2ca26640e95d7a87d7a6c52b5fb0	Hm.	machine
-2074_240_22	a65449f8f2c90512625956eea5a071f840e98129	Beast Witch: E-excuse me! I've received\na report from the guards on perimeter\nwatch that there are intruders in\nKorurine!	machine
+2074_240_22	a65449f8f2c90512625956eea5a071f840e98129	E-excuse me! I've received a\nreport from the guards on\nperimeter watch that there are\nintruders in Korurine!	machine
 2074_240_24	4fb913fe4e520263376373bab163af8975f31a25	Grrr...!	machine
-2074_240_25	99083315bc8570789bfba7dff6fb26e0c053479d	Beast Witch: Also, I am terribly\nsorry! We've currently lost\nsight of the intruders! T-that\nshouldn't even be possible...!	machine
-2074_240_26	04921ec7df177b339ab907beaf8e9dee4f19ac2b	Beast Witch: A-anyway, there's a\npossibility that Rubarika soldiers have\nsneaked into the village of Korurine! I\nwill handle Lady Karlyn's escort...	machine
+2074_240_25	99083315bc8570789bfba7dff6fb26e0c053479d	Also, I am terribly sorry! We've\ncurrently lost sight of the\nintruders! T-that shouldn't even\nbe possible...!	machine
+2074_240_26	04921ec7df177b339ab907beaf8e9dee4f19ac2b	A-anyway, there's a possibility that\nRubarika soldiers have sneaked into the\nvillage of Korurine! I will handle Lady\nKarlyn's escort...	machine
 2074_240_27	619b78228b7584104e305f1fe18527a0c86d7aec	...Sigh.	machine
-2074_240_28	f82351a419fec95883d0d35aa506572fc4c0feb5	Beast Witch: Lady Karlyn!?	machine
+2074_240_28	f82351a419fec95883d0d35aa506572fc4c0feb5	Lady Karlyn!?	machine
 2074_240_29	3c73669a3038ebf1dbbf3af1b1859647fa162cca	I'll be fine. I already have a\nperfectly capable guard here,\nso you go help search for that\nintruder.	machine
 2074_240_30	199e7a3bbf46d2df93450356701ac5d0d0189467	I'm not someone who can be\ntaken down by a mere\nRubarika soldier.	machine
 2074_240_31	b7e7151e47cc8bc050421b38178bb02bdee33f57	Now, go!	machine
-2074_240_32	29f5bf42333579752da992713e50272e64ddd62e	Beast Witch: Y-yes, ma'am!	machine
+2074_240_32	29f5bf42333579752da992713e50272e64ddd62e	Y-yes, ma'am!	machine
 2074_240_33	ea9ea883bf628c0178428a2e9a46da99cec652ec	...Speak of the devil.	machine
 2074_240_34	5021e81e76768112cea6c56812c608a7f34d7df4	Well then, shall we begin\npreparations for withdrawal?	machine
 2074_250_02	7df542bf26c64c030f1092ba3d04875474a56d72	He... he actually came...	machine
-2074_250_03	b0c19351473948a76d109c56663753236bf9a0c3	Masked Man: You... you little brat,\nRakstar! You've got some nerve pulling\na stunt like that! Thanks to you lot,\neverything's been thrown into chaos!	machine
+2074_250_03	b0c19351473948a76d109c56663753236bf9a0c3	You... you little brat, Rakstar! You've\ngot some nerve pulling a stunt like that!\nThanks to you lot, everything's been\nthrown into chaos!	machine
 2074_250_04	3c719acddf3330a7041117414631c01375422e21	That was the plan.	machine
 2074_250_05	074483a254bd0af209c3803704ffb401953e83b6	It was my idea! Big brother\nEuwin didn't do anything wrong!	machine
-2074_250_06	6642889c0109adcb3a2814184b4dcb8ae2e9e632	Masked Man: ...!	machine
+2074_250_06	6642889c0109adcb3a2814184b4dcb8ae2e9e632	...!	machine
 2074_250_07	f36d8924270a0253f4c81a8291ddc0a255c993d8	We just wanted to see you.	machine
 2074_250_08	cc6acae5f84d7ef564aff78c73e58189d15a5d05	We didn't have any other\nchoice! Please, just listen to us!	machine
-2074_250_09	16505ac13f7cef4191817432bf4fdeae524d3efa	Masked Man: ...Still, why did\nyou have to bring me to a\nplace this heavily guarded...\nDammit!	machine
+2074_250_09	16505ac13f7cef4191817432bf4fdeae524d3efa	...Still, why did you have to\nbring me to a place this heavily\nguarded... Dammit!	machine
 2074_250_10	964992c63962b46da2c530adcd8310a5046739a1	Please. I want to ask you about\nthe collar you used on Sister\nKarlyn.	machine
 2074_250_11	81bdcc384ca82d2edb4e478266c98dab75b7df43	There's a place we want you to\ngo with us...	machine
-2074_250_12	3e7a113fd3e77c51f619467ed0f74f4fe3990535	Masked Man: Fine, fine. I'll tell\nyou what I can. But not here!	machine
-2074_250_13	3bd546a3ff998609cba0093046a155025fe79347	Masked Man: Hey! You woman\nhiding there with the weapon!\nStop sneaking around and\nshow yourself!	machine
-2074_250_14	7981773e736b41afc1b03f54440a462ecb1d2df1	Masked Man: You really think\nyou're hidden with that\npathetic excuse for a cloak!	machine
+2074_250_12	3e7a113fd3e77c51f619467ed0f74f4fe3990535	Fine, fine. I'll tell you what I can.\nBut not here!	machine
+2074_250_13	3bd546a3ff998609cba0093046a155025fe79347	Hey! You woman hiding there\nwith the weapon! Stop\nsneaking around and show\nyourself!	machine
+2074_250_14	7981773e736b41afc1b03f54440a462ecb1d2df1	You really think you're hidden\nwith that pathetic excuse for a\ncloak!	machine
 2074_250_15	d0266993ffce130079272ddd5c92354a296e6d59	What!?	machine
 2074_250_16	0325f7f2d0c768e7d9d09bc2d55da2be6d9cdc26	What!?	machine
 2074_250_17	88cc0c75145af3d6d31212d2b19d6821f8034849	H-he can see through my\ninvisibility!?	machine
-2074_250_18	a6b75ac5877d112ff4e1ba20c04cacfa3b06e069	Masked Man: I've got a pretty\ngood idea of what you lot are\nup to! Anyway, let's just get\nTika out of here already!!	machine
+2074_250_18	a6b75ac5877d112ff4e1ba20c04cacfa3b06e069	I've got a pretty good idea of\nwhat you lot are up to!\nAnyway, let's just get Tika out\nof here already!!	machine
 2074_250_19	56f51c1d6b3e3d2c8589689245358e8b40cebd02	Um... how do you know who I\nam? And why are you trying to\nprotect me?	machine
-2074_250_20	678db0534a646c6e353c5a9a4b2998f3c955eff0	Masked Man: ...You really have\nno clue, do you?	machine
+2074_250_20	678db0534a646c6e353c5a9a4b2998f3c955eff0	...You really have no clue, do\nyou?	machine
 2074_250_21	5b8d7982954d221e2bcfa23514aa448bec1dd919	Huh?	machine
-2074_250_22	28cbb6c1c03d0bb03edd34f6abead4b0443a4e04	Masked Man: Never mind. Let's\njust get out of here.	machine
-2074_250_23	cbd92395b60098ab3507ee272d24f2b730c0e0a0	Masked Man: Hey, Rakstar, you\nbrat! Where are Karlyn Kayson\nand that werewolf Daftes!\nThey're nearby, right!?	machine
+2074_250_22	28cbb6c1c03d0bb03edd34f6abead4b0443a4e04	Never mind. Let's just get out\nof here.	machine
+2074_250_23	cbd92395b60098ab3507ee272d24f2b730c0e0a0	Hey, Rakstar, you brat! Where\nare Karlyn Kayson and that\nwerewolf Daftes! They're\nnearby, right!?	machine
 2074_250_24	8bcd281be7d333863696c3250a63399c3c4ec979	Wait! How do you know about\nHenri too?	machine
 2074_250_25	7b29c354ee722dd133d9c22794ec185e20002390	There's no way you've ever\nmet Henri...	machine
-2074_250_26	f4d1958d3340b9669c532a4f634250e834ff2191	Masked Man: I told you we'll\ntalk later!	machine
-2074_250_27	1cbbb54b4cbc2a823e1bc01f22a85cd5c1a8fc19	Masked Man: Listen! Everything\nI have is borrowed!!	machine
-2074_250_28	3a863a1571332919e15f6fcebce8c8c9e738d457	Masked Man: The mechanism of the\nWitch's Collar, the Symbology inside―I\ndon't understand a single thing about it!\nIt's all borrowed!	machine
-2074_250_29	de540c9e494bd4c674c175031addb65c8202248d	Masked Man: Damn it, I'm not\nletting myself get tripped up\nhere!	machine
-2074_250_30	b3e768030040e86fb014eba3a15e50b1d6bfafdb	Masked Man: Hey, you\nlistening, Coro! You piece of\njunk AI! Get everyone aboard\nthe ship, now!	machine
+2074_250_26	f4d1958d3340b9669c532a4f634250e834ff2191	I told you we'll talk later!	machine
+2074_250_27	1cbbb54b4cbc2a823e1bc01f22a85cd5c1a8fc19	Listen! Everything I have is\nborrowed!!	machine
+2074_250_28	3a863a1571332919e15f6fcebce8c8c9e738d457	The mechanism of the Witch's\nCollar, the Symbology inside―I\ndon't understand a single thing\nabout it! It's all borrowed!	machine
+2074_250_29	de540c9e494bd4c674c175031addb65c8202248d	Damn it, I'm not letting myself\nget tripped up here!	machine
+2074_250_30	b3e768030040e86fb014eba3a15e50b1d6bfafdb	Hey, you listening, Coro! You\npiece of junk AI! Get everyone\naboard the ship, now!	machine
 2074_250_31	1ae12c627812369515fd8294945a71518521c288	"Huh!? H-how do you know my\nname...!?"	machine
 2074_250_32	0b2539a40c5c5a037e884681fe854a8c714fa1a9	Who on earth are you...!	machine
 2074_250_33	2237ca28ed4de1b05f680beef072a92ac160122b	Hm... what is this! An abnormal\nSymbology reaction is\napproaching!	machine
 2074_250_34	de8288928edb5ac1bf9be20855aa698441f37519	Detecting the approach of a\nlifeform containing immense\nSymbology power! Coro! Initiate\ntransport and containment!	machine
 2074_250_35	41ed25e7bdd3e2386d5025c8b85d5f64249b8faa	"Ah, uh, um... wait!?\nS-something's wrong! I can't\nlock onto any of you!"	machine
-2074_250_36	474ef99242967a7308876376943e398c90e86aea	Masked Man: Damn, just as I\nthought... Here it comes!	machine
-2074_250_37	4268a76b9002d7134523dc47ba411b1a1697a3d1	Beast Witch: Ah... aaaaaah...	machine
+2074_250_36	474ef99242967a7308876376943e398c90e86aea	Damn, just as I thought... Here\nit comes!	machine
+2074_250_37	4268a76b9002d7134523dc47ba411b1a1697a3d1	Ah... aaaaaah...	machine
 2074_250_38	1dc52fd3c5912e883de554ed44bdd15c3eebd7e3	Is that... the Beast Witch?	machine
 2074_250_39	80ad6997de0dd41b4ae4993550b893969905ebef	Something's wrong with her!	machine
-2074_250_40	14354614505217a8a4ac38186d856f09b8b80b4e	Beast Witch: Aaaaaaaaaah!!	machine
-2074_250_41	5399adb896cb5dc81ae37d1fffcd873f9b06695f	Masked Man: Damn it... that\npiece of junk AI!	machine
+2074_250_40	14354614505217a8a4ac38186d856f09b8b80b4e	Aaaaaaaaaah!!	machine
+2074_250_41	5399adb896cb5dc81ae37d1fffcd873f9b06695f	Damn it... that piece of junk AI!	machine
 2074_250_42	fc7dec5f6c16f856c6bbdd42b5a5328633fea8f8	Who on earth is that... is she\nanother "Beast of Baschen"\ntoo!?	machine
-2074_250_43	abbe09848f94f6ede8a0106dfbb8506a0946d45d	Masked Man: Don't be stupid.\nThere's no way a "Beast" like\nthat exists... We're leaving!	machine
+2074_250_43	abbe09848f94f6ede8a0106dfbb8506a0946d45d	Don't be stupid. There's no way\na "Beast" like that exists...\nWe're leaving!	machine
 2074_250_44	d0266993ffce130079272ddd5c92354a296e6d59	What!?	machine
-2074_250_45	d4ef2b53ed426b0bfe58b6db52355cdcf9d5b7fa	Masked Man: If you mess around with\nher, you'll end up with more than just a\nfew scratches! First, we regroup with\nthat witch! Until then, protect Tika with\nyour life!	machine
+2074_250_45	d4ef2b53ed426b0bfe58b6db52355cdcf9d5b7fa	If you mess around with her, you'll end\nup with more than just a few\nscratches! First, we regroup with that\nwitch! Until then, protect Tika with your\nlife!	machine
 2074_260_01	51ff3ad389edb5374dbcfb64057c8f2b182d6c03	Tika! You're safe!	machine
 2074_260_02	157dfe291039280b9f8e9222a5c5e5f41218956c	Oh, good! You're safe too,\nKarlyn! I'm so glad!	machine
 2074_260_03	4d975cefa69995013557c92af59d860d53ea9cac	Euwin! Valka! Rekoro! I see\nyou've successfully linked up\nwith the masked man!	machine
@@ -680,35 +680,35 @@ message_id	ja_sha1	en	source
 2074_260_05	96e4dcec2409a2d732ee334da36462457fdc8fa0	We saw them! Those are the\nforms the Beast Witches took\nwhen they transformed!	machine
 2074_260_06	fa887249d5366aa7c4aa17875d15551ebd1701e4	W-what did you say!?	machine
 2074_260_07	25205e494d814af6d01aedea3a6ad0dd6db4364a	We saw the witches transform!	machine
-2074_260_08	448195fac3bcf9ea11f9297f618376309348bdec	Masked Man: I don't care about\nthat! You've come all this way\nand you still can't contain\nthem!?	machine
+2074_260_08	448195fac3bcf9ea11f9297f618376309348bdec	I don't care about that! You've\ncome all this way and you still\ncan't contain them!?	machine
 2074_260_09	e6383a8bcad4400f1c050bfec4d3217ad0f94111	Well, the thing is, when the\nwitches transformed, the\nteleportation signals went\ncompletely haywire...	machine
 2074_260_10	4fd1d489314183a6dfdcf082b06c23d5dbda7d92	Hey, Coro! What are you doing\nwhile Eu and the others are in\ndanger!?	machine
 2074_260_11	13c4587fcb59ecb657312403e901139548411587	I'll go! Let me down right now!	machine
 2074_260_12	faf45f5eee677148074c95d7d2a8a5c8fa2d50c6	Hyaaaa!? Ms. Welch, please\nstop messing with the controls!	machine
-2074_260_13	b329e3dc47d1c07f13bedda2ebcb95dddbd3aeca	Masked Man: Welch Vineyard!\nDon't come over here, you'll\nonly make things more\ntroublesome!!	machine
-2074_260_14	0648f78e999e3be78f25629c3f2d558713cb4c6f	Masked Man: Hey, witch! How\nmany Beast Witches were\nstationed in this village!	machine
+2074_260_13	b329e3dc47d1c07f13bedda2ebcb95dddbd3aeca	Welch Vineyard! Don't come\nover here, you'll only make\nthings more troublesome!!	machine
+2074_260_14	0648f78e999e3be78f25629c3f2d558713cb4c6f	Hey, witch! How many Beast\nWitches were stationed in this\nvillage!	machine
 2074_260_15	e99883ddf330ec5ce628c0d68e116a984afa0c16	T-there shouldn't be ten... But,\nbut what on earth is that...\nWhat happened to those\nchildren?	machine
-2074_260_16	04cec487e6922450ec7f281e7be97dd58d556309	Masked Man: The Crown Prince\nof Baschen wanted new power\nfrom that idiot Givel to destroy\nRubarika.	machine
-2074_260_17	2c22733850dc1c91f37c8abd3aec5e9c99af5aae	Masked Man: That bastard\nGivel accepted it and deployed\nthem to the Rubarika front.	machine
-2074_260_18	4bb69a6efafd1b2d9ff02cc4e8d0e5408bd79faa	Masked Man: That's what I've\nheard... You probably received\nan order saying a new unit was\nbeing formed, right?	machine
+2074_260_16	04cec487e6922450ec7f281e7be97dd58d556309	The Crown Prince of Baschen\nwanted new power from that\nidiot Givel to destroy Rubarika.	machine
+2074_260_17	2c22733850dc1c91f37c8abd3aec5e9c99af5aae	That bastard Givel accepted it\nand deployed them to the\nRubarika front.	machine
+2074_260_18	4bb69a6efafd1b2d9ff02cc4e8d0e5408bd79faa	That's what I've heard... You\nprobably received an order\nsaying a new unit was being\nformed, right?	machine
 2074_260_19	76c814ceddb816615968dd35df55ef4447f733ae	I did receive one... but you're\nsaying this is what it was for!?	machine
 2074_260_20	6da822912c5663c203935bc88109ed702523c4e7	"When the time comes"... the\nBeast Witches... turned into\nthose things...	machine
 2074_260_21	71a67dca512f670f6ae2563a78557a3c60819563	Why, why would anyone do\nthis!!	machine
 2074_260_22	fcba9dc97d2275597a1ca3bce99bbd689193e2c5	This Givel... to treat not only\nmy kin, but the people of this\nland as mere pawns...	machine
 2074_260_23	4ea47fe3af74fbcc9f12fd3e14f3b1495f63877c	He seems to be a far more\ndangerous individual than the\nrumors suggested.	machine
 2074_260_24	d6333c33235dd2d5b43af345b9f1d431b84c6456	That doesn't matter right now!\nHow are we going to ensure\nTika's safety!	machine
-2074_260_25	672a9f198aadfbc12e5058525d606b195df82552	Masked Man: ...You're Rekoro, right?\nI've got some bad news. If you want\nthem teleported back, your only choice\nis to wipe out those witches who've\nturned into monsters.	machine
+2074_260_25	672a9f198aadfbc12e5058525d606b195df82552	...You're Rekoro, right? I've got some\nbad news. If you want them teleported\nback, your only choice is to wipe out\nthose witches who've turned into\nmonsters.	machine
 2074_260_26	63150e8ef1c59d0eebf58f78442bda78e4b9245a	What...!	machine
-2074_260_27	2b99a7ffcb8191220774d92865627c13fd396a53	Masked Man: Apparently, the Gem\npower they're emitting is warping\nspace. The only way to stop it is to\ntake out the source.	machine
+2074_260_27	2b99a7ffcb8191220774d92865627c13fd396a53	Apparently, the Gem power\nthey're emitting is warping\nspace. The only way to stop it\nis to take out the source.	machine
 2074_260_28	9a012251c453ded9cfaa2ddd879a7f18c828fd91	Isn't there any way to save\nthem!?	machine
-2074_260_29	190fe89ce538c31f636cc737239d9f3d104f8748	Masked Man: Once they're like\nthat, there's nothing left to do\nbut kill 'em.	machine
+2074_260_29	190fe89ce538c31f636cc737239d9f3d104f8748	Once they're like that, there's\nnothing left to do but kill 'em.	machine
 2074_260_30	9a00dca902fea3b5240f8d8ab5286f9c2cc43b81	No...!	machine
 2074_260_31	d2058838d145b2d55c8154e57e23cbd6f07be47d	How much does Mista know about the\nwitches' transformation? We cannot\nfight effectively unless that information\nis shared.	machine
-2074_260_32	93f61944bb03988b72c3c313943cd873157b3357	Masked Man: ...They're called\n"Exorcisers," supposedly.	machine
+2074_260_32	93f61944bb03988b72c3c313943cd873157b3357	...They're called "Exorcisers,"\nsupposedly.	machine
 2074_260_33	9b44718b6ad64772f976e054f47504f857e5b36f	"Exorcisers"?	machine
-2074_260_34	0ad7cacf46b39ec288a0f2a9eb24a9c688b102a3	Masked Man: From what I've\nheard, that's Givel's true\nobjective for intervening in the\nHoly War.	machine
+2074_260_34	0ad7cacf46b39ec288a0f2a9eb24a9c688b102a3	From what I've heard, that's\nGivel's true objective for\nintervening in the Holy War.	machine
 2074_260_35	b441b2bd0e08d53604eeb3236c9756ba82cf0b6d	Who... who are you? How do\nyou know all this?	machine
-2074_260_36	244a2f199ab5b4ccb0c64a63fb6f7843a311a115	Masked Man: What, Rakstar\nkid, you still haven't figured it\nout?	machine
+2074_260_36	244a2f199ab5b4ccb0c64a63fb6f7843a311a115	What, Rakstar kid, you still\nhaven't figured it out?	machine
 2074_260_37	a6bf8c17e7707260ef2ac1b615209c8a733c9ebd	In Rubarika, I'm known as\nRicardo Franz. Though my true\nname is something else\nentirely.	machine
 2074_260_38	a566d4688366da39761a2335f79cee5e27e18741	You... you're General Ricardo?	machine
 2074_260_39	97d54dfb4334eace03b12bf430974da4e920283b	...Why were you looking for me?	machine

@@ -181,8 +181,7 @@ bool WireClient::bridge(const std::string& uuid, std::string* err) {
     std::string token((const char*)r.plain.data(), strnlen((const char*)r.plain.data(), 1024));
     url_.assign((const char*)r.plain.data() + 1024, strnlen((const char*)r.plain.data() + 1024, 128));
     // (b) the client's POST: printf'd JSON plus its NUL (CApiNotify::OnResultStart)
-    std::string body = "{\"UUID\":\"" + uuid + "\",\"deviceType\":\"2\",\"nativeToken\":\"" + token + "\"}";
-    body.push_back('\0');
+    const std::string body = bridge_request_body(uuid, token);
     int status = 0;
     std::string reply;
     std::string post_url = url_;
@@ -192,9 +191,7 @@ bool WireClient::bridge(const std::string& uuid, std::string* err) {
     if (status != 200) return *err = "bridge: HTTP " + std::to_string(status), false;
     std::string json = gunzip(reply);
     if (json.empty()) return *err = "bridge: the reply isn't gzip", false;
-    key_ = json_string_field(json, "sharedSecurityKey");
-    session_ = json_string_field(json, "nativeSessionId");
-    if (key_.size() < ninja::kKeySize || session_.empty()) return *err = "bridge: no session in " + json, false;
+    if (!parse_bridge_reply(json, &session_, &key_) || key_.size() < ninja::kKeySize) return *err = "bridge: no session in " + json, false;
     WireArg sid;
     sid.s = session_;
     if (!call("UpdateSession", {sid}, &r, err)) return false;

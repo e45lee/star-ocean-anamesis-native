@@ -17,6 +17,7 @@
 #include "core/request_args.h"
 #include "soaserver/config.h"
 #include "soaserver/ext.h"
+#include "soaserver/fids.h"  // the requests the campaign watches
 
 namespace soa::server::campaign {
 
@@ -63,10 +64,6 @@ bool decode_body(const std::vector<char>& body, Value& out) {
 
 namespace {
 
-// The client's FunctionIDs of the requests the campaign watches (docs/api.md;
-// port/src/native/api/gen/fakeapi_tables.inc).
-constexpr u32 kGetPlayMission = 0x7c1b7a1b, kGetWorldMapInfoList = 0x15a9bdbd, kGetPlayer = 0x9a056905;
-constexpr u32 kMissionStart = 0xb7c62bc2, kMissionEnd = 0x8312a64c, kMissionTalk = 0x816dc8b4, kMissionFailed = 0x479604f6;
 // msgpack's empty map: a body that holds nothing (the host's fallback for an unanswered request).
 constexpr u8 kEmptyMsgpackMap = 0x80;
 
@@ -95,10 +92,10 @@ std::vector<std::pair<std::string, Value>> campaign_keys(u32 fid, const State& s
     // MissionStart's MissionParameter / PlayMission come from the server core (api/missions/), which
     // takes the mission from the request. The full player state (GetPlayer) and GetPlayMission (the
     // answer after a story scene's EndMissionTalk, core/lifecycle.cpp) are the login delivery.
-    bool login = fid == kGetPlayer || fid == kGetPlayMission;
-    if (login || fid == kGetWorldMapInfoList || fid == kMissionEnd || fid == kMissionTalk)
+    bool login = fid == fids::kGetPlayer || fid == fids::kGetPlayMission;
+    if (login || fid == fids::kGetWorldMapInfoList || fid == fids::kMissionEnd || fid == fids::kMissionTalk)
         add.push_back({"Player", build_player(s, login && s.seeded)});
-    if (login || fid == kGetWorldMapInfoList || fid == kMissionEnd || fid == kMissionTalk)
+    if (login || fid == fids::kGetWorldMapInfoList || fid == fids::kMissionEnd || fid == fids::kMissionTalk)
         add.push_back({"ActiveWorldMapMissionList", build_world_map_list(s)});
     // (d) Every response carries the current ActiveMissionList, so the menus always see the
     // progress (the 3.7.0 server's exact choice of responses isn't known).
@@ -140,15 +137,15 @@ std::vector<uint8_t> active_mission_list_msgpack() { return mp_encode(build_acti
 void on_request(const Request& req) {
     if (!enabled()) return;
     const uint32_t fid = req.fid;
-    if (fid == kMissionStart) {
+    if (fid == fids::kMissionStart) {
         LOGI("server", "campaign: MissionStart(%" PRIu64 ", %" PRIu64 ", %" PRIu64 ", ...) -> mission %u", arg(req, 1), arg(req, 2), arg(req, 3),
              campaign_mission(args::MissionStartArgs::from(req).mission));
-    } else if (fid == kMissionEnd) {
+    } else if (fid == fids::kMissionEnd) {
         LOGI("server", "campaign: MissionEnd(%" PRIu64 ", %" PRIu64 ") -> mission %u", arg(req, 1), arg(req, 2), mission_end_mission(req));
-    } else if (fid == kMissionTalk) {
+    } else if (fid == fids::kMissionTalk) {
         LOGI("server", "campaign: MissionTalk(%" PRIu64 ", %" PRIu64 ", %" PRIu64 ", %" PRIu64 ") -> mission %u", arg(req, 1), arg(req, 2),
              arg(req, 3), arg(req, 4) & 0xff, mission_talk_mission(req));
-    } else if (fid == kGetWorldMapInfoList) {
+    } else if (fid == fids::kGetWorldMapInfoList) {
         // (b) GetWorldMapInfoList(u32): CWorldMapMenu::CallReceiveApi passes the episode
         // (master_selectpart id, e.g. chapter_1 or Episode03); the answer lists that episode's maps.
         u32 episode = (u32)arg(req, 1);
@@ -157,7 +154,7 @@ void on_request(const Request& req) {
             session().wm_episode = episode;
         }
         LOGI("server", "campaign: GetWorldMapInfoList(%u)", episode);
-    } else if (fid == kMissionFailed) {
+    } else if (fid == fids::kMissionFailed) {
         LOGI("server", "campaign: MissionFailed(%" PRIu64 ", %" PRIu64 ")", arg(req, 1), arg(req, 2));
     }
 }
@@ -171,13 +168,13 @@ namespace {
 //       cleared.
 // A refused request (a refusal, --fail, a failed statement) is rolled back with its clear.
 bool record_progress(ext::Ctx& ctx, const Request& req, Value&) {
-    if (req.fid == kMissionStart) {
+    if (req.fid == fids::kMissionStart) {
         u32 id = campaign_mission(args::MissionStartArgs::from(req).mission);
         std::lock_guard<std::mutex> held(lock());
         session().playing = id;
-    } else if (req.fid == kMissionEnd) {
+    } else if (req.fid == fids::kMissionEnd) {
         if (u32 id = mission_end_mission(req)) clear_mission(ctx, id, "cleared");
-    } else if (req.fid == kMissionTalk) {
+    } else if (req.fid == fids::kMissionTalk) {
         if (u32 id = mission_talk_mission(req)) clear_mission(ctx, id, "story scene played:");
     }
     return false;
@@ -207,7 +204,7 @@ bool on_response(uint32_t fid, const std::string& name, std::vector<char>& body)
     const State s = live_state();
     std::vector<std::pair<std::string, Value>> add = campaign_keys(fid, s);
     Value root;
-    if (fid == kGetWorldMapInfoList || body.empty() || (body.size() == 1 && (u8)body[0] == kEmptyMsgpackMap)) {
+    if (fid == fids::kGetWorldMapInfoList || body.empty() || (body.size() == 1 && (u8)body[0] == kEmptyMsgpackMap)) {
         root = Value::object();
         root["data"] = Value::object();
         root["status"] = 0u;

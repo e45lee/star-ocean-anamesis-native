@@ -1,16 +1,16 @@
 message_id	ja_sha1	en	source
-D123_010_01	99412ba957e9b11f47ef7a8a13e986c435a9d7f6	Miri: So this is the ruin that\nreproduces memories...	machine
+D123_010_01	99412ba957e9b11f47ef7a8a13e986c435a9d7f6	So this is the ruin that\nreproduces memories...	machine
 D123_010_02	6557bc6bad67195affde88577c584341eb0438d1	It's a lot plainer than I\nimagined. I thought there'd be\nrows and rows of machines I'd\nnever seen before.	machine
 D123_010_03	7db28a5b6dc7d766145b417f96a9a8757f61d082	Let's keep moving forward.\nMiri-tan, Ted-tan, <player>-tan.	machine
-D123_010_06	0af8a714cf9c9aa43b1407294fe7a682e91ff042	Miri: I'm just afraid of what might\nhappen if a painful past is reproduced.\nLati said it showed the moment Dorne\ncollapsed...	machine
+D123_010_06	0af8a714cf9c9aa43b1407294fe7a682e91ff042	I'm just afraid of what might\nhappen if a painful past is\nreproduced. Lati said it showed\nthe moment Dorne collapsed...	machine
 D123_010_07	ebe6ba44a8edf85f3324aa94fcda7438b1e49638	And when Fidel came back\nfrom here, he looked pale as a\nghost, muttering something\nabout "fish guts..."	machine
-D123_010_08	be58c685f41d1beecd24ce7b9cbebefae0b15911	Miri: Aren't you scared, Lymle?\nDon't you have a past you'd\nrather forget too?	machine
+D123_010_08	be58c685f41d1beecd24ce7b9cbebefae0b15911	Aren't you scared, Lymle?\nDon't you have a past you'd\nrather forget too?	machine
 D123_010_09	12bc4bbf63da6671656f89b33450754717919200	Even the painful things are an\nimportant part of who I am.	machine
 D123_010_10	5b8d7982954d221e2bcfa23514aa448bec1dd919	Huh?	machine
 D123_010_11	fef868de80481cf6bdee86ebd9f9b43bfee0bce8	I couldn't... save them...	machine
 D123_010_12	7052085b86940304dfd0adabbce7fa624d19db72	I'm... sorry...	machine
 D123_010_13	6642eb77f5b3a8dee045021aba6d8c4b388acb64	Sad memories are precious\ntoo. Everything leads to who I\nam now.	machine
-D123_010_14	98cc2115b22f4a5975bc7c195f7b5afe88100505	Miri: Lymle...	machine
+D123_010_14	98cc2115b22f4a5975bc7c195f7b5afe88100505	Lymle...	machine
 D123_010_15	373a54462f88d776d093b4abcd8e2e428b0a18df	That's... right! Because of the\npast, we are who we are today!	machine
 D123_010_16	398d562aa3041afa1c8502568f09fd67755fd60a	Yeah! Even the parts of the\npast I want to look away from\nare still a part of me. Alright,\nlet's go!	machine
 D123_010_17	d2ad0eb467aba0ec9a1a6cd93ace1df1dd98d906	What?!	machine
@@ -28,22 +28,22 @@ D123_010_28	41f63f9bc510eb5f17a1f3453a8fb5b2721d8324	Alright, I'm off.	machine
 D123_010_29	bee1378b4b2f5e3c453213d5520b49b27a83244c	Yeah.	machine
 D123_010_31	5d4753b636fe7ecd8d62e64eb802201fe2b11de7	Ted, you look absolutely\nmiserable.	machine
 D123_010_32	833d1a60a4080284378745a836f4d8e4554effae	Meryl... What about the clinic?\nThere must be so many injured\nfrom yesterday's attack.	machine
-D123_010_33	f63fdad2aec4c0e1102b03c974b465dc2c722769	Meryl: Everyone is past the critical\npoint. From here on, all a doctor can do\nis monitor their natural healing and wait\nfor them to recover slowly.	machine
-D123_010_34	de04e82d714287f6ec5c12514535b1de8a357133	Meryl: Right now, I simply\nwanted to see the back of the\nhero as he sets off to save\nthis village.	machine
-D123_010_35	8c48ef5e0fa12619ba08001ad926f097f1f85bec	Meryl: ...He looks just like his\nfather.	machine
-D123_010_37	1850ea97b5096ef2123d492cdc2c4a1b473e9cec	Meryl: Are you anxious?\nWondering if you can protect\nthis village from Eitalon while\nFidel is gone?	machine
+D123_010_33	f63fdad2aec4c0e1102b03c974b465dc2c722769	Everyone is past the critical point.\nFrom here on, all a doctor can do is\nmonitor their natural healing and wait\nfor them to recover slowly.	machine
+D123_010_34	de04e82d714287f6ec5c12514535b1de8a357133	Right now, I simply wanted to\nsee the back of the hero as he\nsets off to save this village.	machine
+D123_010_35	8c48ef5e0fa12619ba08001ad926f097f1f85bec	...He looks just like his father.	machine
+D123_010_37	1850ea97b5096ef2123d492cdc2c4a1b473e9cec	Are you anxious? Wondering if\nyou can protect this village\nfrom Eitalon while Fidel is\ngone?	machine
 D123_010_38	6642889c0109adcb3a2814184b4dcb8ae2e9e632	...!	machine
 D123_010_39	1ccba373377104628d1ef8d557d7fa018ed31e17	N-no way! The only reason the village\nsurvived last night was thanks to me! If\nanything, I'm worried about Fidel―he\ncan be surprisingly clueless!	machine
-D123_010_40	d9505e5b026b244a01045cd9688ea94acf67b08b	Meryl: Hehe, I see. I shouldn't\nhave compared you to me, Ted.	machine
+D123_010_40	d9505e5b026b244a01045cd9688ea94acf67b08b	Hehe, I see. I shouldn't have\ncompared you to me, Ted.	machine
 D123_010_41	c7b2ff0e6ba14d45272d62dcce3b505e97b4dc9e	Compare me to you, Ms.\nMeryl?	machine
-D123_010_42	e6e7b39f05c5f64e0ae211dce24273577b004d2a	Meryl: When my childhood\nfriend Daril left this village, I\nhad the same look on my face\nthat you do now.	machine
+D123_010_42	e6e7b39f05c5f64e0ae211dce24273577b004d2a	When my childhood friend Daril\nleft this village, I had the same\nlook on my face that you do\nnow.	machine
 D123_010_44	4d51b7880b7e42c02c64e5da1000144736f6ae89	Man, I'm pathetic... thinking\nabout myself while he's the one\nheading out on a dangerous\njourney.	machine
 D123_010_45	1ad781ee25f924eccdc11debc052cfeec813d394	But once I started wondering if I could\nactually protect everyone if the village\nwas attacked while he was gone, I just\ncouldn't stop.	machine
-D123_010_46	d27b08ff3cc0280a245bba3b2724b609497f8b72	Meryl: After the commotion\nlast night, it's only natural to\nfeel anxious.	machine
-D123_010_47	dc592e0ef98869ac66b797fa19ad7df8d6ddff8e	Meryl: As for me, I watched Daril walk\naway and started worrying about what\nwould happen if Trecour's navy\nattacked from the sea―something that\nhadn't even happened.	machine
-D123_010_48	dd2d2a17ff0dcd061c29d1c956e410920d88967d	Meryl: There were rumors of\nwar with the neighboring nation\nof Trecour around that time.	machine
-D123_010_50	7c619b7d941b01e779c011665e38edd1739b633d	Meryl: If I may offer some\nadvice as someone who's been\nthere: remember that you are\nnot alone.	machine
-D123_010_51	00da40efc8c78a050795b6b1c3f0ed7fdda7cae2	Meryl: Let us all protect the\nvillage together while we wait\nfor Fidel to bring us good\nnews.	machine
+D123_010_46	d27b08ff3cc0280a245bba3b2724b609497f8b72	After the commotion last night,\nit's only natural to feel anxious.	machine
+D123_010_47	dc592e0ef98869ac66b797fa19ad7df8d6ddff8e	As for me, I watched Daril walk away\nand started worrying about what would\nhappen if Trecour's navy attacked from\nthe sea―something that hadn't even\nhappened.	machine
+D123_010_48	dd2d2a17ff0dcd061c29d1c956e410920d88967d	There were rumors of war with\nthe neighboring nation of\nTrecour around that time.	machine
+D123_010_50	7c619b7d941b01e779c011665e38edd1739b633d	If I may offer some advice as\nsomeone who's been there:\nremember that you are not\nalone.	machine
+D123_010_51	00da40efc8c78a050795b6b1c3f0ed7fdda7cae2	Let us all protect the village\ntogether while we wait for Fidel\nto bring us good news.	machine
 D123_010_52	9be921d24614989f546c61fa2ec653351c57116b	...You're right. Thank you, Ms.\nMeryl!	machine
 D123_010_53	1d948878568813bb86cb1b8d71b77a4999d86f20	Noooooooo!!! It wasn't a tragic\npast, it was just a super\nembarrassing past that makes\nme want to hide my face!!!	machine
 D123_010_54	f79326c9312a845e390bfb8e4870712889ebff49	Why am I saying such pathetic\nthings!!	machine
@@ -57,7 +57,7 @@ D123_010_61	7f526d69af49e8e6fc528198e26320111f785d41	Ugh... I can't believe you 
 D123_020_01	65287516c99704501b056185d05ec62ce606a3c7	But I do understand how it\nfeels to get lost in your\nthoughts when you're alone.	machine
 D123_020_02	318f71ca6117b7600ad8184dfe023c496029b046	When I was separated from\nLati and left all by myself...	machine
 D123_020_03	092801cb1592a37db797ffeeafc2998c647661bc	Ah!	machine
-D123_020_04	0c4e0ba18819eed5487a0a364d4f709ad905eaf2	Lucio: Are you stupid? Writing\nletters that'll never even reach\nanyone.	machine
+D123_020_04	0c4e0ba18819eed5487a0a364d4f709ad905eaf2	Are you stupid? Writing letters\nthat'll never even reach\nanyone.	machine
 D123_020_05	3a0decfa73cad4fc63bde8cb430c0bbc3b98882f	Leave me alone!	machine
 D123_020_06	9d3e494c9bb220707b4c0732559941f0cdfea610	Oh, look! This is Aunt Judy's\nhouse! She took care of me\nback in the past Silvarant!	machine
 D123_020_07	42c5baab1d2411c9020285675dab807a1e280a30	The past Silvarant?	machine

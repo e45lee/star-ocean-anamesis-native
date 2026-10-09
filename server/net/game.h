@@ -72,6 +72,9 @@ public:
     // The URL ResultStart sends (e.g. once the HTTP port is bound).
     void set_bridge_url(std::string url) { opt_.bridge_url = std::move(url); }
 
+    // (d) At most this many sessions are kept (game.cpp prune_sessions).
+    static constexpr size_t kMaxSessions = 256;
+
     // Tests / logs.
     size_t session_count() const { return sessions_.size(); }
     bool bound(uint64_t conn) const;
@@ -89,7 +92,16 @@ private:
         uint32_t device_type = 0;
         uint64_t serial = 0;  // creation order (a reconnect tries the newest first)
     };
+    // handle_packet's steps (game.cpp): the plaintext (and a reconnect's session), the session
+    // setup (StartBridge, UpdateSession), and an API request's answer.
     void handle_packet(uint64_t id, Conn& c, const Packet& p, std::vector<uint8_t>* out);
+    bool plaintext(uint64_t id, Conn& c, const Packet& p, const WireApi& api, const std::string& head, std::vector<uint8_t>* plain, std::string* alg,
+                   std::vector<uint8_t>* out);
+    std::map<std::string, Session>::iterator session_by_key(uint64_t id, Conn& c, const Packet& p);
+    void start_bridge(uint64_t id, Conn& c, const Packet& p, const WireApi& api, std::vector<uint8_t>* out);
+    void update_session(uint64_t id, Conn& c, const Packet& p, const WireApi& api, const Decoded& d, std::vector<uint8_t>* out);
+    void answer_request(uint64_t id, Conn& c, const Packet& p, const WireApi& api, const Decoded& d, uint64_t seq, std::vector<uint8_t>* out);
+    void prune_sessions(const std::string& uuid, const std::string& keep);
     void send(Conn& c, uint32_t fid, uint32_t counter, bool encrypt, const std::vector<uint8_t>& plain, std::vector<uint8_t>* out, const char* what);
     void refuse(uint64_t id, Conn& c, uint32_t fid, uint32_t counter, int64_t status, const std::string& why, std::vector<uint8_t>* out);
     std::string random_hex(size_t n);
@@ -114,7 +126,19 @@ private:
 // the new-player flow).
 uint32_t map_device(ext::Sql& st, const std::string& uuid, uint32_t device_type, ServerTime now);
 
-// "key":"value" from a flat JSON object (the bridge request); "" when absent.
-std::string json_string_field(const std::string& json, const std::string& key);
+// The bridge's JSON (nlohmann-json underneath). The client's POST: (b)
+// {"UUID":"%s","deviceType":"%d","nativeToken":"%s"} plus a NUL (CApiNotify::OnResultStart); each
+// field read as a string (a number as its text), "" when absent. False (fields "") when the body
+// isn't a JSON object.
+struct BridgeRequest {
+    std::string uuid, device_type, token;
+};
+bool parse_bridge_request(const std::string& body, BridgeRequest* out);
+// The bridge's answer {"nativeSessionId": ..., "sharedSecurityKey": ...}, and its reading (the
+// wire client); false when either is missing.
+std::string bridge_reply_json(const std::string& session_id, const std::string& key);
+bool parse_bridge_reply(const std::string& json, std::string* session_id, std::string* key);
+// The client's POST body for `uuid` and `token` (deviceType 2), with its NUL (the wire client).
+std::string bridge_request_body(const std::string& uuid, const std::string& token);
 
 }  // namespace soa::server::net

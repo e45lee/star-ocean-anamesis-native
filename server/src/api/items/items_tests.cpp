@@ -6,6 +6,7 @@
 #include <random>
 
 #include "soaserver/native_test.h"
+#include "soaserver/fids.h"
 #include "soaserver/ext.h"
 #include "soaserver/msgpack.h"
 #include "core/errors.h"
@@ -377,16 +378,17 @@ NATIVE_TEST("items/inherit-accessory") {
     add_fol(c, 10000000);
     const u32 fol0 = fol(c);
     c.st.q("update items set limit_break = 2 where uid = ?", {lost});
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {plain_base, lost}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {plain_base, lost}, {}, {}}), (u32)ErrorCode::kItemUnusable,
                 "(a) max_inheritance_num 0: refused");
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, base}, {}, {}}), (u32)ErrorCode::kItemUnusable, "the base itself: refused");
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, base2}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, base}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+                "the base itself: refused");
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, base2}, {}, {}}), (u32)ErrorCode::kItemUnusable,
                 "(b) another inheritance accessory: refused");
     c.st.q("update items set locked = 1 where uid = ?", {lost});
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, lost}, {}, {}}), (u32)ErrorCode::kLockedItem, "a locked one: refused");
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, lost}, {}, {}}), (u32)ErrorCode::kLockedItem, "a locked one: refused");
     c.st.q("update items set locked = 0 where uid = ?", {lost});
     std::vector<u8> out;
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, lost}, {}, {}}, &out), 0u, "inherited");
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, lost}, {}, {}}, &out), 0u, "inherited");
     Value d = out.empty() ? Value() : mp_decode(out);
     const Value* data = d.find("data");
     const Value* r = data ? data->find("InheritResultInfo") : nullptr;
@@ -412,10 +414,40 @@ NATIVE_TEST("items/inherit-accessory") {
     t.expect_eq(info ? info->get_u("inherited_master_item_limit_break_count") : 0, (u64)2, "and its limit break");
     t.expect_eq(inherit_info(items, other) == nullptr, true, "other items carry none");
     t.expect_eq(counter(c, "accessory_inherit"), (int64_t)1, "counted (achievement type 58)");
-    t.expect_eq(S.call({"InheritAccessory", 0xd9feb3e8, {base, other}, {}, {}}), (u32)ErrorCode::kItemUnusable, "(b) a second inheritance: refused");
+    t.expect_eq(S.call({"InheritAccessory", fids::kInheritAccessory, {base, other}, {}, {}}), (u32)ErrorCode::kItemUnusable,
+                "(b) a second inheritance: refused");
     t.expect_eq((u32)c.st.one("select count(*) from items where uid = ?", {other}), 1u, "nothing taken");
     // UpdateItemStock: Player.item_stock is item_stock_max already
-    t.expect_eq(S.call({"UpdateItemStock", 0xcf39cc5c, {}, {}, {}}), (u32)ErrorCode::kLimitReached, "UpdateItemStock refused at the max");
+    t.expect_eq(S.call({"UpdateItemStock", fids::kUpdateItemStock, {}, {}, {}}), (u32)ErrorCode::kLimitReached, "UpdateItemStock refused at the max");
+}
+
+// ItemGradeUpArray and MaterialCompose's refusals (the replay corpora api-sweep and items-party
+// refuse them): no base weapon 10208; an unknown recipe 10208, too few materials 10206.
+NATIVE_TEST("items/grade-up-and-material-compose-refusals") {
+    bool ran = with_scratch_server(t.rand_u64(), [&](Ctx& c) {
+        c.st.exec("begin");
+        u32 code = 0;
+        c.test.on_refuse = [&](u32 e) { code = e; };
+        call(c, "ItemGradeUpArray", {}, {{}});
+        t.expect_eq(code, 10208u, "ItemGradeUpArray without a base weapon");
+        code = 0;
+        u32 accessory = (u32)c.m.one("select id from master_item where type = 3 order by id limit 1", {});
+        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
+        c.grant(1, accessory, 1, items, stocks, chars);
+        call(c, "ItemGradeUpArray", {items.arr.at(0).get_u("id")}, {{}});
+        t.expect_eq(code, 10208u, "ItemGradeUpArray on an accessory");
+        code = 0;
+        call(c, "MaterialCompose", {0xfffffff0u, 1});
+        t.expect_eq(code, 10208u, "MaterialCompose of an unknown recipe");
+        code = 0;
+        u32 recipe = (u32)c.m.one("select id from master_material_compose where master_item1_id > 0 and item1_num > 0 order by id limit 1", {});
+        if (!recipe) return t.fail("no master_material_compose row");
+        u32 item1 = (u32)c.m.one("select master_item1_id from master_material_compose where id = ?", {recipe});
+        c.st.q("delete from stock where master_item_id = ?", {item1});
+        call(c, "MaterialCompose", {recipe, 1});
+        t.expect_eq(code, 10206u, "MaterialCompose without its materials");
+    });
+    if (!ran) return;  // no 3.7.0 master or save
 }
 
 }  // namespace

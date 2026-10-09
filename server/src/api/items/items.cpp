@@ -35,7 +35,7 @@ using namespace ext;
 
 // The content type MaterialCompose grants when its recipe names none: a stack item (a: docs/api.md
 // "Content types" 5).
-constexpr u32 kContentStackItem = 5;
+constexpr ContentType kDefaultResultType = ContentType::kStackItem;
 // master_material_compose's ingredient columns master_item1..5_id / item1..5_num (a).
 constexpr int kRecipeIngredients = 5;
 
@@ -400,10 +400,10 @@ std::vector<u8> material_compose(Ctx& ctx, const Request& req) {
     if (fol(ctx) < (u64)cost * times) return refuse(ctx, "MaterialCompose", "not enough FOL", ErrorCode::kFolShortGrowth);
     for (auto& [item, num] : need) add_stock(ctx, item, -(int64_t)num * times);
     add_fol(ctx, -(int64_t)cost * times);
-    Value added_items = Value::array(), stocks = Value::array(), chars = Value::array();
-    ctx.grant(result_type ? result_type : kContentStackItem, result_id, result_num * times, added_items, stocks, chars);
+    Granted granted;
+    ctx.grant(Grant{result_type ? as_content_type(result_type) : kDefaultResultType, result_id, result_num * times}, granted);
     Value data = ctx.base_data();
-    ext::add_items(data, added_items);
+    ext::add_items(data, granted.items);
     data["StockItem"] = ctx.stock();
     LOGI("server", "MaterialCompose %u x%u: item %u x%u, FOL -%u", id, times, result_id, result_num * times, cost * times);
     return body(data);

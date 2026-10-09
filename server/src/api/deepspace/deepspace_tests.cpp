@@ -149,12 +149,12 @@ NATIVE_TEST("deepspace/extras") {
         c.st.q("update roster set limit_break = 0", {});
         t.expect_eq(max_ships(c, ServerTime(clock)), 1u, "one ship without limit breaks (required_num 0)");
         u32 plan = (u32)c.m.one("select id from master_subscription_plan where id_label = 'pshop_galaxypass_001'", {});
-        Value items = Value::array(), stocks = Value::array(), chars = Value::array();
         // (a) content type 20, 30 days, through the registered grant (api/shop/subscription.cpp) with
         // this test's clock (the core's c.grant makes its own context on the real clock)
-        const GrantFn* g20 = find_grant(20);
+        const GrantFn* g20 = find_grant(ContentType::kPass);
         if (!g20) return t.fail("no content type 20 grant");
-        (*g20)(c, plan, 30, items, stocks, chars);
+        Granted granted;
+        (*g20)(c, Grant{ContentType::kPass, plan, 30}, granted);
         u32 extra = c.global_u32("subscription_deepspace_ship", 0);
         t.expect_eq(extra, 2u, "master_global subscription_deepspace_ship");
         t.expect_eq(max_ships(c, ServerTime(clock)), 1u + extra, "the pass adds its ships");

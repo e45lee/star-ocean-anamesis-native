@@ -1,0 +1,94 @@
+# What the server sends of the client's info classes: one struct per line, CLASS[ as NAME]: FIELD...
+# (tools/gen_server_infos.py's header has the grammar; server/src/api/gen/README.md the workflow). The keys
+# are in the order today's replies send them (tools/reply_shapes.py measures the replay corpora); a
+# `#` line before a struct is its comment in reply_types.h.
+
+# ---- growth (api/growth/growth.cpp) ----
+
+# A stack item a growth step used (AwakenResult / EvolutionResult UseStockItem).
+CStackItemInfo as UseStackItemInfo: master_item_id use_count
+
+# BoostCharacter's BoostedCharacterResult entry (by the character's uid).
+CBoostCharacterResultInfo: id before_level before_exp after_level after_exp is_big_success
+
+# LimitBreakCharacter's entry (by the character's uid); also the gacha's duplicates.
+CLimitBreakInfo: id master_role_id before_master_role_id after_master_role_id before_limit_break_count after_limit_break_count
+
+# EvolutionResult's evolved character (its uid as the u64 it is).
+CUpdatePlayerCharacter: id:u64 before_master_role_id after_master_role_id level is_rarity_7
+
+CEvolutionResultInfo: use_fol UseStockItem:UseStackItemInfo UpdatePlayerCharacter
+
+# A character's fields after a growth step (UpdateCharacter): the equipped skills only after EquipSkill or
+# for a character with growth; the rush keys from its master_role row.
+CUpdateCharacterInfo: id player_id master_role_id level exp weapon_item_id skill1_level skill2_level skill3_level skill1? skill2? skill3? rush_skill? rush_skill_factor_id? rush_gauge_max? rush_gauge_use? weapon_kind? rush_skill_level is_new
+
+# UpdateAwakenLevel's AwakenResult (update_child_id: the graduated disciple's uid, sent as the u64 it is).
+CAwakenResultInfo: awaken_level use_fol UseStockItem:UseStackItemInfo UpdateCharacter update_child_id:u64 update_child_mastery_talent_id
+
+CPersonAddStatusResultInfo: player_character_id player_id before_add_hp after_add_hp before_add_attack after_add_attack before_add_intelligence after_add_intelligence before_add_defence after_add_defence before_add_hit after_add_hit before_add_guard after_add_guard before_add_ap after_add_ap use_fol new_fol
+
+# EquipWeapon / EquipAccessory / EquipAuto: the characters whose weapon / accessory changed, the item
+# equipped (its uid as `id`, a key the client's item info doesn't read: it takes the map's key).
+CEquipWeaponResultPersonInfo: id weapon_item_id
+CEquipWeaponResultItemInfo: +id:u64
+CEquipWeaponResultInfo: Character Item
+CEquipAccessoryResultPersonInfo: id accessory_item_id
+CEquipAccessoryResultItemInfo: +id:u64
+CEquipAccessoryResultInfo: Character Item
+
+# ---- mastery (api/growth/mastery.cpp) ----
+
+# A 師弟 pair (GetMasteryInfo's PlayerCharacterMasteryInfoMap, by the disciple's uid).
+CPlayerCharacterMasteryInfo: character_id player_id parent_character_id dojo_no master_mastery_step_type_id master_mastery_step_1_option_no master_mastery_step_2_option_no master_mastery_step_3_option_no master_mastery_step_4_option_no master_mastery_step_5_option_no created_at updated_at
+
+# The pair after TrainMastery / ResetMastery, with what the disciple's CPersonInfo gets.
+CUpdateCharacterMasteryInfo: character_id player_id parent_character_id dojo_no master_mastery_step_type_id master_mastery_step_1_option_no master_mastery_step_2_option_no master_mastery_step_3_option_no master_mastery_step_4_option_no master_mastery_step_5_option_no created_at updated_at mastery_talent_id parent_master_role_id
+
+# The 皆伝 gift.
+CMasteryRewardInfo: master_item_id num
+
+# A stack item's count now (UpdateStockItem; its master item id also as `id`, which the client's
+# CStackItemInfo doesn't read). TrainMastery sends the list as an array, though the client's
+# CUpdateStackItemInfoList is a map (IInfoBaseMap<u64, CStackItemInfo>).
+CStackItemInfo as UpdateStackItemInfo: +id:u32 master_item_id num
+
+# ---- settings (api/settings/) ----
+
+# An option's value (ConfigInfoList, ConfigInfo).
+CConfigInfo: master_config_id value type
+
+# The birth month (Birth).
+CBirthInfo: year month
+
+# ---- paid currency (api/shop/coins.cpp) ----
+
+# A coin-shop product (CoinList, by its id).
+CCoinInfo: id product_id coin free_coin yen order_id icon_id name name_label title_label description_label opened_at closed_at bought_at limit_count limit_num interval_day bonus_type bonus_id bonus_id_label is_once sale_type starter_limit_day is_view_closed_at
+
+# CoinDepositCreate's pending purchase.
+CCoinDepositInfo: deposit_trans_id
+
+# The coin shop's result after a purchase.
+CPurchasedItemInfo: bonus_type name_label title_label
+
+# ---- the story campaign's lists (api/campaign/lists.cpp) ----
+
+# ActiveMissionList: the planets, their areas, the areas' missions (each map by the id).
+CPlanetInfo: area_ct is_new is_last_play
+CAreaInfo: mission_ct is_new is_last_play is_start_bighunt
+CMissionElementInfo: id is_new is_clear is_last_play
+CActiveMissionListInfo: Planet Area Mission
+
+# ActiveWorldMapMissionList: the world maps, their cells (each an empty CWorldMapCellInfo), the cells'
+# missions.
+CWorldMapInfo: area_ct is_new is_last_play opened_at closed_at
+CWorldMapCellInfo:
+CWorldMapMissionElementInfo: id is_new is_clear is_last_play mission_group_id difficulty mission_type scenario_library_id
+CActiveWorldMapMissionListInfo: WorldMap WorldMapCellList WorldMapMission
+
+# ---- storage (api/storage/storage.cpp; items/items.cpp's SellItem sends the same) ----
+
+# A sale's result: the FOL, a stack item sold and its count left (StockItem: {id: {master_item_id,
+# use_count}}), the items sold.
+CSellResultInfo: total_fol master_item_id num item_ids StockItem:UseStackItemInfo UpdateGearList

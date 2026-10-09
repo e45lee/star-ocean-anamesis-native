@@ -4,7 +4,7 @@
 #   tools/format_server.sh --check    list the files that aren't formatted; exit 1 if any
 #   tools/format_server.sh [--check] FILE...   only these files
 # The files: the tracked and untracked (not ignored) *.cpp, *.h and *.inc under server/, except the
-# Ninja cipher tables (net/ninja/) and the generated decoder table (net/gen/), as
+# Ninja cipher tables (net/ninja/), the generated decoder table (net/gen/) and reply types (src/api/gen/), as
 # server/.clang-format-ignore lists them.
 # clang-format: $CLANG_FORMAT, else `clang-format` on PATH. It must be major version 18 (the style was
 # measured with Ubuntu's clang-format 18.1.3; another version formats some constructs differently).
@@ -27,11 +27,11 @@ if [ "${1:-}" = --check ]; then check=1; shift; fi
 if [ $# -gt 0 ]; then
   files=("$@")
 else
-  mapfile -t files < <(git ls-files -co --exclude-standard server | grep -E '\.(cpp|h|inc)$' | grep -vE '^server/net/(ninja/|gen/)')
+  mapfile -t files < <(git ls-files -co --exclude-standard server | grep -E '\.(cpp|h|inc)$' | grep -vE '^server/(net/ninja/|net/gen/|src/api/gen/)')
 fi
 bad=0
 for f in "${files[@]}"; do
-  case "$f" in server/net/ninja/*|server/net/gen/*) continue ;; esac
+  case "$f" in server/net/ninja/*|server/net/gen/*|server/src/api/gen/*) continue ;; esac
   if [ $check = 1 ]; then
     if ! "$cf" --style=file:server/.clang-format "$f" | cmp -s - "$f"; then echo "not formatted: $f"; bad=1; fi
   else

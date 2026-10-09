@@ -1,3 +1,5 @@
-# Not formatted (tools/format_server.sh skips them too): the Ninja cipher tables and the generated decoder table.
+# Not formatted (tools/format_server.sh skips them too): the Ninja cipher tables, the generated decoder table and
+# reply types.
 net/ninja/*
 net/gen/*
+src/api/gen/*

@@ -193,7 +193,8 @@ public:
     // (*err says why).
     static std::shared_ptr<Tree> build(const Options& opts, std::string* err = nullptr);
 
-    // The answer for an HTTP GET of `url_path` (the path of the URL, a query is ignored):
+    // The answer for an HTTP GET of `url_path` (the URL's path, already percent-decoded: the HTTP
+    // layer's make_request decodes it once; a query or fragment is ignored):
     //   .../Android/<name>  : version.bin, manifest/<format>/..., a bundle, the served master
     //                         ("sqlite/basmaster.sqlite3"), a stand-in, or the download's file <name>;
     //   /master/<rev>/<name>: the same (the client's "download/" -> "master/" swap, unused in 3.7.0).

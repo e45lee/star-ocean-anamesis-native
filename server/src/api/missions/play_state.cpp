@@ -10,6 +10,7 @@
 #include "core/log.h"
 #include "core/request_args.h"
 #include "core/server.h"  // event_clock_of
+#include "soaserver/fids.h"
 #include "core/wallet.h"
 #include "rules/mission_rules.h"
 
@@ -89,7 +90,7 @@ std::vector<u8> mission_restart(ext::Ctx& ctx, const Request&) {
     const u64 helper_index_plus_1 = kind == HelperKind::kNone ? 0 : 1;
     const u64 own_helper_uid = kind == HelperKind::kOwn ? helper_uid : 0;
     const u64 rental_uid = kind == HelperKind::kRental ? helper_uid : 0;
-    Request again{"MissionStart", 0xb7c62bc2, {type, mission, helper_index_plus_1, own_helper_uid, npc_id, rental_uid, 0}, {}, {}};
+    Request again{"MissionStart", fids::kMissionStart, {type, mission, helper_index_plus_1, own_helper_uid, npc_id, rental_uid, 0}, {}, {}};
     return start_mission(ctx, again, nullptr, true);
 }
 

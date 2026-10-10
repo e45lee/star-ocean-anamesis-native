@@ -61,6 +61,25 @@ void aska_image_tests() {
         codec_check(isf_payload_sum(isf, entries[0]) == want && isf[0x1c] == (want & 0xff) && isf[0x1d] == (want >> 8), "isf sum");
     }
     codec_check(isf_entries(Bytes{1, 2, 3}).empty(), "isf_entries of a non-ISF");
+    {  // malformed: payloads inside the entry table (the rebuilt table would be written past the end)
+        Bytes bad(0x60, 0);
+        memcpy(bad.data(), "\0ISF", 4);
+        bad[8] = 3;
+        for (int i = 0; i < 3; i++) bad[0x10 + i * 16] = 0x50, bad[0x14 + i * 16] = 0x20;
+        Bytes rebuilt;
+        codec_check(!isf_repack(bad, {}, rebuilt), "isf_repack refuses payloads in the entry table");
+        Bytes good;
+        codec_check(isf_repack(isf, {}, good) && good.size() == 0x60 && !memcmp(good.data(), isf.data(), 0x45), "isf_repack keeps a file");
+    }
+    {  // malformed AIF: the ' FMA' chunk's 'ffub' is its last 16 bytes (its size field past the end)
+        Bytes aif(0xc0, 0);
+        memcpy(&aif[0], " FIA", 4);
+        memcpy(&aif[0x10], "Xgmi", 4);
+        memcpy(&aif[0x80], " FMA", 4);
+        aif[0x84] = 0x40;
+        memcpy(&aif[0xb0], "ffub", 4);
+        codec_check(find_images(aif).empty(), "find_images: a truncated 'ffub' chunk");
+    }
 
     // ETC2 RGBA8 / RGB8 blocks: constant blocks exactly (alpha) or nearly (colour); gradients and
     // noise within bounds; edges of white text on a dark ground

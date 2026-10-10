@@ -303,7 +303,7 @@ void th_ALooper_pollAll(Cpu& c) {
         const auto& f = fds[i];
         int ev = ((pfd[i].revents & hostfd::kIn) ? 1 : 0) | ((pfd[i].revents & hostfd::kErr) ? 4 : 0) | ((pfd[i].revents & hostfd::kHup) ? 8 : 0);
         if (f.callback) {
-            if (!guest_call(f.callback, {(u64)f.fd, (u64)ev, f.data})) looper_remove_fd(l, f.fd);
+            if ((s32)guest_call(f.callback, {(u64)f.fd, (u64)ev, f.data}) == 0) looper_remove_fd(l, f.fd);  // (an int: w0)
             ret(c, (u64)-2);  // ALOOPER_POLL_CALLBACK
             return;
         }

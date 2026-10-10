@@ -3,6 +3,7 @@
 #include <soa/base64.h>
 #include <soa/prefs_xml.h>
 
+#include <cstdio>
 #include <fstream>
 #include <sstream>
 
@@ -33,9 +34,17 @@ void SharedPrefs::save(const std::string& name, const File& f) {
     std::string out = prefs_xml::serialize(f.entries);
     std::string path = host_shared_prefs_dir() + "/" + name + ".xml";
     std::string tmp = path + ".tmp";
+    bool ok;
     {
         std::ofstream o(tmp, std::ios::binary | std::ios::trunc);
         o << out;
+        o.close();
+        ok = !o.fail();
+    }
+    if (!ok) {  // (disk full, ...): keep the old file rather than replace it with a cut one
+        LOGW("prefs", "can't write %s; %s.xml not saved", tmp.c_str(), name.c_str());
+        std::remove(tmp.c_str());
+        return;
     }
     rename(tmp.c_str(), path.c_str());
 }

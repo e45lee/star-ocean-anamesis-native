@@ -31,6 +31,8 @@
 #endif
 #include <string.h>
 
+#include <cstddef>
+#include <cstdint>
 #include <mutex>
 #include <set>
 #include <string>
@@ -208,11 +210,19 @@ void th_gethostbyname(Cpu& c) {
         c.set_x(0, (u64)name_buf.c_str());
     }
     g_gethostbyname(c);
-    // struct hostent has the same 64-bit layout in Bionic and glibc.
-    auto* he = (hostent*)c.x(0);
-    if (he && !target.empty() && he->h_addr_list) {
+    // The result is bionic's struct hostent (int h_addrtype / h_length; glibc's layout too, not
+    // Winsock's, whose are shorts).
+    struct BionicHostent {
+        char* h_name;
+        char** h_aliases;
+        int32_t h_addrtype, h_length;
+        char** h_addr_list;
+    };
+    static_assert(sizeof(BionicHostent) == 32 && offsetof(BionicHostent, h_addr_list) == 24);
+    auto* he = (const BionicHostent*)c.x(0);
+    if (he && !target.empty() && he->h_addr_list && he->h_length > 0) {
         std::lock_guard<std::mutex> lk(g_mu);
-        for (char** p = he->h_addr_list; *p; p++) g_mapped_addrs.insert(std::string(*p, he->h_length));
+        for (char** p = he->h_addr_list; *p; p++) g_mapped_addrs.insert(std::string(*p, (size_t)he->h_length));
     }
 }
 

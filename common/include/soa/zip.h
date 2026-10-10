@@ -62,9 +62,12 @@ public:
     // deflated: inflated from the start, the first `off` bytes dropped). The bytes read; -1 on error.
     int64_t read(const Entry& e, uint64_t off, void* buf, size_t len) const;
     // The file this archive's bytes are in (the outer file for a nested archive), and an entry's
-    // data offset in it.
+    // data offset in it (0 when its local header can't be read).
     const std::string& path() const { return path_; }
-    uint64_t data_offset_of(const Entry& e) const { return base_ + data_offset(e); }
+    uint64_t data_offset_of(const Entry& e) const {
+        uint64_t off = data_offset(e);
+        return off ? base_ + off : 0;
+    }
     // Where the archive starts in path() and how long it is.
     uint64_t base_offset() const { return base_; }
     uint64_t size() const { return size_; }

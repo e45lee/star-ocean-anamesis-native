@@ -174,7 +174,9 @@ bool isf_repack(const Bytes& d, const std::vector<const Bytes*>& payloads, Bytes
     auto entries = isf_entries(d);
     if (entries.empty()) return fail(err, "not an ISF image"), false;
     if (payloads.size() > entries.size()) return fail(err, "ISF repack: more payloads than entries"), false;
-    // the layout this rebuilds: payloads in entry order, each at the next 32-byte boundary
+    // the layout this rebuilds: payloads in entry order, each at the next 32-byte boundary, after
+    // the header and entry table (which the rebuilt file keeps and rewrites)
+    if (entries[0].offset < 16 + entries.size() * 16) return fail(err, "ISF repack: a payload overlaps the entry table"), false;
     size_t at = entries[0].offset;
     for (auto& e : entries) {
         if (e.offset != at || e.offset % 32) return fail(err, "ISF repack: " + e.name + " isn't where the layout puts it"), false;
@@ -596,12 +598,13 @@ bool find_data(const Bytes& d, size_t base, size_t at, size_t& data, size_t& siz
     if (amf == std::string::npos) return false;
     size_t amf_end = amf + rd32(&d[amf + 4]);
     size_t buff = find("ffub", amf, std::min(amf_end, d.size()));
-    if (buff == std::string::npos || amf_end > d.size()) return false;
+    if (buff == std::string::npos || amf_end > d.size() || buff + 0x14 > amf_end) return false;
     size_t bsz = rd32(&d[buff + 0x10]);
     if (bsz > amf_end - amf) return false;
     size_t start = amf_end - bsz;
     if (at + 0x50 > d.size()) return false;
     for (size_t a = amf; (a = find("rdda", a, std::min(start, amf_end))) != std::string::npos; a += 16) {
+        if (a + 0x2c > d.size()) return false;
         if (memcmp(&d[a + 0x10], &d[at + 0x40], 16)) continue;
         size = rd32(&d[a + 0x20]);
         data = start + rd32(&d[a + 0x28]);

@@ -73,6 +73,7 @@ bool FileTree::locate(const std::string& rel, Loc* out) const {
         out->size = e->size;
         out->in_place = e->method == 0 && e->comp_size == e->size;
         out->offset = out->in_place ? zip_->data_offset_of(*e) : 0;
+        if (out->in_place && !out->offset) return false;  // a bad local header (not the zip's first bytes)
         out->mtime = mtime_;
     }
     return true;

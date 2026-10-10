@@ -159,8 +159,24 @@ void th_send(Cpu& c) {
     th_sendto(c);
 }
 
-// Socket options: (level, name) Linux -> Winsock. TCP (6) and IP options keep their numbers.
+// Socket options: (level, name) Linux -> Winsock; false: none (ignored by setsockopt). TCP and IP
+// options whose numbers differ (Linux TCP_KEEPIDLE 4 is Winsock's TCP_MAXSEG, IP_TOS 1 its IP_OPTIONS)
+// are mapped; the others there have no counterpart we know of.
 bool sockopt_to_host(int& level, int& name) {
+    if (level == 6) {  // IPPROTO_TCP
+        switch (name) {
+        case 1: return true;            // TCP_NODELAY
+        case 4: name = 3; return true;  // TCP_KEEPIDLE -> TCP_KEEPALIVE (s)
+        case 5: name = 17; return true;  // TCP_KEEPINTVL
+        case 6: name = 16; return true;  // TCP_KEEPCNT
+        default: return false;
+        }
+    }
+    if (level == 0) {  // IPPROTO_IP
+        if (name != 1) return false;
+        name = 3;  // IP_TOS
+        return true;
+    }
     if (level != 1) return true;  // SOL_SOCKET
     level = SOL_SOCKET;
     switch (name) {
@@ -183,15 +199,23 @@ void th_setsockopt(Cpu& c) {
     int level = (int)c.x(1), name = (int)c.x(2), len = (int)c.x(4);
     const void* val = (const void*)c.x(3);
     if (!sockopt_to_host(level, name)) {
-        LOGD("net", "setsockopt(level 1, %d): no Winsock counterpart, ignored", (int)c.x(2));
+        LOGD("net", "setsockopt(level %d, %d): no Winsock counterpart, ignored", (int)c.x(1), (int)c.x(2));
         return ret(c, 0);
     }
     DWORD ms;
     if (level == SOL_SOCKET && (name == SO_RCVTIMEO || name == SO_SNDTIMEO) && len >= 16) {  // timeval -> ms
         const s64* tv = (const s64*)val;
-        ms = (DWORD)(tv[0] * 1000 + tv[1] / 1000);
+        ms = (DWORD)(tv[0] * 1000 + (tv[1] + 999) / 1000);  // (rounded up: 0 ms is no timeout)
         val = &ms;
         len = sizeof ms;
+    }
+    struct linger lg;
+    if (level == SOL_SOCKET && name == SO_LINGER && len >= 8) {  // bionic's two ints -> Winsock's two u_shorts
+        const s32* l = (const s32*)val;
+        lg.l_onoff = (u_short)(l[0] != 0);
+        lg.l_linger = (u_short)std::min<s32>(std::max<s32>(l[1], 0), 0xffff);
+        val = &lg;
+        len = sizeof lg;
     }
     ret(c, (u64)(setsockopt(s, level, name, (const char*)val, len) != 0 ? fail() : 0));
 }
@@ -207,6 +231,13 @@ void th_getsockopt(Cpu& c) {
     int len = sizeof buf;
     if (getsockopt(s, level, name, buf, &len) != 0) return ret(c, (u64)fail());
     if (level == SOL_SOCKET && name == SO_ERROR) *(int*)buf = *(int*)buf ? linux_errno(host_errno_of_wsa(*(int*)buf)) : 0;
+    if (level == SOL_SOCKET && name == SO_LINGER) {  // Winsock's two u_shorts -> bionic's two ints
+        struct linger lg;
+        memcpy(&lg, buf, sizeof lg);
+        const s32 l[2] = {lg.l_onoff, lg.l_linger};
+        memcpy(buf, l, sizeof l);
+        len = sizeof l;
+    }
     int cap = c.x(4) ? *(int*)c.x(4) : 0;
     memcpy((void*)c.x(3), buf, std::min(cap, len));
     if (c.x(4)) *(u32*)c.x(4) = (u32)len;

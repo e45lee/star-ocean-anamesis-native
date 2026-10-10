@@ -78,7 +78,10 @@ bool make_dirs(const std::string& dir) {
     std::string cur;
     for (size_t i = 0; i < dir.size(); i++) {
         cur.push_back(dir[i]);
-        if ((dir[i] == '/' && i > 0) || i + 1 == dir.size()) mkdir(cur.c_str(), 0755);
+        if (((dir[i] == '/' || dir[i] == '\\') && i > 0) || i + 1 == dir.size()) {
+            LOGI("vfs", "creating directory %s.", cur.c_str());
+            mkdir(cur.c_str(), 0755);
+        }
     }
     struct stat st;
     return stat(dir.c_str(), &st) == 0 && S_ISDIR(st.st_mode);

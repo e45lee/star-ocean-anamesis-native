@@ -54,7 +54,8 @@ using params::CParameterUI;
 CParameterUI* parameter_ui() {
     static u64 pm = guest::sym("_ZN9Framework10TSingletonI17CParameterManagerE11m_pInstanceE");
     static u64 ui_fn = guest::sym("_ZNK17CParameterManager12pParameterUIEv");
-    return reinterpret_cast<CParameterUI*>(guest_call(ui_fn, {*(const u64*)pm}));
+    u64 mgr = *(const u64*)pm;
+    return mgr ? reinterpret_cast<CParameterUI*>(guest_call(ui_fn, {mgr})) : nullptr;  // (none before the title)
 }
 
 u64 guest_cstr(const std::string& s) {
@@ -135,7 +136,7 @@ void run(const std::string& cmd, CPhase* phase_mgr) {
             if (e == std::string::npos) break;
             pos = e + 1;
         }
-        u64 fn = guest::sym(parts[0].c_str());
+        u64 fn = main_lib()->sym(parts[0].c_str());  // (0 when unknown: guest::sym would end the game)
         if (!fn) {
             LOGW("port_debug", "call: unknown symbol %s", parts[0].c_str());
             return;

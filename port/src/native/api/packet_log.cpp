@@ -24,6 +24,8 @@ std::string g_dir;
 uint64_t g_seq = 0;
 // queued fid -> the wire API its request was logged as (the reply's name)
 std::map<uint32_t, const server::net::WireApi*> g_api;
+// the request's sequence number by fid, for its reply's file (several requests can wait at once)
+std::map<uint32_t, uint64_t> g_seq_of;
 
 // The wire API a captured request is: the one whose method it is, else the one of its fid. Some
 // FakeApiCaller methods queue under another API's FunctionID (EquipAccessory under EquipWeapon's,
@@ -133,6 +135,7 @@ void request(const server::Request& r, const std::vector<uint8_t>& battle_log) {
     if (api) g_api[r.fid] = api;
     else g_api.erase(r.fid);
     uint64_t seq = ++g_seq;
+    g_seq_of[r.fid] = seq;
     line(server::net::request_line(server::net::request_head(0, seq, name, api ? api->fid : r.fid), "inproc", 0, r.method,
                                    format_args(r, battle_log.size())));
     if (!battle_log.empty()) write_file(std::to_string(seq) + "-" + name + "-battle_log.msgp", battle_log.data(), battle_log.size());
@@ -144,9 +147,12 @@ void reply(uint32_t fid, const std::vector<char>& body) {
     auto logged = g_api.find(fid);
     const server::net::WireApi* api = logged != g_api.end() ? logged->second : server::net::api_by_fid(fid);
     if (logged != g_api.end()) g_api.erase(logged);
+    auto s = g_seq_of.find(fid);
+    uint64_t seq = s != g_seq_of.end() ? s->second : g_seq;
+    if (s != g_seq_of.end()) g_seq_of.erase(s);
     std::string name = api ? api->reply : "?";
     uint32_t rfid = api ? api->reply_fid : 0;
-    write_file(std::to_string(g_seq) + "-" + name + ".msgp", body.data(), body.size());
+    write_file(std::to_string(seq) + "-" + name + ".msgp", body.data(), body.size());
     line(server::net::reply_line(name, rfid, "inproc", body.size(), std::nullopt,
                                  server::net::data_keys(std::vector<uint8_t>(body.begin(), body.end()))));
 }
@@ -155,6 +161,7 @@ void refused(uint32_t fid, uint32_t code) {
     std::lock_guard<std::mutex> l(g_mu);
     if (!g_log) return;
     g_api.erase(fid);
+    g_seq_of.erase(fid);
     line(server::net::reply_line("ProtocolError", server::net::kFidProtocolError, "inproc", 0, std::nullopt,
                                  "status=" + std::to_string(code) + " (the server's error code)"));
 }

@@ -197,6 +197,28 @@ std::string find_xapk(const std::vector<std::string>& repo) {
     return "";
 }
 
+// The unpacked APKs when no --apk-dir names them: the first install dir (as find_xapk: the
+// executable's folder and its game/ subfolder, all a release build without --repo has), then the
+// checkouts' work/extracted/xapk, that holds the base APK (`need_base`: the game comes from here)
+// or, beside an XAPK, any of the package's APKs (those it lacks, e.g. assetfastfollow.apk in game/).
+std::string find_apk_dir(const std::vector<std::string>& repo, bool need_base) {
+    std::vector<std::string> dirs = soa::install::install_dirs();
+    for (auto& r : repo) dirs.push_back(r + "/work/extracted/xapk");
+    static const char* const kApks[] = {kBaseApk,
+                                        "assetinstalltime.apk",
+                                        "config.arm64_v8a.apk",
+                                        "assetfastfollow.apk",
+                                        "split_assetfastfollow.apk",
+                                        "assetondemand1.apk",
+                                        "split_assetondemand1.apk"};
+    for (auto& d : dirs)
+        for (const char* f : kApks) {
+            if (exists(d + "/" + f)) return d;
+            if (need_base) break;
+        }
+    return "";
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -226,16 +248,15 @@ int main(int argc, char** argv) {
     // Beside the port's (soa/paths.h): ~/.local/share/soa-viewer-380, on Windows %LOCALAPPDATA%\soa\viewer-380.
     if (data_dir.empty()) data_dir = soa::default_data_dir("soa-viewer-380", "viewer-380");
     make_dirs(data_dir);
-    // The game: --xapk and/or --apk-dir, else an XAPK found (find_xapk), else the unpacked one in
-    // work/. With an XAPK, the unpacked one (--apk-dir, default work/extracted/xapk when present)
-    // supplies the APKs the XAPK lacks.
+    // The game: --xapk and/or --apk-dir, else an XAPK found (find_xapk), else the unpacked one
+    // (find_apk_dir). With an XAPK, the unpacked APKs (--apk-dir, else find_apk_dir: game/ or
+    // work/extracted/xapk) supply those the XAPK lacks.
     const bool apk_dir_given = !apk_dir.empty();
     if (apk_dir.empty() && xapk_path.empty()) xapk_path = find_xapk(repo);
     if (apk_dir.empty()) {
-        std::string base = soa::install::find_in_roots(repo, std::string("work/extracted/xapk/") + kBaseApk);
-        if (!base.empty()) apk_dir = parent(base);
+        apk_dir = find_apk_dir(repo, xapk_path.empty());
         if (xapk_path.empty()) {
-            if (base.empty())
+            if (apk_dir.empty())
                 fatal("the 3.8.0 XAPK wasn't found: give --xapk FILE (or put the *.xapk in %s/%s, beside soa-viewer, or in the "
                       "repository's apk/: see README.txt), or --apk-dir DIR (tools/extract.sh)",
                       soa::install::exe_dir().c_str(), soa::install::kGameSubdir);

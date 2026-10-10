@@ -100,6 +100,9 @@ void Loop::on_readable(int fd, Conn& c) {
             if (sock::interrupted()) continue;
             return drop(fd);
         }
+        // A refused connection (a ProtocolError) ends once its reply is sent: later bytes (packets
+        // buffered behind the refused one) are read and dropped, never handled.
+        if (c.close_after) continue;
         if (!game_.on_data(c.game_id, buf, (size_t)n, &c.out)) c.close_after = true;
     }
 }

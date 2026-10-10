@@ -107,11 +107,16 @@ Value mp_decode(const uint8_t*& p, const uint8_t* e) {
     if (p >= e) return Value();
     size_t off = 0;
     try {
-        msgpack::object_handle h = msgpack::unpack((const char*)p, (size_t)(e - p), off);
+        // Nesting deeper than kMaxDepth throws (msgpack::depth_size_overflow): from_object, pack and
+        // ~Value recurse once per level, so a peer's 0x91 0x91 ... would otherwise overflow the stack.
+        // The game's documents nest a few levels.
+        constexpr size_t kMaxDepth = 256;
+        const msgpack::unpack_limit limit(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, kMaxDepth);
+        msgpack::object_handle h = msgpack::unpack((const char*)p, (size_t)(e - p), off, nullptr, nullptr, limit);
         Value v = from_object(h.get());
         p += off;
         return v;
-    } catch (const std::exception&) {  // msgpack::unpack_error (malformed, truncated), std::bad_alloc
+    } catch (const std::exception&) {  // msgpack::unpack_error (malformed, truncated, too deep), std::bad_alloc
         return Value();
     }
 }

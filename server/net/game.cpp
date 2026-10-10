@@ -11,6 +11,7 @@
 #include <set>
 
 #include <nlohmann/json.hpp>
+#include <openssl/rand.h>
 
 #include "ninja/ninja_ref.h"
 #include "packet_log.h"
@@ -188,7 +189,12 @@ std::string GameServer::key_of(uint64_t conn) const {
 std::string GameServer::random_hex(size_t n) {
     static const char d[] = "0123456789abcdef";
     std::string s;
-    for (size_t i = 0; i < n; i++) s += d[rng_() & 15];
+    // Tokens, session ids and keys: from a CSPRNG (rng_ is an mt19937_64, whose state a peer can
+    // recover from enough of its output); rng_ only with --seed, where tests want the same ones.
+    std::vector<uint8_t> r(n);
+    if (opt_.seed || RAND_bytes(r.data(), (int)n) != 1)
+        for (uint8_t& b : r) b = (uint8_t)rng_();
+    for (size_t i = 0; i < n; i++) s += d[r[i] & 15];
     return s;
 }
 

@@ -220,6 +220,12 @@ NATIVE_TEST("server/msgpack-forms") {
     t.expect_eq((int)mp_decode(q, cut.data() + cut.size()).type, (int)Value::Nil, "truncated: Nil");
     t.expect_eq(q, cut.data(), "truncated: not advanced");
     t.expect_eq((int)mp_decode(std::vector<u8>{0xc1}).type, (int)Value::Nil, "reserved byte: Nil");
+    // nesting: a peer's 100000 nested arrays are Nil (not a stack overflow); 200 levels still decode
+    std::vector<u8> deep(100000, 0x91);
+    deep.push_back(0xc0);
+    t.expect_eq((int)mp_decode(deep).type, (int)Value::Nil, "too deep: Nil");
+    deep.erase(deep.begin(), deep.end() - 201);
+    t.expect_eq((int)mp_decode(deep).type, (int)Value::Arr, "200 levels: an array");
 }
 
 }  // namespace

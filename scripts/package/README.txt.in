@@ -39,6 +39,10 @@ Where soa-viewer looks, first match wins:
   4. its game/ subfolder.
 In 3. and 4. only the top level is searched: the first *.xapk there that holds the game.{{# 380-ok}}
 
+The APKPure XAPK lacks two optional sound packs (background music and talk-scene voices). If you{{# 380-ok}}
+have them as separate files, assetfastfollow.apk and assetondemand1.apk (or split_*.apk), put them
+in the same folder as the XAPK (3. or 4.): soa-viewer reads any APK the XAPK lacks from there.{{# 380-ok}}
+
 
 2. Running
 ----------

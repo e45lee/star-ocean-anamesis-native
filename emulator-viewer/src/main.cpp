@@ -51,6 +51,10 @@ bool exists(const std::string& p) {
     struct stat st;
     return !p.empty() && stat(p.c_str(), &st) == 0;
 }
+bool is_dir(const std::string& p) {
+    struct stat st;
+    return !p.empty() && stat(p.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
+}
 std::string parent(const std::string& p) {
     size_t s = p.find_last_of('/');
     if (s == std::string::npos) return "";
@@ -74,25 +78,32 @@ std::vector<std::string> find_checkouts(const std::string& given) {
     return v;
 }
 
-// The game package: the 3.8.0 XAPK read in place (--xapk FILE, or one found: find_xapk), or the
-// XAPK unpacked into a directory (--apk-dir DIR, tools/extract.sh). Its APKs (the base APK, the
-// arm64 split, the asset packs) open as zip archives either way.
+// The game package: the 3.8.0 XAPK read in place (--xapk FILE, or one found: find_xapk), the XAPK
+// unpacked into a directory (--apk-dir DIR, tools/extract.sh), or both: an APK the XAPK lacks (e.g.
+// the fast-follow / on-demand asset packs the APKPure XAPK doesn't carry) is then taken from the
+// directory. Its APKs (the base APK, the arm64 split, the asset packs) open as zip archives either way.
 struct GamePackage {
-    std::string xapk_path, dir;            // one of them
+    std::string xapk_path, dir;            // either or both
     std::unique_ptr<ZipArchive> xapk;      // --xapk: the outer archive
     std::string cache;                     // --xapk: <data>/xapk-cache, for a member stored deflated
 
-    std::string where() const { return xapk ? "XAPK " + xapk_path : "dir " + dir; }
-    bool has(const std::string& apk) const { return xapk ? xapk->find(apk) != nullptr : exists(dir + "/" + apk); }
-    std::string describe(const std::string& apk) const { return xapk ? xapk_path + ":" + apk : dir + "/" + apk; }
-    // The APK `apk`, nullptr when the package hasn't it. An XAPK's stored member is read in place
-    // (the APKPure XAPK stores every APK); a deflated one is extracted once into the cache (again
-    // when its CRC-32 or size changes).
+    bool in_xapk(const std::string& apk) const { return xapk && xapk->find(apk) != nullptr; }
+    bool in_dir(const std::string& apk) const { return !dir.empty() && exists(dir + "/" + apk); }
+    std::string where() const {
+        if (!xapk) return "dir " + dir;
+        return dir.empty() ? "XAPK " + xapk_path : "XAPK " + xapk_path + " (else dir " + dir + ")";
+    }
+    bool has(const std::string& apk) const { return in_xapk(apk) || in_dir(apk); }
+    std::string describe(const std::string& apk) const {
+        return in_xapk(apk) || (xapk && !in_dir(apk)) ? xapk_path + ":" + apk : dir + "/" + apk;
+    }
+    // The APK `apk`, nullptr when the package hasn't it: the XAPK's member first, else the
+    // directory's file. An XAPK's stored member is read in place (the APKPure XAPK stores every
+    // APK); a deflated one is extracted once into the cache (again when its CRC-32 or size changes).
     std::unique_ptr<ZipArchive> open(const std::string& apk) const {
         auto z = std::make_unique<ZipArchive>();
-        if (!xapk) return exists(dir + "/" + apk) && z->open(dir + "/" + apk) ? std::move(z) : nullptr;
+        if (!in_xapk(apk)) return in_dir(apk) && z->open(dir + "/" + apk) ? std::move(z) : nullptr;
         const ZipArchive::Entry* e = xapk->find(apk);
-        if (!e) return nullptr;
         if (z->open_member(*xapk, apk)) return z;
         std::string out = cache + "/" + apk;
         if (!fresh(out, *e)) {
@@ -186,6 +197,28 @@ std::string find_xapk(const std::vector<std::string>& repo) {
     return "";
 }
 
+// The unpacked APKs when no --apk-dir names them: the first install dir (as find_xapk: the
+// executable's folder and its game/ subfolder, all a release build without --repo has), then the
+// checkouts' work/extracted/xapk, that holds the base APK (`need_base`: the game comes from here)
+// or, beside an XAPK, any of the package's APKs (those it lacks, e.g. assetfastfollow.apk in game/).
+std::string find_apk_dir(const std::vector<std::string>& repo, bool need_base) {
+    std::vector<std::string> dirs = soa::install::install_dirs();
+    for (auto& r : repo) dirs.push_back(r + "/work/extracted/xapk");
+    static const char* const kApks[] = {kBaseApk,
+                                        "assetinstalltime.apk",
+                                        "config.arm64_v8a.apk",
+                                        "assetfastfollow.apk",
+                                        "split_assetfastfollow.apk",
+                                        "assetondemand1.apk",
+                                        "split_assetondemand1.apk"};
+    for (auto& d : dirs)
+        for (const char* f : kApks) {
+            if (exists(d + "/" + f)) return d;
+            if (need_base) break;
+        }
+    return "";
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -212,33 +245,31 @@ int main(int argc, char** argv) {
     if (repo.empty())
         LOGI("viewer", "%s: the XAPK is looked up beside the program (README.txt)",
              soa::install::kReleasePackage ? "release build: no source checkout is searched (only --repo DIR)" : "no source checkout");
-    if (!apk_dir.empty() && !xapk_path.empty()) {
-        fprintf(stderr, "soa-viewer: give --xapk FILE or --apk-dir DIR, not both\n");
-        return 2;
-    }
     // Beside the port's (soa/paths.h): ~/.local/share/soa-viewer-380, on Windows %LOCALAPPDATA%\soa\viewer-380.
     if (data_dir.empty()) data_dir = soa::default_data_dir("soa-viewer-380", "viewer-380");
     make_dirs(data_dir);
-    // The game: --xapk, --apk-dir, else an XAPK found (find_xapk), else the unpacked one in work/.
-    if (apk_dir.empty() && xapk_path.empty()) {
-        xapk_path = find_xapk(repo);
+    // The game: --xapk and/or --apk-dir, else an XAPK found (find_xapk), else the unpacked one
+    // (find_apk_dir). With an XAPK, the unpacked APKs (--apk-dir, else find_apk_dir: game/ or
+    // work/extracted/xapk) supply those the XAPK lacks.
+    const bool apk_dir_given = !apk_dir.empty();
+    if (apk_dir.empty() && xapk_path.empty()) xapk_path = find_xapk(repo);
+    if (apk_dir.empty()) {
+        apk_dir = find_apk_dir(repo, xapk_path.empty());
         if (xapk_path.empty()) {
-            std::string base = soa::install::find_in_roots(repo, std::string("work/extracted/xapk/") + kBaseApk);
-            if (base.empty())
+            if (apk_dir.empty())
                 fatal("the 3.8.0 XAPK wasn't found: give --xapk FILE (or put the *.xapk in %s/%s, beside soa-viewer, or in the "
                       "repository's apk/: see README.txt), or --apk-dir DIR (tools/extract.sh)",
                       soa::install::exe_dir().c_str(), soa::install::kGameSubdir);
-            apk_dir = parent(base);
         }
     }
+    if (apk_dir_given && !is_dir(apk_dir)) fatal("--apk-dir %s: not a directory", apk_dir.c_str());
     GamePackage pkg;
+    pkg.dir = apk_dir;
     if (!xapk_path.empty()) {
         pkg.xapk_path = xapk_path;
         pkg.xapk = std::make_unique<ZipArchive>();
         if (!pkg.xapk->open(xapk_path)) fatal("--xapk %s: not a zip archive", xapk_path.c_str());
         pkg.cache = data_dir + "/xapk-cache";
-    } else {
-        pkg.dir = apk_dir;
     }
     for (const char* f : {kBaseApk, "assetinstalltime.apk", "config.arm64_v8a.apk"})
         if (!pkg.has(f)) fatal("%s: %s is missing", pkg.where().c_str(), f);

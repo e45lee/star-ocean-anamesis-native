@@ -21,7 +21,8 @@ int parse_args(int argc, const char* const* argv, ViewerArgs& a, std::vector<std
     app.add_option("--apk-dir", a.apk_dir,
                    std::string("the XAPK unpacked (tools/extract.sh): ") + kBaseApk +
                        ", assetinstalltime.apk, config.arm64_v8a.apk; optional assetfastfollow.apk / assetondemand1.apk "
-                       "(default <repo>/work/extracted/xapk when no XAPK is found)")
+                       "; with an XAPK, the APKs it lacks are read from here. Default: the first of the executable's folder, its "
+                       "game/ folder and <repo>/work/extracted/xapk holding them (used alone when no XAPK is found)")
         ->type_name("DIR")
         ->group(files);
     cli::add_list(app, "--apk", a.extra_apks, "read assets from FILE too (after the XAPK's; repeatable, later wins)")

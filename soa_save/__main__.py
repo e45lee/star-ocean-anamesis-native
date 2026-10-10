@@ -56,6 +56,9 @@ def main(argv=None):
         t = a.type or (describe(k.entries[a.key])[0] if a.key in k.entries else None)
         if t is None:
             p.error(f"new key {a.key!r}: pass --type")
+        if not a.type and t == "str" and len(k.entries[a.key]) == 4:
+            # describe() also reads a u32 whose top byte is 0 as a string (0x00434241: "ABC")
+            p.error(f"{a.key!r} may be a u32 or a 3-character string: pass --type")
         k.entries[a.key] = encode(t, a.value)
         out = a.out or a.file
         if not a.out:

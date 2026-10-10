@@ -50,7 +50,7 @@ def requirements():
         for line in f:
             line = line.split("#", 1)[0].strip()
             if line and not line.startswith("-"):
-                names.add(norm(re.split(r"[\[<>=!~; ]", line, 1)[0]))
+                names.add(norm(re.split(r"[\[<>=!~; ]", line, maxsplit=1)[0]))
     return names
 
 

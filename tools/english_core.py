@@ -64,7 +64,7 @@ def sha1(s):
 
 
 def prefix(mid):
-    return re.split(r"[_0-9]", mid, 1)[0] or mid
+    return re.split(r"[_0-9]", mid, maxsplit=1)[0] or mid
 
 
 def unesc(s):

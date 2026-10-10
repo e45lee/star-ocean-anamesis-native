@@ -865,7 +865,7 @@ def test_mt_runner_strips_speaker():
     import english_mt_run as R
     src, g = R.load_glossary()
     sp = R.Speakers(src, g)
-    code = next(w for _, lines in R.scenes(src) for m, w in lines if m == "2026_170_06")
+    code = next((w for _, lines in R.scenes(src) for m, w in lines if m == "2026_170_06"), None)
     if not code:
         pytest.skip("no Script files")
     assert sp.name(code) == "Masked Man"  # was sent as 仮面の男 (story-v1)

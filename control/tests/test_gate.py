@@ -141,3 +141,23 @@ def test_a_lone_tests_diff_run_gets_the_long_limit(tmp_path, monkeypatch):
     gate.run_test(neg, str(tmp_path), False)
     gate.run_test(other, str(tmp_path), False)
     assert limits[neg["cmd"]] >= 3600 and limits["true"] == 600
+
+
+def test_t1_paths_are_repo_relative_however_given(monkeypatch, tmp_path):
+    """T1 --for ./x or an absolute path selects what x does (not nothing, which would pass on T0 alone)."""
+    import tests_for
+    monkeypatch.chdir(tests_for.REPO)
+    rel = "server/src/core"
+    want = [t["name"] for t in tests_for.select([rel])[0]]
+    assert want
+    for p in ("./" + rel, os.path.join(tests_for.REPO, rel)):
+        assert tests_for.repo_paths([p]) == [rel]
+    monkeypatch.chdir(tmp_path)
+    assert tests_for.repo_paths(["./gone/file.cpp"]) == ["gone/file.cpp"]
+
+
+def test_a_bad_git_diff_rev_fails():
+    import tests_for
+    with pytest.raises(SystemExit) as e:
+        tests_for.changed_paths("no-such-rev-for-tests_for")
+    assert "git diff" in str(e.value)

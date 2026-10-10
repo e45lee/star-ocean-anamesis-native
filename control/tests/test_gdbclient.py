@@ -54,6 +54,54 @@ def test_encodings():
     assert gdbclient.split_addr("[::1]:1234") == ("::1", 1234) and gdbclient.split_addr(":7") == ("127.0.0.1", 7)
 
 
+def test_timeouts_with_a_fake_stub():
+    """cont() without a timeout waits as long as the stop takes (not the client's 30 s or a previous call's);
+    every other reply keeps the client's own timeout."""
+    import threading
+    import time
+    srv = socket.socket()
+    srv.bind(("127.0.0.1", 0))
+    srv.listen(1)
+    seen = []
+
+    def stub():
+        c, _ = srv.accept()
+        buf = b""
+        with c:
+            while True:
+                data = c.recv(4096)
+                if not data:
+                    return
+                buf += data
+                pkts, buf = gdbclient.parse_packets(buf)
+                for p in pkts:
+                    seen.append(p)
+                    if p == b"vCont;c":
+                        time.sleep(1.5)  # longer than the client's timeout
+                        c.sendall(gdbclient.frame(b"T05thread:2;"))
+                    elif p.startswith(b"qSupported"):
+                        c.sendall(gdbclient.frame(b"PacketSize=4000"))
+                    elif p == b"QStartNoAckMode":
+                        c.sendall(b"+" + gdbclient.frame(b"OK"))
+                    elif p == b"?":
+                        c.sendall(gdbclient.frame(b"T05thread:1;"))
+                    else:
+                        c.sendall(gdbclient.frame(b"OK"))
+
+    th = threading.Thread(target=stub, daemon=True)
+    th.start()
+    g = gdbclient.GdbClient("127.0.0.1", srv.getsockname()[1], timeout=0.5)
+    try:
+        assert g.cont()["tid"] == 2
+        assert g.sock.gettimeout() is None
+        assert g.cmd("Hg2") == "OK" and g.sock.gettimeout() == 0.5
+        with pytest.raises(TimeoutError):
+            g.cont(timeout=0.2)
+    finally:
+        g.sock.close()
+        srv.close()
+
+
 def listen_addr(host):
     return "[%s]:0" % host if ":" in host else "%s:0" % host
 

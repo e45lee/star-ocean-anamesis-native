@@ -106,13 +106,21 @@ def soa_server():
     return os.environ.get("SOA_SERVER", os.path.join(REPO, "build/server/soa-server"))
 
 
+def server_out(flag):
+    """soa-server's output for flag; empty without a soa-server (regen then says what to build)."""
+    try:
+        return subprocess.run([soa_server(), flag], capture_output=True, text=True, cwd=REPO).stdout
+    except OSError:
+        return ""
+
+
 def list_apis():
-    out = subprocess.run([soa_server(), "--list-apis"], capture_output=True, text=True, cwd=REPO).stdout
+    out = server_out("--list-apis")
     return {f[0]: (f[2] if f[2] != "-" else None) for f in (ln.split("\t") for ln in out.splitlines()) if len(f) >= 3}
 
 
 def list_hooks():
-    out = subprocess.run([soa_server(), "--list-hooks"], capture_output=True, text=True, cwd=REPO).stdout
+    out = server_out("--list-hooks")
     hooks = {}
     for ln in out.splitlines():
         f = ln.split("\t")
@@ -248,8 +256,24 @@ def check():
 
 
 # ---- selection --------------------------------------------------------------------------------------
+def repo_paths(paths):
+    """Paths as given on a command line (./x, absolute, relative to the cwd) as the repo-relative
+    paths the rules match."""
+    out = []
+    for p in paths:
+        if os.path.exists(p):
+            p = os.path.relpath(os.path.abspath(p), REPO)
+        elif p.startswith("./"):
+            p = p[2:]
+        out.append(p)
+    return out
+
+
 def changed_paths(rev):
-    out = subprocess.run(["git", "diff", "--name-only", rev], capture_output=True, text=True, cwd=REPO).stdout.split()
+    r = subprocess.run(["git", "diff", "--name-only", rev], capture_output=True, text=True, cwd=REPO)
+    if r.returncode:  # (a typo'd or missing REV must not select nothing and pass)
+        sys.exit("tests_for: git diff %s failed: %s" % (rev, r.stderr.strip()))
+    out = r.stdout.split()
     out += subprocess.run(["git", "ls-files", "--others", "--exclude-standard"], capture_output=True, text=True, cwd=REPO).stdout.split()
     return sorted(set(out))
 
@@ -424,7 +448,7 @@ def main():
     paths = list(a.paths)
     if a.git_diff:
         paths += changed_paths(a.git_diff)
-    paths = [os.path.relpath(os.path.abspath(p), REPO) if os.path.exists(p) else p for p in paths]
+    paths = repo_paths(paths)
     tests, why, corpora, apis, reasons = select(paths, a.all)
     if a.names:
         print("\n".join(t["name"] for t in tests))

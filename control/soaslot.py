@@ -133,12 +133,23 @@ def _open_dir():
     return d
 
 
+def _open_shared(path):
+    """A pool file opened read-write, created writable by every user like its directory (the umask
+    would leave another user's slot files read-only to us: a PermissionError instead of a slot)."""
+    fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o666)
+    try:
+        os.fchmod(fd, 0o666)
+    except OSError:  # (not ours: its owner made it 0666)
+        pass
+    return fd
+
+
 def try_acquire(name):
     """One pass over the slot files: (fd, index) of the slot taken, or None."""
     d = _open_dir()
     for i in range(n_slots()):
         path = os.path.join(d, "slot.%d" % i)
-        fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o666)
+        fd = _open_shared(path)
         try:
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError:
@@ -159,7 +170,7 @@ def stagger():
     if gap <= 0:
         return
     path = os.path.join(slot_dir(), "last-start")
-    fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o666)
+    fd = _open_shared(path)
     try:
         fcntl.flock(fd, fcntl.LOCK_EX)  # one starter at a time
         wait = os.path.getmtime(path) + gap - time.time()

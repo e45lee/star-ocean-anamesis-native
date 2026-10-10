@@ -118,6 +118,7 @@ def split_addr(addr):
 class GdbClient:
     def __init__(self, host="127.0.0.1", port=1234, timeout=30.0, stop=True):
         host = (host or "127.0.0.1").strip("[]")  # an IPv6 address with or without its brackets
+        self.timeout = timeout  # each reply's, unless a call gives its own
         self.sock = socket.create_connection((host, port), timeout=timeout)
         self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.buf = b""
@@ -134,9 +135,9 @@ class GdbClient:
     def _send(self, data: bytes):
         self.sock.sendall(frame(data))
 
-    def _recv(self, timeout=None):
-        if timeout is not None:
-            self.sock.settimeout(timeout)
+    def _recv(self, timeout=None, forever=False):
+        """The next packet, within timeout (None: the client's own; forever: no limit when timeout is None)."""
+        self.sock.settimeout(timeout if timeout is not None or forever else self.timeout)
         while True:
             pkts, self.buf = parse_packets(self.buf)
             if pkts:
@@ -267,7 +268,8 @@ class GdbClient:
         return self.stop_info
 
     def cont(self, timeout=None):
-        """Resume every thread until the next stop (stepping over a breakpoint at the current pc first)."""
+        """Resume every thread until the next stop (stepping over a breakpoint at the current pc first);
+        timeout None waits for it as long as it takes."""
         if self.stop_info and self.breaks:
             pc = self.reg("pc", self.stop_info["tid"])
             if pc in self.breaks:
@@ -276,7 +278,7 @@ class GdbClient:
                 self.set_break(pc)
         self._send(b"vCont;c")
         try:
-            r = self._recv(timeout)
+            r = self._recv(timeout, forever=True)
         except socket.timeout:
             self.interrupt()
             raise TimeoutError("gdbclient: no stop within the timeout (interrupted)")

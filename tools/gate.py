@@ -47,7 +47,7 @@ import tests_for
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PROCS, PLOCK = [], threading.Lock()
+PROCS, PLOCK = [], threading.RLock()  # (re-entrant: the signal handler takes it on the thread that may hold it)
 # Set by an interrupt (Ctrl-C, TERM): no test starts after it, and a test queued for a game slot
 # stops waiting (soaslot.acquire's cancel), so an interrupted gate takes no more slots.
 CANCEL = threading.Event()
@@ -191,7 +191,7 @@ def plan(a):
             if x != "T3" and not a.no_t0:
                 names += [t["name"] for t in tiers if t["tier"] == "T0"]
             if x == "T1":
-                paths = list(a.for_paths)
+                paths = tests_for.repo_paths(a.for_paths)
                 if a.git_diff:
                     paths += tests_for.changed_paths(a.git_diff)
                 if not paths:

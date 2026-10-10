@@ -63,3 +63,20 @@ def test_expect_fail():
     assert difftest.expect_fail(["a"], {"a": (True, "PASS a", "", True)}) == 1  # it didn't
     assert difftest.expect_fail(["a"], {"a": (False, "FAIL a", "", False)}) == 1  # a run broke instead
     assert difftest.expect_fail(["a"], {}) == 1
+
+
+def test_a_failed_prepare_is_a_broken_run(tmp_path, monkeypatch):
+    """A flow whose server state can't be prepared: a 4-tuple result like every other, so --expect-fail
+    reports it instead of an IndexError."""
+    def prepare(d, server):
+        raise RuntimeError("no master")
+    flow = types.SimpleNamespace(NAME="prep", SCREENS={}, prepare=prepare)
+    monkeypatch.setitem(difftest.FLOWS, "prep", flow)
+    monkeypatch.setattr(difftest.targets, "binaries", lambda: {"server": "/nonexistent"})
+    results = {}
+    import threading
+    difftest.run_flow("prep", ["emu"], types.SimpleNamespace(keep=False, sequential=True), {}, str(tmp_path),
+                      results, threading.Lock())
+    ok, line, text, runs_ok = results["prep"]
+    assert not ok and not runs_ok and "no prepared state" in line
+    assert difftest.expect_fail(["prep"], results) == 1

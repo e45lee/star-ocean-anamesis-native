@@ -72,7 +72,7 @@ def run_target(flow, target, rdir, opts, inject, out, prepared=None):
 
 def run_flow(name, tgts, o, inject, out, results, start_gate):
     """One flow: its targets in parallel (each queued for a game slot, control/soaslot.py), then
-    the comparison. results[name] = (ok, summary line, report text)."""
+    the comparison. results[name] = (ok, summary line, report text, every run passed its milestones)."""
     flow = FLOWS[name]
     fdir = os.path.join(out, name)
     os.makedirs(fdir, exist_ok=True)
@@ -84,7 +84,7 @@ def run_flow(name, tgts, o, inject, out, results, start_gate):
         except Exception as e:
             text = "# tests/diff flow %s\n\nFAIL: preparing the server state: %s\n" % (name, e)
             open(os.path.join(fdir, "report.txt"), "w").write(text)
-            results[name] = (False, "FAIL %-14s %4ds  (no prepared state)" % (name, 0), text)
+            results[name] = (False, "FAIL %-14s %4ds  (no prepared state)" % (name, 0), text, False)
             return
     runs, threads = {}, []
     for t in tgts:

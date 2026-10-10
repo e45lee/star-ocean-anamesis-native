@@ -117,3 +117,20 @@ def test_software_gl_threads(tmp_path):
     py = [sys.executable, os.path.join(CONTROL, "soaslot.py"), "run", "--software-gl", "--", "sh", "-c", 'echo "[$LP_NUM_THREADS]"']
     assert subprocess.run(py, env=e, capture_output=True, text=True).stdout.strip() == "[4]"
     assert subprocess.run(py, env=dict(e, LP_NUM_THREADS="8"), capture_output=True, text=True).stdout.strip() == "[8]"
+
+
+def test_slot_files_are_writable_by_every_user(tmp_path, monkeypatch):
+    """Under a umask of 022 the pool's files are still 0666, like its 1777 directory: another user
+    can take the slot later."""
+    monkeypatch.setenv("SOA_SLOT_DIR", str(tmp_path))
+    monkeypatch.setenv("SOA_SLOTS", "1")
+    monkeypatch.setenv("SOA_SLOT_STAGGER", "1")
+    old = os.umask(0o022)
+    try:
+        fd, i = soaslot.try_acquire("t")
+        os.close(fd)
+        soaslot.stagger()
+    finally:
+        os.umask(old)
+    for f in ("slot.%d" % i, "last-start"):
+        assert os.stat(tmp_path / f).st_mode & 0o777 == 0o666, f
